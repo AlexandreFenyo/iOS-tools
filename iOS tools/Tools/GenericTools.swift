@@ -10,7 +10,7 @@
 
 import Foundation
 
-class GenericTools {
+final class GenericTools : AutoTrace {
 
     // Basic debugging
     // Can be declared these ways:
@@ -34,11 +34,27 @@ class GenericTools {
         }
     }
     
-    // The previous function can also we written with o as an implicitely unwrapped Optional wrapping an instance of Any?, like this:
+    // The previous function can also we written with o as an implicitely unwrapped Optional wrapping an instance of Any? (Any?!), like this:
     // static func here(_ s: String, _ o: Any?! = nil) {
     // ...
     // print("here:", s, "instance:", o)
     // ...
-    
 
+/*
+ required init() {
+        print("voila")
+    }
+*/
+    
+}
+
+protocol AutoTrace {
+    init()
+}
+
+extension AutoTrace {
+    init() {
+        self.init()
+        print("truc")
+    }
 }
