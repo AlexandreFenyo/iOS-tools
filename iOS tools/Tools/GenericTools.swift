@@ -40,21 +40,10 @@ final class GenericTools : AutoTrace {
     // print("here:", s, "instance:", o)
     // ...
 
-/*
- required init() {
-        print("voila")
-    }
-*/
-    
 }
 
 protocol AutoTrace {
-    init()
 }
 
 extension AutoTrace {
-    init() {
-        self.init()
-        print("truc")
-    }
 }
