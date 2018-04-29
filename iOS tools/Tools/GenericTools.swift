@@ -8,6 +8,8 @@
 
 // "alt" means "alternative"
 
+// read plist: defaults read /Users/fenyo/Library/Developer/Xcode/DerivedData/iOS_tools-epwocfsynihtagcdtrgfzhdwlvrf/Build/Products/Debug-iphoneos/iOS\ tools.app/Info.plist
+
 import Foundation
 
 final class GenericTools : AutoTrace {
@@ -46,4 +48,5 @@ protocol AutoTrace {
 }
 
 extension AutoTrace {
+    
 }

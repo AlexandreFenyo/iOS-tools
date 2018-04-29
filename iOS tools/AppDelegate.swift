@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
+        // log
         GenericTools.here("application()", self)
 
         return true
@@ -44,9 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     override init() {
-        
-        GenericTools()
-
+        // call super.init() to be able to use self
+        super.init()
+        GenericTools.here("init()", self)
     }
 
 }
