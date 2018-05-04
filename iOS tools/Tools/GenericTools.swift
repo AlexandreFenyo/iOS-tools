@@ -11,12 +11,18 @@
 // read plist: defaults read /Users/fenyo/Library/Developer/Xcode/DerivedData/iOS_tools-epwocfsynihtagcdtrgfzhdwlvrf/Build/Products/Debug-iphoneos/iOS\ tools.app/Info.plist
 
 import Foundation
+import UIKit
+import QuartzCore
+import SceneKit
 
 final class GenericTools : AutoTrace {
     static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
+    static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
+    static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
+    static var demo_ship_scene_view : UIView?
 
     // Basic debugging
-    // Can be declared these ways:Ò
+    // Can be declared these ways:
     // static func here() -> () {
     // static func here() -> Void {
     // static func here() {
@@ -45,10 +51,103 @@ final class GenericTools : AutoTrace {
     // print("here:", s, "instance:", o)
     // ...
 
-    // placeholder for tests
+    // Placeholder for tests
     static func test() {
     }
 
+    // Create demo ship scene
+    static func createDemoShipScene(view: UIView) {
+        // store the view for later use in handleTap()
+        demo_ship_scene_view = view
+        
+        // create a new scene
+        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        
+        // create and add a camera to the scene
+        let cameraNode = SCNNode()
+        cameraNode.camera = SCNCamera()
+        scene.rootNode.addChildNode(cameraNode)
+        
+        // place the camera
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+        
+        // create and add a light to the scene
+        let lightNode = SCNNode()
+        lightNode.light = SCNLight()
+        lightNode.light!.type = .omni
+        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+        scene.rootNode.addChildNode(lightNode)
+        
+        // create and add an ambient light to the scene
+        let ambientLightNode = SCNNode()
+        ambientLightNode.light = SCNLight()
+        ambientLightNode.light!.type = .ambient
+        ambientLightNode.light!.color = UIColor.darkGray
+        scene.rootNode.addChildNode(ambientLightNode)
+        
+        // retrieve the ship node
+        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
+        
+        // animate the 3d object
+        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+        
+        // retrieve the SCNView
+        let scnView = view as! SCNView
+        
+        // set the scene to the view
+        scnView.scene = scene
+        
+        // allows the user to manipulate the camera
+        scnView.allowsCameraControl = true
+        
+        // show statistics such as fps and timing information
+        scnView.showsStatistics = true
+        
+        // configure the view
+        scnView.backgroundColor = UIColor.black
+        
+        // add a tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        scnView.addGestureRecognizer(tapGesture)
+
+    }
+
+    // Callback used by createDemoShipScene()
+    @objc
+    static func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        // retrieve the SCNView
+        let scnView = demo_ship_scene_view as! SCNView
+        
+        // check what nodes are tapped
+        let p = gestureRecognize.location(in: scnView)
+        let hitResults = scnView.hitTest(p, options: [:])
+        // check that we clicked on at least one object
+        if hitResults.count > 0 {
+            // retrieved the first clicked object
+            let result = hitResults[0]
+            
+            // get its material
+            let material = result.node.geometry!.firstMaterial!
+            
+            // highlight it
+            SCNTransaction.begin()
+            SCNTransaction.animationDuration = 0.5
+            
+            // on completion - unhighlight
+            SCNTransaction.completionBlock = {
+                SCNTransaction.begin()
+                SCNTransaction.animationDuration = 0.5
+                
+                material.emission.contents = UIColor.black
+                
+                SCNTransaction.commit()
+            }
+            
+            material.emission.contents = UIColor.red
+            
+            SCNTransaction.commit()
+        }
+    }
 }
 
 protocol AutoTrace {
