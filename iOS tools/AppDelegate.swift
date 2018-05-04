@@ -16,12 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
-        // placeholder for testing
-        GenericTools.test()
-        
         // log
         GenericTools.here("application()", self)
 
+        // placeholder for testing
+        if GenericTools.must_call_initial_tests { GenericTools.test() }
+        
         return true
     }
 
