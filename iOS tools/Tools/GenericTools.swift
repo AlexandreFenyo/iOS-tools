@@ -13,13 +13,15 @@
 import Foundation
 
 final class GenericTools : AutoTrace {
+    static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
 
     // Basic debugging
-    // Can be declared these ways:
+    // Can be declared these ways:Ò
     // static func here() -> () {
     // static func here() -> Void {
     // static func here() {
     static func here() {
+        if !must_log { return }
         print("here");
     }
 
@@ -27,6 +29,7 @@ final class GenericTools : AutoTrace {
     // ex.: here("here")
     //      here("here", self)
     static func here(_ s: String, _ o: Any? = nil) {
+        if !must_log { return }
         if o == nil {
             print("here:", s);
         } else {
@@ -41,6 +44,10 @@ final class GenericTools : AutoTrace {
     // ...
     // print("here:", s, "instance:", o)
     // ...
+
+    // placeholder for tests
+    static func test() {
+    }
 
 }
 

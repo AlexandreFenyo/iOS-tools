@@ -2,16 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>log</key>
+	<true/>
 	<key># read this plist source content</key>
 	<string>cat &quot;./iOS tools/Tools/config.plist&quot;</string>
 	<key># read this plist built content</key>
 	<string>defaults read $HOME/Library/Developer/Xcode/DerivedData/iOS_tools-.../Build/Products/Debug-iphoneos/iOS\ tools.app/config.plist</string>
-	<key>GenericTools configuration</key>
-	<array>
-		<dict>
-			<key>print here() calls</key>
-			<true/>
-		</dict>
-	</array>
 </dict>
 </plist>
