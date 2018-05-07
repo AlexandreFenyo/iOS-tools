@@ -16,10 +16,13 @@ import QuartzCore
 import SceneKit
 
 final class GenericTools : AutoTrace {
+    // holding strong refs to tap targets
+    static var tap_manager: [ManageTap] = []
+
+    // extract configuration parameters
     static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
     static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
     static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
-    static var demo_ship_scene_view : UIView?
 
     // Basic debugging
     // Can be declared these ways:
@@ -55,11 +58,8 @@ final class GenericTools : AutoTrace {
     static func test() {
     }
 
-    // Create demo ship scene
-    static func createDemoShipScene(view: UIView) {
-        // store the view for later use in handleTap()
-        demo_ship_scene_view = view
-        
+    // Insert the demo ship scene into a view
+    static func createDemoShipScene(view: SCNView) {
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
@@ -91,34 +91,37 @@ final class GenericTools : AutoTrace {
         // animate the 3d object
         ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
-        // retrieve the SCNView
-        here("avant erreur", view)
-        let scnView = view as! SCNView
-        
         // set the scene to the view
-        scnView.scene = scene
+        view.scene = scene
         
         // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
+        view.allowsCameraControl = true
         
         // show statistics such as fps and timing information
-        scnView.showsStatistics = true
+        view.showsStatistics = true
         
         // configure the view
-        scnView.backgroundColor = UIColor.black
+        view.backgroundColor = UIColor.black
         
         // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
+        let manageTap = ManageTap(view)
+        // create a strong ref to the target
+        tap_manager.append(manageTap)
+        let tapGesture = UITapGestureRecognizer(target: manageTap, action: #selector(manageTap.handleTap(_:)))
+        view.addGestureRecognizer(tapGesture)
+    }
+}
 
+class ManageTap {
+    let scnView: SCNView
+
+    init(_ v: SCNView) {
+        self.scnView = v
     }
 
     // Callback used by createDemoShipScene()
     @objc
-    static func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = demo_ship_scene_view as! SCNView
-        
+    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // check what nodes are tapped
         let p = gestureRecognize.location(in: scnView)
         let hitResults = scnView.hitTest(p, options: [:])
@@ -126,26 +129,26 @@ final class GenericTools : AutoTrace {
         if hitResults.count > 0 {
             // retrieved the first clicked object
             let result = hitResults[0]
-            
+
             // get its material
             let material = result.node.geometry!.firstMaterial!
-            
+
             // highlight it
             SCNTransaction.begin()
             SCNTransaction.animationDuration = 0.5
-            
+
             // on completion - unhighlight
             SCNTransaction.completionBlock = {
                 SCNTransaction.begin()
                 SCNTransaction.animationDuration = 0.5
-                
+
                 material.emission.contents = UIColor.black
-                
+
                 SCNTransaction.commit()
             }
-            
+
             material.emission.contents = UIColor.red
-            
+
             SCNTransaction.commit()
         }
     }

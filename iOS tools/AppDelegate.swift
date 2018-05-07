@@ -16,10 +16,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
-        // log
+        // Log
         GenericTools.here("application()", self)
 
-        // placeholder for testing
+        // When using a story board with a split view controller, set the same width for each controller
+        if let svc = self.window?.rootViewController as? UISplitViewController {
+            svc.preferredDisplayMode = .allVisible
+            svc.minimumPrimaryColumnWidth = 0
+            svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
+            svc.preferredPrimaryColumnWidthFraction = 0.5
+        }
+        
+        // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test() }
         
         return true
