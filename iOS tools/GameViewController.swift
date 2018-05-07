@@ -15,6 +15,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        GenericTools.here("la vue", self.view)
         if GenericTools.must_create_demo_ship_scene { GenericTools.createDemoShipScene(view: self.view) }
     }
     

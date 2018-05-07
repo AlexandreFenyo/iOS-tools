@@ -21,6 +21,7 @@
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D38681120963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D38681220963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
+		5DF237F520A089B700CF9365 /* TestSplit.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* TestSplit.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		5D135212208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D13521F20853BEA00E4A76D /* GenericTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTools.swift; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
+		5DF237F420A089B700CF9365 /* TestSplit.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = TestSplit.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				5D1351F7208538E300E4A76D /* Assets.xcassets */,
 				5D1351F9208538E300E4A76D /* LaunchScreen.storyboard */,
 				5D1351FC208538E300E4A76D /* Info.plist */,
+				5DF237F420A089B700CF9365 /* TestSplit.storyboard */,
 			);
 			path = "iOS tools";
 			sourceTree = "<group>";
@@ -254,6 +257,7 @@
 				5D1351F1208538DB00E4A76D /* art.scnassets in Resources */,
 				5D1351FB208538E300E4A76D /* LaunchScreen.storyboard in Resources */,
 				5D1351F8208538E300E4A76D /* Assets.xcassets in Resources */,
+				5DF237F520A089B700CF9365 /* TestSplit.storyboard in Resources */,
 				5D1351F6208538DB00E4A76D /* Main.storyboard in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 			);

@@ -92,6 +92,7 @@ final class GenericTools : AutoTrace {
         ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
         
         // retrieve the SCNView
+        here("avant erreur", view)
         let scnView = view as! SCNView
         
         // set the scene to the view
