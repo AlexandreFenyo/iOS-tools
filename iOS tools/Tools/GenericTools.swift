@@ -58,8 +58,16 @@ final class GenericTools : AutoTrace {
     static func test() {
     }
 
+    // split a view controller with two columns of same width
+    static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
+        svc.preferredDisplayMode = .allVisible
+        svc.minimumPrimaryColumnWidth = 0
+        svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
+        svc.preferredPrimaryColumnWidthFraction = 0.5
+    }
+    
     // Insert the demo ship scene into a view
-    static func createDemoShipScene(view: SCNView) {
+    static func createDemoShipScene(_ view: SCNView) {
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
@@ -112,6 +120,7 @@ final class GenericTools : AutoTrace {
     }
 }
 
+// manage a tap on a demo ship scene view
 class ManageTap {
     let scnView: SCNView
 

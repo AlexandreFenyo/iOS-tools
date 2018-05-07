@@ -20,12 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GenericTools.here("application()", self)
 
         // When using a story board with a split view controller, set the same width for each controller
-        if let svc = self.window?.rootViewController as? UISplitViewController {
-            svc.preferredDisplayMode = .allVisible
-            svc.minimumPrimaryColumnWidth = 0
-            svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
-            svc.preferredPrimaryColumnWidthFraction = 0.5
-        }
+        if let svc = self.window?.rootViewController as? UISplitViewController { GenericTools.splitViewControllerSameWidth(svc) }
         
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test() }
