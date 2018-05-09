@@ -141,17 +141,17 @@ final class GenericTools : AutoTrace {
         view.allowsCameraControl = true
         
         // show statistics such as fps and timing information
-//        view.showsStatistics = true
+        view.showsStatistics = true
 
         // configure the view
         view.backgroundColor = UIColor.black
      
         // add a tap gesture recognizer
-//        let manage_tap = ManageTapCube(view)
+        let manage_tap = ManageTapCube(view)
         // create a strong ref to the target
-//        tap_cube_manager.append(manage_tap)
-//        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
-//        view.addGestureRecognizer(tapGesture)
+        tap_cube_manager.append(manage_tap)
+        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
+        view.addGestureRecognizer(tapGesture)
 
     }
     
