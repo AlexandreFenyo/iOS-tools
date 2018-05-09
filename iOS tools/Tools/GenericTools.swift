@@ -17,10 +17,12 @@ import SceneKit
 
 final class GenericTools : AutoTrace {
     // holding strong refs to tap targets
-    static var tap_manager: [ManageTap] = []
+    static var tap_demo_ship_manager: [ManageTapDemoShip] = []
 
     // holding strong refs to tap cube targets
     static var tap_cube_manager: [ManageTapCube] = []
+    
+    static var alternate_value = true
 
     // extract configuration parameters
     static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
@@ -68,6 +70,11 @@ final class GenericTools : AutoTrace {
         svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
         svc.preferredPrimaryColumnWidthFraction = 0.5
     }
+
+    static func alternate() -> Bool {
+        alternate_value = !alternate_value
+        return alternate_value
+    }
     
     // Insert the demo cube scene into a view
     static func createCubeScene(_ view: SCNView) {
@@ -99,34 +106,34 @@ final class GenericTools : AutoTrace {
         // retrieve the cube node
         let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
         box_node.geometry?.firstMaterial?.transparency = 0
-
-        // test draw line
-        let box2 = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
-        let box2_node = SCNNode(geometry: box2)
-        box2.firstMaterial?.transparency = 0
-        box_node.addChildNode(box2_node)
-
         
+        // add a box to draw a line on one of its faces
+        let box2_geom = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
+        box2_geom.firstMaterial?.transparency = 0
+        let box2_node = SCNNode(geometry: box2_geom)
+        box_node.addChildNode(box2_node)
+        
+        // draw a line
         var vertices = [SCNVector3]()
         vertices.append(SCNVector3Make(0, 0, 0.5))
         vertices.append(SCNVector3Make(0, 0, 1))
         let geo_src = SCNGeometrySource(vertices: vertices)
-        let ind : [Int32] = [0, 1]
-        let geo_elem = SCNGeometryElement(indices: ind, primitiveType: SCNGeometryPrimitiveType.line)
+        let indices : [Int32] = [0, 1]
+        let geo_elem = SCNGeometryElement(indices: indices, primitiveType: SCNGeometryPrimitiveType.line)
         let geo = SCNGeometry(sources: [ geo_src ], elements: [ geo_elem ])
         let n = SCNNode(geometry: geo)
         box_node.addChildNode(n)
-
+        
         // wireframe
-//        view.debugOptions.insert(SCNDebugOptions.showWireframe)
-        view.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-
-        //        view.debugOptions = .renderAsWireframe
-
+        // XXX trouver comment faire avec cette syntaxe : view.debugOptions = .renderAsWireframe
+        view.debugOptions.insert(SCNDebugOptions.showWireframe)
+        // does not work, so we set material transparency to 0
+        // view.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+        
         
         // animate the 3d object
         box_node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 10)))
-        
+
         // set the scene to the view
         view.scene = scene
         
@@ -140,11 +147,11 @@ final class GenericTools : AutoTrace {
         view.backgroundColor = UIColor.black
      
         // add a tap gesture recognizer
-        let manage_tap = ManageTapCube(view)
+//        let manage_tap = ManageTapCube(view)
         // create a strong ref to the target
-        tap_cube_manager.append(manage_tap)
-        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
-        view.addGestureRecognizer(tapGesture)
+//        tap_cube_manager.append(manage_tap)
+//        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
+//        view.addGestureRecognizer(tapGesture)
 
     }
     
@@ -194,16 +201,16 @@ final class GenericTools : AutoTrace {
         view.backgroundColor = UIColor.black
         
         // add a tap gesture recognizer
-        let manageTap = ManageTap(view)
+        let manageTap = ManageTapDemoShip(view)
         // create a strong ref to the target
-        tap_manager.append(manageTap)
+        tap_demo_ship_manager.append(manageTap)
         let tapGesture = UITapGestureRecognizer(target: manageTap, action: #selector(manageTap.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
     }
 }
 
 // manage a tap on a demo ship scene view
-class ManageTap {
+class ManageTapDemoShip {
     let scnView: SCNView
 
     init(_ v: SCNView) {
@@ -261,8 +268,8 @@ class ManageTapCube {
             // highlight it
             SCNTransaction.begin()
         
-        scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
-        scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
+            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
 
             SCNTransaction.commit()
     }
