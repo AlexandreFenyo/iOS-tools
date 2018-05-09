@@ -19,6 +19,9 @@ final class GenericTools : AutoTrace {
     // holding strong refs to tap targets
     static var tap_manager: [ManageTap] = []
 
+    // holding strong refs to tap cube targets
+    static var tap_cube_manager: [ManageTapCube] = []
+
     // extract configuration parameters
     static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
     static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
@@ -94,10 +97,35 @@ final class GenericTools : AutoTrace {
         scene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the cube node
-        let ship = scene.rootNode.childNode(withName: "box", recursively: true)!
+        let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
+        box_node.geometry?.firstMaterial?.transparency = 0
+
+        // test draw line
+        let box2 = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
+        let box2_node = SCNNode(geometry: box2)
+        box2.firstMaterial?.transparency = 0
+        box_node.addChildNode(box2_node)
+
+        
+        var vertices = [SCNVector3]()
+        vertices.append(SCNVector3Make(0, 0, 0.5))
+        vertices.append(SCNVector3Make(0, 0, 1))
+        let geo_src = SCNGeometrySource(vertices: vertices)
+        let ind : [Int32] = [0, 1]
+        let geo_elem = SCNGeometryElement(indices: ind, primitiveType: SCNGeometryPrimitiveType.line)
+        let geo = SCNGeometry(sources: [ geo_src ], elements: [ geo_elem ])
+        let n = SCNNode(geometry: geo)
+        box_node.addChildNode(n)
+
+        // wireframe
+//        view.debugOptions.insert(SCNDebugOptions.showWireframe)
+        view.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+
+        //        view.debugOptions = .renderAsWireframe
+
         
         // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 10)))
+        box_node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 10)))
         
         // set the scene to the view
         view.scene = scene
@@ -106,10 +134,18 @@ final class GenericTools : AutoTrace {
         view.allowsCameraControl = true
         
         // show statistics such as fps and timing information
-        view.showsStatistics = true
-        
+//        view.showsStatistics = true
+
         // configure the view
         view.backgroundColor = UIColor.black
+     
+        // add a tap gesture recognizer
+        let manage_tap = ManageTapCube(view)
+        // create a strong ref to the target
+        tap_cube_manager.append(manage_tap)
+        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
+        view.addGestureRecognizer(tapGesture)
+
     }
     
     // Insert the demo ship scene into a view
@@ -206,6 +242,29 @@ class ManageTap {
 
             SCNTransaction.commit()
         }
+    }
+}
+
+// manage a tap on a Cube scene view
+class ManageTapCube {
+    let scnView: SCNView
+    
+    init(_ v: SCNView) {
+        self.scnView = v
+    }
+    
+    // Callback used by createDemoShipScene()
+    @objc
+    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+            GenericTools.here()
+            
+            // highlight it
+            SCNTransaction.begin()
+        
+        scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
+        scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+
+            SCNTransaction.commit()
     }
 }
 
