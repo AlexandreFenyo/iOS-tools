@@ -16,6 +16,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         if GenericTools.must_create_demo_ship_scene { GenericTools.createDemoShipScene(self.view as! SCNView) }
+        else { GenericTools.createCubeScene(self.view as! SCNView) }
     }
     
     override var shouldAutorotate: Bool {

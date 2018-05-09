@@ -7,7 +7,7 @@
 	<key>must call initial tests</key>
 	<true/>
 	<key>must create demo ship scene</key>
-	<true/>
+	<false/>
 	<key># read this plist source content</key>
 	<string>cat &quot;./iOS tools/Tools/config.plist&quot;</string>
 	<key># read this plist built content</key>
