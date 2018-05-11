@@ -4,7 +4,6 @@ import UIKit
 import SpriteKit
 
 class ChartNode : SKSpriteNode {
-    var zoom: CGFloat = 1
     var grid_size: CGSize
 
     public init(size: CGSize, grid_size: CGSize) {
@@ -31,9 +30,13 @@ class ChartNode : SKSpriteNode {
 
         // XXXXXXXXXXX
         // Configure properties for ChartNode
-        super.init(texture: nil, color: UIColor.gray, size: size)
-        self.blendMode = .replace
+        super.init(texture: nil, color: SKColor.clear, size: size)
         self.anchorPoint = CGPoint(x: 0, y: 0)
+        // self.alpha pas concerné
+        self.blendMode = .replace
+        // self.colorBlendFactor = 0
+        // self.color = SKColor.black
+        self.zPosition = 5.0
 
         // Animate shape_node
         let oneMoveLeft = SKAction.moveBy(x: -10, y: 0, duration: 1)

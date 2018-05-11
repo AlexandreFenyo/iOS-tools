@@ -24,12 +24,12 @@ final class GenericTools {
             print("here: ", o!, ":", s, separator: String() /* alt: separator: "" */)
         }
     }
-    
 
-    // - scene
-    //   - camera
-    //   - chart_node
-    //     - shape_node
+    // - view
+    //   - scene: backgroundColor=clear, zPosition=1, blendMode=replace
+    //     - camera
+    //     - chart_node: color=clear, zPosition=5, blendMode=replace
+    //       - shape_node: zPosition=10, strokeColor=red
 
     static func createSpriteScene(_ view: SKView) {
         // Create a scene
@@ -37,7 +37,21 @@ final class GenericTools {
 
         // XXXXXXXXXXX
         // Configure properties for the scene
-        scene.backgroundColor = SKColor.white
+        scene.backgroundColor = SKColor.clear
+        scene.blendMode = .replace
+        // scene.scaleMode semble pas concerné
+        // scene.alpha pas concerné
+        // scene.attributeValues
+        // scene.blendMode
+        // scene.filter ???
+        // scene.setValue(...)
+        // scene.shader ???
+        scene.zPosition = 1.0
+//        scene.shouldRasterize = true
+        scene.shouldCenterFilter = true
+        scene.shouldEnableEffects = true
+
+        // Add scene to view
         view.presentScene(scene)
 
         // Add a camera (optional)
@@ -45,21 +59,14 @@ final class GenericTools {
         scene.camera = cam
         scene.addChild(cam)
         cam.position = CGPoint(x: 600, y: 600)
-        // pas de flicker
-        //        let zoomInAction = SKAction.scale(to: 0.1, duration: 10)
-        // flicker
-        //        let zoomInAction = SKAction.scale(to: 2.0, duration: 10)
-        //        cam.run(zoomInAction)
-        // pas de flicker
-        //        cam.setScale(0.5)
         // flicker
         cam.setScale(2.0)
 
         // Add a chart
         let chart_node = ChartNode(size: CGSize(width: view.frame.width, height: view.frame.width), grid_size: CGSize(width: 20, height: 40))
 
-        // Configure properties for chart_node
         // XXXXXXXXXXX
+        // Configure properties for chart_node
         chart_node.position = CGPoint(x: 0, y: 0)
 
         // Make chart_node a child of scene
