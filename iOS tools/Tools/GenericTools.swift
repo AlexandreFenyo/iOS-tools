@@ -34,11 +34,13 @@ final class GenericTools {
     static func createSpriteScene(_ view: SKView) {
         // Create a scene
         let scene = SKScene(size: view.frame.size)
+
+        // XXXXXXXXXXX
         // Configure properties for the scene
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
 
-        // add a camera (optional)
+        // Add a camera (optional)
         let cam = SKCameraNode()
         scene.camera = cam
         scene.addChild(cam)
@@ -54,21 +56,18 @@ final class GenericTools {
         cam.setScale(2.0)
 
         // Add a chart
-        let chart_node = ChartNode(size: CGSize(width: view.frame.width, height: view.frame.width), grid_size: CGSize(width: 10, height: 20))
-        chart_node.position = CGPoint(x: 0, y: 0)
-        scene.addChild(chart_node)
+        let chart_node = ChartNode(size: CGSize(width: view.frame.width, height: view.frame.width), grid_size: CGSize(width: 20, height: 40))
 
+        // Configure properties for chart_node
+        // XXXXXXXXXXX
+        chart_node.position = CGPoint(x: 0, y: 0)
+
+        // Make chart_node a child of scene
+        scene.addChild(chart_node)
 
         // Display debug informations
         view.showsFPS = true
         view.showsQuadCount = true
     }
 
-}
-
-protocol AutoTrace {
-}
-
-extension AutoTrace {
-    
 }

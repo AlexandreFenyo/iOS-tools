@@ -18,32 +18,29 @@ class ChartNode : SKSpriteNode {
             path.addLine(to: CGPoint(x: x, y: size.height))
             x += grid_size.width
         }
-        var y : CGFloat = 0
-        while y <= size.height {
-            path.move(to: CGPoint(x: 0, y: y))
-            path.addLine(to: CGPoint(x: size.width + grid_size.width, y: y))
-            y += grid_size.height
-        }
 
         // Create a shape node based on the path
         let shape_node = SKShapeNode(path: path)
+
+        // XXXXXXXXXXX
         // Configure properties of shape_node
         shape_node.path = path
         shape_node.strokeColor = SKColor.red
-        shape_node.lineWidth = 1.0
+        shape_node.lineWidth = 0.2
         shape_node.zPosition = 10.0
 
-        // Animate
+        // XXXXXXXXXXX
+        // Configure properties for ChartNode
+        super.init(texture: nil, color: UIColor.gray, size: size)
+        self.blendMode = .replace
+        self.anchorPoint = CGPoint(x: 0, y: 0)
+
+        // Animate shape_node
         let oneMoveLeft = SKAction.moveBy(x: -10, y: 0, duration: 1)
         let oneMoveRight = SKAction.moveBy(x: 10, y: 0, duration: 0)
         let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
         let repeatMove  = SKAction.repeatForever(oneSequence)
         shape_node.run(repeatMove)
-
-        // Configure properties for ChartNode
-        super.init(texture: nil, color: UIColor.gray, size: size)
-        self.blendMode = .replace
-        self.anchorPoint = CGPoint(x: 0, y: 0)
 
         // Make shape_node a child of ChartNode
         self.addChild(shape_node)
