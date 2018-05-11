@@ -19,12 +19,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log
         GenericTools.here("application()", self)
 
-        // When using a story board with a split view controller, set the same width for each controller
-        if let svc = self.window?.rootViewController as? UISplitViewController { GenericTools.splitViewControllerSameWidth(svc) }
-        
-        // Placeholder for some tests
-        if GenericTools.must_call_initial_tests { GenericTools.test() }
-        
         return true
     }
 
