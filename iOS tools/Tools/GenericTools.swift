@@ -14,6 +14,7 @@ import Foundation
 import UIKit
 import QuartzCore
 import SceneKit
+import SpriteKit
 
 final class GenericTools : AutoTrace {
     // holding strong refs to tap targets
@@ -71,9 +72,61 @@ final class GenericTools : AutoTrace {
         svc.preferredPrimaryColumnWidthFraction = 0.5
     }
 
+    // créer un alternate() indexé sur une chaîne de caractères
     static func alternate() -> Bool {
         alternate_value = !alternate_value
         return alternate_value
+    }
+
+    static func createScene(_ view: UIView) {
+        if !alternate() { createSpriteScene(view as! SKView) }
+        else { createCubeScene(view as! SCNView) }
+    }
+    
+    static func createSpriteScene(_ view: SKView) {
+        // Create a scene
+        let scene = SKScene(size: view.frame.size)
+        scene.backgroundColor = SKColor.white
+        view.presentScene(scene)
+        
+        // Add a label
+        let label = SKLabelNode(text: "This is a SpriteKit view")
+        label.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2)
+        label.fontSize = 45
+        label.fontColor = SKColor.black
+        label.fontName = "Avenir"
+        scene.addChild(label)
+
+        // Add an image
+        let sprite_node = SKSpriteNode(imageNamed: "netmon7.png")
+        sprite_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 100)
+        
+        // Apply a rotating animation to the image
+        let oneRevolution : SKAction = SKAction.rotate(byAngle: -CGFloat.pi * 2, duration: 20)
+        let repeatRotation : SKAction = SKAction.repeatForever(oneRevolution)
+        sprite_node.run(repeatRotation)
+        scene.addChild(sprite_node)
+
+        // Apply a shader
+        // let negativeShader = SKShader(source: "void main() { " +
+        //     "    gl_FragColor = vec4(1.0 - SKDefaultShading().rgb, SKDefaultShading().a); }")
+        // sprite_node.shader = negativeShader
+
+        // Add a chart
+        let chart_node = ChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 10, height: 20))
+        chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
+        scene.addChild(chart_node)
+
+//        // Configuring a camera is optional
+//        let cam = SKCameraNode()
+//        scene.camera = cam
+//        scene.addChild(cam)
+//        cam.position = CGPoint(x: 600, y: 600)
+        
+        // Display debug informations
+        view.showsFPS = true
+        view.showsQuadCount = true
+
     }
     
     // Insert the demo cube scene into a view
@@ -152,6 +205,20 @@ final class GenericTools : AutoTrace {
         tap_cube_manager.append(manage_tap)
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
+
+        // add a sprite kit scene to a face of a cube
+        let chart_scene = SKScene(size: CGSize(width: 300, height: 200))
+        chart_scene.backgroundColor = SKColor.white
+        let _g = SCNPlane(width: 3.8, height: 3.8)
+        _g.firstMaterial?.isDoubleSided = true
+        _g.firstMaterial?.diffuse.contents = chart_scene
+        let chart_node = SCNNode(geometry: _g)
+        
+        let xychart_node = ChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 10, height: 20))
+        // chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
+        chart_scene.addChild(xychart_node)
+        
+        scene.rootNode.addChildNode(chart_node)
 
     }
     

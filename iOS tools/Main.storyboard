@@ -42,7 +42,7 @@
         <scene sceneID="HWt-Ak-vRF">
             <objects>
                 <viewController id="fVY-Qy-7SL" customClass="GameViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="glc-5k-oMH" customClass="SCNView">
+                    <view key="view" contentMode="scaleToFill" id="glc-5k-oMH" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
