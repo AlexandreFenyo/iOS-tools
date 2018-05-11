@@ -206,7 +206,7 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        // add a sprite kit scene to a face of a cube
+        // add a sprite kit scene to a plan
         let chart_scene = SKScene(size: CGSize(width: 300, height: 200))
         chart_scene.backgroundColor = SKColor.white
         let _g = SCNPlane(width: 3.8, height: 3.8)
