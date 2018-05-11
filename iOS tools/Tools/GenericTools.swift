@@ -143,29 +143,33 @@ final class GenericTools : AutoTrace {
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
         
         // create and add a light to the scene
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light!.type = .omni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        scene.rootNode.addChildNode(lightNode)
-        
+        // Comment to remove flickering on the line
+//        let lightNode = SCNNode()
+//        lightNode.light = SCNLight()
+//        lightNode.light!.type = .omni
+//        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+//        scene.rootNode.addChildNode(lightNode)
+
         // create and add an ambient light to the scene
-        let ambientLightNode = SCNNode()
-        ambientLightNode.light = SCNLight()
-        ambientLightNode.light!.type = .ambient
-        ambientLightNode.light!.color = UIColor.darkGray
-        scene.rootNode.addChildNode(ambientLightNode)
-        
+//        let ambientLightNode = SCNNode()
+//        ambientLightNode.light = SCNLight()
+//        ambientLightNode.light!.type = .ambient
+//        ambientLightNode.light!.color = UIColor.darkGray
+//        scene.rootNode.addChildNode(ambientLightNode)
+
         // retrieve the cube node
         let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
-        box_node.geometry?.firstMaterial?.transparency = 0
+//        box_node.geometry?.firstMaterial?.transparency = 0
         
         // add a box to draw a line on one of its faces
         let box2_geom = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
-        box2_geom.firstMaterial?.transparency = 0
+//        box2_geom.firstMaterial?.transparency = 0
         let box2_node = SCNNode(geometry: box2_geom)
         box_node.addChildNode(box2_node)
-        
+
+
+
+
         // draw a line
         var vertices = [SCNVector3]()
         vertices.append(SCNVector3Make(0, 0, 0.5))
@@ -174,9 +178,14 @@ final class GenericTools : AutoTrace {
         let indices : [Int32] = [0, 1]
         let geo_elem = SCNGeometryElement(indices: indices, primitiveType: SCNGeometryPrimitiveType.line)
         let geo = SCNGeometry(sources: [ geo_src ], elements: [ geo_elem ])
+        geo.firstMaterial?.isDoubleSided = true
         let n = SCNNode(geometry: geo)
         box_node.addChildNode(n)
-        
+
+
+
+
+
         // wireframe
         // XXX trouver comment faire avec cette syntaxe : view.debugOptions = .renderAsWireframe
         view.debugOptions.insert(SCNDebugOptions.showWireframe)

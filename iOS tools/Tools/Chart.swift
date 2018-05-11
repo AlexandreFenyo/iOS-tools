@@ -39,7 +39,7 @@ class ChartNode : SKSpriteNode {
         shape_node.path = path
         shape_node.strokeColor = UIColor.red
         shape_node.lineWidth = 1
-        shape_node.zPosition = 1
+        shape_node.zPosition = 0.5
 
         let oneMoveLeft = SKAction.moveBy(x: -10, y: 0, duration: 1)
         let oneMoveRight = SKAction.moveBy(x: 10, y: 0, duration: 0)
