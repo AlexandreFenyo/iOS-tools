@@ -30,7 +30,8 @@ class ChartNode : SKSpriteNode {
 
         // XXXXXXXXXXX
         // Configure properties for ChartNode
-        super.init(texture: nil, color: SKColor.clear, size: size)
+        // OK avec yellow
+        super.init(texture: nil, color: SKColor.gray, size: size)
         self.anchorPoint = CGPoint(x: 0, y: 0)
         // self.alpha pas concerné
         self.blendMode = .replace
@@ -39,8 +40,8 @@ class ChartNode : SKSpriteNode {
         self.zPosition = 5.0
 
         // Animate shape_node
-        let oneMoveLeft = SKAction.moveBy(x: -10, y: 0, duration: 1)
-        let oneMoveRight = SKAction.moveBy(x: 10, y: 0, duration: 0)
+        let oneMoveLeft = SKAction.moveBy(x: -20, y: 0, duration: 1)
+        let oneMoveRight = SKAction.moveBy(x: 20, y: 0, duration: 0)
         let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
         let repeatMove  = SKAction.repeatForever(oneSequence)
         shape_node.run(repeatMove)

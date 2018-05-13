@@ -1,5 +1,6 @@
 
-// DEBUG FLICKER
+// DEBUG FLICKER / FLASHING / BLINKING
+// Extrude opaque images by 1 pixel - this prevents flashing images when rendering ???
 
 import Foundation
 import UIKit
