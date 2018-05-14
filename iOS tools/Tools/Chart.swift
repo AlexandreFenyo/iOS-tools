@@ -38,11 +38,12 @@ class ChartNode : SKSpriteNode {
         let shape_node = SKShapeNode(path: path)
         shape_node.path = path
         shape_node.strokeColor = UIColor.red
-        shape_node.lineWidth = 1
+        // pour éviter le flickering, il faut que la ligne soit large, quitte à augmenter la taille de l'image créée et à la réduire à l'écran
+        shape_node.lineWidth = 10
         shape_node.zPosition = 0.5
 
-        let oneMoveLeft = SKAction.moveBy(x: -10, y: 0, duration: 1)
-        let oneMoveRight = SKAction.moveBy(x: 10, y: 0, duration: 0)
+        let oneMoveLeft = SKAction.moveBy(x: -100, y: 0, duration: 1)
+        let oneMoveRight = SKAction.moveBy(x: 100, y: 0, duration: 0)
         let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
         let repeatMove  = SKAction.repeatForever(oneSequence)
         shape_node.run(repeatMove)
@@ -51,15 +52,15 @@ class ChartNode : SKSpriteNode {
         let mask_node = SKSpriteNode(texture: nil, color: UIColor.black, size: CGSize(width: size.width, height: size.height))
         mask_node.anchorPoint = CGPoint(x: 0, y: 0)
 
-        crop_node.maskNode = mask_node
-        crop_node.addChild(shape_node)
+//        crop_node.maskNode = mask_node
+//        crop_node.addChild(shape_node)
         
-        super.init(texture: nil, color: UIColor.gray, size: size)
+        super.init(texture: nil, color: UIColor.black, size: size)
 
         self.anchorPoint = CGPoint(x: 0, y: 0)
 
-        self.addChild(crop_node)
-        
+//        self.addChild(crop_node)
+        self.addChild(shape_node)
     }
     
     required init(coder aDecoder: NSCoder) {

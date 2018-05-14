@@ -113,8 +113,8 @@ final class GenericTools : AutoTrace {
         // sprite_node.shader = negativeShader
 
         // Add a chart
-        let chart_node = ChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 10, height: 20))
-        chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
+        let chart_node = ChartNode(size: CGSize(width: 3000, height: 2000), grid_size: CGSize(width: 10, height: 20))
+        chart_node.position = CGPoint(x: 0, y: 0)
         scene.addChild(chart_node)
 
 //        // Configuring a camera is optional
@@ -216,14 +216,14 @@ final class GenericTools : AutoTrace {
         view.addGestureRecognizer(tapGesture)
 
         // add a sprite kit scene to a plan
-        let chart_scene = SKScene(size: CGSize(width: 300, height: 200))
+        let chart_scene = SKScene(size: CGSize(width: 3000, height: 2000))
         chart_scene.backgroundColor = SKColor.white
         let _g = SCNPlane(width: 1.8, height: 0.8)
         _g.firstMaterial?.isDoubleSided = true
         _g.firstMaterial?.diffuse.contents = chart_scene
         let chart_node = SCNNode(geometry: _g)
         
-        let xychart_node = ChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 10, height: 20))
+        let xychart_node = ChartNode(size: CGSize(width: 3000, height: 2000), grid_size: CGSize(width: 100, height: 200))
         // chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
         chart_scene.addChild(xychart_node)
         
