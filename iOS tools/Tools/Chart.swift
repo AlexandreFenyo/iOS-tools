@@ -12,8 +12,6 @@ import QuartzCore
 import SceneKit
 import SpriteKit
 
-// tiles: https://www.raywenderlich.com/137216/whats-new-spritekit-ios-10-look-tile-maps
-
 class ChartNode : SKSpriteNode {
     var zoom: CGFloat = 1
     var grid_size: CGSize
