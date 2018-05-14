@@ -89,34 +89,41 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
         
-        // Add a label
-        let label = SKLabelNode(text: "This is a SpriteKit view")
-        label.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2)
-        label.fontSize = 45
-        label.fontColor = SKColor.black
-        label.fontName = "Avenir"
-        scene.addChild(label)
-
-        // Add an image
-        let sprite_node = SKSpriteNode(imageNamed: "netmon7.png")
-        sprite_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 100)
-        
-        // Apply a rotating animation to the image
-        let oneRevolution : SKAction = SKAction.rotate(byAngle: -CGFloat.pi * 2, duration: 20)
-        let repeatRotation : SKAction = SKAction.repeatForever(oneRevolution)
-        sprite_node.run(repeatRotation)
-        scene.addChild(sprite_node)
+//        // Add a label
+//        let label = SKLabelNode(text: "This is a SpriteKit view")
+//        label.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2)
+//        label.fontSize = 45
+//        label.fontColor = SKColor.black
+//        label.fontName = "Avenir"
+//        scene.addChild(label)
+//
+//        // Add an image
+//        let sprite_node = SKSpriteNode(imageNamed: "netmon7.png")
+//        sprite_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 100)
+//
+//        // Apply a rotating animation to the image
+//        let oneRevolution : SKAction = SKAction.rotate(byAngle: -CGFloat.pi * 2, duration: 20)
+//        let repeatRotation : SKAction = SKAction.repeatForever(oneRevolution)
+//        sprite_node.run(repeatRotation)
+//        scene.addChild(sprite_node)
 
         // Apply a shader
         // let negativeShader = SKShader(source: "void main() { " +
         //     "    gl_FragColor = vec4(1.0 - SKDefaultShading().rgb, SKDefaultShading().a); }")
         // sprite_node.shader = negativeShader
 
-        // Add a chart
-        let chart_node = ChartNode(size: CGSize(width: 3000, height: 2000), grid_size: CGSize(width: 10, height: 20))
-        chart_node.position = CGPoint(x: 0, y: 0)
+        
+        
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        // Add a chart on the 2D left pane
+        let chart_node = SKChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 20, height: 20), line_width: 1, background: .gray, debug: false)
+        chart_node.position = CGPoint(x: 200, y: 200)
         scene.addChild(chart_node)
 
+        
+        
+        
+        
 //        // Configuring a camera is optional
 //        let cam = SKCameraNode()
 //        scene.camera = cam
@@ -167,9 +174,6 @@ final class GenericTools : AutoTrace {
         let box2_node = SCNNode(geometry: box2_geom)
         box_node.addChildNode(box2_node)
 
-
-
-
         // draw a line
         var vertices = [SCNVector3]()
         vertices.append(SCNVector3Make(0, 0, 0.5))
@@ -181,10 +185,6 @@ final class GenericTools : AutoTrace {
         geo.firstMaterial?.isDoubleSided = true
         let n = SCNNode(geometry: geo)
         box_node.addChildNode(n)
-
-
-
-
 
         // wireframe
         // XXX trouver comment faire avec cette syntaxe : view.debugOptions = .renderAsWireframe
@@ -215,19 +215,8 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        // add a sprite kit scene to a plan
-        let chart_scene = SKScene(size: CGSize(width: 3000, height: 2000))
-        chart_scene.backgroundColor = SKColor.white
-        let _g = SCNPlane(width: 3.8, height: 3.8)
-        _g.firstMaterial?.isDoubleSided = true
-        _g.firstMaterial?.diffuse.contents = chart_scene
-        let chart_node = SCNNode(geometry: _g)
-        
-        let xychart_node = ChartNode(size: CGSize(width: 3000, height: 2000), grid_size: CGSize(width: 100, height: 200))
-        // chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
-        chart_scene.addChild(xychart_node)
-        
-        scene.rootNode.addChildNode(chart_node)
+        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), line_width: 5, background: .gray, debug: false)
+        scene.rootNode.addChildNode(plane_node)
 
     }
     
