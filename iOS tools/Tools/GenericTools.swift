@@ -209,7 +209,7 @@ final class GenericTools : AutoTrace {
         // add a sprite kit scene to a plan
         let chart_scene = SKScene(size: CGSize(width: 300, height: 200))
         chart_scene.backgroundColor = SKColor.white
-        let _g = SCNPlane(width: 3.8, height: 3.8)
+        let _g = SCNPlane(width: 1.8, height: 0.8)
         _g.firstMaterial?.isDoubleSided = true
         _g.firstMaterial?.diffuse.contents = chart_scene
         let chart_node = SCNNode(geometry: _g)
