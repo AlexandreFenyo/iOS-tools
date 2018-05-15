@@ -105,6 +105,7 @@ class SKChartNode : SKSpriteNode {
 
         // Add left mask
         let left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: size.height))
+        if debug { left_mask_node.alpha = 0.5 }
         left_mask_node.position = CGPoint(x: (left_width - size.width) / 2, y: 0)
 
         // Add a label
@@ -129,12 +130,12 @@ class SKChartNode : SKSpriteNode {
         // Create self
         super.init(texture: nil, color: debug ? .yellow : background, size: size)
 
-        // Crop the drawing if working in a 3D scene
+        // Crop the drawing if working in a 2D scene
         let root_node : SKNode
         if crop {
             let crop_node = SKCropNode()
-            let mask_node = SKSpriteNode(texture: nil, color: SKColor.black, size: size)
-            crop_node.maskNode = mask_node
+            let mask_node = SKSpriteNode(texture: nil, color:  SKColor.black, size: size)
+            if !debug { crop_node.maskNode = mask_node }
             root_node = crop_node
             self.addChild(root_node)
         } else { root_node = self }
