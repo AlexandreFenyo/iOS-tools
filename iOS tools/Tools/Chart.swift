@@ -96,8 +96,14 @@ class SKChartNode : SKSpriteNode {
         // Animate
         let oneMoveLeft = SKAction.moveBy(x: -grid_size.width, y: 0, duration: 1)
         let oneMoveRight = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
+        SKAction.customAction(withDuration: 0, actionBlock: {
+            (node: SKNode, val: CGFloat) in
+            print("salut")
+            self.handleLoop(node: node, val: val)
+        })
+
         let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
-        let repeatMove  = SKAction.repeatForever(oneSequence)
+        let repeatMove = SKAction.repeatForever(oneSequence)
         grid_node.run(repeatMove)
 
         // Add left mask
@@ -178,8 +184,6 @@ class SKChartNode : SKSpriteNode {
             if !debug { crop_node.maskNode = mask_node }
             root_node = crop_node
             self.addChild(root_node)
-
-
         } else { root_node = self }
         
         root_node.addChild(grid_node)
@@ -195,6 +199,10 @@ class SKChartNode : SKSpriteNode {
             self.addChild(square_node)
             square_node.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
         }
+    }
+    
+    func handleLoop(node: SKNode, val: CGFloat) {
+        
     }
     
     required init(coder aDecoder: NSCoder) {
