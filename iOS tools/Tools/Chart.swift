@@ -93,19 +93,6 @@ class SKChartNode : SKSpriteNode {
             subgrid_node = nil
         }
         
-        // Animate
-        let oneMoveLeft = SKAction.moveBy(x: -grid_size.width, y: 0, duration: 1)
-        let oneMoveRight = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
-        SKAction.customAction(withDuration: 0, actionBlock: {
-            (node: SKNode, val: CGFloat) in
-            print("salut")
-            self.handleLoop(node: node, val: val)
-        })
-
-        let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
-        let repeatMove = SKAction.repeatForever(oneSequence)
-        grid_node.run(repeatMove)
-
         // Add left mask
         let left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: size.height))
         left_mask_node.anchorPoint = CGPoint(x: 0, y: 0)
@@ -173,6 +160,18 @@ class SKChartNode : SKSpriteNode {
         // Create self
         super.init(texture: nil, color: debug ? .yellow : background, size: size)
         self.anchorPoint = CGPoint(x: 0, y: 0)
+
+        // Animate
+        let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: 1)
+        let move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
+        let handle_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
+            (node: SKNode, val: CGFloat) in
+            self.handleLoop(node: node, val: val)
+        })
+
+        let sequence_action = SKAction.sequence([move_left_action, move_right_action, handle_loop_action])
+        let repeat_action = SKAction.repeatForever(sequence_action)
+        grid_node.run(repeat_action)
 
         // Crop the drawing if working in a 2D scene
         let root_node : SKNode
