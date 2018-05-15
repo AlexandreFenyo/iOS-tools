@@ -15,7 +15,7 @@ import SpriteKit
 // http://iosfonts.com
 
 class SCNChartNode : SCNNode {
-    public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
+    public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -30,8 +30,8 @@ class SCNChartNode : SCNNode {
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal
         // tester avec crop: true
-        let chart_node = SKChartNode(size: size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
-        chart_node.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        let chart_node = SKChartNode(size: size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, vertical_cost: vertical_cost, date: date, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
+        chart_node.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node)
 
         self.scale = SCNVector3(x: 1, y: -1, z: 1)
@@ -45,25 +45,24 @@ class SCNChartNode : SCNNode {
 class SKChartNode : SKSpriteNode {
     var debug: Bool
 
-    public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, crop: Bool = true, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
+    public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, crop: Bool = true, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
         self.debug = debug
-
+        
         // Create the main grid
         let grid_path = CGMutablePath()
         var x : CGFloat = 0
-        while x <= size.width + grid_size.width {
+        while x <= size.width - left_width + grid_size.width {
             grid_path.move(to: CGPoint(x: x, y: 0))
-            grid_path.addLine(to: CGPoint(x: x, y: size.height))
+            grid_path.addLine(to: CGPoint(x: x, y: size.height - bottom_height))
             x += grid_size.width
         }
         var y : CGFloat = 0
-        while y <= size.height {
+        while y <= size.height - bottom_height {
             grid_path.move(to: CGPoint(x: 0, y: y))
-            grid_path.addLine(to: CGPoint(x: size.width + grid_size.width, y: y))
+            grid_path.addLine(to: CGPoint(x: size.width - left_width + grid_size.width, y: y))
             y += grid_size.height
         }
         let grid_node = SKShapeNode(path: grid_path)
-        grid_node.position = CGPoint(x: -size.width / 2 + left_width, y: -size.height / 2 + bottom_height)
         grid_node.path = grid_path
         grid_node.strokeColor = UIColor.red
         grid_node.lineWidth = line_width
@@ -73,19 +72,18 @@ class SKChartNode : SKSpriteNode {
         if (subgrid_size != nil) {
             let subgrid_path = CGMutablePath()
             x = 0
-            while x <= size.width + subgrid_size!.width {
+            while x <= size.width - left_width + subgrid_size!.width {
                 subgrid_path.move(to: CGPoint(x: x, y: 0))
-                subgrid_path.addLine(to: CGPoint(x: x, y: size.height))
+                subgrid_path.addLine(to: CGPoint(x: x, y: size.height - bottom_height))
                 x += subgrid_size!.width
             }
             y = 0
-            while y <= size.height {
+            while y <= size.height - bottom_height {
                 subgrid_path.move(to: CGPoint(x: 0, y: y))
-                subgrid_path.addLine(to: CGPoint(x: size.width + grid_size.width, y: y))
+                subgrid_path.addLine(to: CGPoint(x: size.width - left_width + grid_size.width, y: y))
                 y += subgrid_size!.height
             }
             subgrid_node = SKShapeNode(path: subgrid_path)
-            subgrid_node?.position = CGPoint(x: -size.width / 2 + left_width, y: -size.height / 2 + bottom_height)
             subgrid_node?.path = subgrid_path
             subgrid_node?.strokeColor = UIColor.red
             // In order to avoid flickering on black or dark background, linewidth must be greater than 1
@@ -101,48 +99,93 @@ class SKChartNode : SKSpriteNode {
         let oneSequence = SKAction.sequence([oneMoveLeft, oneMoveRight])
         let repeatMove  = SKAction.repeatForever(oneSequence)
         grid_node.run(repeatMove)
-        if subgrid_node != nil { subgrid_node!.run(repeatMove) }
 
         // Add left mask
         let left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: size.height))
+        left_mask_node.anchorPoint = CGPoint(x: 0, y: 0)
         if debug { left_mask_node.alpha = 0.5 }
-        left_mask_node.position = CGPoint(x: (left_width - size.width) / 2, y: 0)
-
-        // Add a label
-        let label_node = SKLabelNode(fontNamed: font_name)
-        label_node.text = "You Win!"
-        label_node.fontSize = 100
-        label_node.fontColor = SKColor.green
-        label_node.position = CGPoint(x: 0, y: 0)
 
         // Instanciate font to get informations about it
         let font = UIFont(name: font_name, size: 100)
 
-        // Create left values
-        let left_label_node = SKLabelNode(fontNamed: font_name)
-        left_label_node.text = "12345 Mbit/s"
-        left_label_node.fontSize = font_size_ratio * grid_size.height / (font?.capHeight)! * 100
-        left_label_node.fontColor = font_color
-        left_label_node.horizontalAlignmentMode = .right
-        left_label_node.position = CGPoint(x: left_width / 2 - left_label_node.fontSize / 2, y: -(font_size_ratio * grid_size.height / 2))
-        left_mask_node.addChild(left_label_node)
+        // Create y-axis values
+        y = 0
+        while y <= size.height - bottom_height {
+            // Add quantity
+            let left_label_node = SKLabelNode(fontNamed: font_name)
+            left_label_node.text = String(Int(vertical_cost * y)) + " " + vertical_unit
+            left_label_node.fontSize = font_size_ratio * grid_size.height / (font?.capHeight)! * (font?.pointSize)!
+            left_label_node.fontColor = font_color
+            left_label_node.horizontalAlignmentMode = .right
+            left_mask_node.addChild(left_label_node)
+            left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2, y: y + bottom_height - font_size_ratio * grid_size.height / 2)
+            
+            // Add hyphen
+            let hyphen_node = SKSpriteNode(color: grid_node.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node.lineWidth))
+            hyphen_node.anchorPoint = CGPoint(x: 1, y: 0.5)
+            left_mask_node.addChild(hyphen_node)
+            hyphen_node.position = CGPoint(x: left_width, y: y + bottom_height)
+
+            y += grid_size.height
+        }
+
+        // Add bottom mask
+        let bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: size.width - left_width + grid_size.width, height: bottom_height))
+        bottom_mask_node.anchorPoint = CGPoint(x: 0, y: 1)
+        if debug { bottom_mask_node.alpha = 1 }
+
+        // Create x-axis values
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US")
+
+        var now : Date = date
+        x = size.width - left_width
+        while x >= 0 {
+            // Add date
+            let bottom_label_node = SKLabelNode(fontNamed: font_name)
+            bottom_label_node.text = formatter.string(from: now)
+            bottom_label_node.verticalAlignmentMode = .top
+            bottom_label_node.horizontalAlignmentMode = .left
+            
+            bottom_label_node.zRotation = -CGFloat.pi / 4
+            bottom_label_node.fontSize = font_size_ratio * grid_size.height / (font?.capHeight)! * (font?.pointSize)!
+            bottom_label_node.fontColor = font_color
+            bottom_mask_node.addChild(bottom_label_node)
+            bottom_label_node.position = CGPoint(x: x, y: -bottom_label_node.fontSize / 2)
+
+            // Add hyphen
+            let hyphen_node = SKSpriteNode(color: grid_node.strokeColor, size: CGSize(width: grid_node.lineWidth, height: bottom_label_node.fontSize / 4))
+            hyphen_node.anchorPoint = CGPoint(x: 0.5, y: 1)
+            bottom_mask_node.addChild(hyphen_node)
+            hyphen_node.position = CGPoint(x: x, y: 0)
+
+            x -= grid_size.width
+            now.addTimeInterval(-10)
+        }
 
         // Create self
         super.init(texture: nil, color: debug ? .yellow : background, size: size)
+        self.anchorPoint = CGPoint(x: 0, y: 0)
 
         // Crop the drawing if working in a 2D scene
         let root_node : SKNode
         if crop {
             let crop_node = SKCropNode()
             let mask_node = SKSpriteNode(texture: nil, color:  SKColor.black, size: size)
+            mask_node.anchorPoint = CGPoint(x: 0, y: 0)
+
             if !debug { crop_node.maskNode = mask_node }
             root_node = crop_node
             self.addChild(root_node)
+
+
         } else { root_node = self }
         
         root_node.addChild(grid_node)
-        if subgrid_node != nil { root_node.addChild(subgrid_node!) }
-        root_node.addChild(label_node)
+        grid_node.position = CGPoint(x: left_width, y: bottom_height)
+        if subgrid_node != nil { grid_node.addChild(subgrid_node!) }
+        grid_node.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
 
         if debug {
@@ -150,6 +193,7 @@ class SKChartNode : SKSpriteNode {
             let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: self.size.width / 10, height: self.size.height / 10))
             square_node.alpha = 0.5
             self.addChild(square_node)
+            square_node.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
         }
     }
     
