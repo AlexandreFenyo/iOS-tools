@@ -64,6 +64,12 @@ final class GenericTools : AutoTrace {
     static func test() {
     }
 
+    // Espace insécable
+    static func insec() -> String {
+        let arr: [UInt8] = [ 0xC2, 0xA0 ]
+        return NSString(bytes: arr, length: arr.count, encoding: String.Encoding.utf8.rawValue)! as String
+    }
+
     // split a view controller with two columns of same width
     static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
         svc.preferredDisplayMode = .allVisible
@@ -85,7 +91,8 @@ final class GenericTools : AutoTrace {
     
     static func createSpriteScene(_ view: SKView) {
         // Create a scene
-        let scene = SKScene(size: view.frame.size)
+//        let scene = SKScene(size: view.frame.size)
+        let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
         
@@ -116,8 +123,8 @@ final class GenericTools : AutoTrace {
         
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         // Add a chart on the 2D left pane
-        let chart_node = SKChartNode(size: CGSize(width: 300, height: 200), grid_size: CGSize(width: 20, height: 20),subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 30, bottom_height: 30, background: .gray, debug: false)
-        chart_node.position = CGPoint(x: 200, y: 200)
+        let chart_node = SKChartNode(size: CGSize(width: 400, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 30, background: .gray, debug: true)
+        chart_node.position = CGPoint(x: 300, y: 400)
         scene.addChild(chart_node)
 
         
@@ -215,7 +222,7 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 20),line_width: 5, left_width: 300, bottom_height: 300, background: .gray, debug: false)
+        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 300, background: .gray, debug: false)
         scene.rootNode.addChildNode(plane_node)
 
     }
@@ -331,12 +338,10 @@ class ManageTapCube {
             GenericTools.here()
             
             // highlight it
-            SCNTransaction.begin()
-        
-            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
-            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-
-            SCNTransaction.commit()
+//            SCNTransaction.begin()
+//            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
+//            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+//            SCNTransaction.commit()
     }
 }
 
