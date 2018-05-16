@@ -95,7 +95,15 @@ final class GenericTools : AutoTrace {
         let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
-        
+
+        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        // Add a chart on the 2D left pane
+
+        let chart_node = SKChartNode(size: CGSize(width: 400, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 1, background: .gray, debug: false)
+
+        chart_node.position = CGPoint(x: 100, y: 100)
+        scene.addChild(chart_node)
+
         // Display debug informations
         view.showsFPS = true
         view.showsQuadCount = true
