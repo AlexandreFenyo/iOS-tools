@@ -96,51 +96,9 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
         
-//        // Add a label
-//        let label = SKLabelNode(text: "This is a SpriteKit view")
-//        label.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2)
-//        label.fontSize = 45
-//        label.fontColor = SKColor.black
-//        label.fontName = "Avenir"
-//        scene.addChild(label)
-//
-//        // Add an image
-//        let sprite_node = SKSpriteNode(imageNamed: "netmon7.png")
-//        sprite_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 100)
-//
-//        // Apply a rotating animation to the image
-//        let oneRevolution : SKAction = SKAction.rotate(byAngle: -CGFloat.pi * 2, duration: 20)
-//        let repeatRotation : SKAction = SKAction.repeatForever(oneRevolution)
-//        sprite_node.run(repeatRotation)
-//        scene.addChild(sprite_node)
-
-        // Apply a shader
-        // let negativeShader = SKShader(source: "void main() { " +
-        //     "    gl_FragColor = vec4(1.0 - SKDefaultShading().rgb, SKDefaultShading().a); }")
-        // sprite_node.shader = negativeShader
-
-        
-        
-        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // Add a chart on the 2D left pane
-        let chart_node = SKChartNode(size: CGSize(width: 400, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), background: .gray, debug: false)
-        chart_node.position = CGPoint(x: 100, y: 100)
-        scene.addChild(chart_node)
-
-        
-        
-        
-        
-//        // Configuring a camera is optional
-//        let cam = SKCameraNode()
-//        scene.camera = cam
-//        scene.addChild(cam)
-//        cam.position = CGPoint(x: 600, y: 600)
-        
         // Display debug informations
         view.showsFPS = true
         view.showsQuadCount = true
-
     }
     
     // Insert the demo cube scene into a view
@@ -156,21 +114,6 @@ final class GenericTools : AutoTrace {
         // place the camera
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
         
-        // create and add a light to the scene
-        // Comment to remove flickering on the line
-//        let lightNode = SCNNode()
-//        lightNode.light = SCNLight()
-//        lightNode.light!.type = .omni
-//        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-//        scene.rootNode.addChildNode(lightNode)
-
-        // create and add an ambient light to the scene
-//        let ambientLightNode = SCNNode()
-//        ambientLightNode.light = SCNLight()
-//        ambientLightNode.light!.type = .ambient
-//        ambientLightNode.light!.color = UIColor.darkGray
-//        scene.rootNode.addChildNode(ambientLightNode)
-
         // retrieve the cube node
         let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
 //        box_node.geometry?.firstMaterial?.transparency = 0
@@ -222,7 +165,8 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), background: .gray, debug: false)
+//        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
+        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 50, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
         scene.rootNode.addChildNode(plane_node)
 
     }
