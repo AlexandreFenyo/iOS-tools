@@ -16,6 +16,18 @@ import QuartzCore
 import SceneKit
 import SpriteKit
 
+extension String {
+    // Substring starting at start with count chars
+    func sub(_ start: Int, _ count: Int) -> String {
+        return String(self[self.index(self.startIndex, offsetBy: start)..<self.index(self.startIndex, offsetBy: start + count - 1)])
+    }
+    
+    // Substring starting at start
+    func sub(_ start: Int) -> String {
+        return sub(start, self.count - start)
+    }
+}
+
 final class GenericTools : AutoTrace {
     // holding strong refs to tap targets
     static var tap_demo_ship_manager: [ManageTapDemoShip] = []

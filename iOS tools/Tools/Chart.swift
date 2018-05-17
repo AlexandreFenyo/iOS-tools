@@ -12,11 +12,35 @@ import QuartzCore
 import SceneKit
 import SpriteKit
 
-// http://iosfonts.com
+// Default values
+struct ChartDefaults {
+    // See http://iosfonts.com
+    static let font_name = "Arial Rounded MT Bold"
 
-class SKExtLabelNode: SKLabelNode {
-    var date : Date? = nil
-    
+    static let font_size_ratio : CGFloat = 0.4
+    static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+}
+
+// A Label Node with additional atributes
+class SKExtLabelNode : SKLabelNode {
+    // Date displayed by the label
+    private var _date : Date?
+    public var date : Date? {
+        get { return _date }
+        set {
+            _date = newValue
+            self.text = SKExtLabelNode.formatter.string(from: newValue!)
+        }
+    }
+
+    // Static date formatter shared by every instances
+    static private let formatter : DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss"
+        f.locale = Locale(identifier: "en_US")
+        return f
+    }()
+
     public override init() {
         super.init()
     }
@@ -26,13 +50,13 @@ class SKExtLabelNode: SKLabelNode {
         self.date = date
     }
 
-    required init(coder aDecoder: NSCoder) {
+    public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
 
 class SCNChartNode : SCNNode {
-    public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
+    public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -60,10 +84,10 @@ class SCNChartNode : SCNNode {
 }
 
 class SKChartNode : SKSpriteNode {
-    var debug: Bool
-    var right_display_date: Date
+    private var debug: Bool
+    private var right_display_date: Date
 
-    public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
+    public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
         
         // Create the main grid
@@ -117,7 +141,7 @@ class SKChartNode : SKSpriteNode {
         if debug { left_mask_node.alpha = 0.5 }
 
         // Instanciate font to get informations about it
-        let font = UIFont(name: font_name, size: 100)
+        let font = UIFont(name: font_name, size: 1) ?? UIFont.preferredFont(forTextStyle: .body)
 
         // Create y-axis values
         y = 0
@@ -125,7 +149,7 @@ class SKChartNode : SKSpriteNode {
             // Add quantity
             let left_label_node = SKLabelNode(fontNamed: font_name)
             left_label_node.text = String(Int(vertical_cost * y)) + " " + vertical_unit
-            left_label_node.fontSize = font_size_ratio * grid_size.height / (font?.capHeight)! * (font?.pointSize)!
+            left_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
             left_label_node.fontColor = font_color
             left_label_node.horizontalAlignmentMode = .right
             left_mask_node.addChild(left_label_node)
@@ -146,43 +170,38 @@ class SKChartNode : SKSpriteNode {
         if debug { bottom_mask_node.alpha = 1 }
 
         // Create x-axis values
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss"
-        formatter.locale = Locale(identifier: "en_US")
         right_display_date = date
 
         let _formatter = DateFormatter()
         _formatter.dateFormat = "HHmmss"
         _formatter.locale = Locale(identifier: "en_US")
         let _s = _formatter.string(from: date)
-        let hours_today = Double(String(_s.prefix(2)))!
-        let minutes_today = Double(String(_s[_s.index(_s.startIndex, offsetBy: 2)..<_s.index(_s.startIndex, offsetBy: 4)]))!
-        let seconds_today = Double(String(_s.suffix(2)))!
+        let hours_today = Double(_s.sub(0, 2))!
+        let minutes_today = Double(_s.sub(2, 2))!
+        let seconds_today = Double(_s.sub(4))!
 
+        // time_offset: time interval between last vertical grid line displayed and right of chart
         var time_offset = date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1) + seconds_today.truncatingRemainder(dividingBy: grid_time_interval)
         if grid_time_interval >= 60 { time_offset += minutes_today.truncatingRemainder(dividingBy: grid_time_interval / 60) }
         if grid_time_interval >= 3600 { time_offset += hours_today.truncatingRemainder(dividingBy: grid_time_interval / 3600) }
+        // date_rounded: date corresponding the the last grid line displayed
         let date_rounded = date.addingTimeInterval(-time_offset)
-        var current_date = date_rounded
         let horizontal_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
 
+        var current_date = date_rounded
         x = size.width - left_width - (size.width - left_width).remainder(dividingBy: grid_size.width)
         while x >= 0 {
             // Add date
             let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
-            bottom_label_node.text = formatter.string(from: current_date)
             bottom_label_node.verticalAlignmentMode = .top
             bottom_label_node.horizontalAlignmentMode = .left
             
             bottom_label_node.zRotation = -CGFloat.pi / 4
-            bottom_label_node.fontSize = font_size_ratio * grid_size.height / (font?.capHeight)! * (font?.pointSize)!
+            bottom_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
             bottom_label_node.fontColor = font_color
             bottom_mask_node.addChild(bottom_label_node)
             bottom_label_node.position = CGPoint(x: x, y: -bottom_label_node.fontSize / 2)
             bottom_label_node.name = "date-" + String(date_rounded.timeIntervalSince1970)
-            // XXX
-//            bottom_label_node.setValue(value: nil, forKey: "toto")
-                //value: current_date.timeIntervalSince1970, forKey: "date")
 
             // Add hyphen
             let hyphen_node = SKSpriteNode(color: grid_node.strokeColor, size: CGSize(width: grid_node.lineWidth, height: bottom_label_node.fontSize / 4))
@@ -203,7 +222,6 @@ class SKChartNode : SKSpriteNode {
         let first_move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
         let first_move_start_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
             _, _ in
-            print("début de boucle complète")
             self.update_xaxis(bottom_mask_node: bottom_mask_node, size: size, left_width: left_width, grid_size: grid_size, grid_time_interval: grid_time_interval)
             let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
             let move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
@@ -245,8 +263,7 @@ class SKChartNode : SKSpriteNode {
         }
     }
     
-    func update_xaxis(bottom_mask_node: SKSpriteNode, size: CGSize, left_width: CGFloat, grid_size: CGSize, grid_time_interval: TimeInterval) {
-        print("UPDATE XAXIS")
+    private func update_xaxis(bottom_mask_node: SKSpriteNode, size: CGSize, left_width: CGFloat, grid_size: CGSize, grid_time_interval: TimeInterval) {
         right_display_date.addTimeInterval(grid_time_interval)
         bottom_mask_node.enumerateChildNodes(withName: "//date-*", using: {
             node, _ in node.position.x -= grid_size.width
@@ -272,17 +289,10 @@ class SKChartNode : SKSpriteNode {
             let node = leftmost_node! as! SKExtLabelNode
             node.date!.addTimeInterval(TimeInterval(Double(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
             node.position.x = rightmost_node!.position.x + grid_size.width
-
-            // avoir un seul formateur
-            // le faire positionner par ExtDate
-            let formatter = DateFormatter()
-            formatter.dateFormat = "HH:mm:ss"
-            formatter.locale = Locale(identifier: "en_US")
-            node.text = formatter.string(from: node.date!)
         }
     }
     
-    required init(coder aDecoder: NSCoder) {
+    public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
