@@ -180,16 +180,22 @@ class SKChartNode : SKSpriteNode {
         let minutes_today = Double(_s.sub(2, 2))!
         let seconds_today = Double(_s.sub(4))!
 
-        // time_offset: time interval between last vertical grid line displayed and right of chart
+        print("start date:", date)
+        
+        // time_offset: time interval between the current date and the nearest date in the past that is aligned with grid_time_interval, so that it can be written simply
+        // grid_time_interval:
+        //   - if < 60: must divide 60
+        //   - if >= 60 and < 3600: must divide 3600
         var time_offset = date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1) + seconds_today.truncatingRemainder(dividingBy: grid_time_interval)
-        if grid_time_interval >= 60 { time_offset += minutes_today.truncatingRemainder(dividingBy: grid_time_interval / 60) }
-        if grid_time_interval >= 3600 { time_offset += hours_today.truncatingRemainder(dividingBy: grid_time_interval / 3600) }
+        if grid_time_interval >= 60 { time_offset += 60 * minutes_today.truncatingRemainder(dividingBy: grid_time_interval / 60) }
+        if grid_time_interval >= 3600 { time_offset += 3600 * hours_today.truncatingRemainder(dividingBy: grid_time_interval / 3600) }
         // date_rounded: date corresponding the the last grid line displayed
         let date_rounded = date.addingTimeInterval(-time_offset)
         let horizontal_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
 
         var current_date = date_rounded
         x = size.width - left_width - (size.width - left_width).remainder(dividingBy: grid_size.width)
+        
         while x >= 0 {
             // Add date
             let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
@@ -249,7 +255,9 @@ class SKChartNode : SKSpriteNode {
         } else { root_node = self }
 
         root_node.addChild(grid_node)
+
         grid_node.position = CGPoint(x: left_width - horizontal_offset, y: bottom_height)
+        
         if subgrid_node != nil { grid_node.addChild(subgrid_node!) }
         grid_node.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
