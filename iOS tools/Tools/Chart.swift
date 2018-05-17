@@ -14,6 +14,23 @@ import SpriteKit
 
 // http://iosfonts.com
 
+class SKExtLabelNode: SKLabelNode {
+    var date : Date? = nil
+    
+    public override init() {
+        super.init()
+    }
+    
+    public init(fontNamed fontName: String?, date: Date) {
+        super.init(fontNamed: fontName)
+        self.date = date
+    }
+
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class SCNChartNode : SCNNode {
     public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = "Arial Rounded MT Bold", font_size_ratio: CGFloat = 0.4, font_color: SKColor = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1), debug: Bool = true) {
         super.init()
@@ -152,7 +169,7 @@ class SKChartNode : SKSpriteNode {
         x = size.width - left_width - (size.width - left_width).remainder(dividingBy: grid_size.width)
         while x >= 0 {
             // Add date
-            let bottom_label_node = SKLabelNode(fontNamed: font_name)
+            let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
             bottom_label_node.text = formatter.string(from: current_date)
             bottom_label_node.verticalAlignmentMode = .top
             bottom_label_node.horizontalAlignmentMode = .left
@@ -235,14 +252,34 @@ class SKChartNode : SKSpriteNode {
             node, _ in node.position.x -= grid_size.width
         })
 
-        // mettre un marqueur via un noeud
-        
-//        bottom_mask_node.enumerateChildNodes(withName: "//date-*", using: {
-//            node, _ in
-//            node.removeFromParent()
-//        })
+        // Find both extreme date nodes
+        var leftmost_node : SKNode?
+        var rightmost_node : SKNode?
+        bottom_mask_node.enumerateChildNodes(withName: "//date-*", using: {
+            node, _ in
 
-        
+            if let posx = leftmost_node?.position.x {
+                if node.position.x < posx { leftmost_node = node }
+            } else { leftmost_node = node }
+
+            if let posx = rightmost_node?.position.x {
+                if node.position.x > posx { rightmost_node = node }
+            } else { rightmost_node = node }
+        })
+
+        // set the left-most node to the right of the right-most node
+        if leftmost_node != nil && rightmost_node != nil {
+            let node = leftmost_node! as! SKExtLabelNode
+            node.date!.addTimeInterval(TimeInterval(Double(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
+            node.position.x = rightmost_node!.position.x + grid_size.width
+
+            // avoir un seul formateur
+            // le faire positionner par ExtDate
+            let formatter = DateFormatter()
+            formatter.dateFormat = "HH:mm:ss"
+            formatter.locale = Locale(identifier: "en_US")
+            node.text = formatter.string(from: node.date!)
+        }
     }
     
     required init(coder aDecoder: NSCoder) {
