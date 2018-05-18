@@ -111,10 +111,9 @@ final class GenericTools : AutoTrace {
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         // Add a chart on the 2D left pane
 
-        let chart_node = SKChartNode(size: CGSize(width: 400, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 1, background: .gray, debug: false)
-
-        chart_node.position = CGPoint(x: 100, y: 100)
+        let chart_node = SKChartNode(size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: true)
         scene.addChild(chart_node)
+        chart_node.position = CGPoint(x: 50, y: 100)
 
         // Display debug informations
         view.showsFPS = true
@@ -186,7 +185,7 @@ final class GenericTools : AutoTrace {
         view.addGestureRecognizer(tapGesture)
 
 //        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 50, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
+        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 800 / 5 / 4, height: 800 / 5 / 4), line_width: 5, left_width: 50, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
         scene.rootNode.addChildNode(plane_node)
 
     }

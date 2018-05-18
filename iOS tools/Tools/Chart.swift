@@ -86,22 +86,37 @@ class SCNChartNode : SCNNode {
 class SKChartNode : SKSpriteNode {
     private var debug: Bool
     private var right_display_date: Date
-
+    
+    // Rules:
+    // - grid_size.width <= size.width - left_width
+    // - grid_size.height <= size.height - bottom_height
+    // - subgrid_size.width must divide grid_size.width
+    // - subgrid_size.height must divide grid_size.height
     public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
         
+        let graph_width = size.width - left_width
+        let graph_height = size.height - bottom_height
+        let grid_full_width = graph_width.truncatingRemainder(dividingBy: grid_size.width) == 0 ? graph_width + grid_size.width : grid_size.width * (2 + graph_width / grid_size.width).rounded(.down)
+        let grid_full_height = graph_height.truncatingRemainder(dividingBy: grid_size.height) == 0 ? graph_height : grid_size.height * (graph_height / grid_size.height).rounded(.up)
+        
         // Create the main grid
+        // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
+        // Idem for horizontal grid lines: include one more top-most grid line
         let grid_path = CGMutablePath()
         var x : CGFloat = 0
-        while x <= size.width - left_width + 2 * grid_size.width {
+        // There is at least two vertical grid lines
+        while x <= grid_full_width {
             grid_path.move(to: CGPoint(x: x, y: 0))
-            grid_path.addLine(to: CGPoint(x: x, y: size.height - bottom_height))
+            grid_path.addLine(to: CGPoint(x: x, y: grid_full_height))
             x += grid_size.width
         }
+//        let grid_width = x - grid_size.width
         var y : CGFloat = 0
-        while y <= size.height - bottom_height {
+        // There is at least two horizontal grid lines
+        while y <= grid_full_height {
             grid_path.move(to: CGPoint(x: 0, y: y))
-            grid_path.addLine(to: CGPoint(x: size.width - left_width + 2 * grid_size.width, y: y))
+            grid_path.addLine(to: CGPoint(x: grid_full_width, y: y))
             y += grid_size.height
         }
         let grid_node = SKShapeNode(path: grid_path)
@@ -114,15 +129,20 @@ class SKChartNode : SKSpriteNode {
         if (subgrid_size != nil) {
             let subgrid_path = CGMutablePath()
             x = 0
-            while x <= size.width - left_width + 2 * grid_size.width {
-                subgrid_path.move(to: CGPoint(x: x, y: 0))
-                subgrid_path.addLine(to: CGPoint(x: x, y: size.height - bottom_height))
+            
+            while (x <= grid_full_width) {
+                if x.truncatingRemainder(dividingBy: grid_size.width) != 0 {
+                    subgrid_path.move(to: CGPoint(x: x, y: 0))
+                    subgrid_path.addLine(to: CGPoint(x: x, y: grid_full_height))
+                }
                 x += subgrid_size!.width
             }
             y = 0
-            while y <= size.height - bottom_height {
-                subgrid_path.move(to: CGPoint(x: 0, y: y))
-                subgrid_path.addLine(to: CGPoint(x: size.width - left_width + 2 * grid_size.width, y: y))
+            while y <= grid_full_height {
+                if y.remainder(dividingBy: grid_size.height) != 0 {
+                    subgrid_path.move(to: CGPoint(x: 0, y: y))
+                    subgrid_path.addLine(to: CGPoint(x: grid_full_width, y: y))
+                }
                 y += subgrid_size!.height
             }
             subgrid_node = SKShapeNode(path: subgrid_path)
@@ -134,7 +154,7 @@ class SKChartNode : SKSpriteNode {
         } else {
             subgrid_node = nil
         }
-        
+
         // Add left mask
         let left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: size.height))
         left_mask_node.anchorPoint = CGPoint(x: 0, y: 0)
@@ -145,7 +165,7 @@ class SKChartNode : SKSpriteNode {
 
         // Create y-axis values
         y = 0
-        while y <= size.height - bottom_height {
+        while y <= graph_height {
             // Add quantity
             let left_label_node = SKLabelNode(fontNamed: font_name)
             left_label_node.text = String(Int(vertical_cost * y)) + " " + vertical_unit
@@ -165,7 +185,7 @@ class SKChartNode : SKSpriteNode {
         }
 
         // Add bottom mask
-        let bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: size.width - left_width + 2 * grid_size.width, height: bottom_height))
+        let bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: grid_full_width, height: bottom_height))
         bottom_mask_node.anchorPoint = CGPoint(x: 0, y: 1)
         if debug { bottom_mask_node.alpha = 1 }
 
