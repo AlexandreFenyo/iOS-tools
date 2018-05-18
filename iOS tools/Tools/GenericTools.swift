@@ -37,6 +37,8 @@ final class GenericTools : AutoTrace {
     
     static var alternate_value = true
 
+    static let ts = TimeSeries()
+
     // extract configuration parameters
     static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
     static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
@@ -111,10 +113,11 @@ final class GenericTools : AutoTrace {
         // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         // Add a chart on the 2D left pane
 
-        let chart_node = SKChartNode(size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: true)
+        let chart_node = SKChartNode(ts: ts, size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: true)
         scene.addChild(chart_node)
         chart_node.position = CGPoint(x: 50, y: 100)
 
+        
         // Display debug informations
         view.showsFPS = true
         view.showsQuadCount = true
@@ -185,7 +188,7 @@ final class GenericTools : AutoTrace {
         view.addGestureRecognizer(tapGesture)
 
 //        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 100, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 800 / 5 / 4), line_width: 5, left_width: 100, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
+        let plane_node = SCNChartNode(ts: ts, density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 100, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 800 / 5 / 4), line_width: 5, left_width: 100, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
         scene.rootNode.addChildNode(plane_node)
 
     }

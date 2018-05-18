@@ -16,9 +16,27 @@ import SpriteKit
 struct ChartDefaults {
     // See http://iosfonts.com
     static let font_name = "Arial Rounded MT Bold"
-
     static let font_size_ratio : CGFloat = 0.4
     static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+}
+
+struct TimeSeriesElement {
+    public let date : Date
+    public let value : Float
+}
+
+protocol TimeSeriesReceiver {
+    func newData(manager: TimeSeries, value: TimeSeriesElement)
+}
+
+class TimeSeries {
+    private var receivers: [ TimeSeriesReceiver ] = []
+
+    public init() { }
+    
+    public func register(_ receiver: TimeSeriesReceiver) {
+        receivers.append(receiver)
+    }
 }
 
 // A Label Node with additional atributes
@@ -56,7 +74,7 @@ class SKExtLabelNode : SKLabelNode {
 }
 
 class SCNChartNode : SCNNode {
-    public init(density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
+    public init(ts: TimeSeries, density: CGFloat, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -71,7 +89,7 @@ class SCNChartNode : SCNNode {
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal
         // tester avec crop: true
-        let chart_node = SKChartNode(size: size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, vertical_cost: vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
+        let chart_node = SKChartNode(ts: ts, size: size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, vertical_cost: vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
         chart_node.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node)
 
@@ -83,7 +101,7 @@ class SCNChartNode : SCNNode {
     }
 }
 
-class SKChartNode : SKSpriteNode {
+class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
     private var right_display_date: Date
     
@@ -96,7 +114,7 @@ class SKChartNode : SKSpriteNode {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
+    public init(ts: TimeSeries, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
         
         let graph_width = size.width - left_width
@@ -193,9 +211,6 @@ class SKChartNode : SKSpriteNode {
         let bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: grid_full_width, height: bottom_height))
         bottom_mask_node.anchorPoint = CGPoint(x: 0, y: 1)
         if debug { bottom_mask_node.alpha = 1 }
-
-        
-        
         
         // Create x-axis date values
         right_display_date = date
@@ -204,9 +219,9 @@ class SKChartNode : SKSpriteNode {
         _formatter.dateFormat = "HHmmss"
         _formatter.locale = Locale(identifier: "en_US")
         let _s = _formatter.string(from: date)
-        let hours_today = Double(_s.sub(0, 2))!
-        let minutes_today = Double(_s.sub(2, 2))!
-        let seconds_today = Double(_s.sub(4))!
+        let hours_today = TimeInterval(_s.sub(0, 2))!
+        let minutes_today = TimeInterval(_s.sub(2, 2))!
+        let seconds_today = TimeInterval(_s.sub(4))!
 
         // time_offset: time interval between the current date and the nearest date in the past that is aligned with grid_time_interval, so that it can be written simply
         // time_offset < grid_time_interval
@@ -254,6 +269,7 @@ class SKChartNode : SKSpriteNode {
         // Create self
         super.init(texture: nil, color: debug ? .cyan : background, size: size)
         self.anchorPoint = CGPoint(x: 0, y: 0)
+        ts.register(self)
 
         // Animate
         let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node.position.x)) / grid_size.width)))
@@ -324,11 +340,14 @@ class SKChartNode : SKSpriteNode {
         // set the left-most node to the right of the right-most node
         if leftmost_node != nil && rightmost_node != nil {
             let node = leftmost_node! as! SKExtLabelNode
-            node.date!.addTimeInterval(TimeInterval(Double(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
+            node.date!.addTimeInterval(TimeInterval(TimeInterval(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
             node.position.x = rightmost_node!.position.x + grid_size.width
         }
     }
     
+    public func newData(manager: TimeSeries, value: TimeSeriesElement) {
+        
+    }
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
