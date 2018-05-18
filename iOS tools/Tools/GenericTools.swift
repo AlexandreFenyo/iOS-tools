@@ -19,7 +19,7 @@ import SpriteKit
 extension String {
     // Substring starting at start with count chars
     func sub(_ start: Int, _ count: Int) -> String {
-        return String(self[self.index(self.startIndex, offsetBy: start)..<self.index(self.startIndex, offsetBy: start + count - 1)])
+        return String(self[self.index(self.startIndex, offsetBy: start)..<self.index(self.startIndex, offsetBy: start + count)])
     }
     
     // Substring starting at start
@@ -185,7 +185,7 @@ final class GenericTools : AutoTrace {
         view.addGestureRecognizer(tapGesture)
 
 //        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 800 / 5 / 4, height: 800 / 5 / 4), line_width: 5, left_width: 50, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
+        let plane_node = SCNChartNode(density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 100, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 800 / 5 / 4), line_width: 5, left_width: 100, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
         scene.rootNode.addChildNode(plane_node)
 
     }

@@ -92,6 +92,10 @@ class SKChartNode : SKSpriteNode {
     // - grid_size.height <= size.height - bottom_height
     // - subgrid_size.width must divide grid_size.width
     // - subgrid_size.height must divide grid_size.height
+    // - grid_time_interval:
+    //   - if < 60: must divide 60
+    //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
+    //   - if >= 3600: must be a multiple of 3600
     public init(size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
         
@@ -99,6 +103,8 @@ class SKChartNode : SKSpriteNode {
         let graph_height = size.height - bottom_height
         let grid_full_width = graph_width.truncatingRemainder(dividingBy: grid_size.width) == 0 ? graph_width + grid_size.width : grid_size.width * (2 + graph_width / grid_size.width).rounded(.down)
         let grid_full_height = graph_height.truncatingRemainder(dividingBy: grid_size.height) == 0 ? graph_height : grid_size.height * (graph_height / grid_size.height).rounded(.up)
+        // Right-most displayed grid column width
+        let horizontal_remainder = graph_width.truncatingRemainder(dividingBy: grid_size.width)
         
         // Create the main grid
         // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
@@ -129,7 +135,6 @@ class SKChartNode : SKSpriteNode {
         if (subgrid_size != nil) {
             let subgrid_path = CGMutablePath()
             x = 0
-            
             while (x <= grid_full_width) {
                 if x.truncatingRemainder(dividingBy: grid_size.width) != 0 {
                     subgrid_path.move(to: CGPoint(x: x, y: 0))
@@ -139,7 +144,7 @@ class SKChartNode : SKSpriteNode {
             }
             y = 0
             while y <= grid_full_height {
-                if y.remainder(dividingBy: grid_size.height) != 0 {
+                if y.truncatingRemainder(dividingBy: grid_size.height) != 0 {
                     subgrid_path.move(to: CGPoint(x: 0, y: y))
                     subgrid_path.addLine(to: CGPoint(x: grid_full_width, y: y))
                 }
@@ -189,7 +194,10 @@ class SKChartNode : SKSpriteNode {
         bottom_mask_node.anchorPoint = CGPoint(x: 0, y: 1)
         if debug { bottom_mask_node.alpha = 1 }
 
-        // Create x-axis values
+        
+        
+        
+        // Create x-axis date values
         right_display_date = date
 
         let _formatter = DateFormatter()
@@ -200,28 +208,32 @@ class SKChartNode : SKSpriteNode {
         let minutes_today = Double(_s.sub(2, 2))!
         let seconds_today = Double(_s.sub(4))!
 
-        print("start date:", date)
-        
         // time_offset: time interval between the current date and the nearest date in the past that is aligned with grid_time_interval, so that it can be written simply
-        // grid_time_interval:
-        //   - if < 60: must divide 60
-        //   - if >= 60 and < 3600: must divide 3600
+        // time_offset < grid_time_interval
         var time_offset = date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1) + seconds_today.truncatingRemainder(dividingBy: grid_time_interval)
         if grid_time_interval >= 60 { time_offset += 60 * minutes_today.truncatingRemainder(dividingBy: grid_time_interval / 60) }
         if grid_time_interval >= 3600 { time_offset += 3600 * hours_today.truncatingRemainder(dividingBy: grid_time_interval / 3600) }
-        // date_rounded: date corresponding the the last grid line displayed
+        // date_rounded: date printed behind the last grid line displayed
         let date_rounded = date.addingTimeInterval(-time_offset)
-        let horizontal_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
+        // horizontal length corresponding to time_offset
+        let horizontal_time_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
 
         var current_date = date_rounded
-        x = size.width - left_width - (size.width - left_width).remainder(dividingBy: grid_size.width)
+        x = grid_full_width
+        if horizontal_time_offset >= horizontal_remainder {
+            grid_node.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder), y: bottom_height)
+            current_date = date_rounded.addingTimeInterval(grid_time_interval * 2)
+        } else {
+            grid_node.position = CGPoint(x: left_width + (horizontal_remainder - horizontal_time_offset) - grid_size.width, y: bottom_height)
+            current_date = date_rounded.addingTimeInterval(grid_time_interval)
+        }
         
         while x >= 0 {
             // Add date
             let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
             bottom_label_node.verticalAlignmentMode = .top
             bottom_label_node.horizontalAlignmentMode = .left
-            
+
             bottom_label_node.zRotation = -CGFloat.pi / 4
             bottom_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
             bottom_label_node.fontColor = font_color
@@ -240,11 +252,11 @@ class SKChartNode : SKSpriteNode {
         }
 
         // Create self
-        super.init(texture: nil, color: debug ? .yellow : background, size: size)
+        super.init(texture: nil, color: debug ? .cyan : background, size: size)
         self.anchorPoint = CGPoint(x: 0, y: 0)
 
         // Animate
-        let first_move_left_action = SKAction.moveBy(x: horizontal_offset - grid_size.width, y: 0, duration: grid_time_interval - time_offset)
+        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node.position.x)) / grid_size.width)))
         let first_move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
         let first_move_start_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
             _, _ in
@@ -275,9 +287,6 @@ class SKChartNode : SKSpriteNode {
         } else { root_node = self }
 
         root_node.addChild(grid_node)
-
-        grid_node.position = CGPoint(x: left_width - horizontal_offset, y: bottom_height)
-        
         if subgrid_node != nil { grid_node.addChild(subgrid_node!) }
         grid_node.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
