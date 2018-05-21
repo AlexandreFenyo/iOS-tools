@@ -102,11 +102,12 @@ final class GenericTools : AutoTrace {
     }
 
     public static func createScene(_ view: UIView) {
-        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
-        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
-        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
-
+        if (GenericTools.ts.getElements().count == 0) {
+            GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
+            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
+            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
+            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
+        }
         if !alternate() { createSpriteScene(view as! SKView) }
         else { create3DChartScene(view as! SCNView) }
     }

@@ -338,9 +338,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let curve_path = UIBezierPath()
 
         let elts = ts.getElements()
-        print("COUNT: ", elts.count)
-        let truc = ts.getElements()
-        print("COUNT truc: ", truc.count)
         if elts.count > 0 {
             if elts.count > 1 {
                 print("move to:", toPoint(tse: elts[0]).x, toPoint(tse: elts[0]).y)
@@ -354,9 +351,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
         }
 
-        curve_path.move(to: CGPoint(x: 180, y: 80))
-        curve_path.addLine(to: CGPoint(x: 200, y: 100))
-        curve_path.addLine(to: CGPoint(x: 250, y: 100))
+//        curve_path.move(to: CGPoint(x: 180, y: 80))
+//        curve_path.addLine(to: CGPoint(x: 200, y: 100))
+//        curve_path.addLine(to: CGPoint(x: 250, y: 100))
 //        curve_path.close()
 
         // génère warnings
