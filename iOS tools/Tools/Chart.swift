@@ -111,6 +111,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if >= 3600: must be a multiple of 3600
     public init(ts: TimeSeries, size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
+
+        assert(grid_size.width <= size.width - left_width)
+        assert(grid_size.height <= size.height - bottom_height)
+        assert(subgrid_size != nil ? grid_size.width.truncatingRemainder(dividingBy: subgrid_size!.width) == 0 : true)
+        assert(subgrid_size != nil ? grid_size.height.truncatingRemainder(dividingBy: subgrid_size!.height) == 0 : true)
+        assert(grid_time_interval >= 60 || 60.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)
+        assert((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0))
+        assert(grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
         
         let graph_width = size.width - left_width
         let graph_height = size.height - bottom_height
