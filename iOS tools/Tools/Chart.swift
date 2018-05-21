@@ -42,13 +42,8 @@ class TimeSeries {
 // A Label Node with additional atributes
 class SKExtLabelNode : SKLabelNode {
     // Date displayed by the label
-    private var _date : Date?
     public var date : Date? {
-        get { return _date }
-        set {
-            _date = newValue
-            self.text = SKExtLabelNode.formatter.string(from: newValue!)
-        }
+        willSet { self.text = SKExtLabelNode.formatter.string(from: newValue!) }
     }
 
     // Static date formatter shared by every instances
@@ -62,10 +57,10 @@ class SKExtLabelNode : SKLabelNode {
     public override init() {
         super.init()
     }
-    
+
     public init(fontNamed fontName: String?, date: Date) {
         super.init(fontNamed: fontName)
-        self.date = date
+        defer { self.date = date }
     }
 
     public required init(coder aDecoder: NSCoder) {
