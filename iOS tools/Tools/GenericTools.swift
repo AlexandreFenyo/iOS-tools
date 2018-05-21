@@ -103,49 +103,29 @@ final class GenericTools : AutoTrace {
 
     static func createScene(_ view: UIView) {
         if !alternate() { createSpriteScene(view as! SKView) }
-        else { createCubeScene(view as! SCNView) }
+        else { create3DChartScene(view as! SCNView) }
     }
-    
-    static func createSpriteScene(_ view: SKView) {
-        // Create a scene
-//        let scene = SKScene(size: view.frame.size)
-        let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
-        scene.backgroundColor = SKColor.white
-        view.presentScene(scene)
 
-        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // Add a chart on the 2D left pane
-
-        let chart_node = SKChartNode(ts: ts, size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: false)
-        scene.addChild(chart_node)
-        chart_node.position = CGPoint(x: 50, y: 100)
-
-        
-        // Display debug informations
-        view.showsFPS = true
-        view.showsQuadCount = true
-    }
-    
     // Insert the demo cube scene into a view
-    static func createCubeScene(_ view: SCNView) {
+    static func createCubeSceneTest(_ view: SCNView) {
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/Cube.scn")!
-        
+
         // create and add a camera to the scene
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         scene.rootNode.addChildNode(cameraNode)
-        
+
         // place the camera
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
-        
+
         // retrieve the cube node
         let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
-//        box_node.geometry?.firstMaterial?.transparency = 0
-        
+        //        box_node.geometry?.firstMaterial?.transparency = 0
+
         // add a box to draw a line on one of its faces
         let box2_geom = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
-//        box2_geom.firstMaterial?.transparency = 0
+        //        box2_geom.firstMaterial?.transparency = 0
         let box2_node = SCNNode(geometry: box2_geom)
         box_node.addChildNode(box2_node)
 
@@ -166,11 +146,58 @@ final class GenericTools : AutoTrace {
         view.debugOptions.insert(SCNDebugOptions.showWireframe)
         // does not work, so we set material transparency to 0
         // view.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-        
-        
+
         // animate the 3d object
         box_node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 10)))
 
+        // set the scene to the view
+        view.scene = scene
+
+        // allows the user to manipulate the camera
+        view.allowsCameraControl = true
+
+        // show statistics such as fps and timing information
+        view.showsStatistics = true
+
+        // configure the view
+        view.backgroundColor = UIColor.black
+
+//        // add a tap gesture recognizer
+//        let manage_tap = ManageTapCube(view)
+//        // create a strong ref to the target
+//        tap_cube_manager.append(manage_tap)
+//        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
+//        view.addGestureRecognizer(tapGesture)
+    }
+
+    static func createSpriteScene(_ view: SKView) {
+        // Create a scene
+        let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
+        scene.backgroundColor = SKColor.white
+        view.presentScene(scene)
+
+        let chart_node = SKChartNode(ts: ts, size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: false)
+        scene.addChild(chart_node)
+        chart_node.position = CGPoint(x: 50, y: 100)
+        
+        // Display debug informations
+        view.showsFPS = true
+        view.showsQuadCount = true
+    }
+    
+    // Insert a 3D scene containing a 2D Chart into a view
+    static func create3DChartScene(_ view: SCNView) {
+        // create a new scene
+        let scene = SCNScene()
+
+        // create and add a camera to the scene
+        let cameraNode = SCNNode()
+        cameraNode.camera = SCNCamera()
+        scene.rootNode.addChildNode(cameraNode)
+        
+        // place the camera
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
+        
         // set the scene to the view
         view.scene = scene
         
@@ -193,7 +220,6 @@ final class GenericTools : AutoTrace {
 //        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
         let plane_node = SCNChartNode(ts: ts, density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 100, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 800 / 5 / 4), line_width: 5, left_width: 100, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: false)
         scene.rootNode.addChildNode(plane_node)
-
     }
     
     // Insert the demo ship scene into a view

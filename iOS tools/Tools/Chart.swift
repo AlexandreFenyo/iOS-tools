@@ -82,8 +82,7 @@ class SCNChartNode : SCNNode {
         self.geometry?.firstMaterial?.diffuse.contents = chart_scene
 
         // Create a 2D chart and add it to the scene
-        // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal
-        // tester avec crop: true
+        // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
         let chart_node = SKChartNode(ts: ts, size: size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, vertical_cost: vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
         chart_node.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node)
@@ -138,7 +137,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             grid_path.addLine(to: CGPoint(x: x, y: grid_full_height))
             x += grid_size.width
         }
-//        let grid_width = x - grid_size.width
         var y : CGFloat = 0
         // There is at least two horizontal grid lines
         while y <= grid_full_height {
