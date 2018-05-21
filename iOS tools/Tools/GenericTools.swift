@@ -33,26 +33,26 @@ extension String {
 
 final class GenericTools : AutoTrace {
     // holding strong refs to tap targets
-    static var tap_demo_ship_manager: [ManageTapDemoShip] = []
+    private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
 
     // holding strong refs to tap cube targets
-    static var tap_cube_manager: [ManageTapCube] = []
+    private static var tap_cube_manager: [ManageTapCube] = []
     
-    static var alternate_value = true
+    private static var alternate_value = true
 
-    static let ts = TimeSeries()
+    public static let ts = TimeSeries()
 
     // extract configuration parameters
-    static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
-    static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
-    static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
+    public static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
+    public static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
+    public static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
 
     // Basic debugging
     // Can be declared these ways:
     // static func here() -> () {
     // static func here() -> Void {
     // static func here() {
-    static func here() {
+    public static func here() {
         if !must_log { return }
         print("here");
     }
@@ -60,7 +60,7 @@ final class GenericTools : AutoTrace {
     // Basic debugging
     // ex.: here("here")
     //      here("here", self)
-    static func here(_ s: String, _ o: Any? = nil) {
+    public static func here(_ s: String, _ o: Any? = nil) {
         if !must_log { return }
         if o == nil {
             print("here:", s);
@@ -78,17 +78,17 @@ final class GenericTools : AutoTrace {
     // ...
 
     // Placeholder for tests
-    static func test() {
+    public static func test() {
     }
 
     // Espace insécable
-    static func insec() -> String {
+    public static func insec() -> String {
         let arr: [UInt8] = [ 0xC2, 0xA0 ]
         return NSString(bytes: arr, length: arr.count, encoding: String.Encoding.utf8.rawValue)! as String
     }
 
     // split a view controller with two columns of same width
-    static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
+    public static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
         svc.preferredDisplayMode = .allVisible
         svc.minimumPrimaryColumnWidth = 0
         svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
@@ -96,18 +96,23 @@ final class GenericTools : AutoTrace {
     }
 
     // créer un alternate() indexé sur une chaîne de caractères
-    static func alternate() -> Bool {
+    private static func alternate() -> Bool {
         alternate_value = !alternate_value
         return alternate_value
     }
 
-    static func createScene(_ view: UIView) {
+    public static func createScene(_ view: UIView) {
+        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
+        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
+        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
+        GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
+
         if !alternate() { createSpriteScene(view as! SKView) }
         else { create3DChartScene(view as! SCNView) }
     }
 
     // Insert the demo cube scene into a view
-    static func createCubeSceneTest(_ view: SCNView) {
+    public static func createCubeSceneTest(_ view: SCNView) {
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/Cube.scn")!
 
@@ -170,13 +175,13 @@ final class GenericTools : AutoTrace {
 //        view.addGestureRecognizer(tapGesture)
     }
 
-    static func createSpriteScene(_ view: SKView) {
+    public static func createSpriteScene(_ view: SKView) {
         // Create a scene
         let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
 
-        let chart_node = SKChartNode(ts: ts, size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 60, bottom_height: 50, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: false)
+        let chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: false)
         scene.addChild(chart_node)
         chart_node.position = CGPoint(x: 50, y: 100)
         
@@ -186,7 +191,7 @@ final class GenericTools : AutoTrace {
     }
     
     // Insert a 3D scene containing a 2D Chart into a view
-    static func create3DChartScene(_ view: SCNView) {
+    public static func create3DChartScene(_ view: SCNView) {
         // create a new scene
         let scene = SCNScene()
 
@@ -217,13 +222,13 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-//        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-        let plane_node = SCNChartNode(ts: ts, density: 450, size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 100, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 800 / 5 / 4), line_width: 5, left_width: 100, bottom_height: 150, vertical_unit: "Kbit/s", vertical_cost: 10, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: false)
+//        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
+        let plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: false)
         scene.rootNode.addChildNode(plane_node)
     }
     
     // Insert the demo ship scene into a view
-    static func createDemoShipScene(_ view: SCNView) {
+    public static func createDemoShipScene(_ view: SCNView) {
         // create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
 
@@ -277,7 +282,7 @@ final class GenericTools : AutoTrace {
 }
 
 // manage a tap on a demo ship scene view
-class ManageTapDemoShip {
+private class ManageTapDemoShip {
     let scnView: SCNView
 
     init(_ v: SCNView) {
@@ -320,7 +325,7 @@ class ManageTapDemoShip {
 }
 
 // manage a tap on a Cube scene view
-class ManageTapCube {
+private class ManageTapCube {
     let scnView: SCNView
     
     init(_ v: SCNView) {
@@ -330,8 +335,10 @@ class ManageTapCube {
     // Callback used by createDemoShipScene()
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-            GenericTools.here()
-            
+        GenericTools.here("Tap")
+
+        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 120.0))
+
             // highlight it
 //            SCNTransaction.begin()
 //            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
