@@ -26,7 +26,7 @@ struct TimeSeriesElement {
 }
 
 protocol TimeSeriesReceiver {
-    func newData(ts: TimeSeries, value: TimeSeriesElement)
+    func newData(ts: TimeSeries, tse: TimeSeriesElement)
 }
 
 class TimeSeries {
@@ -41,16 +41,15 @@ class TimeSeries {
         receivers.append(receiver)
     }
 
-    public func add(_ elt: TimeSeriesElement) {
+    public func add(_ tse: TimeSeriesElement) {
         // Update backing store
-        if data[elt.date] != nil { return }
-        data[elt.date] = elt
-        let next_date = keys.first(where: { (date) in date > elt.date })
-        let idx = next_date != nil ? keys.index(of: next_date!)! : 0
-        keys.insert(elt.date, at: idx)
+        if data[tse.date] != nil { return }
+        data[tse.date] = tse
+        let next_date = keys.first(where: { (date) in date > tse.date })
+        keys.insert(tse.date, at: next_date != nil ? keys.index(of: next_date!)! : keys.count)
 
         // Signal about new value
-        for receiver in receivers { receiver.newData(ts: self, value: elt) }
+        for receiver in receivers { receiver.newData(ts: self, tse: tse) }
     }
 
     // Ordered array of every elements
@@ -157,7 +156,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     // convert a TimeSeriesElement to a point relative to the grid coordinates
     private func toPoint(tse: TimeSeriesElement) -> CGPoint {
-        return CGPoint(x: graph_width! + left_width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+        return CGPoint(x: full_size.width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
     // Rules:
@@ -432,10 +431,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
     }
     
-    public func newData(ts: TimeSeries, value: TimeSeriesElement) {
+    public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
         print("new data")
 
         curve_path!.removeAllPoints()
+        curve_node!.position = CGPoint(x: 0, y: 0)
 
         let elts = ts.getElements()
         if elts.count > 0 {
