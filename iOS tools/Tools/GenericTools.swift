@@ -105,7 +105,7 @@ final class GenericTools : AutoTrace {
         if (GenericTools.ts.getElements().count == 0) {
             GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
             GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
+            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 35.0))
             GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
         }
         if !alternate() { createSpriteScene(view as! SKView) }
@@ -338,7 +338,7 @@ private class ManageTapCube {
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         GenericTools.here("Tap")
 
-        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 120.0))
+        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 40.0))
 
             // highlight it
 //            SCNTransaction.begin()

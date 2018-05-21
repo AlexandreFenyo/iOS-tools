@@ -26,7 +26,7 @@ struct TimeSeriesElement {
 }
 
 protocol TimeSeriesReceiver {
-    func newData(manager: TimeSeries, value: TimeSeriesElement)
+    func newData(ts: TimeSeries, value: TimeSeriesElement)
 }
 
 class TimeSeries {
@@ -50,7 +50,7 @@ class TimeSeries {
         keys.insert(elt.date, at: idx)
 
         // Signal about new value
-        for receiver in receivers { receiver.newData(manager: self, value: elt) }
+        for receiver in receivers { receiver.newData(ts: self, value: elt) }
     }
 
     // Ordered array of every elements
@@ -136,9 +136,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var horizontal_remainder: CGFloat?
     private var grid_vertical_cost: CGFloat?
 
+    private var grid_node : SKShapeNode?
+    private var curve_node : SKShapeNode?
+    private var curve_path : UIBezierPath?
+
     // Date corresponding to the graph_width position relative to the grid origin
     private var right_display_date: Date
 
+    // Update variables dependant from state
     private func updateStateVariables() {
         // Graph displayed size
         graph_width = full_size.width - left_width
@@ -150,9 +155,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         horizontal_remainder = graph_width!.truncatingRemainder(dividingBy: grid_size.width)
     }
 
-    // convert a TimeSeriesElement to a point relative to the grid origin
+    // convert a TimeSeriesElement to a point relative to the grid coordinates
     private func toPoint(tse: TimeSeriesElement) -> CGPoint {
-        return CGPoint(x: graph_width! + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+        return CGPoint(x: graph_width! + left_width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
     // Rules:
@@ -208,10 +213,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             grid_path.addLine(to: CGPoint(x: grid_full_width!, y: y))
             y += grid_size.height
         }
-        let grid_node = SKShapeNode(path: grid_path)
-        grid_node.path = grid_path
-        grid_node.strokeColor = UIColor.red
-        grid_node.lineWidth = line_width
+        grid_node = SKShapeNode(path: grid_path)
+        grid_node!.path = grid_path
+        grid_node!.strokeColor = UIColor.red
+        grid_node!.lineWidth = line_width
 
         // Create the subgrid
         let subgrid_node: SKShapeNode?
@@ -256,7 +261,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         while y <= graph_height! {
             // Add quantity
             let left_label_node = SKLabelNode(fontNamed: font_name)
-            left_label_node.text = String(Int(grid_vertical_cost * y)) + " " + vertical_unit
+            left_label_node.text = String(Int(grid_vertical_cost * y / grid_size.height)) + " " + vertical_unit
             left_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
             left_label_node.fontColor = font_color
             left_label_node.horizontalAlignmentMode = .right
@@ -264,7 +269,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2, y: y + bottom_height - font_size_ratio * grid_size.height / 2)
             
             // Add hyphen
-            let hyphen_node = SKSpriteNode(color: grid_node.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node.lineWidth))
+            let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node!.lineWidth))
             hyphen_node.anchorPoint = CGPoint(x: 1, y: 0.5)
             left_mask_node.addChild(hyphen_node)
             hyphen_node.position = CGPoint(x: left_width, y: y + bottom_height)
@@ -299,10 +304,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var current_date = date_rounded
         x = grid_full_width!
         if horizontal_time_offset >= horizontal_remainder! {
-            grid_node.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder!), y: bottom_height)
+            grid_node!.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder!), y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval * 2)
         } else {
-            grid_node.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
+            grid_node!.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval)
         }
         
@@ -320,7 +325,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             bottom_label_node.name = "date-" + String(date_rounded.timeIntervalSince1970)
 
             // Add hyphen
-            let hyphen_node = SKSpriteNode(color: grid_node.strokeColor, size: CGSize(width: grid_node.lineWidth, height: bottom_label_node.fontSize / 4))
+            let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: grid_node!.lineWidth, height: bottom_label_node.fontSize / 4))
             hyphen_node.anchorPoint = CGPoint(x: 0.5, y: 1)
             bottom_mask_node.addChild(hyphen_node)
             hyphen_node.position = CGPoint(x: x, y: 0)
@@ -329,66 +334,42 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             current_date.addTimeInterval(-grid_time_interval)
         }
 
-
-
-
-
-
         // Add curve
-        let curve_path = UIBezierPath()
+        curve_path = UIBezierPath()
 
         let elts = ts.getElements()
         if elts.count > 0 {
             if elts.count > 1 {
-                print("move to:", toPoint(tse: elts[0]).x, toPoint(tse: elts[0]).y)
-                curve_path.move(to: toPoint(tse: elts[0]))
-                for p in elts.suffix(from: 1) {
-                    print("add line to:", toPoint(tse: p).x, toPoint(tse: p).y)
-                    curve_path.addLine(to: toPoint(tse: p))
-                }
+                curve_path!.move(to: toPoint(tse: elts[0]))
+                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
             } else {
-                print("should not be here")
+                curve_path!.move(to: toPoint(tse: elts[0]))
+                curve_path!.addLine(to: toPoint(tse: elts[0]))
             }
         }
 
-//        curve_path.move(to: CGPoint(x: 180, y: 80))
-//        curve_path.addLine(to: CGPoint(x: 200, y: 100))
-//        curve_path.addLine(to: CGPoint(x: 250, y: 100))
-//        curve_path.close()
-
-        // génère warnings
-//        curve_path.fill()
-//        curve_path.stroke()
-
-        let curve_node = SKShapeNode(path: curve_path.cgPath)
-        curve_node.lineWidth = line_width
-        curve_node.strokeColor = UIColor.white
-
-
-
-
-
-
-
+        curve_node = SKShapeNode(path: curve_path!.cgPath)
+        curve_node!.lineWidth = line_width
+        curve_node!.strokeColor = UIColor.white
 
         // Animate
-        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node.position.x)) / grid_size.width)))
+        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
         let first_move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
         let first_move_start_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
             _, _ in
-            self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: curve_node)
+            self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!)
             let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
             let move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
             let handle_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
-                _, _ in self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: curve_node)
+                _, _ in self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!)
             })
             let sequence_action = SKAction.sequence([move_left_action, move_right_action, handle_loop_action])
             let repeat_action = SKAction.repeatForever(sequence_action)
-            grid_node.run(repeat_action)
+            self.grid_node!.run(repeat_action)
 
         })
         let sequence_action = SKAction.sequence([first_move_left_action, first_move_right_action, first_move_start_loop_action])
-        grid_node.run(sequence_action)
+        grid_node!.run(sequence_action)
 
         // Crop the drawing if working in a 2D scene
         let root_node : SKNode
@@ -402,10 +383,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             self.addChild(root_node)
         } else { root_node = self }
 
-        root_node.addChild(grid_node)
-        if subgrid_node != nil { grid_node.addChild(subgrid_node!) }
-        grid_node.addChild(curve_node)
-        grid_node.addChild(bottom_mask_node)
+        root_node.addChild(grid_node!)
+        if subgrid_node != nil { grid_node!.addChild(subgrid_node!) }
+        grid_node!.addChild(curve_node!)
+        grid_node!.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
 
         if debug {
@@ -451,9 +432,25 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
     }
     
-    public func newData(manager: TimeSeries, value: TimeSeriesElement) {
-        
+    public func newData(ts: TimeSeries, value: TimeSeriesElement) {
+        print("new data")
+
+        curve_path!.removeAllPoints()
+
+        let elts = ts.getElements()
+        if elts.count > 0 {
+            if elts.count > 1 {
+                curve_path!.move(to: toPoint(tse: elts[0]))
+                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
+            } else {
+                curve_path!.move(to: toPoint(tse: elts[0]))
+                curve_path!.addLine(to: toPoint(tse: elts[0]))
+            }
+        }
+
+        curve_node?.path = curve_path!.cgPath
     }
+
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
