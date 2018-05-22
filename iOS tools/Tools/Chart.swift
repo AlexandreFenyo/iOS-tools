@@ -322,11 +322,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var current_date = date_rounded
         x = grid_full_width!
         if horizontal_time_offset >= horizontal_remainder! {
-            print("CAS1")
             grid_node!.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder!), y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval * 2)
         } else {
-            print("CAS2")
             grid_node!.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval)
         }
