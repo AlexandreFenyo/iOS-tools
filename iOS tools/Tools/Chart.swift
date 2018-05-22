@@ -135,13 +135,37 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var horizontal_remainder: CGFloat?
     private var grid_vertical_cost: CGFloat?
 
-    private var grid_node : SKShapeNode?
+    /*private*/ public var grid_node : SKShapeNode?
     private var curve_node : SKShapeNode?
     private var curve_path : UIBezierPath?
 
     // Date corresponding to the graph_width position relative to the grid origin
     private var right_display_date: Date
 
+    public func testDebug() {
+        print()
+        print("SKChartNode.testDebug(): draw yellow square at y=50")
+        let tse = TimeSeriesElement(date: GenericTools.test_date, value: 50)
+        print("date:", GenericTools.dateToString(GenericTools.test_date))
+        let pt = toPoint(tse: tse)
+        print("pt.x:", pt.x)
+
+        print("graph_width:", graph_width!)
+        print("graph_full_width:", grid_full_width!)
+
+        print("grid node relative pos:", left_width - grid_node!.position.x)
+        
+        let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: 3, height: 3))
+//        square_node.alpha = 0.5
+        square_node.color = SKColor.yellow
+        grid_node!.addChild(square_node)
+
+//        square_node.position = CGPoint(x: pt.x - (left_width - grid_node!.position.x), y: pt.y)
+        square_node.position = CGPoint(x: pt.x, y: pt.y)
+
+        print()
+    }
+    
     // Update variables dependant from state
     private func updateStateVariables() {
         // Graph displayed size
@@ -155,8 +179,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
 
     // convert a TimeSeriesElement to a point relative to the grid coordinates
-    private func toPoint(tse: TimeSeriesElement) -> CGPoint {
+    private func _toPoint(tse: TimeSeriesElement) -> CGPoint {
         return CGPoint(x: full_size.width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+    }
+
+    private func toPoint(tse: TimeSeriesElement) -> CGPoint {
+        return CGPoint(x: -(left_width - grid_node!.position.x) + full_size.width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
     // Rules:
@@ -349,26 +377,27 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         curve_node = SKShapeNode(path: curve_path!.cgPath)
         curve_node!.lineWidth = line_width
-        curve_node!.strokeColor = UIColor.white
+        curve_node!.strokeColor = UIColor.black
 
         // Animate
+        print("temp:", grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
         let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
-        let first_move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
-        let first_move_start_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
-            _, _ in
-            self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!)
-            let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
-            let move_right_action = SKAction.moveBy(x: grid_size.width, y: 0, duration: 0)
-            let handle_loop_action = SKAction.customAction(withDuration: 0, actionBlock: {
-                _, _ in self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!)
-            })
-            let sequence_action = SKAction.sequence([move_left_action, move_right_action, handle_loop_action])
-            let repeat_action = SKAction.repeatForever(sequence_action)
-            self.grid_node!.run(repeat_action)
+        grid_node!.run(first_move_left_action) {
+            print("1st completion")
+            self.grid_node!.position.x += grid_size.width
+            print("DURATION .x:", first_move_left_action.duration)
+            self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: first_move_left_action.duration)
 
-        })
-        let sequence_action = SKAction.sequence([first_move_left_action, first_move_right_action, first_move_start_loop_action])
-        grid_node!.run(sequence_action)
+            let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
+            let move_right_action = SKAction.run {
+                print("loop action")
+                self.grid_node!.position.x += grid_size.width
+                self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: move_left_action.duration)
+            }
+            let sequence_action = SKAction.sequence([move_left_action, move_right_action])
+            let loop_action = SKAction.repeatForever(sequence_action)
+            self.grid_node!.run(loop_action)
+        }
 
         // Crop the drawing if working in a 2D scene
         let root_node : SKNode
@@ -388,17 +417,21 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
 
-        if debug {
-            // Add a black square at the center of the chart
-            let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: self.size.width / 10, height: self.size.height / 10))
-            square_node.alpha = 0.5
-            self.addChild(square_node)
-            square_node.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-        }
+//        if debug {
+//            // Add a black square at the center of the chart
+//            let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: self.size.width / 10, height: self.size.height / 10))
+//            square_node.alpha = 0.5
+//            self.addChild(square_node)
+//            square_node.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+//        }
     }
     
-    private func update_xaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode) {
-        right_display_date.addTimeInterval(grid_time_interval)
+    private func update_xaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
+
+        let avt = right_display_date
+        right_display_date.addTimeInterval(duration)
+        print("add duration:", duration)
+        print("right_display_date:", GenericTools.dateToString(avt), "->", GenericTools.dateToString(right_display_date))
 
         // Move curve to the left
         curve_node.position.x -= grid_size.width

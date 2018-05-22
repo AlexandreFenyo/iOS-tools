@@ -32,6 +32,10 @@ extension String {
 }
 
 final class GenericTools : AutoTrace {
+    public static var plane_node : SCNChartNode?
+    public static var chart_node : SKChartNode?
+    
+
     // holding strong refs to tap targets
     private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
 
@@ -41,12 +45,26 @@ final class GenericTools : AutoTrace {
     private static var alternate_value = true
 
     public static let ts = TimeSeries()
+    
+    public static let test_date : Date = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-mm-yyyy HH:mm:ss"
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00")
+        let date = dateFormatter.date(from: "01-01-2017 12:30:21")
+        return date!
+    }()
 
     // extract configuration parameters
     public static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
     public static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
     public static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
 
+    public static func dateToString(_ date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+        return dateFormatter.string(from: date) + "." + String(date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1)).sub(2)
+    }
+    
     // Basic debugging
     // Can be declared these ways:
     // static func here() -> () {
@@ -103,10 +121,11 @@ final class GenericTools : AutoTrace {
 
     public static func createScene(_ view: UIView) {
         if (GenericTools.ts.getElements().count == 0) {
-            GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
-            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-10.0)), value: 35.0))
-            GenericTools.ts.add(TimeSeriesElement(date: Date().addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
+            let date = Date() // test_date // Date()
+            GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
+            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
+            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 35.0))
+            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-15.0)), value: 20.0))
         }
         if !alternate() { createSpriteScene(view as! SKView) }
         else { create3DChartScene(view as! SCNView) }
@@ -182,9 +201,12 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
 
-        let chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: true)
-        scene.addChild(chart_node)
-        chart_node.position = CGPoint(x: 50, y: 100)
+        print("date:", GenericTools.dateToString(test_date))
+        
+//        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: test_date /* Date()*/, grid_time_interval: 2, background: .gray, debug: true)
+        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: /* test_date */ Date(), grid_time_interval: 2, background: .gray, debug: true)
+        scene.addChild(chart_node!)
+        chart_node!.position = CGPoint(x: 50, y: 100)
         
         // Display debug informations
         view.showsFPS = true
@@ -223,9 +245,9 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-//        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-        let plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
-        scene.rootNode.addChildNode(plane_node)
+////        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
+//        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: /*Date()*/ test_date, grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
+//        scene.rootNode.addChildNode(plane_node!)
     }
     
     // Insert the demo ship scene into a view
@@ -332,13 +354,34 @@ private class ManageTapCube {
     init(_ v: SCNView) {
         self.scnView = v
     }
-    
+
+    var step: Int = 0
+
     // Callback used by createDemoShipScene()
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+ 
         GenericTools.here("Tap")
 
-        GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 40.0))
+        // SCNTransaction.begin()
+
+        step += 1
+        if (step == 1) {
+            print("avant remove actions")
+//            GenericTools.chart_node!.grid_node!.removeAllActions()
+        }
+
+        if (step == 2) {
+//            GenericTools.chart_node!.testDebug()
+        }
+            
+//        if (step == 3) {
+            let xdate = Date()// GenericTools.test_date.addingTimeInterval(2)
+            print("add point at:", GenericTools.dateToString(xdate))
+            GenericTools.ts.add(TimeSeriesElement(date: xdate /* Date() */, value: 40.0))
+
+//        }
+        // SCNTransaction.commit()
 
             // highlight it
 //            SCNTransaction.begin()
