@@ -121,7 +121,7 @@ final class GenericTools : AutoTrace {
 
     public static func createScene(_ view: UIView) {
         if (GenericTools.ts.getElements().count == 0) {
-            let date = test_date //Date()
+            let date = Date() //test_date
             print("Date de lancement:", dateToString(date))
             GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
@@ -202,7 +202,7 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
 
-        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: test_date /*Date()*/, grid_time_interval: 2, background: .gray, debug: true)
+        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, debug: true)
         scene.addChild(chart_node!)
         chart_node!.position = CGPoint(x: 50, y: 100)
         
@@ -243,9 +243,9 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-////        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
-//        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
-//        scene.rootNode.addChildNode(plane_node!)
+//        let plane_node = SCNChartNode(density: 1000, size: CGSize(width: 4000, height: 3000), grid_size: CGSize(width: 200, height: 200), subgrid_size: CGSize(width: 200 / 5, height: 200 / 5), line_width: 5, left_width: 600, bottom_height: 500, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), time_align: 5, grid_time_interval: 10, background: .gray, debug: false)
+        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.15, debug: true)
+        scene.rootNode.addChildNode(plane_node!)
     }
     
     // Insert the demo ship scene into a view
@@ -373,11 +373,10 @@ private class ManageTapCube {
 //        }
         
 //        if (step == 3) {
-            let xdate = // Date().addingTimeInterval(TimeInterval(-1))
-                GenericTools.test_date.addingTimeInterval(2)
+            let xdate = Date()
         
             print("add point at:", GenericTools.dateToString(xdate))
-            GenericTools.ts.add(TimeSeriesElement(date: xdate /* Date() */, value: 40.0))
+            GenericTools.ts.add(TimeSeriesElement(date: xdate, value: 40.0))
 
 //        GenericTools.chart_node!.grid_node!.removeAllActions()
 
