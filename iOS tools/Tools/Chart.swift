@@ -42,6 +42,7 @@ class TimeSeries {
     }
 
     public func add(_ tse: TimeSeriesElement) {
+        print("new data at date:", GenericTools.dateToString(tse.date))
         // Update backing store
         if data[tse.date] != nil { return }
         data[tse.date] = tse
@@ -138,6 +139,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     /*private*/ public var grid_node : SKShapeNode?
     private var curve_node : SKShapeNode?
     private var curve_path : UIBezierPath?
+    private var curve_marker : SKNode?
+    private var curve_marker_date : Date?
 
     // Date corresponding to the graph_width position relative to the grid origin
     private var right_display_date: Date
@@ -152,15 +155,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         print("graph_width:", graph_width!)
         print("graph_full_width:", grid_full_width!)
-
         print("grid node relative pos:", left_width - grid_node!.position.x)
         
         let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: 3, height: 3))
-//        square_node.alpha = 0.5
         square_node.color = SKColor.yellow
         grid_node!.addChild(square_node)
-
-//        square_node.position = CGPoint(x: pt.x - (left_width - grid_node!.position.x), y: pt.y)
         square_node.position = CGPoint(x: pt.x, y: pt.y)
 
         print()
@@ -178,13 +177,24 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         horizontal_remainder = graph_width!.truncatingRemainder(dividingBy: grid_size.width)
     }
 
-    // convert a TimeSeriesElement to a point relative to the grid coordinates
-    private func _toPoint(tse: TimeSeriesElement) -> CGPoint {
-        return CGPoint(x: full_size.width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+    
+    private func __toPoint(tse: TimeSeriesElement) -> CGPoint {
+        return CGPoint(x: curve_marker!.position.x + CGFloat(tse.date.timeIntervalSince(curve_marker_date!) / grid_time_interval) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
+    
+    
+    // Création (1er affichage : right_display_date : l'heure du point vu le plus à droite,
+    // le grid donc la curve est décalée en position vers la gauche de left_width - grid_node!.position.x)
+    private func _toPoint(tse: TimeSeriesElement) -> CGPoint {
+        return CGPoint(x: left_width - grid_node!.position.x + graph_width! + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+    }
+    // Cas suivants (réaffichages à un moment quelconque après première remise à droite)
+    // right_display_date n'est pas la date de ce qui est vu le plus à droite
+    // right_display_date est l'heure qui était affichée le plus à droite au précédent moment où le décalage du grid était nul
+    // donc il faut rajouter le décalage du grid dans la transfo de repère
     private func toPoint(tse: TimeSeriesElement) -> CGPoint {
-        return CGPoint(x: -(left_width - grid_node!.position.x) + full_size.width - grid_node!.position.x + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+        return CGPoint(x: graph_width! + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
     // Rules:
@@ -198,6 +208,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if >= 3600: must be a multiple of 3600
     public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
         self.debug = debug
+
+        print("date création chartnode:", GenericTools.dateToString(date))
 
         // Save state
         self.full_size = full_size
@@ -331,9 +343,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var current_date = date_rounded
         x = grid_full_width!
         if horizontal_time_offset >= horizontal_remainder! {
+            print("CAS1")
             grid_node!.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder!), y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval * 2)
         } else {
+            print("CAS2")
             grid_node!.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval)
         }
@@ -362,35 +376,65 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
 
         // Add curve
+        curve_node = SKShapeNode()
         curve_path = UIBezierPath()
 
+        // Add date/position marker to curve
+        //        // Création (1er affichage : right_display_date : l'heure du point vu le plus à droite,
+        //        // le grid donc la curve est décalée en position vers la gauche de left_width - grid_node!.position.x)
+        //        private func _toPoint(tse: TimeSeriesElement) -> CGPoint {
+        //            return CGPoint(x: left_width - grid_node!.position.x + graph_width! + CGFloat((tse.date.timeIntervalSince(right_display_date) / grid_time_interval)) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
+        //        }
+        curve_marker = SKNode()
+        curve_marker_date = date
+        curve_node!.addChild(curve_marker!)
+        curve_marker!.position.x = left_width - grid_node!.position.x + graph_width!
+
+        
+        
         let elts = ts.getElements()
         if elts.count > 0 {
             if elts.count > 1 {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
+                curve_path!.move(to: __toPoint(tse: elts[0]))
+                for p in elts.suffix(from: 1) { curve_path!.addLine(to: __toPoint(tse: p)) }
             } else {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                curve_path!.addLine(to: toPoint(tse: elts[0]))
+                curve_path!.move(to: __toPoint(tse: elts[0]))
+                curve_path!.addLine(to: __toPoint(tse: elts[0]))
             }
         }
 
-        curve_node = SKShapeNode(path: curve_path!.cgPath)
+    
+        // avec 18:00:15.0 il manque grid offset CAS1
+        // avec 18:00:15.5 il manque grid offset CAS1
+        // avec 18:00:16 il manque grid offset CAS2
+        // avec 18:00:16.5 il manque grid offset CAS2
+        // avec 18:00:17 il manque grid offset CAS1
+        
+        print("last elt:", GenericTools.dateToString(elts[elts.count - 1].date))
+        let tse = elts[elts.count - 1]
+        let badpoint = __toPoint(tse: tse)
+        let badx = badpoint.x
+        print("pointx:", badx) // 330
+        print("right display date:", GenericTools.dateToString(right_display_date))
+        print("time interval:", tse.date.timeIntervalSince(right_display_date))
+        print("graph_width:", graph_width!)
+        print("grid offset:", left_width - grid_node!.position.x)
+        
+        
+        curve_node!.path = curve_path!.cgPath
         curve_node!.lineWidth = line_width
         curve_node!.strokeColor = UIColor.black
 
+        print("date 1er ajout courbe:", GenericTools.dateToString(Date()))
+
         // Animate
-        print("temp:", grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
         let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
         grid_node!.run(first_move_left_action) {
-            print("1st completion")
             self.grid_node!.position.x += grid_size.width
-            print("DURATION .x:", first_move_left_action.duration)
             self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: first_move_left_action.duration)
 
             let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
             let move_right_action = SKAction.run {
-                print("loop action")
                 self.grid_node!.position.x += grid_size.width
                 self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: move_left_action.duration)
             }
@@ -416,22 +460,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.addChild(curve_node!)
         grid_node!.addChild(bottom_mask_node)
         root_node.addChild(left_mask_node)
-
-//        if debug {
-//            // Add a black square at the center of the chart
-//            let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: self.size.width / 10, height: self.size.height / 10))
-//            square_node.alpha = 0.5
-//            self.addChild(square_node)
-//            square_node.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-//        }
     }
     
     private func update_xaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
-
-        let avt = right_display_date
+        // Update right_display_date
         right_display_date.addTimeInterval(duration)
-        print("add duration:", duration)
-        print("right_display_date:", GenericTools.dateToString(avt), "->", GenericTools.dateToString(right_display_date))
 
         // Move curve to the left
         curve_node.position.x -= grid_size.width
@@ -456,7 +489,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             } else { rightmost_node = node }
         })
 
-        // set the left-most node to the right of the right-most node
+        // Set the left-most node to the right of the right-most node
         if leftmost_node != nil && rightmost_node != nil {
             let node = leftmost_node! as! SKExtLabelNode
             node.date!.addTimeInterval(TimeInterval(TimeInterval(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
@@ -465,19 +498,17 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
-        print("new data")
-
         curve_path!.removeAllPoints()
-        curve_node!.position = CGPoint(x: 0, y: 0)
+//        curve_node!.position = CGPoint(x: 0, y: 0)
 
         let elts = ts.getElements()
         if elts.count > 0 {
             if elts.count > 1 {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
+                curve_path!.move(to: __toPoint(tse: elts[0]))
+                for p in elts.suffix(from: 1) { curve_path!.addLine(to: __toPoint(tse: p)) }
             } else {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                curve_path!.addLine(to: toPoint(tse: elts[0]))
+                curve_path!.move(to: __toPoint(tse: elts[0]))
+                curve_path!.addLine(to: __toPoint(tse: elts[0]))
             }
         }
 
