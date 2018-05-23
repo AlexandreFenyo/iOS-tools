@@ -280,6 +280,25 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         assert((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0))
         assert(grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
 
+
+
+        // Crop the drawing if working in a 2D scene
+        if crop {
+            let crop_node = SKCropNode()
+            let mask_node = SKSpriteNode(texture: nil, color:  SKColor.black, size: full_size)
+            mask_node.anchorPoint = CGPoint(x: 0, y: 0)
+
+            if !debug { crop_node.maskNode = mask_node }
+            root_node = crop_node
+            self.addChild(root_node!)
+        } else { root_node = self }
+
+
+
+        updateChart(date: date)
+
+
+        /*
         // Create the main grid
         // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
         // Idem for horizontal grid lines: include one more top-most grid line
@@ -469,6 +488,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.addChild(curve_node!)
         grid_node!.addChild(bottom_mask_node!)
         root_node!.addChild(left_mask_node!)
+
+ */
     }
     
     private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
@@ -500,6 +521,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     // Display only segments or points that can be viewed
     private func drawCurve(ts: TimeSeries) {
+        print("-- drawCurve()")
         // Points from segments that are partly or totally displayed
         var points: [CGPoint] = [ ]
         let elts = ts.getElements()
@@ -511,10 +533,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var all_points: [CGPoint] = [ ]
             for elt in elts { all_points.append(toPoint(tse: elt)) }
             for i in all_points.indices.dropFirst() {
+                print("i:", i, "from:", all_points[i - 1].x, "to:", all_points[i].x)
                 if isCurveSegmentOnScreen(from: all_points[i - 1], to: all_points[i]) {
                     // This is the last segment and it is partly or totally displayed
                     points.append(all_points[i - 1])
                     if i == all_points.count - 1 { points.append(all_points[i]) }
+                } else {
+                    print("REMOVED")
                 }
             }
         }
@@ -557,7 +582,17 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 //        position = CGPoint(x: 0, y: 0)
         updateStateVariables()
 
-        
+
+updateChart(date: date)
+
+
+
+/*
+
+
+        // Create the main grid
+        // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
+        // Idem for horizontal grid lines: include one more top-most grid line
         let grid_path = CGMutablePath()
         var x : CGFloat = 0
         // There is at least two vertical grid lines
@@ -703,8 +738,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         curve_node!.addChild(curve_marker!)
         curve_marker!.position.x = left_width - grid_node!.position.x + graph_width!
         
-        // Draw the curve
-        drawCurve(ts: ts)
+        // Initialize curve
         curve_node!.lineWidth = line_width
         curve_node!.strokeColor = UIColor.black
         
@@ -728,29 +762,206 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             self.grid_node!.run(loop_action)
         }
         
-
-        
-        
-        
         root_node!.addChild(grid_node!)
         if subgrid_node != nil { grid_node!.addChild(subgrid_node!) }
-        grid_node!.addChild(curve_node!)
-        grid_node!.addChild(bottom_mask_node!)
         root_node!.addChild(left_mask_node!)
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+        grid_node!.addChild(bottom_mask_node!)
+        grid_node!.addChild(curve_node!)
+
+        // Do not call drawCurve before adding curve_node as a child to grid_node (some viewed segments may not be displayed)
+        drawCurve(ts: ts)
+
+*/
     }
-    
+
+    private func updateChart(date: Date) {
+
+
+
+        // Create the main grid
+        // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
+        // Idem for horizontal grid lines: include one more top-most grid line
+        let grid_path = CGMutablePath()
+        var x : CGFloat = 0
+        // There is at least two vertical grid lines
+        while x <= grid_full_width! {
+            grid_path.move(to: CGPoint(x: x, y: 0))
+            grid_path.addLine(to: CGPoint(x: x, y: grid_full_height!))
+            x += grid_size.width
+        }
+        var y : CGFloat = 0
+        // There is at least two horizontal grid lines
+        while y <= grid_full_height! {
+            grid_path.move(to: CGPoint(x: 0, y: y))
+            grid_path.addLine(to: CGPoint(x: grid_full_width!, y: y))
+            y += grid_size.height
+        }
+        grid_node = SKShapeNode(path: grid_path)
+        grid_node!.path = grid_path
+        grid_node!.strokeColor = UIColor.red
+        grid_node!.lineWidth = line_width
+
+        // Create the subgrid
+        let subgrid_node: SKShapeNode?
+        if (subgrid_size != nil) {
+            let subgrid_path = CGMutablePath()
+            x = 0
+            while (x <= grid_full_width!) {
+                if x.truncatingRemainder(dividingBy: grid_size.width) != 0 {
+                    subgrid_path.move(to: CGPoint(x: x, y: 0))
+                    subgrid_path.addLine(to: CGPoint(x: x, y: grid_full_height!))
+                }
+                x += subgrid_size!.width
+            }
+            y = 0
+            while y <= grid_full_height! {
+                if y.truncatingRemainder(dividingBy: grid_size.height) != 0 {
+                    subgrid_path.move(to: CGPoint(x: 0, y: y))
+                    subgrid_path.addLine(to: CGPoint(x: grid_full_width!, y: y))
+                }
+                y += subgrid_size!.height
+            }
+            subgrid_node = SKShapeNode(path: subgrid_path)
+            subgrid_node?.path = subgrid_path
+            subgrid_node?.strokeColor = UIColor.red
+            // In order to avoid flickering on black or dark background, linewidth must be greater than 1
+            subgrid_node?.lineWidth = line_width
+            subgrid_node?.alpha = 0.3
+        } else {
+            subgrid_node = nil
+        }
+
+        // Add left mask
+        left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: full_size.height))
+        left_mask_node!.anchorPoint = CGPoint(x: 0, y: 0)
+        if debug { left_mask_node!.alpha = 0.5 }
+
+        // Instanciate font to get informations about it
+        let font = UIFont(name: font_name, size: 1) ?? UIFont.preferredFont(forTextStyle: .body)
+
+        // Create y-axis values
+        y = 0
+        while y <= graph_height! {
+            // Add quantity
+            let left_label_node = SKLabelNode(fontNamed: font_name)
+            left_label_node.text = String(Int(grid_vertical_cost! * y / grid_size.height)) + " " + vertical_unit
+            left_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
+            left_label_node.fontColor = font_color
+            left_label_node.horizontalAlignmentMode = .right
+            left_mask_node!.addChild(left_label_node)
+            left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2, y: y + bottom_height - font_size_ratio * grid_size.height / 2)
+
+            // Add hyphen
+            let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node!.lineWidth))
+            hyphen_node.anchorPoint = CGPoint(x: 1, y: 0.5)
+            left_mask_node!.addChild(hyphen_node)
+            hyphen_node.position = CGPoint(x: left_width, y: y + bottom_height)
+
+            y += grid_size.height
+        }
+
+        // Add bottom mask
+        bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: grid_full_width!, height: bottom_height))
+        bottom_mask_node!.anchorPoint = CGPoint(x: 0, y: 1)
+        if debug { bottom_mask_node!.alpha = 1 }
+
+        // Create x-axis date values
+        let _formatter = DateFormatter()
+        _formatter.dateFormat = "HHmmss"
+        _formatter.locale = Locale(identifier: "en_US")
+        let _s = _formatter.string(from: date)
+        let hours_today = TimeInterval(_s.sub(0, 2))!
+        let minutes_today = TimeInterval(_s.sub(2, 2))!
+        let seconds_today = TimeInterval(_s.sub(4))!
+
+        // time_offset: time interval between the current date and the nearest date in the past that is aligned with grid_time_interval, so that it can be written simply
+        // time_offset < grid_time_interval
+        var time_offset = date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1) + seconds_today.truncatingRemainder(dividingBy: grid_time_interval)
+        if grid_time_interval >= 60 { time_offset += 60 * minutes_today.truncatingRemainder(dividingBy: grid_time_interval / 60) }
+        if grid_time_interval >= 3600 { time_offset += 3600 * hours_today.truncatingRemainder(dividingBy: grid_time_interval / 3600) }
+        // date_rounded: date printed behind the last grid line displayed
+        let date_rounded = date.addingTimeInterval(-time_offset)
+        // horizontal length corresponding to time_offset
+        let horizontal_time_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
+
+        var current_date = date_rounded
+        x = grid_full_width!
+        if horizontal_time_offset >= horizontal_remainder! {
+            grid_node!.position = CGPoint(x: left_width - (horizontal_time_offset - horizontal_remainder!), y: bottom_height)
+            current_date = date_rounded.addingTimeInterval(grid_time_interval * 2)
+        } else {
+            grid_node!.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
+            current_date = date_rounded.addingTimeInterval(grid_time_interval)
+        }
+
+        while x >= 0 {
+            // Add date
+            let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
+            bottom_label_node.verticalAlignmentMode = .top
+            bottom_label_node.horizontalAlignmentMode = .left
+
+            bottom_label_node.zRotation = -CGFloat.pi / 4
+            bottom_label_node.fontSize = font_size_ratio * grid_size.height / font.capHeight * font.pointSize
+            bottom_label_node.fontColor = font_color
+            bottom_mask_node!.addChild(bottom_label_node)
+            bottom_label_node.position = CGPoint(x: x, y: -bottom_label_node.fontSize / 2)
+            bottom_label_node.name = "date-" + String(date_rounded.timeIntervalSince1970)
+
+            // Add hyphen
+            let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: grid_node!.lineWidth, height: bottom_label_node.fontSize / 4))
+            hyphen_node.anchorPoint = CGPoint(x: 0.5, y: 1)
+            bottom_mask_node!.addChild(hyphen_node)
+            hyphen_node.position = CGPoint(x: x, y: 0)
+
+            x -= grid_size.width
+            current_date.addTimeInterval(-grid_time_interval)
+        }
+
+        // Add curve
+        curve_node = SKShapeNode()
+
+        // Add marker to be able to make a projection of a date into the curve coordinates system
+        curve_marker = SKNode()
+        curve_marker_date = date
+        curve_node!.addChild(curve_marker!)
+        curve_marker!.position.x = left_width - grid_node!.position.x + graph_width!
+
+        // Initialize curve
+        curve_node!.lineWidth = line_width
+        curve_node!.strokeColor = UIColor.black
+
+        // Animate
+        func getOperations(after: TimeInterval) -> () -> () {
+            return {
+                self.grid_node!.position.x += self.grid_size.width
+                self.curve_node!.position.x -= self.grid_size.width
+                self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!, duration: after)
+                self.drawCurve(ts: self.ts)
+            }
+        }
+
+        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
+        grid_node!.run(first_move_left_action) {
+            getOperations(after: first_move_left_action.duration)()
+            let move_left_action = SKAction.moveBy(x: -self.grid_size.width, y: 0, duration: self.grid_time_interval)
+            let move_right_action = SKAction.run(getOperations(after: move_left_action.duration))
+            let sequence_action = SKAction.sequence([move_left_action, move_right_action])
+            let loop_action = SKAction.repeatForever(sequence_action)
+            self.grid_node!.run(loop_action)
+        }
+
+        root_node!.addChild(grid_node!)
+        if subgrid_node != nil { grid_node!.addChild(subgrid_node!) }
+        root_node!.addChild(left_mask_node!)
+
+        grid_node!.addChild(bottom_mask_node!)
+        grid_node!.addChild(curve_node!)
+
+        // Do not call drawCurve before adding curve_node as a child to grid_node (some viewed segments may not be displayed)
+        drawCurve(ts: ts)
+    }
+
     public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
         drawCurve(ts: ts)
     }
