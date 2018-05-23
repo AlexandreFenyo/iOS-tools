@@ -60,6 +60,12 @@ class TimeSeries {
     }
 }
 
+enum PositionRelativeToScreen {
+    case onLeft
+    case onScreen
+    case onRight
+}
+
 // A Label Node with additional atributes
 class SKExtLabelNode : SKLabelNode {
     // Date displayed by the label
@@ -179,6 +185,35 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return CGPoint(x: curve_marker!.position.x + CGFloat(tse.date.timeIntervalSince(curve_marker_date!) / grid_time_interval) * grid_size.width, y: CGFloat(tse.value) / grid_vertical_cost! * grid_size.height)
     }
 
+    // Check that a point is not hidden
+    private func isCurvePointOnScreen(point: CGPoint) -> Bool {
+        let p = grid_node!.convert(point, from: curve_node!)
+        return p.x >= 0 && p.x <= grid_full_width!
+    }
+
+    // Check that a point is not hidden
+    private func isCurvePointOnScreen(tse: TimeSeriesElement) -> Bool {
+        return isCurvePointOnScreen(point: toPoint(tse: tse))
+    }
+
+    // Check that a segment is not hidden
+    private func isCurveSegmentOnScreen(from: CGPoint, to: CGPoint) -> Bool {
+        return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
+    }
+
+    // Check that a segment is not hidden
+    private func isCurveSegmentOnScreen(from: TimeSeriesElement, to: TimeSeriesElement) -> Bool {
+        return isCurveSegmentOnScreen(from: toPoint(tse: from), to: toPoint(tse: to))
+    }
+
+    // Position of a curve point relative to screen
+    private func positionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
+        let p = grid_node!.convert(point, from: curve_node!)
+        if p.x < 0 { return .onLeft }
+        if p.x > grid_full_width! { return .onRight }
+        return .onScreen
+    }
+    
     // Rules:
     // - grid_size.width <= size.width - left_width
     // - grid_size.height <= size.height - bottom_height
@@ -369,18 +404,20 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         curve_node!.strokeColor = UIColor.black
 
         // Animate
-        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
-        grid_node!.run(first_move_left_action) {
-            self.grid_node!.position.x += grid_size.width
-            self.curve_node!.position.x -= grid_size.width
-            self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: first_move_left_action.duration)
-
-            let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
-            let move_right_action = SKAction.run {
+        func getOperations(after: TimeInterval) -> () -> () {
+            return {
                 self.grid_node!.position.x += grid_size.width
                 self.curve_node!.position.x -= grid_size.width
-                self.update_xaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: move_left_action.duration)
+                self.updateXaxis(bottom_mask_node: bottom_mask_node, curve_node: self.curve_node!, duration: after)
+                self.drawCurve(ts: ts)
             }
+        }
+
+        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
+        grid_node!.run(first_move_left_action) {
+            getOperations(after: first_move_left_action.duration)()
+            let move_left_action = SKAction.moveBy(x: -grid_size.width, y: 0, duration: grid_time_interval)
+            let move_right_action = SKAction.run(getOperations(after: move_left_action.duration))
             let sequence_action = SKAction.sequence([move_left_action, move_right_action])
             let loop_action = SKAction.repeatForever(sequence_action)
             self.grid_node!.run(loop_action)
@@ -405,7 +442,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         root_node.addChild(left_mask_node)
     }
     
-    private func update_xaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
+    private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
         // Move date nodes to the left
         bottom_mask_node.enumerateChildNodes(withName: "//date-*") { node, _ in node.position.x -= self.grid_size.width }
 
@@ -431,27 +468,36 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             node.position.x = rightmost_node!.position.x + grid_size.width
         }
     }
-    
+
+    // Display only segments or points that can be viewed
     private func drawCurve(ts: TimeSeries) {
-        if spline {
-            var points: [CGPoint] = [ ]
-            for elt in ts.getElements() { points.append(toPoint(tse: elt)) }
-            curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path
-        } else {
-            let elts = ts.getElements()
-            if elts.count > 0 {
-                if elts.count > 1 {
-                    curve_path!.move(to: toPoint(tse: elts[0]))
-                    for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
-                } else {
-                    curve_path!.move(to: toPoint(tse: elts[0]))
-                    curve_path!.addLine(to: toPoint(tse: elts[0]))
+        // Points from segments that are partly or totally displayed
+        var points: [CGPoint] = [ ]
+        let elts = ts.getElements()
+        if elts.count == 1 {
+            // There is no segment, only one point
+            if isCurvePointOnScreen(tse: elts[0]) { points.append(toPoint(tse: elts[0])) }
+        } else if elts.count > 1 {
+            // Convert coordinates
+            var all_points: [CGPoint] = [ ]
+            for elt in elts { all_points.append(toPoint(tse: elt)) }
+            for i in all_points.indices.dropFirst() {
+                if isCurveSegmentOnScreen(from: all_points[i - 1], to: all_points[i]) {
+                    // This is the last segment and it is partly or totally displayed
+                    points.append(all_points[i - 1])
+                    if i == all_points.count - 1 { points.append(all_points[i]) }
                 }
             }
-            curve_node!.path = curve_path!.cgPath
         }
+        if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
+        else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
     }
 
+    public func updateGridVerticalCost(_ grid_vertical_cost: CGFloat) {
+        self.grid_vertical_cost = grid_vertical_cost
+        
+    }
+    
     public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
         curve_path!.removeAllPoints()
         drawCurve(ts: ts)
