@@ -46,6 +46,7 @@ class TimeSeries {
         // Update backing store
         if data[tse.date] != nil { return }
         data[tse.date] = tse
+        // réécrire sans param mais fct
         let next_date = keys.first(where: { (date) in date > tse.date })
         keys.insert(tse.date, at: next_date != nil ? keys.index(of: next_date!)! : keys.count)
 
