@@ -42,12 +42,10 @@ class TimeSeries {
     }
 
     public func add(_ tse: TimeSeriesElement) {
-        print("new data at date:", GenericTools.dateToString(tse.date))
         // Update backing store
         if data[tse.date] != nil { return }
         data[tse.date] = tse
-        // réécrire sans param mais fct
-        let next_date = keys.first(where: { (date) in date > tse.date })
+        let next_date = keys.first { (date) in date > tse.date }
         keys.insert(tse.date, at: next_date != nil ? keys.index(of: next_date!)! : keys.count)
 
         // Signal about new value
@@ -92,7 +90,7 @@ class SKExtLabelNode : SKLabelNode {
 }
 
 class SCNChartNode : SCNNode {
-    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
+    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -106,7 +104,7 @@ class SCNChartNode : SCNNode {
 
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
-        let chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, debug: debug)
+        let chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, spline: spline, debug: debug)
         chart_node.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node)
 
@@ -120,6 +118,7 @@ class SCNChartNode : SCNNode {
 
 class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
+    private let spline: Bool
 
     // State variables
     private var full_size: CGSize
@@ -189,8 +188,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, debug: Bool = true) {
+    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, debug: Bool = true) {
         self.debug = debug
+        self.spline = spline
 
         // Save state
         self.full_size = full_size
@@ -355,7 +355,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         // Add curve
         curve_node = SKShapeNode()
-        curve_path = UIBezierPath()
+        if spline { curve_path = UIBezierPath() }
 
         // Add marker to be able to make a projection of a date into the curve coordinates system
         curve_marker = SKNode()
@@ -364,18 +364,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         curve_marker!.position.x = left_width - grid_node!.position.x + graph_width!
 
         // Draw the curve
-        let elts = ts.getElements()
-        if elts.count > 0 {
-            if elts.count > 1 {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
-            } else {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                curve_path!.addLine(to: toPoint(tse: elts[0]))
-            }
-        }
-
-        curve_node!.path = curve_path!.cgPath
+        drawCurve(ts: ts)
         curve_node!.lineWidth = line_width
         curve_node!.strokeColor = UIColor.black
 
@@ -418,14 +407,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     private func update_xaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
         // Move date nodes to the left
-        bottom_mask_node.enumerateChildNodes(withName: "//date-*", using: {
-            node, _ in node.position.x -= self.grid_size.width
-        })
+        bottom_mask_node.enumerateChildNodes(withName: "//date-*") { node, _ in node.position.x -= self.grid_size.width }
 
         // Find both extreme date nodes
         var leftmost_node : SKNode?
         var rightmost_node : SKNode?
-        bottom_mask_node.enumerateChildNodes(withName: "//date-*", using: {
+        bottom_mask_node.enumerateChildNodes(withName: "//date-*") {
             node, _ in
 
             if let posx = leftmost_node?.position.x {
@@ -435,7 +422,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             if let posx = rightmost_node?.position.x {
                 if node.position.x > posx { rightmost_node = node }
             } else { rightmost_node = node }
-        })
+        }
 
         // Set the left-most node to the right of the right-most node
         if leftmost_node != nil && rightmost_node != nil {
@@ -445,21 +432,29 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
     }
     
+    private func drawCurve(ts: TimeSeries) {
+        if spline {
+            var points: [CGPoint] = [ ]
+            for elt in ts.getElements() { points.append(toPoint(tse: elt)) }
+            curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path
+        } else {
+            let elts = ts.getElements()
+            if elts.count > 0 {
+                if elts.count > 1 {
+                    curve_path!.move(to: toPoint(tse: elts[0]))
+                    for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
+                } else {
+                    curve_path!.move(to: toPoint(tse: elts[0]))
+                    curve_path!.addLine(to: toPoint(tse: elts[0]))
+                }
+            }
+            curve_node!.path = curve_path!.cgPath
+        }
+    }
+
     public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
         curve_path!.removeAllPoints()
-
-        let elts = ts.getElements()
-        if elts.count > 0 {
-            if elts.count > 1 {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                for p in elts.suffix(from: 1) { curve_path!.addLine(to: toPoint(tse: p)) }
-            } else {
-                curve_path!.move(to: toPoint(tse: elts[0]))
-                curve_path!.addLine(to: toPoint(tse: elts[0]))
-            }
-        }
-
-        curve_node!.path = curve_path!.cgPath
+        drawCurve(ts: ts)
     }
 
     public required init(coder aDecoder: NSCoder) {

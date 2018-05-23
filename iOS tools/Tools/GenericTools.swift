@@ -121,8 +121,7 @@ final class GenericTools : AutoTrace {
 
     public static func createScene(_ view: UIView) {
         if (GenericTools.ts.getElements().count == 0) {
-            let date = Date() //test_date
-            print("Date de lancement:", dateToString(date))
+            let date = Date() // test_date
             GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 35.0))
@@ -373,10 +372,7 @@ private class ManageTapCube {
 //        }
         
 //        if (step == 3) {
-            let xdate = Date()
-        
-            print("add point at:", GenericTools.dateToString(xdate))
-            GenericTools.ts.add(TimeSeriesElement(date: xdate, value: 40.0))
+            GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 40.0))
 
 //        GenericTools.chart_node!.grid_node!.removeAllActions()
 
