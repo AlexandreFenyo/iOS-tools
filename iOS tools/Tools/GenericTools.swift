@@ -374,11 +374,14 @@ private class ManageTapCube {
 //        if (step == 3) {
             GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 40.0))
 
+
+        SCNTransaction.begin()
+        GenericTools.chart_node!.updateGridVerticalCost(40.0)
+        SCNTransaction.commit()
+
+
             SCNTransaction.begin()
-
-            GenericTools.chart_node!.updateGridVerticalCost(40.0)
-//            GenericTools.plane_node!.chart_node!.updateGridVerticalCost(40.0)
-
+        GenericTools.plane_node!.chart_node!.updateGridVerticalCost(40.0)
             SCNTransaction.commit()
 
 //        GenericTools.chart_node!.grid_node!.removeAllActions()
