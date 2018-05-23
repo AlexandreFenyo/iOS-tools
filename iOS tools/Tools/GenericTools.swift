@@ -105,7 +105,7 @@ final class GenericTools : AutoTrace {
         return NSString(bytes: arr, length: arr.count, encoding: String.Encoding.utf8.rawValue)! as String
     }
 
-    // split a view controller with two columns of same width
+    // Split a view controller with two columns of same width
     public static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
         svc.preferredDisplayMode = .allVisible
         svc.minimumPrimaryColumnWidth = 0
