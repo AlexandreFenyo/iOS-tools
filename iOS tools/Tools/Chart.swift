@@ -88,7 +88,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
     private let spline: Bool
     private let vertical_auto_layout: Bool
-    private var highest_displayed_val: Float?
+    private var highest_displayed_val: Float = 0
 
     private var root_node : SKNode?
     
@@ -240,7 +240,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         } else { root_node = self }
 
         // Create chart components
-        createChartComponents(date: date, max_val: Float(grid_full_height! / grid_size.height) * grid_vertical_cost)
+        for elt in ts.getElements() { highest_displayed_val = max(highest_displayed_val, elt.value) }
+          createChartComponents(date: date, max_val: highest_displayed_val)
     }
 
     // Update displayed dates
@@ -273,7 +274,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     // Display only segments or points that can be viewed
     // Updates highest_displayed_val
-    private func drawCurve(ts: TimeSeries) -> Float {
+    private func drawCurve(ts: TimeSeries) {
         var highest : Float = 0
 
         // Points from segments that are partly or totally displayed
@@ -302,24 +303,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
         else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
 
-        if highest_displayed_val == nil { highest_displayed_val = highest }
-        if highest_displayed_val! != highest {
+        if highest_displayed_val != highest {
             highest_displayed_val = highest
 
             print("RESIZE at", Date())
 
             updateChartComponents(date: Date(), max_val: highest)
         }
-        
-        return highest
     }
-
-    // a supprimer
-//    public func updateGridVerticalCost(_ grid_vertical_cost: Float) {
-//        self.grid_vertical_cost = grid_vertical_cost
-//        updateStateVariables()
-//        updateChartComponents(date: Date())
-//    }
 
     // Update chart components
     private func updateChartComponents(date: Date, max_val: Float) {
@@ -521,7 +512,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 self.grid_node!.position.x += self.grid_size.width
                 self.curve_node!.position.x -= self.grid_size.width
                 self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!, duration: after)
-                _ = self.drawCurve(ts: self.ts)
+                self.drawCurve(ts: self.ts)
             }
         }
 
@@ -543,11 +534,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.addChild(curve_node!)
 
         // Do not call drawCurve before adding curve_node as a child to grid_node (some viewed segments may not be displayed)
-        _ = drawCurve(ts: ts)
+        drawCurve(ts: ts)
     }
 
     public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) {
-        _ = drawCurve(ts: ts)
+        drawCurve(ts: ts)
     }
 
     // Compute best vertical parameters
@@ -561,7 +552,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // - vertical_unit
     // - factor
     
-    // XXX max_val devrait être un Float et non un CGFloat
     public static func getOptimizedVerticalParameters(height: CGFloat, max_val: Float, nlines: Int) -> (CGFloat, Float, String, Int) {
         let first_label = String(Int((max_val / Float(nlines)).rounded(.down)))
         var left_digit = first_label.sub(0, 1)
