@@ -23,6 +23,8 @@
 		5D38681220963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385920A2EEAF006AC172 /* Splash.storyboard */; };
+		5D661DAC20B77AF400007B46 /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
+		5D661DAD20B77AFD00007B46 /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5DF237F520A089B700CF9365 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* Main.storyboard */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
@@ -322,6 +324,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D661DAD20B77AFD00007B46 /* TimeSeries.swift in Sources */,
 				5D1DCC5020A621C90031B10B /* Chart.swift in Sources */,
 				5D135206208538E300E4A76D /* iOS_toolsTests.swift in Sources */,
 				5D13522120853BEA00E4A76D /* GenericTools.swift in Sources */,
@@ -332,6 +335,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D661DAC20B77AF400007B46 /* TimeSeries.swift in Sources */,
 				5D1DCC5120A621D80031B10B /* Chart.swift in Sources */,
 				5D135211208538E300E4A76D /* iOS_toolsUITests.swift in Sources */,
 				5D13522220853BEA00E4A76D /* GenericTools.swift in Sources */,
