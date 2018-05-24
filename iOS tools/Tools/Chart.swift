@@ -26,7 +26,7 @@ enum PositionRelativeToScreen {
     case onRight
 }
 
-// A Label Node with additional atributes
+// A Label Node with additional attributes
 class SKExtLabelNode : SKLabelNode {
     // Date displayed by the label
     public var date : Date? {
