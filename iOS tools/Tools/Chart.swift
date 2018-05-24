@@ -58,7 +58,7 @@ class SKExtLabelNode : SKLabelNode {
 class SCNChartNode : SCNNode {
     public var chart_node: SKChartNode?
     
-    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, debug: Bool = true) {
+    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -72,7 +72,7 @@ class SCNChartNode : SCNNode {
 
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
-        chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size:  subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, spline: spline, debug: debug)
+        chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, font_size_ratio: font_size_ratio, font_color: font_color, spline: spline, vertical_auto_layout: vertical_auto_layout, debug: debug)
         chart_node!.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node!)
 
@@ -87,6 +87,8 @@ class SCNChartNode : SCNNode {
 class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
     private let spline: Bool
+    private let vertical_auto_layout: Bool
+    private var highest_displayed_val: CGFloat?
 
     private var root_node : SKNode?
     
@@ -146,6 +148,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func updateStateVariables() {
         // Graph displayed size
         graph_width = full_size.width - left_width
+        print("YYY fullsizeheight:", full_size.height)
         graph_height = full_size.height - bottom_height
         // Graph real size
         grid_full_width = graph_width!.truncatingRemainder(dividingBy: grid_size.width) == 0 ? graph_width! + grid_size.width : grid_size.width * (2 + graph_width! / grid_size.width).rounded(.down)
@@ -197,9 +200,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, debug: Bool = true) {
+    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: CGFloat, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, font_size_ratio: CGFloat = ChartDefaults.font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, debug: Bool = true) {
         self.debug = debug
         self.spline = spline
+        self.vertical_auto_layout = vertical_auto_layout
         self.crop = crop
 
         // Save state
@@ -269,12 +273,18 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     // Display only segments or points that can be viewed
     private func drawCurve(ts: TimeSeries) {
+        var highest : Float = 0
+
         // Points from segments that are partly or totally displayed
         var points: [CGPoint] = [ ]
         let elts = ts.getElements()
         if elts.count == 1 {
             // There is no segment, only one point
-            if isCurvePointOnScreen(tse: elts[0]) { points.append(toPoint(tse: elts[0])) }
+            if isCurvePointOnScreen(tse: elts[0]) {
+                let point = toPoint(tse: elts[0])
+                highest = max(highest, elts[0].value)
+                points.append(point)
+            }
         } else if elts.count > 1 {
             // Convert coordinates
             var all_points: [CGPoint] = [ ]
@@ -284,15 +294,33 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     // This is the last segment and it is partly or totally displayed
                     points.append(all_points[i - 1])
                     if i == all_points.count - 1 { points.append(all_points[i]) }
+                    highest = max(highest, Float(all_points[i].y * grid_vertical_cost! / grid_size.height), Float(all_points[i - 1].y * grid_vertical_cost! / grid_size.height))
                 }
             }
         }
         if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
         else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
+
+        if highest_displayed_val == nil { highest_displayed_val = CGFloat(highest) }
+        if vertical_auto_layout && highest_displayed_val! != CGFloat(highest) {
+            highest_displayed_val = CGFloat(highest)
+
+            print("RESIZE at", Date())
+  // changer grid_vertical_cost
+//            grid_vertical_cost = highest
+            
+            
+                //highest_displayed_point! * grid_vertical_cost! / grid_size.height
+//            full_size.height = 1.0 * highest_displayed_point!
+
+            updateStateVariables()
+            updateChartComponents(date: Date())
+        }
     }
 
     public func updateGridVerticalCost(_ grid_vertical_cost: CGFloat) {
         self.grid_vertical_cost = grid_vertical_cost
+        updateStateVariables()
         updateChartComponents(date: Date())
     }
 
@@ -313,19 +341,27 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         // Remove grid_node, left_mask_node and associated hyphens
         root_node!.removeAllChildren()
 
-        // Update computed state variables
-        updateStateVariables()
-
         // Create chart components
         createChartComponents(date: date)
     }
 
     // Create chart components
     private func createChartComponents(date: Date) {
+        if vertical_auto_layout {
+            let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: grid_vertical_cost! * grid_full_height! / grid_size.height, nlines: 5)
+            
+            grid_size.height = _grid_height
+            subgrid_size?.height = grid_size.height / 5.0
+            vertical_unit = _unit
+            grid_vertical_cost = _cost
+            
+            updateStateVariables()
+        }
+        
         assert(grid_size.width <= full_size.width - left_width)
         assert(grid_size.height <= full_size.height - bottom_height)
         assert(subgrid_size != nil ? grid_size.width.truncatingRemainder(dividingBy: subgrid_size!.width) == 0 : true)
-        assert(subgrid_size != nil ? grid_size.height.truncatingRemainder(dividingBy: subgrid_size!.height) == 0 : true)
+        if !vertical_auto_layout { assert(subgrid_size != nil ? grid_size.height.truncatingRemainder(dividingBy: subgrid_size!.height) == 0 : true) }
         assert(grid_time_interval >= 60 || 60.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)
         assert((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0))
         assert(grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
@@ -513,10 +549,49 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         drawCurve(ts: ts)
     }
 
-    public func newData(ts: TimeSeries, tse: TimeSeriesElement) {
+    public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) {
         drawCurve(ts: ts)
     }
 
+    // Compute best vertical parameters
+    // input:
+    // - height
+    // - value at height
+    // - max number of horizontal lines
+    // output:
+    // - grid_size.height
+    // - grid_vertical_cost
+    // - vertical_unit
+    // - factor
+    
+    // XXX max_val devrait être un Float et non un CGFloat
+    public static func getOptimizedVerticalParameters(height: CGFloat, max_val: CGFloat, nlines: Int) -> (CGFloat, CGFloat, String, Int) {
+        let first_label = String(Int((max_val / CGFloat(nlines)).rounded(.down)))
+        var left_digit = first_label.sub(0, 1)
+        switch left_digit {
+        case "3", "4":
+            left_digit = "2"
+        case "6", "7", "8", "9":
+            left_digit = "5"
+        default:
+            break
+        }
+        let (unit, factor) : (String, Int) = {
+            if first_label.count < 4 { return ("bit/s", 1) }
+            if first_label.count < 7 { return ("Kbit/s", 1000) }
+            if first_label.count < 10 { return ("Mbit/s", 1000000) }
+            return ("Gbit/s", 1000000000)
+        }()
+        let grid_vertical_cost = CGFloat(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
+        
+        print("XXX grid_vertical_cost", grid_vertical_cost)
+        print("XXX height", height)
+        print("XXX max_val", max_val)
+        print("XXX", grid_vertical_cost * height / max_val)
+        
+        return (grid_vertical_cost * height / max_val, grid_vertical_cost, unit, factor)
+    }
+    
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

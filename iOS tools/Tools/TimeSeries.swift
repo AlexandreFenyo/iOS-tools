@@ -14,7 +14,7 @@ struct TimeSeriesElement {
 }
 
 protocol TimeSeriesReceiver {
-    func newData(ts: TimeSeries, tse: TimeSeriesElement)
+    func cbNewData(ts: TimeSeries, tse: TimeSeriesElement)
 }
 
 class TimeSeries {
@@ -37,7 +37,7 @@ class TimeSeries {
         keys.insert(tse.date, at: next_date != nil ? keys.index(of: next_date!)! : keys.count)
 
         // Signal about new value
-        for receiver in receivers { receiver.newData(ts: self, tse: tse) }
+        for receiver in receivers { receiver.cbNewData(ts: self, tse: tse) }
     }
 
     // Ordered array of every elements
