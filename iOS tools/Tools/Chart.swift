@@ -314,9 +314,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var (points, target_h) = computePoints()
 
         if highest != target_h {
-            print("changement: self.highest:", highest, "target_h:", target_h)
+            print("create ACTION - changement: self.highest:", highest, "target_h:", target_h)
             var start_height = highest
-            print("create ACTION")
             
             var runnable: ((SKNode, CGFloat) -> ())?
             runnable = {
