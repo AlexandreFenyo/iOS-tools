@@ -18,6 +18,7 @@ struct ChartDefaults {
     static let font_name = "Arial Rounded MT Bold"
     static let font_size_ratio : CGFloat = 0.4
     static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+    static let optimal_vertical_resolution_ratio : CGFloat = 1.2
 }
 
 enum PositionRelativeToScreen {
@@ -148,7 +149,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func updateStateVariables() {
         // Graph displayed size
         graph_width = full_size.width - left_width
-        print("YYY fullsizeheight:", full_size.height)
         graph_height = full_size.height - bottom_height
         // Graph real size
         grid_full_width = graph_width!.truncatingRemainder(dividingBy: grid_size.width) == 0 ? graph_width! + grid_size.width : grid_size.width * (2 + graph_width! / grid_size.width).rounded(.down)
@@ -275,7 +275,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Display only segments or points that can be viewed
     // Updates highest_displayed_val
     private func drawCurve(ts: TimeSeries) {
-        var highest : Float = 0
+        var highest : Float = 1
 
         // Points from segments that are partly or totally displayed
         var points: [CGPoint] = [ ]
@@ -305,9 +305,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         if highest_displayed_val != highest {
             highest_displayed_val = highest
-
-            print("RESIZE at", Date())
-
             updateChartComponents(date: Date(), max_val: highest)
         }
     }
@@ -551,8 +548,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // - grid_vertical_cost
     // - vertical_unit
     // - factor
-    
     public static func getOptimizedVerticalParameters(height: CGFloat, max_val: Float, nlines: Int) -> (CGFloat, Float, String, Int) {
+        var max_val = max_val
+        max_val *= Float(ChartDefaults.optimal_vertical_resolution_ratio)
+        if max_val < Float(nlines) { max_val = Float(nlines) }
+
         let first_label = String(Int((max_val / Float(nlines)).rounded(.down)))
         var left_digit = first_label.sub(0, 1)
         switch left_digit {
@@ -570,12 +570,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             return ("Gbit/s", 1000000000)
         }()
         let grid_vertical_cost = Float(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
-        
-        print("XXX grid_vertical_cost", grid_vertical_cost)
-        print("XXX height", height)
-        print("XXX max_val", max_val)
-        print("XXX", height * CGFloat(grid_vertical_cost / max_val))
-        
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
     
