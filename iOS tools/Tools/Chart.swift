@@ -19,6 +19,7 @@ struct ChartDefaults {
     static let font_size_ratio : CGFloat = 0.4
     static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
     static let optimal_vertical_resolution_ratio : CGFloat = 1.2
+    static let vertical_transition_duration : Double = 1
 }
 
 enum PositionRelativeToScreen {
@@ -89,7 +90,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
     private let spline: Bool
     private let vertical_auto_layout: Bool
-    private var highest_displayed_val: Float = 0
+    
+    private var highest : Float = 0
+//    var highest : CGSize {
+//        didSet { createChartComponents(date: Date(), max_val: Float(size.height)) }
+//    }
 
     private var root_node : SKNode?
     
@@ -240,12 +245,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         } else { root_node = self }
 
         // Create chart components
-        for elt in ts.getElements() { highest_displayed_val = max(highest_displayed_val, elt.value) }
-          createChartComponents(date: date, max_val: highest_displayed_val)
+        var max_val : Float = 0
+        for elt in ts.getElements() { max_val = max(max_val, elt.value) }
+        createChartComponents(date: Date(), max_val: max_val)
+        drawCurve(ts: ts)
     }
 
     // Update displayed dates
-    private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode, duration: TimeInterval) {
+    private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode) {
         // Move date nodes to the left
         bottom_mask_node.enumerateChildNodes(withName: "//date-*") { node, _ in node.position.x -= self.grid_size.width }
 
@@ -273,65 +280,88 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
 
     // Display only segments or points that can be viewed
-    // Updates highest_displayed_val
     private func drawCurve(ts: TimeSeries) {
-        var highest : Float = 1
-
-        // Points from segments that are partly or totally displayed
-        var points: [CGPoint] = [ ]
-        let elts = ts.getElements()
-        if elts.count == 1 {
-            // There is no segment, only one point
-            if isCurvePointOnScreen(tse: elts[0]) {
-                let point = toPoint(tse: elts[0])
-                highest = max(highest, elts[0].value)
-                points.append(point)
-            }
-        } else if elts.count > 1 {
-            // Convert coordinates
-            var all_points: [CGPoint] = [ ]
-            for elt in elts { all_points.append(toPoint(tse: elt)) }
-            for i in all_points.indices.dropFirst() {
-                if isCurveSegmentOnScreen(from: all_points[i - 1], to: all_points[i]) {
-                    // This is the last segment and it is partly or totally displayed
-                    points.append(all_points[i - 1])
-                    if i == all_points.count - 1 { points.append(all_points[i]) }
-                    highest = max(highest, grid_vertical_cost! * Float(all_points[i].y / grid_size.height), grid_vertical_cost! * Float(all_points[i - 1].y / grid_size.height))
+        if hasActions() { return }
+        
+        let computePoints: () -> ([CGPoint], Float) = {
+            var highest : Float = 1
+            // Points from segments that are partly or totally displayed
+            var points: [CGPoint] = [ ]
+            let elts = ts.getElements()
+            if elts.count == 1 {
+                // There is no segment, only one point
+                if self.isCurvePointOnScreen(tse: elts[0]) {
+                    let point = self.toPoint(tse: elts[0])
+                    highest = max(highest, elts[0].value)
+                    points.append(point)
+                }
+            } else if elts.count > 1 {
+                // Convert coordinates
+                var all_points: [CGPoint] = [ ]
+                for elt in elts { all_points.append(self.toPoint(tse: elt)) }
+                for i in all_points.indices.dropFirst() {
+                    if self.isCurveSegmentOnScreen(from: all_points[i - 1], to: all_points[i]) {
+                        // This is the last segment and it is partly or totally displayed
+                        points.append(all_points[i - 1])
+                        if i == all_points.count - 1 { points.append(all_points[i]) }
+                        highest = max(highest, self.grid_vertical_cost! * Float(all_points[i].y / self.grid_size.height), self.grid_vertical_cost! * Float(all_points[i - 1].y / self.grid_size.height))
+                    }
                 }
             }
+            return (points, highest)
         }
-        if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
-        else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
+        
+        var (points, target_h) = computePoints()
 
-        if highest_displayed_val != highest {
-            highest_displayed_val = highest
-            updateChartComponents(date: Date(), max_val: highest)
+        if highest != target_h {
+            print("changement: self.highest:", highest, "target_h:", target_h)
+            var start_height = highest
+            print("create ACTION")
+            
+            var runnable: ((SKNode, CGFloat) -> ())?
+            runnable = {
+                (node, t) in
+                self.createChartComponents(date: Date(), max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
+                let check_h : Float
+                (points, check_h) = computePoints()
+                if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
+                else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
+                
+                if check_h != target_h {
+                    self.removeAllActions()
+                    start_height = self.highest
+                    target_h = check_h
+                    print("REcreate ACTION - changement: de:", start_height, "à:", target_h)
+                    self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+                }
+            }
+            run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+        } else {
+            if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
+            else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
         }
     }
 
-    // Update chart components
-    private func updateChartComponents(date: Date, max_val: Float) {
-        // Remove curve
-        curve_node!.removeAllChildren()
-
-        // Remove displayed dates and associated hyphens
-        bottom_mask_node!.removeAllChildren()
-
-        // Remove animations
-        grid_node!.removeAllActions()
-
-        // Remove bottom_mask_node, curve_node and subgrid_node
-        grid_node!.removeAllChildren()
-
-        // Remove grid_node, left_mask_node and associated hyphens
-        root_node!.removeAllChildren()
-
-        // Create chart components
-        createChartComponents(date: date, max_val: max_val)
-    }
-
-    // Create chart components
+    // Create or update chart components
     private func createChartComponents(date: Date, max_val: Float) {
+        // Update state
+        highest = max_val
+
+        // Remove curve
+        curve_node?.removeAllChildren()
+        
+        // Remove displayed dates and associated hyphens
+        bottom_mask_node?.removeAllChildren()
+        
+        // Remove animations
+        grid_node?.removeAllActions()
+        
+        // Remove bottom_mask_node, curve_node and subgrid_node
+        grid_node?.removeAllChildren()
+        
+        // Remove grid_node, left_mask_node and associated hyphens
+        root_node?.removeAllChildren()
+        
         if vertical_auto_layout {
             let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5)
             
@@ -508,7 +538,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             return {
                 self.grid_node!.position.x += self.grid_size.width
                 self.curve_node!.position.x -= self.grid_size.width
-                self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!, duration: after)
+                self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
                 self.drawCurve(ts: self.ts)
             }
         }
@@ -529,9 +559,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         grid_node!.addChild(bottom_mask_node!)
         grid_node!.addChild(curve_node!)
-
-        // Do not call drawCurve before adding curve_node as a child to grid_node (some viewed segments may not be displayed)
-        drawCurve(ts: ts)
     }
 
     public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) {
