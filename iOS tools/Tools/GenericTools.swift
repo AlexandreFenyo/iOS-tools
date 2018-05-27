@@ -186,7 +186,7 @@ final class GenericTools : AutoTrace {
         view.showsStatistics = true
 
         // configure the view
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .black
 
 //        // add a tap gesture recognizer
 //        let manage_tap = ManageTapCube(view)
@@ -199,7 +199,7 @@ final class GenericTools : AutoTrace {
     public static func createSpriteScene(_ view: SKView) {
         // Create a scene
         let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
-        scene.backgroundColor = SKColor.white
+        scene.backgroundColor = .white
         view.presentScene(scene)
 
         chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: false, vertical_auto_layout: true, debug: false)
@@ -234,7 +234,7 @@ final class GenericTools : AutoTrace {
         view.showsStatistics = true
 
         // configure the view
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .black
      
         // add a tap gesture recognizer
         let manage_tap = ManageTapCube(view)
@@ -290,7 +290,7 @@ final class GenericTools : AutoTrace {
         view.showsStatistics = true
         
         // configure the view
-        view.backgroundColor = UIColor.black
+        view.backgroundColor = .black
         
         // add a tap gesture recognizer
         let manageTap = ManageTapDemoShip(view)

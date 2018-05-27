@@ -69,7 +69,7 @@ class SCNChartNode : SCNNode {
 
         // Create a 2D scene
         let chart_scene = SKScene(size: full_size)
-        chart_scene.backgroundColor = SKColor.white
+        chart_scene.backgroundColor = .white
 
         // Create a 3D plan containing the 2D scene
         self.geometry = SCNPlane(width: full_size.width / density, height: full_size.height / density)
@@ -151,7 +151,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         print("grid node relative pos:", left_width - grid_node!.position.x)
         
         let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: 3, height: 3))
-        square_node.color = SKColor.yellow
+        square_node.color = .yellow
         grid_node!.addChild(square_node)
         square_node.position = CGPoint(x: pt.x, y: pt.y)
         print()
@@ -246,7 +246,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         // Crop the drawing when working in a 2D scene
         if crop {
             let crop_node = SKCropNode()
-            let mask_node = SKSpriteNode(texture: nil, color:  SKColor.black, size: full_size)
+            let mask_node = SKSpriteNode(texture: nil, color: .black, size: full_size)
             mask_node.anchorPoint = CGPoint(x: 0, y: 0)
 
             if !debug { crop_node.maskNode = mask_node }
@@ -320,7 +320,57 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
             return (points, highest)
         }
-        
+
+        let drawPoints: (inout [CGPoint]) -> () = {
+            (points) in
+            if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
+            else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
+            self.curve_node?.removeAllChildren()
+            for point in points {
+                let point_node = SKShapeNode(circleOfRadius: self.line_width * 3)
+                point_node.fillColor = .black
+                point_node.strokeColor = .red
+                point_node.lineWidth = self.line_width
+                self.curve_node?.addChild(point_node)
+                point_node.position = CGPoint(x: point.x, y: point.y)
+            }
+
+            var highest_point : CGPoint? = nil
+            for point in points {
+                if self.isCurvePointOnScreen(point: point) {
+                    if highest_point == nil { highest_point = point }
+                    else if highest_point!.y <= point.y { highest_point! = point }
+                }
+            }
+
+            if highest_point != nil {
+                let sqrt_3_div_2 : CGFloat = 0.87
+                var points = [CGPoint(x: 0, y: 0),
+                              CGPoint(x: -self.line_width * 5, y: 2 * self.line_width * 5 * sqrt_3_div_2),
+                              CGPoint(x: self.line_width * 5, y: 2 * self.line_width * 5 * sqrt_3_div_2),
+                              CGPoint(x: 0, y: 0)]
+                let triangle_node = SKShapeNode(points: &points, count: points.count)
+                triangle_node.lineWidth = self.line_width
+                triangle_node.strokeColor = .yellow
+                self.curve_node?.addChild(triangle_node)
+                triangle_node.position = CGPoint(x: highest_point!.x, y: highest_point!.y + self.line_width * 6)
+                triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
+
+                let font = UIFont(name: self.font_name, size: 2) ?? UIFont.preferredFont(forTextStyle: .body)
+                let max_label = SKLabelNode(fontNamed: self.font_name)
+                max_label.text = "max value"
+                max_label.fontSize = 2 * self.line_width * 5 * sqrt_3_div_2 * font.pointSize
+                max_label.fontColor = .yellow
+                max_label.horizontalAlignmentMode = .right
+                triangle_node.addChild(max_label)
+                max_label.position = CGPoint(x: 0, y: 0)
+
+
+                // si j'ajoute plein de points très vite : crash
+
+            }
+        }
+
         var (points, target_h) = computePoints()
 
         if highest != target_h {
@@ -332,9 +382,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 self.createChartComponents(date: Date(), max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
                 let check_h : Float
                 (points, check_h) = computePoints()
-                if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
-                else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
-                
+                drawPoints(&points)
                 if check_h != target_h {
                     self.removeAllActions()
                     start_height = self.highest
@@ -343,10 +391,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 }
             }
             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
-        } else {
-            if spline { curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
-            else { curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
-        }
+        } else { drawPoints(&points) }
     }
 
     // Create or update chart components
@@ -408,7 +453,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
         grid_node = SKShapeNode(path: grid_path)
         grid_node!.path = grid_path
-        grid_node!.strokeColor = UIColor.red
+        grid_node!.strokeColor = .red
         grid_node!.lineWidth = line_width
 
         // Create the subgrid
@@ -433,7 +478,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
             subgrid_node = SKShapeNode(path: subgrid_path)
             subgrid_node?.path = subgrid_path
-            subgrid_node?.strokeColor = UIColor.red
+            subgrid_node?.strokeColor = .red
             // In order to avoid flickering on black or dark background, linewidth must be greater than 1
             subgrid_node?.lineWidth = line_width
             subgrid_node?.alpha = 0.3
@@ -465,7 +510,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             left_mask_node!.addChild(left_label_node)
             left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2,
                                                y: y + bottom_height - 0.7 * left_label_node.fontSize / 2)
-//                                               y: y + bottom_height - vertical_font_size_ratio * grid_size.height / 2)
 
             // Add hyphen
             let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node!.lineWidth))
@@ -546,7 +590,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         // Initialize curve
         curve_node!.lineWidth = line_width
-        curve_node!.strokeColor = UIColor.black
+        curve_node!.strokeColor = .black
 
         // Animate
         func getOperations(after: TimeInterval) -> () -> () {
