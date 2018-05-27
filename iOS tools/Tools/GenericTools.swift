@@ -16,7 +16,7 @@ import QuartzCore
 import SceneKit
 import SpriteKit
 
-// Usedful declaration to get definitions of Swift (right-click / "Jump to definition")
+// Useful declaration to get definitions of Swift (right-click / "Jump to definition")
 import Swift
 
 extension String {
@@ -202,10 +202,10 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = SKColor.white
         view.presentScene(scene)
 
-        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, spline: false, vertical_auto_layout: true, debug: true)
+        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: false, vertical_auto_layout: true, debug: false)
         scene.addChild(chart_node!)
         chart_node!.position = CGPoint(x: 50, y: 100)
-        
+
         // Display debug informations
         view.showsFPS = true
         view.showsQuadCount = true
@@ -243,7 +243,7 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, font_size_ratio: 0.5, vertical_auto_layout: true, debug: true)
+        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
     }
     
