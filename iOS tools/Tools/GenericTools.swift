@@ -347,7 +347,7 @@ private class ManageTapDemoShip {
 // manage a tap on a Cube scene view
 private class ManageTapCube {
     let scnView: SCNView
-    
+
     init(_ v: SCNView) {
         self.scnView = v
     }
@@ -362,8 +362,9 @@ private class ManageTapCube {
 
         // SCNTransaction.begin()
 
-//        step += 1
-//        if (step == 1) {
+        step += 1
+
+        //        if (step == 1) {
 //            print("avant remove actions")
 //            GenericTools.chart_node!.grid_node!.removeAllActions()
 //        }
@@ -372,7 +373,17 @@ private class ManageTapCube {
 //        }
         
 //        if (step == 3) {
-            GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0))
+        SCNTransaction.begin()
+        // XXX
+        // si j'ajoute plein de points très vite : crash
+        if( step < 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0 * Float(step))) }
+
+        if (step == 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 1000.0)) }
+        if (step == 3) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 200000.0)) }
+        if (step == 4) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 3000000.0)) }
+        if (step == 5) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 850000000.0)) }
+
+        SCNTransaction.commit()
 
 
         SCNTransaction.begin()

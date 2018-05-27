@@ -22,6 +22,7 @@ struct ChartDefaults {
     static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
     static let optimal_vertical_resolution_ratio : CGFloat = 1.2
     static let vertical_transition_duration : Double = 1
+    static let minimum_highest : Float = 1
     // Set to true to avoid moving left at start
     static let debug_do_not_move = false
 }
@@ -293,8 +294,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func drawCurve(ts: TimeSeries) {
         if hasActions() { return }
         
-        let computePoints: () -> ([CGPoint], Float) = {
-            var highest : Float = 1
+        let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?) = {
+            var highest : Float = ChartDefaults.minimum_highest
+            var highest_elt : TimeSeriesElement?
             // Points from segments that are partly or totally displayed
             var points: [CGPoint] = [ ]
             let elts = ts.getElements()
@@ -302,7 +304,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 // There is no segment, only one point
                 if self.isCurvePointOnScreen(tse: elts[0]) {
                     let point = self.toPoint(tse: elts[0])
-                    highest = max(highest, elts[0].value)
+                    if (highest < elts[0].value) {
+                        highest_elt = elts[0]
+                        highest = elts[0].value
+                    }
                     points.append(point)
                 }
             } else if elts.count > 1 {
@@ -314,20 +319,33 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                         // This is the last segment and it is partly or totally displayed
                         points.append(all_points[i - 1])
                         if i == all_points.count - 1 { points.append(all_points[i]) }
-                        highest = max(highest, self.grid_vertical_cost! * Float(all_points[i].y / self.grid_size.height), self.grid_vertical_cost! * Float(all_points[i - 1].y / self.grid_size.height))
+                        let foo = self.grid_vertical_cost! * Float(all_points[i - 1].y / self.grid_size.height)
+                        let bar = self.grid_vertical_cost! * Float(all_points[i].y / self.grid_size.height)
+                        if highest < foo {
+                            highest = foo
+                            highest_elt = elts[i - 1]
+                        }
+                        if highest < bar {
+                            highest = bar
+                            highest_elt = elts[i]
+                        }
                     }
                 }
             }
-            return (points, highest)
+            return (points, highest, highest_elt)
         }
 
-        let drawPoints: (inout [CGPoint]) -> () = {
-            (points) in
+        let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = {
+            (points, highest_tse) in
+            // Draw curve
             if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
             else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
+
+            // Add points
             self.curve_node?.removeAllChildren()
+            let point_radius = self.line_width * 3
             for point in points {
-                let point_node = SKShapeNode(circleOfRadius: self.line_width * 3)
+                let point_node = SKShapeNode(circleOfRadius: point_radius)
                 point_node.fillColor = .black
                 point_node.strokeColor = .red
                 point_node.lineWidth = self.line_width
@@ -335,43 +353,39 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 point_node.position = CGPoint(x: point.x, y: point.y)
             }
 
-            var highest_point : CGPoint? = nil
-            for point in points {
-                if self.isCurvePointOnScreen(point: point) {
-                    if highest_point == nil { highest_point = point }
-                    else if highest_point!.y <= point.y { highest_point! = point }
-                }
-            }
+            if highest_tse != nil {
+                print("SET HIGHEST:", highest_tse!.date, "val:", highest_tse!.value)
+                let highest_point = self.toPoint(tse: highest_tse!)
 
-            if highest_point != nil {
+                // Create blinking triangle
                 let sqrt_3_div_2 : CGFloat = 0.87
+                let triangle_width = 2 * self.line_width * 5
+                let triangle_height = triangle_width * sqrt_3_div_2
                 var points = [CGPoint(x: 0, y: 0),
-                              CGPoint(x: -self.line_width * 5, y: 2 * self.line_width * 5 * sqrt_3_div_2),
-                              CGPoint(x: self.line_width * 5, y: 2 * self.line_width * 5 * sqrt_3_div_2),
+                              CGPoint(x: -triangle_width / 2, y: triangle_height),
+                              CGPoint(x: triangle_width / 2, y: triangle_height),
                               CGPoint(x: 0, y: 0)]
                 let triangle_node = SKShapeNode(points: &points, count: points.count)
-                triangle_node.lineWidth = self.line_width
+                triangle_node.lineWidth = self.line_width * 1.5
                 triangle_node.strokeColor = .yellow
                 self.curve_node?.addChild(triangle_node)
-                triangle_node.position = CGPoint(x: highest_point!.x, y: highest_point!.y + self.line_width * 6)
+                let triangle_relative_height = point_radius * 2
+                triangle_node.position = CGPoint(x: highest_point.x, y: highest_point.y + triangle_relative_height)
                 triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
 
-                let font = UIFont(name: self.font_name, size: 2) ?? UIFont.preferredFont(forTextStyle: .body)
+                // Add corresponding value under triangle
                 let max_label = SKLabelNode(fontNamed: self.font_name)
-                max_label.text = "max value"
-                max_label.fontSize = 2 * self.line_width * 5 * sqrt_3_div_2 * font.pointSize
+                max_label.text = String(Int(highest_tse!.value))
+                max_label.fontSize = triangle_height
                 max_label.fontColor = .yellow
-                max_label.horizontalAlignmentMode = .right
+                max_label.horizontalAlignmentMode = .center
+                max_label.verticalAlignmentMode = .top
                 triangle_node.addChild(max_label)
-                max_label.position = CGPoint(x: 0, y: 0)
-
-
-                // si j'ajoute plein de points très vite : crash
-
+                max_label.position = CGPoint(x: 0, y: -triangle_relative_height * 2)
             }
         }
 
-        var (points, target_h) = computePoints()
+        var (points, target_h, tse) = computePoints()
 
         if highest != target_h {
             var start_height = highest
@@ -381,8 +395,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 (node, t) in
                 self.createChartComponents(date: Date(), max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
                 let check_h : Float
-                (points, check_h) = computePoints()
-                drawPoints(&points)
+                (points, check_h, tse) = computePoints()
+                drawPoints(&points, tse)
                 if check_h != target_h {
                     self.removeAllActions()
                     start_height = self.highest
@@ -391,7 +405,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 }
             }
             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
-        } else { drawPoints(&points) }
+        } else { drawPoints(&points, tse) }
     }
 
     // Create or update chart components
