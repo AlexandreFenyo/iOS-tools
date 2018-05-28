@@ -390,6 +390,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             let triangle_height = triangle_width * sqrt_3_div_2
             let point_radius = self.line_width * 3
             let triangle_relative_height = point_radius * 2
+            let f = DateFormatter()
+            f.dateFormat = "HH:mm:ss"
+            f.locale = Locale(identifier: "en_US")
 
             // Draw curve
             if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
@@ -407,19 +410,23 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 
                 if self.highlight_element != nil && point == self.toPoint(tse: self.highlight_element!) {
                     let point_label = SKLabelNode(fontNamed: self.font_name)
-                    point_label.text = String("salut")
-
                     point_label.text = String(Int(self.highlight_element!.value))
                     if point_label.text!.count > self.grid_vertical_factor! { point_label.text! = point_label.text!.sub(0, point_label.text!.count - self.grid_vertical_factor!) }
-
-
-
                     point_label.fontSize = triangle_height
                     point_label.fontColor = .yellow
                     point_label.horizontalAlignmentMode = .center
                     point_label.verticalAlignmentMode = .top
                     point_node.addChild(point_label)
                     point_label.position = CGPoint(x: 0, y: -triangle_relative_height)
+
+                    let point_label_date = SKLabelNode(fontNamed: self.font_name)
+                    point_label_date.text = f.string(from: self.highlight_element!.date)
+                    point_label_date.fontSize = triangle_height
+                    point_label_date.fontColor = .yellow
+                    point_label_date.horizontalAlignmentMode = .center
+                    point_label_date.verticalAlignmentMode = .top
+                    point_node.addChild(point_label_date)
+                    point_label_date.position = CGPoint(x: 0, y: -triangle_relative_height - triangle_height)
                 }
             }
 
