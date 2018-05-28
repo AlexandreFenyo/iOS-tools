@@ -788,7 +788,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     func handleTap(_ gesture: UITapGestureRecognizer) {
         if gesture.state == .ended {
             let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
-            let tapped_point = grid_node!.convert(CGPoint(x: _point.x - position.x, y: _point.y - position.y), from: self)
+            let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
+            let tapped_point = grid_node!.convert(_point_relative_to_root_node, from: self)
 
             var tapped_element : TimeSeriesElement?
             var best_dist : Double?
@@ -813,9 +814,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             } else if mode == .followDate { createChartComponents(date: Date(), max_val: highest) }
             drawCurve(ts: ts)
 
-            let foo = SKShapeNode(circleOfRadius: 5.0)
-            grid_node!.addChild(foo)
-            foo.position = tapped_point
+            let finger = SKShapeNode(circleOfRadius: 5.0)
+            finger.fillColor = .yellow
+            root_node!.addChild(finger)
+            finger.position = _point_relative_to_root_node
+            finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
+
         }
     }
 
