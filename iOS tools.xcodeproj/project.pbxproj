@@ -26,7 +26,8 @@
 		5D661DAC20B77AF400007B46 /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 		5D661DAD20B77AFD00007B46 /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
-		5DF237F520A089B700CF9365 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* Main.storyboard */; };
+		5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* 2D3D.storyboard */; };
+		5DF599A120BC655C0042EE26 /* WiFi.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF599A020BC655C0042EE26 /* WiFi.storyboard */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,7 +66,8 @@
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
 		5D4B385920A2EEAF006AC172 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
-		5DF237F420A089B700CF9365 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		5DF237F420A089B700CF9365 /* 2D3D.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = 2D3D.storyboard; sourceTree = "<group>"; };
+		5DF599A020BC655C0042EE26 /* WiFi.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = WiFi.storyboard; sourceTree = "<group>"; };
 		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,7 +125,8 @@
 				5D1351F2208538DB00E4A76D /* GameViewController.swift */,
 				5D1351F4208538DB00E4A76D /* Main1.storyboard */,
 				5D1351FC208538E300E4A76D /* Info.plist */,
-				5DF237F420A089B700CF9365 /* Main.storyboard */,
+				5DF237F420A089B700CF9365 /* 2D3D.storyboard */,
+				5DF599A020BC655C0042EE26 /* WiFi.storyboard */,
 			);
 			path = "iOS tools";
 			sourceTree = "<group>";
@@ -265,7 +268,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D1351F1208538DB00E4A76D /* art.scnassets in Resources */,
-				5DF237F520A089B700CF9365 /* Main.storyboard in Resources */,
+				5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */,
+				5DF599A120BC655C0042EE26 /* WiFi.storyboard in Resources */,
 				5D1351F6208538DB00E4A76D /* Main1.storyboard in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */,

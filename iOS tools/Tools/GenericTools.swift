@@ -11,6 +11,10 @@
 // read plist: defaults read /Users/fenyo/Library/Developer/Xcode/DerivedData/iOS_tools-epwocfsynihtagcdtrgfzhdwlvrf/Build/Products/Debug-iphoneos/iOS\ tools.app/Info.plist
 
 // UI: https://developer.apple.com/ios/human-interface-guidelines/overview/themes/
+//     https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/index.html#//apple_ref/doc/uid/TP40015214-CH2-SW1
+//     https://www.raywenderlich.com/160521/storyboards-tutorial-ios-11-part-1
+//     google ios storyboard UI
+//     bouquin Kindle
 
 import Foundation
 import UIKit

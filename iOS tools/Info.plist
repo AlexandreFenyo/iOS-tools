@@ -27,7 +27,7 @@
 	<key>UILaunchStoryboardName</key>
 	<string>Splash</string>
 	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<string>WiFi</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
