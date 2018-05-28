@@ -6,6 +6,44 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+// 3D nodes hierarchy
+// chart: SCNChartNode (SCNNode)
+//   .geometry: SCNPlane
+//   .contents: chart_scene
+// chart_scene: SKScene
+//   chart_node == root_node: SKChartNode (SKSpriteNode)
+//     grid_node: SKShapeNode
+//       subgrid_node: SKShapeNode
+//       bottom_mask: SKSpriteNode
+//         [bottom_label_node]: SKExtLabelNode (SKLabelNode)
+//         [hyphen_node]: SKSpriteNode
+//       curve_node: SKShapeNode
+//         curve_marker: SKNode
+//         [point_node]: SKShapeNode
+//         triangle_node: SKShapeNode
+//           max_label: SKLabelNode
+//     left_mask_node: SKSpriteNode
+//       [left_label_node]: SKLabelNode
+//       [hyphen_node]: SKSpriteNode
+
+// 2D nodes hierarchy
+// chart: SKChartNode (SKSpriteNode)
+//   crop_node == root_node: SKCropNode
+//     .mask: mask_node: SKSpriteNode
+//     grid_node: SKShapeNode
+//       subgrid_node: SKShapeNode
+//       bottom_mask: SKSpriteNode
+//         [bottom_label_node]: SKExtLabelNode (SKLabelNode)
+//         [hyphen_node]: SKSpriteNode
+//       curve_node: SKShapeNode
+//         curve_marker: SKNode
+//         [point_node]: SKShapeNode
+//         triangle_node: SKShapeNode
+//           max_label: SKLabelNode
+//     left_mask_node: SKSpriteNode
+//       [left_label_node]: SKLabelNode
+//       [hyphen_node]: SKSpriteNode
+
 import Foundation
 import UIKit
 import QuartzCore
@@ -31,6 +69,11 @@ enum PositionRelativeToScreen {
     case onLeft
     case onScreen
     case onRight
+}
+
+enum ChartPositionMode {
+    case manual
+    case followDate
 }
 
 // A Label Node with additional attributes
@@ -65,7 +108,7 @@ class SKExtLabelNode : SKLabelNode {
 class SCNChartNode : SCNNode {
     public var chart_node: SKChartNode?
     
-    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, debug: Bool = true) {
+    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true) {
         super.init()
 
         // Create a 2D scene
@@ -79,13 +122,17 @@ class SCNChartNode : SCNNode {
 
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
-        chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, max_horizontal_font_size: max_horizontal_font_size, max_vertical_font_size: max_vertical_font_size, horizontal_font_size_ratio: horizontal_font_size_ratio, vertical_font_size_ratio: vertical_font_size_ratio, font_color: font_color, spline: spline, vertical_auto_layout: vertical_auto_layout, debug: debug)
+        chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, max_horizontal_font_size: max_horizontal_font_size, max_vertical_font_size: max_vertical_font_size, horizontal_font_size_ratio: horizontal_font_size_ratio, vertical_font_size_ratio: vertical_font_size_ratio, font_color: font_color, spline: spline, vertical_auto_layout: vertical_auto_layout, mode: mode, debug: debug)
         chart_node!.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node!)
 
         self.scale = SCNVector3(x: 1, y: -1, z: 1)
     }
     
+    public func registerGestureRecognizers(view: UIView) {
+            chart_node!.registerGestureRecognizers(view: view)
+    }
+
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -97,9 +144,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private let vertical_auto_layout: Bool
     
     private var highest : Float = 0
-//    var highest : CGSize {
-//        didSet { createChartComponents(date: Date(), max_val: Float(size.height)) }
-//    }
 
     private var root_node : SKNode?
     
@@ -109,6 +153,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var left_width: CGFloat
     private var bottom_height: CGFloat
     private var grid_time_interval: TimeInterval
+    private var grid_vertical_cost: Float?
+    private var grid_vertical_factor: Int?
     private var ts: TimeSeries
     private var vertical_unit: String
     private var line_width: CGFloat
@@ -121,13 +167,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var vertical_font_size_ratio: CGFloat
     private var font_color: SKColor
     private var crop: Bool
-    
+    private var mode: ChartPositionMode
+    private var current_date: Date
+
     // Properties computed from state variables
     private var graph_width : CGFloat?
     private var graph_height : CGFloat?
     private var grid_full_width: CGFloat?
     private var grid_full_height: CGFloat?
-    private var grid_vertical_cost: Float?
     // Right-most displayed grid column width
     private var horizontal_remainder: CGFloat?
 
@@ -140,22 +187,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var left_mask_node : SKSpriteNode?
 
     public func testDebug() {
-        print()
-        print("SKChartNode.testDebug(): draw yellow square at y=50")
-        let tse = TimeSeriesElement(date: GenericTools.test_date, value: 50)
-        print("date:", GenericTools.dateToString(GenericTools.test_date))
-        let pt = toPoint(tse: tse)
-        print("pt.x:", pt.x)
-
-        print("graph_width:", graph_width!)
-        print("graph_full_width:", grid_full_width!)
-        print("grid node relative pos:", left_width - grid_node!.position.x)
-        
-        let square_node = SKSpriteNode(color: UIColor.black, size: CGSize(width: 3, height: 3))
-        square_node.color = .yellow
-        grid_node!.addChild(square_node)
-        square_node.position = CGPoint(x: pt.x, y: pt.y)
-        print()
     }
     
     // Update properties derivated from state
@@ -213,7 +244,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, debug: Bool = true) {
+    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true) {
         self.debug = debug
         self.spline = spline
         self.vertical_auto_layout = vertical_auto_layout
@@ -237,6 +268,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         self.horizontal_font_size_ratio = horizontal_font_size_ratio
         self.vertical_font_size_ratio = vertical_font_size_ratio
         self.font_color = font_color
+        self.mode = mode
+        self.current_date = date
 
         // Create self
         super.init(texture: nil, color: debug ? .cyan : background, size: full_size)
@@ -254,11 +287,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             root_node = crop_node
             self.addChild(root_node!)
         } else { root_node = self }
-
+        
         // Create chart components
         var max_val : Float = 0
         for elt in ts.getElements() { max_val = max(max_val, elt.value) }
-        createChartComponents(date: Date(), max_val: max_val)
+        createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: max_val)
         drawCurve(ts: ts)
     }
 
@@ -354,7 +387,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
 
             if highest_tse != nil {
-                print("SET HIGHEST:", highest_tse!.date, "val:", highest_tse!.value)
                 let highest_point = self.toPoint(tse: highest_tse!)
 
                 // Create blinking triangle
@@ -376,6 +408,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 // Add corresponding value under triangle
                 let max_label = SKLabelNode(fontNamed: self.font_name)
                 max_label.text = String(Int(highest_tse!.value))
+                if max_label.text!.count > self.grid_vertical_factor! { max_label.text! = max_label.text!.sub(0, max_label.text!.count - self.grid_vertical_factor!) }
+
                 max_label.fontSize = triangle_height
                 max_label.fontColor = .yellow
                 max_label.horizontalAlignmentMode = .center
@@ -393,7 +427,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var runnable: ((SKNode, CGFloat) -> ())?
             runnable = {
                 (node, t) in
-                self.createChartComponents(date: Date(), max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
+                self.createChartComponents(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
                 let check_h : Float
                 (points, check_h, tse) = computePoints()
                 drawPoints(&points, tse)
@@ -435,7 +469,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             subgrid_size?.height = grid_size.height / 5.0
             vertical_unit = _unit
             grid_vertical_cost = _cost
-            
+            grid_vertical_factor = _factor
+
             updateStateVariables()
         }
         
@@ -504,6 +539,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: full_size.height))
         left_mask_node!.anchorPoint = CGPoint(x: 0, y: 0)
         if debug { left_mask_node!.alpha = 0.5 }
+        // left_mask_node must be higher than bottom_mask
+        left_mask_node!.zPosition = 2
 
         // Instanciate font to get informations about it
         // font.pointSize is set to size parameter - it can be set to any value since we compute the size using font.pointSize
@@ -514,16 +551,18 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         while y <= graph_height! {
             // Add quantity
             let left_label_node = SKLabelNode(fontNamed: font_name)
-            left_label_node.text = String(Int(grid_vertical_cost! * Float(y / grid_size.height))) + " " + vertical_unit
+            left_label_node.text = String(Int(grid_vertical_cost! * Float(y / grid_size.height)))
+            if left_label_node.text!.count > grid_vertical_factor! { left_label_node.text = left_label_node.text!.sub(0, left_label_node.text!.count - grid_vertical_factor!) }
+            left_label_node.text! += " " + vertical_unit
             left_label_node.fontSize = vertical_font_size_ratio * grid_size.height / font.capHeight * font.pointSize
+            // Help select correct font size
             if debug { print("vertical fontsize:", left_label_node.fontSize)}
             if !debug && max_vertical_font_size != nil && left_label_node.fontSize > max_vertical_font_size! { left_label_node.fontSize = max_vertical_font_size! }
 
             left_label_node.fontColor = font_color
             left_label_node.horizontalAlignmentMode = .right
             left_mask_node!.addChild(left_label_node)
-            left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2,
-                                               y: y + bottom_height - 0.7 * left_label_node.fontSize / 2)
+            left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2, y: y + bottom_height - 0.7 * left_label_node.fontSize / 2)
 
             // Add hyphen
             let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node!.lineWidth))
@@ -535,10 +574,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
 
         // Add bottom mask
-        bottom_mask_node = SKSpriteNode(color: debug ? .blue : .clear, size: CGSize(width: grid_full_width!, height: bottom_height))
+        bottom_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: grid_full_width!, height: bottom_height))
         bottom_mask_node!.anchorPoint = CGPoint(x: 0, y: 1)
         if debug { bottom_mask_node!.alpha = 1 }
-
+        // bottom_mask must be higher than (in front of) the curve
+        bottom_mask_node!.zPosition = 1
+        
         // Create x-axis date values
         let _formatter = DateFormatter()
         _formatter.dateFormat = "HHmmss"
@@ -576,6 +617,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
             bottom_label_node.zRotation = -CGFloat.pi / 4
             bottom_label_node.fontSize = horizontal_font_size_ratio * grid_size.width / font.capHeight * font.pointSize
+            // Help select correct font size
             if debug { print("horizontal fontsize:", bottom_label_node.fontSize)}
             if !debug && max_horizontal_font_size != nil && bottom_label_node.fontSize > max_horizontal_font_size! { bottom_label_node.fontSize = max_horizontal_font_size! }
             bottom_label_node.fontColor = font_color
@@ -607,24 +649,26 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         curve_node!.strokeColor = .black
 
         // Animate
-        func getOperations(after: TimeInterval) -> () -> () {
-            return {
-                self.grid_node!.position.x += self.grid_size.width
-                self.curve_node!.position.x -= self.grid_size.width
-                self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
-                self.drawCurve(ts: self.ts)
+        if (mode == .followDate) {
+            func getOperations(after: TimeInterval) -> () -> () {
+                return {
+                    self.grid_node!.position.x += self.grid_size.width
+                    self.curve_node!.position.x -= self.grid_size.width
+                    self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
+                    self.drawCurve(ts: self.ts)
+                }
             }
-        }
-
-        let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
-        if !ChartDefaults.debug_do_not_move {
-            grid_node!.run(first_move_left_action) {
-                getOperations(after: first_move_left_action.duration)()
-                let move_left_action = SKAction.moveBy(x: -self.grid_size.width, y: 0, duration: self.grid_time_interval)
-                let move_right_action = SKAction.run(getOperations(after: move_left_action.duration))
-                let sequence_action = SKAction.sequence([move_left_action, move_right_action])
-                let loop_action = SKAction.repeatForever(sequence_action)
-                self.grid_node!.run(loop_action)
+            // Launch animation
+            let first_move_left_action = SKAction.moveBy(x: -(grid_size.width - (left_width - grid_node!.position.x)), y: 0, duration: grid_time_interval * TimeInterval(((grid_size.width - (left_width - grid_node!.position.x)) / grid_size.width)))
+            if !ChartDefaults.debug_do_not_move {
+                grid_node!.run(first_move_left_action) {
+                    getOperations(after: first_move_left_action.duration)()
+                    let move_left_action = SKAction.moveBy(x: -self.grid_size.width, y: 0, duration: self.grid_time_interval)
+                    let move_right_action = SKAction.run(getOperations(after: move_left_action.duration))
+                    let sequence_action = SKAction.sequence([move_left_action, move_right_action])
+                    let loop_action = SKAction.repeatForever(sequence_action)
+                    self.grid_node!.run(loop_action)
+                }
             }
         }
 
@@ -666,15 +710,47 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             break
         }
         let (unit, factor) : (String, Int) = {
-            if first_label.count < 4 { return ("bit/s", 1) }
-            if first_label.count < 7 { return ("Kbit/s", 1000) }
-            if first_label.count < 10 { return ("Mbit/s", 1000000) }
-            return ("Gbit/s", 1000000000)
+            if first_label.count < 4 { return ("bit/s", 0) }
+            if first_label.count < 7 { return ("Kbit/s", 3) }
+            if first_label.count < 10 { return ("Mbit/s", 6) }
+            return ("Gbit/s", 9)
         }()
         let grid_vertical_cost = Float(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
+
+    public func registerGestureRecognizers(view: UIView) {
+        // This creates a strong ref to the target
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
+        // This creates a strong ref to the target
+        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
+    }
     
+    @objc
+    func handleTap(_ gesture_recognize: UITapGestureRecognizer) {
+        print("HANDLE TAP")
+    }
+
+    @objc
+    func handlePan(_ gesture: UIPanGestureRecognizer) {
+        print("HANDLE PAN")
+        
+        if gesture.state == .began {
+            mode = .manual
+            let point = gesture.translation(in: gesture.view!)
+            print("began", point.x, point.y)
+        }
+
+        if gesture.state == .changed {
+            print("changed")
+            let point = gesture.translation(in: gesture.view!)
+            print("changed", point.x, point.y)
+        }
+        
+//        createChartComponents(date: Date(), max_val: highest)
+//        drawCurve(ts: ts)
+    }
+
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
