@@ -820,7 +820,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             finger.position = _point_relative_to_root_node
             finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
 
-        }
+        }			
     }
 
     @objc

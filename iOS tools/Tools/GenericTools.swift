@@ -10,6 +10,8 @@
 
 // read plist: defaults read /Users/fenyo/Library/Developer/Xcode/DerivedData/iOS_tools-epwocfsynihtagcdtrgfzhdwlvrf/Build/Products/Debug-iphoneos/iOS\ tools.app/Info.plist
 
+// UI: https://developer.apple.com/ios/human-interface-guidelines/overview/themes/
+
 import Foundation
 import UIKit
 import QuartzCore
