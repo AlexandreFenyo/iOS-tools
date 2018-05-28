@@ -825,8 +825,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     @objc
     func handlePan(_ gesture: UIPanGestureRecognizer) {
-        print("HANDLE PAN")
-        
         if gesture.state == .began {
             if mode == .followDate { current_date = Date() }
             date_at_start_of_gesture = current_date
@@ -838,9 +836,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
 
         if gesture.state == .changed {
-            print("changed")
             let point = gesture.translation(in: gesture.view!)
-            print("changed", point.x, point.y)
             current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
             createChartComponents(date: current_date, max_val: highest)
             drawCurve(ts: ts)
