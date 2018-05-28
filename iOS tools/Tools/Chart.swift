@@ -74,6 +74,7 @@ enum PositionRelativeToScreen {
 enum ChartPositionMode {
     case manual
     case followDate
+    case followGesture
 }
 
 // A Label Node with additional attributes
@@ -177,7 +178,15 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var grid_full_height: CGFloat?
     // Right-most displayed grid column width
     private var horizontal_remainder: CGFloat?
+    // Replay button location is relative to root node
+    private var replay_width : CGFloat?
+    private var replay_height : CGFloat?
+    private var replay_horizontal_pos : CGFloat?
+    private var replay_vertical_pos : CGFloat?
 
+    private var date_at_start_of_gesture: Date?
+    private var highlight_element: TimeSeriesElement? = nil
+    
     // Graphic components
     private var grid_node : SKShapeNode?
     private var curve_node : SKShapeNode?
@@ -199,6 +208,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_full_height = graph_height!.truncatingRemainder(dividingBy: grid_size.height) == 0 ? graph_height! : grid_size.height * (graph_height! / grid_size.height).rounded(.up)
         // Right-most displayed grid column width
         horizontal_remainder = graph_width!.truncatingRemainder(dividingBy: grid_size.width)
+        replay_width = graph_width! / 10
+        replay_height = 0.9 * graph_height!
+        replay_horizontal_pos = full_size.width - 3 * replay_width! / 2
+        replay_vertical_pos = bottom_height + (graph_height! - replay_height!) / 2
     }
 
     // Projection of a time series element into the curve coordinates system
@@ -207,6 +220,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
 
     // Check that a point is not hidden
+    // A corriger et regarder impacts
     private func isCurvePointOnScreen(point: CGPoint) -> Bool {
         let p = grid_node!.convert(point, from: curve_node!)
         return p.x >= 0 && p.x <= grid_full_width!
@@ -370,13 +384,19 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = {
             (points, highest_tse) in
+
+            let sqrt_3_div_2 : CGFloat = 0.87
+            let triangle_width = 2 * self.line_width * 5
+            let triangle_height = triangle_width * sqrt_3_div_2
+            let point_radius = self.line_width * 3
+            let triangle_relative_height = point_radius * 2
+
             // Draw curve
             if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
             else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
 
             // Add points
             self.curve_node?.removeAllChildren()
-            let point_radius = self.line_width * 3
             for point in points {
                 let point_node = SKShapeNode(circleOfRadius: point_radius)
                 point_node.fillColor = .black
@@ -384,15 +404,29 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 point_node.lineWidth = self.line_width
                 self.curve_node?.addChild(point_node)
                 point_node.position = CGPoint(x: point.x, y: point.y)
+                
+                if self.highlight_element != nil && point == self.toPoint(tse: self.highlight_element!) {
+                    let point_label = SKLabelNode(fontNamed: self.font_name)
+                    point_label.text = String("salut")
+
+                    point_label.text = String(Int(self.highlight_element!.value))
+                    if point_label.text!.count > self.grid_vertical_factor! { point_label.text! = point_label.text!.sub(0, point_label.text!.count - self.grid_vertical_factor!) }
+
+
+
+                    point_label.fontSize = triangle_height
+                    point_label.fontColor = .yellow
+                    point_label.horizontalAlignmentMode = .center
+                    point_label.verticalAlignmentMode = .top
+                    point_node.addChild(point_label)
+                    point_label.position = CGPoint(x: 0, y: -triangle_relative_height)
+                }
             }
 
             if highest_tse != nil {
                 let highest_point = self.toPoint(tse: highest_tse!)
 
                 // Create blinking triangle
-                let sqrt_3_div_2 : CGFloat = 0.87
-                let triangle_width = 2 * self.line_width * 5
-                let triangle_height = triangle_width * sqrt_3_div_2
                 var points = [CGPoint(x: 0, y: 0),
                               CGPoint(x: -triangle_width / 2, y: triangle_height),
                               CGPoint(x: triangle_width / 2, y: triangle_height),
@@ -401,7 +435,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 triangle_node.lineWidth = self.line_width * 1.5
                 triangle_node.strokeColor = .yellow
                 self.curve_node?.addChild(triangle_node)
-                let triangle_relative_height = point_radius * 2
                 triangle_node.position = CGPoint(x: highest_point.x, y: highest_point.y + triangle_relative_height)
                 triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
 
@@ -421,6 +454,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         var (points, target_h, tse) = computePoints()
 
+        // Vertical animation
         if highest != target_h {
             var start_height = highest
             
@@ -648,6 +682,23 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         curve_node!.lineWidth = line_width
         curve_node!.strokeColor = .black
 
+        // Create blinking right replay button
+        if mode == .manual {
+            var points = [CGPoint(x: replay_horizontal_pos!, y: replay_vertical_pos!),
+                          CGPoint(x: replay_horizontal_pos! + replay_width!, y: replay_vertical_pos! + replay_height! / 2),
+                          CGPoint(x: replay_horizontal_pos!, y: replay_vertical_pos! + replay_height!),
+                          CGPoint(x: replay_horizontal_pos!, y: replay_vertical_pos!)]
+            let replay_node = SKShapeNode(points: &points, count: points.count)
+            replay_node.lineWidth = self.line_width
+            replay_node.strokeColor = .red
+            replay_node.fillColor = .red
+            let alpha_node = SKNode()
+            alpha_node.alpha = 0.5
+            alpha_node.addChild(replay_node)
+            root_node!.addChild(alpha_node)
+        replay_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.5), SKAction.fadeOut(withDuration: 0.5)])))
+        }
+
         // Animate
         if (mode == .followDate) {
             func getOperations(after: TimeInterval) -> () -> () {
@@ -727,8 +778,38 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     @objc
-    func handleTap(_ gesture_recognize: UITapGestureRecognizer) {
-        print("HANDLE TAP")
+    func handleTap(_ gesture: UITapGestureRecognizer) {
+        if gesture.state == .ended {
+            let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
+            let tapped_point = grid_node!.convert(CGPoint(x: _point.x - position.x, y: _point.y - position.y), from: self)
+
+            var tapped_element : TimeSeriesElement?
+            var best_dist : Double?
+            for elt in ts.getElements() {
+                let point = toPoint(tse: elt)
+                if isCurvePointOnScreen(point: point) {
+                    let dist = pow(Double(tapped_point.x - point.x), 2) + pow(Double(tapped_point.y - point.y), 2)
+                    if best_dist == nil || best_dist! >= dist {
+                        tapped_element = elt
+                        best_dist = dist
+                    }
+                }
+                highlight_element = tapped_element
+            }
+
+            if mode == .manual {
+                // tapped_point.x is relative to grid node, replay_horizontal_pos is relative to root node
+                if tapped_point.x >= replay_horizontal_pos! - grid_node!.position.x {
+                    mode = .followDate
+                    createChartComponents(date: Date(), max_val: highest)
+                } else { createChartComponents(date: current_date, max_val: highest) }
+            } else if mode == .followDate { createChartComponents(date: Date(), max_val: highest) }
+            drawCurve(ts: ts)
+
+            let foo = SKShapeNode(circleOfRadius: 5.0)
+            grid_node!.addChild(foo)
+            foo.position = tapped_point
+        }
     }
 
     @objc
@@ -736,19 +817,29 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         print("HANDLE PAN")
         
         if gesture.state == .began {
-            mode = .manual
+            if mode == .followDate { current_date = Date() }
+            date_at_start_of_gesture = current_date
+            mode = .followGesture
             let point = gesture.translation(in: gesture.view!)
             print("began", point.x, point.y)
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
         }
 
         if gesture.state == .changed {
             print("changed")
             let point = gesture.translation(in: gesture.view!)
             print("changed", point.x, point.y)
+            current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
         }
-        
-//        createChartComponents(date: Date(), max_val: highest)
-//        drawCurve(ts: ts)
+
+        if gesture.state != .began && gesture.state != .changed {
+            mode = .manual
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
+        }
     }
 
     public required init(coder aDecoder: NSCoder) {
