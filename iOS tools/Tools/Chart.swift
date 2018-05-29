@@ -322,6 +322,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         // Update state
         highest = max_val
 
+SCNTransaction.begin()
+
         // Remove curve
         curve_node?.removeAllChildren()
         
@@ -336,7 +338,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         
         // Remove grid_node, left_mask_node and associated hyphens
         root_node?.removeAllChildren()
-        
+
+SCNTransaction.commit()
+
+
         if vertical_auto_layout {
             let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5)
             
@@ -436,6 +441,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if (mode == .followDate) {
             func getOperations(after: TimeInterval) -> () -> () {
                 return {
+                    print("deroulement fond: \(Thread.current) / \(OperationQueue.current?.underlyingQueue?.label ?? "None")")
+
                     self.grid_node!.position.x += self.grid_size.width
                     self.curve_node!.position.x -= self.grid_size.width
 //                    self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
@@ -493,11 +500,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     public func registerGestureRecognizers(view: UIView) {
 //        // This creates a strong ref to the target
+        print("REGISTER GESTURE REC: \(Thread.current) / \(OperationQueue.current?.underlyingQueue?.label ?? "None")")
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
     }
 
     @objc
     func handlePan(_ gesture: UIPanGestureRecognizer) {
+        print("HANDLE PAN: \(Thread.current) / \(OperationQueue.current?.underlyingQueue?.label ?? "None")")
         if gesture.state == .began {
             current_date = Date()
             date_at_start_of_gesture = current_date
