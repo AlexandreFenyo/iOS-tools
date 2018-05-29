@@ -132,7 +132,8 @@ final class GenericTools : AutoTrace {
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
             GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-20.0)), value: 50.0))
-//            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
+            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
+            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-55.0)), value: 12.0))
         }
         if !alternate() { createSpriteScene(view as! SKView) }
         else { create3DChartScene(view as! SCNView) }
@@ -208,10 +209,10 @@ final class GenericTools : AutoTrace {
         scene.backgroundColor = .white
         view.presentScene(scene)
 
-//        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: false, vertical_auto_layout: true, debug: false)
-//        scene.addChild(chart_node!)
-//        chart_node!.position = CGPoint(x: 50, y: 100)
-//        chart_node!.registerGestureRecognizers(view: view)
+        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false)
+        scene.addChild(chart_node!)
+        chart_node!.position = CGPoint(x: 50, y: 100)
+        chart_node!.registerGestureRecognizers(view: view)
 
         // Display debug informations
         view.showsFPS = true
@@ -235,7 +236,7 @@ final class GenericTools : AutoTrace {
         view.scene = scene
         
         // allows the user to manipulate the camera
-//        view.allowsCameraControl = true
+        view.allowsCameraControl = true
         
         // show statistics such as fps and timing information
         view.showsStatistics = true
@@ -247,12 +248,11 @@ final class GenericTools : AutoTrace {
         let manage_tap = ManageTapCube(view)
         // create a strong ref to the target
         tap_cube_manager.append(manage_tap)
-        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
+//        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
 //        view.addGestureRecognizer(tapGesture)
 
         plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
-        plane_node!.registerGestureRecognizers(view: view)
     }
     
     // Insert the demo ship scene into a view
@@ -365,6 +365,7 @@ private class ManageTapCube {
     // Callback used by createDemoShipScene()
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        return
  
         GenericTools.here("Tap")
 

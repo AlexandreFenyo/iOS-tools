@@ -400,6 +400,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
             // Add points
             self.curve_node?.removeAllChildren()
+
             for point in points {
                 let point_node = SKShapeNode(circleOfRadius: point_radius)
                 point_node.fillColor = .black
@@ -502,7 +503,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         
         // Remove grid_node, left_mask_node and associated hyphens
         root_node?.removeAllChildren()
-        
+
         if vertical_auto_layout {
             let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5)
             
@@ -789,6 +790,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if gesture.state == .ended {
             let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
             let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
+
             let tapped_point = grid_node!.convert(_point_relative_to_root_node, from: self)
 
             var tapped_element : TimeSeriesElement?
@@ -804,12 +806,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 }
                 highlight_element = tapped_element
             }
-
             if mode == .manual {
                 // tapped_point.x is relative to grid node, replay_horizontal_pos is relative to root node
                 if tapped_point.x >= replay_horizontal_pos! - grid_node!.position.x {
                     mode = .followDate
+
                     createChartComponents(date: Date(), max_val: highest)
+
                 } else { createChartComponents(date: current_date, max_val: highest) }
             } else if mode == .followDate { createChartComponents(date: Date(), max_val: highest) }
             drawCurve(ts: ts)
@@ -818,6 +821,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             finger.fillColor = .yellow
             root_node!.addChild(finger)
             finger.position = _point_relative_to_root_node
+            print(_point_relative_to_root_node.x, _point_relative_to_root_node.y)
             finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
 
         }			
@@ -829,8 +833,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             if mode == .followDate { current_date = Date() }
             date_at_start_of_gesture = current_date
             mode = .followGesture
-            let point = gesture.translation(in: gesture.view!)
-            print("began", point.x, point.y)
             createChartComponents(date: current_date, max_val: highest)
             drawCurve(ts: ts)
         }
