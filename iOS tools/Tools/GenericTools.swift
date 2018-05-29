@@ -37,33 +37,16 @@ extension String {
     }
 }
 
-final class GenericTools : AutoTrace {
+final class GenericTools {
     public static var plane_node : SCNChartNode?
     public static var chart_node : SKChartNode?
-    
 
-    // holding strong refs to tap targets
-    private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
-
-    // holding strong refs to tap cube targets
-    private static var tap_cube_manager: [ManageTapCube] = []
-    
     private static var alternate_value = true
 
     public static let ts = TimeSeries()
     
-    public static let test_date : Date = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-mm-yyyy HH:mm:ss"
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT+0:00")
-        let date = dateFormatter.date(from: "01-01-2017 18:00:16")?.addingTimeInterval(TimeInterval(0))
-        return date!
-    }()
-
     // extract configuration parameters
     public static let must_log = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "log") ?? false) as! Bool
-    public static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
-    public static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
 
     public static func dateToString(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -126,96 +109,11 @@ final class GenericTools : AutoTrace {
     }
 
     public static func createScene(_ view: UIView) {
-        if (GenericTools.ts.getElements().count == 0) {
-            let date = Date() // test_date
-            GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-20.0)), value: 50.0))
-//            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
-        }
         if !alternate() { createSpriteScene(view as! SKView) }
         else { create3DChartScene(view as! SCNView) }
     }
 
-    // Insert the demo cube scene into a view
-    public static func createCubeSceneTest(_ view: SCNView) {
-        // create a new scene
-        let scene = SCNScene(named: "art.scnassets/Cube.scn")!
-
-        // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
-
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
-
-        // retrieve the cube node
-        let box_node = scene.rootNode.childNode(withName: "box", recursively: true)!
-        //        box_node.geometry?.firstMaterial?.transparency = 0
-
-        // add a box to draw a line on one of its faces
-        let box2_geom = SCNBox(width: 2.5, height: 0.5, length: 0.5, chamferRadius: 0.0)
-        //        box2_geom.firstMaterial?.transparency = 0
-        let box2_node = SCNNode(geometry: box2_geom)
-        box_node.addChildNode(box2_node)
-
-        // draw a line
-        var vertices = [SCNVector3]()
-        vertices.append(SCNVector3Make(0, 0, 0.5))
-        vertices.append(SCNVector3Make(0, 0, 1))
-        let geo_src = SCNGeometrySource(vertices: vertices)
-        let indices : [Int32] = [0, 1]
-        let geo_elem = SCNGeometryElement(indices: indices, primitiveType: SCNGeometryPrimitiveType.line)
-        let geo = SCNGeometry(sources: [ geo_src ], elements: [ geo_elem ])
-        geo.firstMaterial?.isDoubleSided = true
-        let n = SCNNode(geometry: geo)
-        box_node.addChildNode(n)
-
-        // wireframe
-        // XXX trouver comment faire avec cette syntaxe : view.debugOptions = .renderAsWireframe
-        view.debugOptions.insert(SCNDebugOptions.showWireframe)
-        // does not work, so we set material transparency to 0
-        // view.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-
-        // animate the 3d object
-        box_node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 10)))
-
-        // set the scene to the view
-        view.scene = scene
-
-        // allows the user to manipulate the camera
-        view.allowsCameraControl = true
-
-        // show statistics such as fps and timing information
-        view.showsStatistics = true
-
-        // configure the view
-        view.backgroundColor = .black
-
-//        // add a tap gesture recognizer
-//        let manage_tap = ManageTapCube(view)
-//        // create a strong ref to the target
-//        tap_cube_manager.append(manage_tap)
-//        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
-//        view.addGestureRecognizer(tapGesture)
-    }
-
     public static func createSpriteScene(_ view: SKView) {
-        // Create a scene
-        let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
-        scene.backgroundColor = .white
-        view.presentScene(scene)
-
-//        chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: false, vertical_auto_layout: true, debug: false)
-//        scene.addChild(chart_node!)
-//        chart_node!.position = CGPoint(x: 50, y: 100)
-//        chart_node!.registerGestureRecognizers(view: view)
-
-        // Display debug informations
-        view.showsFPS = true
-        view.showsQuadCount = true
     }
     
     // Insert a 3D scene containing a 2D Chart into a view
@@ -233,192 +131,16 @@ final class GenericTools : AutoTrace {
         
         // set the scene to the view
         view.scene = scene
-        
-        // allows the user to manipulate the camera
-//        view.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
-        view.showsStatistics = true
 
         // configure the view
         view.backgroundColor = .black
      
-        // add a tap gesture recognizer
-        let manage_tap = ManageTapCube(view)
-        // create a strong ref to the target
-        tap_cube_manager.append(manage_tap)
-        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
-//        view.addGestureRecognizer(tapGesture)
-
         plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
         plane_node!.registerGestureRecognizers(view: view)
     }
     
     // Insert the demo ship scene into a view
-    public static func createDemoShipScene(_ view: SCNView) {
-        // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-
-        // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
-        
-        // create and add a light to the scene
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light!.type = .omni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        scene.rootNode.addChildNode(lightNode)
-        
-        // create and add an ambient light to the scene
-        let ambientLightNode = SCNNode()
-        ambientLightNode.light = SCNLight()
-        ambientLightNode.light!.type = .ambient
-        ambientLightNode.light!.color = UIColor.darkGray
-        scene.rootNode.addChildNode(ambientLightNode)
-        
-        // retrieve the ship node
-        let ship = scene.rootNode.childNode(withName: "ship", recursively: true)!
-
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-        
-        // set the scene to the view
-        view.scene = scene
-        
-        // allows the user to manipulate the camera
-        view.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
-        view.showsStatistics = true
-        
-        // configure the view
-        view.backgroundColor = .black
-        
-        // add a tap gesture recognizer
-        let manageTap = ManageTapDemoShip(view)
-        // create a strong ref to the target
-        tap_demo_ship_manager.append(manageTap)
-        let tapGesture = UITapGestureRecognizer(target: manageTap, action: #selector(manageTap.handleTap(_:)))
-        view.addGestureRecognizer(tapGesture)
-    }
+    public static func createDemoShipScene(_ view: SCNView) { }
 }
 
-// manage a tap on a demo ship scene view
-private class ManageTapDemoShip {
-    let scnView: SCNView
-
-    init(_ v: SCNView) {
-        self.scnView = v
-    }
-
-    // Callback used by createDemoShipScene()
-    @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // check what nodes are tapped
-        let p = gestureRecognize.location(in: scnView)
-        let hitResults = scnView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result = hitResults[0]
-
-            // get its material
-            let material = result.node.geometry!.firstMaterial!
-
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-
-            // on completion - unhighlight
-            SCNTransaction.completionBlock = {
-                SCNTransaction.begin()
-                SCNTransaction.animationDuration = 0.5
-
-                material.emission.contents = UIColor.black
-
-                SCNTransaction.commit()
-            }
-
-            material.emission.contents = UIColor.red
-
-            SCNTransaction.commit()
-        }
-    }
-}
-
-// manage a tap on a Cube scene view
-private class ManageTapCube {
-    let scnView: SCNView
-
-    init(_ v: SCNView) {
-        self.scnView = v
-    }
-
-    var step: Int = 0
-
-    // Callback used by createDemoShipScene()
-    @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
- 
-        GenericTools.here("Tap")
-
-        // SCNTransaction.begin()
-
-        step += 1
-
-        //        if (step == 1) {
-//            print("avant remove actions")
-//            GenericTools.chart_node!.grid_node!.removeAllActions()
-//        }
-//        if (step == 2) {
-//            GenericTools.chart_node!.testDebug()
-//        }
-        
-//        if (step == 3) {
-        SCNTransaction.begin()
-        // XXX
-        // si j'ajoute plein de points très vite : crash
-        if( step < 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0 * Float(step))) }
-
-        if (step == 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 1000.0)) }
-        if (step == 3) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 200000.0)) }
-        if (step == 4) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 3000000.0)) }
-        if (step == 5) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 850000000.0)) }
-
-        SCNTransaction.commit()
-
-
-        SCNTransaction.begin()
-//        GenericTools.chart_node!.updateGridVerticalCost(40.0)
-        SCNTransaction.commit()
-
-
-        SCNTransaction.begin()
-//        GenericTools.plane_node!.chart_node!.updateGridVerticalCost(40.0)
-        SCNTransaction.commit()
-
-//        GenericTools.chart_node!.grid_node!.removeAllActions()
-
-//        }
-        // SCNTransaction.commit()
-
-            // highlight it
-//            SCNTransaction.begin()
-//            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
-//            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-//            SCNTransaction.commit()
-    }
-}
-
-protocol AutoTrace {
-}
-
-extension AutoTrace {
-    
-}
