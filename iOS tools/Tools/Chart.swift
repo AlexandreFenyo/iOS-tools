@@ -347,10 +347,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
        if hasActions() { return }
 
-        // Returns points to draw, highest value and the element corresponding to the highest value
-        let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?) = {
+        // Returns points to draw, highest value (if higher than ChartDefaults.minimum_highest) and the element corresponding to the highest value (if higher than ChartDefaults.minimum_highest)
+        let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?, TimeSeriesElement?) = {
             var highest : Float = ChartDefaults.minimum_highest
             var highest_elt : TimeSeriesElement?
+            var highest_elt_displayed : TimeSeriesElement?
             // Points from segments that are partly or totally displayed
             var points: [CGPoint] = [ ]
             let elts = ts.getElements()
@@ -362,6 +363,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                         highest_elt = elts[0]
                         highest = elts[0].value
                     }
+                    if self.isCurvePointOnScreen(tse: elts[0]) { highest_elt_displayed = elts[0] }
                     points.append(point)
                 }
             } else if elts.count > 1 {
@@ -388,16 +390,24 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                             highest = bar
                             highest_elt = elts[i]
                         }
+
+                        // Handle highest displayed element
+                        for _i in [ i - 1, i ] {
+                            if self.isCurvePointOnScreen(point: all_points[_i]) {
+                                if highest_elt_displayed == nil { highest_elt_displayed = elts[_i] }
+                                else if elts[_i].value > highest_elt_displayed!.value { highest_elt_displayed = elts[_i] }
+                            }
+                        }
                     } else {
                         if prev_segment_was_on_grid { points.append(all_points[i - 1]) }
                         prev_segment_was_on_grid = false
                     }
                 }
             }
-            print("count returned:", points.count)
-            return (points, highest, highest_elt)
+            return (points, highest, highest_elt, highest_elt_displayed)
         }
 
+        // Input: points to draw, time series element on which a triangle must be drawn
         let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = {
             (points, highest_tse) in
 
@@ -415,16 +425,17 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
 
             // Add points
-            self.curve_node?.removeAllChildren()
+            self.curve_node!.removeAllChildren()
 
             for point in points {
                 let point_node = SKShapeNode(circleOfRadius: point_radius)
                 point_node.fillColor = .black
                 point_node.strokeColor = .red
                 point_node.lineWidth = self.line_width
-                self.curve_node?.addChild(point_node)
+                self.curve_node!.addChild(point_node)
                 point_node.position = CGPoint(x: point.x, y: point.y)
-                
+
+                // Display informations for user's selected point
                 if self.highlight_element != nil && point == self.toPoint(tse: self.highlight_element!) {
                     let point_label = SKLabelNode(fontNamed: self.font_name)
                     point_label.text = String(Int(self.highlight_element!.value))
@@ -451,6 +462,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 let highest_point = self.toPoint(tse: highest_tse!)
 
                 // Create blinking triangle
+                // When in followDate mode, the time series point that gets a triangle is not computed at each frame but only when the grid is moved right, so it can temporarily not be the highest point displayed - a better way to handle this triangle would be to compute the highest point at each frame
                 var points = [CGPoint(x: 0, y: 0),
                               CGPoint(x: -triangle_width / 2, y: triangle_height),
                               CGPoint(x: triangle_width / 2, y: triangle_height),
@@ -458,7 +470,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 let triangle_node = SKShapeNode(points: &points, count: points.count)
                 triangle_node.lineWidth = self.line_width * 1.5
                 triangle_node.strokeColor = .yellow
-                self.curve_node?.addChild(triangle_node)
+                self.curve_node!.addChild(triangle_node)
                 triangle_node.position = CGPoint(x: highest_point.x, y: highest_point.y + triangle_relative_height)
                 triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
 
@@ -476,7 +488,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
         }
 
-        var (points, target_h, tse) = computePoints()
+        var (points, target_h, _, tse_displayed) = computePoints()
 
         // Vertical animation
         if highest != target_h {
@@ -487,8 +499,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 (node, t) in
                 self.createChartComponents(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration))
                 let check_h : Float
-                (points, check_h, tse) = computePoints()
-                drawPoints(&points, tse)
+                (points, check_h, _, tse_displayed) = computePoints()
+                drawPoints(&points, tse_displayed)
                 if check_h != target_h {
                     self.removeAllActions()
                     start_height = self.highest
@@ -497,7 +509,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 }
             }
             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
-        } else { drawPoints(&points, tse) }
+        } else { drawPoints(&points, tse_displayed) }
     }
 
     // Create or update chart components
