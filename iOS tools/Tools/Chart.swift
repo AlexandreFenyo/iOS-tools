@@ -849,7 +849,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             finger.fillColor = .yellow
             root_node!.addChild(finger)
             finger.position = _point_relative_to_root_node
-            print(_point_relative_to_root_node.x, _point_relative_to_root_node.y)
             finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
 
         }			
