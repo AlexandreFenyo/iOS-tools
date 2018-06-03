@@ -220,10 +220,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
 
     // Check that a point is not hidden
-    // A corriger et regarder impacts
     private func isCurvePointOnScreen(point: CGPoint) -> Bool {
-        let p = grid_node!.convert(point, from: curve_node!)
-        return p.x >= 0 && p.x <= grid_full_width!
+        let p = root_node!.convert(point, from: curve_node!)
+        return p.x >= left_width && p.x < size.width
     }
 
     // Check that a point is not hidden
@@ -231,14 +230,20 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return isCurvePointOnScreen(point: toPoint(tse: tse))
     }
 
-    // Check that a segment is not hidden
-    private func isCurveSegmentOnScreen(from: CGPoint, to: CGPoint) -> Bool {
-        return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
+    // Check that a point is not on grid
+    private func isCurvePointOnGrid(point: CGPoint) -> Bool {
+        let p = grid_node!.convert(point, from: curve_node!)
+        return p.x >= 0 && p.x <= grid_full_width!
+    }
+
+    // Check that a point is not on grid
+    private func isCurvePointOnGrid(tse: TimeSeriesElement) -> Bool {
+        return isCurvePointOnGrid(point: toPoint(tse: tse))
     }
 
     // Check that a segment is not hidden
-    private func isCurveSegmentOnScreen(from: TimeSeriesElement, to: TimeSeriesElement) -> Bool {
-        return isCurveSegmentOnScreen(from: toPoint(tse: from), to: toPoint(tse: to))
+    private func isCurveSegmentOnGrid(from: CGPoint, to: CGPoint) -> Bool {
+        return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
     }
 
     // Position of a curve point relative to screen
@@ -339,8 +344,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     // Display only segments or points that can be viewed
     private func drawCurve(ts: TimeSeries) {
-        if hasActions() { return }
-        
+        // Actions created by drawPoints recreate components and draw the curve during vertical animations
+       if hasActions() { return }
+
+        // Returns points to draw, highest value and the element corresponding to the highest value
         let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?) = {
             var highest : Float = ChartDefaults.minimum_highest
             var highest_elt : TimeSeriesElement?
@@ -349,7 +356,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             let elts = ts.getElements()
             if elts.count == 1 {
                 // There is no segment, only one point
-                if self.isCurvePointOnScreen(tse: elts[0]) {
+                if self.isCurvePointOnGrid(tse: elts[0]) {
                     let point = self.toPoint(tse: elts[0])
                     if (highest < elts[0].value) {
                         highest_elt = elts[0]
@@ -361,11 +368,16 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 // Convert coordinates
                 var all_points: [CGPoint] = [ ]
                 for elt in elts { all_points.append(self.toPoint(tse: elt)) }
+                var prev_segment_was_on_grid = false
                 for i in all_points.indices.dropFirst() {
-                    if self.isCurveSegmentOnScreen(from: all_points[i - 1], to: all_points[i]) {
-                        // This is the last segment and it is partly or totally displayed
+                    if self.isCurveSegmentOnGrid(from: all_points[i - 1], to: all_points[i]) {
+                        prev_segment_was_on_grid = true
                         points.append(all_points[i - 1])
+
+                        // Handle last segment
                         if i == all_points.count - 1 { points.append(all_points[i]) }
+
+                        // Handle highest value
                         let foo = self.grid_vertical_cost! * Float(all_points[i - 1].y / self.grid_size.height)
                         let bar = self.grid_vertical_cost! * Float(all_points[i].y / self.grid_size.height)
                         if highest < foo {
@@ -376,9 +388,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                             highest = bar
                             highest_elt = elts[i]
                         }
+                    } else {
+                        if prev_segment_was_on_grid { points.append(all_points[i - 1]) }
+                        prev_segment_was_on_grid = false
                     }
                 }
             }
+            print("count returned:", points.count)
             return (points, highest, highest_elt)
         }
 
