@@ -154,6 +154,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var left_width: CGFloat
     private var bottom_height: CGFloat
     private var grid_time_interval: TimeInterval
+    private var initial_grid_time_interval: TimeInterval
     private var grid_vertical_cost: Float?
     private var grid_vertical_factor: Int?
     private var ts: TimeSeries
@@ -185,6 +186,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var replay_vertical_pos : CGFloat?
 
     private var date_at_start_of_gesture: Date?
+    private var grid_time_interval_at_start_of_gesture: TimeInterval?
     private var highlight_element: TimeSeriesElement? = nil
     
     // Graphic components
@@ -276,6 +278,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         self.left_width = left_width
         self.bottom_height = bottom_height
         self.grid_time_interval = grid_time_interval
+        self.initial_grid_time_interval = grid_time_interval
         self.grid_vertical_cost = grid_vertical_cost
         self.vertical_unit = vertical_unit
         self.line_width = line_width
@@ -548,9 +551,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         assert(grid_size.height <= full_size.height - bottom_height)
         assert(subgrid_size != nil ? grid_size.width.truncatingRemainder(dividingBy: subgrid_size!.width) == 0 : true)
         if !vertical_auto_layout { assert(subgrid_size != nil ? grid_size.height.truncatingRemainder(dividingBy: subgrid_size!.height) == 0 : true) }
-        assert(grid_time_interval >= 60 || 60.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)
-        assert((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0))
-        assert(grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
+        assert(mode != .followDate || grid_time_interval >= 60 || 60.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)
+        assert(mode != .followDate || ((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)))
+        assert(mode != .followDate || grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
 
         // Create the main grid
         // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
@@ -811,6 +814,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
+        // This creates a strong ref to the target
+        view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
     }
     
     @objc
@@ -838,6 +843,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 // tapped_point.x is relative to grid node, replay_horizontal_pos is relative to root node
                 if tapped_point.x >= replay_horizontal_pos! - grid_node!.position.x {
                     mode = .followDate
+                    grid_time_interval = initial_grid_time_interval
 
                     createChartComponents(date: Date(), max_val: highest)
 
@@ -867,6 +873,30 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if gesture.state == .changed {
             let point = gesture.translation(in: gesture.view!)
             current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
+        }
+
+        if gesture.state != .began && gesture.state != .changed {
+            mode = .manual
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
+        }
+    }
+
+    @objc
+    func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        if gesture.state == .began {
+            if mode == .followDate { current_date = Date() }
+            date_at_start_of_gesture = current_date
+            grid_time_interval_at_start_of_gesture = grid_time_interval
+            mode = .followGesture
+            createChartComponents(date: current_date, max_val: highest)
+            drawCurve(ts: ts)
+        }
+
+        if gesture.state == .changed {
+            grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture.scale)
             createChartComponents(date: current_date, max_val: highest)
             drawCurve(ts: ts)
         }
