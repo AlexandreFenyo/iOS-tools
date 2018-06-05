@@ -817,7 +817,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
     }
-    
+
+    // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
         if gesture.state == .ended {
