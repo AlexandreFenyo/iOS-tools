@@ -30,7 +30,7 @@ extension String {
     func sub(_ start: Int, _ count: Int) -> String {
         return String(self[self.index(self.startIndex, offsetBy: start)..<self.index(self.startIndex, offsetBy: start + count)])
     }
-    
+
     // Substring starting at start
     func sub(_ start: Int) -> String {
         return sub(start, self.count - start)
