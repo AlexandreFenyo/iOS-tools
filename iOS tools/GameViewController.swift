@@ -15,6 +15,9 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        NetTools.initBonjourService()
+        
         if GenericTools.must_create_demo_ship_scene { GenericTools.createDemoShipScene(self.view as! SCNView) }
         else { GenericTools.createScene(self.view) }
     }
