@@ -173,9 +173,9 @@ class MyNetServiceDelegate : NSObject, NetServiceDelegate {
             print("global")
             let r = RunLoop()
             if r == nil { print("NIL") }
-            print("r=", r)
-            self.r!.run()
-            print("glboal FIN")
+//            print("r=", r)
+//            self.r!.run()
+            print("global FIN")
         }
 //        outputStream.schedule(in: <#T##RunLoop#>, forMode: <#T##RunLoopMode#>
 //        outputStream.schedule(in: r!, forMode: .defaultRunLoopMode)
