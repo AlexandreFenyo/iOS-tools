@@ -251,20 +251,6 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        // add a sprite kit scene to a plan
-        let chart_scene = SKScene(size: CGSize(width: 3000, height: 2000))
-        chart_scene.backgroundColor = SKColor.white
-        let _g = SCNPlane(width: 1.8, height: 0.8)
-        _g.firstMaterial?.isDoubleSided = true
-        _g.firstMaterial?.diffuse.contents = chart_scene
-        let chart_node = SCNNode(geometry: _g)
-        
-        let xychart_node = ChartNode(size: CGSize(width: 3000, height: 2000), grid_size: CGSize(width: 100, height: 200))
-        // chart_node.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 - 200)
-        chart_scene.addChild(xychart_node)
-        
-        scene.rootNode.addChildNode(chart_node)
-
         plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
     }

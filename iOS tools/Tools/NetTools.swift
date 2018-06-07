@@ -8,12 +8,29 @@
 
 import Foundation
 
+
 // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/NetServices/Introduction.html
 // https://github.com/ecnepsnai/BonjourSwift/blob/master/Bonjour.swift
 // https://github.com/Bouke/NetService
 // nc localhost 1919
 // dig -p 5353 @mac _ssh._tcp.local. ptr
 // dig -p 5353 @224.0.0.251 _chargen._tcp.local. ptr
+
+
+class MyThread : Thread {
+    public var r : RunLoop?
+    
+    @objc
+    func saveR(_ gesture: Int) {
+        r = RunLoop.current
+    }
+    
+    public override func main() {
+        print("MYTHREAD")
+        r!.run()
+        print("FIN MYTHREAD")
+    }
+}
 
 class MyNetServiceBrowserDelegate : NSObject, NetServiceBrowserDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
@@ -160,27 +177,44 @@ class MyNetServiceDelegate : NSObject, NetServiceDelegate {
     
     var output_stream_delegate : StreamDelegate?
     var r : RunLoop?
-    
+    var d : DispatchQueue?
+    var t : MyThread?
+
+    // https://github.com/apple/swift/blob/c760f6dfbf0179e9aff90f7bf7375f3af5331318/docs/proposals/Concurrency.rst
+    // https://medium.com/flawless-app-stories/basics-of-parallel-programming-with-swift-93fee8425287
     // https://developer.apple.com/library/archive/samplecode/Earthquakes/Listings/Earthquakes_iOS_QuakesViewController_swift.html#//apple_ref/doc/uid/TP40014547-Earthquakes_iOS_QuakesViewController_swift-DontLinkElementID_5
     func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
         print("didAcceptConnectionWith")
         output_stream_delegate = MyOutputStreamDelegate()
         outputStream.delegate = output_stream_delegate
-//        outputStream.schedule(in: .current, forMode: .defaultRunLoopMode)
-        
 
-        DispatchQueue.global(qos: DispatchQoS.QoSClass.userInteractive).async {
-            print("global")
-            let r = RunLoop()
-            if r == nil { print("NIL") }
-//            print("r=", r)
-//            self.r!.run()
-            print("global FIN")
-        }
-//        outputStream.schedule(in: <#T##RunLoop#>, forMode: <#T##RunLoopMode#>
-//        outputStream.schedule(in: r!, forMode: .defaultRunLoopMode)
         outputStream.open()
+
+        t = MyThread()
+        t!.perform(#selector(MyThread.saveR(_:)))
+        outputStream.schedule(in: t!.r!, forMode: .commonModes)
+        t!.start()
+
         
+//outputStream.schedule(in: <#T##RunLoop#>, forMode: <#T##RunLoopMode#>)
+
+        //        d!.async {
+//            print(CFRunLoopGetCurrent())
+//        }
+
+//        d!.sync {
+//            self.r = .current
+////            print(CFRunLoopGetCurrent())
+////            print(CFRunLoopGetMain())
+//        }
+//
+
+//        print(OperationQueue.current)
+//        print(OperationQueue.main)
+
+        // outputStream.schedule(in: r!, forMode: .commonModes)
+
+    
     }
 }
 
@@ -206,8 +240,20 @@ class MyOutputStreamDelegate : NSObject, StreamDelegate {
             print("hasBytesAvailable")
         case .hasSpaceAvailable:
             print("hasSpaceAvailable")
-            let ret = (aStream as! OutputStream).write(dataPointer, maxLength: data.count)
+            let outputStream = aStream as! OutputStream
+            let ret = outputStream.write(dataPointer, maxLength: data.count)
+            while outputStream.hasSpaceAvailable {
+                outputStream.write(dataPointer, maxLength: data.count)
+            }
+//            print(DispatchQueue.main)
+//            print(OperationQueue.current)
+//            print(OperationQueue.main)
+//            print(CFRunLoopGetCurrent())
+//            print(CFRunLoopGetMain())
+
+            //            while true { sleep(1000) }
             print("write->", ret)
+
         case .errorOccurred:
             print("errorOccurred")
         case .endEncountered:
@@ -218,6 +264,8 @@ class MyOutputStreamDelegate : NSObject, StreamDelegate {
     }
 }
 
+
+
 class NetTools {
     public static var x = false
     private static var srv : NetService?
@@ -226,33 +274,29 @@ class NetTools {
     public static var dl2 : MyNetServiceBrowserDelegate?
     public static var q : DispatchQueue?
     
+    // https://developer.apple.com/library/archive/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html#//apple_ref/doc/uid/TP40008091-CH101-SW1
     // https://theswiftdev.com/2017/08/29/concurrency-model-in-swift/
     // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html
     public static func initBonjourService() {
-
-//        q = DispatchQueue(label: "toto")
-//        let r = RunLoop()
-//        r.run()
-        
         if !x {
             x = true
+
+
+
             let service = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: 1919)
             srv = service
-
-            // service.includesPeerToPeer = true
             dl = MyNetServiceDelegate()
             service.delegate = dl
-            // service.schedule(in: .main, forMode: .defaultRunLoopMode)
             service.publish(options: .listenForConnections)
             print("service published")
         
-            let browser = NetServiceBrowser()
-            br = browser
-            dl2 = MyNetServiceBrowserDelegate()
-            browser.delegate = dl2
-//            browser.searchForBrowsableDomains()
-            browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
-            print("browsing")
+//            let browser = NetServiceBrowser()
+//            br = browser
+//            dl2 = MyNetServiceBrowserDelegate()
+//            browser.delegate = dl2
+////            browser.searchForBrowsableDomains()
+//            browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
+//            print("browsing")
 
 //            let q = OperationQueue()
 //            var i = 0
