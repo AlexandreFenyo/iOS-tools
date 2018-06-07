@@ -23,10 +23,12 @@ class MyThread : Thread {
     @objc
     func saveR(_ gesture: Int) {
         r = RunLoop.current
+        print("saveR:", OperationQueue.current)
     }
     
     public override func main() {
         print("MYTHREAD")
+        print("main:", OperationQueue.current)
         r!.run()
         print("FIN MYTHREAD")
     }
@@ -191,7 +193,8 @@ class MyNetServiceDelegate : NSObject, NetServiceDelegate {
         outputStream.open()
 
         t = MyThread()
-        t!.perform(#selector(MyThread.saveR(_:)))
+//        t!.perform(#selector(MyThread.saveR(_:)))
+        t!.perform(#selector(MyThread.saveR(_:)), on: t!, with: nil, waitUntilDone: true)
         outputStream.schedule(in: t!.r!, forMode: .commonModes)
         t!.start()
 
@@ -242,6 +245,7 @@ class MyOutputStreamDelegate : NSObject, StreamDelegate {
             print("hasSpaceAvailable")
             let outputStream = aStream as! OutputStream
             let ret = outputStream.write(dataPointer, maxLength: data.count)
+print(OperationQueue.current)
             while outputStream.hasSpaceAvailable {
                 outputStream.write(dataPointer, maxLength: data.count)
             }
