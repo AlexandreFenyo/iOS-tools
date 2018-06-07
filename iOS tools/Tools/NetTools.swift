@@ -22,12 +22,16 @@ class MyThread : Thread {
     
     @objc
     func saveR(_ gesture: Int) {
-        r = RunLoop.current
         print("saveR:", OperationQueue.current)
+        r = RunLoop.current
     }
     
     public override func main() {
         print("MYTHREAD")
+
+        // exécuter dans le mainthread l'affectation de la source
+
+        if r == nil { saveR(5) }
         print("main:", OperationQueue.current)
         r!.run()
         print("FIN MYTHREAD")
@@ -192,11 +196,19 @@ class MyNetServiceDelegate : NSObject, NetServiceDelegate {
 
         outputStream.open()
 
+        print("didAcceptConnectionWith 2")
+
         t = MyThread()
-//        t!.perform(#selector(MyThread.saveR(_:)))
-        t!.perform(#selector(MyThread.saveR(_:)), on: t!, with: nil, waitUntilDone: true)
-        outputStream.schedule(in: t!.r!, forMode: .commonModes)
         t!.start()
+
+sleep(3)
+
+        //        t!.perform(#selector(MyThread.saveR(_:)))
+        t!.perform(#selector(MyThread.saveR(_:)), on: t!, with: nil, waitUntilDone: true)
+
+        print("didAcceptConnectionWith 3")
+
+        outputStream.schedule(in: t!.r!, forMode: .commonModes)
 
         
 //outputStream.schedule(in: <#T##RunLoop#>, forMode: <#T##RunLoopMode#>)
@@ -246,10 +258,11 @@ class MyOutputStreamDelegate : NSObject, StreamDelegate {
             let outputStream = aStream as! OutputStream
             let ret = outputStream.write(dataPointer, maxLength: data.count)
 print(OperationQueue.current)
-            while outputStream.hasSpaceAvailable {
-                outputStream.write(dataPointer, maxLength: data.count)
-            }
-//            print(DispatchQueue.main)
+//            while outputStream.hasSpaceAvailable {
+//                outputStream.write(dataPointer, maxLength: data.count)
+//            }
+
+            //            print(DispatchQueue.main)
 //            print(OperationQueue.current)
 //            print(OperationQueue.main)
 //            print(CFRunLoopGetCurrent())
