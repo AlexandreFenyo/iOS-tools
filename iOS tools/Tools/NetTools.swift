@@ -34,8 +34,23 @@ class BackgroundNetworkThread : Thread {
         run_loop!.add(Timer(timeInterval: TimeInterval(3600), repeats: true, block: { _ in }), forMode: RunLoopMode.commonModes)
 
         // Handle events in the background thread
-        run_loop!.run()
+//        run_loop!.run()
+        while true {
+            run_loop!.run(until: Date().addingTimeInterval(TimeInterval(1)))
+            print("LOOP")
+            DispatchQueue.main.sync { close
+            //        DispatchQueue.main.sync {
+            //            // Implicitely remove the stream from the run loop
+            //            stream.close()
+            //
+            //            // May be useless since the delegate property is declared unowned(unsafe)
+            //            stream.delegate = nil
+            //            NetTools.net_service_chargen_delegate!.removeClient(stream: stream)
+            //        }
+
+        }
     }
+        
 }
 
 class MyNetServiceBrowserDelegate : NSObject, NetServiceBrowserDelegate {
@@ -92,9 +107,10 @@ class NetServiceChargenDelegate : NSObject, NetServiceDelegate {
         print("NetServiceChargenDelegate.deinit")
     }
 
-    public func removeClient(stream: Stream) {
+    public func removeClient() {
         for i in clients.indices {
-            if (stream == clients[i].input_stream || stream == clients[i].output_stream) {
+// ATTENTION A REECRIRE
+            if (clients[i].input_stream.streamStatus == .closed || clients[i].output_stream.streamStatus == .closed) {
                 clients.remove(at: i)
                 print("REMOVE")
                 break
@@ -201,18 +217,17 @@ class StreamChargenDelegate : NSObject, StreamDelegate {
     }
     
     private func end(_ stream: Stream) {
-        DispatchQueue.main.sync {
-            // Implicitely remove the stream from the run loop
+        // async est une mauvaise correction du bug
+        print("END->CLOSE")
+        stream.close()
+//        DispatchQueue.main.sync {
+//            // Implicitely remove the stream from the run loop
 //            stream.close()
-            
-            // May be useless since the delegate property is declared unowned(unsafe)
-            stream.delegate = nil
-            
+//
+//            // May be useless since the delegate property is declared unowned(unsafe)
+//            stream.delegate = nil
 //            NetTools.net_service_chargen_delegate!.removeClient(stream: stream)
-
-         stream.close()
-
-        }
+//        }
     }
     
 }
