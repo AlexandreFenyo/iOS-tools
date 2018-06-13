@@ -31,6 +31,10 @@ protocol RefClosed {
 // Start a run loop to manage a stream
 class StreamNetworkThread : Thread {
     private let stream : Stream
+
+    deinit {
+        print("StreamNetworkThread deinit")
+    }
     
     public init(_ stream: Stream) {
         self.stream = stream
@@ -38,10 +42,12 @@ class StreamNetworkThread : Thread {
 
     // Called in the dedicated thread
     override public func main() {
+        print("ENTREE")
         stream.open()
         stream.schedule(in: .current, forMode: .commonModes)
         RunLoop.current.run()
         stream.close()
+        print("SORTIE")
     }
 }
 
@@ -57,6 +63,10 @@ class ChargenClient : NSObject, StreamDelegate {
     private let dataMutablePointer, bufMutablePointer : UnsafeMutablePointer<UInt8>
     private let dataPointer, bufPointer : UnsafePointer<UInt8>
 
+    deinit {
+        print("ChargentClient deinit")
+    }
+    
     public func threadFinished() -> Bool {
         return background_network_thread_in!.isFinished && background_network_thread_out!.isFinished
     }
@@ -64,6 +74,10 @@ class ChargenClient : NSObject, StreamDelegate {
     // May be called in any thread
     public func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
+        print("exitThreads")
+        // UTILE ???
+//        background_network_thread_in!.cancel()
+//        background_network_thread_out!.cancel()
         input_stream.close()
         output_stream.close()
     }
@@ -146,7 +160,9 @@ class NetServiceChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
             repeat {
                 nothing_removed = true
                 for idx in self.clients.indices {
+                    print("TEST")
                     if self.clients[idx].threadFinished() {
+                        print("RE/OVE")
                         self.clients.remove(at: idx)
                         nothing_removed = false
                         break
@@ -163,6 +179,7 @@ class NetServiceChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
 
     // Wait in the main thread until stream dedicated threads quit, in order to avoid discarding objects (strongly referenced by ChargenClient properties in 'clients' array) accessed by those threads. This will freeze the GUI until every clients are disconnected.
     deinit {
+        print("deinit NetServiceChargenDelegate")
         for client in clients { client.exitThreads() }
         while true {
             if clients.count == 0 { break }
@@ -248,6 +265,9 @@ class NetTools {
     private static var br : NetServiceBrowser?
     public static var dl2 : NetServiceChargenBrowserDelegate?
     
+    private static var net_service_chargen : NetService?
+    private static var net_service_chargen_delegate : NetServiceChargenDelegate?
+
     public static var x = false
     
     public static func initBonjourService() {
@@ -255,11 +275,12 @@ class NetTools {
             x = true
             
             // Create chargen service
-            let net_service_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.chargen_port)
-            net_service_chargen.delegate = NetServiceChargenDelegate()
+            net_service_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.chargen_port)
+            net_service_chargen_delegate = NetServiceChargenDelegate()
+            net_service_chargen!.delegate = net_service_chargen_delegate
             
             // Start listening for chargen clients
-            net_service_chargen.publish(options: .listenForConnections)
+            net_service_chargen!.publish(options: .listenForConnections)
 
             //            let browser = NetServiceBrowser()
             //            br = browser
