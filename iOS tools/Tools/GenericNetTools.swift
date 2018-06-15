@@ -274,7 +274,9 @@ class NetTools {
         if !x {
             x = true
 
-            net_test()
+            // Call C
+
+            DispatchQueue.global(qos: .background).async{ net_test() }
             
             // Create chargen service
             net_service_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.chargen_port)

@@ -10,5 +10,12 @@
 #define NetTools_h
 
 #include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <ifaddrs.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
 #endif /* NetTools_h */
