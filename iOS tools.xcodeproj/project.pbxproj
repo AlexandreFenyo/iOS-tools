@@ -16,6 +16,8 @@
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385920A2EEAF006AC172 /* Splash.storyboard */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
+		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
+		5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */; };
 		5DC7AFF120C56BA7002A4491 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* NetTools.swift */; };
 		5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* 2D3D.storyboard */; };
 		5DF599A120BC655C0042EE26 /* WiFi.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF599A020BC655C0042EE26 /* WiFi.storyboard */; };
@@ -38,6 +40,10 @@
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
 		5D4B385920A2EEAF006AC172 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
+		5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS tools-Bridging-Header.h"; sourceTree = "<group>"; };
+		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
+		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
+		5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5DC7AFF020C56BA7002A4491 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
 		5DF237F420A089B700CF9365 /* 2D3D.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = 2D3D.storyboard; sourceTree = "<group>"; };
 		5DF599A020BC655C0042EE26 /* WiFi.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = WiFi.storyboard; sourceTree = "<group>"; };
@@ -58,6 +64,7 @@
 		5D1351E2208538DB00E4A76D = {
 			isa = PBXGroup;
 			children = (
+				5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */,
 				5D1351ED208538DB00E4A76D /* iOS tools */,
 				5D135204208538E300E4A76D /* iOS toolsTests */,
 				5D13520F208538E300E4A76D /* iOS toolsUITests */,
@@ -116,6 +123,9 @@
 				5D8944A120A57C7800E26476 /* Chart.swift */,
 				5DFF67E920B61E8C003605BF /* TimeSeries.swift */,
 				5DC7AFF020C56BA7002A4491 /* NetTools.swift */,
+				5DC736C220D3A55600C2A199 /* NetTools.c */,
+				5DC736C320D3A55600C2A199 /* NetTools.h */,
+				5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -153,6 +163,7 @@
 				TargetAttributes = {
 					5D1351EA208538DB00E4A76D = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 0940;
 					};
 				};
 			};
@@ -184,6 +195,7 @@
 				5DF599A120BC655C0042EE26 /* WiFi.storyboard in Resources */,
 				5D1351F6208538DB00E4A76D /* Main1.storyboard in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
+				5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */,
 				5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */,
 				5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */,
 			);
@@ -212,6 +224,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
 				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5D1351F3208538DB00E4A76D /* GameViewController.swift in Sources */,
@@ -353,6 +366,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
@@ -364,6 +378,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -373,6 +389,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
@@ -384,6 +401,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -273,6 +273,8 @@ class NetTools {
     public static func initBonjourService() {
         if !x {
             x = true
+
+            net_test()
             
             // Create chargen service
             net_service_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.chargen_port)
