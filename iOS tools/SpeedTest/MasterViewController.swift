@@ -8,6 +8,7 @@
 
 // https://www.raywenderlich.com/173753/uisplitviewcontroller-tutorial-getting-started-2
 // https://medium.com/swift-programming/swift-enums-and-uitableview-sections-1806b74b8138
+// http://theapplady.net/how-to-use-the-ios-8-split-view-controller-part-3/
 
 import UIKit
 
@@ -41,6 +42,7 @@ class MasterViewController: UITableViewController {
     let section_header_height: CGFloat = 25
 
     var detail_view_controller : DetailViewController?
+    var detail_navigation_controller : UINavigationController?
 
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [Device(name: "iOS device 1"), Device(name: "iOS device 2")],
@@ -138,7 +140,7 @@ class MasterViewController: UITableViewController {
         detail_view_controller!.device = device
         
         // for iPhone, make the detail view controller visible
-        splitViewController?.showDetailViewController(detail_view_controller!, sender: nil)
+        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
     /*

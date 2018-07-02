@@ -367,55 +367,55 @@ private class ManageTapCube {
     // Callback used by createDemoShipScene()
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        return
+        return ;
  
-        GenericTools.here("Tap")
-
-        // SCNTransaction.begin()
-
-        step += 1
-
-        //        if (step == 1) {
-//            print("avant remove actions")
-//            GenericTools.chart_node!.grid_node!.removeAllActions()
-//        }
-//        if (step == 2) {
-//            GenericTools.chart_node!.testDebug()
-//        }
-        
-//        if (step == 3) {
-        SCNTransaction.begin()
-        // XXX
-        // si j'ajoute plein de points très vite : crash
-        if( step < 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0 * Float(step))) }
-
-        if (step == 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 1000.0)) }
-        if (step == 3) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 200000.0)) }
-        if (step == 4) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 3000000.0)) }
-        if (step == 5) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 850000000.0)) }
-
-        SCNTransaction.commit()
-
-
-        SCNTransaction.begin()
-//        GenericTools.chart_node!.updateGridVerticalCost(40.0)
-        SCNTransaction.commit()
-
-
-        SCNTransaction.begin()
-//        GenericTools.plane_node!.chart_node!.updateGridVerticalCost(40.0)
-        SCNTransaction.commit()
-
-//        GenericTools.chart_node!.grid_node!.removeAllActions()
-
-//        }
-        // SCNTransaction.commit()
-
-            // highlight it
-//            SCNTransaction.begin()
-//            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
-//            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
-//            SCNTransaction.commit()
+//        GenericTools.here("Tap")
+//
+//        // SCNTransaction.begin()
+//
+//        step += 1
+//
+//        //        if (step == 1) {
+////            print("avant remove actions")
+////            GenericTools.chart_node!.grid_node!.removeAllActions()
+////        }
+////        if (step == 2) {
+////            GenericTools.chart_node!.testDebug()
+////        }
+//        
+////        if (step == 3) {
+//        SCNTransaction.begin()
+//        // XXX
+//        // si j'ajoute plein de points très vite : crash
+//        if( step < 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 10.0 * Float(step))) }
+//
+//        if (step == 2) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 1000.0)) }
+//        if (step == 3) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 200000.0)) }
+//        if (step == 4) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 3000000.0)) }
+//        if (step == 5) { GenericTools.ts.add(TimeSeriesElement(date: Date(), value: 850000000.0)) }
+//
+//        SCNTransaction.commit()
+//
+//
+//        SCNTransaction.begin()
+////        GenericTools.chart_node!.updateGridVerticalCost(40.0)
+//        SCNTransaction.commit()
+//
+//
+//        SCNTransaction.begin()
+////        GenericTools.plane_node!.chart_node!.updateGridVerticalCost(40.0)
+//        SCNTransaction.commit()
+//
+////        GenericTools.chart_node!.grid_node!.removeAllActions()
+//
+////        }
+//        // SCNTransaction.commit()
+//
+//            // highlight it
+////            SCNTransaction.begin()
+////            scnView.debugOptions.insert(SCNDebugOptions.showWireframe)
+////            scnView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+////            SCNTransaction.commit()
     }
 }
 

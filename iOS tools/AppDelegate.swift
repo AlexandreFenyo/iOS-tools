@@ -19,10 +19,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log
         GenericTools.here("application()", self)
 
-        guard let splitViewController = window?.rootViewController as? UISplitViewController,
+        guard let splitViewController = window?.rootViewController as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
-            let detailViewController = splitViewController.viewControllers.last as? DetailViewController,
+            let rightNavController = splitViewController.viewControllers.last as? UINavigationController,
+            let detailViewController = rightNavController.topViewController as? DetailViewController,
             let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
 
@@ -30,6 +31,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         detailViewController.device = device
 
         masterViewController.detail_view_controller = detailViewController
+        masterViewController.detail_navigation_controller = rightNavController
+
+        detailViewController.navigationItem.leftItemsSupplementBackButton = true
+        detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+
+        // marche pas
+//        splitViewController.preferredPrimaryColumnWidthFraction = 0.2
+//        splitViewController.minimumPrimaryColumnWidth = 350
+//        splitViewController.maximumPrimaryColumnWidth = 400
+        
         
         // When using a story board with a split view controller, set the same width for each controller
         if let svc = self.window?.rootViewController as? UISplitViewController { GenericTools.splitViewControllerSameWidth(svc) }
