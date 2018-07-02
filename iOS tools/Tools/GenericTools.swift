@@ -6,6 +6,8 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+// https://www.raywenderlich.com/173753/uisplitviewcontroller-tutorial-getting-started-2
+
 // "alt" means "alternative"
 
 // read plist: defaults read /Users/fenyo/Library/Developer/Xcode/DerivedData/iOS_tools-epwocfsynihtagcdtrgfzhdwlvrf/Build/Products/Debug-iphoneos/iOS\ tools.app/Info.plist
