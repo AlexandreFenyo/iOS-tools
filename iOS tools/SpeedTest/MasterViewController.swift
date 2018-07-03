@@ -44,7 +44,7 @@ class MasterViewController: UITableViewController {
     var detail_view_controller : DetailViewController?
     var detail_navigation_controller : UINavigationController?
     var split_view_controller : SplitViewController?
-
+    
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [Device(name: "iOS device 1"), Device(name: "iOS device 2")],
         .localGateway: [Device(name: "Local gateway")],
@@ -60,6 +60,18 @@ class MasterViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         self.navigationItem.rightBarButtonItem = self.editButtonItem
+
+        // https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
+        refreshControl = UIRefreshControl()
+        refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
+    }
+    
+    @objc
+    private func userRefresh(_ sender: Any) {
+        print("started")
+        
+        devices[.iOSDevice]?.append(Device(name: "salut"))
+        tableView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {
