@@ -19,13 +19,13 @@ import Foundation
 
 // Default values
 struct NetworkDefaults {
-    public static let chargen_port : Int32 = 1919
+    public static let speedtest_chargen_port : Int32 = 1919
     public static let buffer_size = 3000
 }
 
 // Protocol used to inform with a callback that a child object has done its job
 protocol RefClosed {
-    func refClosed(_: ChargenClient)
+    func refClosed(_: SpeedTestChargenClient)
 }
 
 // Start a run loop to manage a stream
@@ -52,19 +52,19 @@ class StreamNetworkThread : Thread {
 }
 
 // Manage a remote client with two threads, one for each stream
-class ChargenClient : NSObject, StreamDelegate {
+class SpeedTestChargenClient : NSObject, StreamDelegate {
     private var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
     private let input_stream, output_stream : Stream
 
-    // Needed to inform the the parent that this ChargenClient instance can be disposed
-    private weak var from : NetServiceChargenDelegate?
+    // Needed to inform the the parent that this SpeedTestChargenClient instance can be disposed
+    private weak var from : NetServiceSpeedTestChargenDelegate?
 
     // Data buffers
     private let dataMutablePointer, bufMutablePointer : UnsafeMutablePointer<UInt8>
     private let dataPointer, bufPointer : UnsafePointer<UInt8>
 
     deinit {
-        print("ChargentClient deinit")
+        print("SpeedTestChargentClient deinit")
     }
     
     public func threadFinished() -> Bool {
@@ -83,7 +83,7 @@ class ChargenClient : NSObject, StreamDelegate {
     }
 
     // Prepare threads and data buffers to handle a remote client
-    public init(input_stream: InputStream, output_stream: OutputStream, from: NetServiceChargenDelegate) {
+    public init(input_stream: InputStream, output_stream: OutputStream, from: NetServiceSpeedTestChargenDelegate) {
         self.input_stream = input_stream
         self.output_stream = output_stream
 
@@ -143,10 +143,10 @@ class ChargenClient : NSObject, StreamDelegate {
     }
 }
 
-// Manage callbacks for the chargen service
-class NetServiceChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
+// Manage callbacks for the speed test chargen service
+class NetServiceSpeedTestChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Strong refs
-    private var clients : [ChargenClient] = [ ]
+    private var clients : [SpeedTestChargenClient] = [ ]
 
     // Initialize instance
     public override init() {
@@ -173,13 +173,13 @@ class NetServiceChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
 
     // If one client stream is closed, close the other to end communications with this client
-    public func refClosed(_ client: ChargenClient) {
+    public func refClosed(_ client: SpeedTestChargenClient) {
         client.exitThreads()
     }
 
-    // Wait in the main thread until stream dedicated threads quit, in order to avoid discarding objects (strongly referenced by ChargenClient properties in 'clients' array) accessed by those threads. This will freeze the GUI until every clients are disconnected.
+    // Wait in the main thread until stream dedicated threads quit, in order to avoid discarding objects (strongly referenced by SpeedTestChargenClient properties in 'clients' array) accessed by those threads. This will freeze the GUI until every clients are disconnected.
     deinit {
-        print("deinit NetServiceChargenDelegate")
+        print("deinit NetServiceSpeedTestChargenDelegate")
         for client in clients { client.exitThreads() }
         while true {
             if clients.count == 0 { break }
@@ -221,12 +221,12 @@ class NetServiceChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
     
     // Manage new connections from clients
     public func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
-        clients.append(ChargenClient(input_stream: inputStream, output_stream: outputStream, from: self))
+        clients.append(SpeedTestChargenClient(input_stream: inputStream, output_stream: outputStream, from: self))
     }
 }
 
 
-class NetServiceChargenBrowserDelegate : NSObject, NetServiceBrowserDelegate {
+class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDelegate {
     deinit {
         print("MyNetServiceBrowserDelegate.deinit")
     }
@@ -263,44 +263,39 @@ class NetServiceChargenBrowserDelegate : NSObject, NetServiceBrowserDelegate {
 
 class NetTools {
     private static var br : NetServiceBrowser?
-    public static var dl2 : NetServiceChargenBrowserDelegate?
+    public static var dl2 : NetServiceSpeedTestChargenBrowserDelegate?
     
-    private static var net_service_chargen : NetService?
-    private static var net_service_chargen_delegate : NetServiceChargenDelegate?
+    private static var net_service_speed_test_chargen : NetService?
+    private static var net_service_chargen_delegate : NetServiceSpeedTestChargenDelegate?
 
     public static var x = false
     
     public static func initBonjourService() {
-        if !x {
-            x = true
-
-            // Call C
-
-            DispatchQueue.global(qos: .background).async{ net_test() }
-            
-            // Create chargen service
-            net_service_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.chargen_port)
-            net_service_chargen_delegate = NetServiceChargenDelegate()
-            net_service_chargen!.delegate = net_service_chargen_delegate
-            
-            // Start listening for chargen clients
-            net_service_chargen!.publish(options: .listenForConnections)
-
-            //            let browser = NetServiceBrowser()
-            //            br = browser
-            //            dl2 = MyNetServiceBrowserDelegate()
-            //            browser.delegate = dl2
-            ////            browser.searchForBrowsableDomains()
-            //            browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
-            //            print("browsing")
-            
-            //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
-            //            var readStream : Unmanaged<CFReadStream>?
-            //            var writeStream : Unmanaged<CFWriteStream>?
-            //            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
-            //            CFReadStreamOpen(readStream!.takeRetainedValue())
-        }
+        // Call C
+        // DispatchQueue.global(qos: .background).async{ net_test() }
         
+        // Create chargen service
+        net_service_speed_test_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.speedtest_chargen_port)
+        net_service_chargen_delegate = NetServiceSpeedTestChargenDelegate()
+        net_service_speed_test_chargen!.delegate = net_service_chargen_delegate
+        
+        // Start listening for speed test chargen clients
+        net_service_speed_test_chargen!.publish(options: .listenForConnections)
+        
+        //            let browser = NetServiceBrowser()
+        //            br = browser
+        //            dl2 = MyNetServiceBrowserDelegate()
+        //            browser.delegate = dl2
+        ////            browser.searchForBrowsableDomains()
+        //            browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
+        //            print("browsing")
+        
+        //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
+        //            var readStream : Unmanaged<CFReadStream>?
+        //            var writeStream : Unmanaged<CFWriteStream>?
+        //            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
+        //            CFReadStreamOpen(readStream!.takeRetainedValue())
+
     }
     
 }
