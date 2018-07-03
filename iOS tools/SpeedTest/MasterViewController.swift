@@ -35,6 +35,23 @@ class DeviceCell : UITableViewCell {
 }
 
 class MasterViewController: UITableViewController {
+    @IBOutlet weak var update_button: UIBarButtonItem!
+    @IBOutlet weak var stop_button: UIBarButtonItem!
+
+    @IBAction func update_pressed(_ sender: Any) {
+        // si on ne met pas ca ou qu'on mette true, l'animation est dessus
+        tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - refreshControl!.frame.size.height), animated: false)
+        
+        userRefresh(self)
+        refreshControl!.beginRefreshing()
+    }
+    
+    @IBAction func stop_pressed(_ sender: Any) {
+        refreshControl!.endRefreshing()
+        stop_button!.isEnabled = false
+        update_button!.isEnabled = true
+    }
+    
     enum TableSection: Int {
         case iOSDevice = 0, localGateway, chargenDevice, discardDevice, END
     }
@@ -70,9 +87,9 @@ class MasterViewController: UITableViewController {
     
     @objc
     private func userRefresh(_ sender: Any) {
-        print("started")
-        
-        devices[.iOSDevice]?.append(Device(name: "salut"))
+        update_button!.isEnabled = false
+        stop_button!.isEnabled = true
+        devices[.iOSDevice]!.append(Device(name: "salut"))
         tableView.reloadData()
     }
 
@@ -108,7 +125,11 @@ class MasterViewController: UITableViewController {
     
     //        case iOSDevice = 0, localGateway, chargenDevice, discardDevice, END
 
-
+//    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+//        print("SALUT")
+//        return []
+//    }
+    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: section_header_height))
         view.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
