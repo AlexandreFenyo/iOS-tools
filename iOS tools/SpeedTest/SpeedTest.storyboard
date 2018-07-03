@@ -99,7 +99,8 @@
         <!--Split View Controller-->
         <scene sceneID="kn3-Gh-yRt">
             <objects>
-                <splitViewController id="X4Q-a0-4Mv" customClass="SplitViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController preferredPrimaryColumnWidthFraction="0.0" id="X4Q-a0-4Mv" customClass="SplitViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
+                    <variation key="widthClass=regular" preferredPrimaryColumnWidthFraction="0.3"/>
                     <connections>
                         <segue destination="nVb-da-Lxi" kind="relationship" relationship="masterViewController" id="R27-No-sgh"/>
                         <segue destination="64p-vD-uga" kind="relationship" relationship="detailViewController" id="Fiu-LB-spd"/>

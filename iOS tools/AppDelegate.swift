@@ -32,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         masterViewController.detail_view_controller = detailViewController
         masterViewController.detail_navigation_controller = rightNavController
+        masterViewController.split_view_controller = splitViewController
 
         detailViewController.navigationItem.leftItemsSupplementBackButton = true
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
@@ -40,7 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        splitViewController.preferredPrimaryColumnWidthFraction = 0.2
 //        splitViewController.minimumPrimaryColumnWidth = 350
 //        splitViewController.maximumPrimaryColumnWidth = 400
-        
         
         // When using a story board with a split view controller, set the same width for each controller
         if let svc = self.window?.rootViewController as? UISplitViewController { GenericTools.splitViewControllerSameWidth(svc) }

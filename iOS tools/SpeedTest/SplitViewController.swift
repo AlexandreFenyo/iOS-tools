@@ -9,11 +9,15 @@
 import UIKit
 
 class SplitViewController: UISplitViewController, UISplitViewControllerDelegate {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.delegate = self
+    }
+    
+    override func viewWillLayoutSubviews() {
+//        preferredPrimaryColumnWidthFraction = 0.3
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,14 +31,14 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         return true
     }
 
-    /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+
+            print("SplitViewController.prepare(for segue)")
     }
-    */
 
 }
