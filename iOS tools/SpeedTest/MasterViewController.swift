@@ -62,7 +62,7 @@ class MasterViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         self.navigationItem.rightBarButtonItem = self.editButtonItem
-
+        
         // https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
         refreshControl = UIRefreshControl()
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
