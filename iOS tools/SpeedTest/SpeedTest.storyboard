@@ -73,7 +73,13 @@
                             <outlet property="delegate" destination="9rn-U2-Uvj" id="Sse-Af-y39"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem title="Item" id="w26-jr-JrH"/>
+                        <barButtonItem title="Item" id="Hoh-gZ-vw9"/>
+                        <barButtonItem title="Item" id="9XB-83-j13"/>
+                    </toolbarItems>
                     <navigationItem key="navigationItem" title="Root View Controller" id="bwG-g9-tTY"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nur-ln-hKS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -82,12 +88,20 @@
         <!--Navigation Controller-->
         <scene sceneID="KR7-kL-bhI">
             <objects>
-                <navigationController id="nVb-da-Lxi" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="nVb-da-Lxi" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="P8k-aX-zDp">
                         <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.99598115682601929" green="0.7927742600440979" blue="0.0055574653670191765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C04-G9-mrM">
+                        <rect key="frame" x="0.0" y="980" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.99598115682601929" green="0.7927742600440979" blue="0.0055574653670191765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <variation key="heightClass=regular-widthClass=regular">
+                            <color key="barTintColor" red="0.99598115682601929" green="0.7927742600440979" blue="0.0055574653670191765" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </variation>
+                    </toolbar>
                     <connections>
                         <segue destination="9rn-U2-Uvj" kind="relationship" relationship="rootViewController" id="P5j-OP-syK"/>
                     </connections>
