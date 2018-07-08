@@ -282,14 +282,14 @@ class NetTools {
         // Start listening for speed test chargen clients
         net_service_speed_test_chargen!.publish(options: .listenForConnections)
         
-        //            let browser = NetServiceBrowser()
-        //            br = browser
-        //            dl2 = MyNetServiceBrowserDelegate()
-        //            browser.delegate = dl2
-        ////            browser.searchForBrowsableDomains()
-        //            browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
-        //            print("browsing")
-        
+                    let browser = NetServiceBrowser()
+                    br = browser
+//                    dl2 = MyNetServiceBrowserDelegate()
+//                    browser.delegate = dl2
+        //            browser.searchForBrowsableDomains()
+                    browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
+                    print("browsing")
+
         //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
         //            var readStream : Unmanaged<CFReadStream>?
         //            var writeStream : Unmanaged<CFWriteStream>?
