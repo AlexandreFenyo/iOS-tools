@@ -41,7 +41,7 @@
             </objects>
             <point key="canvasLocation" x="1109" y="304"/>
         </scene>
-        <!--Root View Controller-->
+        <!--Target List-->
         <scene sceneID="pIG-58-iAL">
             <objects>
                 <tableViewController clearsSelectionOnViewWillAppear="NO" id="9rn-U2-Uvj" customClass="MasterViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
@@ -85,8 +85,13 @@
                                 <action selector="stop_pressed:" destination="9rn-U2-Uvj" id="ah7-ZC-teK"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Debug" id="WCR-6O-86k">
+                            <connections>
+                                <action selector="debug_pressed:" destination="9rn-U2-Uvj" id="Jhu-iO-9ns"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Root View Controller" id="bwG-g9-tTY"/>
+                    <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="stop_button" destination="9XB-83-j13" id="aQ2-NI-bch"/>

@@ -39,19 +39,29 @@ class MasterViewController: UITableViewController {
     @IBOutlet weak var stop_button: UIBarButtonItem!
 
     @IBAction func update_pressed(_ sender: Any) {
-        // si on ne met pas ca ou qu'on mette true, l'animation est dessus
-        tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y - refreshControl!.frame.size.height), animated: false)
-        
-        userRefresh(self)
+        let frame = navigationController!.navigationBar.frame
+        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
+
+        // userRefresh(self)
         refreshControl!.beginRefreshing()
+        stop_button!.isEnabled = true
+        update_button!.isEnabled = false
+
+        //        devices[.iOSDevice]!.append(Device(name: "salut"))
+        //        tableView.reloadData()
     }
     
     @IBAction func stop_pressed(_ sender: Any) {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         update_button!.isEnabled = true
+        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
     
+    @IBAction func debug_pressed(_ sender: Any) {
+        print("debug pressed")
+    }
+
     enum TableSection: Int {
         case iOSDevice = 0, localGateway, chargenDevice, discardDevice, END
     }
@@ -63,7 +73,18 @@ class MasterViewController: UITableViewController {
     var split_view_controller : SplitViewController?
     
     var devices : [TableSection: [Device]] = [
-        .iOSDevice: [Device(name: "iOS device 1"), Device(name: "iOS device 2")],
+        .iOSDevice: [
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+        ],
         .localGateway: [Device(name: "Local gateway")],
         .chargenDevice: [Device(name: "chargen device 1")],
         .discardDevice: []
@@ -89,8 +110,9 @@ class MasterViewController: UITableViewController {
     private func userRefresh(_ sender: Any) {
         update_button!.isEnabled = false
         stop_button!.isEnabled = true
-        devices[.iOSDevice]!.append(Device(name: "salut"))
-        tableView.reloadData()
+
+//        devices[.iOSDevice]!.append(Device(name: "salut"))
+//        tableView.reloadData()
     }
 
     override func didReceiveMemoryWarning() {

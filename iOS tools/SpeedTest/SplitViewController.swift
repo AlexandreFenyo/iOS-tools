@@ -13,6 +13,9 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Pour avoir l'icône d'agrandissement dans le detail view controller
+        preferredDisplayMode = .allVisible
+
         self.delegate = self
     }
     
@@ -25,7 +28,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         // Dispose of any resources that can be recreated.
     }
 
-    // on iPhone, show the primary view controller's view by default
+    // On iPhone, show the primary view controller's view by default
     // https://stackoverflow.com/questions/25875618/uisplitviewcontroller-in-portrait-on-iphone-shows-detail-vc-instead-of-master
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
         return true
