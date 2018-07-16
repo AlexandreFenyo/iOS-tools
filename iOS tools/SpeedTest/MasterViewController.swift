@@ -9,6 +9,8 @@
 // https://www.raywenderlich.com/173753/uisplitviewcontroller-tutorial-getting-started-2
 // https://medium.com/swift-programming/swift-enums-and-uitableview-sections-1806b74b8138
 // http://theapplady.net/how-to-use-the-ios-8-split-view-controller-part-3/
+// https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/WindowsandViews/WindowsandViews.html
+// https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
 
 import UIKit
 
@@ -34,39 +36,15 @@ class DeviceCell : UITableViewCell {
     }
 }
 
+// The MasterViewController instance is the delegate for the UITableView
 class MasterViewController: UITableViewController {
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
-
-    @IBAction func update_pressed(_ sender: Any) {
-        let frame = navigationController!.navigationBar.frame
-        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-
-        // userRefresh(self)
-        refreshControl!.beginRefreshing()
-        stop_button!.isEnabled = true
-        update_button!.isEnabled = false
-
-        //        devices[.iOSDevice]!.append(Device(name: "salut"))
-        //        tableView.reloadData()
-    }
-    
-    @IBAction func stop_pressed(_ sender: Any) {
-        refreshControl!.endRefreshing()
-        stop_button!.isEnabled = false
-        update_button!.isEnabled = true
-        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-    }
-    
-    @IBAction func debug_pressed(_ sender: Any) {
-        print("debug pressed")
-    }
+    @IBOutlet weak var add_button: UIBarButtonItem!
 
     enum TableSection: Int {
-        case iOSDevice = 0, localGateway, chargenDevice, discardDevice, END
+        case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
     }
-
-    let section_header_height: CGFloat = 25
 
     var detail_view_controller : DetailViewController?
     var detail_navigation_controller : UINavigationController?
@@ -74,22 +52,38 @@ class MasterViewController: UITableViewController {
     
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
-            Device(name: "iOS device 1"), Device(name: "iOS device 2"),
+            Device(name: "iOS device 1"), Device(name: "iOS device 2")
         ],
-        .localGateway: [Device(name: "Local gateway")],
         .chargenDevice: [Device(name: "chargen device 1")],
-        .discardDevice: []
+        .discardDevice: [],
+        .localGateway: [Device(name: "Local gateway")],
+        .internet: [
+            Device(name: "IPv4 Internet"), Device(name: "IPv6 Internet")
+        ]
     ]
-    
+
+    @IBAction func update_pressed(_ sender: Any) {
+        let frame = navigationController!.navigationBar.frame
+        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
+
+        refreshControl!.beginRefreshing()
+        userRefresh(self)
+    }
+
+    @IBAction func stop_pressed(_ sender: Any) {
+        refreshControl!.endRefreshing()
+        stop_button!.isEnabled = false
+        update_button!.isEnabled = true
+        add_button!.isEnabled = true
+
+        // Scroll to top
+        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+    }
+
+    @IBAction func debug_pressed(_ sender: Any) {
+        print("debug pressed")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -98,11 +92,12 @@ class MasterViewController: UITableViewController {
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        self.navigationItem.rightBarButtonItem = self.editButtonItem
+        // Display an Edit button in the navigation bar for this view controller.
+        navigationItem.rightBarButtonItem = editButtonItem
 
-        // https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
+        // Add a refresh control
         refreshControl = UIRefreshControl()
+        // Call userRefresh() when refreshing with gesture
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
     }
     
@@ -110,15 +105,96 @@ class MasterViewController: UITableViewController {
     private func userRefresh(_ sender: Any) {
         update_button!.isEnabled = false
         stop_button!.isEnabled = true
+        add_button!.isEnabled = false
 
 //        devices[.iOSDevice]!.append(Device(name: "salut"))
 //        tableView.reloadData()
     }
 
+    // Disable other actions while editing
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        if editing {
+            refreshControl!.endRefreshing()
+            stop_button!.isEnabled = false
+            update_button!.isEnabled = false
+            add_button!.isEnabled = false
+        } else {
+            refreshControl!.endRefreshing()
+            stop_button!.isEnabled = false
+            update_button!.isEnabled = true
+            add_button!.isEnabled = true
+        }
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
+
+    // MARK: - Table view headers
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // A section must cover the refresh control if we do not want this control to appear over a row when refreshing, so the section height must be greater or equal to the refresh control height
+        return refreshControl!.frame.height
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        var retval : String?
+        if let tableSection = TableSection(rawValue: section) {
+            switch tableSection {
+            case .iOSDevice:
+                retval = "iOS device"
+            case .localGateway:
+                retval = "Local gateway"
+            case .chargenDevice:
+                retval = "Chargen service"
+            case .discardDevice:
+                retval = "Discard service"
+            case .internet:
+                retval = "Internet"
+            default:
+                retval = "Default"
+            }
+        }
+        return retval
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.backgroundView?.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
+        header.textLabel?.textColor = .black
+        header.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 19)
+    }
+
+    //    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    //        print("SALUT")
+    //        return []
+    //    }
+
+    // Useful when not using tableView(...titleForHeaderInSection...) but directly building a UIView
+//    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: section_header_height))
+//        view.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
+//        let label = UILabel(frame: CGRect(x: 15, y: 0, width: tableView.bounds.width - 30, height: section_header_height))
+//        label.font = UIFont.boldSystemFont(ofSize: 30)
+//        label.textColor = UIColor.black
+//        if let tableSection = TableSection(rawValue: section) {
+//            switch tableSection {
+//            case .iOSDevice:
+//                label.text = "iOS device"
+//            case .localGateway:
+//                label.text = "local gateway"
+//            case .chargenDevice:
+//                label.text = "chargen service"
+//            case .discardDevice:
+//                label.text = "discard service"
+//            default:
+//                label.text = "default"
+//            }
+//        }
+//        view.addSubview(label)
+//        return view
+//    }
 
     // MARK: - Table view data source
 
@@ -134,48 +210,6 @@ class MasterViewController: UITableViewController {
         return 0
     }
 
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section_header_height
-        
-//        // First check if there is a valid section of table.
-//        // Then we check that for the section there is more than 1 row.
-//        if let tableSection = TableSection(rawValue: section), let movieData = data[tableSection], movieData.count > 0 {
-//            return SectionHeaderHeight
-//        }
-//        return 0
-    }
-    
-    //        case iOSDevice = 0, localGateway, chargenDevice, discardDevice, END
-
-//    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-//        print("SALUT")
-//        return []
-//    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: section_header_height))
-        view.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
-        let label = UILabel(frame: CGRect(x: 15, y: 0, width: tableView.bounds.width - 30, height: section_header_height))
-        label.font = UIFont.boldSystemFont(ofSize: 15)
-        label.textColor = UIColor.black
-        if let tableSection = TableSection(rawValue: section) {
-            switch tableSection {
-            case .iOSDevice:
-                label.text = "iOS device"
-            case .localGateway:
-                label.text = "local gateway"
-            case .chargenDevice:
-                label.text = "chargen service"
-            case .discardDevice:
-                label.text = "discard service"
-            default:
-                label.text = "default"
-            }
-        }
-        view.addSubview(label)
-        return view
-    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
@@ -183,6 +217,7 @@ class MasterViewController: UITableViewController {
         let device = device_list[indexPath.item]
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
+        // Save a ref to the device in the cell
         // cell.device = device
         cell.textLabel!.text = device.name
 
@@ -201,25 +236,17 @@ class MasterViewController: UITableViewController {
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
-    /*
-    // Override to support conditional editing of the table view.
+    // Local gateway can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+        return indexPath.section != TableSection.localGateway.rawValue && indexPath.section != TableSection.internet.rawValue
     }
-    */
 
-    /*
-    // Override to support editing the table view.
+    // Delete a row
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        if editingStyle != .delete { fatalError("editingStyle invalid") }
+        devices[TableSection.init(rawValue: indexPath.section)!]!.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .fade)
     }
-    */
 
     /*
     // Override to support rearranging the table view.

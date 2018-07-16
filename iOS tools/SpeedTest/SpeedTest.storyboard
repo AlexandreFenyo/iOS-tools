@@ -94,6 +94,7 @@
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="add_button" destination="w26-jr-JrH" id="l6P-Nt-TeA"/>
                         <outlet property="stop_button" destination="9XB-83-j13" id="aQ2-NI-bch"/>
                         <outlet property="update_button" destination="Hoh-gZ-vw9" id="syK-5d-kg7"/>
                     </connections>
