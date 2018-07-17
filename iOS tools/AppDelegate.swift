@@ -38,7 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test() }
-        
+
+        // Start Bonjour service
+        NetTools.initBonjourService()
+
         return true
     }
 

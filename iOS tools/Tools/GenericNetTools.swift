@@ -233,6 +233,8 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         print("netServiceBrowser:", service, moreComing)
+        print(service.hostName)
+        print(service.addresses)
     }
     
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
@@ -261,31 +263,50 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     }
 }
 
+
+
+
+
+
+class MyNetServiceDelegate : NSObject, NetServiceDelegate {
+    public func netServiceDidResolveAddress(_ sender: NetService) {
+        print(sender.hostName!, sender.port)
+    }
+}
+
 class NetTools {
     private static var br : NetServiceBrowser?
     public static var dl2 : NetServiceSpeedTestChargenBrowserDelegate?
-    
+
+
     private static var net_service_speed_test_chargen : NetService?
-    private static var net_service_chargen_delegate : NetServiceSpeedTestChargenDelegate?
+    private static var net_service_speed_test_chargen_delegate : NetServiceSpeedTestChargenDelegate?
 
     public static var x = false
-    
+
+    private static let ns = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen")
+    private static var ns_deleg = MyNetServiceDelegate()
     public static func initBonjourService() {
+        ns.delegate = ns_deleg
+        ns.resolve(withTimeout: TimeInterval(10))
+    }
+
+    public static func XinitBonjourService() {
         // Call C
         // DispatchQueue.global(qos: .background).async{ net_test() }
-        
+
         // Create chargen service
         net_service_speed_test_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.speedtest_chargen_port)
-        net_service_chargen_delegate = NetServiceSpeedTestChargenDelegate()
-        net_service_speed_test_chargen!.delegate = net_service_chargen_delegate
+        net_service_speed_test_chargen_delegate = NetServiceSpeedTestChargenDelegate()
+        net_service_speed_test_chargen!.delegate = net_service_speed_test_chargen_delegate
         
         // Start listening for speed test chargen clients
         net_service_speed_test_chargen!.publish(options: .listenForConnections)
         
-                    let browser = NetServiceBrowser()
-                    br = browser
-//                    dl2 = MyNetServiceBrowserDelegate()
-//                    browser.delegate = dl2
+        let browser = NetServiceBrowser()
+        br = browser
+                    dl2 = NetServiceSpeedTestChargenBrowserDelegate()
+                    browser.delegate = dl2
         //            browser.searchForBrowsableDomains()
                     browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
                     print("browsing")
