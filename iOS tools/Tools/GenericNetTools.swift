@@ -13,13 +13,13 @@ import Foundation
 // https://github.com/ecnepsnai/BonjourSwift/blob/master/Bonjour.swift
 // https://docs.swift.org/swift-book/LanguageGuide/AutomaticReferenceCounting.html
 // nc localhost 1919
-// dig -p 5353 @mac _ssh._tcp.local. ptr
-// dig -p 5353 @224.0.0.251 _chargen._tcp.local. ptr
+// dig -p 5353 @mac _ssh._tcp.local. PTR
+// dig -p 5353 @224.0.0.251 _speedtestchargen._tcp.local. PTR
 // https://medium.com/flawless-app-stories/memory-leaks-in-swift-bfd5f95f3a74
 
 // Default values
 struct NetworkDefaults {
-    public static let speedtest_chargen_port : Int32 = 1919
+    public static let speed_test_chargen_port : Int32 = 1919
     public static let buffer_size = 3000
 }
 
@@ -240,11 +240,11 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
         print("didRemoveDomain")
     }
-    
+
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
         print("didFindDomain")
     }
-    
+
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         print("didRemove")
     }
@@ -263,60 +263,42 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     }
 }
 
-
-
-
-
-
-class MyNetServiceDelegate : NSObject, NetServiceDelegate {
-    public func netServiceDidResolveAddress(_ sender: NetService) {
-        print(sender.hostName!, sender.port)
-    }
-}
-
 class NetTools {
-    private static var br : NetServiceBrowser?
-    public static var dl2 : NetServiceSpeedTestChargenBrowserDelegate?
+    private static var speed_test_chargen_browser : NetServiceBrowser?
+    public static var speed_test_chargen_browser_delegate : NetServiceSpeedTestChargenBrowserDelegate?
 
+    private static var speed_test_chargen_service : NetService?
+    private static var speed_test_chargen_service_delegate : NetServiceSpeedTestChargenDelegate?
 
-    private static var net_service_speed_test_chargen : NetService?
-    private static var net_service_speed_test_chargen_delegate : NetServiceSpeedTestChargenDelegate?
-
-    public static var x = false
-
-    private static let ns = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen")
-    private static var ns_deleg = MyNetServiceDelegate()
     public static func initBonjourService() {
-        ns.delegate = ns_deleg
-        ns.resolve(withTimeout: TimeInterval(10))
-    }
-
-    public static func XinitBonjourService() {
         // Call C
         // DispatchQueue.global(qos: .background).async{ net_test() }
 
         // Create chargen service
-        net_service_speed_test_chargen = NetService(domain: "local.", type: "_chargen._tcp.", name: "chargen", port: NetworkDefaults.speedtest_chargen_port)
-        net_service_speed_test_chargen_delegate = NetServiceSpeedTestChargenDelegate()
-        net_service_speed_test_chargen!.delegate = net_service_speed_test_chargen_delegate
-        
+//        speed_test_chargen_service = NetService(domain: "local.", type: "_speedtestchargen._tcp.", name: "", port: NetworkDefaults.speed_test_chargen_port)
+//        speed_test_chargen_service_delegate = NetServiceSpeedTestChargenDelegate()
+//        speed_test_chargen_service!.delegate = speed_test_chargen_service_delegate
+
         // Start listening for speed test chargen clients
-        net_service_speed_test_chargen!.publish(options: .listenForConnections)
-        
-        let browser = NetServiceBrowser()
-        br = browser
-                    dl2 = NetServiceSpeedTestChargenBrowserDelegate()
-                    browser.delegate = dl2
-        //            browser.searchForBrowsableDomains()
-                    browser.searchForServices(ofType: "_chargen._tcp.", inDomain: "local.")
-                    print("browsing")
+//        speed_test_chargen_service!.publish(options: .listenForConnections)
+
+        speed_test_chargen_browser = NetServiceBrowser()
+        speed_test_chargen_browser_delegate = NetServiceSpeedTestChargenBrowserDelegate()
+        speed_test_chargen_browser!.delegate = speed_test_chargen_browser_delegate
+
+//speed_test_chargen_browser!.searchForRegistrationDomains()
+//speed_test_chargen_browser!.searchForBrowsableDomains()
+//speed_test_chargen_browser!.searchForServices(ofType: "_XXXspeedtestchargen._tcp.", inDomain: "local.")
+//        speed_test_chargen_browser!.searchForServices(ofType: "_ssh._tcp.", inDomain: "local.")
+        speed_test_chargen_browser!.searchForServices(ofType: "_ssh._tcp", inDomain: "local.")
+
+        print("browsing")
 
         //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
         //            var readStream : Unmanaged<CFReadStream>?
         //            var writeStream : Unmanaged<CFWriteStream>?
         //            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
         //            CFReadStreamOpen(readStream!.takeRetainedValue())
-
     }
     
 }
