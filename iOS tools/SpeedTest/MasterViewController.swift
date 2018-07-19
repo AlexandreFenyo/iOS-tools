@@ -22,10 +22,10 @@ class Device {
     }
 }
 
+// MasterViewController is a DeviceManager
 protocol DeviceManager {
     func addDevice(_: String)
 }
-
 
 class DeviceCell : UITableViewCell {
     // weak var device : Device?
@@ -139,6 +139,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - DeviceManager protocol
 
     public func addDevice(_ name: String) {
+        // plein de pbs d'affichages
+        // It should not be called in the methods that insert or delete rows, especially within an animation block implemented with calls to beginUpdates() and endUpdates().
         devices[.iOSDevice]!.append(Device(name: name))
         tableView.reloadData()
     }

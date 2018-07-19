@@ -99,9 +99,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 }
 
 class ServiceBrowser : NetServiceBrowser {
-    // Strong ref
     private let browser_delegate : BrowserDelegate
-
     private let type : String
 
     init(_ type: String, deviceManager: DeviceManager) {
