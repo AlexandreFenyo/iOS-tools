@@ -12,9 +12,11 @@ import UIKit
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     private var services : [NetService] = []
     private let type : String
+    private let device_manager : DeviceManager
 
-    init(_ type: String) {
+    init(_ type: String, deviceManager: DeviceManager) {
         self.type = type
+        device_manager = deviceManager
     }
 
     // MARK: - NetServiceBrowserDelegate
@@ -74,10 +76,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("netServiceDidStop: NetService resolved with address(es) and timeout reached")
     }
 
-    // Found some addresses for the service
+    // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
         print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
+        device_manager.addDevice(sender.name)
         if sender.addresses != nil {
             for addr in sender.addresses! {
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
@@ -95,14 +98,22 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     }
 }
 
-class ServiceBrowser {
-    private let browser = NetServiceBrowser()
-    private var browser_delegate : BrowserDelegate
+class ServiceBrowser : NetServiceBrowser {
+    // Strong ref
+    private let browser_delegate : BrowserDelegate
 
-    init(_ type: String) {
-        browser_delegate = BrowserDelegate(type)
-        browser.delegate = browser_delegate
-        browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
+    private let type : String
+
+    init(_ type: String, deviceManager: DeviceManager) {
+        browser_delegate = BrowserDelegate(type, deviceManager: deviceManager)
+        self.type = type
+        super.init()
+        self.delegate = browser_delegate
+        searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
+    }
+
+    public func restartSearch() {
+        stop()
+        searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }
-

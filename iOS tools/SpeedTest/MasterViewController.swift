@@ -22,6 +22,11 @@ class Device {
     }
 }
 
+protocol DeviceManager {
+    func addDevice(_: String)
+}
+
+
 class DeviceCell : UITableViewCell {
     // weak var device : Device?
     
@@ -37,7 +42,7 @@ class DeviceCell : UITableViewCell {
 }
 
 // The MasterViewController instance is the delegate for the UITableView
-class MasterViewController: UITableViewController {
+class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
@@ -46,10 +51,12 @@ class MasterViewController: UITableViewController {
         case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
     }
 
-    var detail_view_controller : DetailViewController?
-    var detail_navigation_controller : UINavigationController?
-    var split_view_controller : SplitViewController?
-    
+    public var detail_view_controller : DetailViewController?
+    public var detail_navigation_controller : UINavigationController?
+    public var split_view_controller : SplitViewController?
+    public weak var browser_chargen : ServiceBrowser?
+    public weak var browser_discard : ServiceBrowser?
+
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
             Device(name: "iOS device 1"), Device(name: "iOS device 2")
@@ -98,15 +105,15 @@ class MasterViewController: UITableViewController {
         // Call userRefresh() when refreshing with gesture
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
     }
-    
+
     @objc
     private func userRefresh(_ sender: Any) {
         update_button!.isEnabled = false
         stop_button!.isEnabled = true
         add_button!.isEnabled = false
 
-//        devices[.iOSDevice]!.append(Device(name: "salut"))
-//        tableView.reloadData()
+        browser_chargen?.restartSearch()
+        browser_discard?.restartSearch()
     }
 
     // Disable other actions while editing
@@ -127,6 +134,13 @@ class MasterViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    // MARK: - DeviceManager protocol
+
+    public func addDevice(_ name: String) {
+        devices[.iOSDevice]!.append(Device(name: name))
+        tableView.reloadData()
     }
 
     // MARK: - Table view headers

@@ -50,8 +50,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Start browsing for remote services
         // We can test easily to browse using _ssh._tcp.
-        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type)
-        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type)
+        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
+        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
+        masterViewController.browser_chargen = browser_chargen
+        masterViewController.browser_discard = browser_discard
 
         return true
     }
