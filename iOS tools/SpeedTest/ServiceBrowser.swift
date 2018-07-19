@@ -11,6 +11,11 @@ import UIKit
 
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     private var services : [NetService] = []
+    private let type : String
+
+    init(_ type: String) {
+        self.type = type
+    }
 
     // MARK: - NetServiceBrowserDelegate
 
@@ -33,9 +38,24 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         else { print("warning: service app closed but not previously discovered") }
     }
 
+    // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
         print("didNotSearch")
         for err in errorDict { print("didNotSearch:", err.key, ":", err.value) }
+
+        // Restart browsing
+        browser.stop()
+        browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
+    }
+
+    // A search is commencing
+    public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
+        print("netServiceBrowserWillSearch")
+    }
+
+    // A search was stopped
+    public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        print("netServiceBrowserDidStopSearch")
     }
 
     // MARK: - NetServiceDelegate
@@ -51,22 +71,23 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // NetService resolved with address(es) and timeout reached
     public func netServiceDidStop(_ sender: NetService) {
-        print("netServiceDidStop")
+        print("netServiceDidStop: NetService resolved with address(es) and timeout reached")
     }
 
+    // Found an address for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("netServiceDidResolveAddress")
-        print(sender.name)
+        print("netServiceDidResolveAddress:", sender.name)
     }
 }
 
 class ServiceBrowser {
     private let browser = NetServiceBrowser()
-    private var browser_delegate = BrowserDelegate()
+    private var browser_delegate : BrowserDelegate
 
     init(_ type: String) {
+        browser_delegate = BrowserDelegate(type)
         browser.delegate = browser_delegate
-        browser.searchForServices(ofType: type, inDomain: "local.")
+        browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }
 

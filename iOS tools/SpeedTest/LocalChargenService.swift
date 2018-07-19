@@ -16,11 +16,22 @@ import Foundation
 // dig -p 5353 @mac _ssh._tcp.local. PTR
 // dig -p 5353 @224.0.0.251 _speedtestchargen._tcp.local. PTR
 // https://medium.com/flawless-app-stories/memory-leaks-in-swift-bfd5f95f3a74
+// Call C from Swift
+// DispatchQueue.global(qos: .background).async{ net_test() }
+// Connect to a service
+//            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
+//            var readStream : Unmanaged<CFReadStream>?
+//            var writeStream : Unmanaged<CFWriteStream>?
+//            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
+//            CFReadStreamOpen(readStream!.takeRetainedValue())
 
 // Default values
 struct NetworkDefaults {
-    public static let speed_test_chargen_port : Int32 = 1919
+    public static let speed_test_chargen_port: Int32 = 1919
     public static let buffer_size = 3000
+    public static let local_domain_for_browsing = "local."
+    public static let speed_test_chargen_service_type = "_speedtestchargen._tcp."
+    public static let speed_test_discard_service_type = "_speedtestdiscard._tcp."
 }
 
 // Protocol used to inform with a callback that a child object has done its job
@@ -57,7 +68,7 @@ class SpeedTestChargenClient : NSObject, StreamDelegate {
     private let input_stream, output_stream : Stream
 
     // Needed to inform the the parent that this SpeedTestChargenClient instance can be disposed
-    private weak var from : NetServiceSpeedTestChargenDelegate?
+    private weak var from : LocalChargenDelegate?
 
     // Data buffers
     private let dataMutablePointer, bufMutablePointer : UnsafeMutablePointer<UInt8>
@@ -75,7 +86,7 @@ class SpeedTestChargenClient : NSObject, StreamDelegate {
     public func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
         print("exitThreads")
-        // UTILE ???
+        // Needed ???
 //        background_network_thread_in!.cancel()
 //        background_network_thread_out!.cancel()
         input_stream.close()
@@ -83,7 +94,7 @@ class SpeedTestChargenClient : NSObject, StreamDelegate {
     }
 
     // Prepare threads and data buffers to handle a remote client
-    public init(input_stream: InputStream, output_stream: OutputStream, from: NetServiceSpeedTestChargenDelegate) {
+    public init(input_stream: InputStream, output_stream: OutputStream, from: LocalChargenDelegate) {
         self.input_stream = input_stream
         self.output_stream = output_stream
 
@@ -144,7 +155,7 @@ class SpeedTestChargenClient : NSObject, StreamDelegate {
 }
 
 // Manage callbacks for the speed test chargen service
-class NetServiceSpeedTestChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
+class LocalChargenDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Strong refs
     private var clients : [SpeedTestChargenClient] = [ ]
 
@@ -225,83 +236,3 @@ class NetServiceSpeedTestChargenDelegate : NSObject, NetServiceDelegate, RefClos
     }
 }
 
-
-class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDelegate {
-    deinit {
-        print("MyNetServiceBrowserDelegate.deinit")
-    }
-
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        print("netServiceBrowser:", service, moreComing)
-        service.resolve(withTimeout: TimeInterval(5))
-    }
-
-
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
-        print("didRemove")
-    }
-    
-    public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
-        print("netServiceBrowserWillSearch")
-    }
-    
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
-        print("didNotSearch")
-        for err in errorDict { print("ERREUR:", err.key, err.value) }
-    }
-    
-    public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
-        print("netServiceBrowserDidStopSearch")
-    }
-
-    // Unused
-    // Useful for NetServiceBrowser.searchForRegistrationDomains() and NetServiceBrowser.searchForBrowsableDomains()
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
-        print("didRemoveDomain")
-    }
-
-    // Unused
-    // Useful for NetServiceBrowser.searchForRegistrationDomains() and NetServiceBrowser.searchForBrowsableDomains()
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
-        print("didFindDomain", domainString)
-    }
-}
-
-class NetTools {
-//    private static var speed_test_chargen_browser : NetServiceBrowser?
-//    public static var speed_test_chargen_browser_delegate : NetServiceSpeedTestChargenBrowserDelegate?
-
-    private static var speed_test_chargen_service : NetService?
-    private static var speed_test_chargen_service_delegate : NetServiceSpeedTestChargenDelegate?
-
-    public static func initBonjourService() {
-        // Call C
-        // DispatchQueue.global(qos: .background).async{ net_test() }
-
-        // Create chargen service
-        speed_test_chargen_service = NetService(domain: "local.", type: "_speedtestchargen._tcp.", name: "", port: NetworkDefaults.speed_test_chargen_port)
-        speed_test_chargen_service_delegate = NetServiceSpeedTestChargenDelegate()
-        speed_test_chargen_service!.delegate = speed_test_chargen_service_delegate
-
-        // Start listening for speed test chargen clients
-        speed_test_chargen_service!.publish(options: .listenForConnections)
-
-//        speed_test_chargen_browser = NetServiceBrowser()
-//        speed_test_chargen_browser_delegate = NetServiceSpeedTestChargenBrowserDelegate()
-//        speed_test_chargen_browser!.delegate = speed_test_chargen_browser_delegate
-
-        // We do not search for a specific domain, we use "local.", so the following lines are useless
-        // speed_test_chargen_browser!.searchForRegistrationDomains()
-        // speed_test_chargen_browser!.searchForBrowsableDomains()
-
-//        speed_test_chargen_browser!.searchForServices(ofType: "_speedtestchargen._tcp.", inDomain: "local.")
-
-        // Connect to a service
-        //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
-        //            var readStream : Unmanaged<CFReadStream>?
-        //            var writeStream : Unmanaged<CFWriteStream>?
-        //            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
-        //            CFReadStreamOpen(readStream!.takeRetainedValue())
-    }
-    
-}

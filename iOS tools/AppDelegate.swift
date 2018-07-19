@@ -10,10 +10,11 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow?
-    var browser_chargen: ServiceBrowser?
-    var browser_discard: ServiceBrowser?
+    public var window: UIWindow?
+    private var local_chargen_service: NetService?
+    private var local_chargen_service_delegate: LocalChargenDelegate?
+    private var browser_chargen: ServiceBrowser?
+    private var browser_discard: ServiceBrowser?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -41,11 +42,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test() }
 
-        // Start Bonjour services
-        NetTools.initBonjourService()
-        browser_chargen = ServiceBrowser("_speedtestchargen._tcp.")
-//        browser_discard = ServiceBrowser("_speedtestdiscard._tcp.")
-//        browser_chargen = ServiceBrowser("_ssh._tcp.")
+        // Start local services
+        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)
+        local_chargen_service_delegate = LocalChargenDelegate()
+        local_chargen_service!.delegate = local_chargen_service_delegate
+        local_chargen_service!.publish(options: .listenForConnections)
+
+        // Start browsing for remote services
+        // We can test easily to browse using _ssh._tcp.
+        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type)
+        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type)
 
         return true
     }
