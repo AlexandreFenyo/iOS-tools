@@ -74,9 +74,24 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("netServiceDidStop: NetService resolved with address(es) and timeout reached")
     }
 
-    // Found an address for the service
+    // Found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("netServiceDidResolveAddress:", sender.name)
+        print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
+        // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
+        if sender.addresses != nil {
+            for addr in sender.addresses! {
+                switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
+                case AF_INET:
+                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv4:", GenericNetTools.getAddrFromSockAddr(addr))
+
+                case AF_INET6:
+                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv6:", GenericNetTools.getAddrFromSockAddr(addr))
+
+                default:
+                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "address family not recognized")
+                }
+            }
+        }
     }
 }
 

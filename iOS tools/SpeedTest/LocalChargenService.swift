@@ -18,12 +18,14 @@ import Foundation
 // https://medium.com/flawless-app-stories/memory-leaks-in-swift-bfd5f95f3a74
 // Call C from Swift
 // DispatchQueue.global(qos: .background).async{ net_test() }
+
 // Connect to a service
 //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
 //            var readStream : Unmanaged<CFReadStream>?
 //            var writeStream : Unmanaged<CFWriteStream>?
 //            CFStreamCreatePairWithSocketToHost(nil, "localhost" as CFString, NetworkDefaults.chargen_port, &readStream, &writeStream)
 //            CFReadStreamOpen(readStream!.takeRetainedValue())
+// meilleure alternative si on a un NetService : service.getInputStream()
 
 // Default values
 struct NetworkDefaults {
