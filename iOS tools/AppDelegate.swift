@@ -12,6 +12,8 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var browser_chargen: ServiceBrowser?
+    var browser_discard: ServiceBrowser?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -39,8 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test() }
 
-        // Start Bonjour service
+        // Start Bonjour services
         NetTools.initBonjourService()
+        browser_chargen = ServiceBrowser("_speedtestchargen._tcp.")
+//        browser_discard = ServiceBrowser("_speedtestdiscard._tcp.")
+//        browser_chargen = ServiceBrowser("_ssh._tcp.")
 
         return true
     }

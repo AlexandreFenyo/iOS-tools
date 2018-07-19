@@ -230,20 +230,12 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     deinit {
         print("MyNetServiceBrowserDelegate.deinit")
     }
-    
+
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         print("netServiceBrowser:", service, moreComing)
-        print(service.hostName)
-        print(service.addresses)
-    }
-    
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
-        print("didRemoveDomain")
+        service.resolve(withTimeout: TimeInterval(5))
     }
 
-    public func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
-        print("didFindDomain")
-    }
 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         print("didRemove")
@@ -261,11 +253,23 @@ class NetServiceSpeedTestChargenBrowserDelegate : NSObject, NetServiceBrowserDel
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
         print("netServiceBrowserDidStopSearch")
     }
+
+    // Unused
+    // Useful for NetServiceBrowser.searchForRegistrationDomains() and NetServiceBrowser.searchForBrowsableDomains()
+    public func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
+        print("didRemoveDomain")
+    }
+
+    // Unused
+    // Useful for NetServiceBrowser.searchForRegistrationDomains() and NetServiceBrowser.searchForBrowsableDomains()
+    public func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
+        print("didFindDomain", domainString)
+    }
 }
 
 class NetTools {
-    private static var speed_test_chargen_browser : NetServiceBrowser?
-    public static var speed_test_chargen_browser_delegate : NetServiceSpeedTestChargenBrowserDelegate?
+//    private static var speed_test_chargen_browser : NetServiceBrowser?
+//    public static var speed_test_chargen_browser_delegate : NetServiceSpeedTestChargenBrowserDelegate?
 
     private static var speed_test_chargen_service : NetService?
     private static var speed_test_chargen_service_delegate : NetServiceSpeedTestChargenDelegate?
@@ -275,25 +279,24 @@ class NetTools {
         // DispatchQueue.global(qos: .background).async{ net_test() }
 
         // Create chargen service
-//        speed_test_chargen_service = NetService(domain: "local.", type: "_speedtestchargen._tcp.", name: "", port: NetworkDefaults.speed_test_chargen_port)
-//        speed_test_chargen_service_delegate = NetServiceSpeedTestChargenDelegate()
-//        speed_test_chargen_service!.delegate = speed_test_chargen_service_delegate
+        speed_test_chargen_service = NetService(domain: "local.", type: "_speedtestchargen._tcp.", name: "", port: NetworkDefaults.speed_test_chargen_port)
+        speed_test_chargen_service_delegate = NetServiceSpeedTestChargenDelegate()
+        speed_test_chargen_service!.delegate = speed_test_chargen_service_delegate
 
         // Start listening for speed test chargen clients
-//        speed_test_chargen_service!.publish(options: .listenForConnections)
+        speed_test_chargen_service!.publish(options: .listenForConnections)
 
-        speed_test_chargen_browser = NetServiceBrowser()
-        speed_test_chargen_browser_delegate = NetServiceSpeedTestChargenBrowserDelegate()
-        speed_test_chargen_browser!.delegate = speed_test_chargen_browser_delegate
+//        speed_test_chargen_browser = NetServiceBrowser()
+//        speed_test_chargen_browser_delegate = NetServiceSpeedTestChargenBrowserDelegate()
+//        speed_test_chargen_browser!.delegate = speed_test_chargen_browser_delegate
 
-//speed_test_chargen_browser!.searchForRegistrationDomains()
-//speed_test_chargen_browser!.searchForBrowsableDomains()
-//speed_test_chargen_browser!.searchForServices(ofType: "_XXXspeedtestchargen._tcp.", inDomain: "local.")
-//        speed_test_chargen_browser!.searchForServices(ofType: "_ssh._tcp.", inDomain: "local.")
-        speed_test_chargen_browser!.searchForServices(ofType: "_ssh._tcp", inDomain: "local.")
+        // We do not search for a specific domain, we use "local.", so the following lines are useless
+        // speed_test_chargen_browser!.searchForRegistrationDomains()
+        // speed_test_chargen_browser!.searchForBrowsableDomains()
 
-        print("browsing")
+//        speed_test_chargen_browser!.searchForServices(ofType: "_speedtestchargen._tcp.", inDomain: "local.")
 
+        // Connect to a service
         //            // https://developer.apple.com/documentation/corefoundation/1539743-cfreadstreamopen
         //            var readStream : Unmanaged<CFReadStream>?
         //            var writeStream : Unmanaged<CFWriteStream>?
