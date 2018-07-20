@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var local_chargen_service_delegate: LocalChargenDelegate?
     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
+    private var masterViewController : MasterViewController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -32,6 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set the first device displayed in the detail view controller
         detailViewController.device = devices.first
+
+        self.masterViewController = masterViewController
 
         masterViewController.detail_view_controller = detailViewController
         masterViewController.detail_navigation_controller = rightNavController
@@ -58,9 +61,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    // Tester ce qui se passe si le bg vient d'un appel tél reçu
+
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        masterViewController?.applicationWillResignActive()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {

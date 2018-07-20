@@ -79,16 +79,24 @@ class MasterViewController: UITableViewController, DeviceManager {
         ]
     ]
 
+    // Refresh started with button
+    // see usrRefresh()
     @IBAction func update_pressed(_ sender: Any) {
         let frame = navigationController!.navigationBar.frame
         // Will call scrollViewDidEndScrollingAnimation when finished
-        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
         refreshControl!.beginRefreshing()
-        userRefresh(self)
+
+//        tableView.scrollRectToVisible(CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 1, height: 1)), animated: true)
+//        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
+
+        update_button!.isEnabled = false
+        stop_button!.isEnabled = true
+        add_button!.isEnabled = false
+
+//        addDevice("gesture")
     }
 
-    @IBAction func stop_pressed(_ sender: Any) {
-        return
+    private func stopBrowsing() {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         update_button!.isEnabled = true
@@ -96,13 +104,21 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         browser_discard?.stop()
         browser_chargen?.stop()
+    }
 
+    @IBAction func stop_pressed(_ sender: Any) {
+        stopBrowsing()
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
 
+    public func applicationWillResignActive() {
+        stopBrowsing()
+    }
+
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
+        addDevice("test")
     }
 
     override func viewDidLoad() {
@@ -126,16 +142,19 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        }
     }
 
+    // Refresh started with gesture
+    // see update_pressed()
     @objc
     private func userRefresh(_ sender: Any) {
+        print("VALUE CHANGED REFRESH:", refreshControl!.isRefreshing)
         update_button!.isEnabled = false
         stop_button!.isEnabled = true
         add_button!.isEnabled = false
+        addDevice("gesture")
     }
 
     // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
-        return
         super.setEditing(editing, animated: animated)
         if editing {
             refreshControl!.endRefreshing()
@@ -159,11 +178,15 @@ class MasterViewController: UITableViewController, DeviceManager {
         if pending_add_tasks.isEmpty == false {
             tableView.beginUpdates()
             for task in pending_add_tasks {
-                tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count, section: TableSection.iOSDevice.rawValue)], with: .automatic)
                 devices[.iOSDevice]!.append(Device(name: task.name))
+                tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count - 1, section: TableSection.iOSDevice.rawValue)], with: UITableViewRowAnimation.none)  /* .automatic */
             }
             pending_add_tasks.removeAll()
             tableView.endUpdates()
+
+            let indexPath = IndexPath(row: 0, section: 0)
+            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+
         }
     }
 
@@ -176,7 +199,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var c : Int = 0
     public func addDevice(_ name: String) {
         print("XXXXXXXXXXXXXXXXX addDevice()")
-        return
 //        print("tracking:", tableView.isTracking)
 //        print("dragging:", tableView.isDragging)
 //        print("scrolled animation running:", scrolled_animation_running)
@@ -190,11 +212,11 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         print("fin de scroll")
-        return
         if refreshControl?.isRefreshing == true {
             print("SEARCH")
-            browser_chargen?.search()
-            browser_discard?.search()
+//            browser_chargen?.search()
+//            browser_discard?.search()
+            addDevice("gesture")
         }
     }
 
