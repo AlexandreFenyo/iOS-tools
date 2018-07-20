@@ -11,10 +11,6 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     public var window: UIWindow?
-    private var local_chargen_service: NetService?
-    private var local_chargen_service_delegate: LocalChargenDelegate?
-    private var browser_chargen: ServiceBrowser?
-    private var browser_discard: ServiceBrowser?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -38,22 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.split_view_controller = splitViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-
-        // Placeholder for some tests
-        if GenericTools.must_call_initial_tests { GenericTools.test() }
-
-        // Start local services
-        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)
-        local_chargen_service_delegate = LocalChargenDelegate()
-        local_chargen_service!.delegate = local_chargen_service_delegate
-        local_chargen_service!.publish(options: .listenForConnections)
-
-        // Start browsing for remote services
-        // We can test easily to browse using _ssh._tcp.
-        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
-        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
-        masterViewController.browser_chargen = browser_chargen
-        masterViewController.browser_discard = browser_discard
 
         return true
     }

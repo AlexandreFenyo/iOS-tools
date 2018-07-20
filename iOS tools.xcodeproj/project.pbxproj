@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
 		5D1351F1208538DB00E4A76D /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D1351F0208538DB00E4A76D /* art.scnassets */; };
-		5D1351F3208538DB00E4A76D /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351F2208538DB00E4A76D /* GameViewController.swift */; };
-		5D1351F6208538DB00E4A76D /* Main1.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D1351F4208538DB00E4A76D /* Main1.storyboard */; };
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
@@ -19,23 +17,13 @@
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
-		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
-		5D945D0C2100CF51007E4844 /* GenericNetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* GenericNetTools.swift */; };
-		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
-		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */; };
-		5DC736C820D3D29B00C2A199 /* UDPTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C720D3D29B00C2A199 /* UDPTools.swift */; };
-		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
-		5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* 2D3D.storyboard */; };
-		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5D1351EB208538DB00E4A76D /* iOS tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D1351EE208538DB00E4A76D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D1351F0208538DB00E4A76D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
-		5D1351F2208538DB00E4A76D /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
-		5D1351F5208538DB00E4A76D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main1.storyboard; sourceTree = "<group>"; };
 		5D1351FC208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D135205208538E300E4A76D /* iOS_toolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_toolsTests.swift; sourceTree = "<group>"; };
 		5D135207208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -49,17 +37,7 @@
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
-		5D945D0B2100CF51007E4844 /* GenericNetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericNetTools.swift; sourceTree = "<group>"; };
-		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
-		5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS tools-Bridging-Header.h"; sourceTree = "<group>"; };
-		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
-		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		5DC736C720D3D29B00C2A199 /* UDPTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPTools.swift; sourceTree = "<group>"; };
-		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
-		5DF237F420A089B700CF9365 /* 2D3D.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = 2D3D.storyboard; sourceTree = "<group>"; };
-		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,10 +77,7 @@
 				5D13521E20853BB400E4A76D /* Tools */,
 				5D1351EE208538DB00E4A76D /* AppDelegate.swift */,
 				5D1351F0208538DB00E4A76D /* art.scnassets */,
-				5D1351F2208538DB00E4A76D /* GameViewController.swift */,
-				5D1351F4208538DB00E4A76D /* Main1.storyboard */,
 				5D1351FC208538E300E4A76D /* Info.plist */,
-				5DF237F420A089B700CF9365 /* 2D3D.storyboard */,
 			);
 			path = "iOS tools";
 			sourceTree = "<group>";
@@ -132,13 +107,6 @@
 				5D38680F20963915009FE239 /* config.plist */,
 				5D4B385520A2ECD9006AC172 /* Tools.xcassets */,
 				5D4B385920A2EEAF006AC172 /* Splash.storyboard */,
-				5D8944A120A57C7800E26476 /* Chart.swift */,
-				5DFF67E920B61E8C003605BF /* TimeSeries.swift */,
-				5DC736C220D3A55600C2A199 /* NetTools.c */,
-				5DC736C320D3A55600C2A199 /* NetTools.h */,
-				5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */,
-				5DC736C720D3D29B00C2A199 /* UDPTools.swift */,
-				5D945D0B2100CF51007E4844 /* GenericNetTools.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -150,8 +118,6 @@
 				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
-				5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */,
-				5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */,
 			);
 			path = SpeedTest;
 			sourceTree = "<group>";
@@ -217,8 +183,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D1351F1208538DB00E4A76D /* art.scnassets in Resources */,
-				5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */,
-				5D1351F6208538DB00E4A76D /* Main1.storyboard in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */,
 				5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */,
@@ -250,34 +214,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
-				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
-				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
-				5DC736C820D3D29B00C2A199 /* UDPTools.swift in Sources */,
-				5D1351F3208538DB00E4A76D /* GameViewController.swift in Sources */,
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
-				5D945D0C2100CF51007E4844 /* GenericNetTools.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
-				5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */,
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
-				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		5D1351F4208538DB00E4A76D /* Main1.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5D1351F5208538DB00E4A76D /* Base */,
-			);
-			name = Main1.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		5D135213208538E300E4A76D /* Debug */ = {
@@ -336,6 +281,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -389,6 +335,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -410,7 +357,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -433,7 +380,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -75,29 +75,12 @@
                     </tableView>
                     <toolbarItems>
                         <barButtonItem title="Add" id="w26-jr-JrH"/>
-                        <barButtonItem title="Update" id="Hoh-gZ-vw9">
-                            <connections>
-                                <action selector="update_pressed:" destination="9rn-U2-Uvj" id="WGw-aq-cnK"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem enabled="NO" title="Stop" id="9XB-83-j13">
-                            <connections>
-                                <action selector="stop_pressed:" destination="9rn-U2-Uvj" id="ah7-ZC-teK"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem title="Debug" id="WCR-6O-86k">
-                            <connections>
-                                <action selector="debug_pressed:" destination="9rn-U2-Uvj" id="Jhu-iO-9ns"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem title="Update" id="Hoh-gZ-vw9"/>
+                        <barButtonItem enabled="NO" title="Stop" id="9XB-83-j13"/>
+                        <barButtonItem title="Debug" id="WCR-6O-86k"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="add_button" destination="w26-jr-JrH" id="l6P-Nt-TeA"/>
-                        <outlet property="stop_button" destination="9XB-83-j13" id="aQ2-NI-bch"/>
-                        <outlet property="update_button" destination="Hoh-gZ-vw9" id="syK-5d-kg7"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Nur-ln-hKS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -22,41 +22,18 @@ class Device {
     }
 }
 
-// MasterViewController is a DeviceManager
-protocol DeviceManager {
-    func addDevice(_: String)
-}
-
-struct TaskToRunWhenNoAnimation {
-    public let name : String
-
-    public init(name: String) {
-        self.name = name
-    }
-}
-
 class DeviceCell : UITableViewCell {
-    // weak var device : Device?
-
     init(_ device : Device, style: UITableViewCellStyle, reuseIdentifier: String?) {
-        // self.device = device
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
     
     required init?(coder aDecoder: NSCoder) {
-        // self.device = nil
         super.init(style: .default, reuseIdentifier: "DeviceCell")
     }
 }
 
 // The MasterViewController instance is the delegate for the UITableView
-class MasterViewController: UITableViewController, DeviceManager {
-    @IBOutlet weak var update_button: UIBarButtonItem!
-    @IBOutlet weak var stop_button: UIBarButtonItem!
-    @IBOutlet weak var add_button: UIBarButtonItem!
-
-    private var pending_add_tasks : [TaskToRunWhenNoAnimation] = []
-
+class MasterViewController: UITableViewController {
     enum TableSection: Int {
         case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
     }
@@ -64,8 +41,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_view_controller : DetailViewController?
     public var detail_navigation_controller : UINavigationController?
     public var split_view_controller : SplitViewController?
-    public weak var browser_chargen : ServiceBrowser?
-    public weak var browser_discard : ServiceBrowser?
 
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
@@ -79,111 +54,16 @@ class MasterViewController: UITableViewController, DeviceManager {
         ]
     ]
 
-    @IBAction func update_pressed(_ sender: Any) {
-        let frame = navigationController!.navigationBar.frame
-        // Will call scrollViewDidEndScrollingAnimation when finished
-        tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-        refreshControl!.beginRefreshing()
-        userRefresh(self)
-    }
-
-    @IBAction func stop_pressed(_ sender: Any) {
-        return
-        refreshControl!.endRefreshing()
-        stop_button!.isEnabled = false
-        update_button!.isEnabled = true
-        add_button!.isEnabled = true
-
-        browser_discard?.stop()
-        browser_chargen?.stop()
-
-        // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
-        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-    }
-
-    @IBAction func debug_pressed(_ sender: Any) {
-        print("debug pressed")
-    }
+    var r : UIRefreshControl?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Display an Edit button in the navigation bar for this view controller.
-        navigationItem.rightBarButtonItem = editButtonItem
-
-        // Add a refresh control
-        refreshControl = UIRefreshControl()
-        // Call userRefresh() when refreshing with gesture
-        refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
-
-        // Add a background job that do pending tasks
-//        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
-//            _ in
-//            self.doPendingAddTasks()
-//        }
-    }
-
-    @objc
-    private func userRefresh(_ sender: Any) {
-        update_button!.isEnabled = false
-        stop_button!.isEnabled = true
-        add_button!.isEnabled = false
-    }
-
-    // Disable other actions while editing
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        return
-        super.setEditing(editing, animated: animated)
-        if editing {
-            refreshControl!.endRefreshing()
-            stop_button!.isEnabled = false
-            update_button!.isEnabled = false
-            add_button!.isEnabled = false
-        } else {
-            refreshControl!.endRefreshing()
-            stop_button!.isEnabled = false
-            update_button!.isEnabled = true
-            add_button!.isEnabled = true
-        }
+        r = UIRefreshControl()
+        refreshControl = r
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-    }
-
-    public func doPendingAddTasks() {
-        print("DO TASKS")
-        if pending_add_tasks.isEmpty == false {
-            tableView.beginUpdates()
-            for task in pending_add_tasks {
-                tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count, section: TableSection.iOSDevice.rawValue)], with: .automatic)
-                devices[.iOSDevice]!.append(Device(name: task.name))
-            }
-            pending_add_tasks.removeAll()
-            tableView.endUpdates()
-        }
-    }
-
-    // MARK: - DeviceManager protocol
-
-    // faire toutes les secondes un test pour vider ou pas ce qui doit être rajouté
-    // pb : si je fais l'update en cliquant sur update, on a deux anim en même temps
-    // cf update_pressed
-    // trouver comment faire un postpone après cette anim / tableView.setContentOffset
-    private var c : Int = 0
-    public func addDevice(_ name: String) {
-        print("XXXXXXXXXXXXXXXXX addDevice()")
-        return
-//        print("tracking:", tableView.isTracking)
-//        print("dragging:", tableView.isDragging)
-//        print("scrolled animation running:", scrolled_animation_running)
-
-        c = c + 1
-      pending_add_tasks.append(TaskToRunWhenNoAnimation(name: name + String(c)))
-      doPendingAddTasks()
     }
 
     // MARK: - UIScrollViewDelegate
@@ -191,11 +71,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         print("fin de scroll")
         return
-        if refreshControl?.isRefreshing == true {
-            print("SEARCH")
-            browser_chargen?.search()
-            browser_discard?.search()
-        }
     }
 
     // MARK: - Table view headers
@@ -232,36 +107,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         header.textLabel?.textColor = .black
         header.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 19)
     }
-
-    //    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-    //        print("SALUT")
-    //        return []
-    //    }
-
-    // Useful when not using tableView(...titleForHeaderInSection...) but directly building a UIView
-//    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-//        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: section_header_height))
-//        view.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
-//        let label = UILabel(frame: CGRect(x: 15, y: 0, width: tableView.bounds.width - 30, height: section_header_height))
-//        label.font = UIFont.boldSystemFont(ofSize: 30)
-//        label.textColor = UIColor.black
-//        if let tableSection = TableSection(rawValue: section) {
-//            switch tableSection {
-//            case .iOSDevice:
-//                label.text = "iOS device"
-//            case .localGateway:
-//                label.text = "local gateway"
-//            case .chargenDevice:
-//                label.text = "chargen service"
-//            case .discardDevice:
-//                label.text = "discard service"
-//            default:
-//                label.text = "default"
-//            }
-//        }
-//        view.addSubview(label)
-//        return view
-//    }
 
     // MARK: - Table view data source
 
@@ -302,41 +147,4 @@ class MasterViewController: UITableViewController, DeviceManager {
         // for iPhone, make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
-
-    // Local gateway can not be removed
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section != TableSection.localGateway.rawValue && indexPath.section != TableSection.internet.rawValue
-    }
-
-    // Delete a row
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle != .delete { fatalError("editingStyle invalid") }
-        devices[TableSection.init(rawValue: indexPath.section)!]!.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .fade)
-    }
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        print("MasterViewController.prepare(for segue)")
-    }
-
 }
