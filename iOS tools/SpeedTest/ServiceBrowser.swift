@@ -23,7 +23,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        print("didFind:", service, moreComing)
+//        print("didFind:", service, moreComing)
 
         // Only add remote services
         if (service.name != UIDevice.current.name) {
@@ -45,6 +45,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("didNotSearch")
         for err in errorDict { print("didNotSearch:", err.key, ":", err.value) }
 
+        // return
         // Restart browsing
         browser.stop()
         browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
@@ -78,9 +79,10 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
+ //       print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
         device_manager.addDevice(sender.name)
+        return
         if sender.addresses != nil {
             for addr in sender.addresses! {
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
@@ -107,11 +109,9 @@ class ServiceBrowser : NetServiceBrowser {
         self.type = type
         super.init()
         self.delegate = browser_delegate
-        searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 
-    public func restartSearch() {
-        stop()
+    public func search() {
         searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }

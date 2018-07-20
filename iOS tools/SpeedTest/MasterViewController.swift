@@ -56,7 +56,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var add_button: UIBarButtonItem!
 
     private var pending_add_tasks : [TaskToRunWhenNoAnimation] = []
-    private var scrolled_animation_running = false
 
     enum TableSection: Int {
         case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
@@ -82,22 +81,23 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func update_pressed(_ sender: Any) {
         let frame = navigationController!.navigationBar.frame
-        // will call scrollViewDidEndScrollingAnimation when finished
-        scrolled_animation_running = true
+        // Will call scrollViewDidEndScrollingAnimation when finished
         tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-
         refreshControl!.beginRefreshing()
         userRefresh(self)
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
+        return
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         update_button!.isEnabled = true
         add_button!.isEnabled = true
 
+        browser_discard?.stop()
+        browser_chargen?.stop()
+
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
-        scrolled_animation_running = true
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
 
@@ -120,10 +120,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
 
         // Add a background job that do pending tasks
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
-            _ in
-            self.doPendingAddTasks()
-        }
+//        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
+//            _ in
+//            self.doPendingAddTasks()
+//        }
     }
 
     @objc
@@ -131,13 +131,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         update_button!.isEnabled = false
         stop_button!.isEnabled = true
         add_button!.isEnabled = false
-
-        browser_chargen?.restartSearch()
-        browser_discard?.restartSearch()
     }
 
     // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
+        return
         super.setEditing(editing, animated: animated)
         if editing {
             refreshControl!.endRefreshing()
@@ -157,17 +155,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func doPendingAddTasks() {
-        if tableView.isTracking == false && tableView.isDragging == false && scrolled_animation_running == false {
-            print("DO TASKS")
-            if pending_add_tasks.isEmpty == false {
-                tableView.beginUpdates()
-                for task in pending_add_tasks {
-                    tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count, section: TableSection.iOSDevice.rawValue)], with: .automatic)
-                    devices[.iOSDevice]!.append(Device(name: task.name))
-                }
-                pending_add_tasks.removeAll()
-                tableView.endUpdates()
+        print("DO TASKS")
+        if pending_add_tasks.isEmpty == false {
+            tableView.beginUpdates()
+            for task in pending_add_tasks {
+                tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count, section: TableSection.iOSDevice.rawValue)], with: .automatic)
+                devices[.iOSDevice]!.append(Device(name: task.name))
             }
+            pending_add_tasks.removeAll()
+            tableView.endUpdates()
         }
     }
 
@@ -180,20 +176,26 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var c : Int = 0
     public func addDevice(_ name: String) {
         print("XXXXXXXXXXXXXXXXX addDevice()")
-        print("tracking:", tableView.isTracking)
-        print("dragging:", tableView.isDragging)
-        print("scrolled animation running:", scrolled_animation_running)
+        return
+//        print("tracking:", tableView.isTracking)
+//        print("dragging:", tableView.isDragging)
+//        print("scrolled animation running:", scrolled_animation_running)
 
         c = c + 1
       pending_add_tasks.append(TaskToRunWhenNoAnimation(name: name + String(c)))
-        doPendingAddTasks()
+      doPendingAddTasks()
     }
 
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         print("fin de scroll")
-        scrolled_animation_running = false
+        return
+        if refreshControl?.isRefreshing == true {
+            print("SEARCH")
+            browser_chargen?.search()
+            browser_discard?.search()
+        }
     }
 
     // MARK: - Table view headers
