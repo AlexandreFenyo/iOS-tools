@@ -27,9 +27,17 @@ protocol DeviceManager {
     func addDevice(_: String)
 }
 
+struct TaskToRunWhenNoAnimation {
+    public let name : String
+
+    public init(name: String) {
+        self.name = name
+    }
+}
+
 class DeviceCell : UITableViewCell {
     // weak var device : Device?
-    
+
     init(_ device : Device, style: UITableViewCellStyle, reuseIdentifier: String?) {
         // self.device = device
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,6 +54,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
+
+    private var pending_add_tasks : [TaskToRunWhenNoAnimation] = []
+    private var scrolled_animation_running = false
 
     enum TableSection: Int {
         case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
@@ -71,6 +82,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func update_pressed(_ sender: Any) {
         let frame = navigationController!.navigationBar.frame
+        // will call scrollViewDidEndScrollingAnimation when finished
+        scrolled_animation_running = true
         tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
 
         refreshControl!.beginRefreshing()
@@ -83,7 +96,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         update_button!.isEnabled = true
         add_button!.isEnabled = true
 
-        // Scroll to top
+        // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
+        scrolled_animation_running = true
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
 
@@ -104,6 +118,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl = UIRefreshControl()
         // Call userRefresh() when refreshing with gesture
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
+
+        // Add a background job that do pending tasks
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
+            _ in
+            self.doPendingAddTasks()
+        }
     }
 
     @objc
@@ -136,13 +156,44 @@ class MasterViewController: UITableViewController, DeviceManager {
         super.didReceiveMemoryWarning()
     }
 
+    public func doPendingAddTasks() {
+        if tableView.isTracking == false && tableView.isDragging == false && scrolled_animation_running == false {
+            print("DO TASKS")
+            if pending_add_tasks.isEmpty == false {
+                tableView.beginUpdates()
+                for task in pending_add_tasks {
+                    tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count, section: TableSection.iOSDevice.rawValue)], with: .automatic)
+                    devices[.iOSDevice]!.append(Device(name: task.name))
+                }
+                pending_add_tasks.removeAll()
+                tableView.endUpdates()
+            }
+        }
+    }
+
     // MARK: - DeviceManager protocol
 
+    // faire toutes les secondes un test pour vider ou pas ce qui doit être rajouté
+    // pb : si je fais l'update en cliquant sur update, on a deux anim en même temps
+    // cf update_pressed
+    // trouver comment faire un postpone après cette anim / tableView.setContentOffset
+    private var c : Int = 0
     public func addDevice(_ name: String) {
-        // plein de pbs d'affichages
-        // It should not be called in the methods that insert or delete rows, especially within an animation block implemented with calls to beginUpdates() and endUpdates().
-        devices[.iOSDevice]!.append(Device(name: name))
-        tableView.reloadData()
+        print("XXXXXXXXXXXXXXXXX addDevice()")
+        print("tracking:", tableView.isTracking)
+        print("dragging:", tableView.isDragging)
+        print("scrolled animation running:", scrolled_animation_running)
+
+        c = c + 1
+      pending_add_tasks.append(TaskToRunWhenNoAnimation(name: name + String(c)))
+        doPendingAddTasks()
+    }
+
+    // MARK: - UIScrollViewDelegate
+
+    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        print("fin de scroll")
+        scrolled_animation_running = false
     }
 
     // MARK: - Table view headers
