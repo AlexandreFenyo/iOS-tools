@@ -45,7 +45,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("didNotSearch")
         for err in errorDict { print("didNotSearch:", err.key, ":", err.value) }
 
-        // return
         // Restart browsing
         browser.stop()
         browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
@@ -79,10 +78,10 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
- //       print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
+        print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
         device_manager.addDevice(sender.name)
-        return
+
         if sender.addresses != nil {
             for addr in sender.addresses! {
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
@@ -112,6 +111,7 @@ class ServiceBrowser : NetServiceBrowser {
     }
 
     public func search() {
+        print("START SEARCH")
         searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }

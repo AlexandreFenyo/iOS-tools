@@ -77,7 +77,7 @@
                         <barButtonItem title="Add" id="w26-jr-JrH"/>
                         <barButtonItem title="Update" id="Hoh-gZ-vw9">
                             <connections>
-                                <action selector="update_pressed:" destination="9rn-U2-Uvj" id="WGw-aq-cnK"/>
+                                <action selector="update_pressed:" destination="9rn-U2-Uvj" id="muL-rx-85B"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem enabled="NO" title="Stop" id="9XB-83-j13">
