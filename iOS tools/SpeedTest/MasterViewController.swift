@@ -243,7 +243,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
-
+        
+        stopBrowsing()
         let device = device_list[indexPath.item]
         detail_view_controller!.device = device
         
@@ -270,6 +271,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         print("MasterViewController.prepare(for segue)")
+        guard let master_ip_view_controller = segue.destination as? MasterIPViewController
+        else { fatalError() }
+
+        master_ip_view_controller.device_addresses = [
+            DeviceAddress(name: "127.0.0.1"),
+            DeviceAddress(name: "192.168.0.6"),
+            ]
     }
 
 }
