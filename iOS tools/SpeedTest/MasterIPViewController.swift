@@ -29,7 +29,7 @@ class DeviceAddressCell : UITableViewCell {
 // The MasterViewController instance is the delegate for the UITableView
 class MasterIPViewController: UITableViewController {
 
-    var device_addresses : [DeviceAddress]?
+    var device : Device?
 
     public func applicationWillResignActive() {
     }
@@ -54,14 +54,14 @@ class MasterIPViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return device_addresses!.count
+        return device!.addresses.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let device_address = device_addresses![indexPath.item]
+        let device_address = device!.addresses[indexPath.item]
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
-        cell.textLabel!.text = device_address.name
+        cell.textLabel!.text = device_address.address
 
         return cell
     }

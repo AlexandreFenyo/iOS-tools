@@ -20,16 +20,22 @@
 import UIKit
 
 class Device {
-    var name : String
+    public var name : String
+    public var addresses : [IPAddress] = []
     
-    init(name: String) {
+    public init(name: String, addresses: [IPAddress]) {
         self.name = name
+        self.addresses = addresses
+    }
+
+    public convenience init(name: String) {
+        self.init(name: name, addresses: [])
     }
 }
 
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
-    func addDevice(_: String)
+    func addDevice(name: String, addresses: [IPAddress])
 }
 
 class DeviceCell : UITableViewCell {
@@ -60,7 +66,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
-            Device(name: "iOS device 1"), Device(name: "iOS device 2")
+            Device(name: "iOS device 1", addresses: [IPAddress(type: .IPv4, address: "1.2.3.4")]),
+            Device(name: "iOS device 2")
         ],
         .chargenDevice: [Device(name: "chargen device 1")],
         .discardDevice: [],
@@ -109,7 +116,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
-        addDevice("test")
+//        addDevice("test")
     }
 
     // Refresh started with gesture
@@ -163,9 +170,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - DeviceManager protocol
 
     private var c : Int = 0
-    public func addDevice(_ name: String) {
+    public func addDevice(name: String, addresses: [IPAddress]) {
         c = c + 1
-        devices[.iOSDevice]!.append(Device(name: name))
+        devices[.iOSDevice]!.append(Device(name: name, addresses: addresses))
         tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count - 1, section: TableSection.iOSDevice.rawValue)], with: .automatic)
 
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
@@ -243,7 +250,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
-        
+
         stopBrowsing()
         let device = device_list[indexPath.item]
         detail_view_controller!.device = device
@@ -271,13 +278,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         print("MasterViewController.prepare(for segue)")
-        guard let master_ip_view_controller = segue.destination as? MasterIPViewController
+        guard let master_ip_view_controller = segue.destination as? MasterIPViewController,
+            let index_path = tableView.indexPathForSelectedRow,
+            let table_section = TableSection(rawValue: index_path.section),
+            let device_list = devices[table_section]
         else { fatalError() }
-
-        master_ip_view_controller.device_addresses = [
-            DeviceAddress(name: "127.0.0.1"),
-            DeviceAddress(name: "192.168.0.6"),
-            ]
+        let device = device_list[index_path.item]
+        master_ip_view_controller.device = device
     }
 
 }

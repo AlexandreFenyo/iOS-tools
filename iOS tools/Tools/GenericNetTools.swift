@@ -8,6 +8,20 @@
 
 import Foundation
 
+struct IPAddress {
+    public enum IPAddressType : Int {
+        case IPv4 = 0, IPv6
+    }
+
+    public let address : String
+    public let type : IPAddressType
+
+    public init(type: IPAddressType, address: String) {
+        self.type = type
+        self.address = address
+    }
+}
+
 class GenericNetTools {
 
     // Data must be a sockaddr, sockaddr_in or sockaddr_in6 structure

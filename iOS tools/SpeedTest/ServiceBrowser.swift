@@ -80,22 +80,26 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     public func netServiceDidResolveAddress(_ sender: NetService) {
         print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
-        device_manager.addDevice(sender.name)
 
+        var addresses : [IPAddress] = []
         if sender.addresses != nil {
             for addr in sender.addresses! {
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
                 case AF_INET:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv4:", GenericNetTools.getAddrFromSockAddr(addr))
+                    addresses.append(IPAddress(type: .IPv4, address: GenericNetTools.getAddrFromSockAddr(addr)))
 
                 case AF_INET6:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv6:", GenericNetTools.getAddrFromSockAddr(addr))
+                    addresses.append(IPAddress(type: .IPv6, address: GenericNetTools.getAddrFromSockAddr(addr)))
 
                 default:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "address family not recognized")
                 }
             }
         }
+
+        device_manager.addDevice(name: sender.name, addresses: addresses)
     }
 }
 
