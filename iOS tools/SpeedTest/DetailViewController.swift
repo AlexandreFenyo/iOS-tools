@@ -44,7 +44,11 @@ class DetailViewController: UIViewController {
 
         chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false)
         scene.addChild(chart_node!)
-        chart_node!.position = CGPoint(x: -20, y: -20)
+
+        // Debug:
+        // chart_node!.position = CGPoint(x: -20, y: -20)
+        chart_node!.position = CGPoint(x: 0, y: 0)
+
         chart_node!.registerGestureRecognizers(view: view)
 
 //        ingress_chart.showsFPS = true
