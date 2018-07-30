@@ -255,7 +255,22 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if p.x > grid_full_width! { return .onRight }
         return .onScreen
     }
-    
+
+    public func updateWidth(new_width: CGFloat) {
+        self.full_size.width = new_width
+        size.width = new_width
+        if crop {
+            if (root_node as! SKCropNode).maskNode != nil {
+                ((root_node as! SKCropNode).maskNode as! SKSpriteNode).size.width = new_width
+            }
+        }
+//        var max_val : Float = 0
+//        for elt in ts.getElements() { max_val = max(max_val, elt.value) }
+//        createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: max_val)
+        createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: highest)
+        drawCurve(ts: ts)
+    }
+
     // Rules:
     // - grid_size.width <= size.width - left_width
     // - grid_size.height <= size.height - bottom_height

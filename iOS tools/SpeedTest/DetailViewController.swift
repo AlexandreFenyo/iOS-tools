@@ -64,6 +64,7 @@ class DetailViewController: UIViewController {
             print(scene.size.width, self.chart_node?.size.width, self.view1?.bounds.width)
 
             scene.size.width = (self.view1?.bounds.width)!
+            self.chart_node?.updateWidth(new_width: scene.size.width)
         }
 
 
