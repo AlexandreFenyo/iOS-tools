@@ -14,6 +14,8 @@ class DetailViewController: UIViewController {
     private var chart_node : SKChartNode?
     private let ts = TimeSeries()
 
+    @IBOutlet weak var view1: UIView!
+
     @IBOutlet private weak var detail_label: UILabel!
 
     @IBOutlet private weak var ingress_chart: SKView!
@@ -35,8 +37,11 @@ class DetailViewController: UIViewController {
         navigationItem.leftItemsSupplementBackButton = true
 
         // CGSize(width: view.frame.size.width / 2, height: view.frame.size.height / 4)
-        let scene_size = ingress_chart.bounds.size
-        let full_size = ingress_chart.bounds.size
+        var scene_size = ingress_chart.bounds.size
+        var full_size = ingress_chart.bounds.size
+
+//        scene_size.width = 50
+//        full_size.width = 50
 
         let scene = SKScene(size: scene_size)
         scene.backgroundColor = .brown
@@ -53,6 +58,13 @@ class DetailViewController: UIViewController {
 
 //        ingress_chart.showsFPS = true
 //        ingress_chart.showsQuadCount = true
+
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
+            _ in
+            print(scene.size.width, self.chart_node?.size.width, self.view1?.bounds.width)
+
+            scene.size.width = (self.view1?.bounds.width)!
+        }
 
 
     }

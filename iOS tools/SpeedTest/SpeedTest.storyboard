@@ -82,6 +82,7 @@
                     <connections>
                         <outlet property="detail_label" destination="zHu-Cl-IVw" id="kpY-zU-VLo"/>
                         <outlet property="ingress_chart" destination="wF2-NY-9cu" id="x9p-mM-vGH"/>
+                        <outlet property="view1" destination="v8w-Fg-yMu" id="uCx-Rj-Sgv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jo3-ET-mk8" userLabel="First Responder" sceneMemberID="firstResponder"/>
