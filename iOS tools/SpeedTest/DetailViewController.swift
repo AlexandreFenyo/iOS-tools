@@ -39,6 +39,14 @@ class DetailViewController: UIViewController {
         detail_label.text = device?.name
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        chart_node!.scene!.view!.isPaused = false
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        chart_node!.scene!.view!.isPaused = true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
