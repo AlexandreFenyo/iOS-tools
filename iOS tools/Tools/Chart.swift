@@ -258,20 +258,17 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return .onScreen
     }
 
+    // Update everything that needs to be, when the width has changed because of auto-layout
     public func updateWidth() {
-        if let new_width = follow_view?.bounds.width {
-            if scene!.size.width != new_width {
-                scene!.size.width = new_width
-                full_size.width = new_width
-                size.width = new_width
-                if crop {
-                    if (root_node as! SKCropNode).maskNode != nil {
-                        ((root_node as! SKCropNode).maskNode as! SKSpriteNode).size.width = new_width
-                    }
-                }
-                createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: highest)
-                drawCurve(ts: ts)
+        if let new_width = follow_view?.bounds.width, scene!.size.width != new_width {
+            scene!.size.width = new_width
+            full_size.width = new_width
+            size.width = new_width
+            if crop, let mask_node = ((root_node as! SKCropNode).maskNode as? SKSpriteNode) {
+                mask_node.size.width = new_width
             }
+            createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: highest)
+            drawCurve(ts: ts)
         }
     }
 
