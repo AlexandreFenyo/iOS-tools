@@ -9,9 +9,17 @@
 import UIKit
 import SpriteKit
 
-class DetailViewController: UIViewController {
+class MySKSceneDelegate : NSObject, SKSceneDelegate {
+    public var nodes : [SKChartNode] = []
 
+    public func update(_ currentTime: TimeInterval, for scene: SKScene) {
+        for n in nodes { n.updateWidth() }
+    }
+}
+
+class DetailViewController: UIViewController {
     private var chart_node : SKChartNode?
+    private var scene_delegate : MySKSceneDelegate?
     private let ts = TimeSeries()
 
     @IBOutlet weak var view1: UIView!
@@ -36,38 +44,23 @@ class DetailViewController: UIViewController {
 
         navigationItem.leftItemsSupplementBackButton = true
 
-        // CGSize(width: view.frame.size.width / 2, height: view.frame.size.height / 4)
-        var scene_size = ingress_chart.bounds.size
-        var full_size = ingress_chart.bounds.size
-
-//        scene_size.width = 50
-//        full_size.width = 50
-
-        let scene = SKScene(size: scene_size)
+        let scene = SKScene(size: ingress_chart.bounds.size)
         scene.backgroundColor = .brown
+
+        scene_delegate = MySKSceneDelegate()
+        scene.delegate = scene_delegate
+
         ingress_chart.presentScene(scene)
 
-        chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false)
+        chart_node = SKChartNode(ts: ts, full_size: ingress_chart.bounds.size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
         scene.addChild(chart_node!)
+        scene_delegate!.nodes.append(chart_node!)
 
-        // Debug:
-        // chart_node!.position = CGPoint(x: -20, y: -20)
         chart_node!.position = CGPoint(x: 0, y: 0)
-
         chart_node!.registerGestureRecognizers(view: view)
 
 //        ingress_chart.showsFPS = true
 //        ingress_chart.showsQuadCount = true
-
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
-            _ in
-            print(scene.size.width, self.chart_node?.size.width, self.view1?.bounds.width)
-
-            scene.size.width = (self.view1?.bounds.width)!
-            self.chart_node?.updateWidth(new_width: scene.size.width)
-        }
-
-
     }
 
     override func didReceiveMemoryWarning() {

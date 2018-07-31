@@ -197,6 +197,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var bottom_mask_node : SKSpriteNode?
     private var left_mask_node : SKSpriteNode?
 
+    private var follow_view : UIView?
+
     public func testDebug() {
     }
     
@@ -256,19 +258,21 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return .onScreen
     }
 
-    public func updateWidth(new_width: CGFloat) {
-        self.full_size.width = new_width
-        size.width = new_width
-        if crop {
-            if (root_node as! SKCropNode).maskNode != nil {
-                ((root_node as! SKCropNode).maskNode as! SKSpriteNode).size.width = new_width
+    public func updateWidth() {
+        if let new_width = follow_view?.bounds.width {
+            if scene!.size.width != new_width {
+                scene!.size.width = new_width
+                full_size.width = new_width
+                size.width = new_width
+                if crop {
+                    if (root_node as! SKCropNode).maskNode != nil {
+                        ((root_node as! SKCropNode).maskNode as! SKSpriteNode).size.width = new_width
+                    }
+                }
+                createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: highest)
+                drawCurve(ts: ts)
             }
         }
-//        var max_val : Float = 0
-//        for elt in ts.getElements() { max_val = max(max_val, elt.value) }
-//        createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: max_val)
-        createChartComponents(date: mode == .followDate ? Date() : current_date, max_val: highest)
-        drawCurve(ts: ts)
     }
 
     // Rules:
@@ -280,11 +284,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true) {
+    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true, follow_view : UIView? = nil) {
         self.debug = debug
         self.spline = spline
         self.vertical_auto_layout = vertical_auto_layout
         self.crop = crop
+        self.follow_view = follow_view
 
         // Save state
         self.ts = ts
