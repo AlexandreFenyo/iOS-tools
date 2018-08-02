@@ -28,11 +28,15 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="691" height="400"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zHu-Cl-IVw">
-                                                        <rect key="frame" x="325" y="0.0" width="42" height="20.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="42" height="20.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="DGp-kT-a95">
+                                                        <rect key="frame" x="182.5" y="0.0" width="49" height="31"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    </switch>
                                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wF2-NY-9cu">
                                                         <rect key="frame" x="0.0" y="30.5" width="691" height="264"/>
                                                         <constraints>
@@ -43,11 +47,11 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="400" id="TOJ-S2-kdv"/>
+                                                    <constraint firstItem="zHu-Cl-IVw" firstAttribute="leading" secondItem="wF2-NY-9cu" secondAttribute="leading" id="TRy-ua-9kY"/>
                                                     <constraint firstItem="zHu-Cl-IVw" firstAttribute="top" secondItem="v8w-Fg-yMu" secondAttribute="top" id="UO5-r1-Vdf"/>
                                                     <constraint firstItem="wF2-NY-9cu" firstAttribute="leading" secondItem="v8w-Fg-yMu" secondAttribute="leading" id="bWE-79-pEK"/>
                                                     <constraint firstItem="wF2-NY-9cu" firstAttribute="top" secondItem="zHu-Cl-IVw" secondAttribute="bottom" constant="10" id="t6u-wJ-9tP"/>
                                                     <constraint firstAttribute="trailing" secondItem="wF2-NY-9cu" secondAttribute="trailing" id="wfQ-LS-o1K"/>
-                                                    <constraint firstItem="zHu-Cl-IVw" firstAttribute="centerX" secondItem="v8w-Fg-yMu" secondAttribute="centerX" id="x4D-Qw-BVs"/>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EgB-cc-07s" userLabel="View2">
@@ -80,6 +84,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
                     <connections>
+                        <outlet property="chart_switch1" destination="DGp-kT-a95" id="azb-Xl-qzy"/>
                         <outlet property="detail_label" destination="zHu-Cl-IVw" id="kpY-zU-VLo"/>
                         <outlet property="ingress_chart" destination="wF2-NY-9cu" id="x9p-mM-vGH"/>
                         <outlet property="view1" destination="v8w-Fg-yMu" id="uCx-Rj-Sgv"/>

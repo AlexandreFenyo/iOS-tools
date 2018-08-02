@@ -23,7 +23,6 @@ struct IPAddress {
 }
 
 class GenericNetTools {
-
     // Data must be a sockaddr, sockaddr_in or sockaddr_in6 structure
     public static func getHostNameFromSockAddr(_ addr: Data) -> String {
         return addr.withUnsafeBytes {
@@ -50,5 +49,4 @@ class GenericNetTools {
         NSData(data: addr).getBytes(&saddr, length: MemoryLayout<sockaddr>.size)
         return Int32(saddr.ss_family)
     }
-
 }

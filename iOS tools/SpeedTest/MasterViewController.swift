@@ -163,6 +163,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
+    // Called by MasterIPViewController when an address is selected
+    public func addressSelected(address: IPAddress) {
+        print(address.address, "selected")
+    }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -246,7 +251,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         return cell
     }
 
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
@@ -275,9 +279,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        print("MasterViewController.prepare(for segue)")
         guard let master_ip_view_controller = segue.destination as? MasterIPViewController,
             let index_path = tableView.indexPathForSelectedRow,
             let table_section = TableSection(rawValue: index_path.section),
@@ -285,6 +286,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         else { fatalError() }
         let device = device_list[index_path.item]
         master_ip_view_controller.device = device
+        master_ip_view_controller.master_view_controller = self
+        if !device.addresses.isEmpty {
+            let indexPath = IndexPath(row: 0, section: 0), table_view = master_ip_view_controller.tableView!
+            table_view.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
+            table_view.cellForRow(at: indexPath)!.setHighlighted(true, animated: true)
+        }
     }
 
 }

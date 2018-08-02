@@ -28,8 +28,8 @@ class DeviceAddressCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the UITableView
 class MasterIPViewController: UITableViewController {
-
-    var device : Device?
+    public var master_view_controller : MasterViewController?
+    public var device : Device?
 
     public func applicationWillResignActive() {
     }
@@ -43,6 +43,12 @@ class MasterIPViewController: UITableViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    // Since we highlight the default selected row in MasterViewController.prepare(), we need to unhighlight this row when another cell is selected
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        tableView.cellForRow(at: IndexPath(row: 0, section: 0))!.setHighlighted(false, animated: false)
+        return indexPath
     }
 
     // MARK: - UIScrollViewDelegate
@@ -68,14 +74,7 @@ class MasterIPViewController: UITableViewController {
 
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
-//            else { fatalError() }
-//
-//        let device = device_list[indexPath.item]
-//        detail_view_controller!.device = device
-//
-//        // for iPhone, make the detail view controller visible
-//        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
+        master_view_controller!.addressSelected(address: device!.addresses[indexPath.item])
     }
 
     // MARK: - Navigation

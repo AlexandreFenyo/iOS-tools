@@ -28,6 +28,8 @@ class DetailViewController: UIViewController {
 
     @IBOutlet private weak var ingress_chart: SKView!
 
+    @IBOutlet weak var chart_switch1: UISwitch!
+
     public var device : Device? {
         didSet {
             refreshUI()
@@ -47,10 +49,21 @@ class DetailViewController: UIViewController {
         chart_node!.scene!.view!.isPaused = true
     }
 
+    @objc
+    private func switchChanged(_ sender: Any) {
+        if sender as? UISwitch == chart_switch1, chart_switch1.isOn {
+            // démarrer les stats
+            let cl = LocalChargenClient()
+
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.leftItemsSupplementBackButton = true
+
+        chart_switch1!.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
 
         let scene = SKScene(size: ingress_chart.bounds.size)
         scene.backgroundColor = .brown
