@@ -147,7 +147,7 @@ class SpeedTestChargenClient : NSObject, StreamDelegate {
             ()
         }
     }
-    
+
     private func end(_ stream: Stream) {
         // Closing the stream makes it being unscheduled, this will force the run loop to exit
         stream.close()
