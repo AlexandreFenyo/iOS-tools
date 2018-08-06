@@ -19,13 +19,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Yv-DA-FTU">
-                                <rect key="frame" x="0.0" y="64" width="791" height="770"/>
+                                <rect key="frame" x="0.0" y="64" width="791.5" height="770"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="MBd-X0-9oF">
-                                        <rect key="frame" x="50" y="0.0" width="691" height="900"/>
+                                        <rect key="frame" x="50" y="0.0" width="691.5" height="900"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v8w-Fg-yMu" userLabel="View1">
-                                                <rect key="frame" x="0.0" y="0.0" width="691" height="400"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="691.5" height="400"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zHu-Cl-IVw">
                                                         <rect key="frame" x="0.0" y="0.0" width="42" height="20.5"/>
@@ -38,7 +38,7 @@
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     </switch>
                                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wF2-NY-9cu">
-                                                        <rect key="frame" x="0.0" y="30.5" width="691" height="264"/>
+                                                        <rect key="frame" x="0.0" y="30.5" width="691.5" height="264"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="264" id="qGk-AI-8un"/>
                                                         </constraints>
@@ -55,7 +55,7 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EgB-cc-07s" userLabel="View2">
-                                                <rect key="frame" x="0.0" y="400" width="691" height="500"/>
+                                                <rect key="frame" x="0.0" y="400" width="691.5" height="500"/>
                                                 <color key="backgroundColor" red="1" green="0.29904333779999998" blue="0.91750353740000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="500" id="aNM-9x-sda"/>
