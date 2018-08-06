@@ -8,6 +8,13 @@
 
 #include "NetTools.h"
 
+void LocalChargenClientLoop(const struct sockaddr *saddr) {
+    printf("XXXXXX\n");
+    if (saddr == NULL) printf("C: NULL\n");
+    else printf("family: %d\n", saddr->sa_family);
+
+}
+
 void net_test() {
     char str[INET6_ADDRSTRLEN];
     char hostname[] = "www.fenyo.net";

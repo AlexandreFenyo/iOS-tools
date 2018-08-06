@@ -15,10 +15,13 @@ struct IPAddress : Equatable {
 
     public let address : String
     public let type : IPAddressType
+//    public let saddr : UnsafePointer<sockaddr>
+    public let saddr : Data?
 
-    public init(type: IPAddressType, address: String) {
+    public init(type: IPAddressType, address: String, saddr: Data?) {
         self.type = type
         self.address = address
+        self.saddr = saddr
     }
 }
 

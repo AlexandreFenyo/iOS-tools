@@ -66,7 +66,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
-            Device(name: "iOS device 1", addresses: [IPAddress(type: .IPv4, address: "1.2.3.4"), IPAddress(type: .IPv4, address: "1.2.3.5")]),
+            Device(name: "iOS device 1", addresses: [IPAddress(type: .IPv4, address: "1.2.3.4", saddr: nil), IPAddress(type: .IPv4, address: "1.2.3.5", saddr: nil)]),
             Device(name: "iOS device 2")
         ],
         .chargenDevice: [Device(name: "chargen device 1")],

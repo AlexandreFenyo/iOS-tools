@@ -87,11 +87,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
                 case AF_INET:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv4:", GenericNetTools.getAddrFromSockAddr(addr))
-                    addresses.append(IPAddress(type: .IPv4, address: GenericNetTools.getAddrFromSockAddr(addr)))
+                    addresses.append(IPAddress(type: .IPv4, address: GenericNetTools.getAddrFromSockAddr(addr), saddr: addr))
 
                 case AF_INET6:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv6:", GenericNetTools.getAddrFromSockAddr(addr))
-                    addresses.append(IPAddress(type: .IPv6, address: GenericNetTools.getAddrFromSockAddr(addr)))
+                    addresses.append(IPAddress(type: .IPv6, address: GenericNetTools.getAddrFromSockAddr(addr), saddr: addr))
 
                 default:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "address family not recognized")

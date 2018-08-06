@@ -12,11 +12,16 @@ class LocalChargenClient : Thread {
     let address : IPAddress
 
     override public func main() {
-        print("CLIENT ENTREE")
-        //        for i in 1...100000 {
-        //            print(i)
-        //        }
-        print("CLIENT SORTIE")
+        print("CLIENT ENTREE THREAD", address)
+
+        if let saddr = address.saddr {
+            saddr.withUnsafeBytes {
+                (ump: UnsafePointer<sockaddr>) in
+                LocalChargenClientLoop(OpaquePointer(ump))
+            }
+        }
+
+        print("CLIENT SORTIE THREAD")
     }
 
     init(address: IPAddress) {
