@@ -8,18 +8,18 @@
 
 import Foundation
 
-class LocalChargenClientThread : Thread {
+class LocalChargenClient : Thread {
+    let address : IPAddress
+
     override public func main() {
         print("CLIENT ENTREE")
+        //        for i in 1...100000 {
+        //            print(i)
+        //        }
         print("CLIENT SORTIE")
     }
-}
 
-class LocalChargenClient {
-    let thread : LocalChargenClientThread?
-
-    init() {
-        thread = LocalChargenClientThread()
-        thread!.start()
+    init(address: IPAddress) {
+        self.address = address
     }
 }

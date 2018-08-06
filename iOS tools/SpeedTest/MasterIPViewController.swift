@@ -79,6 +79,14 @@ class MasterIPViewController: UITableViewController {
 
     // MARK: - Navigation
 
+    override func viewWillDisappear(_ animated : Bool) {
+        super.viewWillDisappear(animated)
+
+        if isMovingFromParentViewController {
+            master_view_controller!.addressDeselected()
+        }
+    }
+
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.

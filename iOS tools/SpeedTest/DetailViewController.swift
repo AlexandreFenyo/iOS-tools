@@ -30,13 +30,26 @@ class DetailViewController: UIViewController {
 
     @IBOutlet weak var chart_switch1: UISwitch!
 
+    // Device selected by the user
     public var device : Device? {
         didSet {
-            refreshUI()
+            if oldValue !== device {
+                refreshUI()
+            }
+        }
+    }
+
+    // Address selected by the user
+    public var address : IPAddress? {
+        didSet {
+            if oldValue != address {
+                refreshUI()
+            }
         }
     }
 
     private func refreshUI() {
+        print("refresh UI")
         loadViewIfNeeded()
         detail_label.text = device?.name
     }
@@ -53,7 +66,9 @@ class DetailViewController: UIViewController {
     private func switchChanged(_ sender: Any) {
         if sender as? UISwitch == chart_switch1, chart_switch1.isOn {
             // démarrer les stats
-            let cl = LocalChargenClient()
+            print("address:", address)
+            let cl = LocalChargenClient(address: address!)
+            cl.start()
 
         }
     }

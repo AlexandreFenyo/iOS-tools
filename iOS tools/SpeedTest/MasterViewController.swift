@@ -66,7 +66,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     var devices : [TableSection: [Device]] = [
         .iOSDevice: [
-            Device(name: "iOS device 1", addresses: [IPAddress(type: .IPv4, address: "1.2.3.4")]),
+            Device(name: "iOS device 1", addresses: [IPAddress(type: .IPv4, address: "1.2.3.4"), IPAddress(type: .IPv4, address: "1.2.3.5")]),
             Device(name: "iOS device 2")
         ],
         .chargenDevice: [Device(name: "chargen device 1")],
@@ -166,6 +166,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
         print(address.address, "selected")
+        detail_view_controller!.address = address
+    }
+
+    // Called by MasterIPViewController when an address is deselected and no other address is selected
+    public func addressDeselected() {
+        print("address deselected")
+        detail_view_controller!.address = nil
     }
 
     override func didReceiveMemoryWarning() {
@@ -291,6 +298,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             let indexPath = IndexPath(row: 0, section: 0), table_view = master_ip_view_controller.tableView!
             table_view.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
             table_view.cellForRow(at: indexPath)!.setHighlighted(true, animated: true)
+            addressSelected(address: device.addresses.first!)
         }
     }
 

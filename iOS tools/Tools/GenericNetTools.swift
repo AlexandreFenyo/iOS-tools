@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct IPAddress {
+struct IPAddress : Equatable {
     public enum IPAddressType : Int {
         case IPv4 = 0, IPv6
     }
