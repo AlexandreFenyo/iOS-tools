@@ -10,6 +10,7 @@
 #define NetTools_h
 
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -17,5 +18,8 @@
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <pthread.h>
+
+extern int errno;
 
 #endif /* NetTools_h */

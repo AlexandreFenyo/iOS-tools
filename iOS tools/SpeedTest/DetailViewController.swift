@@ -69,7 +69,6 @@ class DetailViewController: UIViewController {
             print("address:", address)
             let cl = LocalChargenClient(address: address!)
             cl.start()
-
         }
     }
 

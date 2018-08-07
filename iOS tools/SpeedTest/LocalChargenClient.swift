@@ -17,14 +17,20 @@ class LocalChargenClient : Thread {
         if let saddr = address.saddr {
             saddr.withUnsafeBytes {
                 (ump: UnsafePointer<sockaddr>) in
-                LocalChargenClientLoop(OpaquePointer(ump))
+                let retval = localChargenClientLoop(OpaquePointer(ump))
+                print("retval:", retval)
             }
         }
 
         print("CLIENT SORTIE THREAD")
     }
 
-    init(address: IPAddress) {
+    public init(address: IPAddress) {
+        localChargenClientInit()
         self.address = address
+    }
+
+    public func close() {
+        localChargenClientClose()
     }
 }
