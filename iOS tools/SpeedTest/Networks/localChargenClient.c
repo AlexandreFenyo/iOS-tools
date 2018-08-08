@@ -6,7 +6,7 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
-#include "nettools.h"
+#include "../../Tools/Networks/nettools.h"
 
 static pthread_mutex_t mutex;
 static int sock = -1;
