@@ -6,7 +6,7 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
-#include "../../Tools/Networks/nettools.h"
+#include "localChargenClient.h"
 
 static pthread_mutex_t mutex;
 static int sock = -1;

@@ -9,9 +9,6 @@
 #ifndef localChargenClient_h
 #define localChargenClient_h
 
-#ifndef NetTools_h
-#define NetTools_h
-
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
