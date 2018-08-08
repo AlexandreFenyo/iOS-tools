@@ -22,6 +22,8 @@ class DetailViewController: UIViewController {
     private var scene_delegate : MySKSceneDelegate?
     private let ts = TimeSeries()
 
+    private static var cl: LocalChargenClient?
+
     @IBOutlet weak var view1: UIView!
 
     @IBOutlet private weak var detail_label: UILabel!
@@ -64,11 +66,27 @@ class DetailViewController: UIViewController {
 
     @objc
     private func switchChanged(_ sender: Any) {
-        if sender as? UISwitch == chart_switch1, chart_switch1.isOn {
+        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == true {
+            if DetailViewController.cl != nil {
+                print("switchChanged warning: already running")
+                chart_switch1.setOn(false, animated: true)
+                return
+            }
+
             // démarrer les stats
-            print("address:", address)
-            let cl = LocalChargenClient(address: address!)
-            cl.start()
+            print("address:", address!)
+            DetailViewController.cl = LocalChargenClient(address: address!)
+            DetailViewController.cl!.start()
+        }
+
+        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == false {
+            if DetailViewController.cl == nil {
+                print("switchChanged warning: was not running")
+                return
+            }
+
+            print("disconnect from:", address!)
+            DetailViewController.cl!.stop()
         }
     }
 
@@ -96,6 +114,21 @@ class DetailViewController: UIViewController {
 
 //        ingress_chart.showsFPS = true
 //        ingress_chart.showsQuadCount = true
+        
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.2), repeats: true) {
+            _ in
+            if DetailViewController.cl == nil { return }
+            if DetailViewController.cl!.isFinished {
+                DetailViewController.cl!.close();
+                DetailViewController.cl = nil
+                if self.chart_switch1.isOn {
+                    self.chart_switch1.setOn(false, animated: true)
+                }
+            } else {
+                print("nread:", DetailViewController.cl!.getThroughput());
+                
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {

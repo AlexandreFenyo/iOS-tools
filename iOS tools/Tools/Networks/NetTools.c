@@ -8,54 +8,6 @@
 
 #include "NetTools.h"
 
-int last_errno = 0;
-int nread = 0;
-static pthread_mutex_t mutex;
-
-int localChargenClientInit() {
-    int ret = pthread_mutex_init(&mutex, NULL);
-    return ret ? errno : ret;
-}
-
-int localChargenClientClose() {
-    int ret = pthread_mutex_destroy(&mutex);
-    return ret ? errno : ret;
-}
-
-int localChargenClientLoop(const struct sockaddr *saddr) {
-    nread = 0;
-    
-    if (saddr == NULL) printf("C: NULL\n");
-    else printf("family: %d\n", saddr->sa_family);
-    if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -1;
-
-    if (saddr->sa_family == AF_INET) printf("sin_port: %d\n", ((struct sockaddr_in *) saddr)->sin_port);
-    if (saddr->sa_family == AF_INET6) printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
-
-    int s = socket(saddr->sa_family, SOCK_STREAM, getprotobyname("tcp")->p_proto);
-    if (s < 0) {
-        perror("socket()");
-        return errno;
-    }
-
-    int ret = connect(s, saddr, saddr->sa_family == AF_INET ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-    if (ret < 0) {
-        perror("connect()");
-        return errno;
-    }
-
-    char buf[4096];
-    do {
-        long ret = read(s, buf, sizeof(buf));
-        if (!ret) return 0;
-        if (ret < 0) return errno;
-        printf("nbytes:%ld \n", ret);
-        nread += ret;
-    } while (ret >= 0);
-    
-    return 0;
-}
-
 void net_test() {
     char str[INET6_ADDRSTRLEN];
     char hostname[] = "www.fenyo.net";
