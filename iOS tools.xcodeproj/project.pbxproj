@@ -29,6 +29,7 @@
 		5DC736C820D3D29B00C2A199 /* UDPTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C720D3D29B00C2A199 /* UDPTools.swift */; };
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
 		5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DF214FC211B4EF7002B7603 /* localChargenClient.c */; };
+		5DF21507211C6F8E002B7603 /* LocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21506211C6F8E002B7603 /* LocalService.swift */; };
 		5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* 2D3D.storyboard */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
@@ -65,6 +66,7 @@
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
 		5DF214FC211B4EF7002B7603 /* localChargenClient.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = localChargenClient.c; sourceTree = "<group>"; };
 		5DF21503211B5EE5002B7603 /* localChargenClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = localChargenClient.h; sourceTree = "<group>"; };
+		5DF21506211C6F8E002B7603 /* LocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalService.swift; sourceTree = "<group>"; };
 		5DF237F420A089B700CF9365 /* 2D3D.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = 2D3D.storyboard; sourceTree = "<group>"; };
 		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -192,6 +194,7 @@
 			children = (
 				5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */,
 				5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */,
+				5DF21506211C6F8E002B7603 /* LocalService.swift */,
 				5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */,
 				5DF214FC211B4EF7002B7603 /* localChargenClient.c */,
 				5DF21503211B5EE5002B7603 /* localChargenClient.h */,
@@ -309,6 +312,7 @@
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
+				5DF21507211C6F8E002B7603 /* LocalService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
