@@ -132,6 +132,14 @@ class MasterViewController: UITableViewController, DeviceManager {
             cl.background_network_thread_out!.cancel()
             cl.input_stream.close()
             cl.output_stream.close()
+
+            cl.background_network_thread_in!.run_loop!.perform {
+                print("DANS LA RUN LOOP PERFORM")
+            }
+            cl.background_network_thread_out!.run_loop!.perform {
+                print("DANS LA RUN LOOP PERFORM")
+            }
+
         }
 
 

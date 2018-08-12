@@ -72,6 +72,16 @@ class StreamNetworkThread : Thread {
         stream.open()
         stream.schedule(in: .current, forMode: .commonModes)
         run_loop = RunLoop.current
+        var timer = Timer(timeInterval: TimeInterval(1), repeats: true, block: {
+            (timer) in
+            if self.stream.streamStatus != .open {
+                print("TIMER OFF")
+                timer.invalidate()
+            } else {
+                print("TIMER ON")
+            }
+        })
+//        run_loop!.add(timer, forMode: .commonModes)
         print("ENTREE runloop", stream)
         RunLoop.current.run()
         print("SORTIE runloop", stream)
@@ -141,7 +151,7 @@ print("appel de end() pour stream", stream)
 
         // Closing the stream makes it being unscheduled, this will force the run loop to exit
         stream.close()
-        
+
         // Inform the parent object that the stream has just been closed
         DispatchQueue.main.async { self.from?.refClosed(self) }
     }
@@ -181,6 +191,18 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                     let cl = self.clients[idx]
                     print("  thread in finished:", cl.background_network_thread_in?.isFinished)
                     print("  thread out finished:", cl.background_network_thread_out?.isFinished)
+                    print("  input stream status open:", cl.input_stream.streamStatus.rawValue)
+                    print("  output stream status open:", cl.output_stream.streamStatus.rawValue)
+
+                    // heuristique pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé
+                    if cl.input_stream.streamStatus == .closed && cl.background_network_thread_in?.isFinished == false {
+                        cl.background_network_thread_in!.run_loop!.perform { }
+                    }
+
+                    // heuristique pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé
+                    if cl.output_stream.streamStatus == .closed && cl.background_network_thread_out?.isFinished == false {
+                        cl.background_network_thread_out!.run_loop!.perform { }
+                    }
 
                     if self.clients[idx].threadFinished() {
                         print("REMOVE CLIENT", idx)
