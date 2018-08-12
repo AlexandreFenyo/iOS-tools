@@ -120,13 +120,18 @@ class MasterViewController: UITableViewController, DeviceManager {
 
 
         // fermer le stream ou virer la boucle ou le sortir de la boucle
+        // ON CONSTATE que close du stream ne termine pas forcément le thread
 
         print(local_delegate)
         for idx in (local_delegate?.clients.indices)! {
             print("DEBUG idx:", idx)
-            let cl = local_delegate?.clients[idx]
-            cl?.input_stream.close()
-            cl?.output_stream.close()
+            let cl = local_delegate!.clients[idx]
+            cl.input_stream.remove(from: cl.background_network_thread_in!.run_loop!, forMode: .commonModes)
+            cl.output_stream.remove(from: cl.background_network_thread_out!.run_loop!, forMode: .commonModes)
+            cl.background_network_thread_in!.cancel()
+            cl.background_network_thread_out!.cancel()
+            cl.input_stream.close()
+            cl.output_stream.close()
         }
 
 

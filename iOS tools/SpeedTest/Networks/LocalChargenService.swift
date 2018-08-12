@@ -31,6 +31,8 @@ class SpeedTestChargenClient : SpeedTestClient {
     // The delegate receives this message only if theStream is scheduled on a run loop
     // Manage callback I/O events
     public func stream(_ stream: Stream, handle event_code: Stream.Event) {
+//        print("event for stream", stream)
+
         switch event_code {
         case .hasBytesAvailable:
 //            print("inputStream")

@@ -99,6 +99,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
     // May be called in any thread
     public func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
+        // PAS VRAI
         print("exitThreads")
         // Needed ???
         //        background_network_thread_in!.cancel()
@@ -130,6 +131,8 @@ class SpeedTestClient : NSObject, StreamDelegate {
     }
     
     public func end(_ stream: Stream) {
+print("appel de end() pour stream", stream)
+
         // tester func remove(from: RunLoop, forMode: RunLoop.Mode) (unschedule)
         //        input_stream.close()
         //        output_stream.close()
@@ -173,6 +176,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                 nothing_removed = true
                 for idx in self.clients.indices {
                     // bug à corriger car ca boucle meme quand il reste plus rien : tester en faisant un nc pour s'y connecter sant faire < /dev/null et faire CTRL-C
+                    // ON CONSTATE que close du stream ne termine pas forcément le thread
                     print("  client", idx)
                     let cl = self.clients[idx]
                     print("  thread in finished:", cl.background_network_thread_in?.isFinished)
