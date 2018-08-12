@@ -80,8 +80,8 @@ class StreamNetworkThread : Thread {
 
 // Manage a remote client with two threads, one for each stream
 class SpeedTestClient : NSObject, StreamDelegate {
-    private var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
-    private let input_stream, output_stream : Stream
+    public var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
+    public let input_stream, output_stream : Stream
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
     private weak var from : LocalDelegate?
@@ -169,9 +169,24 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
             print("TRY TO SWEEP CLIENTS")
             repeat {
                 nothing_removed = true
+
                 for idx in self.clients.indices {
                     // bug à corriger car ca boucle meme quand il reste plus rien : tester en faisant un nc pour s'y connecter sant faire < /dev/null et faire CTRL-C
                     print("TEST")
+
+                    // heuristique non thread-safe pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé - ca marche pas forcément immédiatement mais au bout d'une minute environ dans certains cas
+                    let cl = self.clients[idx]
+                    if (cl.input_stream.streamStatus == .closed || cl.input_stream.streamStatus == .error) && cl.background_network_thread_in!.isFinished == false {
+                        print("tente debloque in")
+                        cl.background_network_thread_in!.run_loop!.perform { print("debloque in") }
+                    }
+                    if (cl.output_stream.streamStatus == .closed || cl.output_stream.streamStatus == .error) && cl.background_network_thread_out!.isFinished == false {
+                        print("tente debloque out")
+                        cl.background_network_thread_out!.run_loop!.perform { print("debloque out") }
+                    }
+                    print(cl.input_stream.streamStatus.rawValue)
+                    print(cl.output_stream.streamStatus.rawValue)
+
                     if self.clients[idx].threadFinished() {
                         print("REMOVE CLIENT")
                         self.clients.remove(at: idx)
