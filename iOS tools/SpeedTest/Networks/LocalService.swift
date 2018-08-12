@@ -90,7 +90,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
         print("SpeedTestClient deinit")
     }
     
-    public func threadFinished() -> Bool {
+    public func threadsFinished() -> Bool {
         return background_network_thread_in!.isFinished && background_network_thread_out!.isFinished
     }
     
@@ -177,17 +177,13 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                     // heuristique non thread-safe pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé - ca marche pas forcément immédiatement mais au bout d'une minute environ dans certains cas
                     let cl = self.clients[idx]
                     if (cl.input_stream.streamStatus == .closed || cl.input_stream.streamStatus == .error) && cl.background_network_thread_in!.isFinished == false {
-                        print("tente debloque in")
-                        cl.background_network_thread_in!.run_loop!.perform { print("debloque in") }
+                        cl.background_network_thread_in!.run_loop!.perform { }
                     }
                     if (cl.output_stream.streamStatus == .closed || cl.output_stream.streamStatus == .error) && cl.background_network_thread_out!.isFinished == false {
-                        print("tente debloque out")
-                        cl.background_network_thread_out!.run_loop!.perform { print("debloque out") }
+                        cl.background_network_thread_out!.run_loop!.perform { }
                     }
-                    print(cl.input_stream.streamStatus.rawValue)
-                    print(cl.output_stream.streamStatus.rawValue)
 
-                    if self.clients[idx].threadFinished() {
+                    if self.clients[idx].threadsFinished() {
                         print("REMOVE CLIENT")
                         self.clients.remove(at: idx)
                         nothing_removed = false
