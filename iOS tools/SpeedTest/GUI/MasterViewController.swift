@@ -116,6 +116,20 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
+
+
+
+        // fermer le stream ou virer la boucle ou le sortir de la boucle
+
+        print(local_delegate)
+        for idx in (local_delegate?.clients.indices)! {
+            print("DEBUG idx:", idx)
+            let cl = local_delegate?.clients[idx]
+            cl?.input_stream.close()
+            cl?.output_stream.close()
+        }
+
+
 //        addDevice("test")
     }
 

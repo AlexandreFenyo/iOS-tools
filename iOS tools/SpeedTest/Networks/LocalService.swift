@@ -68,23 +68,25 @@ class StreamNetworkThread : Thread {
     
     // Called in the dedicated thread
     override public func main() {
-        print("ENTREE")
+        print("ENTREE thread dedié")
         stream.open()
         stream.schedule(in: .current, forMode: .commonModes)
         run_loop = RunLoop.current
+        print("ENTREE runloop", stream)
         RunLoop.current.run()
+        print("SORTIE runloop", stream)
         stream.close()
-        print("SORTIE")
+        print("SORTIE thread dédié")
     }
 }
 
 // Manage a remote client with two threads, one for each stream
 class SpeedTestClient : NSObject, StreamDelegate {
-    private var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
-    private let input_stream, output_stream : Stream
+    public var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
+    public let input_stream, output_stream : Stream
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
-    private weak var from : LocalDelegate?
+    public weak var from : LocalDelegate?
     
     deinit {
         print("SpeedTestClient deinit")
@@ -171,9 +173,13 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                 nothing_removed = true
                 for idx in self.clients.indices {
                     // bug à corriger car ca boucle meme quand il reste plus rien : tester en faisant un nc pour s'y connecter sant faire < /dev/null et faire CTRL-C
-                    print("TEST")
+                    print("  client", idx)
+                    let cl = self.clients[idx]
+                    print("  thread in finished:", cl.background_network_thread_in?.isFinished)
+                    print("  thread out finished:", cl.background_network_thread_out?.isFinished)
+
                     if self.clients[idx].threadFinished() {
-                        print("REMOVE CLIENT")
+                        print("REMOVE CLIENT", idx)
                         self.clients.remove(at: idx)
                         nothing_removed = false
                         break

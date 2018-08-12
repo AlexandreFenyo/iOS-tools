@@ -8,6 +8,8 @@
 
 import UIKit
 
+var local_delegate : LocalGenericDelegate<SpeedTestChargenClient>?
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     public var window: UIWindow?
@@ -48,6 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Start local services
         local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)
         local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>()
+local_delegate = local_chargen_service_delegate
         local_chargen_service!.delegate = local_chargen_service_delegate
         local_chargen_service!.publish(options: .listenForConnections)
 
