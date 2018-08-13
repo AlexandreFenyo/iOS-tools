@@ -23,6 +23,7 @@ class DetailViewController: UIViewController {
     private let ts = TimeSeries()
 
     private static var cl: LocalChargenClient?
+    private static var cl2: LocalDiscardClient?
 
     @IBOutlet weak var view1: UIView!
 
@@ -90,12 +91,40 @@ class DetailViewController: UIViewController {
         }
     }
 
+    @objc
+    private func switch2Changed(_ sender: Any) {
+        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == true {
+            if DetailViewController.cl2 != nil {
+                print("switchChanged warning: already running")
+                chart_switch1.setOn(false, animated: true)
+                return
+            }
+            
+            // démarrer les stats
+            print("address:", address!)
+            DetailViewController.cl2 = LocalDiscardClient(address: address!)
+            DetailViewController.cl2!.start()
+        }
+        
+        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == false {
+            if DetailViewController.cl2 == nil {
+                print("switchChanged warning: was not running")
+                return
+            }
+            
+            print("disconnect from:", address!)
+            DetailViewController.cl2!.stop()
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.leftItemsSupplementBackButton = true
 
+        // enable 1 of the 2 following lines to test
         chart_switch1!.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
+        // chart_switch1!.addTarget(self, action: #selector(switch2Changed(_:)), for: .valueChanged)
 
         let scene = SKScene(size: ingress_chart.bounds.size)
         scene.backgroundColor = .brown
@@ -114,7 +143,9 @@ class DetailViewController: UIViewController {
 
 //        ingress_chart.showsFPS = true
 //        ingress_chart.showsQuadCount = true
-        
+
+        // enable 1 of the 2 following groups of lines to test
+
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.2), repeats: true) {
             _ in
             if DetailViewController.cl == nil { return }
@@ -126,10 +157,25 @@ class DetailViewController: UIViewController {
                 }
             } else {
                 let throughput = DetailViewController.cl!.getThroughput()
-                //print("nread:", DetailViewController.cl!.getThroughput())
                 self.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
             }
         }
+
+//        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.2), repeats: true) {
+//            _ in
+//            if DetailViewController.cl2 == nil { return }
+//            if DetailViewController.cl2!.isFinished {
+//                DetailViewController.cl2!.close();
+//                DetailViewController.cl2 = nil
+//                if self.chart_switch1.isOn {
+//                    self.chart_switch1.setOn(false, animated: true)
+//                }
+//            } else {
+//                let throughput = DetailViewController.cl2!.getThroughput()
+//                self.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
+//            }
+//        }
+
     }
 
     override func didReceiveMemoryWarning() {
