@@ -148,7 +148,7 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     icmp_hdr.icmp_type = ICMP_ECHO;
     icmp_hdr.icmp_code = 0;
     icmp_hdr.icmp_seq = htons(12);
-    icmp6_hdr.icmp6_type = ICMP6_ECHO_REPLY;
+    icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
     icmp6_hdr.icmp6_code = 0;
 
     if (saddr == NULL) return -1;
@@ -159,6 +159,7 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     if (saddr->sa_family == AF_INET6) printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
     
     sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname((saddr->sa_family == AF_INET) ? "icmp" : "icmp6")->p_proto);
+
     if (sock < 0) {
         perror("socket()");
         return (setLastErrorNo() << 8) - 3;
