@@ -16,4 +16,11 @@ int localDiscardClientGetLastErrorNo();
 long localDiscardClientGetNWrite();
 int localDiscardClientLoop(const struct sockaddr *saddr);
 
+int localPingClientOpen();
+int localPingClientClose();
+int localPingClientStop();
+int localPingClientGetLastErrorNo();
+long localPingClientGetRTT();
+int localPingClientLoop(const struct sockaddr *saddr);
+
 void net_test();

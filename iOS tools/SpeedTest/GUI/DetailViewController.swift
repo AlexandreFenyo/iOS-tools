@@ -24,6 +24,7 @@ class DetailViewController: UIViewController {
 
     private static var cl: LocalChargenClient?
     private static var cl2: LocalDiscardClient?
+    private static var cl3: LocalPingClient?
 
     @IBOutlet weak var view1: UIView!
 
@@ -76,8 +77,16 @@ class DetailViewController: UIViewController {
 
             // démarrer les stats
             print("address:", address!)
-            DetailViewController.cl = LocalChargenClient(address: address!)
-            DetailViewController.cl!.start()
+// à remettre
+//            DetailViewController.cl = LocalChargenClient(address: address!)
+//            DetailViewController.cl!.start()
+
+            
+            
+// test ping
+            DetailViewController.cl3 = LocalPingClient(address: address!)
+            DetailViewController.cl3!.start()
+
         }
 
         if sender as? UISwitch == chart_switch1, chart_switch1.isOn == false {
