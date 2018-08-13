@@ -142,10 +142,14 @@ int localPingClientStop() {
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/ip_icmp.h
 int localPingClientLoop(const struct sockaddr *saddr) {
     struct icmp icmp_hdr;
+    struct icmp6_hdr icmp6_hdr;
     memset(&icmp_hdr, 0, sizeof icmp_hdr);
+    memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
     icmp_hdr.icmp_type = ICMP_ECHO;
     icmp_hdr.icmp_code = 0;
     icmp_hdr.icmp_seq = htons(12);
+    icmp6_hdr.icmp6_type = ICMP6_ECHO_REPLY;
+    icmp6_hdr.icmp6_code = 0;
 
     if (saddr == NULL) return -1;
     else printf("family: %d\n", saddr->sa_family);
@@ -154,14 +158,17 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     if (saddr->sa_family == AF_INET) printf("sin_port: %d\n", ((struct sockaddr_in *) saddr)->sin_port);
     if (saddr->sa_family == AF_INET6) printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
     
-    sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname(saddr->sa_family == AF_INET ? "icmp" : "icmp6")->p_proto);
+    sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname((saddr->sa_family == AF_INET) ? "icmp" : "icmp6")->p_proto);
     if (sock < 0) {
         perror("socket()");
         return (setLastErrorNo() << 8) - 3;
     }
 
-    ssize_t len = sendto(sock, &icmp_hdr, sizeof icmp_hdr, 0, saddr, saddr->sa_family == AF_INET ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
+    ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
     printf("sendto ICMP retval:%ld\n", len);
+    if  (len < 0) {
+        perror("sendto");
+    }
     
     // retval == 0: EOF
     return 0;
