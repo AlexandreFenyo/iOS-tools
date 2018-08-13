@@ -12,7 +12,7 @@ import Foundation
 class SpeedTestChargenClient : SpeedTestClient {
     // Data buffers
     private let dataMutablePointer, bufMutablePointer : UnsafeMutablePointer<UInt8>
-    private let dataPointer, bufPointer : UnsafePointer<UInt8>
+    private let dataPointer : UnsafePointer<UInt8>
 
     // Prepare threads and data buffers to handle a remote client
     public required init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
@@ -21,7 +21,6 @@ class SpeedTestChargenClient : SpeedTestClient {
         dataMutablePointer.initialize(repeating: 65, count: NetworkDefaults.buffer_size)
         dataPointer = UnsafePointer<UInt8>(dataMutablePointer)
         bufMutablePointer = UnsafeMutablePointer<UInt8>.allocate(capacity: NetworkDefaults.buffer_size)
-        bufPointer = UnsafePointer<UInt8>(bufMutablePointer)
 
         // Initialize superclass
         super.init(input_stream: input_stream, output_stream: output_stream, from: from)
@@ -33,7 +32,6 @@ class SpeedTestChargenClient : SpeedTestClient {
     public func stream(_ stream: Stream, handle event_code: Stream.Event) {
         switch event_code {
         case .hasBytesAvailable:
-//            print("inputStream")
             let inputStream = stream as! InputStream
             let ret = inputStream.read(bufMutablePointer, maxLength: NetworkDefaults.buffer_size)
             if ret <= 0 {
@@ -42,7 +40,6 @@ class SpeedTestChargenClient : SpeedTestClient {
             }
 
         case .hasSpaceAvailable:
-//            print("outputStream")
             let outputStream = stream as! OutputStream
             let ret = outputStream.write(dataPointer, maxLength: NetworkDefaults.buffer_size)
             if ret < 0 {

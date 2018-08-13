@@ -1,24 +1,6 @@
 
 import Foundation
 
-//ENTREE
-//ENTREE
-//TEST
-//TEST
-//2018-08-09 18:41:43.824487+0200 iOS tools[59134:18322489] SocketStream write error [0x618000178f00]: 1 32
-//outputStream end
-//SORTIE
-//SORTIE
-//REF CLOSED
-//exitThreads
-//REF CLOSED
-//exitThreads
-//TEST
-//RE/OVE
-//SpeedTestClient deinit
-//StreamNetworkThread deinit
-//StreamNetworkThread deinit
-
 // (while sleep .1; do echo salut ; done) | nc 192.168.1.212 1919 > /tmp/bigfile
 // simuler one-way: CTRL-D avec nc sur MacOS
 // https://github.com/ecnepsnai/BonjourSwift/blob/master/Bonjour.swift
@@ -91,16 +73,13 @@ class SpeedTestClient : NSObject, StreamDelegate {
     }
     
     public func threadsFinished() -> Bool {
-        return (background_network_thread_in?.isFinished ?? true) && (background_network_thread_out?.isFinished ?? true)
+        return background_network_thread_in?.isFinished ?? true && background_network_thread_out?.isFinished ?? true
     }
     
     // May be called in any thread
     public func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
         print("exitThreads")
-        // Needed ???
-        //        background_network_thread_in!.cancel()
-        //        background_network_thread_out!.cancel()
         input_stream?.close()
         output_stream?.close()
     }
@@ -121,20 +100,14 @@ class SpeedTestClient : NSObject, StreamDelegate {
         output_stream?.delegate = self
         background_network_thread_in = input_stream != nil ? StreamNetworkThread(input_stream!) : nil
         background_network_thread_out = output_stream != nil ? StreamNetworkThread(output_stream!) : nil
-        
+
         // Beginning at this line, input and output streams must only be accessed from their dedicated threads
         background_network_thread_in?.start()
         background_network_thread_out?.start()
     }
     
     public func end(_ stream: Stream) {
-        // tester func remove(from: RunLoop, forMode: RunLoop.Mode) (unschedule)
-        //        input_stream.close()
-        //        output_stream.close()
-//        input_stream.remove(from: background_network_thread_in!.run_loop!, forMode: .commonModes)
-//        output_stream.remove(from: background_network_thread_out!.run_loop!, forMode: .commonModes)
-
-        // Closing the stream makes it being unscheduled, this will force the run loop to exit
+        // Closing the stream makes it being unscheduled, this will force the run loop to exit -- but there are some bugs on the kernel, so this does not work everytime
         stream.close()
         
         // Inform the parent object that the stream has just been closed
@@ -170,7 +143,6 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
 
     // Initialize instance
     public override init() {
-        // Initialize superclass
         super.init()
         
         // Add a background job that sweeps terminated connections
@@ -182,8 +154,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                 nothing_removed = true
 
                 for idx in self.clients.indices {
-                    // bug à corriger car ca boucle meme quand il reste plus rien : tester en faisant un nc pour s'y connecter sant faire < /dev/null et faire CTRL-C
-                    print("TEST")
+                    print("  TRY TO SWEEP CLIENT IDX", idx)
 
                     // heuristique non thread-safe pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé - ca marche pas forcément immédiatement mais au bout d'une minute environ dans certains cas
                     let cl = self.clients[idx]
@@ -197,7 +168,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                     }
 
                     if self.clients[idx].threadsFinished() {
-                        print("REMOVE CLIENT")
+                        print("  REMOVE CLIENT IDX", idx)
                         self.clients.remove(at: idx)
                         nothing_removed = false
                         break

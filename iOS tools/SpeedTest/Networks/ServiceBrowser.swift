@@ -23,8 +23,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-//        print("didFind:", service, moreComing)
-
         // Only add remote services
         if (service.name != UIDevice.current.name) {
             services.append(service)
