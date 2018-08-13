@@ -81,7 +81,7 @@ class StreamNetworkThread : Thread {
 // Manage a remote client with two threads, one for each stream
 class SpeedTestClient : NSObject, StreamDelegate {
     public var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
-    public let input_stream, output_stream : Stream
+    public let input_stream, output_stream : Stream?
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
     private weak var from : LocalDelegate?
@@ -91,7 +91,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
     }
     
     public func threadsFinished() -> Bool {
-        return background_network_thread_in!.isFinished && background_network_thread_out!.isFinished
+        return (background_network_thread_in?.isFinished ?? true) && (background_network_thread_out?.isFinished ?? true)
     }
     
     // May be called in any thread
@@ -101,12 +101,12 @@ class SpeedTestClient : NSObject, StreamDelegate {
         // Needed ???
         //        background_network_thread_in!.cancel()
         //        background_network_thread_out!.cancel()
-        input_stream.close()
-        output_stream.close()
+        input_stream?.close()
+        output_stream?.close()
     }
     
     // Prepare threads and data buffers to handle a remote client
-    required public init(input_stream: InputStream, output_stream: OutputStream, from: LocalDelegate) {
+    required public init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
         self.input_stream = input_stream
         self.output_stream = output_stream
         
@@ -117,14 +117,14 @@ class SpeedTestClient : NSObject, StreamDelegate {
         super.init()
         
         // Create input and output threads
-        input_stream.delegate = self
-        output_stream.delegate = self
-        background_network_thread_in = StreamNetworkThread(input_stream)
-        background_network_thread_out = StreamNetworkThread(output_stream)
+        input_stream?.delegate = self
+        output_stream?.delegate = self
+        background_network_thread_in = input_stream != nil ? StreamNetworkThread(input_stream!) : nil
+        background_network_thread_out = output_stream != nil ? StreamNetworkThread(output_stream!) : nil
         
         // Beginning at this line, input and output streams must only be accessed from their dedicated threads
-        background_network_thread_in!.start()
-        background_network_thread_out!.start()
+        background_network_thread_in?.start()
+        background_network_thread_out?.start()
     }
     
     public func end(_ stream: Stream) {
@@ -143,9 +143,20 @@ class SpeedTestClient : NSObject, StreamDelegate {
 }
 
 class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
+    private let manage_input: Bool, manage_output: Bool
+
+    public init(manage_input: Bool, manage_output: Bool) {
+       self.manage_input = manage_input
+        self.manage_output = manage_output
+    }
+    
     // Manage new connections from clients
     public override func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
-        clients.append(T(input_stream: inputStream, output_stream: outputStream, from: self))
+        if manage_input == false { inputStream.close() }
+        if manage_output == false { outputStream.close() }
+        let _input_stream = manage_input ? inputStream : nil
+        let _output_stream = manage_output ? outputStream : nil
+        clients.append(T(input_stream: _input_stream, output_stream: _output_stream, from: self))
     }
 }
 
@@ -176,10 +187,12 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
 
                     // heuristique non thread-safe pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé - ca marche pas forcément immédiatement mais au bout d'une minute environ dans certains cas
                     let cl = self.clients[idx]
-                    if (cl.input_stream.streamStatus == .closed || cl.input_stream.streamStatus == .error) && cl.background_network_thread_in!.isFinished == false {
+                    if let stream : Stream = cl.input_stream,
+                        (stream.streamStatus == .closed || stream.streamStatus == .error) && cl.background_network_thread_in!.isFinished == false {
                         cl.background_network_thread_in!.run_loop!.perform { }
                     }
-                    if (cl.output_stream.streamStatus == .closed || cl.output_stream.streamStatus == .error) && cl.background_network_thread_out!.isFinished == false {
+                    if let stream : Stream = cl.output_stream,
+                        (stream.streamStatus == .closed || stream.streamStatus == .error) && cl.background_network_thread_out!.isFinished == false {
                         cl.background_network_thread_out!.run_loop!.perform { }
                     }
 

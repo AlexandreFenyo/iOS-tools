@@ -15,7 +15,7 @@ class SpeedTestChargenClient : SpeedTestClient {
     private let dataPointer, bufPointer : UnsafePointer<UInt8>
 
     // Prepare threads and data buffers to handle a remote client
-    public required init(input_stream: InputStream, output_stream: OutputStream, from: LocalDelegate) {
+    public required init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
         // Prepare data buffers
         dataMutablePointer = UnsafeMutablePointer<UInt8>.allocate(capacity: NetworkDefaults.buffer_size)
         dataMutablePointer.initialize(repeating: 65, count: NetworkDefaults.buffer_size)
