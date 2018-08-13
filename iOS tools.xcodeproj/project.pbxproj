@@ -31,6 +31,8 @@
 		5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DF214FC211B4EF7002B7603 /* localChargenClient.c */; };
 		5DF21507211C6F8E002B7603 /* LocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21506211C6F8E002B7603 /* LocalService.swift */; };
 		5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21508211C9455002B7603 /* LocalDiscardService.swift */; };
+		5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2150B2121D397002B7603 /* localDiscardClient.c */; };
+		5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2150D2121D664002B7603 /* LocalDiscardClient.swift */; };
 		5DF237F520A089B700CF9365 /* 2D3D.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF237F420A089B700CF9365 /* 2D3D.storyboard */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
@@ -69,6 +71,9 @@
 		5DF21503211B5EE5002B7603 /* localChargenClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = localChargenClient.h; sourceTree = "<group>"; };
 		5DF21506211C6F8E002B7603 /* LocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalService.swift; sourceTree = "<group>"; };
 		5DF21508211C9455002B7603 /* LocalDiscardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDiscardService.swift; sourceTree = "<group>"; };
+		5DF2150A2121D337002B7603 /* localDiscardClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = localDiscardClient.h; sourceTree = "<group>"; };
+		5DF2150B2121D397002B7603 /* localDiscardClient.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = localDiscardClient.c; sourceTree = "<group>"; };
+		5DF2150D2121D664002B7603 /* LocalDiscardClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDiscardClient.swift; sourceTree = "<group>"; };
 		5DF237F420A089B700CF9365 /* 2D3D.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = 2D3D.storyboard; sourceTree = "<group>"; };
 		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -199,8 +204,11 @@
 				5DF21508211C9455002B7603 /* LocalDiscardService.swift */,
 				5DF21506211C6F8E002B7603 /* LocalService.swift */,
 				5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */,
-				5DF214FC211B4EF7002B7603 /* localChargenClient.c */,
 				5DF21503211B5EE5002B7603 /* localChargenClient.h */,
+				5DF214FC211B4EF7002B7603 /* localChargenClient.c */,
+				5DF2150D2121D664002B7603 /* LocalDiscardClient.swift */,
+				5DF2150A2121D337002B7603 /* localDiscardClient.h */,
+				5DF2150B2121D397002B7603 /* localDiscardClient.c */,
 			);
 			path = Networks;
 			sourceTree = "<group>";
@@ -305,10 +313,12 @@
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
 				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5DC736C820D3D29B00C2A199 /* UDPTools.swift in Sources */,
+				5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */,
 				5D1351F3208538DB00E4A76D /* GameViewController.swift in Sources */,
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
 				5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
+				5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */,
 				5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */,
 				5D945D0C2100CF51007E4844 /* GenericNetTools.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,

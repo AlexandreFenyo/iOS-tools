@@ -1,23 +1,23 @@
 //
-//  localChargenClient.c
+//  localDiscardClient.c
 //  iOS tools
 //
 //  Created by Alexandre Fenyo on 08/08/2018.
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
-#include "localChargenClient.h"
+#include "localDiscardClient.h"
 
 static pthread_mutex_t mutex;
 static int sock = -1;
 
 static int last_errno;
-static long nread;
+static long nwrite;
 
 // return values:
 // - >= 0: last_errno value
 // - < 0 : mutex error, should not happen
-int localChargenClientGetLastErrorNo() {
+int localDiscardClientGetLastErrorNo() {
     int retval, ret;
     
     ret = pthread_mutex_lock(&mutex);
@@ -61,7 +61,7 @@ static int setLastErrorNo() {
 // return values:
 // - 0  : no error
 // - < 0: mutex error, should not happen
-static int addToNRead(long newval) {
+static int addToNWrite(long newval) {
     int ret;
     
     ret = pthread_mutex_lock(&mutex);
@@ -70,7 +70,7 @@ static int addToNRead(long newval) {
         return -1;
     }
     
-    nread += newval;
+    nwrite += newval;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -82,23 +82,23 @@ static int addToNRead(long newval) {
 }
 
 // return values:
-// - >= 0: nread value
+// - >= 0: nwrite value
 // - < 0 : mutex error, should not happen
-long localChargenClientGetNRead() {
+long localDiscardClientGetNWrite() {
     long retval;
     int ret;
     
     ret = pthread_mutex_lock(&mutex);
     if (ret < 0) {
-        perror("nread pthread_mutex_lock");
+        perror("nwrite pthread_mutex_lock");
         return -1;
     }
     
-    retval = nread;
+    retval = nwrite;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
-        perror("nread pthread_mutex_unlock");
+        perror("nwrite pthread_mutex_unlock");
         return -1;
     }
     
@@ -108,9 +108,9 @@ long localChargenClientGetNRead() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_init
-int localChargenClientOpen() {
+int localDiscardClientOpen() {
     last_errno = 0;
-    nread = 0;
+    nwrite = 0;
     
     int ret = pthread_mutex_init(&mutex, NULL);
     if (ret < 0) perror("init pthread_mutex_init");
@@ -121,7 +121,7 @@ int localChargenClientOpen() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localChargenClientClose() {
+int localDiscardClientClose() {
     int ret = pthread_mutex_destroy(&mutex);
     if (ret < 0) perror("close pthread_mutex_destroy");
     
@@ -131,13 +131,13 @@ int localChargenClientClose() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localChargenClientStop() {
+int localDiscardClientStop() {
     if (sock < 0) return -1;
     close(sock);
     return 0;
 }
 
-int localChargenClientLoop(const struct sockaddr *saddr) {
+int localDiscardClientLoop(const struct sockaddr *saddr) {
     if (saddr == NULL) return -1;
     else printf("family: %d\n", saddr->sa_family);
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
@@ -157,16 +157,16 @@ int localChargenClientLoop(const struct sockaddr *saddr) {
     }
     
     char buf[4096];
+    memset(buf, 'A', sizeof buf);
     long retval;
     do {
-        retval = read(sock, buf, sizeof(buf));
+        retval = write(sock, buf, sizeof(buf));
         if (retval < 0) {
-            perror("read");
+            perror("write");
             return (setLastErrorNo() << 8) - 5;
         }
-        if (addToNRead(retval) < 0) return -6;
-    } while (retval > 0);
+        if (addToNWrite(retval) < 0) return -6;
+    } while (retval >= 0);
     
-    // retval == 0: EOF
     return 0;
 }

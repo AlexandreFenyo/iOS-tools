@@ -9,4 +9,11 @@ int localChargenClientGetLastErrorNo();
 long localChargenClientGetNRead();
 int localChargenClientLoop(const struct sockaddr *saddr);
 
+int localDiscardClientOpen();
+int localDiscardClientClose();
+int localDiscardClientStop();
+int localDiscardClientGetLastErrorNo();
+long localDiscardClientGetNWrite();
+int localDiscardClientLoop(const struct sockaddr *saddr);
+
 void net_test();
