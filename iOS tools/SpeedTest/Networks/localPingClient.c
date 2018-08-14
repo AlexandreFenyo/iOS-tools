@@ -143,6 +143,12 @@ int localPingClientStop() {
 int localPingClientLoop(const struct sockaddr *saddr) {
     struct icmp icmp_hdr;
     struct icmp6_hdr icmp6_hdr;
+    struct timeval tv;
+
+    // Timeout when receive an ICMP response
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    
     memset(&icmp_hdr, 0, sizeof icmp_hdr);
     memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
     icmp_hdr.icmp_type = ICMP_ECHO;
@@ -150,6 +156,7 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     icmp_hdr.icmp_seq = htons(12);
     icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
     icmp6_hdr.icmp6_code = 0;
+    icmp6_hdr.icmp6_seq = htons(12);
 
     if (saddr == NULL) return -1;
     else printf("family: %d\n", saddr->sa_family);
@@ -159,18 +166,43 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     if (saddr->sa_family == AF_INET6) printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
     
     sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname((saddr->sa_family == AF_INET) ? "icmp" : "icmp6")->p_proto);
-
     if (sock < 0) {
         perror("socket()");
         return (setLastErrorNo() << 8) - 3;
     }
 
+    int ret;
+//    ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+//    if (ret < 0) {
+//        perror("setsockopt()");
+//        return (setLastErrorNo() << 8) - 4;
+//    }
+
     ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
     printf("sendto ICMP retval:%ld\n", len);
     if  (len < 0) {
-        perror("sendto");
+        perror("sendto()");
     }
     
+    char buf[10000];
+    socklen_t foo = 0;
+    printf("avant recvfrom\n");
+    long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
+    if (retval < 0) {
+        perror("recvfrom()");
+        return (setLastErrorNo() << 8) - 4;
+    }
+    printf("après recvfrom\n");
+
+    // apparemment ca repond pas quand icmp en v4 !
+    
+    printf("recvfrom : retval = %ld\n", retval);
+    
+    ret = close(sock);
+    if  (ret < 0) {
+        perror("close()");
+    }
+
     // retval == 0: EOF
     return 0;
 }
