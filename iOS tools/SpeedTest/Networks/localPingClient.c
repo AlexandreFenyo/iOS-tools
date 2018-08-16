@@ -178,7 +178,7 @@ int localPingClientLoop(const struct sockaddr *saddr) {
 //        return (setLastErrorNo() << 8) - 4;
 //    }
 
-    ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
+    ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
     printf("sendto ICMP retval:%ld\n", len);
     if  (len < 0) {
         perror("sendto()");
