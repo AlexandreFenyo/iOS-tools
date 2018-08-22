@@ -105,6 +105,7 @@ final class GenericTools : AutoTrace {
 
     // Placeholder for tests
     public static func test() {
+        c_test()
     }
 
     // Espace insécable

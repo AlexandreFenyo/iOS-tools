@@ -23,4 +23,6 @@ int localPingClientGetLastErrorNo();
 long localPingClientGetRTT();
 int localPingClientLoop(const struct sockaddr *saddr);
 
+int c_test();
+
 void net_test();

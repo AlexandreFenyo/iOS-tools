@@ -144,19 +144,7 @@ int localPingClientLoop(const struct sockaddr *saddr) {
     struct icmp icmp_hdr;
     struct icmp6_hdr icmp6_hdr;
     struct timeval tv;
-
-    // Timeout when receive an ICMP response
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
-    
-    memset(&icmp_hdr, 0, sizeof icmp_hdr);
-    memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
-    icmp_hdr.icmp_type = ICMP_ECHO;
-    icmp_hdr.icmp_code = 0;
-    icmp_hdr.icmp_seq = htons(12);
-    icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
-    icmp6_hdr.icmp6_code = 0;
-    icmp6_hdr.icmp6_seq = htons(12);
+    int ret;
 
     if (saddr == NULL) return -1;
     else printf("family: %d\n", saddr->sa_family);
@@ -171,38 +159,62 @@ int localPingClientLoop(const struct sockaddr *saddr) {
         return (setLastErrorNo() << 8) - 3;
     }
 
-    int ret;
-//    ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
-//    if (ret < 0) {
-//        perror("setsockopt()");
-//        return (setLastErrorNo() << 8) - 4;
-//    }
+    memset(&icmp_hdr, 0, sizeof icmp_hdr);
+    memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
+    icmp_hdr.icmp_type = ICMP_ECHO;
+    icmp_hdr.icmp_code = 0;
+    icmp_hdr.icmp_seq = htons(12);
 
-    ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-    printf("sendto ICMP retval:%ld\n", len);
-    if  (len < 0) {
-        perror("sendto()");
-    }
-    
-    char buf[10000];
-    socklen_t foo = 0;
-    printf("avant recvfrom\n");
-    long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
-    if (retval < 0) {
-        perror("recvfrom()");
+    icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
+    icmp6_hdr.icmp6_code = 0;
+    icmp6_hdr.icmp6_seq = htons(12);
+
+    unsigned short ck = 0;
+    for (int i = 0; i < sizeof icmp_hdr / 2; i++) ck += ((unsigned short *) &icmp_hdr)[i];
+    icmp_hdr.icmp_cksum = 0b1111111111111111 ^ ck;
+
+    // Timeout when receive an ICMP response
+    tv.tv_sec = 3;
+    tv.tv_usec = 0;
+    ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+    if (ret < 0) {
+        perror("setsockopt()");
         return (setLastErrorNo() << 8) - 4;
     }
-    printf("après recvfrom\n");
 
-    // apparemment ca repond pas quand icmp en v4 !
-    
-    printf("recvfrom : retval = %ld\n", retval);
-    
+    while (1) {
+        struct timeval tv, tv2;
+        
+        gettimeofday(&tv, NULL);
+        ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
+        printf("sendto ICMP retval:%ld\n", len);
+        if  (len < 0) {
+            perror("sendto()");
+        }
+        
+        char buf[10000];
+        socklen_t foo = 0;
+        printf("avant recvfrom\n");
+        long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
+        if (retval < 0 && errno != EAGAIN) {
+            printf("%d\n", errno);
+            perror("recvfrom()");
+            return (setLastErrorNo() << 8) - 5;
+        }
+        gettimeofday(&tv2, NULL);
+        long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
+        printf("duration: %ld\n", duration);
+        if (setRTT(duration) < 0) return -6;
+
+        printf("après recvfrom\n");
+        
+        printf("recvfrom : retval = %ld\n", retval);
+    }
+
     ret = close(sock);
     if  (ret < 0) {
         perror("close()");
     }
 
-    // retval == 0: EOF
     return 0;
 }

@@ -9,6 +9,7 @@
 #ifndef localPingClient_h
 #define localPingClient_h
 
+#include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -23,7 +24,6 @@
 #include <netinet/ip_icmp.h>
 #include <netinet/icmp6.h>
 #include <pthread.h>
-
-extern int errno;
+#include <sys/time.h>
 
 #endif /* localPingClient_h */

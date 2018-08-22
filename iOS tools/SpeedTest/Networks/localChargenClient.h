@@ -9,6 +9,7 @@
 #ifndef localChargenClient_h
 #define localChargenClient_h
 
+#include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -19,7 +20,5 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <pthread.h>
-
-extern int errno;
 
 #endif /* localChargenClient_h */
