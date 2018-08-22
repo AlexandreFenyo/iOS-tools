@@ -159,7 +159,7 @@ int localFloodClientLoop(const struct sockaddr *saddr) {
 //    // Timeout when receive an ICMP response
 //    tv.tv_sec = 3;
 //    tv.tv_usec = 0;
-//    ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof tv);
+//    ret = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof tv);
 //    if (ret < 0) {
 //        perror("setsockopt()");
 //        return (setLastErrorNo() << 8) - 4;
