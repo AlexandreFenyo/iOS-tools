@@ -9,6 +9,7 @@
 import Foundation
 
 // https://developer.apple.com/documentation/foundation/urlsession
+// https://www.raywenderlich.com/959-arc-and-memory-management-in-swift
 
 class LocalHttpClient : NSObject, URLSessionDataDelegate {
 //    private let address : IPAddress
