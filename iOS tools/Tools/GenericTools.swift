@@ -107,7 +107,7 @@ final class GenericTools : AutoTrace {
     public static func test() {
         c_test()
         
-        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
+//        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
     }
 
     // Espace insécable

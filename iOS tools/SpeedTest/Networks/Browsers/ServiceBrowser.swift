@@ -81,7 +81,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
         var addresses : [IPAddress] = []
         if sender.addresses != nil {
-            for addr in sender.addresses! {
+            for addr in sender.addresses! { 
                 switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
                 case AF_INET:
                     print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv4:", GenericNetTools.getAddrFromSockAddr(addr))
