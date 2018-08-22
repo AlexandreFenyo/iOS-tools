@@ -25,6 +25,7 @@ class DetailViewController: UIViewController {
     private static var cl: LocalChargenClient?
     private static var cl2: LocalDiscardClient?
     private static var cl3: LocalPingClient?
+    private static var cl4: LocalFloodClient?
 
     @IBOutlet weak var view1: UIView!
 
@@ -80,12 +81,16 @@ class DetailViewController: UIViewController {
 // à remettre
 //            DetailViewController.cl = LocalChargenClient(address: address!)
 //            DetailViewController.cl!.start()
-
             
-            
+// à remettre
 // test ping
-            DetailViewController.cl3 = LocalPingClient(address: address!)
-            DetailViewController.cl3!.start()
+//            DetailViewController.cl3 = LocalPingClient(address: address!)
+//            DetailViewController.cl3!.start()
+
+            // à remettre
+            // test ping
+            DetailViewController.cl4 = LocalFloodClient(address: address!)
+            DetailViewController.cl4!.start()
 
         }
 

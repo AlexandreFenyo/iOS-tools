@@ -23,6 +23,13 @@ int localPingClientGetLastErrorNo();
 long localPingClientGetRTT();
 int localPingClientLoop(const struct sockaddr *saddr);
 
+int localFloodClientOpen();
+int localFloodClientClose();
+int localFloodClientStop();
+int localFloodClientGetLastErrorNo();
+long localFloodClientGetNWrite();
+int localFloodClientLoop(const struct sockaddr *saddr);
+
 int c_test();
 
 void net_test();
