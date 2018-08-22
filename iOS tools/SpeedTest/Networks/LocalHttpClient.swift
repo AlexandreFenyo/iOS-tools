@@ -27,7 +27,7 @@ class LocalHttpClient : NSObject, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-            print("XXX", data.count)
+        print("web downloaded bytes:", data.count)
     }
     
     
