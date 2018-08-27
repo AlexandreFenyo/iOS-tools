@@ -105,9 +105,11 @@ final class GenericTools : AutoTrace {
 
     // Placeholder for tests
     public static func test() {
-        c_test()
-        
+//        c_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
+        
+        let nb = NetworkBrowser(network: IPv4SAddress(address: "10.69.184.195"), netmask: IPv4SAddress(address: "255.255.255.0"))
+        nb!.browse()
     }
 
     // Espace insécable

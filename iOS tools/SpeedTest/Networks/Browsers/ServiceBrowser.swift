@@ -81,18 +81,19 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
         var addresses : [IPAddress] = []
         if sender.addresses != nil {
-            for addr in sender.addresses! {
-                switch GenericNetTools.getAddrFamilyFromSockAddr(addr) {
+            for data in sender.addresses! {
+                let sock_addr = SockAddr(data)!
+                switch sock_addr.getFamily() {
                 case AF_INET:
-                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv4:", GenericNetTools.getAddrFromSockAddr(addr))
-                    addresses.append(IPAddress(type: .IPv4, address: GenericNetTools.getAddrFromSockAddr(addr), saddr: addr))
+                    print("  hostname:", sock_addr.resolveHostName(), "IPv4:", sock_addr.getNumericAddress())
+                    addresses.append(sock_addr.getIPAddress()!)
 
                 case AF_INET6:
-                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "IPv6:", GenericNetTools.getAddrFromSockAddr(addr))
-                    addresses.append(IPAddress(type: .IPv6, address: GenericNetTools.getAddrFromSockAddr(addr), saddr: addr))
+                    print("  hostname:", sock_addr.resolveHostName(), "IPv6:", sock_addr.getNumericAddress())
+                    addresses.append(sock_addr.getIPAddress()!)
 
                 default:
-                    print("  hostname:", GenericNetTools.getHostNameFromSockAddr(addr), "address family not recognized")
+                    fatalError("can not be here")
                 }
             }
         }

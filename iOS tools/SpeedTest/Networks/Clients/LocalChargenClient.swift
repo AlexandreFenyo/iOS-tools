@@ -17,7 +17,7 @@ class LocalChargenClient : Thread {
     override internal func main() {
         print("CLIENT ENTREE THREAD", address)
 
-        if let saddr = address.saddr {
+        if let saddr = address.toSockAddress()?.sockaddr {
             saddr.withUnsafeBytes {
                 (ump: UnsafePointer<sockaddr>) in
                 let retval = localChargenClientLoop(OpaquePointer(ump))
