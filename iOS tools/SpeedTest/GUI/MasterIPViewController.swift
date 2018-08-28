@@ -68,6 +68,7 @@ class MasterIPViewController: UITableViewController {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
         cell.textLabel!.text = device_address.toSockAddress()!.getNumericAddress()
+        print("address: ", device_address.toSockAddress()!.getNumericAddress())
 
         return cell
     }

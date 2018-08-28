@@ -16,6 +16,23 @@ class SockAddr : Equatable, NSCopying {
         self.sockaddr = sockaddr
     }
 
+    public static func getSockAddr(_ sockaddr: Data) -> SockAddr {
+        let family = sockaddr.withUnsafeBytes {
+            (bytes : UnsafePointer<sockaddr>) -> UInt8 in
+            return bytes.pointee.sa_family
+        }
+        switch Int32(family) {
+        case AF_INET:
+                return SockAddr4(sockaddr)!
+            
+        case AF_INET6:
+            return SockAddr6(sockaddr)!
+
+        default:
+            fatalError("bad address family")
+        }
+    }
+    
     public func getIPAddress() -> IPAddress? {
         return nil
     }
@@ -25,7 +42,7 @@ class SockAddr : Equatable, NSCopying {
             (bytes : UnsafePointer<sockaddr>) -> String? in
             var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
             let ret = getnameinfo(bytes, UInt32(MemoryLayout<sockaddr>.size), &buffer, UInt32(NI_MAXHOST), nil, 0, flags)
-            return ret != 0 ? String(cString: buffer) : nil
+            return ret == 0 ? String(cString: buffer) : nil
         }
     }
 
@@ -87,7 +104,7 @@ class SockAddr6 : SockAddr {
         return sockaddr.withUnsafeBytes {
             (bytes : UnsafePointer<sockaddr_in6>) -> IPAddress in
             var in6_addr = bytes.pointee.sin6_addr
-            return IPv6Address(NSData(bytes: &in6_addr, length: Int(bytes.pointee.sin6_len)) as Data)
+            return IPv6Address(NSData(bytes: &in6_addr, length: Int(bytes.pointee.sin6_len)) as Data, scope: bytes.pointee.sin6_scope_id)
         }
     }
     
@@ -166,6 +183,14 @@ class IPv4Address : IPAddress {
 }
 
 class IPv6Address : IPAddress {
+    // scope zone index
+    let scope : UInt32
+
+    public init(_ inaddr: Data, scope: UInt32 = 0) {
+        self.scope = scope
+        super.init(inaddr)
+    }
+
     public override func getFamily() -> Int32 {
         return AF_INET6
     }
@@ -180,6 +205,7 @@ class IPv6Address : IPAddress {
         data.withUnsafeMutableBytes {
             (bytes : UnsafeMutablePointer<sockaddr_in6>) in
             bytes.pointee.sin6_addr = in6_addr
+            bytes.pointee.sin6_scope_id = scope
             bytes.pointee.sin6_len = UInt8(MemoryLayout<in6_addr>.size)
             bytes.pointee.sin6_family = UInt8(AF_INET6)
         }

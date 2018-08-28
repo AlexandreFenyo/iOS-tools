@@ -82,7 +82,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         var addresses : [IPAddress] = []
         if sender.addresses != nil {
             for data in sender.addresses! {
-                let sock_addr = SockAddr(data)!
+                let sock_addr = SockAddr.getSockAddr(data)
                 switch sock_addr.getFamily() {
                 case AF_INET:
                     print("  hostname:", sock_addr.resolveHostName(), "IPv4:", sock_addr.getNumericAddress())
