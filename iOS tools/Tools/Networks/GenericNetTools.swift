@@ -163,6 +163,18 @@ class IPAddress : Equatable, NSCopying {
         return map(netmask: netmask) { $0 ^ $1 }
     }
 
+    public func and(_ netmask: IPAddress) -> IPAddress {
+        fatalError("and on IPAddress")
+    }
+    
+    public func or(_ netmask: IPAddress) -> IPAddress {
+        fatalError("or on IPAddress")
+    }
+    
+    public func xor(_ netmask: IPAddress) -> IPAddress {
+        fatalError("xor on IPAddress")
+    }
+    
     static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
         return lhs.inaddr == rhs.inaddr
     }
@@ -218,15 +230,15 @@ class IPv4Address : IPAddress {
         return IPv4Address(inaddr)
     }
     
-    public func and(_ netmask: IPAddress) -> IPv4Address {
+    public override func and(_ netmask: IPAddress) -> IPAddress {
         return IPv4Address(super._and(netmask))
     }
 
-    public func or(_ netmask: IPAddress) -> IPv4Address {
+    public override func or(_ netmask: IPAddress) -> IPAddress {
         return IPv4Address(super._or(netmask))
     }
 
-    public func xor(_ netmask: IPAddress) -> IPv4Address {
+    public override func xor(_ netmask: IPAddress) -> IPAddress {
         return IPv4Address(super._xor(netmask))
     }
 }
@@ -262,15 +274,15 @@ class IPv6Address : IPAddress {
         return SockAddr(data)
     }
 
-    public func and(_ netmask: IPAddress) -> IPv6Address {
+    public override func and(_ netmask: IPAddress) -> IPAddress {
         return IPv6Address(super._and(netmask), scope: (netmask as! IPv6Address).scope)
     }
 
-    public func or(_ netmask: IPAddress) -> IPv6Address {
+    public override func or(_ netmask: IPAddress) -> IPAddress {
         return IPv6Address(super._or(netmask), scope: (netmask as! IPv6Address).scope)
     }
 
-    public func xor(_ netmask: IPAddress) -> IPv6Address {
+    public override func xor(_ netmask: IPAddress) -> IPAddress {
         return IPv6Address(super._xor(netmask), scope: (netmask as! IPv6Address).scope)
     }
 }

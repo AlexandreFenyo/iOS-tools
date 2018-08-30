@@ -22,7 +22,7 @@ class NetworkBrowser {
         // DispatchQueue
         
         let last = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
-        var current = network.and(netmask).next()
+        var current = (network.and(netmask) as! IPv4Address).next()
         repeat {
             print(current.getNumericAddress())
             
