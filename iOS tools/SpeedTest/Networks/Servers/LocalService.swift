@@ -20,16 +20,6 @@ import Foundation
 //            CFReadStreamOpen(readStream!.takeRetainedValue())
 // meilleure alternative si on a un NetService : service.getInputStream()
 
-// Default values
-struct NetworkDefaults {
-    public static let speed_test_chargen_port: Int32 = 1919
-    public static let speed_test_discard_port: Int32 = 1920
-    public static let buffer_size = 3000
-    public static let local_domain_for_browsing = "local."
-    public static let speed_test_chargen_service_type = "_speedtestchargen._tcp."
-    public static let speed_test_discard_service_type = "_speedtestdiscard._tcp."
-}
-
 // Protocol used to inform with a callback that a child object has done its job
 protocol RefClosed : class {
     func refClosed(_: SpeedTestClient)

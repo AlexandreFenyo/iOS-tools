@@ -8,8 +8,6 @@
 
 import Foundation
 
-private let NPARALLEL = 3
-
 class NetworkBrowser {
     private let network : IPv4Address
     private let netmask : IPv4Address
@@ -24,7 +22,7 @@ class NetworkBrowser {
         // DispatchQueue
 // faire un tableau accessible en parallèle pour déterminer les tâches et positionner les résultats ? ou async sur main thread pour les résultats
         DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.concurrentPerform(iterations: NPARALLEL) {
+            DispatchQueue.concurrentPerform(iterations: NetworkDefaults.n_parallel_tasks) {
                 idx in
                 print("ITERATION \(idx) : début")
                 sleep(5)
