@@ -137,6 +137,32 @@ class IPAddress : Equatable, NSCopying {
         return toSockAddress()!.getNumericAddress()!
     }
 
+    private func map(netmask: IPAddress, _ map: (UInt8, UInt8) -> UInt8) -> Data {
+        if netmask.inaddr.count != inaddr.count { fatalError("incompatible types") }
+
+        var addr = inaddr
+        var mask_bytes = [UInt8](netmask.inaddr)
+        
+        addr.withUnsafeMutableBytes {
+            (bytes : UnsafeMutablePointer<UInt8>) in
+            for idx in 0..<mask_bytes.count { bytes[idx] = map(bytes[idx], mask_bytes[idx]) }
+        }
+        
+        return addr
+    }
+
+    public func _and(_ netmask: IPAddress) -> Data {
+        return map(netmask: netmask) { $0 & $1 }
+    }
+
+    public func _or(_ netmask: IPAddress) -> Data {
+        return map(netmask: netmask) { $0 | $1 }
+    }
+
+    public func _xor(_ netmask: IPAddress) -> Data {
+        return map(netmask: netmask) { $0 ^ $1 }
+    }
+
     static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
         return lhs.inaddr == rhs.inaddr
     }
@@ -191,7 +217,18 @@ class IPv4Address : IPAddress {
         inaddr.reverse()
         return IPv4Address(inaddr)
     }
+    
+    public func and(_ netmask: IPAddress) -> IPv4Address {
+        return IPv4Address(super._and(netmask))
+    }
 
+    public func or(_ netmask: IPAddress) -> IPv4Address {
+        return IPv4Address(super._or(netmask))
+    }
+
+    public func xor(_ netmask: IPAddress) -> IPv4Address {
+        return IPv4Address(super._xor(netmask))
+    }
 }
 
 class IPv6Address : IPAddress {
@@ -223,6 +260,18 @@ class IPv6Address : IPAddress {
         }
         
         return SockAddr(data)
+    }
+
+    public func and(_ netmask: IPAddress) -> IPv6Address {
+        return IPv6Address(super._and(netmask), scope: (netmask as! IPv6Address).scope)
+    }
+
+    public func or(_ netmask: IPAddress) -> IPv6Address {
+        return IPv6Address(super._or(netmask), scope: (netmask as! IPv6Address).scope)
+    }
+
+    public func xor(_ netmask: IPAddress) -> IPv6Address {
+        return IPv6Address(super._xor(netmask), scope: (netmask as! IPv6Address).scope)
     }
 }
 

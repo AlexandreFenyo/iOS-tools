@@ -20,8 +20,14 @@ class NetworkBrowser {
     
     public func browse() {
         // DispatchQueue
-//        network.next().getNumericAddress()
-        print(network.getNumericAddress(), network.next().getNumericAddress())
+        
+        let last = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
+        var current = network.and(netmask).next()
+        repeat {
+            print(current.getNumericAddress())
+            
+            current = current.next()
+        } while current != last
     }
         
         
