@@ -8,6 +8,8 @@
 
 import Foundation
 
+private let NPARALLEL = 3
+
 class NetworkBrowser {
     private let network : IPv4Address
     private let netmask : IPv4Address
@@ -20,15 +22,26 @@ class NetworkBrowser {
     
     public func browse() {
         // DispatchQueue
+// faire un tableau accessible en parallèle pour déterminer les tâches et positionner les résultats ? ou async sur main thread pour les résultats
+        DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.concurrentPerform(iterations: NPARALLEL) {
+                idx in
+                print("ITERATION \(idx) : début")
+                sleep(5)
+                print("ITERATION \(idx) : fin")
+            }
+        }
+
+        print("après itérations")
+        return
         
         let last = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
         var current = (network.and(netmask) as! IPv4Address).next()
         repeat {
             print(current.getNumericAddress())
+
             
             current = current.next()
         } while current != last
     }
-        
-        
 }

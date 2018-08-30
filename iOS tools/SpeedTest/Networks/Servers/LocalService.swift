@@ -149,7 +149,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
             _ in
             var nothing_removed : Bool
-            print("TRY TO SWEEP CLIENTS")
+//            print("TRY TO SWEEP CLIENTS")
             repeat {
                 nothing_removed = true
 
