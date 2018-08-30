@@ -180,6 +180,18 @@ class IPv4Address : IPAddress {
 
         return SockAddr(data)
     }
+
+    public func next() -> IPv4Address {
+        var inaddr = self.inaddr
+        inaddr.reverse()
+        inaddr.withUnsafeMutableBytes {
+            (bytes : UnsafeMutablePointer<UInt32>) in
+            bytes.pointee += 1
+        }
+        inaddr.reverse()
+        return IPv4Address(inaddr)
+    }
+
 }
 
 class IPv6Address : IPAddress {

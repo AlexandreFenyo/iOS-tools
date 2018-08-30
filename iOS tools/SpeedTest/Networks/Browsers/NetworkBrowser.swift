@@ -20,8 +20,8 @@ class NetworkBrowser {
     
     public func browse() {
         // DispatchQueue
-
-        // network.next()
+//        network.next().getNumericAddress()
+        print(network.getNumericAddress(), network.next().getNumericAddress())
     }
         
         
