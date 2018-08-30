@@ -174,7 +174,11 @@ class IPAddress : Equatable, NSCopying {
     public func xor(_ netmask: IPAddress) -> IPAddress {
         fatalError("xor on IPAddress")
     }
-    
+
+    public func next() -> IPAddress {
+        fatalError("next on IPAddress")
+    }
+
     static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
         return lhs.inaddr == rhs.inaddr
     }
@@ -219,7 +223,7 @@ class IPv4Address : IPAddress {
         return SockAddr(data)
     }
 
-    public func next() -> IPv4Address {
+    public override func next() -> IPAddress {
         var inaddr = self.inaddr
         inaddr.reverse()
         inaddr.withUnsafeMutableBytes {
@@ -284,6 +288,10 @@ class IPv6Address : IPAddress {
 
     public override func xor(_ netmask: IPAddress) -> IPAddress {
         return IPv6Address(super._xor(netmask), scope: (netmask as! IPv6Address).scope)
+    }
+
+    public override func next() -> IPAddress {
+        fatalError("next on IPv6Address")
     }
 }
 

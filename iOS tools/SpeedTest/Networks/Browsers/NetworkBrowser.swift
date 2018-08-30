@@ -34,7 +34,7 @@ class NetworkBrowser {
         return
         
         let last = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
-        var current = (network.and(netmask) as! IPv4Address).next()
+        var current = network.and(netmask).next()
         repeat {
             print(current.getNumericAddress())
 
