@@ -33,3 +33,9 @@ int localFloodClientLoop(const struct sockaddr *saddr);
 int c_test();
 
 void net_test();
+
+// needed to access to struct icmp from Swift
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
+

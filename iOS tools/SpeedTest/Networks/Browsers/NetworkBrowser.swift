@@ -43,6 +43,20 @@ class NetworkBrowser {
                 while address != nil {
                     print(idx, address?.getNumericAddress())
 
+                    let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
+                    if s < 0 {
+                        perror("socket")
+                        fatalError("browse: socket")
+                    }
+
+                    var tv = timeval(tv_sec: 3, tv_usec: 0)
+                    var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+                    if ret < 0 {
+                        perror("setsockopt")
+                        fatalError("browse: setsockopt")
+                    }
+
+                    var hdr : icmp
                     
                     
                     address = self.getIPForTask()
