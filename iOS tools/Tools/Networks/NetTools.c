@@ -8,6 +8,10 @@
 
 #include "NetTools.h"
 
+__uint16_t _htons(__uint16_t x) {
+    return htons(x);
+}
+
 void net_test() {
     char str[INET6_ADDRSTRLEN];
     char hostname[] = "www.fenyo.net";

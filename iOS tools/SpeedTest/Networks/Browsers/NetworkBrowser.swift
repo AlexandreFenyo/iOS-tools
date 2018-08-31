@@ -56,9 +56,37 @@ class NetworkBrowser {
                         fatalError("browse: setsockopt")
                     }
 
-                    var hdr : icmp
+                    var hdr = icmp()
+                    hdr.icmp_type = UInt8(ICMP_ECHO)
+                    hdr.icmp_code = 0
+                    hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+
+//                    [ushort].
+
+//                    var buffer = [ushort](repeating: 0, count: MemoryLayout<icmp>.size / 2)
+//                    buffer.withUnsafeBufferPointer {
+//                        (bytes) -> Int in
+//                        let x : UnsafeRawPointer = bytes
+//                        let a = 2
+//                        return a
+//                    }
                     
-                    
+
+                    withUnsafeBytes(of: &hdr) {
+                        bytes in
+
+                        var buffer = [ushort](repeating: 0, count: MemoryLayout<icmp>.size / 2)
+                        
+                        
+                        bytes.map {
+                            (UInt8) in
+                            let x = 5
+                        }
+
+
+                        let x = 5
+                    }
+    
                     address = self.getIPForTask()
                 }
                 print("ITERATION \(idx) : fin")

@@ -39,3 +39,4 @@ void net_test();
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
 
+__uint16_t _htons(__uint16_t x);
