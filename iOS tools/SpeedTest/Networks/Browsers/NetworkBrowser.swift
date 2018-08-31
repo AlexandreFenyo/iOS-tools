@@ -11,35 +11,46 @@ import Foundation
 class NetworkBrowser {
     private let network : IPv4Address
     private let netmask : IPv4Address
+    private let broadcast : IPAddress
+    private var current : IPv4Address? = nil
 
     public init?(network: IPv4Address?, netmask: IPv4Address?) {
         if network == nil || netmask == nil { return nil }
         self.network = network!
         self.netmask = netmask!
+        broadcast = self.network.or(self.netmask.xor(IPv4Address("255.255.255.255")!))
+    }
+
+    private func getIPForTask() -> IPv4Address? {
+        return DispatchQueue.main.sync {
+            () -> IPv4Address? in
+            if current == nil { return nil }
+            current = current!.next() as? IPv4Address
+            if current != broadcast { return current }
+            current = nil
+            return nil
+        }
     }
     
     public func browse() {
-        // DispatchQueue
-// faire un tableau accessible en parallèle pour déterminer les tâches et positionner les résultats ? ou async sur main thread pour les résultats
+        current = network.and(netmask).next() as? IPv4Address
+
         DispatchQueue.global(qos: .userInitiated).async {
             DispatchQueue.concurrentPerform(iterations: NetworkDefaults.n_parallel_tasks) {
                 idx in
                 print("ITERATION \(idx) : début")
-                sleep(5)
+                var address = self.getIPForTask()
+                while address != nil {
+                    print(idx, address?.getNumericAddress())
+
+                    
+                    
+                    address = self.getIPForTask()
+                }
                 print("ITERATION \(idx) : fin")
             }
+            print("après itérations")
         }
 
-        print("après itérations")
-        return
-        
-        let last = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
-        var current = network.and(netmask).next()
-        repeat {
-            print(current.getNumericAddress())
-
-            
-            current = current.next()
-        } while current != last
     }
 }
