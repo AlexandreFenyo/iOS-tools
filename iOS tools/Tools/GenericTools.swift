@@ -108,7 +108,7 @@ final class GenericTools : AutoTrace {
 //        c_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
         
-        let nb = NetworkBrowser(network: IPv4Address("10.69.184.195"), netmask: IPv4Address("255.255.255.0"))
+        let nb = NetworkBrowser(network: IPv4Address("192.168.0.199"), netmask: IPv4Address("255.255.255.0"))
         nb!.browse()
     }
 

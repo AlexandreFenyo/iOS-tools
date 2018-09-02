@@ -39,9 +39,8 @@ class NetworkBrowser {
             DispatchQueue.concurrentPerform(iterations: NetworkDefaults.n_parallel_tasks) {
                 idx in
                 print("ITERATION \(idx) : début")
-                var address = self.getIPForTask()
-                while address != nil {
-                    print(idx, address?.getNumericAddress())
+                while let address = self.getIPForTask() {
+                    print(idx, address.getNumericAddress())
 
                     let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
                     if s < 0 {
@@ -50,7 +49,7 @@ class NetworkBrowser {
                     }
 
                     var tv = timeval(tv_sec: 3, tv_usec: 0)
-                    var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+                    let ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
                     if ret < 0 {
                         perror("setsockopt")
                         fatalError("browse: setsockopt")
@@ -60,34 +59,25 @@ class NetworkBrowser {
                     hdr.icmp_type = UInt8(ICMP_ECHO)
                     hdr.icmp_code = 0
                     hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
-
-//                    [ushort].
-
-//                    var buffer = [ushort](repeating: 0, count: MemoryLayout<icmp>.size / 2)
-//                    buffer.withUnsafeBufferPointer {
-//                        (bytes) -> Int in
-//                        let x : UnsafeRawPointer = bytes
-//                        let a = 2
-//                        return a
-//                    }
-                    
-
-                    withUnsafeBytes(of: &hdr) {
-                        bytes in
-
-                        var buffer = [ushort](repeating: 0, count: MemoryLayout<icmp>.size / 2)
-                        
-                        
-                        bytes.map {
-                            (UInt8) in
-                            let x = 5
+                    hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                        $0.withMemoryRebound(to: u_short.self, capacity: MemoryLayout<icmp>.size / 2) {
+                            var sum : u_short = 0
+                            for idx in 0..<(MemoryLayout<icmp>.size / 2) { sum += $0[idx] }
+                            sum ^= u_short.max
+                            return sum
                         }
-
-
-                        let x = 5
                     }
-    
-                    address = self.getIPForTask()
+
+                    let ret2 = withUnsafePointer(to: &hdr) {
+                        (bytes) -> Int in
+                        address.toSockAddress()!.sockaddr.withUnsafeBytes {
+                            (sockaddr : UnsafePointer<sockaddr>) in
+                            return sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                        }
+                    }
+
+                    print("sendto retval:", ret2)
+
                 }
                 print("ITERATION \(idx) : fin")
             }
