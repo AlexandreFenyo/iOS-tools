@@ -31,7 +31,7 @@ class NetworkBrowser {
             return nil
         }
     }
-    
+
     public func browse() {
         current = network.and(netmask).next() as? IPv4Address
 
@@ -44,14 +44,14 @@ class NetworkBrowser {
 
                     let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
                     if s < 0 {
-                        perror("socket")
+                        GenericTools.perror("socket")
                         fatalError("browse: socket")
                     }
 
                     var tv = timeval(tv_sec: 3, tv_usec: 0)
                     let ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
                     if ret < 0 {
-                        perror("setsockopt")
+                        GenericTools.perror("setsockopt")
                         fatalError("browse: setsockopt")
                     }
 
@@ -59,10 +59,11 @@ class NetworkBrowser {
                     hdr.icmp_type = UInt8(ICMP_ECHO)
                     hdr.icmp_code = 0
                     hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                    let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
                     hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
-                        $0.withMemoryRebound(to: u_short.self, capacity: MemoryLayout<icmp>.size / 2) {
+                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
                             var sum : u_short = 0
-                            for idx in 0..<(MemoryLayout<icmp>.size / 2) { sum += $0[idx] }
+                            for idx in 0..<capacity { sum += $0[idx] }
                             sum ^= u_short.max
                             return sum
                         }
@@ -75,8 +76,31 @@ class NetworkBrowser {
                             return sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
                         }
                     }
+                    if ret2 < 0 {
+                        GenericTools.perror("sendto")
+                        continue
+                    }
 
-                    print("sendto retval:", ret2)
+                    let buf_size = 10000
+                    var buf = [UInt8](repeating: 0, count: buf_size)
+                    var from = Data(count: MemoryLayout<sockaddr_in>.size)
+                    var from_len : socklen_t = UInt32(from.count)
+                    let ret3 = withUnsafeMutablePointer(to: &from_len) {
+                        (from_len_p) -> Int in
+                        from.withUnsafeMutableBytes {
+                            (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
+                            buf.withUnsafeMutableBytes {
+                                recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p)
+                            }
+                        }
+                    }
+                    if ret3 < 0 {
+                        GenericTools.perror("recvfrom")
+                        continue
+                    }
+
+                    print("REPLY: sending to", address.getNumericAddress(),
+                          ", reply from", SockAddr.getSockAddr(from).getNumericAddress())
 
                 }
                 print("ITERATION \(idx) : fin")

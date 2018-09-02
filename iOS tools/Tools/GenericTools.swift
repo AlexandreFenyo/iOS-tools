@@ -43,7 +43,6 @@ final class GenericTools : AutoTrace {
     public static var plane_node : SCNChartNode?
     public static var chart_node : SKChartNode?
     
-
     // holding strong refs to tap targets
     private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
 
@@ -96,12 +95,16 @@ final class GenericTools : AutoTrace {
             print("here: ", o!, ":", s, separator: String() /* alt: separator: "" */)
         }
     }
-    
+
     // The previous function can also we written with o as an implicitely unwrapped Optional wrapping an instance of Any? (Any?!), like this:
     // static func here(_ s: String, _ o: Any?! = nil) {
     // ...
     // print("here:", s, "instance:", o)
     // ...
+
+    public static func perror(_ str : String = "error") {
+        print("\(str): \(String(cString: strerror(errno))) (\(errno))")
+    }
 
     // Placeholder for tests
     public static func test() {
