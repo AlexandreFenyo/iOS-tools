@@ -16,5 +16,5 @@ struct NetworkDefaults {
     public static let local_domain_for_browsing = "local."
     public static let speed_test_chargen_service_type = "_speedtestchargen._tcp."
     public static let speed_test_discard_service_type = "_speedtestdiscard._tcp."
-    public static let n_parallel_tasks = 3
+    public static let n_icmp_echo_reply = 3
 }

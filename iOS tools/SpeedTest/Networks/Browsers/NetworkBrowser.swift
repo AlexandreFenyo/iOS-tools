@@ -13,17 +13,26 @@ class NetworkBrowser {
     private let netmask : IPv4Address
     private let broadcast : IPAddress
     private var current : IPv4Address? = nil
+    private var reply = [IPv4Address: Int]()
 
     public init?(network: IPv4Address?, netmask: IPv4Address?) {
         if network == nil || netmask == nil { return nil }
         self.network = network!
         self.netmask = netmask!
         broadcast = self.network.or(self.netmask.xor(IPv4Address("255.255.255.255")!))
+
+        var current = network!.and(netmask!).next() as! IPv4Address
+        repeat {
+            reply[current] = NetworkDefaults.n_icmp_echo_reply
+            current = current.next() as! IPv4Address
+        } while current != broadcast
     }
 
     private func getIPForTask() -> IPv4Address? {
-        return DispatchQueue.main.sync {
-            () -> IPv4Address? in
+        return DispatchQueue.main.sync { () -> IPv4Address? in
+
+            // CONTINUER ICI
+
             if current == nil { return nil }
             current = current!.next() as? IPv4Address
             if current != broadcast { return current }
@@ -33,10 +42,49 @@ class NetworkBrowser {
     }
 
     public func browse() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
+            if s < 0 {
+                GenericTools.perror("socket")
+                fatalError("browse: socket")
+            }
+            
+            var tv = timeval(tv_sec: 3, tv_usec: 0)
+            let ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+            if ret < 0 {
+                GenericTools.perror("setsockopt")
+                fatalError("browse: setsockopt")
+            }
+
+            let dispatchGroup = DispatchGroup()
+            
+            dispatchGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                for i in 0..<3 {
+                    print("i=", i)
+                    sleep(1)
+                }
+                dispatchGroup.leave()
+            }
+            dispatchGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                for i in 0..<5 {
+                    print("j=", i)
+                    sleep(1)
+                }
+                dispatchGroup.leave()
+            }
+            dispatchGroup.wait()
+            print("FIN FIN FIN FIN")
+        }
+        
+        return
+        ;
+        
         current = network.and(netmask).next() as? IPv4Address
 
         DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.concurrentPerform(iterations: NetworkDefaults.n_parallel_tasks) {
+            DispatchQueue.concurrentPerform(iterations: 3 /*NetworkDefaults.n_parallel_tasks*/ ) {
                 idx in
                 print("ITERATION \(idx) : début")
                 while let address = self.getIPForTask() {
@@ -63,7 +111,7 @@ class NetworkBrowser {
                     hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
                         $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
                             var sum : u_short = 0
-                            for idx in 0..<capacity { sum += $0[idx] }
+                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
                             sum ^= u_short.max
                             return sum
                         }

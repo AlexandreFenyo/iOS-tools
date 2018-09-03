@@ -16,6 +16,7 @@
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385920A2EEAF006AC172 /* Splash.storyboard */; };
+		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
@@ -60,6 +61,7 @@
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
 		5D4B385920A2EEAF006AC172 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
+		5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPortBrowser.swift; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 			children = (
 				5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */,
 				5DF215212133D7DA002B7603 /* NetworkBrowser.swift */,
+				5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */,
 			);
 			path = Browsers;
 			sourceTree = "<group>";
@@ -361,6 +364,7 @@
 				5DF2151B212D8B62002B7603 /* localFloodClient.c in Sources */,
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
+				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,

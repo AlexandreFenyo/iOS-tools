@@ -113,9 +113,13 @@ class SockAddr6 : SockAddr {
     }
 }
 
-class IPAddress : Equatable, NSCopying {
+class IPAddress : Equatable, NSCopying, Hashable {
     // struct in_addr
     public let inaddr : Data
+
+    var hashValue: Int {
+        return inaddr.hashValue
+    }
 
     public init(_ inaddr: Data) {
         self.inaddr = inaddr
@@ -250,6 +254,10 @@ class IPv4Address : IPAddress {
 class IPv6Address : IPAddress {
     // scope zone index
     let scope : UInt32
+
+    override var hashValue: Int {
+        return super.hashValue &+ scope.hashValue
+    }
 
     public init(_ inaddr: Data, scope: UInt32 = 0) {
         self.scope = scope
