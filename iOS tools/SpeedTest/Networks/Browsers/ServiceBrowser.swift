@@ -85,11 +85,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 let sock_addr = SockAddr.getSockAddr(data)
                 switch sock_addr.getFamily() {
                 case AF_INET:
-                    print("  hostname:", sock_addr.resolveHostName(), "IPv4:", sock_addr.getNumericAddress())
+                    print("  hostname:", sock_addr.resolveHostName(), "IPv4:", sock_addr.toNumericString())
                     addresses.append(sock_addr.getIPAddress()!)
 
                 case AF_INET6:
-                    print("  hostname:", sock_addr.resolveHostName(), "IPv6:", sock_addr.getNumericAddress())
+                    print("  hostname:", sock_addr.resolveHostName(), "IPv6:", sock_addr.toNumericString())
                     addresses.append(sock_addr.getIPAddress()!)
 
                 default:

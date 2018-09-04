@@ -50,7 +50,7 @@ class SockAddr : Equatable, NSCopying {
         return getNameInfo(NI_NAMEREQD)
     }
 
-    public func getNumericAddress() -> String? {
+    public func toNumericString() -> String? {
         return getNameInfo(NI_NUMERICHOST)
     }
     
@@ -137,8 +137,8 @@ class IPAddress : Equatable, NSCopying, Hashable {
         return toSockAddress()!.resolveHostName()!
     }
     
-    public func getNumericAddress() -> String {
-        return toSockAddress()!.getNumericAddress()!
+    public func toNumericString() -> String {
+        return toSockAddress()!.toNumericString()!
     }
 
     private func map(netmask: IPAddress, _ map: (UInt8, UInt8) -> UInt8) -> Data {

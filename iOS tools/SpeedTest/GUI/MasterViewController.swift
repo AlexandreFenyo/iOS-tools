@@ -165,7 +165,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
-        print(address.getNumericAddress(), "selected")
+        print(address.toNumericString(), "selected")
         detail_view_controller!.address = address
     }
 
