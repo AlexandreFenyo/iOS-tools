@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
 
         // Placeholder for some tests
-        if GenericTools.must_call_initial_tests { GenericTools.test() }
+        if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 
         // Start local services
         local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)

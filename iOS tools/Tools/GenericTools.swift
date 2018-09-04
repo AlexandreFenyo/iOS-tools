@@ -107,11 +107,11 @@ final class GenericTools : AutoTrace {
     }
 
     // Placeholder for tests
-    public static func test() {
+    public static func test(masterViewController: MasterViewController) {
 //        c_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
         
-        let nb = NetworkBrowser(network: IPv4Address("192.168.0.199"), netmask: IPv4Address("255.255.255.248"))
+        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
         nb!.browse()
     }
 

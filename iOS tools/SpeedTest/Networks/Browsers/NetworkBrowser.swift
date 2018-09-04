@@ -9,17 +9,19 @@
 import Foundation
 
 class NetworkBrowser {
+    private let device_manager : DeviceManager
     private let network : IPv4Address
     private let netmask : IPv4Address
     private let broadcast : IPAddress
     private var reply : [IPv4Address: (Int, Date?)] = [:]
     private var finished : Bool = false
 
-    public init?(network: IPv4Address?, netmask: IPv4Address?) {
+    public init?(network: IPv4Address?, netmask: IPv4Address?, device_manager: DeviceManager) {
         guard let network = network, let netmask = netmask else {
             return nil
         }
         
+        self.device_manager = device_manager
         self.network = network
         self.netmask = netmask
         broadcast = self.network.or(self.netmask.xor(IPv4Address("255.255.255.255")!))
@@ -44,6 +46,13 @@ class NetworkBrowser {
         }
     }
 
+    private func manageAnswer(from: IPv4Address) {
+        DispatchQueue.main.sync {
+            device_manager.addDevice(name: "unnamed", addresses: [from])
+            reply.removeValue(forKey: from)
+        }
+    }
+    
     private func isFinished() -> Bool {
         return DispatchQueue.main.sync { finished || reply.isEmpty }
     }
@@ -116,7 +125,9 @@ class NetworkBrowser {
                         GenericTools.perror("recvfrom")
                         continue
                     }
-                    
+
+                    self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
+
                     print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while true
