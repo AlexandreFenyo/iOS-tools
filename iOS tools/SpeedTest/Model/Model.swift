@@ -9,7 +9,7 @@
 import Foundation
 
 class DomainPart : Hashable {
-    var hashValue: Int
+    internal var hashValue: Int
     internal let name: String
 
     public init(_ name : String) {
@@ -18,7 +18,7 @@ class DomainPart : Hashable {
         hashValue = name.hashValue
     }
 
-    static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
+    public static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
         return lhs.name == rhs.name
     }
 }
@@ -31,7 +31,7 @@ class HostPart : DomainPart {
 }
 
 class DomainName : Hashable {
-    var hashValue: Int
+    internal var hashValue: Int
     
     internal let host_part: HostPart
     internal let domain_part: DomainPart?
@@ -51,7 +51,7 @@ class DomainName : Hashable {
         return domain_part != nil
     }
 
-    static func == (lhs: DomainName, rhs: DomainName) -> Bool {
+    public static func == (lhs: DomainName, rhs: DomainName) -> Bool {
         return lhs.host_part == rhs.host_part && lhs.domain_part == rhs.domain_part
     }
 }
