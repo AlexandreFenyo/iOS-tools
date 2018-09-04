@@ -109,10 +109,14 @@ final class GenericTools : AutoTrace {
     // Placeholder for tests
     public static func test(masterViewController: MasterViewController) {
 //        c_test()
+        net_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
         
-        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
-        nb!.browse()
+//        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
+//        nb!.browse()
+        
+        print("infos sur le device:", UIDevice.current.localizedModel, UIDevice.current.name, UIDevice.current.systemName, UIDevice.current.systemVersion, UIDevice.current.userInterfaceIdiom)
+
     }
 
     // Espace insécable

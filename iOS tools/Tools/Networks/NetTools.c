@@ -164,8 +164,8 @@ void net_test() {
     addr.sin_len = sizeof addr.sin_addr;
     addr.sin_port = htons(8888);
     
-    // char ip[] ="2a01:e35:8aae:bc63:222:15ff:fe3b:59a";
-    char ip2[] ="1.2.3.4";
+    char ip2[] ="149.202.53.208";
+//    char ip2[] ="10.69.184.195";
     ret = inet_pton(AF_INET, ip2, &addr.sin_addr);
     if (ret < 1) {
         if (ret == 0) {
@@ -176,16 +176,25 @@ void net_test() {
             return;
         }
     }
-
-    // Flood with UDP
-    while (1) {
-        len = sendto(s, buf, sizeof buf, 0, (struct sockaddr *) &addr, sizeof addr);
-        if (len < 1) {
-            printf("len: %ld\n", len);
-            perror("sendto v4");
-            return;
-        }
-//        printf("envoyés: %ld\n", len);
+    
+    char host[512];
+    ret = getnameinfo(&addr, sizeof addr, host, sizeof host, 0, 0, NI_NAMEREQD);
+    if (ret) {
+        printf("%s\n", gai_strerror(ret));
+        return;
     }
+    printf("hostname from DNS: %s\n", host);
+    
+    
+    // Flood with UDP
+//    while (1) {
+//        len = sendto(s, buf, sizeof buf, 0, (struct sockaddr *) &addr, sizeof addr);
+//        if (len < 1) {
+//            printf("len: %ld\n", len);
+//            perror("sendto v4");
+//            return;
+//        }
+////        printf("envoyés: %ld\n", len);
+//    }
 }
 
