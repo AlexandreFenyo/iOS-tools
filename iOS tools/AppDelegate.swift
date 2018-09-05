@@ -25,7 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log
         GenericTools.here("application()", self)
 
-        guard let splitViewController = window?.rootViewController as? SplitViewController,
+        guard let tabbarViewController = window?.rootViewController as? UITabBarController,
+            let splitViewController = tabbarViewController.viewControllers?.first as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? UINavigationController,
