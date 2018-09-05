@@ -224,12 +224,12 @@
         <!--Tab Bar Controller-->
         <scene sceneID="b25-n7-3eE">
             <objects>
-                <tabBarController id="qr3-3S-ChA" sceneMemberID="viewController">
+                <tabBarController modalTransitionStyle="crossDissolve" id="qr3-3S-ChA" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mIY-MO-Mvq">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="barTintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="barTintColor" cocoaTouchSystemColor="darkTextColor"/>
                     </tabBar>
                     <connections>
                         <segue destination="X4Q-a0-4Mv" kind="relationship" relationship="viewControllers" id="Uoc-lW-VA0"/>
