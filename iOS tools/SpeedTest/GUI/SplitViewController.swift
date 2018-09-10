@@ -9,14 +9,59 @@
 import UIKit
 
 class SplitViewController: UISplitViewController, UISplitViewControllerDelegate {
-    
+    public weak var tabbarViewController: UITabBarController?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Pour avoir l'icône d'agrandissement dans le detail view controller
+        // Pour avoir l'icône d'agrandissement dans le detail view controller (icone "expand")
         preferredDisplayMode = .allVisible
 
         self.delegate = self
+    }
+
+    func targetDisplayModeForAction(in svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
+        print("BUTTON EXPAND APPUYE")
+        print(displayMode.rawValue)
+        if 1 == displayMode.rawValue {
+            print("SUPPRESSION DE LA BARRE")
+            tabbar_height = 0
+            // marche pas
+            tabbarViewController!.view.setNeedsDisplay()
+            tabbarViewController!.view.layoutIfNeeded()
+            tabbarViewController!.view.setNeedsLayout()
+            tabbarViewController!.view.setNeedsDisplay()
+            for vc in tabbarViewController!.viewControllers! {
+                vc.view.setNeedsDisplay()
+                vc.view.setNeedsLayout()
+                vc.view.layoutSubviews()
+                vc.view.layoutIfNeeded()
+                vc.view.setNeedsDisplay()
+                vc.view.setNeedsLayout()
+                vc.view.layoutSubviews()
+                vc.view.layoutIfNeeded()
+            }
+        }
+        if 2 == displayMode.rawValue {
+            print("REMISE DE LA BARRE")
+            tabbar_height = nil
+            // marche pas
+            tabbarViewController!.view.setNeedsDisplay()
+            tabbarViewController!.view.setNeedsLayout()
+            tabbarViewController!.view.layoutIfNeeded()
+            tabbarViewController!.view.setNeedsDisplay()
+            for vc in tabbarViewController!.viewControllers! {
+                vc.view.setNeedsDisplay()
+                vc.view.setNeedsLayout()
+                vc.view.layoutSubviews()
+                vc.view.layoutIfNeeded()
+                vc.view.setNeedsDisplay()
+                vc.view.setNeedsLayout()
+                vc.view.layoutSubviews()
+                vc.view.layoutIfNeeded()
+            }
+        }
+        return .automatic
     }
 
     // Update status bar style

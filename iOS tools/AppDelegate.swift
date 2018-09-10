@@ -17,6 +17,16 @@ extension UIApplication {
     }
 }
 
+public var tabbar_height: CGFloat?
+extension UITabBar {
+    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+        var sizeThatFits = super.sizeThatFits(size)
+        if let h = tabbar_height { sizeThatFits.height = h }
+        else { sizeThatFits.height = 80 }
+        return sizeThatFits
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     public var window: UIWindow?
@@ -53,6 +63,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.split_view_controller = splitViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+
+        splitViewController.tabbarViewController = tabbarViewController
 
         // Customize status bar
         UIApplication.shared.statusBarView?.backgroundColor = .black
