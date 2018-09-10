@@ -18,7 +18,12 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
 
         self.delegate = self
     }
-    
+
+    // Update status bar style
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     override func viewWillLayoutSubviews() {
 //        preferredPrimaryColumnWidthFraction = 0.3
     }

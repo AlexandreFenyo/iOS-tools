@@ -8,6 +8,15 @@
 
 import UIKit
 
+extension UIApplication {
+    var statusBarView: UIView? {
+        if responds(to: Selector(("statusBar"))) {
+            return value(forKey: "statusBar") as? UIView
+        }
+        return nil
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     public var window: UIWindow?
@@ -44,6 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.split_view_controller = splitViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+
+        // Customize status bar
+        UIApplication.shared.statusBarView?.backgroundColor = .black
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }

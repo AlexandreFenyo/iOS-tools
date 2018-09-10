@@ -229,7 +229,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="barTintColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="barTintColor" red="1" green="0.35712001879999999" blue="0.42114973420000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="X4Q-a0-4Mv" kind="relationship" relationship="viewControllers" id="Uoc-lW-VA0"/>
@@ -238,7 +238,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yr4-eF-Fkn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1972" y="-204"/>
+            <point key="canvasLocation" x="-1599" y="220"/>
         </scene>
         <!--Item-->
         <scene sceneID="kn3-Gh-yRt">
