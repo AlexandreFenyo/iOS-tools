@@ -8,6 +8,25 @@
 
 import UIKit
 
+extension UIApplication {
+    var statusBarView: UIView? {
+        if responds(to: Selector(("statusBar"))) {
+            return value(forKey: "statusBar") as? UIView
+        }
+        return nil
+    }
+}
+
+//public var tabbar_height: CGFloat?
+//extension UITabBar {
+//    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+//        var sizeThatFits = super.sizeThatFits(size)
+//        if let h = tabbar_height { sizeThatFits.height = h }
+//        else { sizeThatFits.height = 80 }
+//        return sizeThatFits
+//    }
+//}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     public var window: UIWindow?
@@ -25,7 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log
         GenericTools.here("application()", self)
 
-        guard let splitViewController = window?.rootViewController as? SplitViewController,
+        guard let tabBarController = window?.rootViewController as? UITabBarController,
+            let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? UINavigationController,
@@ -43,6 +63,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.split_view_controller = splitViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        
+        // Customize status bar
+        UIApplication.shared.statusBarView?.backgroundColor = .black
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
