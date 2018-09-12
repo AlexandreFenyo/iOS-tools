@@ -44,10 +44,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Log
         GenericTools.here("application()", self)
 
-        guard let tabBarController = window?.rootViewController as? UITabBarController,
+        guard
+            let tabBarController = window?.rootViewController as? UITabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
-            let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
-            let masterViewController = leftNavController.topViewController as? MasterViewController,
+            let leftNavController = splitViewController.viewControllers.first as? UINavigationController
+            else { fatalError() }
+
+        print("lefNavController", leftNavController.topViewController)
+        
+        guard
+            let masterViewController = leftNavController.topViewController as? MasterViewController
+            else { fatalError() }
+        
+        guard
             let rightNavController = splitViewController.viewControllers.last as? UINavigationController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
             let devices = masterViewController.devices[.localGateway]

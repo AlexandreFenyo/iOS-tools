@@ -22,6 +22,7 @@
 		5D636448213EA9AF00BFEB0F /* MulticastIPv4Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636447213EA9AF00BFEB0F /* MulticastIPv4Browser.swift */; };
 		5D63644A213EA9C000BFEB0F /* MulticastIPv6Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636449213EA9C000BFEB0F /* MulticastIPv6Browser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
+		5D636450214970D600BFEB0F /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644F214970D600BFEB0F /* NavigationController.swift */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
@@ -73,6 +74,7 @@
 		5D636449213EA9C000BFEB0F /* MulticastIPv6Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastIPv6Browser.swift; sourceTree = "<group>"; };
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		5D63644F214970D600BFEB0F /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
+				5D63644F214970D600BFEB0F /* NavigationController.swift */,
 			);
 			path = GUI;
 			sourceTree = "<group>";
@@ -403,6 +406,7 @@
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
 				5DF21518212D8A1C002B7603 /* LocalFlood.swift in Sources */,
 				5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */,
+				5D636450214970D600BFEB0F /* NavigationController.swift in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
 				5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */,
 				5DF215132121EBA8002B7603 /* LocalPingClient.swift in Sources */,
