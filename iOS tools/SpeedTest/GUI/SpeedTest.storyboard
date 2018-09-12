@@ -147,7 +147,9 @@
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY"/>
+                    <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
+                        <barButtonItem key="leftBarButtonItem" title="Item" id="Mvn-mF-1uc"/>
+                    </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="add_button" destination="w26-jr-JrH" id="l6P-Nt-TeA"/>
