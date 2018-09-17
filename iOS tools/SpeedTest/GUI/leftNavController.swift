@@ -6,37 +6,12 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+// https://medium.com/whoknows-swift/swift-the-hierarchy-of-uinavigationcontroller-programmatically-91631990f495
+// https://www.raywenderlich.com/411-core-graphics-tutorial-part-1-getting-started
+// https://cocoacasts.com/working-with-auto-layout-in-code
+
 import Foundation
 import UIKit
-
-class RoundedView : UIView {
-    let radius : CGFloat
-
-    public init(radius: CGFloat) {
-        self.radius = radius
-        super.init(frame: .zero)
-        backgroundColor = .clear
-        layer.setNeedsDisplay()
-    }
-
-    override func draw(_ layer: CALayer, in ctx: CGContext) {
-        ctx.beginPath()
-        ctx.setLineWidth(0)
-        ctx.setFillColor(UIColor.black.cgColor)
-        ctx.addRect(CGRect(x: 0, y: 0, width: radius, height: radius))
-        ctx.fillPath()
-        
-        ctx.beginPath()
-        ctx.setBlendMode(.clear)
-        ctx.move(to: CGPoint(x: radius, y: radius))
-        ctx.addArc(center: CGPoint(x: radius, y: radius), radius: radius, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, clockwise: false)
-        ctx.fillPath()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
 
 class LeftNavController : UINavigationController {
     let r : CGFloat = 20
@@ -44,7 +19,7 @@ class LeftNavController : UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let rv = RoundedView(radius: r)
+        let rv = RoundedCornerView(radius: r, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, arc_center: CGPoint(x: r, y: r))
         navigationBar.addSubview(rv)
         
         rv.translatesAutoresizingMaskIntoConstraints = false

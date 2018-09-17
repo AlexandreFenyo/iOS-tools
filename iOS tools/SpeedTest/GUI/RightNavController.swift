@@ -10,35 +10,21 @@ import Foundation
 import UIKit
 
 class RightNavController : UINavigationController {
+    let r : CGFloat = 20
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let rv2 = RoundedView2(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        navigationBar.addSubview(rv2)
+        let rv = RoundedCornerView(radius: r, startAngle: -0.5 * CGFloat.pi, endAngle: 0.0 * CGFloat.pi, arc_center: CGPoint(x: 0, y: r))
+        navigationBar.addSubview(rv)
         
-        rv2.translatesAutoresizingMaskIntoConstraints = false
-
+        rv.translatesAutoresizingMaskIntoConstraints = false
         view.addConstraints(
             [
-                NSLayoutConstraint(item: view, attribute: .centerX, relatedBy: .equal, toItem: rv2, attribute: .centerX, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: rv2, attribute: .centerY, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: rv2, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100),
-                NSLayoutConstraint(item: rv2, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100)
-
+                NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: rv, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: navigationBar, attribute: .top, relatedBy: .equal, toItem: rv, attribute: .top, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: rv, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
+                NSLayoutConstraint(item: rv, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
             ])
-
-        
-        
-        //        rightNavController.view.addConstraints([
-        //            NSLayoutConstraint(item: rv2, attribute: .centerX, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1.0, constant: 64)])
-        
-        //        rv2.trailingAnchor.constraint(equalTo: rightNavController.view.rightAnchor).isActive = true
-        
-        //        rv2.translatesAutoresizingMaskIntoConstraints = false
-        //        rv2.centerXAnchor.constraint(equalTo: rightNavController.view.centerXAnchor).isActive = true
-        //        rv2.rightAnchor.constraint(equalTo: rightNavController.view.rightAnchor, constant: 0).isActive = true
-        //rightNavController.view.addConstraints([
-        //   NSLayoutConstraint(item: rv2, attribute: .centerX, relatedBy: .equal, toItem: rightNavController.view, attribute: .centerX, multiplier: 1.0, constant: 0)])
-
     }
 }
