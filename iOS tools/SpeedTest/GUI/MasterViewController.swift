@@ -117,6 +117,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
 //        addDevice("test")
+
+//print(traitCollection.horizontalSizeClass.rawValue)
     }
 
     // Refresh started with gesture

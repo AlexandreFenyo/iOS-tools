@@ -67,7 +67,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Customize status bar
         UIApplication.shared.statusBarView?.backgroundColor = .black
-        
+
+
+
+
+
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 

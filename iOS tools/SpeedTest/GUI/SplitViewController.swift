@@ -9,8 +9,6 @@
 import UIKit
 
 class SplitViewController: UISplitViewController, UISplitViewControllerDelegate {
-//    public weak var tabbarViewController: UITabBarController?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -19,7 +17,18 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
 
         self.delegate = self
     }
-    
+
+    // On iPad, when in multi applications at once mode, the app may be in a compact trait and, in such a case, the status bar is replaced by another bar type without any background color. Therefore, the navigation bar background color is used, so the black rounded edges must not be displayed. In order to avoid having to check if we are in a multi applications at once mode, we choose to hide the rounded edges when the application is in a compact trait, even when not in application at once mode.
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        // as? and not as!: depending on the state of the app, the first and last controllers may not both being set
+        if let left_nav_view_controller = viewControllers.first as? LeftNavController {
+            left_nav_view_controller.rv!.isHidden = traitCollection.horizontalSizeClass == .compact
+        }
+        if let right_nav_view_controller = viewControllers.last as? RightNavController {
+            right_nav_view_controller.rv!.isHidden = traitCollection.horizontalSizeClass == .compact
+        }
+    }
+
 //    func targetDisplayModeForAction(in svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
 //        print("BUTTON EXPAND APPUYE")
 //        print(displayMode.rawValue)
