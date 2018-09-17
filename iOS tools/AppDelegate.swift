@@ -47,16 +47,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard
             let tabBarController = window?.rootViewController as? UITabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
-            let leftNavController = splitViewController.viewControllers.first as? UINavigationController
-            else { fatalError() }
-
-        print("lefNavController", leftNavController.topViewController)
-        
-        guard
-            let masterViewController = leftNavController.topViewController as? MasterViewController
-            else { fatalError() }
-        
-        guard
+            let leftNavController = splitViewController.viewControllers.first as? UINavigationController,
+            let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? UINavigationController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
             let devices = masterViewController.devices[.localGateway]
@@ -76,6 +68,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Customize status bar
         UIApplication.shared.statusBarView?.backgroundColor = .black
 
+        
+        let rv = RoundedView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        leftNavController.navigationBar.addSubview(rv)
+
+        
+        
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 
