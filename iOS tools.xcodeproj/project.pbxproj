@@ -34,7 +34,6 @@
 		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */; };
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
-		5DE9CE93214FE232006F3BC0 /* StoryboardTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DE9CE92214FE232006F3BC0 /* StoryboardTest.storyboard */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
 		5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */; };
 		5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */; };
@@ -91,7 +90,6 @@
 		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DC736C520D3A69F00C2A199 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
-		5DE9CE92214FE232006F3BC0 /* StoryboardTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = StoryboardTest.storyboard; sourceTree = "<group>"; };
 		5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = leftNavController.swift; sourceTree = "<group>"; };
 		5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightNavController.swift; sourceTree = "<group>"; };
 		5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornerView.swift; sourceTree = "<group>"; };
@@ -242,7 +240,6 @@
 				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
-				5DE9CE92214FE232006F3BC0 /* StoryboardTest.storyboard */,
 				5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */,
 				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
 				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
@@ -371,7 +368,6 @@
 				5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */,
 				5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */,
 				5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */,
-				5DE9CE93214FE232006F3BC0 /* StoryboardTest.storyboard in Resources */,
 				5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
