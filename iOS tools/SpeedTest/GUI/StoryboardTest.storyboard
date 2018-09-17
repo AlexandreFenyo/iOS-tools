@@ -14,25 +14,31 @@
         <scene sceneID="pDC-Zh-JtC">
             <objects>
                 <viewController id="Suz-of-dfv" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="MlO-EI-x7V">
+                    <view key="view" contentMode="scaleToFill" id="MlO-EI-x7V" userLabel="view1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qhw-qF-r8u">
-                                <rect key="frame" x="6" y="53" width="265" height="190"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qhw-qF-r8u" userLabel="view2">
+                                <rect key="frame" x="55" y="238.5" width="265" height="190"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GBp-q4-pEs">
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GBp-q4-pEs" userLabel="view3">
                                         <rect key="frame" x="17" y="31" width="240" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="GBp-q4-pEs" firstAttribute="centerX" secondItem="Qhw-qF-r8u" secondAttribute="centerX" id="eoV-3G-jJE"/>
+                                    <constraint firstAttribute="width" constant="265" id="7FO-tD-M1T"/>
+                                    <constraint firstAttribute="height" constant="190" id="Es5-Li-eOR"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Qhw-qF-r8u" firstAttribute="centerY" secondItem="MlO-EI-x7V" secondAttribute="centerY" id="izc-bt-h9o"/>
+                            <constraint firstItem="Qhw-qF-r8u" firstAttribute="centerX" secondItem="MlO-EI-x7V" secondAttribute="centerX" id="x09-wy-jSq"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="VKt-vN-KYF"/>
                     </view>
                 </viewController>
