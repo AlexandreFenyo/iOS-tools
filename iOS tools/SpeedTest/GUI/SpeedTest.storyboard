@@ -198,10 +198,10 @@
             </objects>
             <point key="canvasLocation" x="1945" y="-468"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Left Nav Controller-->
         <scene sceneID="KR7-kL-bhI">
             <objects>
-                <navigationController toolbarHidden="NO" id="nVb-da-Lxi" sceneMemberID="viewController">
+                <navigationController toolbarHidden="NO" id="nVb-da-Lxi" customClass="LeftNavController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="P8k-aX-zDp">
                         <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -289,10 +289,10 @@
             </objects>
             <point key="canvasLocation" x="-1818" y="976"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Right Nav Controller-->
         <scene sceneID="ioW-gA-6zc">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="64p-vD-uga" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="64p-vD-uga" customClass="RightNavController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mMu-CZ-UIo">
                         <rect key="frame" x="0.0" y="20" width="791.5" height="44"/>
