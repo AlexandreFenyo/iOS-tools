@@ -17,55 +17,29 @@ class LeftNavController : UINavigationController {
     let r : CGFloat = 20
     var rv : RoundedCornerView?
 
-//    override func viewDidAppear(_ animated: Bool) {
-//        let renderer = UIGraphicsImageRenderer(size: toolbar.bounds.size)
-//        let image = renderer.image { (context) in
-//            UIColor.darkGray.setStroke()
-//            context.stroke(renderer.format.bounds)
-//            UIColor(red: 158/255, green: 215/255, blue: 245/255, alpha: 1).setFill()
-//            context.fill(CGRect(x: 10, y: 10, width: toolbar.bounds.size.width - 80, height: toolbar.bounds.size.height - 20))
-//        }
-//        toolbar.setBackgroundImage(image, forToolbarPosition: .bottom, barMetrics: .default)
-//        toolbar.contentMode = .scaleToFill
-//        toolbar.subviews.first?.contentMode = .scaleToFill
-//        for i in toolbar.subviews {
-//            i.contentMode = .scaleToFill
-//        }
-//    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        ////////////////////////////////////////////////////////////
+        // Manage the toolbar background
 
-
-        // stretch : https://developer.apple.com/documentation/uikit/uiimage
-        // https://stackoverflow.com/questions/27153181/how-do-you-make-a-background-image-scale-to-screen-size-in-swift
-        // Set the toolbar background
-        // toolbar.tintColor = .red
-//	        toolbar.back
-        //        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 120, height: 40))
-        let renderer = UIGraphicsImageRenderer(size: toolbar.bounds.size)
+        let h = toolbar.bounds.height
+        let margin : CGFloat = 5
+        let d = h - 2 * margin
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: h, height: h))
         let image1 = renderer.image { (context) in
             UIColor.darkGray.setStroke()
-            context.stroke(renderer.format.bounds)
-            UIColor(red: 158/255, green: 215/255, blue: 245/255, alpha: 1).setFill()
-//            context.fill(CGRect(x: 10, y: 10, width: toolbar.bounds.size.width - 20, height: toolbar.bounds.size.height - 20))
-//            context.cgContext.addEllipse(in: CGRect(x: 1, y: 1, width: 20, height: 20))
-//            context.cgContext.drawPath(using: .fillStroke)
-            context.cgContext.fillEllipse(in: CGRect(x: 5, y: 5, width: toolbar.bounds.size.height - 10, height: toolbar.bounds.size.height - 10))
-            context.cgContext.fillEllipse(in: CGRect(x: toolbar.bounds.size.width - 5 - (toolbar.bounds.size.height - 10), y: 5, width: toolbar.bounds.size.height - 10, height: toolbar.bounds.size.height - 10))
-
+            UIColor(red: 253/255, green: 111/255, blue: 105/255, alpha: 1).setFill()
+            context.cgContext.fillEllipse(in: CGRect(x: margin, y: margin, width: d, height: d))
         }
-        let image2 = UIImage(named: "netmon7")
-        if image2 == nil { exit(1) }
-        let image = image1.resizableImage(withCapInsets: UIEdgeInsets(top: 10, left: 10, bottom: toolbar.bounds.size.width - 20, right: toolbar.bounds.size.height - 20))
+        let image = image1.resizableImage(withCapInsets: UIEdgeInsets(top: h / 2, left: h / 2, bottom: h / 2, right: h / 2))
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleToFill
         toolbar.addSubview(imageView)
         toolbar.sendSubview(toBack: imageView)
-        // regarder les contraintes en trop
+
+        // Manage constraints for auto resizing
         imageView.translatesAutoresizingMaskIntoConstraints = false
-//        toolbar.translatesAutoresizingMaskIntoConstraints = false
         toolbar.addConstraints(
             [
                 NSLayoutConstraint(item: toolbar, attribute: .leading, relatedBy: .equal, toItem: imageView, attribute: .leading, multiplier: 1.0, constant: 0),
@@ -75,12 +49,17 @@ class LeftNavController : UINavigationController {
             ])
         
         // Make the toolbar background transparent
-        toolbar.setBackgroundImage(UIGraphicsImageRenderer(bounds: CGRect(x: 0, y: 0, width: 1, height: 1)).image(actions: { _ in }), forToolbarPosition: .bottom, barMetrics: .default)
-        
-        
+        toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        // Remove the top border of the toolbar
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+
+        ////////////////////////////////////////////////////////////
+        // Manage the top left rounded corner
+
         rv = RoundedCornerView(radius: r, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, arc_center: CGPoint(x: r, y: r))
         navigationBar.addSubview(rv!)
 
+        // Manage constraints for auto resizing
         rv!.translatesAutoresizingMaskIntoConstraints = false
         view.addConstraints(
             [
