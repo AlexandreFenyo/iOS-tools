@@ -38,15 +38,11 @@ protocol DeviceManager {
     func addDevice(name: String, addresses: [IPAddress])
 }
 
+// 70 80 91
+// 152 171 173
+// fond : 104 117 134
 class DeviceCell : UITableViewCell {
-
-//    init(_ device : Device, style: UITableViewCellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(style: .default, reuseIdentifier: "DeviceCell")
-//    }
+    @IBOutlet weak var name: UILabel!
 }
 
 // The MasterViewController instance is the delegate for the UITableView
@@ -297,9 +293,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         let device = device_list[indexPath.item]
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
-        cell.textLabel!.text = device.name
-        print("XXXXX cell.lab.text")
-//        cell.lab.text = "SALUT"
+        //cell.textLabel!.text = device.name
+cell.name.text = device.name
+        cell.layer.shadowColor = UIColor.clear.cgColor
 
         return cell
     }
