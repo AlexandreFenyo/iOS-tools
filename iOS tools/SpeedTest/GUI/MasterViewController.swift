@@ -147,8 +147,49 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl = UIRefreshControl()
         // Call userRefresh() when refreshing with gesture
         refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
+
+        // Prepare the section headers
+        let nib = UINib(nibName: "MasterSectionHeader", bundle: nil)
+        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "MasterSectionHeader")
     }
 
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // Here, we use NSFetchedResultsController
+        // And we simply use the section name as title
+//        let currSection = fetchedResultsController.sections?[section]
+//        let title = currSection!.name
+        
+        // Dequeue with the reuse identifier
+        let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MasterSectionHeader")
+        let header = cell as! MasterSectionHeader
+        
+        if let tableSection = TableSection(rawValue: section) {
+            switch tableSection {
+            case .iOSDevice:
+                header.titleLabel.text = "iOS devices"
+                header.subTitleLabel.text = "other devices running this app"
+                header.imageView.image = UIImage(named: "netmon7")
+            case .localGateway:
+                header.titleLabel.text = "Local gateway"
+                header.subTitleLabel.text = "other devices running this app"
+            case .chargenDevice:
+                header.titleLabel.text = "Chargen service"
+                header.subTitleLabel.text = "other devices running this app"
+            case .discardDevice:
+                header.titleLabel.text = "Discard service"
+                header.subTitleLabel.text = "other devices running this app"
+            case .internet:
+                header.titleLabel.text = "Internet"
+                header.subTitleLabel.text = "other devices running this app"
+            default:
+                header.titleLabel.text = "Default"
+                header.subTitleLabel.text = "Default"
+            }
+        }
+
+        return cell
+    }
+    
     // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
@@ -227,12 +268,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         return retval
     }
 
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as! UITableViewHeaderFooterView
-        header.backgroundView?.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
-        header.textLabel?.textColor = .black
-        header.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 19)
-    }
+//    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+//        let header = view as! UITableViewHeaderFooterView
+//        header.backgroundView?.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
+//        header.textLabel?.textColor = .black
+//        header.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 19)
+//    }
 
     // MARK: - Table view data source
 

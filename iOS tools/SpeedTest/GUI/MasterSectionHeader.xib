@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="7qK-hN-orN" customClass="MasterSectionHeader" customModule="iOS_tools" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YKU-a3-88e">
+                    <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g9Y-7S-naT">
+                            <rect key="frame" x="10" y="10" width="50" height="355"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="50" id="mrX-qb-xXG"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="sub label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3S8-GK-sgW">
+                            <rect key="frame" x="70" y="348" width="587" height="17"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <color key="textColor" red="0.57254901960000004" green="0.58823529409999997" blue="0.61176470589999998" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="erd-24-PNd">
+                            <rect key="frame" x="70" y="10" width="587" height="26.5"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                            <color key="textColor" red="0.5725490196078431" green="0.58823529411764708" blue="0.61176470588235299" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.23529411764705882" green="0.22352941176470587" blue="0.30196078431372547" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="g9Y-7S-naT" firstAttribute="top" secondItem="YKU-a3-88e" secondAttribute="top" constant="10" id="3YN-pu-eXv"/>
+                        <constraint firstItem="erd-24-PNd" firstAttribute="top" secondItem="YKU-a3-88e" secondAttribute="top" constant="10" id="3wG-pF-JDb"/>
+                        <constraint firstItem="erd-24-PNd" firstAttribute="leading" secondItem="g9Y-7S-naT" secondAttribute="trailing" constant="10" id="4C7-8w-BGT"/>
+                        <constraint firstAttribute="bottom" secondItem="3S8-GK-sgW" secondAttribute="bottom" constant="10" id="AqT-JS-HPg"/>
+                        <constraint firstItem="g9Y-7S-naT" firstAttribute="leading" secondItem="YKU-a3-88e" secondAttribute="leading" constant="10" id="CKO-ER-yU0"/>
+                        <constraint firstAttribute="bottom" secondItem="g9Y-7S-naT" secondAttribute="bottom" constant="10" id="L5X-CO-uX6"/>
+                        <constraint firstItem="3S8-GK-sgW" firstAttribute="leading" secondItem="g9Y-7S-naT" secondAttribute="trailing" constant="10" id="fXI-YB-MYn"/>
+                        <constraint firstAttribute="trailing" secondItem="erd-24-PNd" secondAttribute="trailing" constant="10" id="k5q-KN-GCT"/>
+                        <constraint firstAttribute="trailing" secondItem="3S8-GK-sgW" secondAttribute="trailing" constant="10" id="swj-cE-KVm"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstItem="YKU-a3-88e" firstAttribute="top" secondItem="7qK-hN-orN" secondAttribute="top" id="CGs-6h-R6o"/>
+                <constraint firstAttribute="trailing" secondItem="YKU-a3-88e" secondAttribute="trailing" id="L93-og-wGB"/>
+                <constraint firstAttribute="bottom" secondItem="YKU-a3-88e" secondAttribute="bottom" id="PEV-xd-Hzm"/>
+                <constraint firstItem="YKU-a3-88e" firstAttribute="leading" secondItem="7qK-hN-orN" secondAttribute="leading" id="aS1-Xf-FPc"/>
+            </constraints>
+            <connections>
+                <outlet property="imageView" destination="g9Y-7S-naT" id="Dbt-rc-9MT"/>
+                <outlet property="subTitleLabel" destination="3S8-GK-sgW" id="JPc-UQ-xEI"/>
+                <outlet property="titleLabel" destination="erd-24-PNd" id="S4M-6g-8zo"/>
+            </connections>
+            <point key="canvasLocation" x="375.56221889055473" y="-500"/>
+        </view>
+    </objects>
+</document>
