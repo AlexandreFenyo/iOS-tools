@@ -8,6 +8,8 @@
 
 import Foundation
 
+// A domain part may contain a dot
+// ex: fenyo.net, net, www.fenyo.net
 class DomainPart : Hashable {
     internal var hashValue: Int
     internal let name: String
@@ -23,6 +25,8 @@ class DomainPart : Hashable {
     }
 }
 
+// A host part must not contain a dot
+// ex: www, localhost
 class HostPart : DomainPart {
     public override init(_ name : String) {
         if name.contains(".") { fatalError("HostPart") }
@@ -30,6 +34,8 @@ class HostPart : DomainPart {
     }
 }
 
+// A domain name must contain a host part and may optionally contain a domain part
+// ex: {www, nil}, {www, fenyo.net}
 class DomainName : Hashable {
     internal var hashValue: Int
     
@@ -56,12 +62,17 @@ class DomainName : Hashable {
     }
 }
 
+// A FQDN is a domain name that both contains a host part and a domain part
+// ex: {www, fenyo.net}, {localhost, localdomain}
 class FQDN : DomainName {
     public init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
 }
 
+// A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
+// ex of mDNS name: iPad de Alexandre.local
+// ex of dns names: localhost, localhost.localdomain, www.fenyo.net , www
 class Node {
     private var mDNS_names = Set<FQDN>()
     private var dns_names = Set<DomainName>()
@@ -88,8 +99,10 @@ class Node {
 
 }
 
+// The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
     private var nodes : [Node] = []
+    static public let shared = DBMaster()
 }
 
 func xxxtst() {

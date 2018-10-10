@@ -9,7 +9,8 @@
 import UIKit
 
 extension UIApplication {
-    var statusBarView: UIView? {
+    // Find the status bar view
+    var status_bar_view: UIView? {
         if responds(to: Selector(("statusBar"))) {
             return value(forKey: "statusBar") as? UIView
         }
@@ -17,19 +18,11 @@ extension UIApplication {
     }
 }
 
-//public var tabbar_height: CGFloat?
-//extension UITabBar {
-//    override open func sizeThatFits(_ size: CGSize) -> CGSize {
-//        var sizeThatFits = super.sizeThatFits(size)
-//        if let h = tabbar_height { sizeThatFits.height = h }
-//        else { sizeThatFits.height = 80 }
-//        return sizeThatFits
-//    }
-//}
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    // The app delegate must implement the window property if it wants to use a main storyboard file
     public var window: UIWindow?
+
     private var local_chargen_service: NetService?
     private var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
     private var local_discard_service: NetService?
@@ -40,9 +33,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-
-        // Log
-        GenericTools.here("application()", self)
 
         guard
             let tabBarController = window?.rootViewController as? UITabBarController,
@@ -66,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         
         // Customize status bar
-        UIApplication.shared.statusBarView?.backgroundColor = .black
+        UIApplication.shared.status_bar_view?.backgroundColor = .black
 
 
 
@@ -129,3 +119,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// Example: changing the tab bar height
+//public var tabbar_height: CGFloat?
+//extension UITabBar {
+//    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+//        var sizeThatFits = super.sizeThatFits(size)
+//        if let h = tabbar_height { sizeThatFits.height = h }
+//        else { sizeThatFits.height = 80 }
+//        return sizeThatFits
+//    }
+//}

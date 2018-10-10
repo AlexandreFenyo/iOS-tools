@@ -12,11 +12,6 @@
 // https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/WindowsandViews/WindowsandViews.html
 // https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
 
-// let frame = navigationController!.navigationBar.frame
-// tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-// tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-// tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-
 import UIKit
 
 class Device {
@@ -43,6 +38,10 @@ protocol DeviceManager {
 // fond : 104 117 134
 class DeviceCell : UITableViewCell {
     @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var detail1: UILabel!
+    @IBOutlet weak var detail2: UILabel!
+    @IBOutlet weak var nIPs: UILabel!
+    @IBOutlet weak var nPorts: UILabel!
 }
 
 // The MasterViewController instance is the delegate for the UITableView
@@ -343,5 +342,9 @@ cell.name.text = device.name
             addressSelected(address: device.addresses.first!)
         }
     }
-
 }
+
+// let frame = navigationController!.navigationBar.frame
+// tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
+// tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+// tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)

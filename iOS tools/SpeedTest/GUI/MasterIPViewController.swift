@@ -26,7 +26,7 @@ class DeviceAddressCell : UITableViewCell {
     }
 }
 
-// The MasterViewController instance is the delegate for the UITableView
+// The MasterIPViewController instance is the delegate for the UITableView
 class MasterIPViewController: UITableViewController {
     public var master_view_controller : MasterViewController?
     public var device : Device?
