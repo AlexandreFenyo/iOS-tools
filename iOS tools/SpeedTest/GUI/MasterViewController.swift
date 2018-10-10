@@ -39,13 +39,14 @@ protocol DeviceManager {
 }
 
 class DeviceCell : UITableViewCell {
-    init(_ device : Device, style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(style: .default, reuseIdentifier: "DeviceCell")
-    }
+
+//    init(_ device : Device, style: UITableViewCellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        super.init(style: .default, reuseIdentifier: "DeviceCell")
+//    }
 }
 
 // The MasterViewController instance is the delegate for the UITableView
@@ -297,6 +298,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
         cell.textLabel!.text = device.name
+        print("XXXXX cell.lab.text")
+//        cell.lab.text = "SALUT"
 
         return cell
     }
