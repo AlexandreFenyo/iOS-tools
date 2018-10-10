@@ -57,6 +57,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_view_controller : DetailViewController?
     public var detail_navigation_controller : UINavigationController?
     public var split_view_controller : SplitViewController?
+
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
 
