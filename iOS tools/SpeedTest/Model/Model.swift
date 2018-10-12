@@ -70,6 +70,10 @@ enum NodeType {
     case localhost, ios, chargen, discard, gateway, internet
 }
 
+enum SectionType {
+    case localhost, ios, chargen_discard, gateway, internet, other
+}
+
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net , www
@@ -110,8 +114,28 @@ class Node : Hashable {
     }
 }
 
+class Section {
+    public var description: String
+    public var detailed_description: String
+    public var nodes = [Node]()
+    
+    public init(_ description: String, _ detailed_description: String) {
+        self.description = description
+        self.detailed_description = detailed_description
+    }
+}
+
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
+    private let sections : [SectionType: Section] = [
+        .localhost: Section("localhost", "this host"),
+        .ios: Section("iOS devices", "other devices running this app"),
+        .chargen_discard: Section("Chargen/Discard services", "other devices running these services"),
+        .gateway: Section("Local gateway", "local router"),
+        .internet: Section("Internet", "remote host on the Internet"),
+        .other: Section("Other hosts", "any host")
+    ]
+
     private var nodes = Set<Node>()
     static public let shared = DBMaster()
 
@@ -121,21 +145,26 @@ class DBMaster {
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
         DBMaster.shared.nodes.insert(node)
+        DBMaster.shared.sections[.ios]!.nodes.append(node)
         
         node = Node()
         node.types.insert(.chargen)
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
+        DBMaster.shared.sections[.chargen_discard]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.gateway)
         node.dns_names.insert(DomainName(HostPart("Local gateway")))
+        DBMaster.shared.sections[.gateway]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
+        DBMaster.shared.sections[.internet]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
+        DBMaster.shared.sections[.internet]!.nodes.append(node)
     }
 }

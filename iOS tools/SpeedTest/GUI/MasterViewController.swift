@@ -278,7 +278,22 @@ class MasterViewController: UITableViewController, DeviceManager {
         return TableSection.END.rawValue
     }
 
+    // Sections:
+    // - iOS devices
+    // - gateways
+    // - chargen service
+    // - discard service
+    // - localhost
+    // - Internet
+    // - other local devices
+    // - Windows devices
+    // - SMTP relays
+    // - custom devices
+    // - all devices
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        
+        
         // Swift's optional lookup, instead of devices[TableSection(rawValue: section)!]!.count
         if let table_section = TableSection(rawValue: section), let device_list = devices[table_section] {
             return device_list.count
@@ -287,6 +302,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        
+        
+        
+        
+        
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
 
