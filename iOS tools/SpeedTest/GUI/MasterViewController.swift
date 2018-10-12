@@ -33,9 +33,9 @@ protocol DeviceManager {
     func addDevice(name: String, addresses: [IPAddress])
 }
 
-// 70 80 91
-// 152 171 173
-// fond : 104 117 134
+// foncé: 70 80 91
+// clair: 152 171 173
+// fond: 104 117 134
 class DeviceCell : UITableViewCell {
     @IBOutlet weak var name: UILabel!
     @IBOutlet weak var detail1: UILabel!
@@ -61,7 +61,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
 
-    var devices : [TableSection: [Device]] = [
+    private var devices : [TableSection: [Device]] = [
         .iOSDevice: [
             Device(name: "iOS device 1", addresses: [IPv4Address("1.2.3.4")!, IPv4Address("1.2.3.5")!]),
             Device(name: "iOS device 2")

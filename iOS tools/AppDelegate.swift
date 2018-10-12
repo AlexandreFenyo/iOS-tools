@@ -40,12 +40,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
-            let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let devices = masterViewController.devices[.localGateway]
+            let detailViewController = rightNavController.topViewController as? DetailViewController
+//            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
 
         // Set the first device displayed in the detail view controller
-        detailViewController.device = devices.first
+//        detailViewController.device = devices.first
 
         self.masterViewController = masterViewController
 

@@ -42,15 +42,11 @@ class DomainName : Hashable {
     internal let host_part: HostPart
     internal let domain_part: DomainPart?
 
-    public init(_ host_part : HostPart, _ domain_part : DomainPart?) {
+    public init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
         if let domain_part = domain_part { self.domain_part = domain_part }
         else { self.domain_part = nil }
         hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
-    }
-
-    public convenience init(_ host_part : String, _ domain_part : String?) {
-        self.init(HostPart(host_part), domain_part != nil ? DomainPart(domain_part!) : nil)
     }
     
     public func isFQDN() -> Bool {
@@ -70,14 +66,26 @@ class FQDN : DomainName {
     }
 }
 
+enum NodeType {
+    case localhost, ios, chargen, discard, gateway, internet
+}
+
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net , www
-class Node {
-    private var mDNS_names = Set<FQDN>()
-    private var dns_names = Set<DomainName>()
-    private var v4_addresses = Set<IPv4Address>()
-    private var v6_addresses = Set<IPv6Address>()
+class Node : Hashable {
+    internal var hashValue: Int
+
+    public var mcast_dns_names = Set<FQDN>()
+    public var dns_names = Set<DomainName>()
+    public var v4_addresses = Set<IPv4Address>()
+    public var v6_addresses = Set<IPv6Address>()
+    public var tcp_ports = Set<UInt32>()
+    public var types = Set<NodeType>()
+
+    public init() {
+        hashValue = mcast_dns_names.hashValue &+ dns_names.hashValue &+ v4_addresses.hashValue &+ v6_addresses.hashValue &+ tcp_ports.hashValue &+ types.hashValue
+    }
 
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
@@ -90,26 +98,44 @@ class Node {
     }
 
     private var fqdn_names: Set<FQDN> {
-        return fqdn_dns_names.union(mDNS_names)
+        return fqdn_dns_names.union(mcast_dns_names)
     }
     
     private var short_names: Set<HostPart> {
-        return Set(mDNS_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
+        return Set(mcast_dns_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
     }
 
+    public static func == (lhs: Node, rhs: Node) -> Bool {
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses
+    }
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    private var nodes : [Node] = []
+    private var nodes = Set<Node>()
     static public let shared = DBMaster()
-}
 
-func xxxtst() {
-    var f = FQDN("toto", "truc")
-    var address : [IPAddress] = []
-    let ad = address + address
-//    var g : DomainName
-//    f = DomainName(FQDN)
-    
+    public init() {
+        var node = Node()
+        node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
+        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
+        node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
+        DBMaster.shared.nodes.insert(node)
+        
+        node = Node()
+        node.types.insert(.chargen)
+        node.dns_names.insert(DomainName(HostPart("chargen device 1")))
+
+        node = Node()
+        node.types.insert(.gateway)
+        node.dns_names.insert(DomainName(HostPart("Local gateway")))
+
+        node = Node()
+        node.types.insert(.internet)
+        node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
+
+        node = Node()
+        node.types.insert(.internet)
+        node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
+    }
 }
