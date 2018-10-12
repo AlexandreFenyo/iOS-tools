@@ -76,7 +76,7 @@ enum SectionType: Int {
 
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
-// ex of dns names: localhost, localhost.localdomain, www.fenyo.net , www
+// ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
 class Node : Hashable {
     internal var hashValue: Int
 
