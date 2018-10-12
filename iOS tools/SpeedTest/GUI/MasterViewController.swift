@@ -151,37 +151,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // Here, we use NSFetchedResultsController
-        // And we simply use the section name as title
-//        let currSection = fetchedResultsController.sections?[section]
-//        let title = currSection!.name
-        
-        // Dequeue with the reuse identifier
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MasterSectionHeader")
         let header = cell as! MasterSectionHeader
-        
-        if let tableSection = TableSection(rawValue: section) {
-            switch tableSection {
-            case .iOSDevice:
-                header.titleLabel.text = "iOS devices"
-                header.subTitleLabel.text = "other devices running this app"
-                header.imageView.image = UIImage(named: "netmon7")
-            case .localGateway:
-                header.titleLabel.text = "Local gateway"
-                header.subTitleLabel.text = "other devices running this app"
-            case .chargenDevice:
-                header.titleLabel.text = "Chargen service"
-                header.subTitleLabel.text = "other devices running this app"
-            case .discardDevice:
-                header.titleLabel.text = "Discard service"
-                header.subTitleLabel.text = "other devices running this app"
-            case .internet:
-                header.titleLabel.text = "Internet"
-                header.subTitleLabel.text = "other devices running this app"
-            default:
-                header.titleLabel.text = "Default"
-                header.subTitleLabel.text = "Default"
-            }
+
+        if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
+            header.titleLabel.text = section.description
+            header.subTitleLabel.text = section.detailed_description
+            header.imageView.image = UIImage(named: "netmon7")
         }
 
         return cell
@@ -244,27 +220,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         return refreshControl!.frame.height
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        var retval : String?
-        if let tableSection = TableSection(rawValue: section) {
-            switch tableSection {
-            case .iOSDevice:
-                retval = "iOS device"
-            case .localGateway:
-                retval = "Local gateway"
-            case .chargenDevice:
-                retval = "Chargen service"
-            case .discardDevice:
-                retval = "Discard service"
-            case .internet:
-                retval = "Internet"
-            default:
-                retval = "Default"
-            }
-        }
-        return retval
-    }
-
 //    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
 //        let header = view as! UITableViewHeaderFooterView
 //        header.backgroundView?.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
@@ -278,46 +233,36 @@ class MasterViewController: UITableViewController, DeviceManager {
         return TableSection.END.rawValue
     }
 
-    // Sections:
-    // - iOS devices
-    // - gateways
-    // - chargen service
-    // - discard service
-    // - localhost
-    // - Internet
-    // - other local devices
-    // - Windows devices
-    // - SMTP relays
-    // - custom devices
-    // - all devices
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        
-        
-        // Swift's optional lookup, instead of devices[TableSection(rawValue: section)!]!.count
-        if let table_section = TableSection(rawValue: section), let device_list = devices[table_section] {
-            return device_list.count
+        if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
+            return section.nodes.count
         }
         return 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        
-        
-        
-        
-        
-        guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
-        else { fatalError() }
+        guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
 
-        let device = device_list[indexPath.item]
-
+        let node = section.nodes[indexPath.item]
+        
+        
+//        guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
+//        else { fatalError() }
+//        let device = device_list[indexPath.item]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
-        //cell.textLabel!.text = device.name
-cell.name.text = device.name
         cell.layer.shadowColor = UIColor.clear.cgColor
 
+        // Not used since the cell style is 'custom' (style set from the storyboard):
+        // cell.textLabel!.text = device.name
+//        cell.name.text = device.name
+        cell.name.text = node.dns_names.first?.host_part.name
+        // remplir ici les éléments de la cellule selon ce qu'il y a de plus logique
+        
+        
+        
+        
+        
         return cell
     }
 

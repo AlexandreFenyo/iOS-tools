@@ -66,12 +66,12 @@ class FQDN : DomainName {
     }
 }
 
-enum NodeType {
-    case localhost, ios, chargen, discard, gateway, internet
+enum NodeType: Int {
+    case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
-enum SectionType {
-    case localhost, ios, chargen_discard, gateway, internet, other
+enum SectionType: Int {
+    case localhost = 0, ios, chargen_discard, gateway, internet, other
 }
 
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
@@ -127,44 +127,50 @@ class Section {
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    private let sections : [SectionType: Section] = [
-        .localhost: Section("localhost", "this host"),
-        .ios: Section("iOS devices", "other devices running this app"),
-        .chargen_discard: Section("Chargen/Discard services", "other devices running these services"),
-        .gateway: Section("Local gateway", "local router"),
-        .internet: Section("Internet", "remote host on the Internet"),
-        .other: Section("Other hosts", "any host")
-    ]
-
-    private var nodes = Set<Node>()
+    public var sections : [SectionType: Section]
+    private var nodes : Set<Node>
     static public let shared = DBMaster()
 
     public init() {
+        nodes = Set<Node>()
+        sections = [
+            .localhost: Section("localhost", "this host"),
+            .ios: Section("iOS devices", "other devices running this app"),
+            .chargen_discard: Section("Chargen/Discard services", "other devices running these services"),
+            .gateway: Section("Local gateway", "local router"),
+            .internet: Section("Internet", "remote host on the Internet"),
+            .other: Section("Other hosts", "any host")
+        ]
+        
         var node = Node()
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
-        DBMaster.shared.nodes.insert(node)
-        DBMaster.shared.sections[.ios]!.nodes.append(node)
+        nodes.insert(node)
+        sections[.ios]!.nodes.append(node)
         
         node = Node()
         node.types.insert(.chargen)
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
-        DBMaster.shared.sections[.chargen_discard]!.nodes.append(node)
+        nodes.insert(node)
+        sections[.chargen_discard]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.gateway)
         node.dns_names.insert(DomainName(HostPart("Local gateway")))
-        DBMaster.shared.sections[.gateway]!.nodes.append(node)
+        nodes.insert(node)
+        sections[.gateway]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
-        DBMaster.shared.sections[.internet]!.nodes.append(node)
+        nodes.insert(node)
+        sections[.internet]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
-        DBMaster.shared.sections[.internet]!.nodes.append(node)
+        nodes.insert(node)
+        sections[.internet]!.nodes.append(node)
     }
 }
