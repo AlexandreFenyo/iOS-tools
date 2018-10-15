@@ -230,7 +230,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return TableSection.END.rawValue
+        return DBMaster.shared.sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -240,6 +240,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         return 0
     }
 
+    // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
         
@@ -249,7 +250,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         cell.layer.shadowColor = UIColor.clear.cgColor
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
-        // cell.textLabel!.text = device.name
+        // cell.textLabel!.text = ...
 
         cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
         
@@ -283,6 +284,7 @@ class MasterViewController: UITableViewController, DeviceManager {
        return cell
     }
 
+    // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
         else { fatalError() }
@@ -297,7 +299,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section != TableSection.localGateway.rawValue && indexPath.section != TableSection.internet.rawValue
+        guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
+        return !section.nodes[indexPath.item].types.contains(.locked)
     }
 
     // Delete a row

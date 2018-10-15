@@ -79,7 +79,7 @@ class FQDN : DomainName {
 }
 
 enum NodeType: Int {
-    case localhost = 0, ios, chargen, discard, gateway, internet
+    case localhost = 0, ios, chargen, discard, gateway, internet, locked
 }
 
 enum SectionType: Int {
@@ -176,18 +176,21 @@ class DBMaster {
 
         node = Node()
         node.types.insert(.gateway)
+        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("Local gateway")))
         nodes.insert(node)
         sections[.gateway]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
+        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
         nodes.insert(node)
         sections[.internet]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.internet)
+        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
         nodes.insert(node)
         sections[.internet]!.nodes.append(node)
