@@ -36,12 +36,17 @@ class SockAddr : Equatable, NSCopying {
     public func getIPAddress() -> IPAddress? {
         return nil
     }
-    
+
+    // Warning: an address like fe81:abcd:: may throw an error because 'cd' contains the scope, and it must be the index of an existing interface
     private func getNameInfo(_ flags: Int32) -> String? {
         return sockaddr.withUnsafeBytes {
             (bytes : UnsafePointer<sockaddr>) -> String? in
             var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
             let ret = getnameinfo(bytes, UInt32(MemoryLayout<sockaddr>.size), &buffer, UInt32(NI_MAXHOST), nil, 0, flags)
+            if ret != 0 {
+                print("getNameInfo error:")
+                puts(gai_strerror(ret))
+            }
             return ret == 0 ? String(cString: buffer) : nil
         }
     }
@@ -137,8 +142,9 @@ class IPAddress : Equatable, NSCopying, Hashable {
         return toSockAddress()!.resolveHostName()!
     }
     
-    public func toNumericString() -> String {
-        return toSockAddress()!.toNumericString()!
+    // Only IPv6 addresses can return nil
+    public func toNumericString() -> String? {
+        return toSockAddress()!.toNumericString()
     }
 
     private func map(netmask: IPAddress, _ map: (UInt8, UInt8) -> UInt8) -> Data {
@@ -249,6 +255,27 @@ class IPv4Address : IPAddress {
     public override func xor(_ netmask: IPAddress) -> IPAddress {
         return IPv4Address(super._xor(netmask))
     }
+
+    private func bytes() -> [UInt8] {
+        return inaddr.withUnsafeBytes {
+            (bytes : UnsafePointer<UInt8>) -> [UInt8] in
+            [ bytes[0], bytes[1], bytes[2], bytes[3] ]
+        }
+    }
+    
+    // private => unicast
+    public func isPrivate() -> Bool {
+        return bytes()[0] == 10 || (bytes()[0] == 192 && bytes()[1] == 168) || (bytes()[0] == 172 && (bytes()[1] >= 16 && bytes()[1] < 32))
+    }
+
+    public func isUnicast() -> Bool {
+        return bytes()[0] < 224
+    }
+
+    // autoconfig => { not private, unicast }
+    public func isAutoConfig() -> Bool {
+        return bytes()[0] == 169 && bytes()[1] == 254
+    }
 }
 
 class IPv6Address : IPAddress {
@@ -262,6 +289,19 @@ class IPv6Address : IPAddress {
     public init(_ inaddr: Data, scope: UInt32 = 0) {
         self.scope = scope
         super.init(inaddr)
+    }
+
+    public convenience init?(_ address: String) {
+        var data = Data(count: MemoryLayout<in6_addr>.size)
+        let ret = data.withUnsafeMutableBytes {
+            (bytes : UnsafeMutablePointer<in6_addr>) -> Int32 in
+            return address.withCString {
+                (ptr) -> Int32 in
+                return inet_pton(AF_INET6, ptr, &bytes.pointee)
+            }
+        }
+        if ret != 1 { return nil }
+        self.init(data)
     }
 
     public override func getFamily() -> Int32 {
@@ -300,6 +340,26 @@ class IPv6Address : IPAddress {
 
     public override func next() -> IPAddress {
         fatalError("next on IPv6Address")
+    }
+
+    public func isULA() -> Bool {
+        return and(IPv6Address("fe00::")!) == IPv6Address("fc00::")
+    }
+
+    public func isLLA() -> Bool {
+        return and(IPv6Address("ffc0::")!) == IPv6Address("fe80::")
+    }
+
+    public func isUnicastPublic() -> Bool {
+        return and(IPv6Address("e000::")!) == IPv6Address("2000::")
+    }
+
+    public func isMulticastPublic() -> Bool {
+        return and(IPv6Address("ff00::")!) == IPv6Address("ff00::")
+    }
+
+    public func isReserved() -> Bool {
+        return and(IPv6Address("ff00::")!) == IPv6Address("::")
     }
 }
 

@@ -242,28 +242,45 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
-
+        
         let node = section.nodes[indexPath.item]
-        
-        
-//        guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
-//        else { fatalError() }
-//        let device = device_list[indexPath.item]
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
         cell.layer.shadowColor = UIColor.clear.cgColor
-
+        
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = device.name
-//        cell.name.text = device.name
-        cell.name.text = node.dns_names.first?.host_part.name
-        // remplir ici les éléments de la cellule selon ce qu'il y a de plus logique
+
+        cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
         
+        if let best = (Array(node.v4_addresses.filter { (address) -> Bool in
+            // 1st choice: public (not autoconfig) && unicast
+            !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
+        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+            // 2nd choice: private && not autoconfig
+            address.isPrivate() && !address.isAutoConfig()
+        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+            // 3rd choice: autoconfig
+            address.isAutoConfig()
+        })).first { cell.detail1.text = best.toNumericString() }
+        else { cell.detail1.text = "no IPv4 address" }
+
+        if let best = (Array(node.v6_addresses.filter { (address) -> Bool in
+            // 1st choice: unicast public
+            address.isUnicastPublic()
+        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+            // 2nd choice: ULA
+            address.isULA()
+        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+            // 3rd choice: LLA
+            address.isLLA()
+        })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
+        else { cell.detail2.text = "no IPv6 address" }
+
+        cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
+        cell.nPorts.text = String(node.tcp_ports.count) + " port" + (node.tcp_ports.count > 1 ? "s" : "")
         
-        
-        
-        
-        return cell
+       return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

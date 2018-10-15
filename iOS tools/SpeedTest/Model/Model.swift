@@ -20,6 +20,10 @@ class DomainPart : Hashable {
         hashValue = name.hashValue
     }
 
+    public func toString() -> String {
+        return name
+    }
+    
     public static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
         return lhs.name == rhs.name
     }
@@ -47,6 +51,14 @@ class DomainName : Hashable {
         if let domain_part = domain_part { self.domain_part = domain_part }
         else { self.domain_part = nil }
         hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
+    }
+
+    public func toString() -> String {
+        if let domain_part = domain_part {
+            return host_part.toString() + "." + domain_part.toString()
+        } else {
+            return host_part.toString()
+        }
     }
     
     public func isFQDN() -> Bool {
@@ -146,9 +158,16 @@ class DBMaster {
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
+        node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
         nodes.insert(node)
         sections[.ios]!.nodes.append(node)
-        
+
+        node = Node()
+        node.types.insert(.chargen)
+        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
+        nodes.insert(node)
+        sections[.chargen_discard]!.nodes.append(node)
+
         node = Node()
         node.types.insert(.chargen)
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
