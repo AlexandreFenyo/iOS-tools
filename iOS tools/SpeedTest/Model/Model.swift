@@ -78,11 +78,11 @@ class FQDN : DomainName {
     }
 }
 
-enum NodeType: Int {
+enum NodeType: Int, CaseIterable {
     case localhost = 0, ios, chargen, discard, gateway, internet, locked
 }
 
-enum SectionType: Int {
+enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
 }
 
@@ -143,6 +143,25 @@ class DBMaster {
     private var nodes : Set<Node>
     static public let shared = DBMaster()
 
+    public func removeNode(_ node: Node) {
+        SectionType.allCases.forEach {
+            sections[$0]!.nodes.removeAll(where: { $0 == node })
+        }
+        nodes.remove(node)
+    }
+    
+    public func locateNode(_ node: Node) -> [IndexPath] {
+        var paths = [IndexPath]()
+        SectionType.allCases.forEach {
+            for idx in sections[$0]!.nodes.indices {
+                if sections[$0]!.nodes[idx] == node {
+                    paths.append(IndexPath(row: idx, section: $0.rawValue))
+                }
+            }
+        }
+        return paths
+    }
+
     public init() {
         nodes = Set<Node>()
         sections = [
@@ -161,6 +180,7 @@ class DBMaster {
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
         nodes.insert(node)
         sections[.ios]!.nodes.append(node)
+        sections[.chargen_discard]!.nodes.append(node)
 
         node = Node()
         node.types.insert(.chargen)

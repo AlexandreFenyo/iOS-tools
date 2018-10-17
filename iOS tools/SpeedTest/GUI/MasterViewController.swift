@@ -74,6 +74,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         ]
     ]
 
+    // Get the node corresponding to an indexPath in the table
+    private func getNode(indexPath index_path: IndexPath) -> Node {
+        guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }
+        return section.nodes[index_path.item]
+    }
+
     private func startBrowsing() {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
         _ in
@@ -237,15 +243,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             return section.nodes.count
         }
-        return 0
+        fatalError()
     }
 
     // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
-        
-        let node = section.nodes[indexPath.item]
-        
+        let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
         cell.layer.shadowColor = UIColor.clear.cgColor
         
@@ -286,28 +289,25 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let table_section = TableSection(rawValue: indexPath.section), let device_list = devices[table_section]
-        else { fatalError() }
-
+        detail_view_controller!.node = getNode(indexPath: indexPath)
         stopBrowsing()
-        let device = device_list[indexPath.item]
-        detail_view_controller!.device = device
-        
+
         // for iPhone, make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        guard let type = SectionType(rawValue: indexPath.section), let section = DBMaster.shared.sections[type] else { fatalError() }
-        return !section.nodes[indexPath.item].types.contains(.locked)
+        return !getNode(indexPath: indexPath).types.contains(.locked)
     }
 
-    // Delete a row
+    // Delete every rows corresponding to a node
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete { fatalError("editingStyle invalid") }
-        devices[TableSection.init(rawValue: indexPath.section)!]!.remove(at: indexPath.row)
-        tableView.deleteRows(at: [indexPath], with: .fade)
+        let node = getNode(indexPath: indexPath)
+        let paths = DBMaster.shared.locateNode(node)
+        DBMaster.shared.removeNode(node)
+        tableView.deleteRows(at: paths, with: .fade)
     }
 
     // MARK: - Navigation

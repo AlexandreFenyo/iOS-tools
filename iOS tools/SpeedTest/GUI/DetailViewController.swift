@@ -43,6 +43,15 @@ class DetailViewController: UIViewController {
             }
         }
     }
+    
+    // Node selected by the user
+    public var node : Node? {
+        didSet {
+            if oldValue !== node {
+                refreshUI()
+            }
+        }
+    }
 
     // Address selected by the user
     public var address : IPAddress? {
@@ -56,7 +65,7 @@ class DetailViewController: UIViewController {
     private func refreshUI() {
         print("refresh UI")
         loadViewIfNeeded()
-        detail_label.text = device?.name
+        detail_label.text = node == nil ? "no selection" : (node!.mcast_dns_names.map { $0.toString() } + node!.dns_names.map { $0.toString() }).first
     }
 
     override func viewDidAppear(_ animated: Bool) {
