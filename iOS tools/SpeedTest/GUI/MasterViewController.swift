@@ -16,7 +16,7 @@ import UIKit
 
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
-//    func addDevice(name: String, addresses: [IPAddress])
+    func addNode(_ node: Node)
 }
 
 // foncé: 70 80 91
@@ -88,6 +88,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
+        
+        var node = Node()
+        node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
+        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
+        node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
+        node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
+        nodes.insert(node)
+        sections[.ios]!.nodes.append(node)
+        sections[.chargen_discard]!.nodes.append(node)
+        addNode(node)
+        
 //        addDevice("test")
 
 //print(traitCollection.horizontalSizeClass.rawValue)
