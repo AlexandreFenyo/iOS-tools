@@ -34,15 +34,6 @@ class DetailViewController: UIViewController {
     @IBOutlet private weak var ingress_chart: SKView!
 
     @IBOutlet weak var chart_switch1: UISwitch!
-
-    // Device selected by the user
-    public var device : Device? {
-        didSet {
-            if oldValue !== device {
-                refreshUI()
-            }
-        }
-    }
     
     // Node selected by the user
     public var node : Node? {

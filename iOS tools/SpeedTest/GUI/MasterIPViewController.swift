@@ -29,7 +29,7 @@ class DeviceAddressCell : UITableViewCell {
 // The MasterIPViewController instance is the delegate for the UITableView
 class MasterIPViewController: UITableViewController {
     public var master_view_controller : MasterViewController?
-    public var device : Device?
+    public var node : Node?
 
     public func applicationWillResignActive() {
     }
@@ -60,22 +60,22 @@ class MasterIPViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return device!.addresses.count
+        return node!.v4_addresses.count + node!.v6_addresses.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let device_address = device!.addresses[indexPath.item]
-
+        let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
-        cell.textLabel!.text = device_address.toSockAddress()!.toNumericString()
-        print("address: ", device_address.toSockAddress()!.toNumericString())
-
+        cell.textLabel!.text = address.toNumericString()
+        print("address: ", cell.textLabel!.text)
         return cell
     }
 
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        master_view_controller!.addressSelected(address: device!.addresses[indexPath.item])
+        let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
+
+        master_view_controller!.addressSelected(address: address)
     }
 
     // MARK: - Navigation

@@ -98,7 +98,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             }
         }
 
-        device_manager.addDevice(name: sender.name, addresses: addresses)
+//        device_manager.addDevice(name: sender.name, addresses: addresses)
+// A REFAIRE avec node
+
     }
 }
 

@@ -14,23 +14,9 @@
 
 import UIKit
 
-class Device {
-    public var name : String
-    public var addresses : [IPAddress] = []
-    
-    public init(name: String, addresses: [IPAddress]) {
-        self.name = name
-        self.addresses = addresses
-    }
-
-    public convenience init(name: String) {
-        self.init(name: name, addresses: [])
-    }
-}
-
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
-    func addDevice(name: String, addresses: [IPAddress])
+//    func addDevice(name: String, addresses: [IPAddress])
 }
 
 // foncé: 70 80 91
@@ -50,29 +36,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
 
-    enum TableSection: Int {
-        case iOSDevice = 0, chargenDevice, discardDevice, localGateway, internet, END
-    }
-
     public var detail_view_controller : DetailViewController?
     public var detail_navigation_controller : UINavigationController?
     public var split_view_controller : SplitViewController?
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
-
-    private var devices : [TableSection: [Device]] = [
-        .iOSDevice: [
-            Device(name: "iOS device 1", addresses: [IPv4Address("1.2.3.4")!, IPv4Address("1.2.3.5")!]),
-            Device(name: "iOS device 2")
-        ],
-        .chargenDevice: [Device(name: "chargen device 1")],
-        .discardDevice: [],
-        .localGateway: [Device(name: "Local gateway")],
-        .internet: [
-            Device(name: "IPv4 Internet"), Device(name: "IPv6 Internet")
-        ]
-    ]
 
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
@@ -203,12 +172,14 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // MARK: - DeviceManager protocol
 
-    private var c : Int = 0
     public func addDevice(name: String, addresses: [IPAddress]) {
-        c = c + 1
-        devices[.iOSDevice]!.append(Device(name: name, addresses: addresses))
-        tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count - 1, section: TableSection.iOSDevice.rawValue)], with: .automatic)
+//        devices[.iOSDevice]!.append(Device(name: name, addresses: addresses))
+//        tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count - 1, section: TableSection.iOSDevice.rawValue)], with: .automatic)
 
+        // completer
+        
+        
+        
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }
@@ -314,19 +285,18 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let master_ip_view_controller = segue.destination as? MasterIPViewController,
-            let index_path = tableView.indexPathForSelectedRow,
-            let table_section = TableSection(rawValue: index_path.section),
-            let device_list = devices[table_section]
-        else { fatalError() }
-        let device = device_list[index_path.item]
-        master_ip_view_controller.device = device
+        let master_ip_view_controller = segue.destination as! MasterIPViewController
+        let index_path = tableView.indexPathForSelectedRow!
+        let type = SectionType(rawValue: index_path.section)
+        let section = DBMaster.shared.sections[type!]
+        let node = section!.nodes[index_path.item]
+        master_ip_view_controller.node = node
         master_ip_view_controller.master_view_controller = self
-        if !device.addresses.isEmpty {
+        if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {
             let indexPath = IndexPath(row: 0, section: 0), table_view = master_ip_view_controller.tableView!
             table_view.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
             table_view.cellForRow(at: indexPath)!.setHighlighted(true, animated: true)
-            addressSelected(address: device.addresses.first!)
+            addressSelected(address: node.v4_addresses.count > 0 ? node.v4_addresses.first! : node.v6_addresses.first!)
         }
     }
 }

@@ -48,7 +48,9 @@ class NetworkBrowser {
 
     private func manageAnswer(from: IPv4Address) {
         DispatchQueue.main.sync {
-            device_manager.addDevice(name: "unnamed \(from.toNumericString())", addresses: [from])
+//            device_manager.addDevice(name: "unnamed \(from.toNumericString())", addresses: [from])
+            // A REFAIRE avec node
+
             reply.removeValue(forKey: from)
         }
     }

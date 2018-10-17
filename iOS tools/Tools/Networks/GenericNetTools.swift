@@ -9,7 +9,6 @@
 import Foundation
 
 class SockAddr : Equatable, NSCopying {
-    // struct sockaddr
     public let sockaddr : Data
 
     public init?(_ sockaddr: Data) {
@@ -118,7 +117,7 @@ class SockAddr6 : SockAddr {
     }
 }
 
-class IPAddress : Equatable, NSCopying, Hashable {
+class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     // struct in_addr
     public let inaddr : Data
 
@@ -195,6 +194,19 @@ class IPAddress : Equatable, NSCopying, Hashable {
     
     func copy(with zone: NSZone? = nil) -> Any {
         return IPAddress(inaddr)
+    }
+    
+    static func < (lhs: IPAddress, rhs: IPAddress) -> Bool {
+        var x = lhs
+        var y = rhs
+        
+        return withUnsafeBytes(of: &x) { (xp) -> Bool in
+            withUnsafeBytes(of: &y, { (yp) -> Bool in
+                if xp.count != yp.count { fatalError() }
+                for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
+                return false
+            })
+        }
     }
 }
 
