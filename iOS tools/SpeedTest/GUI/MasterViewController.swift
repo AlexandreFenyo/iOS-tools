@@ -89,18 +89,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
         
-        var node = Node()
+        let node = Node()
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
-        nodes.insert(node)
-        sections[.ios]!.nodes.append(node)
-        sections[.chargen_discard]!.nodes.append(node)
         addNode(node)
         
-//        addDevice("test")
-
 //print(traitCollection.horizontalSizeClass.rawValue)
     }
 
@@ -183,14 +178,9 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // MARK: - DeviceManager protocol
 
-    public func addDevice(name: String, addresses: [IPAddress]) {
-//        devices[.iOSDevice]!.append(Device(name: name, addresses: addresses))
-//        tableView.insertRows(at: [IndexPath(row: devices[.iOSDevice]!.count - 1, section: TableSection.iOSDevice.rawValue)], with: .automatic)
+    func addNode(_ node: Node) {
+        // A REMPLIR
 
-        // completer
-        
-        
-        
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }

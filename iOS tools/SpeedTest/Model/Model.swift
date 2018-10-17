@@ -143,6 +143,10 @@ class DBMaster {
     private var nodes : Set<Node>
     static public let shared = DBMaster()
 
+    public func addNode(_ node: Node) {
+        // A REMPLIR
+    }
+
     public func removeNode(_ node: Node) {
         SectionType.allCases.forEach {
             sections[$0]!.nodes.removeAll(where: { $0 == node })
