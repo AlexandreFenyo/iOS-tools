@@ -280,6 +280,7 @@ class IPv4Address : IPAddress {
         return bytes()[0] == 10 || (bytes()[0] == 192 && bytes()[1] == 168) || (bytes()[0] == 172 && (bytes()[1] >= 16 && bytes()[1] < 32))
     }
 
+    // unicast
     public func isUnicast() -> Bool {
         return bytes()[0] < 224
     }
@@ -287,6 +288,11 @@ class IPv4Address : IPAddress {
     // autoconfig => { not private, unicast }
     public func isAutoConfig() -> Bool {
         return bytes()[0] == 169 && bytes()[1] == 254
+    }
+
+    // local => { private, unicast }
+    public func isLocal() -> Bool {
+        return bytes()[0] == 127
     }
 }
 

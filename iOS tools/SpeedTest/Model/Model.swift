@@ -8,6 +8,14 @@
 
 import Foundation
 
+enum NodeType: Int, CaseIterable {
+    case localhost = 0, ios, chargen, discard, gateway, internet, locked
+}
+
+enum SectionType: Int, CaseIterable {
+    case localhost = 0, ios, chargen_discard, gateway, internet, other
+}
+
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
 class DomainPart : Hashable {
@@ -78,14 +86,6 @@ class FQDN : DomainName {
     }
 }
 
-enum NodeType: Int, CaseIterable {
-    case localhost = 0, ios, chargen, discard, gateway, internet, locked
-}
-
-enum SectionType: Int, CaseIterable {
-    case localhost = 0, ios, chargen_discard, gateway, internet, other
-}
-
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
@@ -121,8 +121,27 @@ class Node : Hashable {
         return Set(mcast_dns_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
     }
 
+    public func toSectionTypes() -> Set<SectionType> {
+        var section_types = Set<SectionType>()
+
+        if types.contains(.localhost) { section_types.insert(.localhost) }
+        if types.contains(.ios) { section_types.insert(.ios) }
+        if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
+
+
+        return section_types
+    }
+    
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses
+        if !(lhs.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }.intersection(rhs.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }).isEmpty) { return true }
+        
+        if !(lhs.v6_addresses.filter { !$0.isMulticastPublic() }.intersection(rhs.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
+
+        if !lhs.mcast_dns_names.intersection(rhs.mcast_dns_names).isEmpty { return true }
+
+        if !lhs.dns_names.intersection(rhs.dns_names).isEmpty { return true }
+
+        return false
     }
 }
 
@@ -143,14 +162,22 @@ class DBMaster {
     private var nodes : Set<Node>
     static public let shared = DBMaster()
 
-    public func addNode(_ node: Node) {
-        // A REMPLIR
+    public func addNode(_ new_node: Node) {
+        if let node = (nodes.filter { $0 == new_node }).first {
+            node.mcast_dns_names.formUnion(new_node.mcast_dns_names)
+            node.dns_names.formUnion(new_node.mcast_dns_names)
+            node.v4_addresses.formUnion(new_node.v4_addresses)
+            node.v6_addresses.formUnion(new_node.v6_addresses)
+            node.types.formUnion(new_node.types)
+            node.tcp_ports.formUnion(new_node.tcp_ports)
+            
+        } else {
+            
+        }
     }
 
     public func removeNode(_ node: Node) {
-        SectionType.allCases.forEach {
-            sections[$0]!.nodes.removeAll(where: { $0 == node })
-        }
+        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll(where: { $0 == node }) }
         nodes.remove(node)
     }
     
