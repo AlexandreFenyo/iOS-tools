@@ -174,16 +174,13 @@ class DBMaster {
             node.v6_addresses.formUnion(new_node.v6_addresses)
             node.types.formUnion(new_node.types)
             node.tcp_ports.formUnion(new_node.tcp_ports)
-            print("already node")
         } else {
             // We have discovered a new node
-            print("new node")
             nodes.insert(new_node)
         }
-
-        let node = (nodes.filter { $0 == new_node }).first!
         
         // Update sections
+        let node = (nodes.filter { $0 == new_node }).first!
         SectionType.allCases.forEach {
             if node.toSectionTypes().contains($0) {
                 if !sections[$0]!.nodes.contains(node) { sections[$0]!.nodes.append(node) }
@@ -234,7 +231,6 @@ class DBMaster {
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
         node.types = [ .chargen, .discard ]
-        print("INSERTION deuxièeme")
         addNode(node)
 
         node = Node()
