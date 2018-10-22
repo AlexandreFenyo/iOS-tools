@@ -124,7 +124,7 @@ final class GenericTools : AutoTrace {
             return ret == 0
         }
         let s = SockAddr(sa)
-        print("adddddressse:", s!.toNumericString())
+        print("addresse numérique récupérée du C:", s!.toNumericString())
         
         print("val1:", MemoryLayout<sockaddr>.size, "val2:", MemoryLayout<sockaddr_in>.size, "val3:", MemoryLayout<sockaddr_in6>.size)
 // BIG PB de tailles!!!
