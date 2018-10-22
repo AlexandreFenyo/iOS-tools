@@ -13,15 +13,45 @@ __uint16_t _htons(__uint16_t x) {
 }
 
 int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
-    struct ifaddrs *addresses = NULL;
-    struct ifaddrs *address = NULL;
-    getifaddrs(&addresses);
-    address = addresses;
-    address = address->ifa_next;
-    struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
-    printf("xxxxxxxxxxx %s\n", inet_ntoa(s_in->sin_addr));
-    memcpy(sa, s_in, sizeof(struct sockaddr_in));
+    struct ifaddrs *addresses;
+    struct ifaddrs *address;
+
+    printf("C salen: %d\n", salen);
     
+    
+    int ret = getifaddrs(&addresses);
+    if (ret != 0) {
+        perror("getifaddrs");
+        return -1;
+    }
+    if (addresses == NULL) return -2;
+
+    address = addresses;
+    while (ifindex-- >= 0) {
+        while (address->ifa_addr == NULL || (address->ifa_addr->sa_family != AF_INET && address->ifa_addr->sa_family != AF_INET6)) {
+            address = address->ifa_next;
+            if (address == NULL) return -3;
+        }
+        address = address->ifa_next;
+        if (address == NULL) return -4;
+    }
+
+    if (address->ifa_addr->sa_family == AF_INET) {
+        struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
+        if (salen < sizeof(struct sockaddr_in)) return -5;
+        memcpy(sa, s_in, sizeof(struct sockaddr_in));
+    } else {
+        struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) address->ifa_addr;
+        printf("sizeof(struct sockaddr_in6): %d\n", sizeof(struct sockaddr_in6));
+        if (salen < sizeof(struct sockaddr_in6)) return -6;
+        memcpy(sa, s_in6, sizeof(struct sockaddr_in6));
+    }
+    
+//    struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
+//    printf("xxxxxxxxxxx %s\n", inet_ntoa(s_in->sin_addr));
+//    memcpy(sa, s_in, sizeof(struct sockaddr_in));
+
+    freeifaddrs(addresses);
     return 0;
 }
 
