@@ -127,7 +127,7 @@ final class GenericTools : AutoTrace {
         print("addresse numérique récupérée du C:", s!.toNumericString())
         
         print("val1:", MemoryLayout<sockaddr>.size, "val2:", MemoryLayout<sockaddr_in>.size, "val3:", MemoryLayout<sockaddr_in6>.size)
-// BIG PB de tailles!!!
+// BIG PB de tailles!!! UTILISER struct sockaddr_storage plutôt que struct sockaddr
         
 //        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
 //        nb!.browse()
