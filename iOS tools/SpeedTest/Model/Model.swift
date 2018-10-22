@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum NodeType: Int, CaseIterable {
-    case localhost = 0, ios, chargen, discard, gateway, internet, locked
-}
-
 enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
+}
+
+enum NodeType: Int, CaseIterable {
+    case localhost = 0, ios, chargen, discard, gateway, internet, locked
 }
 
 // A domain part may contain a dot
@@ -128,6 +128,7 @@ class Node : Hashable {
         if types.contains(.ios) { section_types.insert(.ios) }
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
 
+        if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) { section_types.insert(.other) }
 
         return section_types
     }
@@ -164,20 +165,30 @@ class DBMaster {
 
     public func addNode(_ new_node: Node) {
         if let node = (nodes.filter { $0 == new_node }).first {
+            // The node is already registered
             node.mcast_dns_names.formUnion(new_node.mcast_dns_names)
             node.dns_names.formUnion(new_node.mcast_dns_names)
             node.v4_addresses.formUnion(new_node.v4_addresses)
             node.v6_addresses.formUnion(new_node.v6_addresses)
             node.types.formUnion(new_node.types)
             node.tcp_ports.formUnion(new_node.tcp_ports)
-            
         } else {
-            
+            // We have discovered a new node
+            nodes.insert(new_node)
+        }
+        
+        // Update sections
+        SectionType.allCases.forEach {
+            if new_node.toSectionTypes().contains($0) {
+                sections[$0]!.nodes.append(new_node)
+            } else {
+                sections[$0]!.nodes.removeAll { $0 == new_node }
+            }
         }
     }
 
     public func removeNode(_ node: Node) {
-        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll(where: { $0 == node }) }
+        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll { $0 == node }}
         nodes.remove(node)
     }
     
