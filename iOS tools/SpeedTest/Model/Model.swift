@@ -127,6 +127,8 @@ class Node : Hashable {
         if types.contains(.localhost) { section_types.insert(.localhost) }
         if types.contains(.ios) { section_types.insert(.ios) }
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
+        if types.contains(.gateway) { section_types.insert(.gateway) }
+        if types.contains(.internet) { section_types.insert(.internet) }
 
         if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) { section_types.insert(.other) }
 
@@ -172,18 +174,20 @@ class DBMaster {
             node.v6_addresses.formUnion(new_node.v6_addresses)
             node.types.formUnion(new_node.types)
             node.tcp_ports.formUnion(new_node.tcp_ports)
+            print("already node")
         } else {
             // We have discovered a new node
+            print("new node")
             nodes.insert(new_node)
         }
+
+        let node = (nodes.filter { $0 == new_node }).first!
         
         // Update sections
         SectionType.allCases.forEach {
-            if new_node.toSectionTypes().contains($0) {
-                sections[$0]!.nodes.append(new_node)
-            } else {
-                sections[$0]!.nodes.removeAll { $0 == new_node }
-            }
+            if node.toSectionTypes().contains($0) {
+                if !sections[$0]!.nodes.contains(node) { sections[$0]!.nodes.append(node) }
+            } else { sections[$0]!.nodes.removeAll { $0 == node } }
         }
     }
 
@@ -196,9 +200,7 @@ class DBMaster {
         var paths = [IndexPath]()
         SectionType.allCases.forEach {
             for idx in sections[$0]!.nodes.indices {
-                if sections[$0]!.nodes[idx] == node {
-                    paths.append(IndexPath(row: idx, section: $0.rawValue))
-                }
+                if sections[$0]!.nodes[idx] == node { paths.append(IndexPath(row: idx, section: $0.rawValue)) }
             }
         }
         return paths
@@ -220,41 +222,34 @@ class DBMaster {
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
-        nodes.insert(node)
-        sections[.ios]!.nodes.append(node)
-        sections[.chargen_discard]!.nodes.append(node)
+        node.types = [ .chargen, .discard, .ios ]
+        addNode(node)
 
         node = Node()
-        node.types.insert(.chargen)
-        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
-        nodes.insert(node)
-        sections[.chargen_discard]!.nodes.append(node)
+        node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
+        node.types = [ .chargen, .discard ]
+        addNode(node)
 
         node = Node()
-        node.types.insert(.chargen)
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
-        nodes.insert(node)
-        sections[.chargen_discard]!.nodes.append(node)
+        node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
+        node.types = [ .chargen, .discard ]
+        print("INSERTION deuxièeme")
+        addNode(node)
 
         node = Node()
-        node.types.insert(.gateway)
-        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("Local gateway")))
-        nodes.insert(node)
-        sections[.gateway]!.nodes.append(node)
+        node.types = [ .gateway ]
+        addNode(node)
 
         node = Node()
-        node.types.insert(.internet)
-        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
-        nodes.insert(node)
-        sections[.internet]!.nodes.append(node)
+        node.types = [ .internet, .locked ]
+        addNode(node)
 
         node = Node()
-        node.types.insert(.internet)
-        node.types.insert(.locked)
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
-        nodes.insert(node)
-        sections[.internet]!.nodes.append(node)
+        node.types = [ .internet, .locked ]
+        addNode(node)
     }
 }
