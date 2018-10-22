@@ -40,3 +40,6 @@ void net_test();
 #include <netinet/ip_icmp.h>
 
 __uint16_t _htons(__uint16_t x);
+
+int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen);
+

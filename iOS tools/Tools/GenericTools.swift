@@ -112,6 +112,19 @@ final class GenericTools : AutoTrace {
         net_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
         
+        
+        // récupération 1ère adresse IP de localhost
+        var sa = Data(count: MemoryLayout<sockaddr>.size)
+        sa.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<sockaddr>) -> Bool in
+            let ret = getlocaladdr(0, bytes, 10)
+            return ret == 0
+        }
+        let s = SockAddr(sa)
+        print("adddddressse:", s!.toNumericString())
+        
+        
+        
+        
 //        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
 //        nb!.browse()
         

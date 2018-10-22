@@ -247,5 +247,11 @@ class DBMaster {
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
         node.types = [ .internet, .locked ]
         addNode(node)
+
+        
+        // gérer localhost
+        
+
+
     }
 }

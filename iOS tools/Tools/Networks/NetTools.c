@@ -12,6 +12,19 @@ __uint16_t _htons(__uint16_t x) {
     return htons(x);
 }
 
+int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
+    struct ifaddrs *addresses = NULL;
+    struct ifaddrs *address = NULL;
+    getifaddrs(&addresses);
+    address = addresses;
+    address = address->ifa_next;
+    struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
+    printf("xxxxxxxxxxx %s\n", inet_ntoa(s_in->sin_addr));
+    memcpy(sa, s_in, sizeof(struct sockaddr_in));
+    
+    return 0;
+}
+
 void net_test() {
     char str[INET6_ADDRSTRLEN];
     char hostname[] = "www.fenyo.net";
