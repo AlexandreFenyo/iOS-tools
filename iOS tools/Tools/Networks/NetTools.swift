@@ -59,7 +59,9 @@ class SockAddr : Equatable, NSCopying {
     }
     
     public func getFamily() -> Int32 {
-        fatalError("getFamily() on SockAddr")
+        return Int32(sockaddr.withUnsafeBytes { (bytes : UnsafePointer<sockaddr>) -> UInt8 in
+            bytes.pointee.sa_family
+        })
     }
 
     static func == (lhs: SockAddr, rhs: SockAddr) -> Bool {

@@ -248,6 +248,26 @@ class DBMaster {
         node.types = [ .internet, .locked ]
         addNode(node)
 
+        node = Node()
+        node.types = [ .localhost ]
+        var idx : Int32 = 0
+        var ret : Int32 = 0
+        repeat {
+            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
+            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            if ret == 0 {
+                if SockAddr(data)!.getFamily() == AF_INET {
+                    print("FAM1")
+//                    node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
+                } else {
+                    print("FAM2")
+//                node.v6_addresses.insert(SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address)
+                }
+            }
+            idx += 1
+        } while ret == 0
+//        addNode(node)
+
         
         // gérer localhost
         

@@ -19,7 +19,7 @@ class LocalDiscardClient : Thread {
         
         if let saddr = address.toSockAddress()?.sockaddr {
             saddr.withUnsafeBytes {
-                (ump: UnsafePointer<sockaddr>) in
+                (ump: UnsafePointer<sockaddr_storage>) in
                 let retval = localDiscardClientLoop(OpaquePointer(ump))
                 print("retval:", retval)
             }

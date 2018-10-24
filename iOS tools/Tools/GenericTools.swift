@@ -111,24 +111,7 @@ final class GenericTools : AutoTrace {
 //        c_test()
         net_test()
 //        let session = LocalHttpClient(url: "https://www.fenyo.net/bigfile")
-        
-        
-        
-        
-        // récupération 1ère adresse IP de localhost
-        var sa = Data(count: MemoryLayout<sockaddr>.size)
-        sa.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<sockaddr>) -> Bool in
-            let ret = getlocaladdr(0, bytes, UInt32(MemoryLayout<sockaddr>.size))
-            print("longueur:", UInt32(MemoryLayout<sockaddr>.size))
-            print("ret = ", ret)
-            return ret == 0
-        }
-        let s = SockAddr(sa)
-        print("addresse numérique récupérée du C:", s!.toNumericString())
-        
-        print("val1:", MemoryLayout<sockaddr>.size, "val2:", MemoryLayout<sockaddr_in>.size, "val3:", MemoryLayout<sockaddr_in6>.size)
-// BIG PB de tailles!!! UTILISER struct sockaddr_storage plutôt que struct sockaddr
-        
+                
 //        let nb = NetworkBrowser(network: IPv4Address("10.69.184.0"), netmask: IPv4Address("255.255.255.0"), device_manager: masterViewController)
 //        nb!.browse()
         

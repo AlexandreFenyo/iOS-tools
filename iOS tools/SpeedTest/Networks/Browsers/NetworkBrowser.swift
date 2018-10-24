@@ -8,6 +8,7 @@
 
 import Foundation
 
+// IPv4 only
 class NetworkBrowser {
     private let device_manager : DeviceManager
     private let network : IPv4Address

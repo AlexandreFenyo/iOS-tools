@@ -12,28 +12,29 @@ __uint16_t _htons(__uint16_t x) {
     return htons(x);
 }
 
-int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
-    struct ifaddrs *addresses;
-    struct ifaddrs *address;
+static int nextValidAddr(struct ifaddrs **paddress) {
+    while ((*paddress)->ifa_addr == NULL || ((*paddress)->ifa_addr->sa_family != AF_INET && (*paddress)->ifa_addr->sa_family != AF_INET6)) {
+        *paddress = (*paddress)->ifa_next;
+        if ((*paddress) == NULL) return -1;
+    }
+    return 0;
+}
 
-    printf("C salen: %d\n", salen);
-    
-    
-    int ret = getifaddrs(&addresses);
-    if (ret != 0) {
+int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
+    struct ifaddrs *addresses, *address;
+
+    if (getifaddrs(&addresses) != 0) {
         perror("getifaddrs");
         return -1;
     }
     if (addresses == NULL) return -2;
 
     address = addresses;
-    while (ifindex-- >= 0) {
-        while (address->ifa_addr == NULL || (address->ifa_addr->sa_family != AF_INET && address->ifa_addr->sa_family != AF_INET6)) {
-            address = address->ifa_next;
-            if (address == NULL) return -3;
-        }
+    if (nextValidAddr(&address) == -1) return -3;
+    while (--ifindex >= 0) {
         address = address->ifa_next;
         if (address == NULL) return -4;
+        if (nextValidAddr(&address) == -1) return -3;
     }
 
     if (address->ifa_addr->sa_family == AF_INET) {
@@ -42,15 +43,10 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
         memcpy(sa, s_in, sizeof(struct sockaddr_in));
     } else {
         struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) address->ifa_addr;
-        printf("sizeof(struct sockaddr_in6): %d\n", sizeof(struct sockaddr_in6));
         if (salen < sizeof(struct sockaddr_in6)) return -6;
         memcpy(sa, s_in6, sizeof(struct sockaddr_in6));
     }
     
-//    struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
-//    printf("xxxxxxxxxxx %s\n", inet_ntoa(s_in->sin_addr));
-//    memcpy(sa, s_in, sizeof(struct sockaddr_in));
-
     freeifaddrs(addresses);
     return 0;
 }

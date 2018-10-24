@@ -19,7 +19,7 @@ class LocalChargenClient : Thread {
 
         if let saddr = address.toSockAddress()?.sockaddr {
             saddr.withUnsafeBytes {
-                (ump: UnsafePointer<sockaddr>) in
+                (ump: UnsafePointer<sockaddr_storage>) in
                 let retval = localChargenClientLoop(OpaquePointer(ump))
                 print("retval:", retval)
             }
