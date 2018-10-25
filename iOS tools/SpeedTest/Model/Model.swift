@@ -257,42 +257,14 @@ class DBMaster {
             ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
             if ret == 0 {
                 if SockAddr(data)!.getFamily() == AF_INET {
-                    print("FAM1")
-//                    node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
+                    node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
                 } else {
-                    print("FAM2")
-//                    node.v6_addresses.insert(SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address)
-
-                    node.v6_addresses.insert(SockAddr6(data.subdata(in: Range(0...MemoryLayout<sockaddr_in6>.size)))?.getIPAddress() as! IPv6Address)
-                    
-                    let x = SockAddr6(data.subdata(in: Range(0...MemoryLayout<sockaddr_in6>.size)))?.getIPAddress() as! IPv6Address
-                    print(x.inaddr.count) // 28
-                    print(node.v6_addresses.first!.inaddr.count)
-                    print(IPv6Address("fe80:1::abcd:1234")!.inaddr.count)
-//                    
-//                    let addr4 = IPv4Address("1.2.3.4")!
-//                    print(addr4.inaddr.count)
-//
-//                    print(addr6!.inaddr.count)
-//                    
-//                    let addr62 = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-//                    print(addr62.inaddr.count)
-//                    node.v6_addresses.insert(IPv6Address("fe80:1::ffff:1234")!)
-
+                    node.v6_addresses.insert(SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address)
                 }
             }
             idx += 1
         } while ret == 0
 
-        print("XXXX", MemoryLayout<sockaddr>.size) // 16
-        print("XXXX", MemoryLayout<sockaddr_in>.size) // 16
-        print("XXXX", MemoryLayout<sockaddr_in6>.size) // 28
-
         addNode(node)
-
-        // gérer localhost
-        
-
-
     }
 }

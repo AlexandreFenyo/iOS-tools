@@ -87,7 +87,7 @@ class SockAddr4 : SockAddr {
         return sockaddr.withUnsafeBytes {
             (bytes : UnsafePointer<sockaddr_in>) -> IPAddress in
             var in_addr = bytes.pointee.sin_addr
-            return IPv4Address(NSData(bytes: &in_addr, length: Int(bytes.pointee.sin_len)) as Data)
+            return IPv4Address(NSData(bytes: &in_addr, length: MemoryLayout<in_addr>.size) as Data)
         }
     }
     
@@ -110,10 +110,10 @@ class SockAddr6 : SockAddr {
         return sockaddr.withUnsafeBytes {
             (bytes : UnsafePointer<sockaddr_in6>) -> IPAddress in
             var in6_addr = bytes.pointee.sin6_addr
-            return IPv6Address(NSData(bytes: &in6_addr, length: Int(bytes.pointee.sin6_len)) as Data, scope: bytes.pointee.sin6_scope_id)
+            return IPv6Address(NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data, scope: bytes.pointee.sin6_scope_id)
         }
     }
-    
+
     public override func getFamily() -> Int32 {
         return AF_INET6
     }
