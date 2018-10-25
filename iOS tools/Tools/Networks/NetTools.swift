@@ -32,7 +32,7 @@ class SockAddr : Equatable, NSCopying {
     public func getIPAddress() -> IPAddress? {
         return nil
     }
-
+    
     // Warning: an address like fe81:abcd:: may throw an error because 'cd' contains the scope, and it must be the index of an existing interface
     private func getNameInfo(_ flags: Int32) -> String? {
         return sockaddr.withUnsafeBytes {
@@ -117,7 +117,24 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     public init(_ inaddr: Data) {
         self.inaddr = inaddr
     }
-    
+
+    public init(mask_len: Int, data_size: Int) {
+//        inaddr = Data(count: MemoryLayout<in_addr>.size)
+  inaddr = Data(count: data_size)
+        inaddr.withUnsafeMutableBytes { (b: UnsafeMutablePointer<UInt8>) in
+            var byte = 0
+            var bit = 7
+            for _ in 0..<mask_len {
+                b[byte] |= 1<<bit
+                bit -= 1
+                if bit < 0 {
+                    byte += 1
+                    bit = 7
+                }
+            }
+        }
+    }
+
     public func getFamily() -> Int32 {
         fatalError("getFamily() on IPAddress")
     }
@@ -206,6 +223,10 @@ class IPv4Address : IPAddress {
         self.init(data)
     }
 
+    public convenience init(mask_len: Int) {
+        self.init(mask_len: mask_len, data_size: MemoryLayout<in_addr>.size)
+    }
+
     public override func getFamily() -> Int32 {
         return AF_INET
     }
@@ -281,6 +302,11 @@ class IPv6Address : IPAddress {
         super.init(inaddr)
     }
 
+    public init(mask_len: Int) {
+        scope = 0
+        super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
+    }
+
     public convenience init?(_ address: String) {
         var data = Data(count: MemoryLayout<in6_addr>.size)
         let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<in6_addr>) -> Int32 in address.withCString { inet_pton(AF_INET6, $0, &bytes.pointee) } }
@@ -352,4 +378,7 @@ struct IPNetwork {
         self.ip_address = ip_address
         self.mask_len = mask_len
     }
+}
+
+final class NetTools {
 }

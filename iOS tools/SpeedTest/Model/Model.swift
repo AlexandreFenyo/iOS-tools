@@ -259,8 +259,12 @@ class DBMaster {
             if ret >= 0 {
                 if SockAddr(data)!.getFamily() == AF_INET {
                     node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
+                    print("masklen:", ret)
+                    print(IPv4Address(mask_len: Int(ret)).toNumericString())
                 } else {
                     node.v6_addresses.insert(SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address)
+                    print("masklen:", ret)
+                    print(IPv6Address(mask_len: Int(ret)).toNumericString())
                 }
             }
             idx += 1
