@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
@@ -272,6 +273,7 @@ class DBMaster {
             idx += 1
         } while ret >= 0
 
+        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         addNode(node)
     }
 }

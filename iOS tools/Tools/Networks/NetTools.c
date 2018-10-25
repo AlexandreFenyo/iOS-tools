@@ -128,7 +128,7 @@ void net_test() {
 
     freeifaddrs(addresses);
 
-    // DNS
+    // direct DNS
     printf("DNS\n");
     
     struct addrinfo *infos;
@@ -140,19 +140,20 @@ void net_test() {
 
     hints.ai_flags = AI_ALL | AI_V4MAPPED;
 //    hints.ai_flags = AI_ALL;
+    // ATTENTION : peut bloquer plusieurs secondes avant un timeout
     ret = getaddrinfo(hostname, (char *) &hints, NULL, &infos);
 //    ret = getaddrinfo(hostname, NULL, NULL, &infos);
-    if (ret != 0) {
-        perror("getaddrinfo");
+    if (ret) {
+        printf("getaddrinfo(): %s\n", gai_strerror(ret));
         return;
     }
-
-    if (hints.ai_flags & AI_CANONNAME && infos != NULL) printf("canon:%s \n", infos->ai_canonname);
 
     while (infos != NULL) {
         struct sockaddr_in *s_in;
         struct sockaddr_in6 *s_in6;
-        
+
+        if (hints.ai_flags & AI_CANONNAME && infos != NULL) printf("canon:%s\n", infos->ai_canonname);
+
         printf("%s ", hostname);
         
         switch (infos->ai_family) {
@@ -232,7 +233,7 @@ void net_test() {
     addr.sin_len = sizeof addr.sin_addr;
     addr.sin_port = htons(8888);
     
-    char ip2[] ="149.202.53.208";
+    char ip2[] = "149.202.53.208";
 //    char ip2[] ="10.69.184.195";
     ret = inet_pton(AF_INET, ip2, &addr.sin_addr);
     if (ret < 1) {
@@ -248,7 +249,7 @@ void net_test() {
     char host[512];
     ret = getnameinfo(&addr, sizeof addr, host, sizeof host, 0, 0, NI_NAMEREQD);
     if (ret) {
-        printf("%s\n", gai_strerror(ret));
+        printf("getnameinfo(): %s\n", gai_strerror(ret));
         return;
     }
     printf("hostname from DNS: %s\n", host);
