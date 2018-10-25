@@ -248,6 +248,7 @@ class DBMaster {
         node.types = [ .internet, .locked ]
         addNode(node)
 
+        // Add localhost
         node = Node()
         node.types = [ .localhost ]
         var idx : Int32 = 0
@@ -255,7 +256,7 @@ class DBMaster {
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
             ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            if ret == 0 {
+            if ret >= 0 {
                 if SockAddr(data)!.getFamily() == AF_INET {
                     node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
                 } else {
@@ -263,7 +264,7 @@ class DBMaster {
                 }
             }
             idx += 1
-        } while ret == 0
+        } while ret >= 0
 
         addNode(node)
     }

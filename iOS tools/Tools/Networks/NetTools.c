@@ -20,8 +20,21 @@ static int nextValidAddr(struct ifaddrs **paddress) {
     return 0;
 }
 
+static int countBits(void *buf, int count) {
+    int nbits = 0;
+    for (int i = 0; i < count; i++) {
+        unsigned char c = ((unsigned char *) buf)[i];
+        while (c) {
+            if (c & 1) nbits++;
+            c >>= 1;
+        }
+    }
+    return nbits;
+}
+
 int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
     struct ifaddrs *addresses, *address;
+    int mask_len;
 
     if (getifaddrs(&addresses) != 0) {
         perror("getifaddrs");
@@ -41,14 +54,20 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
         struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
         if (salen < sizeof(struct sockaddr_in)) return -5;
         memcpy(sa, s_in, sizeof(struct sockaddr_in));
+
+        struct sockaddr_in *netmask = (struct sockaddr_in *) address->ifa_netmask;
+        mask_len = countBits(&netmask->sin_addr, sizeof netmask->sin_addr);
     } else {
         struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) address->ifa_addr;
         if (salen < sizeof(struct sockaddr_in6)) return -6;
         memcpy(sa, s_in6, sizeof(struct sockaddr_in6));
+        
+        struct sockaddr_in6 *netmask = (struct sockaddr_in6 *) address->ifa_netmask;
+        mask_len = countBits(&netmask->sin6_addr, sizeof netmask->sin6_addr);
     }
     
     freeifaddrs(addresses);
-    return 0;
+    return mask_len;
 }
 
 void net_test() {
