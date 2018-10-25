@@ -72,7 +72,8 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
 
 void net_test() {
     char str[INET6_ADDRSTRLEN];
-    char hostname[] = "www.fenyo.net";
+//    char hostname[] = "www.fenyo.net";
+    char hostname[] = "google.com";
 
     // Addresses
     
@@ -128,14 +129,19 @@ void net_test() {
     freeifaddrs(addresses);
 
     // DNS
+    printf("DNS\n");
     
     struct addrinfo *infos;
     struct addrinfo hints;
     bzero(&hints, sizeof hints);
     
     hints.ai_family = PF_UNSPEC;
+//    hints.ai_family = PF_INET6;
+
     hints.ai_flags = AI_ALL | AI_V4MAPPED;
+//    hints.ai_flags = AI_ALL;
     ret = getaddrinfo(hostname, (char *) &hints, NULL, &infos);
+//    ret = getaddrinfo(hostname, NULL, NULL, &infos);
     if (ret != 0) {
         perror("getaddrinfo");
         return;
@@ -172,7 +178,11 @@ void net_test() {
         infos = infos->ai_next;
     }
 
+    freeaddrinfo(infos);
+    
     // UDP v6
+    printf("UDPv6\n");
+
     int s6 = socket(AF_INET6, SOCK_DGRAM, 0);
     if (s6 < 0) {
         perror("socket IPv6");
