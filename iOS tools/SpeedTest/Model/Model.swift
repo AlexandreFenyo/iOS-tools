@@ -254,8 +254,7 @@ class DBMaster {
         // Add localhost
         node = Node()
         node.types = [ .localhost ]
-        var idx : Int32 = 0
-        var ret : Int32 = 0
+        var idx : Int32 = 0, ret : Int32 = 0
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
             ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }

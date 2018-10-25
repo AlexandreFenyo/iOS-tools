@@ -107,7 +107,6 @@ class SockAddr6 : SockAddr {
 }
 
 class IPAddress : Equatable, NSCopying, Comparable, Hashable {
-    // struct in_addr
     public let inaddr : Data
 
     var hashValue: Int {
@@ -119,11 +118,9 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     }
 
     public init(mask_len: UInt8, data_size: Int) {
-//        inaddr = Data(count: MemoryLayout<in_addr>.size)
-  inaddr = Data(count: data_size)
+        inaddr = Data(count: data_size)
         inaddr.withUnsafeMutableBytes { (b: UnsafeMutablePointer<UInt8>) in
-            var byte = 0
-            var bit = 7
+            var byte = 0, bit = 7
             for _ in 0..<mask_len {
                 b[byte] |= 1<<bit
                 bit -= 1
