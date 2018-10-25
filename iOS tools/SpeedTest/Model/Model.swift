@@ -163,6 +163,7 @@ class Section {
 class DBMaster {
     public var sections : [SectionType: Section]
     private var nodes : Set<Node>
+    private var networks : Set<IPNetwork>
     static public let shared = DBMaster()
 
     public func addNode(_ new_node: Node) {
@@ -204,6 +205,8 @@ class DBMaster {
     }
 
     public init() {
+        networks = Set<IPNetwork>()
+
         nodes = Set<Node>()
         sections = [
             .localhost: Section("localhost", "this host"),
@@ -258,13 +261,13 @@ class DBMaster {
             ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
             if ret >= 0 {
                 if SockAddr(data)!.getFamily() == AF_INET {
-                    node.v4_addresses.insert(SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address)
-                    print("masklen:", ret)
-                    print(IPv4Address(mask_len: Int(ret)).toNumericString())
+                    let address = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
+                    node.v4_addresses.insert(address)
+                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 } else {
-                    node.v6_addresses.insert(SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address)
-                    print("masklen:", ret)
-                    print(IPv6Address(mask_len: Int(ret)).toNumericString())
+                    let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+                    node.v6_addresses.insert(address)
+                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 }
             }
             idx += 1

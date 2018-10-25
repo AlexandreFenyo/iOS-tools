@@ -118,7 +118,7 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
         self.inaddr = inaddr
     }
 
-    public init(mask_len: Int, data_size: Int) {
+    public init(mask_len: UInt8, data_size: Int) {
 //        inaddr = Data(count: MemoryLayout<in_addr>.size)
   inaddr = Data(count: data_size)
         inaddr.withUnsafeMutableBytes { (b: UnsafeMutablePointer<UInt8>) in
@@ -223,7 +223,7 @@ class IPv4Address : IPAddress {
         self.init(data)
     }
 
-    public convenience init(mask_len: Int) {
+    public convenience init(mask_len: UInt8) {
         self.init(mask_len: mask_len, data_size: MemoryLayout<in_addr>.size)
     }
 
@@ -302,7 +302,7 @@ class IPv6Address : IPAddress {
         super.init(inaddr)
     }
 
-    public init(mask_len: Int) {
+    public init(mask_len: UInt8) {
         scope = 0
         super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
     }
@@ -334,15 +334,15 @@ class IPv6Address : IPAddress {
     }
 
     public override func and(_ netmask: IPAddress) -> IPAddress {
-        return IPv6Address(super._and(netmask), scope: (netmask as! IPv6Address).scope)
+        return IPv6Address(super._and(netmask), scope: scope)
     }
 
     public override func or(_ netmask: IPAddress) -> IPAddress {
-        return IPv6Address(super._or(netmask), scope: (netmask as! IPv6Address).scope)
+        return IPv6Address(super._or(netmask), scope: scope)
     }
 
     public override func xor(_ netmask: IPAddress) -> IPAddress {
-        return IPv6Address(super._xor(netmask), scope: (netmask as! IPv6Address).scope)
+        return IPv6Address(super._xor(netmask), scope: scope)
     }
 
     public override func next() -> IPAddress {
@@ -370,10 +370,14 @@ class IPv6Address : IPAddress {
     }
 }
 
-struct IPNetwork {
+struct IPNetwork : Hashable {
     public let ip_address : IPAddress
     public let mask_len : UInt8
     
+    public var hashValue: Int {
+        return ip_address.hashValue &+ mask_len.hashValue
+    }
+
     public init(ip_address: IPAddress, mask_len: UInt8) {
         self.ip_address = ip_address
         self.mask_len = mask_len
