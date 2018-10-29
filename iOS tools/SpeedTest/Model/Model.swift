@@ -103,7 +103,7 @@ class Node : Hashable {
     public init() {
         hashValue = mcast_dns_names.hashValue &+ dns_names.hashValue &+ v4_addresses.hashValue &+ v6_addresses.hashValue &+ tcp_ports.hashValue &+ types.hashValue
     }
-
+    
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
     }
@@ -136,16 +136,29 @@ class Node : Hashable {
         return section_types
     }
     
-    public static func == (lhs: Node, rhs: Node) -> Bool {
-        if !(lhs.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }.intersection(rhs.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }).isEmpty) { return true }
+    public func merge(_ node: Node) {
+        mcast_dns_names.formUnion(node.mcast_dns_names)
+        dns_names.formUnion(node.mcast_dns_names)
+        v4_addresses.formUnion(node.v4_addresses)
+        v6_addresses.formUnion(node.v6_addresses)
+        types.formUnion(node.types)
+        tcp_ports.formUnion(node.tcp_ports)
+    }
+
+    public func isSimilar(with: Node) -> Bool {
+        if !(v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }.intersection(with.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }).isEmpty) { return true }
         
-        if !(lhs.v6_addresses.filter { !$0.isMulticastPublic() }.intersection(rhs.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
+        if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
 
-        if !lhs.mcast_dns_names.intersection(rhs.mcast_dns_names).isEmpty { return true }
+        if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
 
-        if !lhs.dns_names.intersection(rhs.dns_names).isEmpty { return true }
+        if !dns_names.intersection(with.dns_names).isEmpty { return true }
 
         return false
+    }
+
+    public static func == (lhs: Node, rhs: Node) -> Bool {
+        return lhs.mcast_dns_names == rhs.mcast_dns_names || lhs.dns_names == rhs.dns_names || lhs.v4_addresses == rhs.v4_addresses || lhs.v6_addresses == rhs.v6_addresses || lhs.tcp_ports == rhs.tcp_ports || lhs.types == rhs.types
     }
 }
 
@@ -167,27 +180,59 @@ class DBMaster {
     private var networks : Set<IPNetwork>
     static public let shared = DBMaster()
 
+    private func findSimilar(_ arr_nodes : [Node]) -> (Int, Int)? {
+        for i in 0 ..< arr_nodes.count {
+            for j in (i + 1) ..< arr_nodes.count {
+                if arr_nodes[i].isSimilar(with: arr_nodes[j]) { return (i, j) }
+            }
+        }
+        return nil
+    }
+    
     public func addNode(_ new_node: Node) {
-        if let node = (nodes.filter { $0 == new_node }).first {
-            // The node is already registered
-            node.mcast_dns_names.formUnion(new_node.mcast_dns_names)
-            node.dns_names.formUnion(new_node.mcast_dns_names)
-            node.v4_addresses.formUnion(new_node.v4_addresses)
-            node.v6_addresses.formUnion(new_node.v6_addresses)
-            node.types.formUnion(new_node.types)
-            node.tcp_ports.formUnion(new_node.tcp_ports)
-        } else {
-            // We have discovered a new node
-            nodes.insert(new_node)
+        let index_paths_removed = [IndexPath]()
+        let index_paths_inserted = [IndexPath]()
+
+        var nodes_removed = [Node]()
+        var nodes_inserted = [Node]()
+
+        print("avant addNode", nodes.count)
+
+        var arr_nodes = Array(nodes)
+        arr_nodes.append(new_node)
+        
+        while let (i, j) = findSimilar(arr_nodes) {
+            // ils ne sont pas égaux mais simplement similaires donc en les mergeant ca donne encore un nouveau
+            let node = Node()
+            node.merge(arr_nodes[i])
+            node.merge(arr_nodes[j])
+            nodes_inserted.append(node)
+            nodes_removed.append(arr_nodes[i])
+            nodes_removed.append(arr_nodes[j])
+            arr_nodes.append(node)
+            arr_nodes.remove(at: i)
+            arr_nodes.remove(at: j - 1)
         }
         
-        // Update sections
-        let node = (nodes.filter { $0 == new_node }).first!
+//        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll() }
         SectionType.allCases.forEach {
-            if node.toSectionTypes().contains($0) {
-                if !sections[$0]!.nodes.contains(node) { sections[$0]!.nodes.append(node) }
-            } else { sections[$0]!.nodes.removeAll { $0 == node } }
+            for node in arr_nodes {
+                if node.toSectionTypes().contains($0) {
+                    // node est du type de la section
+                    if !sections[$0]!.nodes.contains(node) {
+                        // la section ne contient pas node, donc il faut l'y rajouter
+                        sections[$0]!.nodes.append(node)
+                    }
+                } else {
+                    // node n'est pas dans la section
+                    
+                }
+            }
         }
+        
+        nodes = Set(arr_nodes)
+        
+        print("après addNode", nodes.count)
     }
 
     public func removeNode(_ node: Node) {
