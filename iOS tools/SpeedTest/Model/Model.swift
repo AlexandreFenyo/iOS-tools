@@ -190,6 +190,13 @@ class DBMaster {
     }
     
     public func addNode(_ new_node: Node) {
+        SectionType.allCases.forEach {
+            sections[$0]!.nodes.append(new_node)
+        }
+        nodes.insert(new_node)
+return
+        
+        
         let index_paths_removed = [IndexPath]()
         let index_paths_inserted = [IndexPath]()
 

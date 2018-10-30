@@ -88,13 +88,25 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
+
+        
         
         let node = Node()
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
         tableView.beginUpdates()
+        
+        SectionType.allCases.forEach {
+            DBMaster.shared.sections[$0]!.nodes.remove(at: 0)
+            tableView.deleteRows(at: [IndexPath(row: 0, section: $0.rawValue)], with: .automatic)
+        }
+
+        
         addNode(node)
-        tableView.endUpdates()
+        SectionType.allCases.forEach {
+        tableView.insertRows(at: [ IndexPath(row: DBMaster.shared.sections[$0]!.nodes.count - 1, section: $0.rawValue)], with: .automatic)
+        }
+     tableView.endUpdates()
         
 //print(traitCollection.horizontalSizeClass.rawValue)
     }
