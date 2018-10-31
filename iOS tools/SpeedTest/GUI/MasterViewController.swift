@@ -95,18 +95,27 @@ class MasterViewController: UITableViewController, DeviceManager {
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
         tableView.beginUpdates()
+        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
+        print(index_paths_removed.count)
+        print(index_paths_inserted.count)
+        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+        tableView.insertRows(at: index_paths_inserted, with: .automatic)
+        tableView.endUpdates()
         
-        SectionType.allCases.forEach {
-            DBMaster.shared.sections[$0]!.nodes.remove(at: 0)
-            tableView.deleteRows(at: [IndexPath(row: 0, section: $0.rawValue)], with: .automatic)
-        }
-
         
-        addNode(node)
-        SectionType.allCases.forEach {
-        tableView.insertRows(at: [ IndexPath(row: DBMaster.shared.sections[$0]!.nodes.count - 1, section: $0.rawValue)], with: .automatic)
-        }
-     tableView.endUpdates()
+//        tableView.beginUpdates()
+//
+//        SectionType.allCases.forEach {
+//            DBMaster.shared.sections[$0]!.nodes.remove(at: 0)
+//            tableView.deleteRows(at: [IndexPath(row: 0, section: $0.rawValue)], with: .automatic)
+//        }
+//
+//
+//        addNode(node)
+//        SectionType.allCases.forEach {
+//        tableView.insertRows(at: [ IndexPath(row: DBMaster.shared.sections[$0]!.nodes.count - 1, section: $0.rawValue)], with: .automatic)
+//        }
+//     tableView.endUpdates()
         
 //print(traitCollection.horizontalSizeClass.rawValue)
     }

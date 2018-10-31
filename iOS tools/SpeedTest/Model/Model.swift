@@ -189,57 +189,49 @@ class DBMaster {
         return nil
     }
     
-    public func addNode(_ new_node: Node) {
-        SectionType.allCases.forEach {
-            sections[$0]!.nodes.append(new_node)
-        }
-        nodes.insert(new_node)
-return
-        
-        
-        let index_paths_removed = [IndexPath]()
-        let index_paths_inserted = [IndexPath]()
+    public func addNode(_ new_node: Node) -> ([IndexPath], [IndexPath]) {
+        var index_paths_removed = [IndexPath]()
+        var index_paths_inserted = [IndexPath]()
 
-        var nodes_removed = [Node]()
-        var nodes_inserted = [Node]()
-
-        print("avant addNode", nodes.count)
-
+        // Déterminer la nouvelle liste de noeuds suite à l'ajout d'un noeud
         var arr_nodes = Array(nodes)
         arr_nodes.append(new_node)
-        
         while let (i, j) = findSimilar(arr_nodes) {
             // ils ne sont pas égaux mais simplement similaires donc en les mergeant ca donne encore un nouveau
+
+            print("SALUT")
+
             let node = Node()
             node.merge(arr_nodes[i])
             node.merge(arr_nodes[j])
-            nodes_inserted.append(node)
-            nodes_removed.append(arr_nodes[i])
-            nodes_removed.append(arr_nodes[j])
             arr_nodes.append(node)
+            arr_nodes.remove(at: j)
             arr_nodes.remove(at: i)
-            arr_nodes.remove(at: j - 1)
         }
-        
-//        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll() }
+
+        // Dans chaque section, déterminer et supprimer les noeuds qui ont disparu
+        SectionType.allCases.forEach {
+            for idx in (0..<sections[$0]!.nodes.count).reversed() {
+                if !arr_nodes.contains(sections[$0]!.nodes[idx]) {
+                    print("disparu")
+                    index_paths_removed.append(IndexPath(row: idx, section: $0.rawValue))
+                    sections[$0]!.nodes.remove(at: idx)
+                }
+            }
+        }
+
+        // Dans chaque section, ajouter les nouveaux noeuds
         SectionType.allCases.forEach {
             for node in arr_nodes {
-                if node.toSectionTypes().contains($0) {
-                    // node est du type de la section
-                    if !sections[$0]!.nodes.contains(node) {
-                        // la section ne contient pas node, donc il faut l'y rajouter
-                        sections[$0]!.nodes.append(node)
-                    }
-                } else {
-                    // node n'est pas dans la section
-                    
+                if node.toSectionTypes().contains($0) && !sections[$0]!.nodes.contains(node) {
+                    index_paths_inserted.append(IndexPath(row: sections[$0]!.nodes.count, section: $0.rawValue))
+                    sections[$0]!.nodes.append(node)
                 }
             }
         }
         
         nodes = Set(arr_nodes)
-        
-        print("après addNode", nodes.count)
+        return (index_paths_removed, index_paths_inserted)
     }
 
     public func removeNode(_ node: Node) {
