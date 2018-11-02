@@ -32,10 +32,6 @@ class NetworkBrowser {
         } while current != broadcast
     }
 
-    public func stop() {
-        finished = true
-    }
-    
     private func getIPForTask() -> IPv4Address? {
         return DispatchQueue.main.sync {
             guard let address = reply.filter({
@@ -56,6 +52,11 @@ class NetworkBrowser {
             device_manager.addNode(node)
             reply.removeValue(forKey: from)
         }
+    }
+    
+    // Must be called by main thread
+    public func stop() {
+        finished = true
     }
     
     private func isFinished() -> Bool {
