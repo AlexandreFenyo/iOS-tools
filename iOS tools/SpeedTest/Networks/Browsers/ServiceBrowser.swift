@@ -79,18 +79,21 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
-        var addresses : [IPAddress] = []
+        let node = Node()
+
+        node.types = [ .chargen , .discard, .ios ]
+        node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
+        node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
+
         if sender.addresses != nil {
             for data in sender.addresses! {
                 let sock_addr = SockAddr.getSockAddr(data)
                 switch sock_addr.getFamily() {
                 case AF_INET:
-                    print("  hostname:", sock_addr.resolveHostName(), "IPv4:", sock_addr.toNumericString())
-                    addresses.append(sock_addr.getIPAddress()!)
+                    node.v4_addresses.insert(sock_addr.getIPAddress() as! IPv4Address)
 
                 case AF_INET6:
-                    print("  hostname:", sock_addr.resolveHostName(), "IPv6:", sock_addr.toNumericString())
-                    addresses.append(sock_addr.getIPAddress()!)
+                    node.v6_addresses.insert(sock_addr.getIPAddress() as! IPv6Address)
 
                 default:
                     fatalError("can not be here")
@@ -98,9 +101,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             }
         }
 
-//        device_manager.addDevice(name: sender.name, addresses: addresses)
-// A REFAIRE avec node
-
+        // sender.domain not used ("local.")
+        if !sender.name.isEmpty { node.names.insert(sender.name) }
+        if let domain = DomainName(sender.hostName!) { node.dns_names.insert(domain) }
+        
+        device_manager.addNode(node)
     }
 }
 
@@ -116,7 +121,6 @@ class ServiceBrowser : NetServiceBrowser {
     }
 
     public func search() {
-        print("START SEARCH")
         searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }

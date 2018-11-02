@@ -66,12 +66,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 
         // Start local services
-        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)
+        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: Int32(NetworkDefaults.speed_test_chargen_port))
         local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true)
         local_chargen_service!.delegate = local_chargen_service_delegate
         local_chargen_service!.publish(options: .listenForConnections)
 
-        local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: NetworkDefaults.speed_test_discard_port)
+        local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: Int32(NetworkDefaults.speed_test_discard_port))
         local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false)
         local_discard_service!.delegate = local_discard_service_delegate
         local_discard_service!.publish(options: .listenForConnections)

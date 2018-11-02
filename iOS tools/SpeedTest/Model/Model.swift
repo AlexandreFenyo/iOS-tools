@@ -14,7 +14,7 @@ enum SectionType: Int, CaseIterable {
 }
 
 enum NodeType: Int, CaseIterable {
-    case localhost = 0, ios, chargen, discard, gateway, internet, locked
+    case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
 // A domain part may contain a dot
@@ -62,6 +62,18 @@ class DomainName : Hashable {
         hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
     }
 
+    public init?(_ name: String) {
+        if let idx = name.firstIndex(of: ".") {
+            if idx == name.indices.first || idx == name.indices.last { return nil }
+            host_part = HostPart(String(name.prefix(upTo: idx)))
+            domain_part = DomainPart(String(name[name.index(after: idx)...]))
+        } else {
+            host_part = HostPart(name)
+            domain_part = nil
+        }
+        hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
+    }
+    
     public func toString() -> String {
         if let domain_part = domain_part {
             return host_part.toString() + "." + domain_part.toString()
@@ -95,13 +107,14 @@ class Node : Hashable {
 
     public var mcast_dns_names = Set<FQDN>()
     public var dns_names = Set<DomainName>()
+    public var names = Set<String>()
     public var v4_addresses = Set<IPv4Address>()
     public var v6_addresses = Set<IPv6Address>()
-    public var tcp_ports = Set<UInt32>()
+    public var tcp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
 
     public init() {
-        hashValue = mcast_dns_names.hashValue &+ dns_names.hashValue &+ v4_addresses.hashValue &+ v6_addresses.hashValue &+ tcp_ports.hashValue &+ types.hashValue
+        hashValue = mcast_dns_names.hashValue &+ dns_names.hashValue &+ names.hashValue &+ v4_addresses.hashValue &+ v6_addresses.hashValue &+ tcp_ports.hashValue &+ types.hashValue
     }
     
     private var adresses: Set<IPAddress> {
@@ -125,7 +138,10 @@ class Node : Hashable {
     public func toSectionTypes() -> Set<SectionType> {
         var section_types = Set<SectionType>()
 
-        if types.contains(.localhost) { section_types.insert(.localhost) }
+        if types.contains(.localhost) {
+            section_types.insert(.localhost)
+            return section_types
+        }
         if types.contains(.ios) { section_types.insert(.ios) }
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
         if types.contains(.gateway) { section_types.insert(.gateway) }
@@ -138,7 +154,8 @@ class Node : Hashable {
     
     public func merge(_ node: Node) {
         mcast_dns_names.formUnion(node.mcast_dns_names)
-        dns_names.formUnion(node.mcast_dns_names)
+        dns_names.formUnion(node.dns_names)
+        names.formUnion(node.names)
         v4_addresses.formUnion(node.v4_addresses)
         v6_addresses.formUnion(node.v6_addresses)
         types.formUnion(node.types)
@@ -158,7 +175,7 @@ class Node : Hashable {
     }
 
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
     }
 }
 
@@ -188,14 +205,27 @@ class DBMaster {
         }
         return nil
     }
-    
+
     public func addNode(_ new_node: Node) -> ([IndexPath], [IndexPath]) {
+        return addOrRemoveNode(new_node, add: true)
+    }
+    public func removeNode(_ node: Node) -> [IndexPath] {
+        let (index_paths_removed, _) = addOrRemoveNode(node, add: false)
+        return index_paths_removed
+    }
+
+    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
 
+        if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted) }
+
         // Déterminer la nouvelle liste de noeuds suite à l'ajout d'un noeud
         var arr_nodes = Array(nodes)
-        arr_nodes.append(new_node)
+        
+        if add { arr_nodes.append(new_node) }
+        else { arr_nodes.removeAll { $0 == new_node } }
+        
         while let (i, j) = findSimilar(arr_nodes) {
             // ils ne sont pas égaux mais simplement similaires donc en les mergeant ca donne encore un nouveau
             let node = Node()
@@ -229,21 +259,6 @@ class DBMaster {
         return (index_paths_removed, index_paths_inserted)
     }
 
-    public func removeNode(_ node: Node) {
-        SectionType.allCases.forEach { sections[$0]!.nodes.removeAll { $0 == node }}
-        nodes.remove(node)
-    }
-    
-    public func locateNode(_ node: Node) -> [IndexPath] {
-        var paths = [IndexPath]()
-        SectionType.allCases.forEach {
-            for idx in sections[$0]!.nodes.indices {
-                if sections[$0]!.nodes[idx] == node { paths.append(IndexPath(row: idx, section: $0.rawValue)) }
-            }
-        }
-        return paths
-    }
-
     public init() {
         networks = Set<IPNetwork>()
 
@@ -256,8 +271,9 @@ class DBMaster {
             .internet: Section("Internet", "remote host on the Internet"),
             .other: Section("Other hosts", "any host")
         ]
-        
+
         var node = Node()
+        /*
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
@@ -283,14 +299,15 @@ class DBMaster {
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
-        node.types = [ .internet, .locked ]
+        node.types = [ .internet ]
         _ = addNode(node)
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
-        node.types = [ .internet, .locked ]
+        node.types = [ .internet ]
         _ = addNode(node)
-
+*/
+        
         // Add localhost
         node = Node()
         node.types = [ .localhost ]
@@ -311,7 +328,7 @@ class DBMaster {
             }
             idx += 1
         } while ret >= 0
-
+        node.names.insert(UIDevice.current.name)
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         _ = addNode(node)
     }

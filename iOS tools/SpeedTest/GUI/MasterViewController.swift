@@ -88,36 +88,12 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
-
-        
-        
         let node = Node()
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
-        tableView.beginUpdates()
-        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        print(index_paths_removed.count)
-        print(index_paths_inserted.count)
-        tableView.deleteRows(at: index_paths_removed, with: .automatic)
-        tableView.insertRows(at: index_paths_inserted, with: .automatic)
-        tableView.endUpdates()
+        addNode(node)
         
-        
-//        tableView.beginUpdates()
-//
-//        SectionType.allCases.forEach {
-//            DBMaster.shared.sections[$0]!.nodes.remove(at: 0)
-//            tableView.deleteRows(at: [IndexPath(row: 0, section: $0.rawValue)], with: .automatic)
-//        }
-//
-//
-//        addNode(node)
-//        SectionType.allCases.forEach {
-//        tableView.insertRows(at: [ IndexPath(row: DBMaster.shared.sections[$0]!.nodes.count - 1, section: $0.rawValue)], with: .automatic)
-//        }
-//     tableView.endUpdates()
-        
-//print(traitCollection.horizontalSizeClass.rawValue)
+        //print(traitCollection.horizontalSizeClass.rawValue)
     }
 
     // Refresh started with gesture
@@ -200,9 +176,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - DeviceManager protocol
 
     func addNode(_ node: Node) {
-        DBMaster.shared.addNode(node)
-        // A FINIR
-
+        tableView.beginUpdates()
+        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
+        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+        tableView.insertRows(at: index_paths_inserted, with: .automatic)
+        tableView.endUpdates()
+        
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }
@@ -277,7 +256,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
         cell.nPorts.text = String(node.tcp_ports.count) + " port" + (node.tcp_ports.count > 1 ? "s" : "")
-        
+
        return cell
     }
 
@@ -292,16 +271,18 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !getNode(indexPath: indexPath).types.contains(.locked)
+        return !getNode(indexPath: indexPath).types.contains(.localhost)
     }
 
     // Delete every rows corresponding to a node
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete { fatalError("editingStyle invalid") }
         let node = getNode(indexPath: indexPath)
-        let paths = DBMaster.shared.locateNode(node)
-        DBMaster.shared.removeNode(node)
-        tableView.deleteRows(at: paths, with: .fade)
+
+        tableView.beginUpdates()
+        let index_paths_removed = DBMaster.shared.removeNode(node)
+        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+        tableView.endUpdates()
     }
 
     // MARK: - Navigation
