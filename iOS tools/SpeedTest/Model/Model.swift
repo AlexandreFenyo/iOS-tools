@@ -197,6 +197,7 @@ class DBMaster {
     private var networks : Set<IPNetwork>
     static public let shared = DBMaster()
 
+    // Returns a pair (x, y) with x < y
     private func findSimilar(_ arr_nodes : [Node]) -> (Int, Int)? {
         for i in 0 ..< arr_nodes.count {
             for j in (i + 1) ..< arr_nodes.count {
@@ -220,14 +221,14 @@ class DBMaster {
 
         if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted) }
 
-        // Déterminer la nouvelle liste de noeuds suite à l'ajout d'un noeud
+        // Create the new node list including the new node
         var arr_nodes = Array(nodes)
         
         if add { arr_nodes.append(new_node) }
         else { arr_nodes.removeAll { $0 == new_node } }
         
         while let (i, j) = findSimilar(arr_nodes) {
-            // ils ne sont pas égaux mais simplement similaires donc en les mergeant ca donne encore un nouveau
+            // Nodes at i and j positions are not equal but only similar. Therefore, merging them together creates a new node distinct from i and j.
             let node = Node()
             node.merge(arr_nodes[i])
             node.merge(arr_nodes[j])
@@ -236,7 +237,7 @@ class DBMaster {
             arr_nodes.remove(at: i)
         }
 
-        // Dans chaque section, déterminer et supprimer les noeuds qui ont disparu
+        // In each section, locate and remove nodes that have been removed
         SectionType.allCases.forEach {
             for idx in (0..<sections[$0]!.nodes.count).reversed() {
                 if !arr_nodes.contains(sections[$0]!.nodes[idx]) {
@@ -246,7 +247,7 @@ class DBMaster {
             }
         }
 
-        // Dans chaque section, ajouter les nouveaux noeuds
+        // Add the new nodes in each section
         SectionType.allCases.forEach {
             for node in arr_nodes {
                 if node.toSectionTypes().contains($0) && !sections[$0]!.nodes.contains(node) {
