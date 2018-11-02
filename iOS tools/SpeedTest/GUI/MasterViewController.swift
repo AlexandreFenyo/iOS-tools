@@ -42,8 +42,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
-
-    private var browser_network : NetworkBrowser?
+    private var browser_networks = [NetworkBrowser]()
 
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
@@ -64,10 +63,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             for network in DBMaster.shared.networks {
                 if let network_addr = network.ip_address as? IPv4Address {
                     if network.mask_len < 22 { continue }
-                    
-                    self.browser_network = NetworkBrowser(network: network_addr, netmask: IPv4Address(mask_len: network.mask_len), device_manager: self)
-                    print("browse:", network_addr.toNumericString(), network.mask_len)
-                    self.browser_network!.browse()
+                    let nb = NetworkBrowser(network: network_addr, netmask: IPv4Address(mask_len: network.mask_len), device_manager: self)!
+                    self.browser_networks.append(nb)
+                    nb.browse()
                 }
             }
         }
@@ -82,8 +80,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         browser_discard?.stop()
         browser_chargen?.stop()
-        browser_network?.stop()
-        browser_network = nil
+        for nb in browser_networks { nb.stop() }
+        browser_networks.removeAll()
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
