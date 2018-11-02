@@ -158,7 +158,7 @@ class Node : Hashable {
     }
 
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names || lhs.dns_names == rhs.dns_names || lhs.v4_addresses == rhs.v4_addresses || lhs.v6_addresses == rhs.v6_addresses || lhs.tcp_ports == rhs.tcp_ports || lhs.types == rhs.types
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
     }
 }
 
@@ -198,9 +198,6 @@ class DBMaster {
         arr_nodes.append(new_node)
         while let (i, j) = findSimilar(arr_nodes) {
             // ils ne sont pas égaux mais simplement similaires donc en les mergeant ca donne encore un nouveau
-
-            print("SALUT")
-
             let node = Node()
             node.merge(arr_nodes[i])
             node.merge(arr_nodes[j])
@@ -213,7 +210,6 @@ class DBMaster {
         SectionType.allCases.forEach {
             for idx in (0..<sections[$0]!.nodes.count).reversed() {
                 if !arr_nodes.contains(sections[$0]!.nodes[idx]) {
-                    print("disparu")
                     index_paths_removed.append(IndexPath(row: idx, section: $0.rawValue))
                     sections[$0]!.nodes.remove(at: idx)
                 }
@@ -229,7 +225,6 @@ class DBMaster {
                 }
             }
         }
-        
         nodes = Set(arr_nodes)
         return (index_paths_removed, index_paths_inserted)
     }
@@ -267,34 +262,34 @@ class DBMaster {
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.5")!)
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
-        node.types = [ .chargen, .discard, .ios ]
-        addNode(node)
+        node.types = [ .chargen , .discard, .ios ]
+        _ = addNode(node)
 
         node = Node()
         node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
         node.types = [ .chargen, .discard ]
-        addNode(node)
+        _ = addNode(node)
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("chargen device 1")))
         node.v6_addresses.insert(IPv6Address("fe80:1::abcd:1234")!)
         node.types = [ .chargen, .discard ]
-        addNode(node)
+        _ = addNode(node)
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("Local gateway")))
         node.types = [ .gateway ]
-        addNode(node)
+        _ = addNode(node)
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("IPv4 Internet")))
         node.types = [ .internet, .locked ]
-        addNode(node)
+        _ = addNode(node)
 
         node = Node()
         node.dns_names.insert(DomainName(HostPart("IPv6 Internet")))
         node.types = [ .internet, .locked ]
-        addNode(node)
+        _ = addNode(node)
 
         // Add localhost
         node = Node()
@@ -318,6 +313,6 @@ class DBMaster {
         } while ret >= 0
 
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
-        addNode(node)
+        _ = addNode(node)
     }
 }
