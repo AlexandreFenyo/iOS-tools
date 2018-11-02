@@ -17,6 +17,7 @@ import UIKit
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
     func addNode(_ node: Node)
+    func setInformation(_ info: String)
 }
 
 // foncé: 70 80 91
@@ -60,6 +61,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
+            AVOIR TOUS LES RESEaUX DANS UN MEME browser
             for network in DBMaster.shared.networks {
                 if let network_addr = network.ip_address as? IPv4Address {
                     if network.mask_len < 22 { continue }
@@ -82,6 +84,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_chargen?.stop()
         for nb in browser_networks { nb.stop() }
         browser_networks.removeAll()
+
+        setTitle("Target List")
+    }
+    
+    public func setTitle(_ title: String) {
+        navigationItem.title = title
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
@@ -200,6 +208,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }
 
+    func setInformation(_ info: String) {
+        setTitle(info)
+    }
+    
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {

@@ -41,6 +41,7 @@ class NetworkBrowser {
             reply[address]!.0 -= 1
             if reply[address]!.0 == 0 { reply.removeValue(forKey: address) }
             else { reply[address]!.1 = Date() }
+            if let info = address.toNumericString() { device_manager.setInformation("trying " + info) }
             return address
         }
     }
@@ -50,6 +51,7 @@ class NetworkBrowser {
             let node = Node()
             node.v4_addresses.insert(from)
             device_manager.addNode(node)
+            if let info = from.toNumericString() { device_manager.setInformation("found " + info) }
             reply.removeValue(forKey: from)
         }
     }
@@ -60,7 +62,7 @@ class NetworkBrowser {
     }
     
     private func isFinished() -> Bool {
-        return DispatchQueue.main.sync { finished || reply.isEmpty }
+        return DispatchQueue.main.sync { return finished || reply.isEmpty }
     }
     
     public func browse() {
@@ -122,9 +124,7 @@ class NetworkBrowser {
                     var from_len : socklen_t = UInt32(from.count)
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
                         from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
-                            buf.withUnsafeMutableBytes {
-                                recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p)
-                            }
+                            buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
                         }
                     }
                     if ret < 0 {
@@ -140,6 +140,9 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
             dispatchGroup.wait()
+            
+            DispatchQueue.main.sync { self.device_manager.setInformation("") }
+
         }
     }
 }
