@@ -18,9 +18,7 @@ class NetworkBrowser {
     private var finished : Bool = false
 
     public init?(network: IPv4Address?, netmask: IPv4Address?, device_manager: DeviceManager) {
-        guard let network = network, let netmask = netmask else {
-            return nil
-        }
+        guard let network = network, let netmask = netmask else { return nil }
         
         self.device_manager = device_manager
         self.network = network
@@ -49,8 +47,9 @@ class NetworkBrowser {
 
     private func manageAnswer(from: IPv4Address) {
         DispatchQueue.main.sync {
-//            device_manager.addDevice(name: "unnamed \(from.toNumericString())", addresses: [from])
-            // A REFAIRE avec node
+            let node = Node()
+            node.v4_addresses.insert(from)
+            device_manager.addNode(node)
 
             reply.removeValue(forKey: from)
         }

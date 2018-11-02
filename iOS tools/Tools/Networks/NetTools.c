@@ -71,6 +71,8 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
 }
 
 void net_test() {
+   // récupérer des infos comme la gateway par défaut via sysctl(3)
+    
     char str[INET6_ADDRSTRLEN];
 //    char hostname[] = "www.fenyo.net";
     char hostname[] = "google.com";
@@ -128,7 +130,7 @@ void net_test() {
 
     freeifaddrs(addresses);
 
-    // direct DNS
+    // direct DNS: hostname to IP
     printf("DNS\n");
     
     struct addrinfo *infos;
@@ -246,6 +248,7 @@ void net_test() {
         }
     }
     
+    // reverse DNS: IP to hostname
     char host[512];
     ret = getnameinfo(&addr, sizeof addr, host, sizeof host, 0, 0, NI_NAMEREQD);
     if (ret) {

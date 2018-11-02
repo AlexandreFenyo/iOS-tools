@@ -49,17 +49,31 @@ class MasterViewController: UITableViewController, DeviceManager {
         return section.nodes[index_path.item]
     }
 
+    // Find new nodes
     private func startBrowsing() {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
-        _ in
-        self.stop_button!.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-        self.browser_chargen?.search()
-        self.browser_discard?.search()
-      }
+            _ in
+            self.stop_button!.isEnabled = true
+            self.add_button!.isEnabled = false
+            self.update_button!.isEnabled = false
+            self.browser_chargen?.search()
+            self.browser_discard?.search()
+
+            for network in DBMaster.shared.networks {
+                if let network_addr = network.ip_address as? IPv4Address {
+                    if network.mask_len < 22 { continue }
+                    
+                    let nb = NetworkBrowser(network: network_addr, netmask: IPv4Address(mask_len: network.mask_len), device_manager: self)!
+                    print("browse:", network_addr.toNumericString(), network.mask_len)
+                    nb.browse()
+                }
+            }
+//
+
+        }
     }
 
+    // Stop looking for new nodes
     private func stopBrowsing() {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false

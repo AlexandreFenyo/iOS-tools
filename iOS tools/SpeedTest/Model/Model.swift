@@ -194,7 +194,7 @@ class Section {
 class DBMaster {
     public var sections : [SectionType: Section]
     private var nodes : Set<Node>
-    private var networks : Set<IPNetwork>
+    public var networks : Set<IPNetwork>
     static public let shared = DBMaster()
 
     // Returns a pair (x, y) with x < y
