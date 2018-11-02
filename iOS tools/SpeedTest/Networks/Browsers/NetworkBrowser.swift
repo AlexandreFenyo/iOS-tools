@@ -32,6 +32,10 @@ class NetworkBrowser {
         } while current != broadcast
     }
 
+    public func stop() {
+        finished = true
+    }
+    
     private func getIPForTask() -> IPv4Address? {
         return DispatchQueue.main.sync {
             guard let address = reply.filter({
@@ -50,7 +54,6 @@ class NetworkBrowser {
             let node = Node()
             node.v4_addresses.insert(from)
             device_manager.addNode(node)
-
             reply.removeValue(forKey: from)
         }
     }
@@ -131,12 +134,11 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                     print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
-                } while true
-                    
+                } while !self.isFinished()
+
                 dispatchGroup.leave()
             }
             dispatchGroup.wait()
-            print("FIN FIN FIN FIN")
         }
     }
 }
