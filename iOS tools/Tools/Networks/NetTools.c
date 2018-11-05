@@ -101,6 +101,7 @@ struct rt_msghdr {
     struct rt_metrics rtm_rmx; /* metrics themselves */
 };
 
+// FAIRE PASSER UN TABLEAU DE STRUCTURES VERS SWIFT
 void net_ipv4_gateway() {
     int mib[6];
     mib[0] = CTL_NET;
