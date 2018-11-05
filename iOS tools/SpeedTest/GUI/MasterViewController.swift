@@ -43,7 +43,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
-    private var browser_networks = [NetworkBrowser]()
+    
+    private var browser_network : NetworkBrowser?
 
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
@@ -61,16 +62,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
-//            AVOIR TOUS LES RESEaUX DANS UN MEME browser
-
-            for network in DBMaster.shared.networks {
-                if let network_addr = network.ip_address as? IPv4Address {
-                    if network.mask_len < 22 { continue }
-                    let nb = NetworkBrowser(network: network_addr, netmask: IPv4Address(mask_len: network.mask_len), device_manager: self)!
-                    self.browser_networks.append(nb)
-                    nb.browse()
-                }
-            }
+            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
+            self.browser_network = nb
+            nb.browse()
         }
     }
 
@@ -83,8 +77,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         browser_discard?.stop()
         browser_chargen?.stop()
-        for nb in browser_networks { nb.stop() }
-        browser_networks.removeAll()
+        browser_network?.stop()
+        browser_network = nil
 
         setTitle("Target List")
     }

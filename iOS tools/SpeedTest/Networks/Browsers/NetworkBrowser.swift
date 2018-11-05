@@ -11,25 +11,35 @@ import Foundation
 // IPv4 only
 class NetworkBrowser {
     private let device_manager : DeviceManager
-    private let network : IPv4Address
-    private let netmask : IPv4Address
-    private let broadcast : IPAddress
     private var reply : [IPv4Address: (Int, Date?)] = [:]
     private var finished : Bool = false
 
     public init?(network: IPv4Address?, netmask: IPv4Address?, device_manager: DeviceManager) {
         guard let network = network, let netmask = netmask else { return nil }
-        
         self.device_manager = device_manager
-        self.network = network
-        self.netmask = netmask
-        broadcast = self.network.or(self.netmask.xor(IPv4Address("255.255.255.255")!))
+        let broadcast = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
 
         var current = network.and(netmask).next() as! IPv4Address
         repeat {
             reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
             current = current.next() as! IPv4Address
         } while current != broadcast
+    }
+
+    public init(networks: Set<IPNetwork>, device_manager: DeviceManager) {
+        self.device_manager = device_manager
+        for network in networks {
+            if let network_addr = network.ip_address as? IPv4Address {
+                if network.mask_len < 22 { continue }
+                let netmask = IPv4Address(mask_len: network.mask_len)
+                let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
+                var current = network_addr.and(netmask).next() as! IPv4Address
+                repeat {
+                    reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
+                    current = current.next() as! IPv4Address
+                } while current != broadcast
+            }
+        }
     }
 
     private func getIPForTask() -> IPv4Address? {
@@ -39,9 +49,9 @@ class NetworkBrowser {
                 return Date().timeIntervalSince(last_use) > 3
             }).first?.key else { return nil }
             reply[address]!.0 -= 1
+            if let info = address.toNumericString() { device_manager.setInformation((reply[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + "trying " + info) }
             if reply[address]!.0 == 0 { reply.removeValue(forKey: address) }
             else { reply[address]!.1 = Date() }
-            if let info = address.toNumericString() { device_manager.setInformation("trying " + info) }
             return address
         }
     }
