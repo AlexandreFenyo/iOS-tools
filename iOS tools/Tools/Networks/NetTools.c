@@ -179,11 +179,11 @@ void net_ipv6_gateway() {
         if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
         
         struct sockaddr_in6 *sin = next + sizeof(struct rt_msghdr);
-//        if (sin->sin6_addr.__u6_addr.__u6_addr32[0] ||
-//            sin->sin6_addr.__u6_addr.__u6_addr32[1] ||
-//            sin->sin6_addr.__u6_addr.__u6_addr32[2] ||
-//            sin->sin6_addr.__u6_addr.__u6_addr32[3]
-//            ) continue;
+        if (sin->sin6_addr.__u6_addr.__u6_addr32[0] ||
+            sin->sin6_addr.__u6_addr.__u6_addr32[1] ||
+            sin->sin6_addr.__u6_addr.__u6_addr32[2] ||
+            sin->sin6_addr.__u6_addr.__u6_addr32[3]
+            ) continue;
         char str[INET6_ADDRSTRLEN];
         inet_ntop(sin->sin6_family, &sin->sin6_addr, str, sizeof str);
 
@@ -192,7 +192,7 @@ void net_ipv6_gateway() {
         printf("        addrs: %d\n", ((struct rt_msghdr *) next)->rtm_addrs);
         printf("        flags: %d\n", ((struct rt_msghdr *) next)->rtm_flags);
         printf("-  family:%d %d\n", sin->sin6_family, AF_INET6);
-        inet_ntop(sin->sin6_family, &sin->sin6_addr, str, sizeof str);
+        inet_ntop(sin->sin6_family, &sin[1].sin6_addr, str, sizeof str);
         printf("-  gw:%s\n", str);
     }
 }
