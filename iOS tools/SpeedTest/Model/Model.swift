@@ -210,6 +210,7 @@ class DBMaster {
     public func addNode(_ new_node: Node) -> ([IndexPath], [IndexPath]) {
         return addOrRemoveNode(new_node, add: true)
     }
+    
     public func removeNode(_ node: Node) -> [IndexPath] {
         let (index_paths_removed, _) = addOrRemoveNode(node, add: false)
         return index_paths_removed

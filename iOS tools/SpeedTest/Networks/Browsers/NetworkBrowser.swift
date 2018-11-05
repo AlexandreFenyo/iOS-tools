@@ -9,11 +9,13 @@
 import Foundation
 
 // IPv4 only
+// Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
     private let device_manager : DeviceManager
     private var reply : [IPv4Address: (Int, Date?)] = [:]
     private var finished : Bool = false
 
+    // Browse a network
     public init?(network: IPv4Address?, netmask: IPv4Address?, device_manager: DeviceManager) {
         guard let network = network, let netmask = netmask else { return nil }
         self.device_manager = device_manager
@@ -21,11 +23,14 @@ class NetworkBrowser {
 
         var current = network.and(netmask).next() as! IPv4Address
         repeat {
-            reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
+            if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+                reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
             current = current.next() as! IPv4Address
+            }
         } while current != broadcast
     }
 
+    // Browse a set of networks
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager) {
         self.device_manager = device_manager
         for network in networks {
@@ -97,7 +102,7 @@ class NetworkBrowser {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
-                        print("sending icmp to", address.toNumericString())
+//                        print("sending icmp to", address.toNumericString())
 
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
@@ -143,7 +148,7 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    print("reply from", SockAddr.getSockAddr(from).toNumericString())
+//                    print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while !self.isFinished()
 
