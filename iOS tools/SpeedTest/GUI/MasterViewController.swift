@@ -52,7 +52,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         return section.nodes[index_path.item]
     }
 
-    // Find new nodes
+    // Update nodes and find new nodes
     private func startBrowsing() {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
             _ in
@@ -62,6 +62,10 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
+            // Update local node
+            self.addNode(DBMaster.shared.getLocalNode())
+
+            // Use ICMP to find new nodes
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
             self.browser_network = nb
             nb.browse()

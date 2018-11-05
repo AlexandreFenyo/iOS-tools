@@ -11,9 +11,11 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/sysctl.h>
 #include <netdb.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>

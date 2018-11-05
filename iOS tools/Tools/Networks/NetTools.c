@@ -69,9 +69,143 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
     freeifaddrs(addresses);
     return mask_len;
 }
+// From OSX net/route.h:
+struct rt_metrics {
+    u_int32_t       rmx_locks;      /* Kernel leaves these values alone */
+    u_int32_t       rmx_mtu;        /* MTU for this path */
+    u_int32_t       rmx_hopcount;   /* max hops expected */
+    int32_t         rmx_expire;     /* lifetime for route, e.g. redirect */
+    u_int32_t       rmx_recvpipe;   /* inbound delay-bandwidth product */
+    u_int32_t       rmx_sendpipe;   /* outbound delay-bandwidth product */
+    u_int32_t       rmx_ssthresh;   /* outbound gateway buffer limit */
+    u_int32_t       rmx_rtt;        /* estimated round trip time */
+    u_int32_t       rmx_rttvar;     /* estimated rtt variance */
+    u_int32_t       rmx_pksent;     /* packets sent using this route */
+    u_int32_t       rmx_state;      /* route state */
+    u_int32_t       rmx_filler[3];  /* will be used for T/TCP later */
+};
+
+// From OSX net/route.h:
+struct rt_msghdr {
+    u_short rtm_msglen;     /* to skip over non-understood messages */
+    u_char  rtm_version;    /* future binary compatibility */
+    u_char  rtm_type;       /* message type */
+    u_short rtm_index;      /* index for associated ifp */
+    int     rtm_flags;      /* flags, incl. kern & message, e.g. DONE */
+    int     rtm_addrs;      /* bitmask identifying sockaddrs in msg */
+    pid_t   rtm_pid;        /* identify sender */
+    int     rtm_seq;        /* for sender to identify action */
+    int     rtm_errno;      /* why failed */
+    int     rtm_use;        /* from rtentry */
+    u_int32_t rtm_inits;    /* which metrics we are initializing */
+    struct rt_metrics rtm_rmx; /* metrics themselves */
+};
+
+void net_ipv4_gateway() {
+    int mib[6];
+    mib[0] = CTL_NET;
+    mib[1] = PF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_INET;
+    mib[4] = NET_RT_FLAGS;
+    // see RTF_* in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
+    mib[5] = 2 | 1 | 0x10000000;
+    size_t needed = 0;
+    int res = sysctl(mib, 6, NULL, &needed, NULL, 0);
+    if (res < 0) {
+        perror("sysctl");
+        return;
+    }
+    void *msg;
+    printf("needed: %d\n", needed);
+    msg = malloc(needed);
+    if (!msg) {
+        perror("malloc");
+        return;
+    }
+    res = sysctl(mib, 6, msg, &needed, NULL, 0);
+    if (res < 0) {
+        perror("sysctl");
+        return;
+    }
+    void *lim = msg + needed;
+    void *next;
+    for (next = msg; next < lim; next += ((struct rt_msghdr *) next)->rtm_msglen) {
+        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
+        
+        struct sockaddr_in *sin = next + sizeof(struct rt_msghdr);
+        if (sin->sin_addr.s_addr) continue;
+        
+        printf("MESSAGE type: %d\n", ((struct rt_msghdr *) next)->rtm_type);
+        printf("        addrs: %d\n", ((struct rt_msghdr *) next)->rtm_addrs);
+        printf("        flags: %d\n", ((struct rt_msghdr *) next)->rtm_flags);
+        
+        printf("-  family:%d %d\n", sin->sin_family, AF_INET);
+        printf("   %s\n", inet_ntoa(sin->sin_addr));
+        printf("gw:%s\n", inet_ntoa(sin[1].sin_addr));
+    }
+}
+
+void net_ipv6_gateway() {
+    int mib[6];
+    mib[0] = CTL_NET;
+    mib[1] = PF_ROUTE;
+    mib[2] = 0;
+    mib[3] = AF_INET6;
+    mib[4] = NET_RT_FLAGS;
+    // see RTF_* in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
+    mib[5] = 2 | 1 | 0x10000000;
+    size_t needed = 0;
+    int res = sysctl(mib, 6, NULL, &needed, NULL, 0);
+    if (res < 0) {
+        perror("sysctl");
+        return;
+    }
+    void *msg;
+    printf("needed: %d\n", needed);
+    msg = malloc(needed);
+    if (!msg) {
+        perror("malloc");
+        return;
+    }
+    res = sysctl(mib, 6, msg, &needed, NULL, 0);
+    if (res < 0) {
+        perror("sysctl");
+        return;
+    }
+    void *lim = msg + needed;
+    void *next;
+    for (next = msg; next < lim; next += ((struct rt_msghdr *) next)->rtm_msglen) {
+        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
+        
+        struct sockaddr_in6 *sin = next + sizeof(struct rt_msghdr);
+//        if (sin->sin6_addr.__u6_addr.__u6_addr32[0] ||
+//            sin->sin6_addr.__u6_addr.__u6_addr32[1] ||
+//            sin->sin6_addr.__u6_addr.__u6_addr32[2] ||
+//            sin->sin6_addr.__u6_addr.__u6_addr32[3]
+//            ) continue;
+        char str[INET6_ADDRSTRLEN];
+        inet_ntop(sin->sin6_family, &sin->sin6_addr, str, sizeof str);
+
+        printf("MESSAGE type: %d\n", ((struct rt_msghdr *) next)->rtm_type);
+        printf("  dst:%s\n", str);
+        printf("        addrs: %d\n", ((struct rt_msghdr *) next)->rtm_addrs);
+        printf("        flags: %d\n", ((struct rt_msghdr *) next)->rtm_flags);
+        printf("-  family:%d %d\n", sin->sin6_family, AF_INET6);
+        inet_ntop(sin->sin6_family, &sin->sin6_addr, str, sizeof str);
+        printf("-  gw:%s\n", str);
+    }
+}
 
 void net_test() {
-   // récupérer des infos comme la gateway par défaut via sysctl(3)
+    // récupérer des infos comme la gateway par défaut via sysctl(3)
+//    net_ipv4_gateway();
+    net_ipv6_gateway();
+
+
+    
+
+    
     
     char str[INET6_ADDRSTRLEN];
 //    char hostname[] = "www.fenyo.net";

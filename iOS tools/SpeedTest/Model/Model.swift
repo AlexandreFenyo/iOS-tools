@@ -215,6 +215,32 @@ class DBMaster {
         let (index_paths_removed, _) = addOrRemoveNode(node, add: false)
         return index_paths_removed
     }
+    
+    public func getLocalNode() -> Node {
+        let node = Node()
+        node.types = [ .localhost ]
+        var idx : Int32 = 0, ret : Int32 = 0
+        repeat {
+            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
+            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            if ret >= 0 {
+                if SockAddr(data)!.getFamily() == AF_INET {
+                    let address = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
+                    node.v4_addresses.insert(address)
+                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
+                } else {
+                    let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+                    node.v6_addresses.insert(address)
+                    // ATTENTION : on a parfois: Thread 1: Fatal error: Duplicate element found in Set. Elements may have been mutated after insertion
+                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
+                }
+            }
+            idx += 1
+        } while ret >= 0
+        node.names.insert(UIDevice.current.name)
+        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
+        return node
+    }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
         var index_paths_removed = [IndexPath]()
@@ -311,27 +337,6 @@ class DBMaster {
 */
         
         // Add localhost
-        node = Node()
-        node.types = [ .localhost ]
-        var idx : Int32 = 0, ret : Int32 = 0
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            if ret >= 0 {
-                if SockAddr(data)!.getFamily() == AF_INET {
-                    let address = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
-                    node.v4_addresses.insert(address)
-                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
-                } else {
-                    let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-                    node.v6_addresses.insert(address)
-                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
-                }
-            }
-            idx += 1
-        } while ret >= 0
-        node.names.insert(UIDevice.current.name)
-        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
-        _ = addNode(node)
+        _ = addNode(getLocalNode())
     }
 }
