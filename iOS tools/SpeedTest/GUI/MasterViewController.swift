@@ -61,7 +61,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
-            AVOIR TOUS LES RESEaUX DANS UN MEME browser
+//            AVOIR TOUS LES RESEaUX DANS UN MEME browser
+
             for network in DBMaster.shared.networks {
                 if let network_addr = network.ip_address as? IPv4Address {
                     if network.mask_len < 22 { continue }
