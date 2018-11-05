@@ -35,7 +35,7 @@ class NetworkBrowser {
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
                 var current = network_addr.and(netmask).next() as! IPv4Address
                 repeat {
-                    reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
+                    if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
                     current = current.next() as! IPv4Address
                 } while current != broadcast
             }

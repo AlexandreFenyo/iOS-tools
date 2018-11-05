@@ -193,7 +193,7 @@ class Section {
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
     public var sections : [SectionType: Section]
-    private var nodes : Set<Node>
+    public var nodes : Set<Node>
     public var networks : Set<IPNetwork>
     static public let shared = DBMaster()
 
