@@ -12,64 +12,8 @@ __uint16_t _htons(__uint16_t x) {
     return htons(x);
 }
 
-static int nextValidAddr(struct ifaddrs **paddress) {
-    while ((*paddress)->ifa_addr == NULL || ((*paddress)->ifa_addr->sa_family != AF_INET && (*paddress)->ifa_addr->sa_family != AF_INET6)) {
-        *paddress = (*paddress)->ifa_next;
-        if ((*paddress) == NULL) return -1;
-    }
-    return 0;
-}
-
-static int countBits(void *buf, int count) {
-    int nbits = 0;
-    for (int i = 0; i < count; i++) {
-        unsigned char c = ((unsigned char *) buf)[i];
-        while (c) {
-            if (c & 1) nbits++;
-            c >>= 1;
-        }
-    }
-    return nbits;
-}
-
-int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
-    struct ifaddrs *addresses, *address;
-    int mask_len;
-
-    if (getifaddrs(&addresses) != 0) {
-        perror("getifaddrs");
-        return -1;
-    }
-    if (addresses == NULL) return -2;
-
-    address = addresses;
-    if (nextValidAddr(&address) == -1) return -3;
-    while (--ifindex >= 0) {
-        address = address->ifa_next;
-        if (address == NULL) return -4;
-        if (nextValidAddr(&address) == -1) return -3;
-    }
-
-    if (address->ifa_addr->sa_family == AF_INET) {
-        struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
-        if (salen < sizeof(struct sockaddr_in)) return -5;
-        memcpy(sa, s_in, sizeof(struct sockaddr_in));
-
-        struct sockaddr_in *netmask = (struct sockaddr_in *) address->ifa_netmask;
-        mask_len = countBits(&netmask->sin_addr, sizeof netmask->sin_addr);
-    } else {
-        struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) address->ifa_addr;
-        if (salen < sizeof(struct sockaddr_in6)) return -6;
-        memcpy(sa, s_in6, sizeof(struct sockaddr_in6));
-        
-        struct sockaddr_in6 *netmask = (struct sockaddr_in6 *) address->ifa_netmask;
-        mask_len = countBits(&netmask->sin6_addr, sizeof netmask->sin6_addr);
-    }
-    
-    freeifaddrs(addresses);
-    return mask_len;
-}
 // From OSX net/route.h:
+// /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
 struct rt_metrics {
     u_int32_t       rmx_locks;      /* Kernel leaves these values alone */
     u_int32_t       rmx_mtu;        /* MTU for this path */
@@ -101,113 +45,164 @@ struct rt_msghdr {
     struct rt_metrics rtm_rmx; /* metrics themselves */
 };
 
-// FAIRE PASSER UN TABLEAU DE STRUCTURES VERS SWIFT
-void net_ipv4_gateway() {
-    int mib[6];
-    mib[0] = CTL_NET;
-    mib[1] = PF_ROUTE;
-    mib[2] = 0;
-    mib[3] = AF_INET;
-    mib[4] = NET_RT_FLAGS;
-    // see RTF_* in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
-    mib[5] = 2 | 1 | 0x10000000;
-    size_t needed = 0;
-    int res = sysctl(mib, 6, NULL, &needed, NULL, 0);
-    if (res < 0) {
-        perror("sysctl");
-        return;
+static int nextValidAddr(struct ifaddrs **paddress) {
+    while ((*paddress)->ifa_addr == NULL || ((*paddress)->ifa_addr->sa_family != AF_INET && (*paddress)->ifa_addr->sa_family != AF_INET6)) {
+        *paddress = (*paddress)->ifa_next;
+        if ((*paddress) == NULL) return -1;
     }
-    void *msg;
-    printf("needed: %d\n", needed);
-    msg = malloc(needed);
-    if (!msg) {
-        perror("malloc");
-        return;
-    }
-    res = sysctl(mib, 6, msg, &needed, NULL, 0);
-    if (res < 0) {
-        perror("sysctl");
-        return;
-    }
-    void *lim = msg + needed;
-    void *next;
-    for (next = msg; next < lim; next += ((struct rt_msghdr *) next)->rtm_msglen) {
-        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
-        
-        struct sockaddr_in *sin = next + sizeof(struct rt_msghdr);
-        if (sin->sin_addr.s_addr) continue;
-        
-        printf("MESSAGE type: %d\n", ((struct rt_msghdr *) next)->rtm_type);
-        printf("        addrs: %d\n", ((struct rt_msghdr *) next)->rtm_addrs);
-        printf("        flags: %d\n", ((struct rt_msghdr *) next)->rtm_flags);
-        
-        printf("-  family:%d %d\n", sin->sin_family, AF_INET);
-        printf("   %s\n", inet_ntoa(sin->sin_addr));
-        printf("gw:%s\n", inet_ntoa(sin[1].sin_addr));
-    }
+    return 0;
 }
 
-void net_ipv6_gateway() {
-    int mib[6];
-    mib[0] = CTL_NET;
-    mib[1] = PF_ROUTE;
-    mib[2] = 0;
-    mib[3] = AF_INET6;
-    mib[4] = NET_RT_FLAGS;
-    // see RTF_* in /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
-    mib[5] = 2 | 1 | 0x10000000;
+static int countBits(void *buf, int count) {
+    int nbits = 0;
+    for (int i = 0; i < count; i++) {
+        unsigned char c = ((unsigned char *) buf)[i];
+        while (c) {
+            if (c & 1) nbits++;
+            c >>= 1;
+        }
+    }
+    return nbits;
+}
+
+int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen) {
+    struct ifaddrs *addresses, *address;
+    int mask_len;
+
+    if (getifaddrs(&addresses) != 0) {
+        perror("getifaddrs");
+        return -1;
+    }
+    if (addresses == NULL) return -2;
+
+    address = addresses;
+    if (nextValidAddr(&address) == -1) {
+        freeifaddrs(addresses);
+        return -3;
+    }
+    while (--ifindex >= 0) {
+        address = address->ifa_next;
+        if (address == NULL) {
+            freeifaddrs(addresses);
+            return -4;
+        }
+        if (nextValidAddr(&address) == -1) {
+            freeifaddrs(addresses);
+            return -3;
+        }
+    }
+
+    if (address->ifa_addr->sa_family == AF_INET) {
+        struct sockaddr_in *s_in = (struct sockaddr_in *) address->ifa_addr;
+        if (salen < sizeof(struct sockaddr_in)) {
+            freeifaddrs(addresses);
+            return -5;
+        }
+        memcpy(sa, s_in, sizeof(struct sockaddr_in));
+
+        struct sockaddr_in *netmask = (struct sockaddr_in *) address->ifa_netmask;
+        mask_len = countBits(&netmask->sin_addr, sizeof netmask->sin_addr);
+    } else {
+        struct sockaddr_in6 *s_in6 = (struct sockaddr_in6 *) address->ifa_addr;
+        if (salen < sizeof(struct sockaddr_in6)) {
+            freeifaddrs(addresses);
+            return -6;
+        }
+        memcpy(sa, s_in6, sizeof(struct sockaddr_in6));
+        
+        struct sockaddr_in6 *netmask = (struct sockaddr_in6 *) address->ifa_netmask;
+        mask_len = countBits(&netmask->sin6_addr, sizeof netmask->sin6_addr);
+    }
+    
+    freeifaddrs(addresses);
+    return mask_len;
+}
+
+int getlocalgatewayipv4(int gwindex, struct sockaddr *sa, socklen_t salen) {
+    int mib[6] = { CTL_NET, PF_ROUTE, 0, AF_INET, NET_RT_FLAGS, 2 | 1 | 0x10000000 };
+
     size_t needed = 0;
-    int res = sysctl(mib, 6, NULL, &needed, NULL, 0);
-    if (res < 0) {
+    if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) {
         perror("sysctl");
-        return;
+        return -1;
     }
+
     void *msg;
-    printf("needed: %d\n", needed);
-    msg = malloc(needed);
-    if (!msg) {
+    if (!(msg = malloc(needed))) {
         perror("malloc");
-        return;
+        return -2;
     }
-    res = sysctl(mib, 6, msg, &needed, NULL, 0);
-    if (res < 0) {
+
+    if (sysctl(mib, 6, msg, &needed, NULL, 0) < 0) {
         perror("sysctl");
-        return;
+        free(msg);
+        return -3;
     }
-    void *lim = msg + needed;
-    void *next;
-    for (next = msg; next < lim; next += ((struct rt_msghdr *) next)->rtm_msglen) {
+
+    for (void *next = msg; next < msg + needed; next += ((struct rt_msghdr *) next)->rtm_msglen) {
+        // Is it a route with a gateway?
+        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
+
+        struct sockaddr_in *sin = next + sizeof(struct rt_msghdr);
+        // Is it a default route?
+        if (sin->sin_addr.s_addr) continue;
+
+        if (gwindex-- == 0) {
+            memcpy(sa, sin + 1, sizeof(struct sockaddr_in));
+            free(msg);
+            return 0;
+        }
+    }
+
+    free(msg);
+    return -4;
+}
+
+int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
+    int mib[6] = { CTL_NET, PF_ROUTE, 0, AF_INET6, NET_RT_FLAGS, 2 | 1 | 0x10000000 };
+    
+    size_t needed = 0;
+    if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) {
+        perror("sysctl");
+        return -1;
+    }
+    
+    void *msg;
+    if (!(msg = malloc(needed))) {
+        perror("malloc");
+        return -2;
+    }
+    
+    if (sysctl(mib, 6, msg, &needed, NULL, 0) < 0) {
+        perror("sysctl");
+        free(msg);
+        return -3;
+    }
+    
+    for (void *next = msg; next < msg + needed; next += ((struct rt_msghdr *) next)->rtm_msglen) {
+        // Is it a route with a gateway?
         if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
         
+        // Is it a default route?
         struct sockaddr_in6 *sin = next + sizeof(struct rt_msghdr);
         if (sin->sin6_addr.__u6_addr.__u6_addr32[0] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[1] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[2] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[3]
             ) continue;
-        char str[INET6_ADDRSTRLEN];
-        inet_ntop(sin->sin6_family, &sin->sin6_addr, str, sizeof str);
 
-        printf("MESSAGE type: %d\n", ((struct rt_msghdr *) next)->rtm_type);
-        printf("  dst:%s\n", str);
-        printf("        addrs: %d\n", ((struct rt_msghdr *) next)->rtm_addrs);
-        printf("        flags: %d\n", ((struct rt_msghdr *) next)->rtm_flags);
-        printf("-  family:%d %d\n", sin->sin6_family, AF_INET6);
-        inet_ntop(sin->sin6_family, &sin[1].sin6_addr, str, sizeof str);
-        printf("-  gw:%s\n", str);
+        if (gwindex-- == 0) {
+            memcpy(sa, sin + 1, sizeof(struct sockaddr_in6));
+            free(msg);
+            return 0;
+        }
     }
+    
+    free(msg);
+    return -4;
 }
 
 void net_test() {
-    // récupérer des infos comme la gateway par défaut via sysctl(3)
-//    net_ipv4_gateway();
-    net_ipv6_gateway();
-
-
-    
-
-    
-    
     char str[INET6_ADDRSTRLEN];
 //    char hostname[] = "www.fenyo.net";
     char hostname[] = "google.com";

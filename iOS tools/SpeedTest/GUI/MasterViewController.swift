@@ -65,6 +65,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             // Update local node
             self.addNode(DBMaster.shared.getLocalNode())
 
+            // Update local gateways
+            for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw) }
+            
             // Use ICMP to find new nodes
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
             self.browser_network = nb
