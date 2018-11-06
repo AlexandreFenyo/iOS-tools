@@ -62,11 +62,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
-            // Update local node
-            self.addNode(DBMaster.shared.getLocalNode())
-
-            // Update local gateways
-            for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw) }
+            self.updateLocalNodeAndGateways()
             
             // Use ICMP to find new nodes
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
@@ -163,6 +159,18 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
 
         return cell
+    }
+
+    private func updateLocalNodeAndGateways() {
+        // Update local node
+        self.addNode(DBMaster.shared.getLocalNode())
+        
+        // Update local gateways
+        for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw) }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        updateLocalNodeAndGateways()
     }
     
     // Disable other actions while editing

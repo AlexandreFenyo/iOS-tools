@@ -325,7 +325,6 @@ class DBMaster {
 
     public init() {
         networks = Set<IPNetwork>()
-
         nodes = Set<Node>()
         sections = [
             .localhost: Section("localhost", "this host"),
@@ -336,7 +335,7 @@ class DBMaster {
             .other: Section("Other hosts", "any host")
         ]
 
-        var node = Node()
+//        var node = Node()
         /*
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
@@ -373,9 +372,9 @@ class DBMaster {
 */
         
         // Add localhost
-        _ = addNode(getLocalNode())
+//        _ = addNode(getLocalNode())
 
         // Add gateways
-        for gw in getLocalGateways() { _ = addNode(gw) }
+//        for gw in getLocalGateways() { _ = addNode(gw) }
     }
 }
