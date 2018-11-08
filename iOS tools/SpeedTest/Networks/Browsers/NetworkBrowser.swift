@@ -65,7 +65,7 @@ class NetworkBrowser {
         DispatchQueue.main.sync {
             let node = Node()
             node.v4_addresses.insert(from)
-            device_manager.addNode(node)
+            device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
             if let info = from.toNumericString() { device_manager.setInformation("found " + info) }
             reply.removeValue(forKey: from)
         }

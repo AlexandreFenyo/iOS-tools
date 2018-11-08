@@ -17,6 +17,7 @@ import UIKit
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
     func addNode(_ node: Node)
+    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func setInformation(_ info: String)
 }
 
@@ -111,7 +112,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         let node = Node()
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
         node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
-        addNode(node)
+        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         //print(traitCollection.horizontalSizeClass.rawValue)
     }
@@ -163,10 +164,11 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     private func updateLocalNodeAndGateways() {
         // Update local node
-        self.addNode(DBMaster.shared.getLocalNode())
+        let node = DBMaster.shared.getLocalNode()
+        self.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         // Update local gateways
-        for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw) }
+        for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -203,6 +205,23 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+
+    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
+        addNode(node)
+        for address in resolve_ipv4_addresses {
+            DispatchQueue.global(qos: .background).async {
+                guard let name = address.resolveHostName() else { return }
+                DispatchQueue.main.async {
+                    // On ne doit pas modifier un noeud qui est déjà dans la BDD donc on crée un nouveau noeud
+                    let node = Node()
+                    node.v4_addresses.insert(address)
+                    guard let domain_name = DomainName(name) else { return }
+                    node.dns_names.insert(domain_name)
+                    self.addNode(node)
+                }
+            }
+        }
     }
 
     func addNode(_ node: Node) {

@@ -140,8 +140,8 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
         fatalError("toSockAddress() on IPAddress")
     }
 
-    public func resolveHostName() -> String {
-        return toSockAddress()!.resolveHostName()!
+    public func resolveHostName() -> String? {
+        return toSockAddress()!.resolveHostName()
     }
     
     // Only IPv6 addresses can return nil
