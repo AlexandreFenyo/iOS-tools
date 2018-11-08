@@ -213,7 +213,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
-                    // On ne doit pas modifier un noeud qui est déjà dans la BDD donc on crée un nouveau noeud
+                    // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v4_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
