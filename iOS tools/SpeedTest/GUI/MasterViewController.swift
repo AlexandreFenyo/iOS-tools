@@ -205,8 +205,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         super.didReceiveMemoryWarning()
     }
 
-    // MARK: - DeviceManager protocol
-
     func addNode(_ node: Node) {
         tableView.beginUpdates()
         let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
@@ -217,6 +215,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }
+
+    // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {
         setTitle(info)
