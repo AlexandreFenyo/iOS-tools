@@ -13,36 +13,32 @@ import Foundation
 class NetworkBrowser {
     private let device_manager : DeviceManager
     private var reply : [IPv4Address: (Int, Date?)] = [:]
+    private var broadcast_ipv4 = Set<IPv4Address>()
+    private var multicast_ipv6 = Set<IPv6Address>()
     private var finished : Bool = false
-
-    // Browse a network
-    public init?(network: IPv4Address?, netmask: IPv4Address?, device_manager: DeviceManager) {
-        guard let network = network, let netmask = netmask else { return nil }
-        self.device_manager = device_manager
-        let broadcast = network.or(netmask.xor(IPv4Address("255.255.255.255")!))
-
-        var current = network.and(netmask).next() as! IPv4Address
-        repeat {
-            if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
-                reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
-            current = current.next() as! IPv4Address
-            }
-        } while current != broadcast
-    }
 
     // Browse a set of networks
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager) {
         self.device_manager = device_manager
         for network in networks {
+            if let network_addr = network.ip_address as? IPv6Address {
+                if network_addr == IPv6Address("::1") { continue }
+                let multicast = network_addr.and(IPv6Address("0000:ffff::")!).or((IPv6Address("ff02::1")!))
+                multicast_ipv6.insert(multicast as! IPv6Address)
+            }
+
             if let network_addr = network.ip_address as? IPv4Address {
-                if network.mask_len < 22 { continue }
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
-                var current = network_addr.and(netmask).next() as! IPv4Address
-                repeat {
-                    if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
-                    current = current.next() as! IPv4Address
-                } while current != broadcast
+// A REMETTRE
+                if network.mask_len < /*22*/ 200 { broadcast_ipv4.insert(broadcast as! IPv4Address) }
+                else {
+                    var current = network_addr.and(netmask).next() as! IPv4Address
+                    repeat {
+                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
+                        current = current.next() as! IPv4Address
+                    } while current != broadcast
+                }
             }
         }
     }
@@ -66,7 +62,9 @@ class NetworkBrowser {
             let node = Node()
             node.v4_addresses.insert(from)
             device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
-            if let info = from.toNumericString() { device_manager.setInformation("found " + info) }
+            if let info = from.toNumericString() { device_manager.setInformation("found " + info)
+                print("FOUND:" , info)
+            }
             reply.removeValue(forKey: from)
         }
     }
@@ -97,13 +95,13 @@ class NetworkBrowser {
 
             let dispatchGroup = DispatchGroup()
             
+            // Unicast ICMPv4
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            // wait .5 sec to let the recvfrom() start before sending ICMP packets
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
-//                        print("sending icmp to", address.toNumericString())
-
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
                         hdr.icmp_code = 0
@@ -130,6 +128,35 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
 
+            // Multicast ICMPv4 and ICMPv6
+            dispatchGroup.enter()
+            // wait .5 sec to let the recvfrom() start before sending ICMP packets
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+                for address in self.broadcast_ipv4 {
+                    var hdr = icmp()
+                    hdr.icmp_type = UInt8(ICMP_ECHO)
+                    hdr.icmp_code = 0
+                    hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                    let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                    hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                            var sum : u_short = 0
+                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                            sum ^= u_short.max
+                            return sum
+                        }
+                    }
+                    
+                    let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                        address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                            sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                        }
+                    }
+                    if ret < 0 { GenericTools.perror("sendto") }
+                }
+                dispatchGroup.leave()
+            }
+            
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {
@@ -148,12 +175,13 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-//                    print("reply from", SockAddr.getSockAddr(from).toNumericString())
+                    print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while !self.isFinished()
 
                 dispatchGroup.leave()
             }
+
             dispatchGroup.wait()
             
             DispatchQueue.main.sync { self.device_manager.setInformation("") }

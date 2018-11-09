@@ -163,7 +163,7 @@ class Node : Hashable {
     }
 
     public func isSimilar(with: Node) -> Bool {
-        if !(v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }.intersection(with.v4_addresses.filter { $0.isUnicast() && !$0.isLocal() }).isEmpty) { return true }
+        if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
         
         if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
 
