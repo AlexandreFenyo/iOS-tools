@@ -73,11 +73,17 @@ class NetworkBrowser {
     public func stop() {
         finished = true
     }
-    
+
+    TROUVER CE UI EST LANCE PAR CHAAUE THREAD
+    MODIFIER LES APPELS A IS FINISHED OR EMPTY OU IS FINISHED
+    private func isFinishedOrEmpty() -> Bool {
+        return DispatchQueue.main.sync { return finished || reply.isEmpty }
+    }
+
     private func isFinished() -> Bool {
         return DispatchQueue.main.sync { return finished || reply.isEmpty }
     }
-    
+
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
             let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
@@ -164,6 +170,9 @@ class NetworkBrowser {
                     var buf = [UInt8](repeating: 0, count: buf_size)
                     var from = Data(count: MemoryLayout<sockaddr_in>.size)
                     var from_len : socklen_t = UInt32(from.count)
+
+print("AVANT RECVFROM")
+
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
                         from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
                             buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
@@ -178,6 +187,7 @@ class NetworkBrowser {
                     print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while !self.isFinished()
+            print("ICI1")
 
                 dispatchGroup.leave()
             }
