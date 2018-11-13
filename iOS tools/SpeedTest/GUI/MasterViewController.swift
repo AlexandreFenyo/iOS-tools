@@ -54,6 +54,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Update nodes and find new nodes
+    // Main thread
     private func startBrowsing() {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
             _ in
@@ -73,6 +74,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Stop looking for new nodes
+    // Main thread
     private func stopBrowsing() {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
@@ -207,6 +209,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         super.didReceiveMemoryWarning()
     }
 
+    // Main thread
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
@@ -224,6 +227,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
+    // Main thread
     func addNode(_ node: Node) {
         tableView.beginUpdates()
         let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)

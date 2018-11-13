@@ -48,6 +48,9 @@ class SockAddr : Equatable, NSCopying {
     }
 
     public func resolveHostName() -> String? {
+//        let name = getNameInfo(NI_NAMEREQD)
+//        print("DNS retourne :", toNumericString(), name)
+//        return name
         return getNameInfo(NI_NAMEREQD)
     }
 

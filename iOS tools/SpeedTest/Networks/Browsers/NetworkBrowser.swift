@@ -15,9 +15,10 @@ class NetworkBrowser {
     private var reply : [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
-    private var finished : Bool = false
+    private var finished : Bool = false // Main thread
 
     // Browse a set of networks
+    // Main thread
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager) {
         self.device_manager = device_manager
         for network in networks {
@@ -43,6 +44,7 @@ class NetworkBrowser {
         }
     }
 
+    // Any thread
     private func getIPForTask() -> IPv4Address? {
         return DispatchQueue.main.sync {
             guard let address = reply.filter({
@@ -57,6 +59,7 @@ class NetworkBrowser {
         }
     }
 
+    // Any thread
     private func manageAnswer(from: IPv4Address) {
         DispatchQueue.main.sync {
             let node = Node()
@@ -69,21 +72,22 @@ class NetworkBrowser {
         }
     }
     
-    // Must be called by main thread
+    // Main thread
     public func stop() {
         finished = true
     }
 
-    TROUVER CE UI EST LANCE PAR CHAAUE THREAD
-    MODIFIER LES APPELS A IS FINISHED OR EMPTY OU IS FINISHED
+    // Any thread
     private func isFinishedOrEmpty() -> Bool {
         return DispatchQueue.main.sync { return finished || reply.isEmpty }
     }
 
+    // Any thread
     private func isFinished() -> Bool {
-        return DispatchQueue.main.sync { return finished || reply.isEmpty }
+        return DispatchQueue.main.sync { return finished }
     }
 
+    // Main thread
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
             let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
@@ -129,7 +133,7 @@ class NetworkBrowser {
                         }
                         if ret < 0 { GenericTools.perror("sendto") }
                     } else { sleep(1) }
-                } while !self.isFinished()
+                } while !self.isFinishedOrEmpty()
                 
                 dispatchGroup.leave()
             }
@@ -171,8 +175,6 @@ class NetworkBrowser {
                     var from = Data(count: MemoryLayout<sockaddr_in>.size)
                     var from_len : socklen_t = UInt32(from.count)
 
-print("AVANT RECVFROM")
-
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
                         from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
                             buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
@@ -187,8 +189,6 @@ print("AVANT RECVFROM")
                     print("reply from", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while !self.isFinished()
-            print("ICI1")
-
                 dispatchGroup.leave()
             }
 
