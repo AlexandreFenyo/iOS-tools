@@ -189,7 +189,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
-        print("netServiceDidPublish")
+//        print("netServiceDidPublish")
     }
     
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
@@ -201,7 +201,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
-        print("netServiceWillPublish")
+//        print("netServiceWillPublish")
     }
     
     public func netServiceWillResolve(_ sender: NetService) {

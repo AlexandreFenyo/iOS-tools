@@ -16,10 +16,6 @@
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385920A2EEAF006AC172 /* Splash.storyboard */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
-		5D636444213EA98E00BFEB0F /* BroadcastIPv4Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636443213EA98E00BFEB0F /* BroadcastIPv4Browser.swift */; };
-		5D636446213EA99B00BFEB0F /* BroadcastIPv6Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636445213EA99B00BFEB0F /* BroadcastIPv6Browser.swift */; };
-		5D636448213EA9AF00BFEB0F /* MulticastIPv4Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636447213EA9AF00BFEB0F /* MulticastIPv4Browser.swift */; };
-		5D63644A213EA9C000BFEB0F /* MulticastIPv6Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636449213EA9C000BFEB0F /* MulticastIPv6Browser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
@@ -67,10 +63,6 @@
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
 		5D4B385920A2EEAF006AC172 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPortBrowser.swift; sourceTree = "<group>"; };
-		5D636443213EA98E00BFEB0F /* BroadcastIPv4Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastIPv4Browser.swift; sourceTree = "<group>"; };
-		5D636445213EA99B00BFEB0F /* BroadcastIPv6Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastIPv6Browser.swift; sourceTree = "<group>"; };
-		5D636447213EA9AF00BFEB0F /* MulticastIPv4Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastIPv4Browser.swift; sourceTree = "<group>"; };
-		5D636449213EA9C000BFEB0F /* MulticastIPv6Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastIPv6Browser.swift; sourceTree = "<group>"; };
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
@@ -287,10 +279,6 @@
 				5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */,
 				5DF215212133D7DA002B7603 /* NetworkBrowser.swift */,
 				5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */,
-				5D636443213EA98E00BFEB0F /* BroadcastIPv4Browser.swift */,
-				5D636445213EA99B00BFEB0F /* BroadcastIPv6Browser.swift */,
-				5D636447213EA9AF00BFEB0F /* MulticastIPv4Browser.swift */,
-				5D636449213EA9C000BFEB0F /* MulticastIPv6Browser.swift */,
 			);
 			path = Browsers;
 			sourceTree = "<group>";
@@ -392,12 +380,10 @@
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
-				5D636446213EA99B00BFEB0F /* BroadcastIPv6Browser.swift in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
 				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5DF215222133D7DA002B7603 /* NetworkBrowser.swift in Sources */,
-				5D636444213EA98E00BFEB0F /* BroadcastIPv4Browser.swift in Sources */,
 				5DF21516212D7C13002B7603 /* genericTools.c in Sources */,
 				5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */,
 				5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */,
@@ -409,10 +395,8 @@
 				5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */,
 				5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */,
 				5DF215132121EBA8002B7603 /* LocalPingClient.swift in Sources */,
-				5D63644A213EA9C000BFEB0F /* MulticastIPv6Browser.swift in Sources */,
 				5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */,
 				5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */,
-				5D636448213EA9AF00BFEB0F /* MulticastIPv4Browser.swift in Sources */,
 				5DF2151D212DAF2B002B7603 /* LocalHttpClient.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
 				5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */,

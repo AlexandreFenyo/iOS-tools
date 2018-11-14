@@ -114,7 +114,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     override init() {
         // call super.init() to be able to use self
         super.init()
-        GenericTools.here("init()", self)
+//        GenericTools.here("init()", self)
     }
 
 }

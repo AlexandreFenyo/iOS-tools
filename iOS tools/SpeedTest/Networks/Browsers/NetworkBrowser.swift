@@ -66,7 +66,7 @@ class NetworkBrowser {
             node.v4_addresses.insert(from)
             device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
             if let info = from.toNumericString() { device_manager.setInformation("found " + info)
-                print("FOUND:" , info)
+//                print("FOUND:" , info)
             }
             reply.removeValue(forKey: from)
         }
@@ -138,7 +138,7 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
 
-            // Multicast ICMPv4 and ICMPv6
+            // Multicast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
@@ -166,7 +166,32 @@ class NetworkBrowser {
                 }
                 dispatchGroup.leave()
             }
-            
+
+            // Multicast ICMPv6
+            dispatchGroup.enter()
+            // wait .5 sec to let the recvfrom() start before sending ICMP packets
+            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+                for address in self.multicast_ipv6 {
+                    var hdr = icmp6_hdr()
+                    hdr.icmp6_type = UInt8(ICMP6_ECHO_REQUEST)
+                    hdr.icmp6_code = 0
+//                    hdr.icmp6_dataun.icmp6_un_data16.1 = _htons(12)
+
+                    print("XXX TRY sendto addr=" + (address.toNumericString() ?? ""))
+                    let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                        address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                            sendto(s, bytes, MemoryLayout<icmp6_hdr>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in6>.size))
+                        }
+                    }
+                    if ret < 0 { GenericTools.perror("sendto ipv6") }
+                    else { print("sendto ipv6 OK addr=" + (address.toNumericString() ?? "")) }
+
+                }
+
+                dispatchGroup.leave()
+            }
+
+            // Catch replies
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {
