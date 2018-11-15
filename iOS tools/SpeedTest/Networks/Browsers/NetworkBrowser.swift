@@ -177,6 +177,19 @@ class NetworkBrowser {
                     hdr.icmp6_code = 0
 //                    hdr.icmp6_dataun.icmp6_un_data16.1 = _htons(12)
 
+
+                    let capacity = MemoryLayout<icmp6_hdr>.size / MemoryLayout<ushort>.size
+                    hdr.icmp6_cksum = withUnsafePointer(to: &hdr) {
+                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                            var sum : u_short = 0
+                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                            sum ^= u_short.max
+                            return sum
+                        }
+                    }
+
+
+
                     print("XXX TRY sendto addr=" + (address.toNumericString() ?? ""))
                     let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
                         address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
