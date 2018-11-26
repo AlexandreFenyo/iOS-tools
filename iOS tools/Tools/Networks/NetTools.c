@@ -202,6 +202,75 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
     return -4;
 }
 
+struct tv32 {
+    u_int32_t tv32_sec;
+    u_int32_t tv32_usec;
+};
+#define MAXPACKETLEN    131072
+#define ICMP6ECHOLEN    8       /* icmp echo header len excluding time */
+#define ICMP6ECHOTMLEN sizeof(struct tv32)
+#define DEFDATALEN      ICMP6ECHOTMLEN
+int multicasticmp6() {
+    printf("START multicast icmp6\n");
+
+    struct addrinfo hints, *res;
+    int ret, s, packlen, i;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET6;
+    hints.ai_socktype = SOCK_RAW;
+    // CNAME chaining by Microsoft
+    ret = getaddrinfo("www.microsoft.com", NULL, &hints, &res);
+    if (ret) {
+        printf("%s\n", gai_strerror(ret));
+        return -1;
+    }
+    struct sockaddr_in6 dst;        /* who to ping6 */
+    memcpy(&dst, res->ai_addr, res->ai_addrlen);
+
+    if ((s = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
+        perror("socket");
+        return -1;
+    }
+
+    struct msghdr smsghdr;
+    memset(&smsghdr, 0, sizeof(smsghdr));
+    u_char outpack[MAXPACKETLEN];
+    u_char *datap;
+    datap = &outpack[ICMP6ECHOLEN + ICMP6ECHOTMLEN];
+
+    int datalen = DEFDATALEN;
+    struct icmp6_hdr *icp;
+    struct iovec iov[2]; // pourquoi 2 et pas 1 ???
+    int cc;
+    struct icmp6_nodeinfo *nip;
+    int seq;
+    icp = (struct icmp6_hdr *)outpack;
+    nip = (struct icmp6_nodeinfo *)outpack;
+    memset(icp, 0, sizeof(struct icmp6_hdr));
+    icp->icmp6_cksum = 0;
+    seq = 0;
+    icp->icmp6_type = ICMP6_ECHO_REQUEST;
+    icp->icmp6_code = 0;
+    icp->icmp6_id = 55;
+    icp->icmp6_seq = ntohs(seq);
+    cc = ICMP6ECHOLEN + datalen;
+
+    smsghdr.msg_name = (caddr_t)&dst;
+    smsghdr.msg_namelen = sizeof(dst);
+    memset(&iov, 0, sizeof(iov));
+    iov[0].iov_base = (caddr_t)outpack;
+    iov[0].iov_len = cc;
+    smsghdr.msg_iov = iov;
+    smsghdr.msg_iovlen = 1;
+
+    i = sendmsg(s, &smsghdr, 0);
+    printf("SENDMSG returnd %d\n", i);
+    perror("sendmsg");
+    
+    freeaddrinfo(res);
+    return 0;
+}
+
 void net_test() {
     char str[INET6_ADDRSTRLEN];
 //    char hostname[] = "www.fenyo.net";

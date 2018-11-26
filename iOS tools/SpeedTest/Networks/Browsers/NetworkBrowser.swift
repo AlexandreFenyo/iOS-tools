@@ -188,7 +188,7 @@ class NetworkBrowser {
                         }
                     }
 
-
+                    multicasticmp6();
 
                     print("XXX TRY sendto addr=" + (address.toNumericString() ?? ""))
                     let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in

@@ -20,6 +20,7 @@
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/icmp6.h>
 #include <pthread.h>
 
 extern int errno;
