@@ -112,7 +112,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             node.dns_names.insert(domain)
             device_manager.setInformation("found " + sender.name)
         }
-        
+
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
 }

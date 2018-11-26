@@ -211,15 +211,18 @@ struct tv32 {
 #define ICMP6ECHOTMLEN sizeof(struct tv32)
 #define DEFDATALEN      ICMP6ECHOTMLEN
 int multicasticmp6() {
-    printf("START multicast icmp6\n");
+    printf("\n\nSTART multicast icmp6\n");
 
     struct addrinfo hints, *res;
-    int ret, s, packlen, i;
+    int ret, s, i;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET6;
     hints.ai_socktype = SOCK_RAW;
+
+    hints.ai_flags = AI_NUMERICHOST;
     // CNAME chaining by Microsoft
-    ret = getaddrinfo("www.microsoft.com", NULL, &hints, &res);
+    //    ret = getaddrinfo("www.microsoft.com", NULL, &hints, &res);
+    ret = getaddrinfo("::1%lo0", NULL, &hints, &res);
     if (ret) {
         printf("%s\n", gai_strerror(ret));
         return -1;
@@ -227,7 +230,7 @@ int multicasticmp6() {
     struct sockaddr_in6 dst;        /* who to ping6 */
     memcpy(&dst, res->ai_addr, res->ai_addrlen);
 
-    if ((s = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
+    if ((s = socket(res->ai_family, /*res->ai_socktype*/3, /*res->ai_protocol*/58)) < 0) {
         perror("socket");
         return -1;
     }
@@ -264,7 +267,7 @@ int multicasticmp6() {
     smsghdr.msg_iovlen = 1;
 
     i = sendmsg(s, &smsghdr, 0);
-    printf("SENDMSG returnd %d\n", i);
+    printf("SENDMSG returnd %d\n\n", i);
     perror("sendmsg");
     
     freeaddrinfo(res);
