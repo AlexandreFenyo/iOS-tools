@@ -12,6 +12,7 @@ import Foundation
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
     private let device_manager : DeviceManager
+    private let browser_tcp : TCPPortBrowser
     private var reply : [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
@@ -19,8 +20,9 @@ class NetworkBrowser {
 
     // Browse a set of networks
     // Main thread
-    public init(networks: Set<IPNetwork>, device_manager: DeviceManager) {
+    public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser) {
         self.device_manager = device_manager
+        self.browser_tcp = browser_tcp
         for network in networks {
             if let network_addr = network.ip_address as? IPv6Address {
                 if network_addr == IPv6Address("::1") { continue }
@@ -231,8 +233,8 @@ class NetworkBrowser {
             }
 
             dispatchGroup.wait()
-            
-            DispatchQueue.main.sync { self.device_manager.setInformation("") }
+  
+            DispatchQueue.main.sync { self.browser_tcp.browse() }
 
         }
     }

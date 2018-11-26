@@ -46,6 +46,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public weak var browser_discard : ServiceBrowser?
     
     private var browser_network : NetworkBrowser?
+    private var browser_tcp : TCPPortBrowser?
 
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
@@ -67,7 +68,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.updateLocalNodeAndGateways()
             
             // Use ICMP to find new nodes
-            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
+            let tb = TCPPortBrowser(device_manager: self)
+            self.browser_tcp = tb
+            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
             self.browser_network = nb
             nb.browse()
         }
@@ -84,7 +87,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_discard?.stop()
         browser_chargen?.stop()
         browser_network?.stop()
+        browser_tcp?.stop()
         browser_network = nil
+        browser_tcp = nil
 
         setTitle("Target List")
     }
