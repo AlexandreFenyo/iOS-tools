@@ -202,38 +202,31 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
     return -4;
 }
 
-struct tv32 {
-    u_int32_t tv32_sec;
-    u_int32_t tv32_usec;
-};
+//struct tv32 {
+//    u_int32_t tv32_sec;
+//    u_int32_t tv32_usec;
+//};
 #define MAXPACKETLEN    131072
 #define ICMP6ECHOLEN    8       /* icmp echo header len excluding time */
-#define ICMP6ECHOTMLEN sizeof(struct tv32)
-#define DEFDATALEN      ICMP6ECHOTMLEN
 
 int multicasticmp6() {
     printf("\n\n1--- START multicast icmp6\n");
 
     struct addrinfo hints, *res;
-    int ret, s;
-    long i;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET6;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_protocol = IPPROTO_UDP;
-
-    // hints.ai_flags = AI_NUMERICHOST;
-    // CNAME chaining by Microsoft
-//    ret = getaddrinfo("www.microsoft.com", 0, &hints, &res);
-    ret = getaddrinfo("virt.fenyo.net", 0, &hints, &res);
-//    ret = getaddrinfo("::1%lo0", NULL, &hints, &res);
+    int ret = getaddrinfo("ff02::1%en0", NULL, &hints, &res);
     if (ret) {
+        perror("getaddrinfo");
         return -1;
     }
-    struct sockaddr_in6 dst;        /* who to ping6 */
+    struct sockaddr_in6 dst;
     memcpy(&dst, res->ai_addr, res->ai_addrlen);
 
-        if ((s = socket(PF_INET6, SOCK_DGRAM, 58)) < 0) {
+    int s = socket(PF_INET6, SOCK_DGRAM,  IPPROTO_ICMPV6);
+    if (s < 0) {
         perror("socket");
         return -1;
     }
@@ -241,35 +234,22 @@ int multicasticmp6() {
     struct msghdr smsghdr;
     memset(&smsghdr, 0, sizeof(smsghdr));
     u_char outpack[MAXPACKETLEN];
-    u_char *datap;
-    datap = &outpack[ICMP6ECHOLEN + ICMP6ECHOTMLEN];
-
-    int datalen = DEFDATALEN;
     struct icmp6_hdr *icp;
-    struct iovec iov[2]; // pourquoi 2 et pas 1 ???
-    int cc;
-    struct icmp6_nodeinfo *nip;
-    int seq;
+    struct iovec iov[1];
     icp = (struct icmp6_hdr *)outpack;
-    nip = (struct icmp6_nodeinfo *)outpack;
     memset(icp, 0, sizeof(struct icmp6_hdr));
-    icp->icmp6_cksum = 0;
-    seq = 0;
     icp->icmp6_type = ICMP6_ECHO_REQUEST;
-    icp->icmp6_code = 0;
     icp->icmp6_id = 55;
-    icp->icmp6_seq = ntohs(seq);
-    cc = ICMP6ECHOLEN + datalen;
-
+    icp->icmp6_seq = ntohs(0);
     smsghdr.msg_name = (caddr_t)&dst;
     smsghdr.msg_namelen = sizeof(dst);
     memset(&iov, 0, sizeof(iov));
     iov[0].iov_base = (caddr_t)outpack;
-    iov[0].iov_len = cc;
+    iov[0].iov_len = ICMP6ECHOLEN;
     smsghdr.msg_iov = iov;
     smsghdr.msg_iovlen = 1;
 
-    i = sendmsg(s, &smsghdr, 0);
+    long i = sendmsg(s, &smsghdr, 0);
     printf("SENDMSG returnd %ld\n\n", i);
     perror("sendmsg");
 
