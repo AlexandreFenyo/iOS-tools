@@ -215,40 +215,26 @@ int multicasticmp6() {
     printf("\n\n1--- START multicast icmp6\n");
 
     struct addrinfo hints, *res;
-    int ret, s, i;
+    int ret, s;
+    long i;
     memset(&hints, 0, sizeof(hints));
-//    hints.ai_family = AF_INET6;
-//    hints.ai_socktype = /*SOCK_RAW*/ SOCK_DGRAM;
-
-//    hints.ai_flags = AI_CANONNAME;
     hints.ai_family = AF_INET6;
-//    hints.ai_socktype = SOCK_RAW;
-//    hints.ai_protocol = IPPROTO_ICMPV6;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_protocol = IPPROTO_UDP;
-//    hints.ai_family = PF_UNSPEC;
-//    hints.ai_socktype = SOCK_STREAM;
 
     // hints.ai_flags = AI_NUMERICHOST;
     // CNAME chaining by Microsoft
-//        ret = getaddrinfo("www.microsoft.com", "http", &hints, &res);
 //    ret = getaddrinfo("www.microsoft.com", 0, &hints, &res);
     ret = getaddrinfo("virt.fenyo.net", 0, &hints, &res);
 //    ret = getaddrinfo("::1%lo0", NULL, &hints, &res);
     if (ret) {
-        printf("2--- XXX: %s\n", gai_strerror(ret));
-        printf("3--- XXX: erreur avec getaddrinfo()\n");
-        exit(0);
         return -1;
     }
-    printf("4--- XXX: getaddrinfo() OK\n");
     struct sockaddr_in6 dst;        /* who to ping6 */
     memcpy(&dst, res->ai_addr, res->ai_addrlen);
 
         if ((s = socket(PF_INET6, SOCK_DGRAM, 58)) < 0) {
-//    if ((s = socket(/*res->ai_family*/PF_INET6, /*res->ai_socktype*/3, /*res->ai_protocol*/58)) < 0) {
         perror("socket");
-        exit(0);
         return -1;
     }
 
@@ -284,10 +270,8 @@ int multicasticmp6() {
     smsghdr.msg_iovlen = 1;
 
     i = sendmsg(s, &smsghdr, 0);
-    printf("SENDMSG returnd %d\n\n", i);
+    printf("SENDMSG returnd %ld\n\n", i);
     perror("sendmsg");
-
-    exit(0);
 
     freeaddrinfo(res);
     return 0;
