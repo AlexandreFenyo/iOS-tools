@@ -92,14 +92,26 @@ class NetworkBrowser {
     // Main thread
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
-            let s = socket(AF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
+            let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
                 fatalError("browse: socket")
             }
             
             var tv = timeval(tv_sec: 3, tv_usec: 0)
-            let ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+            var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+            if ret < 0 {
+                GenericTools.perror("setsockopt")
+                fatalError("browse: setsockopt")
+            }
+
+            let s6 = socket(PF_INET6, SOCK_DGRAM, getprotobyname("icmp6").pointee.p_proto)
+            if s6 < 0 {
+                GenericTools.perror("socket6")
+                fatalError("browse: socket6")
+            }
+            
+            ret = setsockopt(s6, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
             if ret < 0 {
                 GenericTools.perror("setsockopt")
                 fatalError("browse: setsockopt")
@@ -179,18 +191,7 @@ class NetworkBrowser {
                     hdr.icmp6_code = 0
 //                    hdr.icmp6_dataun.icmp6_un_data16.1 = _htons(12)
 
-
-                    let capacity = MemoryLayout<icmp6_hdr>.size / MemoryLayout<ushort>.size
-                    hdr.icmp6_cksum = withUnsafePointer(to: &hdr) {
-                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
-                            var sum : u_short = 0
-                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
-                            sum ^= u_short.max
-                            return sum
-                        }
-                    }
-
-                    multicasticmp6();
+//                    multicasticmp6();
 
                     print("XXX TRY sendto addr=" + (address.toNumericString() ?? ""))
                     let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
@@ -206,7 +207,7 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
 
-            // Catch replies
+            // Catch IPv4 replies
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {
@@ -232,6 +233,9 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
 
+            // Catch IPv6 replies
+
+            
             dispatchGroup.wait()
   
             DispatchQueue.main.sync { self.browser_tcp.browse() }
