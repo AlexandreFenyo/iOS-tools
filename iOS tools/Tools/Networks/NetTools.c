@@ -12,6 +12,10 @@ __uint16_t _htons(__uint16_t x) {
     return htons(x);
 }
 
+__uint16_t _ntohs(__uint16_t x) {
+    return ntohs(x);
+}
+
 // From OSX net/route.h:
 // /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
 struct rt_metrics {
@@ -244,7 +248,7 @@ int multicasticmp6() {
     smsghdr.msg_name = (caddr_t)&dst;
     smsghdr.msg_namelen = sizeof(dst);
     memset(&iov, 0, sizeof(iov));
-    iov[0].iov_base = (caddr_t)outpack;
+    iov[0].iov_base = (caddr_t)icp;
     iov[0].iov_len = ICMP6ECHOLEN;
     smsghdr.msg_iov = iov;
     smsghdr.msg_iovlen = 1;
