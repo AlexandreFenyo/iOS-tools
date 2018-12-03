@@ -1,0 +1,12 @@
+lldb:
+
+expression -L -- ptr
+type lookup SockAddr
+type lookup sockaddr_storage
+
+expr let xx = sockaddr_storage(); print(xx)
+expr msg_hdr.msg_name._rawValue
+expr -l C -- *(sockaddr_storage *) 0x0000700007fe3c28
+expr -l C -LT -- ((sockaddr_storage *) 0x0000700007fe3c28)->ss_len
+expr -l C -LT -f h -- ((sockaddr_storage *) 0x0000700007fe3c28)->ss_len
+expr -l C -- *(sockaddr_in6 *) 0x000070000fa21c28

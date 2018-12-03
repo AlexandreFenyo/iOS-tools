@@ -198,9 +198,9 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                     hdr.icmp6_dataun.icmp6_un_data16.0 = 55 // icmp6_id
                     hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
                     iov.iov_len = 8
-                    let retlen = withUnsafeMutablePointer(to: &saddr) { (ptr) -> Int in
+                    msg_hdr.msg_namelen = UInt32(saddr.count)
+                    let retlen = saddr.withUnsafeMutableBytes { (ptr: UnsafeMutablePointer<sockaddr_in6>) -> Int in
                         msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr)
-                        msg_hdr.msg_namelen = UInt32(address.toSockAddress()!.sockaddr.count)
                         return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
                             iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
                             return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
@@ -210,20 +210,12 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                             }
                         }
                     }
-                    print("IPV6 sendmsg : retval=", retlen)
+
+                    print("IPV6 sendmsg: retval=", retlen)
                     GenericTools.perror()
 
 //                    multicasticmp6();
-
-//                    print("XXX TRY sendto addr=" + (address.toNumericString() ?? ""))
-//                    let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-//                        address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
-//                            sendto(s, bytes, MemoryLayout<icmp6_hdr>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in6>.size))
-//                        }
-//                    }
-//                    if ret < 0 { GenericTools.perror("sendto ipv6") }
-//                    else { print("sendto ipv6 OK addr=" + (address.toNumericString() ?? "")) }
-
+                    
                 }
 
                 dispatchGroup.leave()
