@@ -13,7 +13,8 @@ import Foundation
 class NetworkBrowser {
     private let device_manager : DeviceManager
     private let browser_tcp : TCPPortBrowser
-    private var reply : [IPv4Address: (Int, Date?)] = [:]
+    private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
+    private var reply_ipv6 : [IPv6Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
     private var finished : Bool = false // Main thread
@@ -40,7 +41,7 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                 else {
                     var current = network_addr.and(netmask).next() as! IPv4Address
                     repeat {
-                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
+                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
                         current = current.next() as! IPv4Address
                     } while current != broadcast
                 }
@@ -51,28 +52,45 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
     // Any thread
     private func getIPForTask() -> IPv4Address? {
         return DispatchQueue.main.sync {
-            guard let address = reply.filter({
+            guard let address = reply_ipv4.filter({
                 guard let last_use = $0.value.1 else { return true }
                 return Date().timeIntervalSince(last_use) > 3
             }).first?.key else { return nil }
-            reply[address]!.0 -= 1
-            if let info = address.toNumericString() { device_manager.setInformation((reply[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + "trying " + info) }
-            if reply[address]!.0 == 0 { reply.removeValue(forKey: address) }
-            else { reply[address]!.1 = Date() }
+            reply_ipv4[address]!.0 -= 1
+            if let info = address.toNumericString() { device_manager.setInformation((reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + "trying " + info) }
+            if reply_ipv4[address]!.0 == 0 { reply_ipv4.removeValue(forKey: address) }
+            else { reply_ipv4[address]!.1 = Date() }
             return address
         }
     }
 
     // Any thread
-    private func manageAnswer(from: IPv4Address) {
+    private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
             let node = Node()
-            node.v4_addresses.insert(from)
-            device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
-            if let info = from.toNumericString() { device_manager.setInformation("found " + info)
-//                print("FOUND:" , info)
+            switch from.getFamily() {
+            case AF_INET:
+                node.v4_addresses.insert(from as! IPv4Address)
+                device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+                if let info = from.toNumericString() {
+                    device_manager.setInformation("found " + info)
+                    print("manageAnswer() FOUND IPv4:" , info)
+                }
+                reply_ipv4.removeValue(forKey: from as! IPv4Address)
+
+            case AF_INET6:
+                node.v6_addresses.insert(from as! IPv6Address)
+                device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
+                if let info = from.toNumericString() {
+                    device_manager.setInformation("found " + info)
+                    print("manageAnswer() FOUND IPv6:" , info)
+                }
+                reply_ipv6.removeValue(forKey: from as! IPv6Address)
+
+            default:
+                print("manageAnswer(): invalid family", from.getFamily())
             }
-            reply.removeValue(forKey: from)
+
         }
     }
     
@@ -83,7 +101,7 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
 
     // Any thread
     private func isFinishedOrEmpty() -> Bool {
-        return DispatchQueue.main.sync { return finished || reply.isEmpty }
+        return DispatchQueue.main.sync { return finished || reply_ipv4.isEmpty }
     }
 
     // Any thread
@@ -210,14 +228,11 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                             }
                         }
                     }
-
-                    print("IPV6 sendmsg: retval=", retlen)
-                    GenericTools.perror()
-
-//                    multicasticmp6();
-                    
+                    if retlen < 0 {
+                        print("IPV6 sendmsg: retval=", retlen)
+                        GenericTools.perror()
+                    }
                 }
-
                 dispatchGroup.leave()
             }
 
@@ -241,13 +256,37 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    print("reply from", SockAddr.getSockAddr(from).toNumericString())
+                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString())
                     
                 } while !self.isFinished()
                 dispatchGroup.leave()
             }
 
             // Catch IPv6 replies
+            dispatchGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                repeat {
+                    let buf_size = 10000
+                    var buf = [UInt8](repeating: 0, count: buf_size)
+                    var from = Data(count: MemoryLayout<sockaddr_in6>.size)
+                    var from_len : socklen_t = UInt32(from.count)
+                    
+                    let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
+                        from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
+                            buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
+                        }
+                    }
+                    if ret < 0 {
+                        GenericTools.perror("reply from IPv6")
+                        continue
+                    }
+                    
+//                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString())
+                    
+                } while !self.isFinished()
+                dispatchGroup.leave()
+            }
 
             
             dispatchGroup.wait()

@@ -18,6 +18,7 @@ import UIKit
 protocol DeviceManager {
     func addNode(_ node: Node)
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
+    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
 }
 
@@ -221,9 +222,29 @@ class MasterViewController: UITableViewController, DeviceManager {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
+                    print("reverse IPv4 résolue:", name)
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v4_addresses.insert(address)
+                    guard let domain_name = DomainName(name) else { return }
+                    node.dns_names.insert(domain_name)
+                    self.addNode(node)
+                }
+            }
+        }
+    }
+
+    // Main thread
+    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
+        addNode(node)
+        for address in resolve_ipv6_addresses {
+            DispatchQueue.global(qos: .background).async {
+                guard let name = address.resolveHostName() else { return }
+                DispatchQueue.main.async {
+                    print("reverse IPv6 résolue:", name)
+                    // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
+                    let node = Node()
+                    node.v6_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
                     node.dns_names.insert(domain_name)
                     self.addNode(node)
