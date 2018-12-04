@@ -8,16 +8,16 @@
 
 import Foundation
 
-// IPv4 only
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
     private let device_manager : DeviceManager
     private let browser_tcp : TCPPortBrowser
     private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
-    private var reply_ipv6 : [IPv6Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
-    private var finished : Bool = false // Main thread
+    private var multicast_ipv4_finished = false // Main thread
+    private var multicast_ipv6_finished = false // Main thread
+    private var finished = false // Main thread
 
     // Browse a set of networks
     // Main thread
@@ -31,13 +31,10 @@ class NetworkBrowser {
                 multicast_ipv6.insert(multicast as! IPv6Address)
             }
 
-multicast_ipv6.insert(IPv6Address("::1%en0")!)
-
             if let network_addr = network.ip_address as? IPv4Address {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
-// A REMETTRE
-                if network.mask_len < /*22*/ 200 { broadcast_ipv4.insert(broadcast as! IPv4Address) }
+                if network.mask_len < 22 { broadcast_ipv4.insert(broadcast as! IPv4Address) }
                 else {
                     var current = network_addr.and(netmask).next() as! IPv4Address
                     repeat {
@@ -85,7 +82,6 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                     device_manager.setInformation("found " + info)
                     print("manageAnswer() FOUND IPv6:" , info)
                 }
-                reply_ipv6.removeValue(forKey: from as! IPv6Address)
 
             default:
                 print("manageAnswer(): invalid family", from.getFamily())
@@ -109,6 +105,11 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
         return DispatchQueue.main.sync { return finished }
     }
 
+    // Any thread
+    private func isFinishedOrDone() -> Bool {
+        return DispatchQueue.main.sync { return finished || (reply_ipv4.isEmpty && multicast_ipv4_finished && multicast_ipv6_finished) }
+    }
+    
     // Main thread
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
@@ -122,18 +123,22 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
             var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
             if ret < 0 {
                 GenericTools.perror("setsockopt")
+                close(s)
                 fatalError("browse: setsockopt")
             }
 
             let s6 = socket(PF_INET6, SOCK_DGRAM, getprotobyname("icmp6").pointee.p_proto)
             if s6 < 0 {
                 GenericTools.perror("socket6")
+                close(s)
                 fatalError("browse: socket6")
             }
             
             ret = setsockopt(s6, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
             if ret < 0 {
                 GenericTools.perror("setsockopt")
+                close(s)
+                close(s6)
                 fatalError("browse: setsockopt")
             }
 
@@ -176,28 +181,35 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
-                for address in self.broadcast_ipv4 {
-                    var hdr = icmp()
-                    hdr.icmp_type = UInt8(ICMP_ECHO)
-                    hdr.icmp_code = 0
-                    hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
-                    let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
-                    hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
-                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
-                            var sum : u_short = 0
-                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
-                            sum ^= u_short.max
-                            return sum
+                for _ in 1...3 {
+                    for address in self.broadcast_ipv4 {
+                        var hdr = icmp()
+                        hdr.icmp_type = UInt8(ICMP_ECHO)
+                        hdr.icmp_code = 0
+                        hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                        let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                        hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                            $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                                var sum : u_short = 0
+                                for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                                sum ^= u_short.max
+                                return sum
+                            }
                         }
-                    }
-                    
-                    let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                        address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
-                            sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                        
+                        let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                            address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                            }
                         }
+                        if ret < 0 { GenericTools.perror("sendto") }
                     }
-                    if ret < 0 { GenericTools.perror("sendto") }
+
+                    if self.isFinished() { break }
+                    sleep(1)
                 }
+                DispatchQueue.main.sync { self.multicast_ipv4_finished = true }
+
                 dispatchGroup.leave()
             }
 
@@ -205,34 +217,40 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
-                for address in self.multicast_ipv6 {
-                    var saddr = address.toSockAddress()!.sockaddr
-                    print("ipv6 address:", address.toNumericString())
-                    var msg_hdr = msghdr()
-                    var hdr = icmp6_hdr()
-                    var iov = iovec()
-                    hdr.icmp6_type = UInt8(ICMP6_ECHO_REQUEST)
-                    hdr.icmp6_code = 0
-                    hdr.icmp6_dataun.icmp6_un_data16.0 = 55 // icmp6_id
-                    hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
-                    iov.iov_len = 8
-                    msg_hdr.msg_namelen = UInt32(saddr.count)
-                    let retlen = saddr.withUnsafeMutableBytes { (ptr: UnsafeMutablePointer<sockaddr_in6>) -> Int in
-                        msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr)
-                        return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
-                            iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
-                            return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
-                                msg_hdr.msg_iov = ptr
-                                msg_hdr.msg_iovlen = 1
-                                return sendmsg(s6, &msg_hdr, 0)
+                for _ in 1...3 {
+                    for address in self.multicast_ipv6 {
+                        var saddr = address.toSockAddress()!.sockaddr
+                        var msg_hdr = msghdr()
+                        var hdr = icmp6_hdr()
+                        var iov = iovec()
+                        hdr.icmp6_type = UInt8(ICMP6_ECHO_REQUEST)
+                        hdr.icmp6_code = 0
+                        hdr.icmp6_dataun.icmp6_un_data16.0 = 55 // icmp6_id
+                        hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
+                        iov.iov_len = 8
+                        msg_hdr.msg_namelen = UInt32(saddr.count)
+                        let retlen = saddr.withUnsafeMutableBytes { (ptr: UnsafeMutablePointer<sockaddr_in6>) -> Int in
+                            msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr)
+                            return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
+                                iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
+                                return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
+                                    msg_hdr.msg_iov = ptr
+                                    msg_hdr.msg_iovlen = 1
+                                    return sendmsg(s6, &msg_hdr, 0)
+                                }
                             }
                         }
+                        if retlen < 0 {
+                            print("IPV6 sendmsg: retval=", retlen)
+                            GenericTools.perror()
+                        }
                     }
-                    if retlen < 0 {
-                        print("IPV6 sendmsg: retval=", retlen)
-                        GenericTools.perror()
-                    }
+
+                    if self.isFinished() { break }
+                    sleep(1)
                 }
+                DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
+
                 dispatchGroup.leave()
             }
 
@@ -258,7 +276,7 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                     print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString())
                     
-                } while !self.isFinished()
+                } while !self.isFinishedOrDone()
                 dispatchGroup.leave()
             }
 
@@ -281,16 +299,18 @@ multicast_ipv6.insert(IPv6Address("::1%en0")!)
                         continue
                     }
                     
-//                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
                     print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString())
                     
-                } while !self.isFinished()
+                } while !self.isFinishedOrDone()
                 dispatchGroup.leave()
             }
-
             
             dispatchGroup.wait()
   
+            close(s)
+            close(s6)
+
             DispatchQueue.main.sync { self.browser_tcp.browse() }
 
         }
