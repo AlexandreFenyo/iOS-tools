@@ -30,22 +30,53 @@ class TCPPortBrowser {
             }
         }
         
-        DispatchQueue.global(qos: .userInitiated).async {
-            let dispatchGroup = DispatchGroup()
+        let dispatchGroup = DispatchGroup()
 
-            for addr in self.ip_to_tcp_port.keys {
-                dispatchGroup.enter()
-                DispatchQueue.global(qos: .userInitiated).async {
-                    print("TCP browse ADDRESSE :", addr.toNumericString())
-                    dispatchGroup.leave()
-                }
+        device_manager.setInformation("browsing TCP ports")
+
+        for addr in self.ip_to_tcp_port.keys {
+            let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
+            if s < 0 {
+                GenericTools.perror("socket")
+                fatalError("browse: socket")
             }
-                
-            dispatchGroup.wait()
-            print("TCP browse ADDRESSE: FIN")
+            
+            var tv = timeval(tv_sec: 1, tv_usec: 0)
+            var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
+            if ret < 0 {
+                GenericTools.perror("setsockopt")
+                close(s)
+                fatalError("browse: setsockopt")
+            }
+        
+            dispatchGroup.enter()
+            DispatchQueue.global(qos: .userInitiated).async {
+                print("TCP browse ADDRESSE :", addr.toNumericString())
+                for port in self.ip_to_tcp_port[addr]! {
+                    print(addr.toNumericString(), ":", port)
 
-            DispatchQueue.main.sync { self.device_manager.setInformation("") }
+                    addr.toSockAddress()
+                    
+                    let ret = addr.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                        connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
+                    }
+                    
+                    print("ret=", ret)
+                    perror("connect")
+                    
+                }
+
+                
+
+                close(s)
+                dispatchGroup.leave()
+            }
         }
+
+        dispatchGroup.wait()
+        print("TCP browse ADDRESSE: FIN")
+        
+        device_manager.setInformation("")
     }
 
     // Browse a set of networks

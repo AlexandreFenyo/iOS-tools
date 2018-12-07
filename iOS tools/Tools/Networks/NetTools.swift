@@ -143,6 +143,10 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
         fatalError("toSockAddress() on IPAddress")
     }
 
+    public func toSockAddress(port: UInt16) -> SockAddr? {
+        fatalError("toSockAddress(port) on IPAddress")
+    }
+    
     public func resolveHostName() -> String? {
         return toSockAddress()!.resolveHostName()
     }
@@ -232,15 +236,20 @@ class IPv4Address : IPAddress {
     }
 
     public override func toSockAddress() -> SockAddr? {
+        return toSockAddress(port: 0)
+    }
+
+    public override func toSockAddress(port: UInt16) -> SockAddr? {
         let in_addr = inaddr.withUnsafeBytes { (bytes : UnsafePointer<in_addr>) -> in_addr in bytes.pointee }
         
         var data = Data(count: MemoryLayout<sockaddr_in>.size)
         data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<sockaddr_in>) in
             bytes.pointee.sin_addr = in_addr
+            bytes.pointee.sin_port = port
             bytes.pointee.sin_len = UInt8(MemoryLayout<in_addr>.size)
             bytes.pointee.sin_family = UInt8(AF_INET)
         }
-
+        
         return SockAddr(data)
     }
 
@@ -319,12 +328,17 @@ class IPv6Address : IPAddress {
     }
 
     public override func toSockAddress() -> SockAddr? {
+        return toSockAddress(port: 0)
+    }
+
+    public override func toSockAddress(port: UInt16) -> SockAddr? {
         let in6_addr = inaddr.withUnsafeBytes { (bytes : UnsafePointer<in6_addr>) -> in6_addr in bytes.pointee }
         
         var data = Data(count: MemoryLayout<sockaddr_in6>.size)
         data.withUnsafeMutableBytes {
             (bytes : UnsafeMutablePointer<sockaddr_in6>) in
             bytes.pointee.sin6_addr = in6_addr
+            bytes.pointee.sin6_port = port
             bytes.pointee.sin6_scope_id = scope
             bytes.pointee.sin6_len = UInt8(MemoryLayout<in6_addr>.size)
             bytes.pointee.sin6_family = UInt8(AF_INET6)
