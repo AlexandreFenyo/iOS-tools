@@ -36,13 +36,13 @@ class TCPPortBrowser {
             for addr in self.ip_to_tcp_port.keys {
                 dispatchGroup.enter()
                 DispatchQueue.global(qos: .userInitiated).async {
-                    print("ADDRESSE :", addr.toNumericString())
+                    print("TCP browse ADDRESSE :", addr.toNumericString())
                     dispatchGroup.leave()
                 }
             }
                 
             dispatchGroup.wait()
-            print("ADDRESSE: FIN")
+            print("TCP browse ADDRESSE: FIN")
 
             DispatchQueue.main.sync { self.device_manager.setInformation("") }
         }

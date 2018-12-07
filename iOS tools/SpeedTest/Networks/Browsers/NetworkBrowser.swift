@@ -15,7 +15,8 @@ class NetworkBrowser {
     private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
-    private var multicast_ipv4_finished = false // Main thread
+    private var unicast_ipv4_finished = false // Main thread
+    private var broadcast_ipv4_finished = false // Main thread
     private var multicast_ipv6_finished = false // Main thread
     private var finished = false // Main thread
 
@@ -24,13 +25,19 @@ class NetworkBrowser {
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser) {
         self.device_manager = device_manager
         self.browser_tcp = browser_tcp
+
         for network in networks {
+            // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
+                print("IPv6 NETWORK :", network_addr.toNumericString())
+                // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 if network_addr == IPv6Address("::1") { continue }
                 let multicast = network_addr.and(IPv6Address("0000:ffff::")!).or((IPv6Address("ff02::1")!))
                 multicast_ipv6.insert(multicast as! IPv6Address)
             }
 
+            // IPv4 networks
+            // Either broadcast the entire network or ping each address, depending on the network size
             if let network_addr = network.ip_address as? IPv4Address {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
@@ -49,12 +56,14 @@ class NetworkBrowser {
     // Any thread
     private func getIPForTask() -> IPv4Address? {
         return DispatchQueue.main.sync {
+            // Collect one address among those left and used more than 3 secs ago
             guard let address = reply_ipv4.filter({
                 guard let last_use = $0.value.1 else { return true }
                 return Date().timeIntervalSince(last_use) > 3
             }).first?.key else { return nil }
             reply_ipv4[address]!.0 -= 1
             if let info = address.toNumericString() { device_manager.setInformation((reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + "trying " + info) }
+            // Remove the address if used 3 times, but note that when the last one is removed, we should wait 3 secs before considering we have been able to wait for a reply from this last address
             if reply_ipv4[address]!.0 == 0 { reply_ipv4.removeValue(forKey: address) }
             else { reply_ipv4[address]!.1 = Date() }
             return address
@@ -68,15 +77,18 @@ class NetworkBrowser {
             switch from.getFamily() {
             case AF_INET:
                 node.v4_addresses.insert(from as! IPv4Address)
+                // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
                     print("manageAnswer() FOUND IPv4:" , info)
                 }
+                // Do not try to reach this address with unicast anymore
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
 
             case AF_INET6:
                 node.v6_addresses.insert(from as! IPv6Address)
+                // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
@@ -96,18 +108,18 @@ class NetworkBrowser {
     }
 
     // Any thread
-    private func isFinishedOrEmpty() -> Bool {
+    private func isFinished() -> Bool {
+        return DispatchQueue.main.sync { return finished }
+    }
+    
+    // Any thread
+    private func isFinishedOrUnicastEmpty() -> Bool {
         return DispatchQueue.main.sync { return finished || reply_ipv4.isEmpty }
     }
 
     // Any thread
-    private func isFinished() -> Bool {
-        return DispatchQueue.main.sync { return finished }
-    }
-
-    // Any thread
-    private func isFinishedOrDone() -> Bool {
-        return DispatchQueue.main.sync { return finished || (reply_ipv4.isEmpty && multicast_ipv4_finished && multicast_ipv6_finished) }
+    private func isFinishedOrEverythingDone() -> Bool {
+        return DispatchQueue.main.sync { return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished) }
     }
     
     // Main thread
@@ -119,6 +131,7 @@ class NetworkBrowser {
                 fatalError("browse: socket")
             }
             
+            // Set timeout for no answer
             var tv = timeval(tv_sec: 3, tv_usec: 0)
             var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
             if ret < 0 {
@@ -134,6 +147,7 @@ class NetworkBrowser {
                 fatalError("browse: socket6")
             }
             
+            // Set timeout for no answer
             ret = setsockopt(s6, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
             if ret < 0 {
                 GenericTools.perror("setsockopt")
@@ -144,9 +158,9 @@ class NetworkBrowser {
 
             let dispatchGroup = DispatchGroup()
             
-            // Unicast ICMPv4
+            // Send unicast ICMPv4
             dispatchGroup.enter()
-            // wait .5 sec to let the recvfrom() start before sending ICMP packets
+            // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
@@ -164,20 +178,27 @@ class NetworkBrowser {
                                 return sum
                             }
                         }
-                        
+
                         let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
                             address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
                                 sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
                             }
                         }
                         if ret < 0 { GenericTools.perror("sendto") }
-                    } else { sleep(1) }
-                } while !self.isFinishedOrEmpty()
+                    } else {
+                        // Do not overload the proc
+                        usleep(250000)
+                    }
+                } while !self.isFinishedOrUnicastEmpty()
+
+                // Wait .5 sec between the last unicast packet sent and toggling the finished flag
+                usleep(500000)
+                DispatchQueue.main.sync { self.unicast_ipv4_finished = true }
                 
                 dispatchGroup.leave()
             }
 
-            // Multicast ICMPv4
+            // Send broadcast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
@@ -206,14 +227,18 @@ class NetworkBrowser {
                     }
 
                     if self.isFinished() { break }
-                    sleep(1)
+                    // wait some delay before sending another broadcast packet
+                    usleep(250000)
                 }
-                DispatchQueue.main.sync { self.multicast_ipv4_finished = true }
+
+                // Wait .5 sec between the last broadcast packet sent and toggling the finished flag
+                usleep(500000)
+                DispatchQueue.main.sync { self.broadcast_ipv4_finished = true }
 
                 dispatchGroup.leave()
             }
 
-            // Multicast ICMPv6
+            // Send multicast ICMPv6
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
@@ -245,10 +270,14 @@ class NetworkBrowser {
                             GenericTools.perror()
                         }
                     }
-
+                    
                     if self.isFinished() { break }
-                    sleep(1)
+                    // wait some delay before sending another broadcast packet
+                    usleep(250000)
                 }
+
+                // Wait .5 sec between the last multicast packet sent and toggling the finished flag
+                usleep(500000)
                 DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
 
                 dispatchGroup.leave()
@@ -276,7 +305,7 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                     print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString())
                     
-                } while !self.isFinishedOrDone()
+                } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
 
@@ -302,7 +331,7 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
                     print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString())
                     
-                } while !self.isFinishedOrDone()
+                } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
             
