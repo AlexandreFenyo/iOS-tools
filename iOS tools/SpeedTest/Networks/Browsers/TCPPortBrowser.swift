@@ -9,7 +9,8 @@
 import Foundation
 
 class TCPPortBrowser {
-    private static let ports_set : Set<UInt16> = Set(1..<1023).union(Set([8080, 3389, 5900, 6000]))
+//    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
+    private static let ports_set : Set<UInt16> = Set(22..<23).union(Set([8080, 3389, 5900, 6000]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
@@ -35,40 +36,65 @@ class TCPPortBrowser {
         device_manager.setInformation("browsing TCP ports")
 
         for addr in self.ip_to_tcp_port.keys {
-            let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
-            if s < 0 {
-                GenericTools.perror("socket")
-                fatalError("browse: socket")
-            }
-            
-            var tv = timeval(tv_sec: 1, tv_usec: 0)
-            var ret = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &tv, UInt32(MemoryLayout<timeval>.size))
-            if ret < 0 {
-                GenericTools.perror("setsockopt")
-                close(s)
-                fatalError("browse: setsockopt")
-            }
-        
+            var tv = timeval(tv_sec: 5, tv_usec: 0)
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
-                print("TCP browse ADDRESSE :", addr.toNumericString())
                 for port in self.ip_to_tcp_port[addr]! {
-                    print(addr.toNumericString(), ":", port)
+                    let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
+                    if s < 0 {
+                        GenericTools.perror("socket")
+                        fatalError("browse: socket")
+                    }
 
-                    addr.toSockAddress()
-                    
-                    let ret = addr.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                    var ret = fcntl(s, F_SETFL, O_NONBLOCK)
+                    if (ret < 0) {
+                        GenericTools.perror("fcntl")
+                        fatalError("browse: fcntl")
+                    }
+
+                    ret = addr.toSockAddress(port: port)!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
                         connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
                     }
-                    
-                    print("ret=", ret)
-                    perror("connect")
-                    
+                    if (ret < 0 && errno != EINPROGRESS) {
+                        perror("connect")
+                        print("connect", addr.toNumericString(), "port", port)
+                    } else {
+                        var fds : fd_set = getfds(s)
+                        ret = select(s + 1, nil, &fds, nil, &tv)
+                        if ret > 0 {
+                            var so_error : Int32 = 0
+                            var len : socklen_t = 4
+                            ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
+                            if ret < 0 {
+                                perror("getsockopt")
+                                print("getsockopt", addr.toNumericString(), "port", port)
+                            } else {
+                                switch so_error {
+                                case 0:
+                                    print("getsockopt port open", addr.toNumericString(), "port", port)
+                                    
+                                case ECONNREFUSED:
+                                    print("getsockopt connection refused", addr.toNumericString(), "port", port)
+                                    
+                                default:
+                                    print("getsockopt other state", addr.toNumericString(), "port", port, "so_error", so_error)
+                                }
+                            }
+                        } else {
+                            if ret == 0 {
+                                print("select timeout reached", addr.toNumericString(), "port", port)
+                            } else {
+                                perror("select")
+                                print("select", addr.toNumericString(), "port", port)
+
+                            }
+                        }
+                        // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/sys/socket.h
+                    }
+
+                    close(s)
                 }
 
-                
-
-                close(s)
                 dispatchGroup.leave()
             }
         }

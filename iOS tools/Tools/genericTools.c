@@ -16,3 +16,9 @@ int c_test() {
     printf("ck=%d\n", ck);
     return 0;
 }
+
+fd_set getfds(int fd) {
+    fd_set fds;
+    __DARWIN_FD_SET(fd, &fds);
+    return fds;
+}

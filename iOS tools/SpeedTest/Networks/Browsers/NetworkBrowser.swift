@@ -125,6 +125,10 @@ class NetworkBrowser {
     // Main thread
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
+            
+DispatchQueue.main.sync { self.browser_tcp.browse() }
+return
+
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")

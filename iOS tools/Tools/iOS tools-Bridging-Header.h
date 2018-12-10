@@ -34,6 +34,9 @@ int c_test();
 
 void net_test();
 
+#include <sys/select.h>
+fd_set getfds(int fd);
+
 // needed to access to struct icmp from Swift
 #include <netinet/in.h>
 #include <netinet/ip.h>
