@@ -10,7 +10,7 @@ import Foundation
 
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
-    private static let ports_set : Set<UInt16> = Set(22..<23).union(Set([8080, 3389, 5900, 6000]))
+    private static let ports_set : Set<UInt16> = Set(20...80).union(Set([8080, 3389, 5900, 6000]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
@@ -23,20 +23,24 @@ class TCPPortBrowser {
     // Main thread
     public func browse() {
         // Initialize port lists to connect to
-        for node in DBMaster.shared.nodes {
-            if let addr = node.v4_addresses.first {
-                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-            } else if let addr = node.v6_addresses.first {
-                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-            }
-        }
+        
+        let a = IPv4Address("10.69.127.250")!
+        ip_to_tcp_port[a] = TCPPortBrowser.ports_set
+        
+//        for node in DBMaster.shared.nodes {
+//            if let addr = node.v4_addresses.first {
+//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+//            } else if let addr = node.v6_addresses.first {
+//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+//            }
+//        }
         
         let dispatchGroup = DispatchGroup()
 
         device_manager.setInformation("browsing TCP ports")
 
         for addr in self.ip_to_tcp_port.keys {
-            var tv = timeval(tv_sec: 5, tv_usec: 0)
+            var tv = timeval(tv_sec: 0, tv_usec: 900000)
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 for port in self.ip_to_tcp_port[addr]! {

@@ -245,7 +245,7 @@ class IPv4Address : IPAddress {
         var data = Data(count: MemoryLayout<sockaddr_in>.size)
         data.withUnsafeMutableBytes { (bytes : UnsafeMutablePointer<sockaddr_in>) in
             bytes.pointee.sin_addr = in_addr
-            bytes.pointee.sin_port = port
+            bytes.pointee.sin_port = _htons(port)
             bytes.pointee.sin_len = UInt8(MemoryLayout<in_addr>.size)
             bytes.pointee.sin_family = UInt8(AF_INET)
         }
@@ -338,7 +338,7 @@ class IPv6Address : IPAddress {
         data.withUnsafeMutableBytes {
             (bytes : UnsafeMutablePointer<sockaddr_in6>) in
             bytes.pointee.sin6_addr = in6_addr
-            bytes.pointee.sin6_port = port
+            bytes.pointee.sin6_port = _htons(port)
             bytes.pointee.sin6_scope_id = scope
             bytes.pointee.sin6_len = UInt8(MemoryLayout<in6_addr>.size)
             bytes.pointee.sin6_family = UInt8(AF_INET6)
