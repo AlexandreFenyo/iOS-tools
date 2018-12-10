@@ -25,6 +25,7 @@ class TCPPortBrowser {
         // Initialize port lists to connect to
         
         let a = IPv4Address("10.69.127.250")!
+//        let a = IPv4Address("1.2.3.4")!
         ip_to_tcp_port[a] = TCPPortBrowser.ports_set
         
 //        for node in DBMaster.shared.nodes {
@@ -40,7 +41,7 @@ class TCPPortBrowser {
         device_manager.setInformation("browsing TCP ports")
 
         for addr in self.ip_to_tcp_port.keys {
-            var tv = timeval(tv_sec: 0, tv_usec: 900000)
+            var tv = timeval(tv_sec: 0, tv_usec: /* 20000 */ 20)
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 for port in self.ip_to_tcp_port[addr]! {
