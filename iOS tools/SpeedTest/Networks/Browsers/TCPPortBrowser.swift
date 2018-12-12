@@ -40,6 +40,7 @@ class TCPPortBrowser {
         device_manager.setInformation("browsing TCP ports")
 
         for addr in self.ip_to_tcp_port.keys {
+            var tv = timeval(tv_sec: 0, tv_usec: /* 20000 */ 200000)
             dispatchGroup.enter()
             
             self.ip_to_tcp_port_open[addr] = Set<UInt16>()
