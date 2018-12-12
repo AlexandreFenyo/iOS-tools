@@ -9,11 +9,11 @@
 import Foundation
 
 class TCPPortBrowser {
-//    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
-    private static let ports_set : Set<UInt16> = Set(20...80).union(Set([8080, 3389, 5900, 6000]))
+    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
+    private var ip_to_tcp_port_open : [IPAddress: Set<UInt16>] = [:] // Main thread
 
     // Main thread
     public func stop() {
@@ -24,84 +24,122 @@ class TCPPortBrowser {
     public func browse() {
         // Initialize port lists to connect to
         
-        let a = IPv4Address("10.69.127.250")!
-//        let a = IPv4Address("1.2.3.4")!
-        ip_to_tcp_port[a] = TCPPortBrowser.ports_set
-        
-//        for node in DBMaster.shared.nodes {
-//            if let addr = node.v4_addresses.first {
-//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-//            } else if let addr = node.v6_addresses.first {
-//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-//            }
-//        }
+//        let a = IPv4Address("10.69.127.250")!
+////        let a = IPv4Address("1.2.3.4")!
+//        ip_to_tcp_port[a] = TCPPortBrowser.ports_set
+        for node in DBMaster.shared.nodes {
+            if let addr = node.v4_addresses.first {
+                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+            } else if let addr = node.v6_addresses.first {
+                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+            }
+        }
         
         let dispatchGroup = DispatchGroup()
 
         device_manager.setInformation("browsing TCP ports")
 
         for addr in self.ip_to_tcp_port.keys {
-            var tv = timeval(tv_sec: 0, tv_usec: /* 20000 */ 20)
             dispatchGroup.enter()
+            
+            self.ip_to_tcp_port_open[addr] = Set<UInt16>()
+            
             DispatchQueue.global(qos: .userInitiated).async {
-                for port in self.ip_to_tcp_port[addr]! {
-                    let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
-                    if s < 0 {
-                        GenericTools.perror("socket")
-                        fatalError("browse: socket")
-                    }
+                for delay : Int32 in [ 4000 /*, 20000, 60000, 400000 */ ] {
+                    var ports = self.ip_to_tcp_port[addr]!
 
-                    var ret = fcntl(s, F_SETFL, O_NONBLOCK)
-                    if (ret < 0) {
-                        GenericTools.perror("fcntl")
-                        fatalError("browse: fcntl")
-                    }
+                    for port in self.ip_to_tcp_port[addr]! {
+                        if ports.contains(port) == false { continue }
 
-                    ret = addr.toSockAddress(port: port)!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
-                        connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
-                    }
-                    if (ret < 0 && errno != EINPROGRESS) {
-                        perror("connect")
-                        print("connect", addr.toNumericString(), "port", port)
-                    } else {
-                        var fds : fd_set = getfds(s)
-                        ret = select(s + 1, nil, &fds, nil, &tv)
-                        if ret > 0 {
-                            var so_error : Int32 = 0
-                            var len : socklen_t = 4
-                            ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
-                            if ret < 0 {
-                                perror("getsockopt")
-                                print("getsockopt", addr.toNumericString(), "port", port)
+                        let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
+                        if s < 0 {
+                            GenericTools.perror("socket")
+                            fatalError("browse: socket")
+                        }
+                        
+                        var ret = fcntl(s, F_SETFL, O_NONBLOCK)
+                        if (ret < 0) {
+                            GenericTools.perror("fcntl")
+                            close(s)
+                            fatalError("browse: fcntl")
+                        }
+                        
+                        ret = addr.toSockAddress(port: port)!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
+                            connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
+                        }
+
+                        if (ret < 0) {
+                            // connect(): error
+                            if errno != EINPROGRESS {
+                                perror("connect")
+                                print("ERREUR connect", addr.toNumericString(), "port", port)
+                                // do not retry this port
+                                ports.remove(port)
                             } else {
-                                switch so_error {
-                                case 0:
-                                    print("getsockopt port open", addr.toNumericString(), "port", port)
-                                    
-                                case ECONNREFUSED:
-                                    print("getsockopt connection refused", addr.toNumericString(), "port", port)
-                                    
-                                default:
-                                    print("getsockopt other state", addr.toNumericString(), "port", port, "so_error", so_error)
+                                // EINPROGRESS
+                                var fds : fd_set = getfds(s)
+                                var tv = timeval(tv_sec: 0, tv_usec: delay)
+                                ret = select(s + 1, nil, &fds, nil, &tv)
+                                if ret > 0 {
+                                    // socket is in FDS
+
+                                    var so_error : Int32 = 0
+                                    var len : socklen_t = 4
+                                    ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
+                                    if ret < 0 {
+                                        // can not get socket status
+                                        perror("getsockopt")
+                                        print("ERREUR getsockopt", addr.toNumericString(), "port", port)
+                                        // do not retry this port
+                                        ports.remove(port)
+                                    } else {
+                                        // socket status returned
+                                        switch so_error {
+                                        case 0:
+                                            // socket status: OK
+                                            self.ip_to_tcp_port_open[addr]!.insert(port)
+                                            print("getsockopt port open", addr.toNumericString(), "port", port)
+                                            // do not retry this port
+                                            ports.remove(port)
+                                            
+                                        case ECONNREFUSED:
+                                            // do not retry this port
+                                            ports.remove(port)
+                                            print("getsockopt connection refused", addr.toNumericString(), "port", port)
+                                            
+                                        default:
+                                            print("ERREUR getsockopt other state", addr.toNumericString(), "port", port, "so_error", so_error)
+                                        }
+                                    }
+                                } else {
+                                    // socket is not in FDS
+                                    if ret == 0 {
+                                        // timeout reached
+                                        print("select timeout reached", addr.toNumericString(), "port", port)
+                                    } else {
+                                        // select error : ???
+                                        perror("select")
+                                        print("ERREUR select", addr.toNumericString(), "port", port)
+                                        
+                                    }
                                 }
+                    
+                                
                             }
                         } else {
-                            if ret == 0 {
-                                print("select timeout reached", addr.toNumericString(), "port", port)
-                            } else {
-                                perror("select")
-                                print("select", addr.toNumericString(), "port", port)
-
-                            }
+                            // connect(): no error, successful completion
+                            self.ip_to_tcp_port_open[addr]!.insert(port)
+                            // do not retry this port
+                            ports.remove(port)
                         }
-                        // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/sys/socket.h
+
+                        close(s)
                     }
-
-                    close(s)
                 }
-
                 dispatchGroup.leave()
             }
+            
+
         }
 
         dispatchGroup.wait()
