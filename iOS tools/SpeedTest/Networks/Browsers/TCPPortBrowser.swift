@@ -10,7 +10,7 @@ import Foundation
 
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
-    private static let ports_set : Set<UInt16> = Set(1...1).union(Set([22]))
+    private static let ports_set : Set<UInt16> = Set(22...22).union(Set([22]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
@@ -46,7 +46,7 @@ class TCPPortBrowser {
             self.ip_to_tcp_port_open[addr] = Set<UInt16>()
             
             DispatchQueue.global(qos: .userInitiated).async {
-                for delay : Int32 in [ 4, 20000 /*, 4000, 20000, 60000, 400000 */ ] {
+                for delay : Int32 in [ 4 /*, 4000, 20000, 60000, 400000 */ ] {
                     var ports = self.ip_to_tcp_port[addr]!
 
                     for port in self.ip_to_tcp_port[addr]! {
@@ -86,7 +86,7 @@ class TCPPortBrowser {
                                     need_repeat = false
                                     
 
-                                    
+// https://cr.yp.to/docs/connect.html
                                     var fds : fd_set = getfds(s)
                                     var tv = timeval(tv_sec: 0, tv_usec: delay)
                                     ret = select(s + 1, nil, &fds, nil, &tv)
@@ -106,8 +106,22 @@ class TCPPortBrowser {
                                             // socket status returned
                                             switch so_error {
                                             case 0:
-                                                print("getsockopt so_error == 0", addr.toNumericString(), "port", port)
-                                                need_repeat = true
+//                                                print("getsockopt so_error == 0", addr.toNumericString(), "port", port)
+                                                var saddr = sockaddr()
+                                                var slen = UInt32(MemoryLayout<sockaddr>.size)
+                                                let rr = getpeername(s, &saddr, &slen)
+                                                if rr < 0 {
+                                                    perror("getpeername")
+                                                    need_repeat = true
+                                                } else {
+                                                    // do not retry this port
+                                                    print("PORT OK : ", port)
+                                                    ports.remove(port)
+                                                }
+
+                                                //                                                if rr < 0 && errno == ENOTCONN { need_repeat = true }
+
+                                                
                                                 // socket status: OK
                                                 //                                            self.ip_to_tcp_port_open[addr]!.insert(port)
                                                 //                                            print("getsockopt port open", addr.toNumericString(), "port", port)
