@@ -9,8 +9,8 @@
 import Foundation
 
 class TCPPortBrowser {
-//    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
-    private static let ports_set : Set<UInt16> = Set(22...22).union(Set([22]))
+    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
+//    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
@@ -25,7 +25,7 @@ class TCPPortBrowser {
     public func browse() {
         // Initialize port lists to connect to
         
-        let a = IPv4Address("10.69.184.194")!
+        let a = IPv4Address("192.168.1.254")!
 //        let a = IPv4Address("1.2.3.4")!
         ip_to_tcp_port[a] = TCPPortBrowser.ports_set
 //        for node in DBMaster.shared.nodes {
@@ -46,7 +46,7 @@ class TCPPortBrowser {
             self.ip_to_tcp_port_open[addr] = Set<UInt16>()
             
             DispatchQueue.global(qos: .userInitiated).async {
-                for delay : Int32 in [ 4 /*, 4000, 20000, 60000, 400000 */ ] {
+                for delay : Int32 in [ 4000 /*, 4000, 20000, 60000, 400000 */ ] {
                     var ports = self.ip_to_tcp_port[addr]!
 
                     for port in self.ip_to_tcp_port[addr]! {
@@ -106,28 +106,24 @@ class TCPPortBrowser {
                                             // socket status returned
                                             switch so_error {
                                             case 0:
-//                                                print("getsockopt so_error == 0", addr.toNumericString(), "port", port)
                                                 var saddr = sockaddr()
                                                 var slen = UInt32(MemoryLayout<sockaddr>.size)
                                                 let rr = getpeername(s, &saddr, &slen)
                                                 if rr < 0 {
-                                                    perror("getpeername")
-                                                    need_repeat = true
+                                                    if errno == ENOTCONN {
+                                                        need_repeat = true
+                                                    } else {
+                                                        perror("getpeername")
+                                                        // do not retry this port
+                                                        ports.remove(port)
+                                                    }
                                                 } else {
+                                                    // we got a peer name
+                                                    print("getpeername PORT CONNECTED : ", addr.toNumericString(), "port", port)
                                                     // do not retry this port
-                                                    print("PORT OK : ", port)
                                                     ports.remove(port)
                                                 }
 
-                                                //                                                if rr < 0 && errno == ENOTCONN { need_repeat = true }
-
-                                                
-                                                // socket status: OK
-                                                //                                            self.ip_to_tcp_port_open[addr]!.insert(port)
-                                                //                                            print("getsockopt port open", addr.toNumericString(), "port", port)
-                                                //                                            // do not retry this port
-                                                //                                            ports.remove(port)
-                                                
                                             case ECONNREFUSED:
                                                 // do not retry this port
                                                 ports.remove(port)
@@ -138,7 +134,7 @@ class TCPPortBrowser {
                                             }
                                         }
                                     } else {
-                                        // socket is not in FDS
+                                        // socket ein FDS
                                         if ret == 0 {
                                             // timeout reached
                                             print("select timeout reached", addr.toNumericString(), "port", port)
