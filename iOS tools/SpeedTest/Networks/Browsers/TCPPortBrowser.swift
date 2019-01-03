@@ -35,7 +35,7 @@ class TCPPortBrowser {
 //                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
 //            }
 //        }
-        
+
         let dispatchGroup = DispatchGroup()
 
         device_manager.setInformation("browsing TCP ports")
@@ -89,7 +89,9 @@ class TCPPortBrowser {
 // https://cr.yp.to/docs/connect.html
                                     var fds : fd_set = getfds(s)
                                     var tv = timeval(tv_sec: 0, tv_usec: delay)
+print("avant select")
                                     ret = select(s + 1, nil, &fds, nil, &tv)
+print("apres select")
                                     if ret > 0 {
                                         // socket is in FDS
                                         
