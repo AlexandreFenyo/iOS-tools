@@ -126,7 +126,9 @@ class NetworkBrowser {
     public func browse() {
         DispatchQueue.global(qos: .userInitiated).async {
             
-DispatchQueue.main.async { self.browser_tcp.browse() }
+            
+self.browser_tcp.browse()
+//DispatchQueue.main.async { self.browser_tcp.browse() }
 return
 
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)

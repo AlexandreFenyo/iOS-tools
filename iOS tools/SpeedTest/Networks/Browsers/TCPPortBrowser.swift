@@ -12,21 +12,21 @@ class TCPPortBrowser {
     private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
 //    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22]))
     private let device_manager : DeviceManager
-    private var finished : Bool = false // Main thread
-    private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:]
-    private var ip_to_tcp_port_open : [IPAddress: Set<UInt16>] = [:] // Main thread
+    private var finished : Bool = false // Set by Main thread
+    private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:] // Browse thread
+    private var ip_to_tcp_port_open : [IPAddress: Set<UInt16>] = [:] // Browse thread
 
     // Main thread
     public func stop() {
         finished = true
     }
 
-    // Main thread
+    // userInitiated thread (Browse thread)
     public func browse() {
         // Initialize port lists to connect to
         
-        let a = IPv4Address("192.168.1.254")!
-//        let a = IPv4Address("1.2.3.4")!
+//        let a = IPv4Address("192.168.1.253")!
+        let a = IPv4Address("1.2.3.4")!
         ip_to_tcp_port[a] = TCPPortBrowser.ports_set
 //        for node in DBMaster.shared.nodes {
 //            if let addr = node.v4_addresses.first {
@@ -38,18 +38,23 @@ class TCPPortBrowser {
 
         let dispatchGroup = DispatchGroup()
 
-        device_manager.setInformation("browsing TCP ports")
+        DispatchQueue.main.sync { device_manager.setInformation("browsing TCP ports") }
 
         for addr in self.ip_to_tcp_port.keys {
             dispatchGroup.enter()
             
             self.ip_to_tcp_port_open[addr] = Set<UInt16>()
             
+            // Create a thread for each address
             DispatchQueue.global(qos: .userInitiated).async {
-                for delay : Int32 in [ 4000 /*, 4000, 20000, 60000, 400000 */ ] {
+                var x = 1
+
+                for delay : Int32 in [ 900000 /*, 4000, 20000, 60000, 400000 */ ] {
+                    if self.finished { break }
                     var ports = self.ip_to_tcp_port[addr]!
 
                     for port in self.ip_to_tcp_port[addr]! {
+                        if self.finished { break }
                         if ports.contains(port) == false { continue }
 
                         let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
@@ -57,6 +62,7 @@ class TCPPortBrowser {
                             GenericTools.perror("socket")
                             fatalError("browse: socket")
                         }
+//                        print("socket fd:", s)
                         
                         var ret = fcntl(s, F_SETFL, O_NONBLOCK)
                         if (ret < 0) {
@@ -65,7 +71,7 @@ class TCPPortBrowser {
                             fatalError("browse: fcntl")
                         }
                         
-                        
+                        print("trying port", port)
                         ret = addr.toSockAddress(port: port)!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
                             connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
                         }
@@ -79,19 +85,25 @@ class TCPPortBrowser {
                                 ports.remove(port)
                             } else {
                                 // EINPROGRESS
-                                
+
+
                                 var need_repeat = false
                                 repeat {
-                                    
+                                    print("repeating")
+                                    if self.finished { break }
                                     need_repeat = false
                                     
 
 // https://cr.yp.to/docs/connect.html
                                     var fds : fd_set = getfds(s)
                                     var tv = timeval(tv_sec: 0, tv_usec: delay)
-print("avant select")
+
+                                    x += 1
+//                                    print("avant select:", x)
+print("avant select", Date.timeIntervalSinceReferenceDate*1000000)
                                     ret = select(s + 1, nil, &fds, nil, &tv)
-print("apres select")
+print("après select", Date.timeIntervalSinceReferenceDate*1000000)
+//print("apres select")
                                     if ret > 0 {
                                         // socket is in FDS
                                         
@@ -113,6 +125,7 @@ print("apres select")
                                                 let rr = getpeername(s, &saddr, &slen)
                                                 if rr < 0 {
                                                     if errno == ENOTCONN {
+                                                        print("ENOTCONN")
                                                         need_repeat = true
                                                     } else {
                                                         perror("getpeername")
@@ -136,7 +149,7 @@ print("apres select")
                                             }
                                         }
                                     } else {
-                                        // socket ein FDS
+                                        // socket in FDS
                                         if ret == 0 {
                                             // timeout reached
                                             print("select timeout reached", addr.toNumericString(), "port", port)
@@ -173,9 +186,9 @@ print("apres select")
 
         dispatchGroup.wait()
         print("TCP browse ADDRESSE: FIN")
-        exit(1)
+//        exit(1)
         
-        device_manager.setInformation("")
+        DispatchQueue.main.sync { device_manager.setInformation("") }
     }
 
     // Browse a set of networks
