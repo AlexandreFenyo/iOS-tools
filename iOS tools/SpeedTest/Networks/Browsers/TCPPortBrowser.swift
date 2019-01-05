@@ -9,8 +9,8 @@
 import Foundation
 
 class TCPPortBrowser {
-    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
-//    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22]))
+//    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
+    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 80]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Set by Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:] // Browse thread
@@ -50,7 +50,7 @@ class TCPPortBrowser {
             DispatchQueue.global(qos: .userInitiated).async {
                 var ports = self.ip_to_tcp_port[addr]!
 
-                for delay : Int32 in [ /* 1000, 5000, */ 200000 /*, 100000 */ ] {
+                for delay : Int32 in [ /* 1000, 5000, */ 200000, 200001 /*, 100000 */ ] {
                     if self.finished { break }
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
@@ -87,6 +87,10 @@ class TCPPortBrowser {
                                 // EINPROGRESS
 
                                 if self.finished { break }
+
+
+
+
 
                                 // https://cr.yp.to/docs/connect.html
                                 var fds : fd_set = getfds(s)
@@ -147,7 +151,7 @@ class TCPPortBrowser {
                                     // socket in FDS
                                     if ret == 0 {
                                         // timeout reached
-                                        //                                            print("select timeout reached", addr.toNumericString(), "port", port)
+                                        print("select timeout reached", addr.toNumericString(), "port", port)
                                     } else {
                                         // select error : ???
                                         perror("select")
@@ -155,6 +159,15 @@ class TCPPortBrowser {
 
                                     }
                                 }
+
+
+
+
+
+
+
+
+
 
                             }
                                 
