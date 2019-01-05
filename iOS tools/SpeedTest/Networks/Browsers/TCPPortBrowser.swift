@@ -25,19 +25,20 @@ class TCPPortBrowser {
     public func browse() {
         // Initialize port lists to connect to
         
-//        let a = IPv4Address("192.168.1.253")!
-        let a = IPv4Address("1.2.3.4")!
+        let a = IPv4Address("192.168.1.254")!
+//        let a = IPv4Address("1.2.3.4")!
         ip_to_tcp_port[a] = TCPPortBrowser.ports_set
-//        for node in DBMaster.shared.nodes {
-//            if let addr = node.v4_addresses.first {
-//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-//            } else if let addr = node.v6_addresses.first {
-//                ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+//        DispatchQueue.main.sync {
+//            for node in DBMaster.shared.nodes {
+//                if let addr = node.v4_addresses.first {
+//                    ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+//                } else if let addr = node.v6_addresses.first {
+//                    ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+//                }
 //            }
 //        }
 
         let dispatchGroup = DispatchGroup()
-
         DispatchQueue.main.sync { device_manager.setInformation("browsing TCP ports") }
 
         for addr in self.ip_to_tcp_port.keys {
@@ -47,13 +48,12 @@ class TCPPortBrowser {
             
             // Create a thread for each address
             DispatchQueue.global(qos: .userInitiated).async {
-                var x = 1
+                var ports = self.ip_to_tcp_port[addr]!
 
-                for delay : Int32 in [ 900000 /*, 4000, 20000, 60000, 400000 */ ] {
+                for delay : Int32 in [ /* 1000, 5000, */ 200000 /*, 100000 */ ] {
                     if self.finished { break }
-                    var ports = self.ip_to_tcp_port[addr]!
 
-                    for port in self.ip_to_tcp_port[addr]! {
+                    for port in self.ip_to_tcp_port[addr]!.sorted() {
                         if self.finished { break }
                         if ports.contains(port) == false { continue }
 
@@ -71,7 +71,7 @@ class TCPPortBrowser {
                             fatalError("browse: fcntl")
                         }
                         
-                        print("trying port", port)
+                        print(addr.toNumericString(), ": trying port", port, "for", delay, "microseconds")
                         ret = addr.toSockAddress(port: port)!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
                             connect(s, sockaddr, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
                         }
@@ -86,88 +86,81 @@ class TCPPortBrowser {
                             } else {
                                 // EINPROGRESS
 
+                                if self.finished { break }
 
-                                var need_repeat = false
-                                repeat {
-                                    print("repeating")
-                                    if self.finished { break }
-                                    need_repeat = false
-                                    
+                                // https://cr.yp.to/docs/connect.html
+                                var fds : fd_set = getfds(s)
+                                var tv = timeval(tv_sec: 0, tv_usec: delay)
 
-// https://cr.yp.to/docs/connect.html
-                                    var fds : fd_set = getfds(s)
-                                    var tv = timeval(tv_sec: 0, tv_usec: delay)
+                                ret = select(s + 1, nil, &fds, nil, &tv)
+                                if ret > 0 {
+                                    // socket is in FDS
 
-                                    x += 1
-//                                    print("avant select:", x)
-print("avant select", Date.timeIntervalSinceReferenceDate*1000000)
-                                    ret = select(s + 1, nil, &fds, nil, &tv)
-print("après select", Date.timeIntervalSinceReferenceDate*1000000)
-//print("apres select")
-                                    if ret > 0 {
-                                        // socket is in FDS
-                                        
-                                        var so_error : Int32 = 0
-                                        var len : socklen_t = 4
-                                        ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
-                                        if ret < 0 {
-                                            // can not get socket status
-                                            perror("getsockopt")
-                                            print("ERREUR getsockopt", addr.toNumericString(), "port", port)
-                                            // do not retry this port
-                                            ports.remove(port)
-                                        } else {
-                                            // socket status returned
-                                            switch so_error {
-                                            case 0:
-                                                var saddr = sockaddr()
-                                                var slen = UInt32(MemoryLayout<sockaddr>.size)
-                                                let rr = getpeername(s, &saddr, &slen)
-                                                if rr < 0 {
-                                                    if errno == ENOTCONN {
-                                                        print("ENOTCONN")
-                                                        need_repeat = true
-                                                    } else {
-                                                        perror("getpeername")
-                                                        // do not retry this port
-                                                        ports.remove(port)
-                                                    }
+//                                    var ret = fcntl(s, F_SETFL, 0)
+//                                    if (ret < 0) {
+//                                        GenericTools.perror("fcntl")
+//                                        close(s)
+//                                        fatalError("browse: fcntl")
+//                                    }
+
+                                    var so_error : Int32 = 0
+                                    var len : socklen_t = 4
+                                    ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
+                                    if ret < 0 {
+                                        // can not get socket status
+                                        perror("getsockopt")
+                                        print("ERREUR getsockopt", addr.toNumericString(), "port", port)
+                                        // do not retry this port
+                                        ports.remove(port)
+                                    } else {
+                                        // socket status returned
+                                        switch so_error {
+                                        case 0:
+                                            var saddr = sockaddr()
+                                            var slen = UInt32(MemoryLayout<sockaddr>.size)
+                                            let rr = getpeername(s, &saddr, &slen)
+                                            if rr < 0 {
+                                                if errno == ENOTCONN {
+                                                    print("ENOTCONN")
                                                 } else {
-                                                    // we got a peer name
-                                                    print("getpeername PORT CONNECTED : ", addr.toNumericString(), "port", port)
+                                                    perror("getpeername")
                                                     // do not retry this port
                                                     ports.remove(port)
                                                 }
-
-                                            case ECONNREFUSED:
+                                            } else {
+                                                // we got a peer name
+                                                print("getpeername PORT CONNECTED :", addr.toNumericString()!, "port", port, "after", delay)
                                                 // do not retry this port
                                                 ports.remove(port)
-                                                print("getsockopt connection refused", addr.toNumericString(), "port", port)
-                                                
-                                            default:
-                                                print("ERREUR getsockopt other state", addr.toNumericString(), "port", port, "so_error", so_error)
                                             }
-                                        }
-                                    } else {
-                                        // socket in FDS
-                                        if ret == 0 {
-                                            // timeout reached
-                                            print("select timeout reached", addr.toNumericString(), "port", port)
-                                        } else {
-                                            // select error : ???
-                                            perror("select")
-                                            print("ERREUR select", addr.toNumericString(), "port", port)
-                                            
+
+                                        case ECONNREFUSED:
+                                            // do not retry this port
+                                            ports.remove(port)
+                                            print("getsockopt connection refused", addr.toNumericString(), "port", port)
+
+                                        default:
+                                            print("ERREUR getsockopt other state", addr.toNumericString(), "port", port, "so_error", so_error)
                                         }
                                     }
-                                
-                                    
-                                }  while need_repeat
-                                
+                                } else {
+                                    // socket in FDS
+                                    if ret == 0 {
+                                        // timeout reached
+                                        //                                            print("select timeout reached", addr.toNumericString(), "port", port)
+                                    } else {
+                                        // select error : ???
+                                        perror("select")
+                                        print("ERREUR select", addr.toNumericString(), "port", port)
+
+                                    }
+                                }
+
                             }
                                 
                         } else {
                             // connect(): no error, successful completion
+                            print("port found", port)
                             self.ip_to_tcp_port_open[addr]!.insert(port)
                             // do not retry this port
                             ports.remove(port)
