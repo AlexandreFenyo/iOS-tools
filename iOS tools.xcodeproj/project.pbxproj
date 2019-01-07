@@ -14,7 +14,6 @@
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
-		5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385920A2EEAF006AC172 /* Splash.storyboard */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
@@ -61,7 +60,6 @@
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
-		5D4B385920A2EEAF006AC172 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
 		5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPortBrowser.swift; sourceTree = "<group>"; };
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -173,7 +171,6 @@
 				5DF214FF211B4FCE002B7603 /* Networks */,
 				5D38680F20963915009FE239 /* config.plist */,
 				5D4B385520A2ECD9006AC172 /* Tools.xcassets */,
-				5D4B385920A2EEAF006AC172 /* Splash.storyboard */,
 				5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */,
 			);
 			path = Tools;
@@ -346,7 +343,6 @@
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5DC736C620D3A69F00C2A199 /* Default-568h@2x.png in Resources */,
-				5D4B385A20A2EEAF006AC172 /* Splash.storyboard in Resources */,
 				5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */,
 				5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */,
 			);

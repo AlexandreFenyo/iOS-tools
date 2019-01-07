@@ -25,7 +25,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>Splash</string>
+	<string>SpeedTest</string>
 	<key>UIMainStoryboardFile</key>
 	<string>SpeedTest</string>
 	<key>UIRequiredDeviceCapabilities</key>
