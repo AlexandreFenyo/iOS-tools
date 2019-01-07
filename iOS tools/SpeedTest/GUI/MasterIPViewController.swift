@@ -63,6 +63,7 @@ class MasterIPViewController: UITableViewController {
         return node!.v4_addresses.count + node!.v6_addresses.count
     }
 
+    // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
