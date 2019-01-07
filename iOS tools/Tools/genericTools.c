@@ -19,6 +19,7 @@ int c_test() {
 
 fd_set getfds(int fd) {
     fd_set fds;
+    bzero(&fds, sizeof fds);
     __DARWIN_FD_SET(fd, &fds);
     return fds;
 }

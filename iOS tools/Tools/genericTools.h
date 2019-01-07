@@ -11,5 +11,6 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <strings.h>
 
 #endif /* genericTools_h */
