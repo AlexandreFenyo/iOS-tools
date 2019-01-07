@@ -216,6 +216,8 @@ class DBMaster {
         return index_paths_removed
     }
 
+    /* 1 gateway per IP */
+    /*
     public func getLocalGateways() -> [Node] {
         var gateways = [Node]()
 
@@ -249,6 +251,41 @@ class DBMaster {
             idx += 1
         } while ret >= 0
 
+        return gateways
+    }
+ */
+
+    /* A unique gateway */
+    public func getLocalGateways() -> [Node] {
+        var gateways = [Node]()
+        let gw = Node()
+        gw.types.insert(.gateway)
+        
+        var idx : Int32 = 0, ret : Int32
+        repeat {
+            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
+            ret = data.withUnsafeMutableBytes { getlocalgatewayipv4(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            
+            if (ret >= 0) {
+                let addr = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
+                gw.v4_addresses.insert(addr)
+            }
+            idx += 1
+        } while ret >= 0
+        
+        idx = 0
+        repeat {
+            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
+            ret = data.withUnsafeMutableBytes { getlocalgatewayipv6(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            
+            if (ret >= 0) {
+                let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+                gw.v6_addresses.insert(addr)
+            }
+            idx += 1
+        } while ret >= 0
+        
+        gateways.append(gw)
         return gateways
     }
     
