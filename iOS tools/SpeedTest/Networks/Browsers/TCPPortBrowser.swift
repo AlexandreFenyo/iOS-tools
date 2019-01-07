@@ -22,7 +22,18 @@ class TCPPortBrowser {
     public func stop() {
         finished = true
     }
-
+    
+    private func addPort(addr: IPAddress, port: UInt16) {
+        DispatchQueue.main.sync {
+            let node = Node()
+            if addr.getFamily() == AF_INET { node.v4_addresses.insert(addr as! IPv4Address) }
+            else { node.v6_addresses.insert(addr as! IPv6Address) }
+            node.tcp_ports.insert(port)
+            self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
+            self.device_manager.addNode(node)
+        }
+    }
+    
     // userInitiated thread (Browse thread)
     public func browse() {
         // Initialize port lists to connect to
@@ -144,6 +155,7 @@ class TCPPortBrowser {
                                                     print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay)
                                                     // do not retry this port
                                                     ports.remove(port)
+                                                    self.addPort(addr: addr, port: port)
                                                 }
                                                 
                                             case ECONNREFUSED:
@@ -175,17 +187,13 @@ class TCPPortBrowser {
                             self.ip_to_tcp_port_open[addr]!.insert(port)
                             // do not retry this port
                             ports.remove(port)
+                            self.addPort(addr: addr, port: port)
                         }
-
-
-
                         close(s)
                     }
                 }
                 dispatchGroup.leave()
             }
-            
-
         }
 
         dispatchGroup.wait()
