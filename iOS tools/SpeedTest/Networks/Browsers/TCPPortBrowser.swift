@@ -8,7 +8,7 @@
 
 import Foundation
 
-let debug = false
+let debug = true
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     private static let ports_set : Set<UInt16> = Set(1...65535)
