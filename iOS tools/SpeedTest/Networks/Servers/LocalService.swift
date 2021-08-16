@@ -42,7 +42,7 @@ class StreamNetworkThread : Thread {
     override public func main() {
         print("ENTREE")
         stream.open()
-        stream.schedule(in: .current, forMode: .commonModes)
+        stream.schedule(in: .current, forMode: RunLoop.Mode.common)
         run_loop = RunLoop.current
         RunLoop.current.run()
         stream.close()

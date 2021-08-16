@@ -36,7 +36,7 @@ class LeftNavController : UINavigationController {
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleToFill
         toolbar.addSubview(imageView)
-        toolbar.sendSubview(toBack: imageView)
+        toolbar.sendSubviewToBack(imageView)
 
         // Manage constraints for auto resizing
         imageView.translatesAutoresizingMaskIntoConstraints = false

@@ -34,7 +34,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         print("didRemove")
-        if let idx = services.index(of: service) { services.remove(at: idx) }
+        if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
         else { print("warning: service app closed but not previously discovered") }
     }
 
@@ -65,7 +65,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
         print("didNotResolve")
         for err in errorDict { print("didNotResolve:", err.key, ":", err.value) }
-        if let idx = services.index(of: sender) { services.remove(at: idx) }
+        if let idx = services.firstIndex(of: sender) { services.remove(at: idx) }
         else { print("warning: service browsed but not resolved") }
     }
 

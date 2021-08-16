@@ -34,7 +34,7 @@ class TimeSeries {
         if data[tse.date] != nil { return }
         data[tse.date] = tse
         let next_date = keys.first { (date) in date > tse.date }
-        keys.insert(tse.date, at: next_date != nil ? keys.index(of: next_date!)! : keys.count)
+        keys.insert(tse.date, at: next_date != nil ? keys.firstIndex(of: next_date!)! : keys.count)
 
         // Signal about new value
         for receiver in receivers { receiver.cbNewData(ts: self, tse: tse) }

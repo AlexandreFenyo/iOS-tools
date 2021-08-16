@@ -110,7 +110,7 @@ class SockAddr6 : SockAddr {
 }
 
 class IPAddress : Equatable, NSCopying, Comparable, Hashable {
-    public let inaddr : Data
+    public var inaddr : Data
 
     var hashValue: Int {
         return inaddr.hashValue

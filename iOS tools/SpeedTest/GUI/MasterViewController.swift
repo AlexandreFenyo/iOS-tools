@@ -360,7 +360,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Delete every rows corresponding to a node
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete { fatalError("editingStyle invalid") }
         let node = getNode(indexPath: indexPath)
 

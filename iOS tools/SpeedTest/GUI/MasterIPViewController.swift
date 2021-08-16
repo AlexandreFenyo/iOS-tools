@@ -17,7 +17,7 @@ class DeviceAddress {
 }
 
 class DeviceAddressCell : UITableViewCell {
-    init(_ device : DeviceAddress, style: UITableViewCellStyle, reuseIdentifier: String?) {
+    init(_ device : DeviceAddress, style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }
 
@@ -83,7 +83,7 @@ class MasterIPViewController: UITableViewController {
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
 
-        if isMovingFromParentViewController {
+        if isMovingFromParent {
             master_view_controller!.addressDeselected()
         }
     }
