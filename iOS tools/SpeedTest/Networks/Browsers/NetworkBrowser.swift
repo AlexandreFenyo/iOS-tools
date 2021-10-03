@@ -29,10 +29,11 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
-                print("IPv6 NETWORK :", network_addr.toNumericString())
+                print("IPv6 NETWORK :", network_addr.toNumericString()!)
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 if network_addr == IPv6Address("::1") { continue }
                 let multicast = network_addr.and(IPv6Address("0000:ffff::")!).or((IPv6Address("ff02::1")!))
+                print("salut:", multicast) // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
                 multicast_ipv6.insert(multicast as! IPv6Address)
             }
 
@@ -180,8 +181,8 @@ class NetworkBrowser {
                         }
 
                         let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
-                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                            address.toSockAddress()!.saddrdata.withUnsafeBytes {
+                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
                             }
                         }
                         if ret < 0 { GenericTools.perror("sendto") }
@@ -219,8 +220,8 @@ class NetworkBrowser {
                         }
                         
                         let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.sockaddr.withUnsafeBytes { (sockaddr : UnsafePointer<sockaddr>) in
-                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, sockaddr, UInt32(MemoryLayout<sockaddr_in>.size))
+                            address.toSockAddress()!.saddrdata.withUnsafeBytes {
+                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
                             }
                         }
                         if ret < 0 { GenericTools.perror("sendto") }
@@ -244,7 +245,7 @@ class NetworkBrowser {
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
-                        var saddr = address.toSockAddress()!.sockaddr
+                        var saddr = address.toSockAddress()!.saddrdata
                         var msg_hdr = msghdr()
                         var hdr = icmp6_hdr()
                         var iov = iovec()
@@ -254,8 +255,8 @@ class NetworkBrowser {
                         hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
                         iov.iov_len = 8
                         msg_hdr.msg_namelen = UInt32(saddr.count)
-                        let retlen = saddr.withUnsafeMutableBytes { (ptr: UnsafeMutablePointer<sockaddr_in6>) -> Int in
-                            msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr)
+                        let retlen = saddr.withUnsafeMutableBytes { (ptr) -> Int in
+                            msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr.bindMemory(to: sockaddr_in6.self).baseAddress)
                             return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
                                 iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
                                 return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
@@ -293,8 +294,8 @@ class NetworkBrowser {
                     var from_len : socklen_t = UInt32(from.count)
 
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
-                        from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
-                            buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
+                        from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
+                            buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
                         }
                     }
                     if ret < 0 {
@@ -303,7 +304,7 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString())
+                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
@@ -319,8 +320,8 @@ class NetworkBrowser {
                     var from_len : socklen_t = UInt32(from.count)
                     
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
-                        from.withUnsafeMutableBytes { (from_p : UnsafeMutablePointer<sockaddr>) -> Int in
-                            buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p, from_len_p) }
+                        from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
+                            buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
                         }
                     }
                     if ret < 0 {
@@ -329,7 +330,7 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString())
+                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()

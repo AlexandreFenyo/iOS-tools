@@ -22,7 +22,7 @@ class RightNavController : UINavigationController {
         rv!.translatesAutoresizingMaskIntoConstraints = false
         view.addConstraints(
             [
-                NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: rv, attribute: .trailing, multiplier: 1.0, constant: 0),
+                NSLayoutConstraint(item: view!, attribute: .trailing, relatedBy: .equal, toItem: rv, attribute: .trailing, multiplier: 1.0, constant: 0),
                 NSLayoutConstraint(item: navigationBar, attribute: .top, relatedBy: .equal, toItem: rv, attribute: .top, multiplier: 1.0, constant: 0),
                 NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
                 NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)

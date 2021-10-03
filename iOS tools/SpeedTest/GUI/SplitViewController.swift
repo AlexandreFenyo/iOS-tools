@@ -13,7 +13,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         super.viewDidLoad()
 
         // Pour avoir l'icône d'agrandissement dans le detail view controller (icone "expand")
-        preferredDisplayMode = .allVisible
+        preferredDisplayMode = .oneBesideSecondary
 
         self.delegate = self
     }

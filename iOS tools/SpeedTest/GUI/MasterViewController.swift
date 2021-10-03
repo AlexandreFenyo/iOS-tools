@@ -66,6 +66,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
+            // ceci déclenche de temps en temps Duplicate elements of type 'IPv6Address' were found in a Set avant même qu'il n'y ait un NetworkBrowser
             self.updateLocalNodeAndGateways()
             
             // Use ICMP to find new nodes
@@ -73,7 +74,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_tcp = tb
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
             self.browser_network = nb
-            nb.browse()
+            // Alex : à remettre, je retire pour simplifier le debug
+            // nb.browse()
         }
     }
 
@@ -176,7 +178,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         // Update local gateways
-        for gw in DBMaster.shared.getLocalGateways() { _ = self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
+        for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -201,7 +203,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
-        print(address.toNumericString(), "selected")
+        print(address.toNumericString()!, "selected")
         detail_view_controller!.address = address
     }
 

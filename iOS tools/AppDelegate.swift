@@ -11,8 +11,8 @@ import UIKit
 extension UIApplication {
     // Find the status bar view
     var status_bar_view: UIView? {
-        if responds(to: Selector(("statusBar"))) {
-            return value(forKey: "statusBar") as? UIView
+        if responds(to: Selector(("statusBarManager"))) {
+            return value(forKey: "statusBarManager") as? UIView
         }
         return nil
     }

@@ -20,13 +20,15 @@ enum NodeType: Int, CaseIterable {
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
 class DomainPart : Hashable {
-    internal var hashValue: Int
     internal let name: String
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+    }
 
     public init(_ name : String) {
         if name.isEmpty { fatalError("DomainPart") }
         self.name = name
-        hashValue = name.hashValue
     }
 
     public func toString() -> String {
@@ -50,8 +52,11 @@ class HostPart : DomainPart {
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
 class DomainName : Hashable {
-    internal var hashValue: Int
-    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(host_part)
+        hasher.combine(domain_part)
+    }
+
     internal let host_part: HostPart
     internal let domain_part: DomainPart?
 
@@ -59,7 +64,6 @@ class DomainName : Hashable {
         self.host_part = host_part
         if let domain_part = domain_part { self.domain_part = domain_part }
         else { self.domain_part = nil }
-        hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
     }
 
     public init?(_ name: String) {
@@ -71,7 +75,6 @@ class DomainName : Hashable {
             host_part = HostPart(name)
             domain_part = nil
         }
-        hashValue = host_part.hashValue &+ (domain_part?.hashValue ?? 0)
     }
     
     public func toString() -> String {
@@ -103,7 +106,15 @@ class FQDN : DomainName {
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
 class Node : Hashable {
-    internal var hashValue: Int
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(mcast_dns_names)
+        hasher.combine(dns_names)
+        hasher.combine(names)
+        hasher.combine(v4_addresses)
+        hasher.combine(v6_addresses)
+        hasher.combine(tcp_ports)
+        hasher.combine(types)
+    }
 
     public var mcast_dns_names = Set<FQDN>()
     public var dns_names = Set<DomainName>()
@@ -113,9 +124,7 @@ class Node : Hashable {
     public var tcp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
 
-    public init() {
-        hashValue = mcast_dns_names.hashValue &+ dns_names.hashValue &+ names.hashValue &+ v4_addresses.hashValue &+ v6_addresses.hashValue &+ tcp_ports.hashValue &+ types.hashValue
-    }
+    public init() { }
     
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
@@ -157,6 +166,7 @@ class Node : Hashable {
         dns_names.formUnion(node.dns_names)
         names.formUnion(node.names)
         v4_addresses.formUnion(node.v4_addresses)
+        // de temps en temps : Duplicate elements of type 'IPv6Address' were found in a Set
         v6_addresses.formUnion(node.v6_addresses)
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
@@ -164,7 +174,8 @@ class Node : Hashable {
 
     public func isSimilar(with: Node) -> Bool {
         if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
-        
+
+        // de temps en temps : Duplicate elements of type 'IPv6Address' were found in a Set alors que je n'ai pas encore de NetworkBrowser instancié
         if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
 
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
@@ -264,8 +275,9 @@ class DBMaster {
         var idx : Int32 = 0, ret : Int32
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocalgatewayipv4(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            
+            ret = data.withUnsafeMutableBytes {
+                getlocalgatewayipv4(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size))
+            }
             if (ret >= 0) {
                 let addr = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
                 gw.v4_addresses.insert(addr)
@@ -276,8 +288,8 @@ class DBMaster {
         idx = 0
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocalgatewayipv6(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            
+            ret = data.withUnsafeMutableBytes { getlocalgatewayipv6(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+
             if (ret >= 0) {
                 let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
                 gw.v6_addresses.insert(addr)
@@ -295,16 +307,19 @@ class DBMaster {
         var idx : Int32 = 0, ret : Int32
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
             if ret >= 0 {
                 if SockAddr(data)!.getFamily() == AF_INET {
                     let address = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
                     node.v4_addresses.insert(address)
+                    // Duplicate arrivé ici pour type IPNetwork
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 } else {
                     let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+                    // parfois erreur Duplicate elements of type IPv6Address
                     node.v6_addresses.insert(address)
                     // ATTENTION : on a parfois: Thread 1: Fatal error: Duplicate element found in Set. Elements may have been mutated after insertion
+                    print("networks:", networks)
                     networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 }
             }

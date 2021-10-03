@@ -127,7 +127,7 @@ final class GenericTools : AutoTrace {
 
     // Split a view controller with two columns of same width
     public static func splitViewControllerSameWidth(_ svc: UISplitViewController) {
-        svc.preferredDisplayMode = .allVisible
+        svc.preferredDisplayMode = .oneBesideSecondary
         svc.minimumPrimaryColumnWidth = 0
         svc.maximumPrimaryColumnWidth = CGFloat.greatestFiniteMagnitude
         svc.preferredPrimaryColumnWidthFraction = 0.5

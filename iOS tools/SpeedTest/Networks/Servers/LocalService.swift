@@ -21,7 +21,7 @@ import Foundation
 // meilleure alternative si on a un NetService : service.getInputStream()
 
 // Protocol used to inform with a callback that a child object has done its job
-protocol RefClosed : class {
+protocol RefClosed : AnyObject {
     func refClosed(_: SpeedTestClient)
 }
 

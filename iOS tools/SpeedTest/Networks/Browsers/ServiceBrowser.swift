@@ -41,11 +41,14 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
         print("didNotSearch")
-        for err in errorDict { print("didNotSearch:", err.key, ":", err.value) }
+        for err in errorDict {
+            print("didNotSearch:", err.key, ":", err.value)
+        }
 
         // Restart browsing
-        browser.stop()
-        browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
+        // ce n'est pas la bonne méthode pour redémarrer la recherche car ce searchForServices rappelle netServiceBrowser avec didNotSearch donc on boucle jusqu'à saturer la pile, il faudrait déléguer à plus tard cette recherche, ou afficher un pop-up pour que l'utilisateur le fasse
+        // browser.stop()
+        // browser.searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 
     // A search is commencing
