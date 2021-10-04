@@ -117,6 +117,33 @@ final class GenericTools : AutoTrace {
         
 //        print("infos sur le device:", UIDevice.current.localizedModel, UIDevice.current.name, UIDevice.current.systemName, UIDevice.current.systemVersion, UIDevice.current.userInterfaceIdiom)
 
+        print("TESTS INITIAUX")
+        
+        // RFC 3513 section 4 : IPv6 address space
+        // link-local : FE80::/10
+        // site-local : FEC0::/10
+        // multicast  : FF::/8
+        // le 2ième octet de poids fort contient le scope multicast dans ses 4 bits de poids faible (scope qui n'a rien à voir avec le scope de l'adresse IPv6)
+        // les 3ièmes et 4ièmes octets de poids fort sont utilisés pour stocker le scope dans certaines adresses IPv6, quand le scope n'est pas global, c'est à dire pour les adresses qui ne sont pas global unicast
+        // avec getNameInfo(), s'il y a un scope d'adresse IPv6, ce scope doit être l'index de l'interface réseau
+        // les seules plages soumises à scope d'adresse IPv6 à l'intérieur de l'adresse sont :
+        // FE80::/10 : c'est le scope d'adresse IPv6 link-local
+        // FF01::/16 : c'est le scope multicast 1 : interface-local scope
+        // FF02::/16 : c'est le scope multicast 2 : link-local scope
+        // c'est le noyau FreeBSD qui utilise ce moyen de stockage du scope
+
+        //        let x1 = IPv6Address("fe81:ab00::1")
+        //        let x1 = IPv6Address("fe81:0002::1") // getNameInfo() : fe81::1%pdp_ip1
+        //        let x1 = IPv6Address("ff02:0002::1") // getNameInfo() : ff02::1%pdp_ip1
+
+        /*
+        let x1 = IPv6Address("FEB0:0003::1") // getNameInfo() : ff02::1%pdp_ip1
+        print(x1!.getRawBytes())
+        print(x1!.scope)
+        print(x1!.toSockAddress()!._getNameInfo(NI_NUMERICHOST)!)
+        print("FIN DES TESTS INITIAUX")
+        exit(0)
+         */
     }
 
     // Espace insécable

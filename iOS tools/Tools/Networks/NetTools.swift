@@ -37,6 +37,11 @@ class SockAddr : Equatable, NSCopying {
         return nil
     }
 
+    // pour debug
+    public func _getNameInfo(_ flags: Int32) -> String? {
+        return getNameInfo(flags)
+    }
+
     // Warning: an address like fe81:abcd:: may throw an error because 'cd' contains the scope, and it must be the index of an existing interface
     private func getNameInfo(_ flags: Int32) -> String? {
         return saddrdata.withUnsafeBytes {
@@ -44,13 +49,31 @@ class SockAddr : Equatable, NSCopying {
             var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
             let ret = getnameinfo(bytes.bindMemory(to: sockaddr.self).baseAddress!, UInt32(MemoryLayout<sockaddr>.size), &buffer, UInt32(NI_MAXHOST), nil, 0, flags)
             if ret != 0 {
-                print("getNameInfo error:")
+                print("getNameInfo error: ", terminator: "")
                 puts(gai_strerror(ret))
             }
+
+            var retval = ""
+            for idx in 0..<saddrdata.count {
+                retval = retval + String(format: "%02x", saddrdata[idx])
+                if idx + 1 < saddrdata.count { retval = retval + ":" }
+            }
+            print("[", retval, "]")
+
             return ret == 0 ? String(cString: buffer) : nil
         }
     }
 
+    public func getRawBytes() -> String {
+        var retval = "raw bytes: "
+        for idx in 0..<saddrdata.count {
+            retval = retval + String(format: "%02x", saddrdata[idx])
+            if idx + 1 < saddrdata.count { retval = retval + ":" }
+        }
+        print("[", retval, "]")
+        return retval
+    }
+    
     public func resolveHostName() -> String? {
 //        let name = getNameInfo(NI_NAMEREQD)
 //        print("DNS retourne :", toNumericString(), name)
@@ -306,19 +329,48 @@ class IPv6Address : IPAddress {
     // scope zone index
     let scope : UInt32
 
+    /*
+    private func extractScope() {
+        inaddr.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
+            if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
+                scope = bytes[1] as! UInt32 + (bytes[2] as! UInt32) << 8
+            }
+        }
+    }
+     */
+
+    private func setScope() {
+        
+    }
+
     override func hash(into hasher: inout Hasher) {
         hasher.combine(inaddr)
         hasher.combine(scope)
     }
 
+    private func bytes() -> [UInt8] {
+        return inaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> [UInt8] in [ bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15] ] }
+    }
+
+    public func getRawBytes() -> String {
+        var retval = "raw bytes: "
+        for idx in 0..<inaddr.count {
+            retval = retval + String(format: "%02x", inaddr[idx])
+            if idx + 1 < inaddr.count { retval = retval + ":" }
+        }
+        return retval
+    }
+
     public init(_ inaddr: Data, scope: UInt32 = 0) {
         self.scope = scope
         super.init(inaddr)
+        print("INITIALISATION 1 IPv6Address: ", getRawBytes(), " scope=", scope)
     }
 
     public init(mask_len: UInt8) {
         scope = 0
         super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
+        print("INITIALISATION 2 IPv6Address: ", getRawBytes(), " scope=", scope)
     }
 
     public convenience init?(_ address: String) {
@@ -337,7 +389,7 @@ class IPv6Address : IPAddress {
     }
 
     public override func toSockAddress(port: UInt16) -> SockAddr? {
-        let my_in6_addr = inaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> in6_addr in bytes.bindMemory(to: in6_addr.self).baseAddress!.pointee }
+        let my_in6_addr = inaddr.withUnsafeBytes { $0.bindMemory(to: in6_addr.self).baseAddress!.pointee }
         
         var data = Data(count: MemoryLayout<sockaddr_in6>.size)
         data.withUnsafeMutableBytes {

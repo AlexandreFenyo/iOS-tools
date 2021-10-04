@@ -29,11 +29,14 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
+                print("---------------")
                 print("IPv6 NETWORK :", network_addr.toNumericString()!)
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 if network_addr == IPv6Address("::1") { continue }
                 let multicast = network_addr.and(IPv6Address("0000:ffff::")!).or((IPv6Address("ff02::1")!))
-                print("salut:", multicast) // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
+                // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
+                // on va traiter celui là en premier
+                print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
                 multicast_ipv6.insert(multicast as! IPv6Address)
             }
 
