@@ -6,6 +6,10 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+// Règles :
+// - on utilise de préférence des IPAddress plutôt que des SockAddr pour stocker des infos
+// - les SockAddr permettent de convertir des sock_addr en IPAddress
+
 import Foundation
 
 class SockAddr : Equatable, NSCopying {
@@ -16,7 +20,6 @@ class SockAddr : Equatable, NSCopying {
     }
 
     public static func getSockAddr(_ saddrdata: Data) -> SockAddr {
-        // let family = saddrdata.withUnsafeBytes { (bytes : UnsafePointer<sockaddr>) -> UInt8 in bytes.pointee.sa_family }
         let family = saddrdata.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> UInt8 in
             bytes.bindMemory(to: sockaddr.self).baseAddress!.pointee.sa_family
         }
@@ -58,7 +61,7 @@ class SockAddr : Equatable, NSCopying {
                 retval = retval + String(format: "%02x", saddrdata[idx])
                 if idx + 1 < saddrdata.count { retval = retval + ":" }
             }
-            print("[", retval, "]")
+//            print("[", retval, "]")
 
             return ret == 0 ? String(cString: buffer) : nil
         }
@@ -70,14 +73,11 @@ class SockAddr : Equatable, NSCopying {
             retval = retval + String(format: "%02x", saddrdata[idx])
             if idx + 1 < saddrdata.count { retval = retval + ":" }
         }
-        print("[", retval, "]")
+//        print("[", retval, "]")
         return retval
     }
     
     public func resolveHostName() -> String? {
-//        let name = getNameInfo(NI_NAMEREQD)
-//        print("DNS retourne :", toNumericString(), name)
-//        return name
         return getNameInfo(NI_NAMEREQD)
     }
 
@@ -104,10 +104,10 @@ class SockAddr4 : SockAddr {
         if family != AF_INET { return nil }
         super.init(sockaddr)
     }
-    
+
     public override func getIPAddress() -> IPAddress {
-        return saddrdata.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> IPAddress in
-            var in_addr = bytes.bindMemory(to: sockaddr_in.self).baseAddress!.pointee.sin_addr
+        return saddrdata.withUnsafeBytes {
+            var in_addr = $0.bindMemory(to: sockaddr_in.self).baseAddress!.pointee.sin_addr
             return IPv4Address(NSData(bytes: &in_addr, length: MemoryLayout<in_addr>.size) as Data)
         }
     }
@@ -125,9 +125,9 @@ class SockAddr6 : SockAddr {
     }
     
     public override func getIPAddress() -> IPAddress {
-        return saddrdata.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> IPAddress in
-            var in6_addr = bytes.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_addr
-            return IPv6Address(NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data, scope: bytes.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_scope_id)
+        return saddrdata.withUnsafeBytes {
+            var in6_addr = $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_addr
+            return IPv6Address(NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data, scope: $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_scope_id)
         }
     }
 
@@ -136,8 +136,8 @@ class SockAddr6 : SockAddr {
     }
 }
 
-class IPAddress : Equatable, NSCopying, Comparable, Hashable {
-    public var inaddr : Data
+class IPAddress /*:*/ /*Equatable,*/ /*NSCopying,*/ /*Comparable,*/ /*Hashable*/ : Hashable {
+    public let inaddr : Data
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(inaddr)
@@ -148,7 +148,7 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     }
 
     public init(mask_len: UInt8, data_size: Int) {
-        inaddr = Data(count: data_size)
+        var inaddr = Data(count: data_size)
         inaddr.withUnsafeMutableBytes {
             var byte = 0, bit = 7
             for _ in 0..<mask_len {
@@ -160,6 +160,7 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
                 }
             }
         }
+        self.inaddr = inaddr
     }
 
     public func getFamily() -> Int32 {
@@ -196,15 +197,15 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
         return addr
     }
 
-    public func _and(_ netmask: IPAddress) -> Data {
+    fileprivate func _and(_ netmask: IPAddress) -> Data {
         return map(netmask: netmask) { $0 & $1 }
     }
 
-    public func _or(_ netmask: IPAddress) -> Data {
+    fileprivate func _or(_ netmask: IPAddress) -> Data {
         return map(netmask: netmask) { $0 | $1 }
     }
 
-    public func _xor(_ netmask: IPAddress) -> Data {
+    fileprivate func _xor(_ netmask: IPAddress) -> Data {
         return map(netmask: netmask) { $0 ^ $1 }
     }
 
@@ -227,15 +228,16 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
         return lhs.inaddr == rhs.inaddr
     }
-    
+
     func copy(with zone: NSZone? = nil) -> Any {
-        return IPAddress(inaddr)
+        fatalError("copy() on IPAddress")
+        // return IPAddress(inaddr)
     }
-    
+
     static func < (lhs: IPAddress, rhs: IPAddress) -> Bool {
         var x = lhs
         var y = rhs
-        
+
         return withUnsafeBytes(of: &x) { (xp) -> Bool in
             withUnsafeBytes(of: &y, { (yp) -> Bool in
                 if xp.count != yp.count { fatalError() }
@@ -246,7 +248,7 @@ class IPAddress : Equatable, NSCopying, Comparable, Hashable {
     }
 }
 
-class IPv4Address : IPAddress {
+class IPv4Address : IPAddress, Comparable {
     public convenience init?(_ address: String) {
         var data = Data(count: MemoryLayout<in_addr>.size)
         let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) -> Int32 in address.withCString { inet_aton($0, bytes.bindMemory(to: in_addr.self).baseAddress) } }
@@ -277,7 +279,7 @@ class IPv4Address : IPAddress {
             $0.bindMemory(to: sockaddr_in.self).baseAddress!.pointee.sin_family = UInt8(AF_INET)
         }
         
-        return SockAddr(data)
+        return SockAddr4(data)
     }
 
     public override func next() -> IPAddress {
@@ -323,24 +325,50 @@ class IPv4Address : IPAddress {
     public func isLocal() -> Bool {
         return bytes()[0] == 127
     }
+
+    static func == (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
+        return lhs.inaddr == rhs.inaddr
+    }
+
+    override func copy(with zone: NSZone? = nil) -> Any {
+        return IPv4Address(inaddr)
+    }
+
+    static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
+        var x = lhs
+        var y = rhs
+
+        return withUnsafeBytes(of: &x) { (xp) -> Bool in
+            withUnsafeBytes(of: &y, { (yp) -> Bool in
+                if xp.count != yp.count { fatalError() }
+                for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
+                return false
+            })
+        }
+    }
 }
 
-class IPv6Address : IPAddress {
+class IPv6Address : IPAddress, Comparable {
     // scope zone index
     let scope : UInt32
 
-    /*
-    private func extractScope() {
-        inaddr.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
-            if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
-                scope = bytes[1] as! UInt32 + (bytes[2] as! UInt32) << 8
-            }
-        }
+    static func getBytes(_ addr: in6_addr) -> [UInt8] {
+        return Mirror(reflecting: addr.__u6_addr.__u6_addr8).children.map { $0.value as! UInt8 }
     }
-     */
 
-    private func setScope() {
-        
+    static func extractScope(_ addr: in6_addr) -> (addr: in6_addr, scope: UInt32) {
+        var scope = UInt32(0)
+        var bytes = getBytes(addr)
+        if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
+            bytes[2] = 0
+            bytes[3] = 0
+            scope = UInt32(bytes[3]) + 16 * UInt32(bytes[2])
+            print("CLEARING", bytes[2], bytes[3], scope)
+        }
+
+        var retval = in6_addr()
+        retval.__u6_addr.__u6_addr8 = (bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15])
+        return (retval, scope)
     }
 
     override func hash(into hasher: inout Hasher) {
@@ -364,13 +392,13 @@ class IPv6Address : IPAddress {
     public init(_ inaddr: Data, scope: UInt32 = 0) {
         self.scope = scope
         super.init(inaddr)
-        print("INITIALISATION 1 IPv6Address: ", getRawBytes(), " scope=", scope)
+//        print("INITIALISATION 1 IPv6Address: ", getRawBytes(), " scope=", scope)
     }
 
     public init(mask_len: UInt8) {
         scope = 0
         super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
-        print("INITIALISATION 2 IPv6Address: ", getRawBytes(), " scope=", scope)
+//        print("INITIALISATION 2 IPv6Address: ", getRawBytes(), " scope=", scope)
     }
 
     public convenience init?(_ address: String) {
@@ -389,8 +417,16 @@ class IPv6Address : IPAddress {
     }
 
     public override func toSockAddress(port: UInt16) -> SockAddr? {
-        let my_in6_addr = inaddr.withUnsafeBytes { $0.bindMemory(to: in6_addr.self).baseAddress!.pointee }
-        
+        var inaddr_clean = inaddr
+        inaddr_clean.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
+            if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
+                print("CLEANING", bytes[2], bytes[3])
+                bytes[2] = 0
+                bytes[3] = 0
+            }
+        }
+        let my_in6_addr = inaddr_clean.withUnsafeBytes { $0.bindMemory(to: in6_addr.self).baseAddress!.pointee }
+
         var data = Data(count: MemoryLayout<sockaddr_in6>.size)
         data.withUnsafeMutableBytes {
             $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_addr = my_in6_addr
@@ -399,8 +435,8 @@ class IPv6Address : IPAddress {
             $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_len = UInt8(MemoryLayout<in6_addr>.size)
             $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_family = UInt8(AF_INET6)
         }
-        
-        return SockAddr(data)
+
+        return SockAddr6(data)
     }
 
     public override func and(_ netmask: IPAddress) -> IPAddress {
@@ -420,27 +456,50 @@ class IPv6Address : IPAddress {
     }
 
     public func isULA() -> Bool {
-        return and(IPv6Address("fe00::")!) == IPv6Address("fc00::")
+        return and(IPv6Address("fe00::")!) == IPv6Address("fc00::")!
     }
 
     public func isLLA() -> Bool {
-        return and(IPv6Address("ffc0::")!) == IPv6Address("fe80::")
+        return and(IPv6Address("ffc0::")!) == IPv6Address("fe80::")!
     }
 
     public func isUnicastPublic() -> Bool {
-        return and(IPv6Address("e000::")!) == IPv6Address("2000::")
+        return and(IPv6Address("e000::")!) == IPv6Address("2000::")!
     }
 
     public func isMulticastPublic() -> Bool {
-        return and(IPv6Address("ff00::")!) == IPv6Address("ff00::")
+        return and(IPv6Address("ff00::")!) == IPv6Address("ff00::")!
     }
 
     public func isReserved() -> Bool {
-        return and(IPv6Address("ff00::")!) == IPv6Address("::")
+        return and(IPv6Address("ff00::")!) == IPv6Address("::")!
+    }
+
+    static func == (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
+        return lhs.inaddr == rhs.inaddr && lhs.scope == rhs.scope
+    }
+
+    override func copy(with zone: NSZone? = nil) -> Any {
+        return IPv6Address(inaddr, scope: scope)
+    }
+
+    static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
+        var x = lhs
+        var y = rhs
+
+        if x.scope != y.scope { return x.scope < y.scope }
+
+        return withUnsafeBytes(of: &x) { (xp) -> Bool in
+            withUnsafeBytes(of: &y, { (yp) -> Bool in
+                if xp.count != yp.count { fatalError() }
+                for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
+                return false
+            })
+        }
     }
 }
 
-struct IPNetwork : Hashable {
+struct IPNetwork : Hashable, Equatable {
     public let ip_address : IPAddress
     public let mask_len : UInt8
     
@@ -452,6 +511,10 @@ struct IPNetwork : Hashable {
     public init(ip_address: IPAddress, mask_len: UInt8) {
         self.ip_address = ip_address
         self.mask_len = mask_len
+    }
+
+    static func == (lhs: IPNetwork, rhs: IPNetwork) -> Bool {
+        return lhs.ip_address == rhs.ip_address && lhs.mask_len == rhs.mask_len
     }
 }
 

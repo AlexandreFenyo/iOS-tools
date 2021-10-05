@@ -315,16 +315,27 @@ class DBMaster {
                     // Duplicate arrivé ici pour type IPNetwork
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 } else {
+//                    print("ADRESSE LOCALE IPv6:")
                     let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+
+                    // debug
+                    data.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) in
+                        let sid = bytes.bindMemory(to: sockaddr_in6.self).baseAddress?.pointee.sin6_scope_id
+                        let saddr = bytes.bindMemory(to: sockaddr_in6.self).baseAddress?.pointee.sin6_addr
+                        let a = saddr?.__u6_addr.__u6_addr8
+//                        print(String(format: "%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X --- SID: %X", a!.0, a!.1, a!.2, a!.3, a!.4, a!.5, a!.6, a!.7, a!.8, a!.9, a!.10, a!.11, a!.12, a!.13, a!.14, a!.15, sid!))
+                    }
+                    
                     // parfois erreur Duplicate elements of type IPv6Address
                     node.v6_addresses.insert(address)
                     // ATTENTION : on a parfois: Thread 1: Fatal error: Duplicate element found in Set. Elements may have been mutated after insertion
-                    print("networks:", networks)
+//                    print("networks:", networks)
                     networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
                 }
             }
             idx += 1
         } while ret >= 0
+
         node.names.insert(UIDevice.current.name)
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node
