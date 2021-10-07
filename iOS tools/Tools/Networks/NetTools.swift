@@ -12,7 +12,7 @@
 
 import Foundation
 
-class SockAddr : Equatable, NSCopying {
+class SockAddr {
     fileprivate let saddrdata : Data
 
     public func getData() -> Data {
@@ -60,17 +60,6 @@ class SockAddr : Equatable, NSCopying {
         }
     }
 
-    /*
-    public func getRawBytes() -> String {
-        var retval = "raw bytes: "
-        for idx in 0..<saddrdata.count {
-            retval = retval + String(format: "%02x", saddrdata[idx])
-            if idx + 1 < saddrdata.count { retval = retval + ":" }
-        }
-        return retval
-    }
-    */
-
     public func resolveHostName() -> String? {
         return getNameInfo(NI_NAMEREQD)
     }
@@ -80,14 +69,6 @@ class SockAddr : Equatable, NSCopying {
     }
     
     public func getFamily() -> Int32 {
-        fatalError("should not be called")
-    }
-
-    static func == (lhs: SockAddr, rhs: SockAddr) -> Bool {
-        return lhs.saddrdata == rhs.saddrdata
-    }
-
-    public func copy(with zone: NSZone? = nil) -> Any {
         fatalError("should not be called")
     }
 }
@@ -109,10 +90,6 @@ class SockAddr4 : SockAddr {
     public override func getFamily() -> Int32 {
         return AF_INET
     }
-
-    public override func copy(with zone: NSZone? = nil) -> Any {
-        return SockAddr4(saddrdata)!
-    }
 }
 
 class SockAddr6 : SockAddr {
@@ -132,13 +109,9 @@ class SockAddr6 : SockAddr {
     public override func getFamily() -> Int32 {
         return AF_INET6
     }
-
-    public override func copy(with zone: NSZone? = nil) -> Any {
-        return SockAddr6(saddrdata)!
-    }
 }
 
-class IPAddress /*:*/ /*Equatable,*/ /*NSCopying,*/ /*Comparable,*/ /*Hashable*/ : Hashable {
+class IPAddress : Hashable {
     fileprivate let inaddr : Data
 
     public func hash(into hasher: inout Hasher) {
@@ -228,24 +201,41 @@ class IPAddress /*:*/ /*Equatable,*/ /*NSCopying,*/ /*Comparable,*/ /*Hashable*/
     }
 
     static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
-        return lhs.inaddr == rhs.inaddr
+        if let lhsv4 = lhs as? IPv4Address {
+            if let rhsv4 = rhs as? IPv4Address {
+                return lhsv4 == rhsv4
+            } else {
+                return false
+            }
+        }
+
+        if let lhsv6 = lhs as? IPv6Address {
+            if let rhsv6 = rhs as? IPv6Address {
+                return lhsv6 == rhsv6
+            } else {
+                return false
+            }
+        }
+
+        fatalError("should not be called")
     }
 
     func copy(with zone: NSZone? = nil) -> Any {
         fatalError("copy() on IPAddress")
     }
 
-    static func < (lhs: IPAddress, rhs: IPAddress) -> Bool {
-        var x = lhs
-        var y = rhs
-
-        return withUnsafeBytes(of: &x) { (xp) -> Bool in
-            withUnsafeBytes(of: &y, { (yp) -> Bool in
+    static func isLowerThan(lhs: IPAddress, rhs: IPAddress) -> Bool {
+        return withUnsafeBytes(of: lhs.inaddr) { (xp) -> Bool in
+            withUnsafeBytes(of: rhs.inaddr, { (yp) -> Bool in
                 if xp.count != yp.count { fatalError() }
                 for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
                 return false
             })
         }
+    }
+
+    static func < (lhs: IPAddress, rhs: IPAddress) -> Bool {
+        fatalError("< on IPAddress")
     }
 }
 
@@ -340,16 +330,7 @@ class IPv4Address : IPAddress, Comparable {
     }
 
     static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
-        var x = lhs
-        var y = rhs
-
-        return withUnsafeBytes(of: &x) { (xp) -> Bool in
-            withUnsafeBytes(of: &y, { (yp) -> Bool in
-                if xp.count != yp.count { fatalError() }
-                for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
-                return false
-            })
-        }
+        return isLowerThan(lhs: lhs, rhs: rhs)
     }
 }
 
@@ -435,11 +416,11 @@ class IPv6Address : IPAddress, Comparable {
         return AF_INET6
     }
 
-    public override func toSockAddress() -> SockAddr? {
+    public override func toSockAddress() -> SockAddr6? {
         return toSockAddress(port: 0)
     }
 
-    public override func toSockAddress(port: UInt16) -> SockAddr? {
+    public override func toSockAddress(port: UInt16) -> SockAddr6? {
         var inaddr_clean = inaddr
         inaddr_clean.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
             if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
@@ -488,7 +469,7 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     public func isULA() -> Bool {
-        return and(IPv6Address("fe00::")!) == IPv6Address("fc00::")!
+        return and(IPv6Address("fe00::")!) as! IPv6Address == IPv6Address("fc00::")!
     }
 
     public func isLLA() -> Bool {
@@ -496,11 +477,11 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     public func isUnicastPublic() -> Bool {
-        return and(IPv6Address("e000::")!) == IPv6Address("2000::")!
+        return and(IPv6Address("e000::")!) as! IPv6Address == IPv6Address("2000::")!
     }
 
     public func isMulticastPublic() -> Bool {
-        return and(IPv6Address("ff00::")!) == IPv6Address("ff00::")!
+        return and(IPv6Address("ff00::")!) as! IPv6Address == IPv6Address("ff00::")!
     }
 
     static func == (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
@@ -512,18 +493,8 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
-        var x = lhs
-        var y = rhs
-
-        if x.scope != y.scope { return x.scope < y.scope }
-
-        return withUnsafeBytes(of: &x) { (xp) -> Bool in
-            withUnsafeBytes(of: &y, { (yp) -> Bool in
-                if xp.count != yp.count { fatalError() }
-                for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
-                return false
-            })
-        }
+        if lhs.scope != rhs.scope { return lhs.scope < rhs.scope }
+        return isLowerThan(lhs: lhs, rhs: rhs)
     }
 }
 
@@ -532,7 +503,14 @@ struct IPNetwork : Hashable, Equatable {
     public let mask_len : UInt8
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(ip_address)
+        if let addr = ip_address as? IPv4Address {
+            hasher.combine(addr)
+        } else if let addr = ip_address as? IPv6Address {
+            hasher.combine(addr)
+        } else {
+            fatalError("invalid address family")
+        }
+
         hasher.combine(mask_len)
     }
 
@@ -542,7 +520,14 @@ struct IPNetwork : Hashable, Equatable {
     }
 
     static func == (lhs: IPNetwork, rhs: IPNetwork) -> Bool {
-        return lhs.ip_address == rhs.ip_address && lhs.mask_len == rhs.mask_len
+        switch lhs.ip_address.getFamily() {
+        case AF_INET:
+            return lhs.ip_address as! IPv4Address == rhs.ip_address as! IPv4Address && lhs.mask_len == rhs.mask_len
+        case AF_INET6:
+            return lhs.ip_address as! IPv6Address == rhs.ip_address as! IPv6Address && lhs.mask_len == rhs.mask_len
+        default:
+            fatalError("invalid family")
+        }
     }
 }
 

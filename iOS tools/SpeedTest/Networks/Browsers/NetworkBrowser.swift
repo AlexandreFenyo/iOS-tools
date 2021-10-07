@@ -50,8 +50,8 @@ class NetworkBrowser {
             // Either broadcast the entire network or ping each address, depending on the network size
             if let network_addr = network.ip_address as? IPv4Address {
                 let netmask = IPv4Address(mask_len: network.mask_len)
-                let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!))
-                if network.mask_len < 22 { broadcast_ipv4.insert(broadcast as! IPv4Address) }
+                let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
+                if network.mask_len < 22 { broadcast_ipv4.insert(broadcast) }
                 else {
                     var current = network_addr.and(netmask).next() as! IPv4Address
                     repeat {
