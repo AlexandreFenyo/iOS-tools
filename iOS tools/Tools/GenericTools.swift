@@ -144,6 +144,15 @@ final class GenericTools : AutoTrace {
         print("FIN DES TESTS INITIAUX")
         exit(0)
          */
+
+        /*
+        let x1 = IPv6Address("FE80:0003::1")
+        print(x1!.getRawBytes())
+        print(x1!.toSockAddress()!._getNameInfo(NI_NUMERICHOST)!)
+
+        print("FIN DES TESTS INITIAUX")
+//        exit(0)
+*/
     }
 
     // Espace insécable

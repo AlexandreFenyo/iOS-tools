@@ -93,7 +93,7 @@ class TCPPortBrowser {
                         if debug { print(addr.toNumericString()!, ": trying port", port, "for", delay, "microseconds") }
                         let t0 = NSDate().timeIntervalSince1970
                         
-                        ret = addr.toSockAddress(port: port)!.saddrdata.withUnsafeBytes {
+                        ret = addr.toSockAddress(port: port)!.getData().withUnsafeBytes {
                             connect(s, $0.bindMemory(to: sockaddr.self).baseAddress, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
                         }
                         if debug { var d0 = 1000000 * (NSDate().timeIntervalSince1970 - t0); d0.round(.down); print(addr.toNumericString()!, "duration connect", d0) }

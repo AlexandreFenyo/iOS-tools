@@ -304,38 +304,55 @@ class DBMaster {
     public func getLocalNode() -> Node {
         let node = Node()
         node.types = [ .localhost ]
-        var idx : Int32 = 0, ret : Int32
+        var idx : Int32 = 0, mask_len : Int32
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocaladdr(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            if ret >= 0 {
-                if SockAddr(data)!.getFamily() == AF_INET {
-                    let address = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
+            mask_len = data.withUnsafeMutableBytes { getlocaladdr(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
+            if mask_len >= 0 {
+                let my_sock_addr = SockAddr.getSockAddr(data)
+                switch my_sock_addr.getFamily() {
+                    // à remettre - on l a enlever pour forcer les apparitions de pb sur le case IPv6
+                case AF_INET:
+true
+                    /*
+                    let address = my_sock_addr.getIPAddress() as! IPv4Address
                     node.v4_addresses.insert(address)
                     // Duplicate arrivé ici pour type IPNetwork
-                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
-                } else {
-//                    print("ADRESSE LOCALE IPv6:")
-                    let address = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
+                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
+*/
+                case AF_INET6:
+                    let address = my_sock_addr.getIPAddress() as! IPv6Address
 
-                    // debug
-                    data.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) in
-                        let sid = bytes.bindMemory(to: sockaddr_in6.self).baseAddress?.pointee.sin6_scope_id
-                        let saddr = bytes.bindMemory(to: sockaddr_in6.self).baseAddress?.pointee.sin6_addr
-                        let a = saddr?.__u6_addr.__u6_addr8
-//                        print(String(format: "%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X --- SID: %X", a!.0, a!.1, a!.2, a!.3, a!.4, a!.5, a!.6, a!.7, a!.8, a!.9, a!.10, a!.11, a!.12, a!.13, a!.14, a!.15, sid!))
-                    }
+                    print("")
+                    print("address:", address.getRawBytes(), "masklen:", mask_len, "scope:", address.getScope())
+                    let addrmask = IPv6Address(mask_len: UInt8(mask_len))
+                    print("addrmask:", addrmask.getRawBytes(), "scope:", addrmask.getScope())
+                    let addr_masked = address.and(addrmask) as! IPv6Address
+                    print("addr_masked:", addr_masked.getRawBytes(), "scope:", addr_masked.getScope())
                     
                     // parfois erreur Duplicate elements of type IPv6Address
                     node.v6_addresses.insert(address)
+
+                    print("set size before insert:", networks.count)
+
                     // ATTENTION : on a parfois: Thread 1: Fatal error: Duplicate element found in Set. Elements may have been mutated after insertion
-//                    print("networks:", networks)
-                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(ret))), mask_len: UInt8(ret)))
+                    // à remettre
+//                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
+                    // a enlever, version utilisant ce qu'on a affiché
+                    networks.insert(IPNetwork(ip_address: addr_masked, mask_len: UInt8(mask_len)))
+
+                    print("set size after insert:", networks.count)
+                    
+                default:
+                    fatalError("bad address family")
                 }
             }
             idx += 1
-        } while ret >= 0
+        } while mask_len >= 0
 
+// à supprimer, on l'a mis pour forcer les apparitions de pbs sur le cas IPv6 précédent
+exit(0)
+        
         node.names.insert(UIDevice.current.name)
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node

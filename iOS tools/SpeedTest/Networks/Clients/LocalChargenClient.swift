@@ -15,17 +15,16 @@ class LocalChargenClient : Thread {
 
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD", address)
+        print("CLIENT ENTREE THREAD CHARGEN", address)
 
-        if let saddr = address.toSockAddress()?.saddrdata {
-            saddr.withUnsafeBytes {
-                (ump: UnsafeRawBufferPointer) in
-                let retval = localChargenClientLoop(OpaquePointer(ump.bindMemory(to: sockaddr_storage.self).baseAddress!))
-                print("retval:", retval)
+        if let saddr = address.toSockAddress()?.getData() {
+            let retval = saddr.withUnsafeBytes {
+                localChargenClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
+            print("localChargenClientLoop returned:", retval)
         }
 
-        print("CLIENT SORTIE THREAD")
+        print("CLIENT SORTIE THREAD CHARGEN")
     }
     
     override public func start() {

@@ -16,16 +16,15 @@ class LocalPingClient : Thread {
     
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD", address)
+        print("CLIENT ENTREE THREAD PING", address)
         
-        if let saddr = address.toSockAddress()?.saddrdata {
-            saddr.withUnsafeBytes {
-                (ump: UnsafeRawBufferPointer) in
-                let retval = localPingClientLoop(OpaquePointer(ump.bindMemory(to: sockaddr_storage.self).baseAddress!))
-                print("retval:", retval)
+        if let saddr = address.toSockAddress()?.getData() {
+            let retval = saddr.withUnsafeBytes {
+                localPingClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
+            print("localPingClientLoop() returned:", retval)
         }
-        print("CLIENT SORTIE THREAD")
+        print("CLIENT SORTIE THREAD PING")
     }
     
     override public func start() {

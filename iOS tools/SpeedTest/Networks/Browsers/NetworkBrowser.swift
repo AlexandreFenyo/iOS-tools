@@ -30,15 +30,20 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
-//                print("---------------")
-//                print("IPv6 NETWORK :", network_addr.toNumericString()!)
+                print("---------------")
+                print("IPv6 NETWORK :", network_addr.toNumericString()!)
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
+                // TRAITER CE CAS PLUTOT QUE FAIRE UN CONTINUE
                 if network_addr == IPv6Address("::1") { continue }
-                let multicast = network_addr.and(IPv6Address("0000:ffff::")!).or(IPv6Address("ff02::1")!)
-                // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
-                // on va traiter celui là en premier
-//                print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
-                multicast_ipv6.insert(multicast as! IPv6Address)
+                // corriger ceci :
+//                CONTINUER ICI
+                if network_addr.isLLA() {
+                    let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
+                    // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
+                    // on va traiter celui là en premier
+                    print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
+                    multicast_ipv6.insert(multicast)
+                }
             }
 
             // IPv4 networks
@@ -185,7 +190,7 @@ class NetworkBrowser {
                         }
 
                         let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.saddrdata.withUnsafeBytes {
+                            address.toSockAddress()!.getData().withUnsafeBytes {
                                 sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
                             }
                         }
@@ -224,7 +229,7 @@ class NetworkBrowser {
                         }
                         
                         let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.saddrdata.withUnsafeBytes {
+                            address.toSockAddress()!.getData().withUnsafeBytes {
                                 sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
                             }
                         }
@@ -249,7 +254,7 @@ class NetworkBrowser {
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
-                        var saddr = address.toSockAddress()!.saddrdata
+                        var saddr = address.toSockAddress()!.getData()
                         var msg_hdr = msghdr()
                         var hdr = icmp6_hdr()
                         var iov = iovec()
