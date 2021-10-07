@@ -311,37 +311,15 @@ class DBMaster {
             if mask_len >= 0 {
                 let my_sock_addr = SockAddr.getSockAddr(data)
                 switch my_sock_addr.getFamily() {
-                    // à remettre - on l a enlever pour forcer les apparitions de pb sur le case IPv6
                 case AF_INET:
-true
-                    /*
                     let address = my_sock_addr.getIPAddress() as! IPv4Address
                     node.v4_addresses.insert(address)
-                    // Duplicate arrivé ici pour type IPNetwork
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
-*/
+
                 case AF_INET6:
                     let address = my_sock_addr.getIPAddress() as! IPv6Address
-
-                    print("")
-                    print("address:", address.getRawBytes(), "masklen:", mask_len, "scope:", address.getScope())
-                    let addrmask = IPv6Address(mask_len: UInt8(mask_len))
-                    print("addrmask:", addrmask.getRawBytes(), "scope:", addrmask.getScope())
-                    let addr_masked = address.and(addrmask) as! IPv6Address
-                    print("addr_masked:", addr_masked.getRawBytes(), "scope:", addr_masked.getScope())
-                    
-                    // parfois erreur Duplicate elements of type IPv6Address
                     node.v6_addresses.insert(address)
-
-                    print("set size before insert:", networks.count)
-
-                    // ATTENTION : on a parfois: Thread 1: Fatal error: Duplicate element found in Set. Elements may have been mutated after insertion
-                    // à remettre
-//                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
-                    // a enlever, version utilisant ce qu'on a affiché
-                    networks.insert(IPNetwork(ip_address: addr_masked, mask_len: UInt8(mask_len)))
-
-                    print("set size after insert:", networks.count)
+                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
                     
                 default:
                     fatalError("bad address family")
@@ -350,9 +328,6 @@ true
             idx += 1
         } while mask_len >= 0
 
-// à supprimer, on l'a mis pour forcer les apparitions de pbs sur le cas IPv6 précédent
-exit(0)
-        
         node.names.insert(UIDevice.current.name)
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node

@@ -520,6 +520,10 @@ struct IPNetwork : Hashable, Equatable {
     }
 
     static func == (lhs: IPNetwork, rhs: IPNetwork) -> Bool {
+        if lhs.ip_address.getFamily() != rhs.ip_address.getFamily() {
+            return false
+        }
+
         switch lhs.ip_address.getFamily() {
         case AF_INET:
             return lhs.ip_address as! IPv4Address == rhs.ip_address as! IPv4Address && lhs.mask_len == rhs.mask_len

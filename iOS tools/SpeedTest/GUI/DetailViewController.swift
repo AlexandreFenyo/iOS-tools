@@ -88,7 +88,7 @@ class DetailViewController: UIViewController {
 //            DetailViewController.cl3!.start()
 
             // à remettre
-            // test ping
+            // test flood
             DetailViewController.cl4 = LocalFloodClient(address: address!)
             DetailViewController.cl4!.start()
 

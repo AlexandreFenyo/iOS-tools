@@ -74,8 +74,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_tcp = tb
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
             self.browser_network = nb
-            // Alex : à remettre, je retire pour simplifier le debug
-            // nb.browse()
+            nb.browse()
         }
     }
 
