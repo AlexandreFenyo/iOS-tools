@@ -56,6 +56,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         
         // Customize status bar
+        // le fond de la status bar est censé être noir
+        // Alex
+        print("info:", UIApplication.shared.status_bar_view)
         UIApplication.shared.status_bar_view?.backgroundColor = .black
 
 
