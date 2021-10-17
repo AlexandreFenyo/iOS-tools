@@ -57,7 +57,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Customize status bar
         // le fond de la status bar est censé être noir
-        // Alex
+        
+        // MARK: - à corriger car ne marche pas
+        
         print("info:", UIApplication.shared.status_bar_view)
         UIApplication.shared.status_bar_view?.backgroundColor = .black
 
