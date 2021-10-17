@@ -8,15 +8,7 @@
 
 import UIKit
 
-extension UIApplication {
-    // Find the status bar view
-    var status_bar_view: UIView? {
-        if responds(to: Selector(("statusBarManager"))) {
-            return value(forKey: "statusBarManager") as? UIView
-        }
-        return nil
-    }
-}
+extension UIApplication {}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -55,18 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         
-        // Customize status bar
-        // le fond de la status bar est censé être noir
-        
-        // MARK: - à corriger car ne marche pas
-        
-        print("info:", UIApplication.shared.status_bar_view)
-        UIApplication.shared.status_bar_view?.backgroundColor = .black
-
-
-
-
-
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 
