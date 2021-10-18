@@ -53,10 +53,11 @@ class SockAddr {
         return saddrdata.withUnsafeBytes {
             var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
             let ret = getnameinfo($0.bindMemory(to: sockaddr.self).baseAddress!, UInt32(MemoryLayout<sockaddr>.size), &buffer, UInt32(NI_MAXHOST), nil, 0, flags)
+//             print("request:", (getIPAddress() as? IPv4Address)?.bytes())
             if ret != 0 {
-                print("getNameInfo error:", gai_strerror(ret)!)
+//                print("getNameInfo error:", gai_strerror(ret)!)
             } else {
-                print("NAMEINFO:", String(cString: buffer))
+//                print("getNameInfo returned 0:", String(cString: buffer))
             }
             return ret == 0 ? String(cString: buffer) : nil
         }
@@ -299,7 +300,7 @@ class IPv4Address : IPAddress, Comparable {
         return IPv4Address(super._xor(netmask))
     }
 
-    private func bytes() -> [UInt8] {
+    fileprivate func bytes() -> [UInt8] {
         return inaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> [UInt8] in [ bytes[0], bytes[1], bytes[2], bytes[3] ] }
     }
     
@@ -426,7 +427,7 @@ class IPv6Address : IPAddress, Comparable {
         var inaddr_clean = inaddr
         inaddr_clean.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
             if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
-                print("toSockAddress() CLEANING bytes 2 & 3 :", bytes[2], bytes[3])
+//                print("toSockAddress() CLEANING bytes 2 & 3 :", bytes[2], bytes[3])
                 bytes[2] = 0
                 bytes[3] = 0
             }

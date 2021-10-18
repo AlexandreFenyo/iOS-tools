@@ -54,7 +54,7 @@ class MasterIPViewController: UITableViewController {
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("fin de scroll")
+//        print("fin de scroll")
     }
 
     // MARK: - Table view data source

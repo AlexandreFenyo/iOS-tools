@@ -30,8 +30,8 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
-                print("---------------")
-                print("IPv6 NETWORK :", network_addr.toNumericString()!)
+//                print("---------------")
+//                print("IPv6 NETWORK :", network_addr.toNumericString()!)
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 // TRAITER CE CAS PLUTOT QUE FAIRE UN CONTINUE
                 if network_addr == IPv6Address("::1") { continue }
@@ -41,7 +41,7 @@ class NetworkBrowser {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
                     // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
                     // on va traiter celui là en premier
-                    print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
+//                    print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
                     multicast_ipv6.insert(multicast)
                 }
             }
@@ -91,7 +91,7 @@ class NetworkBrowser {
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
-                    print("manageAnswer() FOUND IPv4:" , info)
+//                    print("manageAnswer() FOUND IPv4:" , info)
                 }
                 // Do not try to reach this address with unicast anymore
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
@@ -276,8 +276,8 @@ class NetworkBrowser {
                             }
                         }
                         if retlen < 0 {
-                            print("IPV6 sendmsg: retval=", retlen)
-                            GenericTools.perror()
+//                            print("IPV6 sendmsg: retval=", retlen)
+//                            GenericTools.perror()
                         }
                     }
                     
@@ -313,7 +313,7 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
+//                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
@@ -339,7 +339,7 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
+//                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()

@@ -33,16 +33,16 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
-        print("didRemove")
+//        print("didRemove")
         if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
         else { print("warning: service app closed but not previously discovered") }
     }
 
     // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
-        print("didNotSearch")
+//        print("didNotSearch")
         for err in errorDict {
-            print("didNotSearch:", err.key, ":", err.value)
+//            print("didNotSearch:", err.key, ":", err.value)
         }
 
         // Restart browsing
@@ -53,12 +53,12 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
-        print("netServiceBrowserWillSearch")
+//        print("netServiceBrowserWillSearch")
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
-        print("netServiceBrowserDidStopSearch")
+//        print("netServiceBrowserDidStopSearch")
     }
 
     // MARK: - NetServiceDelegate
@@ -66,7 +66,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Service that the browser had found but has not been resolved
     // Simulate by setting a TimeInterval of 0.1 when resolving the service
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
-        print("didNotResolve")
+//        print("didNotResolve")
         for err in errorDict { print("didNotResolve:", err.key, ":", err.value) }
         if let idx = services.firstIndex(of: sender) { services.remove(at: idx) }
         else { print("warning: service browsed but not resolved") }

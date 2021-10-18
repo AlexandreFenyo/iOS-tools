@@ -185,7 +185,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
-        print("didNotPublish")
+//        print("didNotPublish")
     }
     
     public func netServiceDidPublish(_ sender: NetService) {

@@ -223,7 +223,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
-                    print("reverse IPv4 résolue:", name)
+//                    print("reverse IPv4 résolue:", name)
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v4_addresses.insert(address)
@@ -242,7 +242,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
-                    print("reverse IPv6 résolue:", name)
+//                    print("reverse IPv6 résolue:", name)
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v6_addresses.insert(address)
@@ -275,7 +275,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("fin de scroll")
+//        print("fin de scroll")
     }
 
     // MARK: - Table view headers
