@@ -54,7 +54,9 @@ class SockAddr {
             var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
             let ret = getnameinfo($0.bindMemory(to: sockaddr.self).baseAddress!, UInt32(MemoryLayout<sockaddr>.size), &buffer, UInt32(NI_MAXHOST), nil, 0, flags)
             if ret != 0 {
-                print("getNameInfo error: ", gai_strerror(ret)!)
+                print("getNameInfo error:", gai_strerror(ret)!)
+            } else {
+                print("NAMEINFO:", String(cString: buffer))
             }
             return ret == 0 ? String(cString: buffer) : nil
         }

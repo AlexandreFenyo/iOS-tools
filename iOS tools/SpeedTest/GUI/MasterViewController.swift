@@ -310,6 +310,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
         cell.layer.shadowColor = UIColor.clear.cgColor
+        // marche pas :
+        // cell.layer.backgroundColor = .init(red: 1.0, green: 0, blue: 0, alpha: 0)
+        // cell.backgroundColor = .red
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
