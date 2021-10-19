@@ -59,6 +59,14 @@ class LeftNavController : UINavigationController {
         rv = RoundedCornerView(radius: r, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, arc_center: CGPoint(x: r, y: r))
         navigationBar.addSubview(rv!)
 
+        // Manage the navigation bar behaviour
+        // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+        navigationBar.standardAppearance = appearance;
+        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+        
         // Manage constraints for auto resizing
         rv!.translatesAutoresizingMaskIntoConstraints = false
         view.addConstraints(

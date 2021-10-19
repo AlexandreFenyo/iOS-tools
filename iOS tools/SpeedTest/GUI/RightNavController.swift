@@ -27,5 +27,13 @@ class RightNavController : UINavigationController {
                 NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
                 NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
             ])
+
+        // Manage the navigation bar behaviour
+        // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+        navigationBar.standardAppearance = appearance;
+        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
     }
 }
