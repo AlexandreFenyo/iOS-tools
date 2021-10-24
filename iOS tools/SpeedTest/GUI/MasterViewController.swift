@@ -173,6 +173,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             header.titleLabel.text = section.description
             header.subTitleLabel.text = section.detailed_description
+
+//            header.imageView.image = UIImage(systemName: "network")
+//header.imageView.image = UIImage(named: "Localhost")
             header.imageView.image = UIImage(named: "netmon7")
         }
 
