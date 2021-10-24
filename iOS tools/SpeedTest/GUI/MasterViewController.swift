@@ -171,7 +171,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             header.titleLabel.text = section.description
             header.subTitleLabel.text = section.detailed_description
-            header.imageView.image = UIImage(named: section.description)
+            header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
         }
 
         return cell
