@@ -175,7 +175,6 @@ class Node : Hashable {
     public func isSimilar(with: Node) -> Bool {
         if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
 
-        // de temps en temps : Duplicate elements of type 'IPv6Address' were found in a Set alors que je n'ai pas encore de NetworkBrowser instancié
         if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
 
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
