@@ -158,8 +158,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.register(nib, forHeaderFooterViewReuseIdentifier: "MasterSectionHeader")
         
         // remove the section heading on iOS 15
-        if #available(iOS 15, *) {
-            tableView.sectionHeaderTopPadding = 0
+        if #available(iOS 15.0, *) {
+            // à remettre : ça pose pb avec MacCatalyst
+            // UITableView.appearance().sectionHeaderTopPadding = 0
         }
     }
 
@@ -170,10 +171,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             header.titleLabel.text = section.description
             header.subTitleLabel.text = section.detailed_description
-
-//            header.imageView.image = UIImage(systemName: "network")
-//header.imageView.image = UIImage(named: "Localhost")
-            header.imageView.image = UIImage(named: "netmon7")
+            header.imageView.image = UIImage(named: section.description)
         }
 
         return cell
