@@ -22,10 +22,10 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         // as? and not as!: depending on the state of the app, the first and last controllers may not both being set
         if let left_nav_view_controller = viewControllers.first as? LeftNavController {
-            left_nav_view_controller.rv!.isHidden = traitCollection.horizontalSizeClass == .compact
+            left_nav_view_controller.rv?.isHidden = traitCollection.horizontalSizeClass == .compact
         }
         if let right_nav_view_controller = viewControllers.last as? RightNavController {
-            right_nav_view_controller.rv!.isHidden = traitCollection.horizontalSizeClass == .compact
+            right_nav_view_controller.rv?.isHidden = traitCollection.horizontalSizeClass == .compact
         }
     }
 

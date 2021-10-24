@@ -158,10 +158,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.register(nib, forHeaderFooterViewReuseIdentifier: "MasterSectionHeader")
         
         // remove the section heading on iOS 15
-//        tableView.setSectionHeader
         if #available(iOS 15, *) {
-//            tableView.setSectionHeaderTop
-//            tableView.setSectionHeader
             tableView.sectionHeaderTopPadding = 0
         }
     }
