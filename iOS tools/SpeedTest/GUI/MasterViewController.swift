@@ -315,10 +315,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
+
         cell.layer.shadowColor = UIColor.clear.cgColor
-        // marche pas :
-        // cell.layer.backgroundColor = .init(red: 1.0, green: 0, blue: 0, alpha: 0)
-        // cell.backgroundColor = .red
+
+        // Couleur de fond quand on clique sur éditer pour supprimer une cellule
+        cell.backgroundColor = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
