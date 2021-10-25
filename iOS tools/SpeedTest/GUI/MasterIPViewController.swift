@@ -68,6 +68,13 @@ class MasterIPViewController: UITableViewController {
         let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
         cell.textLabel!.text = address.toNumericString()
+
+        cell.textLabel!.textColor = .black
+        cell.textLabel!.layer.opacity = 0.7
+        cell.textLabel!.highlightedTextColor = .blue
+
+        cell.backgroundColor = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
+        
         return cell
     }
 
