@@ -238,25 +238,25 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Add" id="w26-jr-JrH"/>
-                        <barButtonItem title="Update" id="Hoh-gZ-vw9">
+                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH"/>
+                        <barButtonItem title="Update" image="repeat" catalog="system" id="Hoh-gZ-vw9">
                             <connections>
                                 <action selector="update_pressed:" destination="9rn-U2-Uvj" id="muL-rx-85B"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem enabled="NO" title="Stop" id="9XB-83-j13">
+                        <barButtonItem enabled="NO" title="Stop" image="stop.circle" catalog="system" id="9XB-83-j13">
                             <connections>
                                 <action selector="stop_pressed:" destination="9rn-U2-Uvj" id="ah7-ZC-teK"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Debug" id="WCR-6O-86k">
+                        <barButtonItem title="Debug" image="info.circle" catalog="system" id="WCR-6O-86k">
                             <connections>
                                 <action selector="debug_pressed:" destination="9rn-U2-Uvj" id="Jhu-iO-9ns"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
-                        <barButtonItem key="leftBarButtonItem" title="Item" id="Mvn-mF-1uc"/>
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc"/>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -335,11 +335,11 @@
             </objects>
             <point key="canvasLocation" x="156" y="-467"/>
         </scene>
-        <!--Item-->
+        <!--Discover-->
         <scene sceneID="kn3-Gh-yRt">
             <objects>
                 <splitViewController preferredPrimaryColumnWidthFraction="0.0" id="X4Q-a0-4Mv" customClass="SplitViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="Jgi-Wj-wsx"/>
+                    <tabBarItem key="tabBarItem" title="Discover" image="note.text" catalog="system" id="Jgi-Wj-wsx"/>
                     <variation key="widthClass=regular" preferredPrimaryColumnWidthFraction="0.3"/>
                     <connections>
                         <segue destination="nVb-da-Lxi" kind="relationship" relationship="masterViewController" id="R27-No-sgh"/>
@@ -350,7 +350,7 @@
             </objects>
             <point key="canvasLocation" x="-798" y="-136"/>
         </scene>
-        <!--Item 2-->
+        <!--Traces-->
         <scene sceneID="vTx-7H-WYK">
             <objects>
                 <viewController id="ffj-xs-eeE" sceneMemberID="viewController">
@@ -360,13 +360,13 @@
                         <viewLayoutGuide key="safeArea" id="AM3-10-Cs8"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 2" id="tYh-kU-aKM"/>
+                    <tabBarItem key="tabBarItem" title="Traces" image="text.justify" catalog="system" id="tYh-kU-aKM"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QuN-IS-7Ub" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-798" y="547"/>
         </scene>
-        <!--Item-->
+        <!--CLI-->
         <scene sceneID="Vt6-RQ-TVN">
             <objects>
                 <viewController id="d60-mu-Od5" sceneMemberID="viewController">
@@ -376,7 +376,7 @@
                         <viewLayoutGuide key="safeArea" id="myy-AV-da8"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item" id="W16-9t-txw"/>
+                    <tabBarItem key="tabBarItem" title="CLI" image="terminal" catalog="system" id="W16-9t-txw"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nJh-PO-hVU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -421,4 +421,14 @@
             <point key="canvasLocation" x="155" y="304"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="info.circle" catalog="system" width="128" height="121"/>
+        <image name="note.text" catalog="system" width="128" height="106"/>
+        <image name="questionmark.circle" catalog="system" width="128" height="121"/>
+        <image name="rectangle.badge.plus" catalog="system" width="128" height="95"/>
+        <image name="repeat" catalog="system" width="128" height="98"/>
+        <image name="stop.circle" catalog="system" width="128" height="121"/>
+        <image name="terminal" catalog="system" width="128" height="93"/>
+        <image name="text.justify" catalog="system" width="128" height="100"/>
+    </resources>
 </document>

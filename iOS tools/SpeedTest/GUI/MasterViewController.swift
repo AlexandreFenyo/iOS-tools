@@ -147,7 +147,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // Display an Edit button in the navigation bar for this view controller.
         navigationItem.rightBarButtonItem = editButtonItem
-
+        
         // Add a refresh control
         refreshControl = UIRefreshControl()
         // Call userRefresh() when refreshing with gesture
