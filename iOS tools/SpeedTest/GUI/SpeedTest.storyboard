@@ -256,7 +256,11 @@
                         </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
-                        <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc"/>
+                        <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc">
+                            <connections>
+                                <action selector="help_pressed:" destination="9rn-U2-Uvj" id="Hmj-eb-j9V"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>

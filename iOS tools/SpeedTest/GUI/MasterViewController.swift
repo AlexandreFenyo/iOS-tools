@@ -98,6 +98,25 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     public func setTitle(_ title: String) {
         navigationItem.title = title
+
+        // changer la couleur du texte qui est en noir par défaut
+
+//        navigationController!.navigationBar.barStyle = .default
+//        navigationController?.navigationBar.barTintColor = .red
+//        print(navigationController?.navigationBar.barTintColor)
+//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
+        
+        // Couleur du Edit
+        // navigationController?.navigationBar.tintColor = .red
+        // Couleur des boutons en bas (reload par ex.)
+        // navigationController?.toolbar.tintColor = .green
+
+    }
+
+    @IBAction func help_pressed(_ sender: Any) {
+        if let link = URL(string: "https://x.org") {
+          UIApplication.shared.open(link)
+        }
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
@@ -188,6 +207,14 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidAppear(_ animated: Bool) {
         updateLocalNodeAndGateways()
+
+        // tests
+            /*
+        navigationController!.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.orange]
+        navigationController!.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.orange]
+        navigationController!.tabBarController?.tabBar.barTintColor = UIColor.brown
+        tabBarController?.tabBar.tintColor = UIColor.yellow
+*/
     }
     
     // Disable other actions while editing
