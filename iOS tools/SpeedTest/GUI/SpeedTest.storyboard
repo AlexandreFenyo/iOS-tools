@@ -357,7 +357,7 @@
         <!--Traces-->
         <scene sceneID="vTx-7H-WYK">
             <objects>
-                <viewController id="ffj-xs-eeE" sceneMemberID="viewController">
+                <viewController id="ffj-xs-eeE" customClass="TracesViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mpn-fn-ggL">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
