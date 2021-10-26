@@ -18,7 +18,7 @@ class TracesViewController : UIViewController {
         super.viewDidLoad()
         view.addSubview(contentView.view)
         contentView.view.frame = view.frame
-        //        addChild(contentView)
-        //        contentView.didMove(toParent: self)
+        addChild(contentView)
+        // contentView.didMove(toParent: self)
     }
 }

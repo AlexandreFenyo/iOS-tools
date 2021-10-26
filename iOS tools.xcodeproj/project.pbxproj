@@ -177,6 +177,14 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		5D1F12462728300F00656D0D /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
 		5D63644C213EE0DF00BFEB0F /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +225,7 @@
 		5DF21501211B5D98002B7603 /* GUI */ = {
 			isa = PBXGroup;
 			children = (
+				5D1F12462728300F00656D0D /* SwiftUI */,
 				5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */,
 				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
@@ -228,7 +237,6 @@
 				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
 				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
 				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
-				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
 			);
 			path = GUI;
 			sourceTree = "<group>";
@@ -538,7 +546,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -562,7 +570,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
