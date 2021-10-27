@@ -181,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
+				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -227,7 +228,6 @@
 			children = (
 				5D1F12462728300F00656D0D /* SwiftUI */,
 				5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */,
-				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
 				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
 				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,

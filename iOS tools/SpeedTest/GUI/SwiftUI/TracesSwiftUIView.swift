@@ -7,10 +7,22 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct TracesSwiftUIView: View {
-    @State private var content: String = "toto"
+    @State public var content: String // = "toto"
+//    @Binding var content2: String
 
+    public func addText(_ str: String) {
+        print("addText(\(str))")
+        content += str
+//        print("AVANT:", content2)
+//        content += str
+//        content2.append(contentsOf: "TESTING")
+//        content = " cava "
+//        print("APRES:", content2)
+    }
+    
     @Namespace var topID
     @Namespace var bottomID
 
@@ -25,7 +37,9 @@ struct TracesSwiftUIView: View {
                             .id(topID)
 
                             Text(content)
-                            .id(bottomID)
+//                            Text(content2)
+
+                                .id(bottomID)
                             .lineLimit(nil)
                         }.frame(maxWidth: .infinity).background(Color.yellow)
                             .frame(minHeight: geometry.size.height)
@@ -39,13 +53,16 @@ struct TracesSwiftUIView: View {
                                 proxy.scrollTo(bottomID)
                             }
                         } label: {
-                            Label("Network", systemImage: "network").foregroundColor(.green).padding()
+                            Label("Scroll to bottom", systemImage: "network").foregroundColor(.green).padding()
                         }.background(Color.blue).cornerRadius(20)
 
                         Button {
-                            for _ in 1..<200 { content += "test " }
+                            for _ in 1..<200 {
+                                // content += "test "
+                                addText("test ")
+                            }
                         } label: {
-                            Text("Clear All").foregroundColor(.green).padding()
+                            Text("Add lines").foregroundColor(.green).padding()
                         }
                         .background(Color.blue).cornerRadius(20).padding()
 
@@ -83,8 +100,10 @@ struct TracesSwiftUIView: View {
     }
 }
 
+/*
 struct TracesSwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        TracesSwiftUIView()
+        TracesSwiftUIView(content2: Binding<String>)
     }
 }
+*/

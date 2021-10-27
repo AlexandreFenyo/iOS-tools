@@ -83,6 +83,10 @@ class NetworkBrowser {
     // Any thread
     private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
+            
+            print("ON VA FAIRE UNE TRACE")
+            device_manager.addTrace("ON VA FAIRE UNE TRACE")
+            
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
@@ -313,7 +317,7 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-//                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
+                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()

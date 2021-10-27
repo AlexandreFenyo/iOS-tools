@@ -20,6 +20,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
+    func addTrace(_ content: String)
 }
 
 // foncé: 70 80 91
@@ -35,6 +36,12 @@ class DeviceCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the UITableView
 class MasterViewController: UITableViewController, DeviceManager {
+    func addTrace(_ content: String) {
+        print("MasterViewController.addTrace()")
+        traces_view_controller?.addTrace(content)
+//        traces_view_controller?.contentView.rootView.addText(content)
+    }
+    
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
@@ -42,6 +49,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_view_controller : DetailViewController?
     public var detail_navigation_controller : UINavigationController?
     public var split_view_controller : SplitViewController?
+    public var traces_view_controller : TracesViewController?
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
@@ -116,6 +124,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBAction func help_pressed(_ sender: Any) {
         if let link = URL(string: "https://x.org") {
           UIApplication.shared.open(link)
+          addTrace("HTTPS")
         }
     }
 
@@ -143,6 +152,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         //print(traitCollection.horizontalSizeClass.rawValue)
+
+        // TEST
+        print("ON VA FAIRE UNE TRACE DEBUG PRESSED")
+        addTrace("ON VA FAIRE UNE TRACE DEBUG PRESSED")
     }
 
     // Refresh started with gesture

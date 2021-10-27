@@ -22,7 +22,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
     private var masterViewController : MasterViewController?
-
+    private var tracesViewController : TracesViewController?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
@@ -32,10 +33,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
-            let detailViewController = rightNavController.topViewController as? DetailViewController
+            let detailViewController = rightNavController.topViewController as? DetailViewController,
+            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController
 //            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
-
+        
         // Set the first device displayed in the detail view controller
 //        detailViewController.device = devices.first
 
@@ -44,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.detail_view_controller = detailViewController
         masterViewController.detail_navigation_controller = rightNavController
         masterViewController.split_view_controller = splitViewController
+        masterViewController.traces_view_controller = tracesViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         
