@@ -6,44 +6,64 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
+// différents moyens de communications du modèle :
+// https://developer.apple.com/documentation/swiftui/state-and-data-flow
+
 import Foundation
 
 import UIKit
 import SwiftUI
 
 class TracesViewModel {
-    private var model: String
+    public var traces: String
 
-    init(model: String) {
-        self.model = model
+    init(traces: String) {
+        // appelé à chaque fois qu'on tape sur le bouton en haut à droite dans la vue SwiftUI
+        self.traces = traces
     }
 }
 extension TracesViewModel {
     var title: String {
-        return model
+        return traces
     }
     func update(str: String) {
-        model = str
+        print("updateX(",str,")")
+//        traces += str
+          
     }
 }
 
 class TracesViewController : UIViewController {
-    private let viewModel = TracesViewModel(model: "initstring")
     private lazy var hostingViewController = makeHeader()
 
     private func makeHeader() -> UIHostingController<TracesSwiftUIView> {
-        let contentView = TracesSwiftUIView(content: "totot")
+//        let contentView = TracesSwiftUIView()
+        let contentView = TracesSwiftUIView(txt: "création", contr: self)
+        
+        print("on crée la vue SwiftUI", contentView)
+        
         let contentVC = UIHostingController(rootView: contentView)
         contentVC.view.translatesAutoresizingMaskIntoConstraints = false
         return contentVC
     }
 
-    @State private var content2: String = ""
-    private var contentView : UIHostingController<TracesSwiftUIView>!
-
     public func addTrace(_ content: String) {
         print("TracesViewController.addTrace()", content)
-        viewModel.update(str: content)
+        
+//        hostingViewController.rootView.txt = "FGRIOJOKFEOZKFZEOFK"
+//        print("on tape sur ", hostingViewController.rootView)
+        
+        print("ICI")
+        hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
+        
+        //        viewModel.update(str: content)
+        //hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
+
+        // marche pas mais devrait marcher...
+        // hostingViewController.rootView = TracesSwiftUIView(contr: self)
+        // hostingViewController.rootView.model = TracesViewModel(traces: "ERRRRRR")
+        // utilité ?: hostingViewController.loadView()
+
     }
     
     override func viewDidLoad() {

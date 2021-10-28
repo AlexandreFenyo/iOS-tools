@@ -39,7 +39,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String) {
         print("MasterViewController.addTrace()")
         traces_view_controller?.addTrace(content)
-//        traces_view_controller?.contentView.rootView.addText(content)
     }
     
     @IBOutlet weak var update_button: UIBarButtonItem!
@@ -156,6 +155,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         // TEST
         print("ON VA FAIRE UNE TRACE DEBUG PRESSED")
         addTrace("ON VA FAIRE UNE TRACE DEBUG PRESSED")
+
+        // Exemple qui fonctionne de modification visuelle de composant UIKit
+        // let tabBarController = UIApplication.shared.windows.first?.rootViewController as? UITabBarController
+        // tabBarController?.tabBar.barTintColor = .yellow
+
+        
+        // ca marche :
+//        setTitle("FGIRJZEFJEIZFJ")
     }
 
     // Refresh started with gesture
