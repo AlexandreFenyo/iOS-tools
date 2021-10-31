@@ -14,31 +14,26 @@ import Foundation
 import UIKit
 import SwiftUI
 
-class TracesViewModel {
-    public var traces: String
+public class TracesViewModel : ObservableObject {
+    @Published private(set) var traces: String
 
     init(traces: String) {
-        // appelé à chaque fois qu'on tape sur le bouton en haut à droite dans la vue SwiftUI
         self.traces = traces
     }
-}
-extension TracesViewModel {
-    var title: String {
-        return traces
-    }
-    func update(str: String) {
-        print("updateX(",str,")")
-//        traces += str
-          
+    
+    public func update(str: String) {
+        traces = str
     }
 }
+
+public var model = TracesViewModel(traces: "externe ")
 
 class TracesViewController : UIViewController {
     private lazy var hostingViewController = makeHeader()
 
     private func makeHeader() -> UIHostingController<TracesSwiftUIView> {
 //        let contentView = TracesSwiftUIView()
-        let contentView = TracesSwiftUIView(txt: "création", contr: self)
+        let contentView = TracesSwiftUIView(model: model, txt: "création")
         
         print("on crée la vue SwiftUI", contentView)
         
@@ -54,7 +49,10 @@ class TracesViewController : UIViewController {
 //        print("on tape sur ", hostingViewController.rootView)
         
         print("ICI")
-        hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
+//        hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
+        hostingViewController.rootView.txt = "ABCDEF"
+        hostingViewController.rootView.model.update(str: "IEFRZHJEFJRZEFIR")
+
         
         //        viewModel.update(str: content)
         //hostingViewController.rootView.model = TracesViewModel(traces: "TEST")

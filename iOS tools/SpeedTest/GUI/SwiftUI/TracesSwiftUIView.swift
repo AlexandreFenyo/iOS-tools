@@ -10,10 +10,12 @@ import SwiftUI
 import UIKit
 
 struct TracesSwiftUIView: View {
-    @State public var model: TracesViewModel = TracesViewModel(traces: "valeur initiale via SwiftUI")
+//    @State public var model: TracesViewModel = TracesViewModel(traces: "valeur initiale via SwiftUI")
+
+    @ObservedObject var model: TracesViewModel
     @State public var txt: String?
 
-    var contr : UIViewController
+//    var contr : UIViewController
     
     @Namespace var topID
     @Namespace var bottomID
@@ -30,7 +32,7 @@ struct TracesSwiftUIView: View {
 
                             Text(txt ?? "txt vide")
                             
-                            Text(model.title)
+                            Text(model.traces)
 
                                 .id(bottomID)
                             .lineLimit(nil)
@@ -75,7 +77,7 @@ struct TracesSwiftUIView: View {
   //                          model.traces = "truc"
 
                             // ca marche en recréant un modèle
-                            model = TracesViewModel(traces: model.traces + " - truc affiché par bouton")
+//                            model = TracesViewModel(traces: model.traces + " - truc affiché par bouton")
                             // alternative qui ne marche pas :
                             // model.traces += " - truc affiché par bouton"
                             // IL faut donc créer un nouveau modèle à chaque modif ! même avec SwiftUI
