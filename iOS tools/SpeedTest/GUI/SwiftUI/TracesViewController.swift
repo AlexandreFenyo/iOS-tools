@@ -14,26 +14,11 @@ import Foundation
 import UIKit
 import SwiftUI
 
-public class TracesViewModel : ObservableObject {
-    @Published private(set) var traces: String
-
-    init(traces: String) {
-        self.traces = traces
-    }
-    
-    public func update(str: String) {
-        traces = str
-    }
-}
-
-public var model = TracesViewModel(traces: "externe ")
-
 class TracesViewController : UIViewController {
     private lazy var hostingViewController = makeHeader()
 
     private func makeHeader() -> UIHostingController<TracesSwiftUIView> {
-//        let contentView = TracesSwiftUIView()
-        let contentView = TracesSwiftUIView(model: model, txt: "création")
+        let contentView = TracesSwiftUIView(model: TracesViewModel())
         
         print("on crée la vue SwiftUI", contentView)
         
@@ -44,24 +29,7 @@ class TracesViewController : UIViewController {
 
     public func addTrace(_ content: String) {
         print("TracesViewController.addTrace()", content)
-        
-//        hostingViewController.rootView.txt = "FGRIOJOKFEOZKFZEOFK"
-//        print("on tape sur ", hostingViewController.rootView)
-        
-        print("ICI")
-//        hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
-        hostingViewController.rootView.txt = "ABCDEF"
-        hostingViewController.rootView.model.update(str: "IEFRZHJEFJRZEFIR")
-
-        
-        //        viewModel.update(str: content)
-        //hostingViewController.rootView.model = TracesViewModel(traces: "TEST")
-
-        // marche pas mais devrait marcher...
-        // hostingViewController.rootView = TracesSwiftUIView(contr: self)
-        // hostingViewController.rootView.model = TracesViewModel(traces: "ERRRRRR")
-        // utilité ?: hostingViewController.loadView()
-
+        hostingViewController.rootView.model.update(str: "TracesViewController")
     }
     
     override func viewDidLoad() {

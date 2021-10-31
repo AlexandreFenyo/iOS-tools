@@ -9,14 +9,20 @@
 import SwiftUI
 import UIKit
 
-struct TracesSwiftUIView: View {
-//    @State public var model: TracesViewModel = TracesViewModel(traces: "valeur initiale via SwiftUI")
-
-    @ObservedObject var model: TracesViewModel
-    @State public var txt: String?
-
-//    var contr : UIViewController
+public class TracesViewModel : ObservableObject {
+    @Published private(set) var traces: String = ""
     
+    public func update(str: String) {
+        traces = str
+    }
+    public func append(str: String) {
+        traces += str
+    }
+}
+
+struct TracesSwiftUIView: View {
+    @ObservedObject var model: TracesViewModel
+
     @Namespace var topID
     @Namespace var bottomID
 
@@ -30,8 +36,6 @@ struct TracesSwiftUIView: View {
                             Spacer()
                             .id(topID)
 
-                            Text(txt ?? "txt vide")
-                            
                             Text(model.traces)
 
                                 .id(bottomID)
@@ -54,7 +58,7 @@ struct TracesSwiftUIView: View {
                         Button {
                             for _ in 1..<200 {
                                 // marche pas car il faut créer un nouveau modèle !
-                                model.update(str: "text ")
+                                model.append(str: "text ")
                                 // content += "test "
                                 // addText("test ")
                             }
@@ -66,28 +70,14 @@ struct TracesSwiftUIView: View {
                         Spacer()
                         
                         Button {
-                            model.update(str: "CLEAR")
+                            model.update(str: "CLEARED")
                         } label: {
                             Label("do not use", systemImage: "arrow.down.to.line.circle.fill").padding()
                         }
                         .background(Color.gray).cornerRadius(20)
 
                         Button {
-//                            model.update(str: "")
-  //                          model.traces = "truc"
-
-                            // ca marche en recréant un modèle
-//                            model = TracesViewModel(traces: model.traces + " - truc affiché par bouton")
-                            // alternative qui ne marche pas :
-                            // model.traces += " - truc affiché par bouton"
-                            // IL faut donc créer un nouveau modèle à chaque modif ! même avec SwiftUI
-
-                            // Exemple qui fonctionne de modification visuelle de composant UIKit
-                            // let tabBarController = UIApplication.shared.windows.first?.rootViewController as? UITabBarController
-                            // tabBarController?.tabBar.barTintColor = .yellow
-                            
-                            txt = "plus vide du tout"
-
+                            model.update(str: "")
                             
                         } label: {
                             Image(systemName: "delete.left.fill").padding()
