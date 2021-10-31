@@ -9,26 +9,18 @@
 // différents moyens de communications du modèle :
 // https://developer.apple.com/documentation/swiftui/state-and-data-flow
 
-import Foundation
-
-import UIKit
 import SwiftUI
 
 class TracesViewController : UIViewController {
-    private lazy var hostingViewController = makeHeader()
+    private lazy var hostingViewController = makeHostingController()
 
-    private func makeHeader() -> UIHostingController<TracesSwiftUIView> {
-        let contentView = TracesSwiftUIView()
-        
-        print("on crée la vue SwiftUI", contentView)
-        
-        let contentVC = UIHostingController(rootView: contentView)
-        contentVC.view.translatesAutoresizingMaskIntoConstraints = false
-        return contentVC
+    private func makeHostingController() -> UIHostingController<TracesSwiftUIView> {
+        let hostingController = UIHostingController(rootView: TracesSwiftUIView())
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        return hostingController
     }
 
     public func addTrace(_ content: String) {
-        print("TracesViewController.addTrace()", content)
         hostingViewController.rootView.model.update(str: "TracesViewController")
     }
     
@@ -42,9 +34,7 @@ class TracesViewController : UIViewController {
             hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
             hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-            hostingViewController.view.heightAnchor.constraint(
-                equalTo: view.heightAnchor,
-                multiplier: 1.0)
+            hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
     }
 }

@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct TracesSwiftUIView: View {
     public class TracesViewModel : ObservableObject
@@ -31,9 +30,8 @@ struct TracesSwiftUIView: View {
                         VStack {
                             Spacer()
                             .id(topID)
-
                             Text(model.traces)
-                                .id(bottomID)
+                            .id(bottomID)
                             .lineLimit(nil)
                         }.frame(maxWidth: .infinity).background(Color.yellow)
                             .frame(minHeight: geometry.size.height)
