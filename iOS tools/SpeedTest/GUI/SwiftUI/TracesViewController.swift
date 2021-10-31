@@ -30,7 +30,6 @@ class TracesViewController : UIViewController {
     public func addTrace(_ content: String) {
         print("TracesViewController.addTrace()", content)
         hostingViewController.rootView.model.update(str: "TracesViewController")
-        hostingViewController.rootView.model2.update(str: "TracesViewController")
     }
     
     override func viewDidLoad() {
