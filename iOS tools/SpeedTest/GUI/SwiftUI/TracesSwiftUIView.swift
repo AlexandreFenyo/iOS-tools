@@ -9,19 +9,23 @@
 import SwiftUI
 import UIKit
 
-public class TracesViewModel : ObservableObject {
-    @Published private(set) var traces: String = ""
-    
-    public func update(str: String) {
-        traces = str
-    }
-    public func append(str: String) {
-        traces += str
-    }
-}
-
 struct TracesSwiftUIView: View {
-    @ObservedObject var model: TracesViewModel
+    public class TracesViewModel : ObservableObject
+    {
+        @Published private(set) var traces: String = "initstring"
+        public func update(str: String) { traces = str }
+        public func append(str: String) { traces += str }
+    }
+
+    public class TracesViewModel2
+    {
+        private(set) var traces: String = "initstring"
+        public func update(str: String) { traces = str }
+        public func append(str: String) { traces += str }
+    }
+
+    @ObservedObject var model = TracesViewModel()
+    @State var model2: TracesViewModel2 = TracesViewModel2()
 
     @Namespace var topID
     @Namespace var bottomID
@@ -37,6 +41,7 @@ struct TracesSwiftUIView: View {
                             .id(topID)
 
                             Text(model.traces)
+                            Text(model2.traces)
 
                                 .id(bottomID)
                             .lineLimit(nil)
@@ -59,6 +64,7 @@ struct TracesSwiftUIView: View {
                             for _ in 1..<200 {
                                 // marche pas car il faut créer un nouveau modèle !
                                 model.append(str: "text ")
+                                model2.append(str: "text ")
                                 // content += "test "
                                 // addText("test ")
                             }
@@ -71,6 +77,7 @@ struct TracesSwiftUIView: View {
                         
                         Button {
                             model.update(str: "CLEARED")
+                            model2.update(str: "CLEARED")
                         } label: {
                             Label("do not use", systemImage: "arrow.down.to.line.circle.fill").padding()
                         }
@@ -78,7 +85,7 @@ struct TracesSwiftUIView: View {
 
                         Button {
                             model.update(str: "")
-                            
+                            model2.update(str: "")
                         } label: {
                             Image(systemName: "delete.left.fill").padding()
                         }
