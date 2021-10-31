@@ -50,10 +50,7 @@ struct TracesSwiftUIView: View {
 
                         Button {
                             for _ in 1..<200 {
-                                // marche pas car il faut créer un nouveau modèle !
                                 model.append(str: "text ")
-                                // content += "test "
-                                // addText("test ")
                             }
                         } label: {
                             Text("Add lines").foregroundColor(.green).padding()
