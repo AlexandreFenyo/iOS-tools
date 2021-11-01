@@ -178,6 +178,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.backgroundColor = COLORS.standard_background
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -214,6 +218,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             header.subTitleLabel.text = section.detailed_description
             header.subTitleLabel.textColor = COLORS.section_label
             header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
+            header.mainView.backgroundColor = COLORS.section_background
         }
         
         return cell

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_5" orientation="landscape" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -42,7 +42,6 @@
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
-                    <color key="backgroundColor" red="0.23529411764705882" green="0.22352941176470587" blue="0.30196078431372547" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstItem="g9Y-7S-naT" firstAttribute="top" secondItem="YKU-a3-88e" secondAttribute="top" constant="10" id="3YN-pu-eXv"/>
                         <constraint firstItem="erd-24-PNd" firstAttribute="top" secondItem="YKU-a3-88e" secondAttribute="top" constant="10" id="3wG-pF-JDb"/>
@@ -67,6 +66,7 @@
             </constraints>
             <connections>
                 <outlet property="imageView" destination="g9Y-7S-naT" id="Dbt-rc-9MT"/>
+                <outlet property="mainView" destination="YKU-a3-88e" id="uuE-xZ-gpS"/>
                 <outlet property="subTitleLabel" destination="3S8-GK-sgW" id="JPc-UQ-xEI"/>
                 <outlet property="titleLabel" destination="erd-24-PNd" id="S4M-6g-8zo"/>
             </connections>

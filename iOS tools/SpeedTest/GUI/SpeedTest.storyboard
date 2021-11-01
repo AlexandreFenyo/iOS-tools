@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -62,7 +63,6 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" red="0.4823529411764706" green="0.53322881460000005" blue="0.59591698650000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="MBd-X0-9oF" secondAttribute="bottom" id="2zX-2V-sfn"/>
                                     <constraint firstItem="MBd-X0-9oF" firstAttribute="leading" secondItem="4Yv-DA-FTU" secondAttribute="leading" constant="50" id="8Fx-qv-OPU"/>
@@ -100,7 +100,7 @@
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="aHA-zn-q5Z">
                         <rect key="frame" x="0.0" y="0.0" width="308" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.48228603599999997" green="0.53322881460000005" blue="0.59591698650000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="DeviceCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeviceCell" rowHeight="99" id="HNq-FQ-1QM" customClass="DeviceCell" customModule="iOS_tools" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="308" height="99"/>
@@ -211,7 +211,6 @@
                                             </variation>
                                         </stackView>
                                     </subviews>
-                                    <color key="backgroundColor" red="0.40784313725490196" green="0.45882352941176469" blue="0.52549019607843139" alpha="1" colorSpace="calibratedRGB"/>
                                     <constraints>
                                         <constraint firstItem="8sv-PI-ax7" firstAttribute="leading" secondItem="bA0-0K-nIQ" secondAttribute="leading" id="9d3-VQ-tKd"/>
                                         <constraint firstAttribute="trailing" secondItem="8sv-PI-ax7" secondAttribute="trailing" id="AFj-YH-Cnp"/>
@@ -434,5 +433,8 @@
         <image name="stop.circle" catalog="system" width="128" height="121"/>
         <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="text.justify" catalog="system" width="128" height="100"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
