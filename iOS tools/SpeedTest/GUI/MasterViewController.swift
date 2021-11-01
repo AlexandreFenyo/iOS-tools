@@ -32,6 +32,8 @@ class DeviceCell : UITableViewCell {
     @IBOutlet weak var detail2: UILabel!
     @IBOutlet weak var nIPs: UILabel!
     @IBOutlet weak var nPorts: UILabel!
+    @IBOutlet weak var rect1: UIView!
+    @IBOutlet weak var rect2: UIView!
 }
 
 // The MasterViewController instance is the delegate for the UITableView
@@ -372,6 +374,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
 
         cell.layer.shadowColor = UIColor.clear.cgColor
+        
+        // Create some sort of shadow
+        cell.rect1.backgroundColor = COLORS.section_background
+        cell.rect2.backgroundColor = COLORS.rect2_background
 
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
         cell.backgroundColor = COLORS.standard_background

@@ -114,11 +114,9 @@
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S7m-cI-wKi" userLabel="rect1">
                                                     <rect key="frame" x="0.0" y="0.0" width="308" height="2"/>
-                                                    <color key="backgroundColor" red="0.23529411759999999" green="0.22352941179999999" blue="0.30196078430000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eXr-ao-vAJ" userLabel="rect2">
                                                     <rect key="frame" x="0.0" y="2" width="308" height="2"/>
-                                                    <color key="backgroundColor" red="0.59607843140000005" green="0.6705882353" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="2" id="cMp-w7-OJR"/>
                                                     </constraints>
@@ -227,6 +225,8 @@
                                     <outlet property="nIPs" destination="sld-lA-kLh" id="15q-zc-I80"/>
                                     <outlet property="nPorts" destination="3Fh-QV-NZs" id="KcU-0z-mdo"/>
                                     <outlet property="name" destination="KBz-al-Df2" id="LJZ-FR-dJZ"/>
+                                    <outlet property="rect1" destination="S7m-cI-wKi" id="MtY-gD-R74"/>
+                                    <outlet property="rect2" destination="eXr-ao-vAJ" id="Y5M-0G-qhH"/>
                                     <segue destination="JJz-SI-hJs" kind="show" id="aIb-Wn-tv2"/>
                                 </connections>
                             </tableViewCell>
