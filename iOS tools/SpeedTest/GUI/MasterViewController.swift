@@ -381,6 +381,10 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
         cell.backgroundColor = COLORS.standard_background
+
+        // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
+        cell.contentView.backgroundColor = COLORS.standard_background
+        
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
