@@ -73,7 +73,7 @@ class MasterIPViewController: UITableViewController {
         cell.textLabel!.layer.opacity = 0.7
         cell.textLabel!.highlightedTextColor = .blue
 
-        cell.backgroundColor = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
+        cell.backgroundColor = COLORS.standard_background
         
         return cell
     }

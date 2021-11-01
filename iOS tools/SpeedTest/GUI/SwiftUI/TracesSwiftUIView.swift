@@ -8,12 +8,17 @@
 
 import SwiftUI
 
+// types de traces : selon verbosité
+
 struct TracesSwiftUIView: View {
     public class TracesViewModel : ObservableObject
     {
         @Published private(set) var traces: String = "initstring"
         public func update(str: String) { traces = str }
         public func append(str: String) { traces += str }
+
+        @Published private(set) var level: Int = 1
+        public func setLevel(_ val: Int) { level = val }
     }
 
     @ObservedObject var model = TracesViewModel()
@@ -41,28 +46,41 @@ struct TracesSwiftUIView: View {
                 VStack {
                     HStack {
                         Button {
+                            model.setLevel(1)
                             withAnimation {
                                 proxy.scrollTo(bottomID)
                             }
                         } label: {
-                            Label("Scroll to bottom", systemImage: "network").foregroundColor(.green).padding()
-                        }.background(Color.blue).cornerRadius(20)
+                            Label("level 1", systemImage: "rectangle.split.2x2").foregroundColor(.green).padding()
+                        }.background(model.level == 1 ? Color.blue : Color.gray).cornerRadius(20)
 
                         Button {
-                            for _ in 1..<200 {
-                                model.append(str: "text ")
-                            }
+                            model.setLevel(2)
                         } label: {
-                            Text("Add lines").foregroundColor(.green).padding()
+                            Label("level 2", systemImage: "tablecells").foregroundColor(.green).padding()
                         }
-                        .background(Color.blue).cornerRadius(20).padding()
+                        .background(model.level == 2 ? Color.blue : Color.gray).cornerRadius(20).padding()
+
+                        Button {
+                            model.setLevel(3)
+                        } label: {
+                            Label("level 3", systemImage: "rectangle.split.3x3").foregroundColor(.green).padding()
+                        }
+                        .background(model.level == 3 ? Color.blue : Color.gray).cornerRadius(20).padding()
 
                         Spacer()
-                        
+
                         Button {
                             model.update(str: "CLEARED")
                         } label: {
-                            Label("do not use", systemImage: "arrow.down.to.line.circle.fill").padding()
+                            Image("arrow up").padding()
+                        }
+                        .background(Color.gray).cornerRadius(20)
+
+                        Button {
+                            model.update(str: "CLEARED")
+                        } label: {
+                            Image("arrow down").padding()
                         }
                         .background(Color.gray).cornerRadius(20)
 
@@ -80,8 +98,6 @@ struct TracesSwiftUIView: View {
                     
                     Spacer()
                 }.padding()
-                
-//                Spacer().background(Color.blue)
 
             }.background(Color.orange)
             .background(Color(red: 0.478, green: 0.539, blue: 0.613))
@@ -90,10 +106,8 @@ struct TracesSwiftUIView: View {
     }
 }
 
-/*
 struct TracesSwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        TracesSwiftUIView(content2: Binding<String>)
+        TracesSwiftUIView()
     }
 }
-*/

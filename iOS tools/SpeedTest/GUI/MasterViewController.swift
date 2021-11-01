@@ -181,6 +181,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // view.backgroundColor = .red
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
@@ -206,13 +207,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MasterSectionHeader")
         let header = cell as! MasterSectionHeader
-
+        
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             header.titleLabel.text = section.description
+            header.titleLabel.textColor = COLORS.section_label
             header.subTitleLabel.text = section.detailed_description
+            header.subTitleLabel.textColor = COLORS.section_label
             header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
         }
-
+        
         return cell
     }
 
@@ -366,7 +369,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         cell.layer.shadowColor = UIColor.clear.cgColor
 
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
-        cell.backgroundColor = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
+        cell.backgroundColor = COLORS.standard_background
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...

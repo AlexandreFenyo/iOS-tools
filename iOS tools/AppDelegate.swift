@@ -8,6 +8,13 @@
 
 import UIKit
 
+public enum COLORS {
+    static let standard_background = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
+    static let top_down_background = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+    static let section_label = /* UIColor.red */ UIColor(red: 146/255, green: 150/255, blue: 156/255, alpha: 1)
+//    static let section_background = UIColor.red // UIColor(red: 60/255, green: 57/255, blue: 77/255, alpha: 1) // background color de firstview
+}
+
 extension UIApplication {}
 
 @UIApplicationMain
