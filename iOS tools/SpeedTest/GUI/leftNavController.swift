@@ -64,7 +64,7 @@ class LeftNavController : UINavigationController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = COLORS.top_down_background
-        navigationBar.standardAppearance = appearance;
+        navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
         
         // Manage constraints for auto resizing

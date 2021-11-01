@@ -320,15 +320,10 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="P8k-aX-zDp">
                         <rect key="frame" x="0.0" y="24" width="308" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.98935157060000001" green="0.51814478639999995" blue="0.49820691350000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="C04-G9-mrM">
                         <rect key="frame" x="0.0" y="1251" width="308" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.99215686274509807" green="0.43529411764705883" blue="0.41176470588235292" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <variation key="heightClass=regular-widthClass=regular">
-                            <color key="barTintColor" red="0.99215686270000003" green="0.43529411759999997" blue="0.41176470590000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        </variation>
                     </toolbar>
                     <connections>
                         <segue destination="9rn-U2-Uvj" kind="relationship" relationship="rootViewController" id="P5j-OP-syK"/>
@@ -392,7 +387,6 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="irW-Df-Hmm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.9882352941176471" green="0.51764705882352935" blue="0.49803921568627452" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
                         <segue destination="X4Q-a0-4Mv" kind="relationship" relationship="viewControllers" id="WRV-SP-FjR"/>
@@ -412,7 +406,6 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="mMu-CZ-UIo">
                         <rect key="frame" x="0.0" y="24" width="1024" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.98935157060000001" green="0.51814478639999995" blue="0.49820691350000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

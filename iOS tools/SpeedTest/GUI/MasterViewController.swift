@@ -184,6 +184,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.standard_background
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -202,7 +203,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Prepare the section headers
         let nib = UINib(nibName: "MasterSectionHeader", bundle: nil)
         tableView.register(nib, forHeaderFooterViewReuseIdentifier: "MasterSectionHeader")
-        
+
         // remove the section heading on iOS 15
         if #available(iOS 15.0, *) {
             // à remettre : ça pose pb avec MacCatalyst
@@ -238,13 +239,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewDidAppear(_ animated: Bool) {
         updateLocalNodeAndGateways()
 
-        // tests
-            /*
-        navigationController!.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.orange]
-        navigationController!.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.orange]
-        navigationController!.tabBarController?.tabBar.barTintColor = UIColor.brown
-        tabBarController?.tabBar.tintColor = UIColor.yellow
-*/
+        navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
+
+        // Pour changement des couleurs du texte
+        // navigationController!.navigationBar.largeTitleTextAttributes = [ .foregroundColor: UIColor.orange ]
+        // navigationController!.navigationBar.titleTextAttributes = [ .foregroundColor: UIColor.orange ]
+        // tabBarController?.tabBar.tintColor = UIColor.red
     }
     
     // Disable other actions while editing
