@@ -48,46 +48,58 @@ struct TracesSwiftUIView: View {
                         Button {
                             model.setLevel(1)
                         } label: {
-                            Label("level 1", systemImage: "rectangle.split.2x2").disabled(model.level != 1).padding()
+                            Label("level 1", systemImage: "rectangle.split.2x2")
+                                .foregroundColor(model.level != 1 ? Color.gray : Color.blue)
+                                .disabled(model.level != 1).padding()
                         }
-                        .background(model.level != 1 ? Color(COLORS.standard_background).darker() : Color(COLORS.top_down_background)).cornerRadius(20)
+                        .background(model.level != 1 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
 
                         Button {
                             model.setLevel(2)
                         } label: {
-                            Label("level 2", systemImage: "tablecells").disabled(model.level != 2).padding()
+                            Label("level 2", systemImage: "tablecells")
+                                .foregroundColor(model.level != 2 ? Color.gray : Color.blue)
+                                .disabled(model.level != 2).padding()
                         }
-                        .background(model.level != 2 ? Color(COLORS.standard_background).darker() : Color(COLORS.top_down_background)).cornerRadius(20)
+                        .background(model.level != 2 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
 
                         Button {
                             model.setLevel(3)
                         } label: {
-                            Label("level 3", systemImage: "rectangle.split.3x3").disabled(model.level != 3).padding()
+                            Label("level 3", systemImage: "rectangle.split.3x3")
+                                .foregroundColor(model.level != 3 ? Color.gray : Color.blue)
+                                .disabled(model.level != 3).padding()
                         }
-                        .background(model.level != 3 ? Color(COLORS.standard_background).darker() : Color(COLORS.top_down_background)).cornerRadius(20)
+                        .background(model.level != 3 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
 
                         Spacer()
 
                         Button {
                             model.update(str: "CLEARED")
                         } label: {
-                            Image("arrow up").padding()
+                            Image("arrow up")
+                                .renderingMode(.template)
+                                .foregroundColor(.gray).padding()
                         }
-                        .background(Color.gray).cornerRadius(20)
+                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
 
                         Button {
                             model.update(str: "CLEARED")
                         } label: {
-                            Image("arrow down").padding()
+                            Image("arrow down")
+                                .renderingMode(.template)
+                                .foregroundColor(.gray).padding()
                         }
-                        .background(Color.gray).cornerRadius(20)
+                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
 
                         Button {
                             model.update(str: "")
                         } label: {
-                            Image(systemName: "delete.left.fill").padding()
+                            Image(systemName: "delete.left.fill")
+                                .renderingMode(.template)
+                                .foregroundColor(.gray).padding()
                         }
-                        .background(Color.gray).cornerRadius(20)
+                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
 
                         // arrow.down.to.line.circle.fill
                         // arrow.down.up.line.circle.fill
@@ -97,8 +109,10 @@ struct TracesSwiftUIView: View {
                     Spacer()
                 }.padding()
 
-            }.background(Color.orange)
-            .background(Color(red: 0.478, green: 0.539, blue: 0.613))
+            }
+            // Couleur de fond qui s'affiche quand on scroll au delà des limites
+            // .background(Color.orange)
+            .background(Color(COLORS.standard_background))
         }
     }
     }
