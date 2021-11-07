@@ -20,7 +20,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
-    func addTrace(_ content: String)
+    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel)
 }
 
 // foncé: 70 80 91
@@ -38,11 +38,10 @@ class DeviceCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the UITableView
 class MasterViewController: UITableViewController, DeviceManager {
-    func addTrace(_ content: String) {
-        print("MasterViewController.addTrace()")
-        traces_view_controller?.addTrace(content)
+    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+        traces_view_controller?.addTrace(content, level: level)
     }
-    
+
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
@@ -54,7 +53,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
-    
+
     private var browser_network : NetworkBrowser?
     private var browser_tcp : TCPPortBrowser?
 
@@ -75,9 +74,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_chargen?.search()
             self.browser_discard?.search()
 
-            // ceci déclenche de temps en temps Duplicate elements of type 'IPv6Address' were found in a Set avant même qu'il n'y ait un NetworkBrowser
             self.updateLocalNodeAndGateways()
-            
+
             // Use ICMP to find new nodes
             let tb = TCPPortBrowser(device_manager: self)
             self.browser_tcp = tb
@@ -104,7 +102,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         setTitle("Target List")
     }
-    
+
     public func setTitle(_ title: String) {
         navigationItem.title = title
 

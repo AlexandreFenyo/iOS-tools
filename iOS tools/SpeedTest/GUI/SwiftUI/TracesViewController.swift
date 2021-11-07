@@ -20,10 +20,10 @@ class TracesViewController : UIViewController {
         return hostingController
     }
 
-    public func addTrace(_ content: String) {
-        hostingViewController.rootView.model.update(str: "TracesViewController")
+    public func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+        hostingViewController.rootView.model.append(content, level: level)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         addChild(hostingViewController)

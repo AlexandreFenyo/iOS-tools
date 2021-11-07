@@ -25,23 +25,14 @@ class NetworkBrowser {
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser) {
         self.device_manager = device_manager
         self.browser_tcp = browser_tcp
-//        print("<><><><><><><><>")
 
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
-//                print("---------------")
-//                print("IPv6 NETWORK :", network_addr.toNumericString()!)
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
-                // TRAITER CE CAS PLUTOT QUE FAIRE UN CONTINUE
                 if network_addr == IPv6Address("::1") { continue }
-                // corriger ceci :
-//                CONTINUER ICI
                 if network_addr.isLLA() {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
-                    // pb aléatoirement ici et ailleurs :  Duplicate elements of type 'IPv6Address' were found in a Set, dans Thread 1 Queue
-                    // on va traiter celui là en premier
-//                    print("INSERTION DANS multicast_ipv6 DE :", multicast.toNumericString() ?? "nil")
                     multicast_ipv6.insert(multicast)
                 }
             }
@@ -51,11 +42,17 @@ class NetworkBrowser {
             if let network_addr = network.ip_address as? IPv4Address {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
-                if network.mask_len < 22 { broadcast_ipv4.insert(broadcast) }
+                if network.mask_len < 22 {
+                    broadcast_ipv4.insert(broadcast)
+                }
                 else {
                     var current = network_addr.and(netmask).next() as! IPv4Address
                     repeat {
-                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty { reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
+                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+                            
+                            device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
+                            
+                            reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
                         current = current.next() as! IPv4Address
                     } while current != broadcast
                 }
@@ -85,7 +82,7 @@ class NetworkBrowser {
         DispatchQueue.main.sync {
             
             print("ON VA FAIRE UNE TRACE")
-            device_manager.addTrace("ON VA FAIRE UNE TRACE")
+            device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
             
             let node = Node()
             switch from.getFamily() {

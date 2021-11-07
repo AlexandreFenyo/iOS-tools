@@ -35,7 +35,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
 //        print("didRemove")
         if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
-        else { print("warning: service app closed but not previously discovered") }
+        else {
+            print("warning: service app closed but not previously discovered")
+        }
     }
 
     // Simulate by switching Wi-Fi off and returning to the app

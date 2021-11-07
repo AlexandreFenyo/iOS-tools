@@ -8,113 +8,168 @@
 
 import SwiftUI
 
-// types de traces : selon verbosité
-
 struct TracesSwiftUIView: View {
+    public enum LogLevel : Int {
+        case INFO = 0
+        case DEBUG
+        case ALL
+    }
+    
     public class TracesViewModel : ObservableObject
     {
-        @Published private(set) var traces: String = "initstring"
-        public func update(str: String) { traces = str }
-        public func append(str: String) { traces += str }
-
-        @Published private(set) var level: Int = 1
-        public func setLevel(_ val: Int) { level = val }
+        private let df: DateFormatter = {
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            return df
+        }()
+        
+        @Published private(set) var traces: String = {
+            var str : String = ""
+            for i in 1...200 { str += "Speed Test - Traces \(i)\n" }
+            return str
+        }()
+        
+        fileprivate func update(str: String) {
+            traces = str
+        }
+        
+        public func append(_ str: String, level _level: LogLevel = .ALL) {
+            if _level.rawValue <= level.rawValue {
+                traces += df.string(from: Date())
+                traces += ": "
+                traces += str
+                traces += "\n"
+            }
+        }
+        
+        @Published private(set) var level: LogLevel = .ALL
+        public func setLevel(_ val: LogLevel) { level = val }
     }
-
+    
     @ObservedObject var model = TracesViewModel()
-
+    
     @Namespace var topID
     @Namespace var bottomID
+    
 
-    var body: some View {
-        ScrollViewReader { proxy in
-        GeometryReader { geometry in
-            ZStack {
-                VStack {
-                    ScrollView {
-                        VStack {
-                            Spacer()
-                            .id(topID)
-                            Text(model.traces)
-                            .id(bottomID)
-                            .lineLimit(nil)
-                        }.frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
-                            .frame(minHeight: geometry.size.height)
-                    }
-                }
+    
+    struct SizePreferenceKey: PreferenceKey {
+        static var defaultValue: CGSize = .zero
 
-                VStack {
-                    HStack {
-                        Button {
-                            model.setLevel(1)
-                        } label: {
-                            Label("level 1", systemImage: "rectangle.split.2x2")
-                                .foregroundColor(model.level != 1 ? Color.gray : Color.blue)
-                                .disabled(model.level != 1).padding()
-                        }
-                        .background(model.level != 1 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
-
-                        Button {
-                            model.setLevel(2)
-                        } label: {
-                            Label("level 2", systemImage: "tablecells")
-                                .foregroundColor(model.level != 2 ? Color.gray : Color.blue)
-                                .disabled(model.level != 2).padding()
-                        }
-                        .background(model.level != 2 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
-
-                        Button {
-                            model.setLevel(3)
-                        } label: {
-                            Label("level 3", systemImage: "rectangle.split.3x3")
-                                .foregroundColor(model.level != 3 ? Color.gray : Color.blue)
-                                .disabled(model.level != 3).padding()
-                        }
-                        .background(model.level != 3 ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20)
-
-                        Spacer()
-
-                        Button {
-                            model.update(str: "CLEARED")
-                        } label: {
-                            Image("arrow up")
-                                .renderingMode(.template)
-                                .foregroundColor(.gray).padding()
-                        }
-                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
-
-                        Button {
-                            model.update(str: "CLEARED")
-                        } label: {
-                            Image("arrow down")
-                                .renderingMode(.template)
-                                .foregroundColor(.gray).padding()
-                        }
-                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
-
-                        Button {
-                            model.update(str: "")
-                        } label: {
-                            Image(systemName: "delete.left.fill")
-                                .renderingMode(.template)
-                                .foregroundColor(.gray).padding()
-                        }
-                        .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(20)
-
-                        // arrow.down.to.line.circle.fill
-                        // arrow.down.up.line.circle.fill
-
-                    }.background(Color.clear)
-                    
-                    Spacer()
-                }.padding()
-
-            }
-            // Couleur de fond qui s'affiche quand on scroll au delà des limites
-            // .background(Color.orange)
-            .background(Color(COLORS.standard_background))
+        static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+            value = nextValue()
         }
     }
+    struct SizeModifier: ViewModifier {
+        private var sizeView: some View {
+            GeometryReader { geometry in
+                Color.clear.preference(key: SizePreferenceKey.self, value: geometry.size)
+            }
+        }
+
+        func body(content: Content) -> some View {
+            content.background(sizeView)
+        }
+    }
+    
+    
+    
+    var body: some View {
+        ScrollViewReader { proxy in
+            GeometryReader { geometry in
+                ZStack {
+                    ScrollView {
+                        VStack {
+                            Spacer().id(topID)
+                            
+                            Text(model.traces)
+                                .font(.footnote)
+                                .id(bottomID)
+                                .lineLimit(nil)
+                            
+                        }
+                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
+                        // Pousser le texte en bas :
+                        .frame(minHeight: geometry.size.height)
+                    }
+                    .modifier(SizeModifier())
+//                    .coordinateSpace(name: "scroll")
+                    .onPreferenceChange(SizePreferenceKey.self) { Value in
+                        print("SALUT")
+                    }
+                    
+                    VStack {
+                        HStack {
+                            Button {
+                                model.setLevel(.INFO)
+                                model.append("set trace level to INFO", level: .INFO)
+                            } label: {
+                                Label("Level 1", systemImage: "rectangle.split.2x2")
+                                    .foregroundColor(model.level != .INFO ? Color.gray : Color.blue)
+                                    .disabled(model.level != .INFO).padding(12)
+                            }
+                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            
+                            Button {
+                                model.setLevel(.DEBUG)
+                                model.append("set trace level to DEBUG", level: .INFO)
+                            } label: {
+                                Label("Level 2", systemImage: "tablecells")
+                                    .foregroundColor(model.level != .DEBUG ? Color.gray : Color.blue)
+                                    .disabled(model.level != .DEBUG).padding(12)
+                            }
+                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            
+                            Button {
+                                model.setLevel(.ALL)
+                                model.append("set trace level to ALL", level: .INFO)
+                            } label: {
+                                Label("Level 3", systemImage: "rectangle.split.3x3")
+                                    .foregroundColor(model.level != .ALL ? Color.gray : Color.blue)
+                                    .disabled(model.level != .ALL).padding(12)
+                            }
+                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            
+                            Spacer()
+                            
+                            Button {
+                                withAnimation { proxy.scrollTo(topID) }
+                            } label: {
+                                Image("arrow up")
+                                    .renderingMode(.template)
+                                    .foregroundColor(.gray).padding(12)
+                            }
+                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                            
+                            Button {
+                                withAnimation { proxy.scrollTo(bottomID) }
+                            } label: {
+                                Image("arrow down")
+                                    .renderingMode(.template)
+                                    .foregroundColor(.gray).padding(12)
+                            }
+                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                            
+                            Button {
+                                model.update(str: "")
+                            } label: {
+                                Image(systemName: "delete.left.fill")
+                                    .renderingMode(.template)
+                                    .foregroundColor(.gray).padding(12)
+                            }
+                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                            
+                        }.background(Color.clear).lineLimit(1)
+                        
+                        Spacer()
+                    }.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
+                    
+                }
+                // Couleur de fond qui s'affiche quand on scroll au delà des limites
+                // .background(Color.orange)
+                .background(Color(COLORS.standard_background))
+            }
+        }
     }
 }
 
@@ -123,3 +178,5 @@ struct TracesSwiftUIView_Previews: PreviewProvider {
         TracesSwiftUIView()
     }
 }
+
+
