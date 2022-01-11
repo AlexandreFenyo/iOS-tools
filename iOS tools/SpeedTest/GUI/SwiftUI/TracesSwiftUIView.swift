@@ -54,6 +54,7 @@ struct TracesSwiftUIView: View {
 
     
     // https://swiftwithmajid.com/2020/09/24/mastering-scrollview-in-swiftui/
+    // https://developer.apple.com/forums/thread/650312
     
     private struct ScrollOffsetPreferenceKey: PreferenceKey {
         static var defaultValue: CGPoint = .zero
