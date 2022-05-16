@@ -24,8 +24,8 @@ struct TracesSwiftUIView: View {
         }()
         
         @Published private(set) var traces: String = {
-            var str : String = ""
-            for i in 1...200 { str += "Speed Test - Traces \(i)\n" }
+            var str : String = "première ligne"
+            for i in 1...200 { str += "\nSpeed Test - Traces \(i)" }
             return str
         }()
         
@@ -35,10 +35,8 @@ struct TracesSwiftUIView: View {
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             if _level.rawValue <= level.rawValue {
-                traces += df.string(from: Date())
-                traces += ": "
-                traces += str
-                traces += "\n"
+                print("str:(\(str))")
+                traces += "\n" + df.string(from: Date()) + ": " + str
             }
         }
         
@@ -51,75 +49,40 @@ struct TracesSwiftUIView: View {
     @Namespace var topID
     @Namespace var bottomID
     
-
-    
-    // https://swiftwithmajid.com/2020/09/24/mastering-scrollview-in-swiftui/
-    // https://developer.apple.com/forums/thread/650312
-    
-    private struct ScrollOffsetPreferenceKey: PreferenceKey {
-        static var defaultValue: CGPoint = .zero
+    private struct ScrollViewOffsetPreferenceKey: PreferenceKey {
+        static var defaultValue: CGFloat = .zero
         
-        static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
-            print("salut")
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value += nextValue()
         }
     }
-
-    struct MyScrollView<Content: View>: View {
-        let axes: Axis.Set
-        let showsIndicators: Bool
-        let offsetChanged: (CGPoint) -> Void
-        let content: Content
-
-        init(
-            axes: Axis.Set = .vertical,
-            showsIndicators: Bool = true,
-            offsetChanged: @escaping (CGPoint) -> Void = { _ in },
-            @ViewBuilder content: () -> Content
-        ) {
-            self.axes = axes
-            self.showsIndicators = showsIndicators
-            self.offsetChanged = offsetChanged
-            self.content = content()
-        }
-        
-        var body: some View {
-                SwiftUI.ScrollView(axes, showsIndicators: showsIndicators) {
-                    GeometryReader { geometry in
-                        Color.clear.preference(
-                            key: ScrollOffsetPreferenceKey.self,
-                            value: geometry.frame(in: .named("scrollView")).origin
-                        )
-                    }.frame(width: 0, height: 0)
-                    content
-                }
-                .coordinateSpace(name: "scrollView")
-                .onPreferenceChange(ScrollOffsetPreferenceKey.self, perform: offsetChanged)
-            }
-
-    }
-
-    
-    // produire un evt quand le contentOffset est au max
     
     var body: some View {
-        ScrollViewReader { proxy in
-            GeometryReader { geometry in
+        GeometryReader { traceGeom in
+            ScrollViewReader { scrollViewProxy in
                 ZStack {
-                    MyScrollView {
-                        VStack {
+                    ScrollView {
+                        LazyVStack {
                             Spacer().id(topID)
                             
                             Text(model.traces)
                                 .font(.footnote)
                                 .id(bottomID)
                                 .lineLimit(nil)
-                            
                         }
-                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
+//                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
                         // Pousser le texte en bas :
-                        .frame(minHeight: geometry.size.height)
-                    }
-                   
+//                        .frame(minHeight: traceGeom.size.height)
+                        
+                        GeometryReader { scrollViewContentGeom in
+                            Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                        }
+                    }.coordinateSpace(name: "scroll")
+                        .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                            print("value: \(value)")
+                        }
+
+                    /*
                     VStack {
                         HStack {
                             Button {
@@ -155,7 +118,7 @@ struct TracesSwiftUIView: View {
                             Spacer()
                             
                             Button {
-                                withAnimation { proxy.scrollTo(topID) }
+                                withAnimation { scrollViewProxy.scrollTo(topID) }
                             } label: {
                                 Image("arrow up")
                                     .renderingMode(.template)
@@ -164,7 +127,7 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
                             
                             Button {
-                                withAnimation { proxy.scrollTo(bottomID) }
+                                withAnimation { scrollViewProxy.scrollTo(bottomID) }
                             } label: {
                                 Image("arrow down")
                                     .renderingMode(.template)
@@ -184,11 +147,13 @@ struct TracesSwiftUIView: View {
                         }.background(Color.clear).lineLimit(1)
                         
                         Spacer()
-                    }.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
+                    }
+        //.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
+                    */
                     
                 }
                 // Couleur de fond qui s'affiche quand on scroll au delà des limites
-                // .background(Color.orange)
+                .background(Color.orange)
                 .background(Color(COLORS.standard_background))
             }
         }
