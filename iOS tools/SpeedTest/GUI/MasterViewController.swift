@@ -205,7 +205,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // remove the section heading on iOS 15
         if #available(iOS 15.0, *) {
             // à remettre : ça pose pb avec MacCatalyst
-            // UITableView.appearance().sectionHeaderTopPadding = 0
+            UITableView.appearance().sectionHeaderTopPadding = 0
         }
     }
 
