@@ -62,28 +62,28 @@ struct TracesSwiftUIView: View {
             ScrollViewReader { scrollViewProxy in
                 ZStack {
                     ScrollView {
-
-                        ZStack {
-                        LazyVStack {
-                            Spacer().id(topID)
-                            Text(model.traces)
-                                .font(.footnote)
-                                .id(bottomID)
-                                .lineLimit(nil)
-                        }
-//                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
-                        // Pousser le texte en bas :
-//                        .frame(minHeight: traceGeom.size.height)
                         
-                        GeometryReader { scrollViewContentGeom in
-                            Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                        ZStack {
+                            LazyVStack {
+                                Spacer().id(topID)
+                                Text(model.traces)
+                                    .font(.footnote)
+                                    .id(bottomID)
+                                    .lineLimit(nil)
+                            }
+                            //                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
+                            // Pousser le texte en bas :
+                            //                        .frame(minHeight: traceGeom.size.height)
+                            
+                            GeometryReader { scrollViewContentGeom in
+                                Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                            }
                         }
-                        }
-                        }.coordinateSpace(name: "scroll")
+                    }.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
                             print("value: \(value)")
                         }
-
+                    
                     VStack {
                         HStack {
                             Button {
@@ -149,7 +149,7 @@ struct TracesSwiftUIView: View {
                         
                         Spacer()
                     }
-        //.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
+                    //.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
                     
                 }
                 // Couleur de fond qui s'affiche quand on scroll au delà des limites
