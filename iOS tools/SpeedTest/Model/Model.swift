@@ -208,6 +208,7 @@ class DBMaster {
     static public let shared = DBMaster()
 
     // Returns a pair (x, y) with x < y
+// LENT algo en N^2
     private func findSimilar(_ arr_nodes : [Node]) -> (Int, Int)? {
         for i in 0 ..< arr_nodes.count {
             for j in (i + 1) ..< arr_nodes.count {
@@ -332,7 +333,10 @@ class DBMaster {
         return node
     }
 
+    // LENT : .05 secondes à partir d'un moment
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
+        let start_time = Date()
+        
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
 
@@ -343,7 +347,11 @@ class DBMaster {
         
         if add { arr_nodes.append(new_node) }
         else { arr_nodes.removeAll { $0 == new_node } }
-        
+
+        print("duration1: \(Date().timeIntervalSince(start_time))")
+
+        // LONG :
+/*
         while let (i, j) = findSimilar(arr_nodes) {
             // Nodes at i and j positions are not equal but only similar. Therefore, merging them together creates a new node distinct from i and j.
             let node = Node()
@@ -353,6 +361,8 @@ class DBMaster {
             arr_nodes.remove(at: j)
             arr_nodes.remove(at: i)
         }
+*/
+        print("duration2: \(Date().timeIntervalSince(start_time))")
 
         // In each section, locate and remove nodes that have been removed
         SectionType.allCases.forEach {
@@ -364,6 +374,8 @@ class DBMaster {
             }
         }
 
+        print("duration3: \(Date().timeIntervalSince(start_time))")
+
         // Add the new nodes in each section
         SectionType.allCases.forEach {
             for node in arr_nodes {
@@ -374,6 +386,9 @@ class DBMaster {
             }
         }
         nodes = Set(arr_nodes)
+        
+        print("duration: \(Date().timeIntervalSince(start_time))")
+
         return (index_paths_removed, index_paths_inserted)
     }
 

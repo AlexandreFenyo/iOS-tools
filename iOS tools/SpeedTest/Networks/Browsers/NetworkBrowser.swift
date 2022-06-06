@@ -79,32 +79,48 @@ class NetworkBrowser {
 
     // Any thread
     private func manageAnswer(from: IPAddress) {
+        // PB PERFS ICI
+        
         DispatchQueue.main.sync {
             
-            print("ON VA FAIRE UNE TRACE")
-            device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
+//            return ;
+            
+            print("manageAnswer()")
+//            device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
             
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
+                let _ = 0
+
+                /*
                 node.v4_addresses.insert(from as! IPv4Address)
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
+
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+
                 if let info = from.toNumericString() {
-                    device_manager.setInformation("found " + info)
+//                    device_manager.setInformation("found " + info)
 //                    print("manageAnswer() FOUND IPv4:" , info)
                 }
                 // Do not try to reach this address with unicast anymore
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
-
+*/
+                
             case AF_INET6:
+//                let foo = 0
                 node.v6_addresses.insert(from as! IPv6Address)
+
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
+                // LENT
+//                device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
+                device_manager.addNode(node)
+
                 if let info = from.toNumericString() {
-                    device_manager.setInformation("found " + info)
-                    print("manageAnswer() FOUND IPv6:" , info)
+//                    device_manager.setInformation("found " + info)
+//                    print("manageAnswer() FOUND IPv6:" , info)
                 }
+                
 
             default:
                 print("manageAnswer(): invalid family", from.getFamily())
@@ -135,7 +151,7 @@ class NetworkBrowser {
     
     // Main thread
     public func browse() {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .background).async {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
@@ -168,11 +184,18 @@ class NetworkBrowser {
             }
 
             let dispatchGroup = DispatchGroup()
+
+            
+            
+            
+            
+            
+            
             
             // Send unicast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
@@ -209,10 +232,14 @@ class NetworkBrowser {
                 dispatchGroup.leave()
             }
 
+            
+            
+            
+            
             // Send broadcast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
                         var hdr = icmp()
@@ -248,11 +275,19 @@ class NetworkBrowser {
 
                 dispatchGroup.leave()
             }
-
+            
+            
+            
+            
+            
+            
+            
+            
+            
             // Send multicast ICMPv6
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
                         var saddr = address.toSockAddress()!.getData()
@@ -292,11 +327,15 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
 
                 dispatchGroup.leave()
+             
             }
 
+            
+            /*
+            
             // Catch IPv4 replies
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -319,10 +358,12 @@ class NetworkBrowser {
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
+            
+            */
 
             // Catch IPv6 replies
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -340,18 +381,20 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-//                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
+
+                    //                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
             
             dispatchGroup.wait()
-  
+            
+            
             close(s)
             close(s6)
 
-            self.browser_tcp.browse()
+//            self.browser_tcp.browse()
         }
     }
 }

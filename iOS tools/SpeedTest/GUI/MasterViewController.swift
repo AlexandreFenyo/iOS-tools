@@ -280,6 +280,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Main thread
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
+        return ;
         for address in resolve_ipv4_addresses {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
@@ -299,6 +300,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Main thread
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
+        return ;
         for address in resolve_ipv6_addresses {
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
@@ -317,20 +319,38 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Main thread
     func addNode(_ node: Node) {
+// LENT
+        
+        // Use -performBatchUpdates:completion: instead of these methods, which will be deprecated in a future release.
+
+        /*
         tableView.beginUpdates()
         let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
         tableView.deleteRows(at: index_paths_removed, with: .automatic)
         tableView.insertRows(at: index_paths_inserted, with: .automatic)
         tableView.endUpdates()
+*/
+        
+        // LENT : uniquement ceci ?
+        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
+
+        /*
+ tableView.performBatchUpdates {
+            tableView.deleteRows(at: index_paths_removed, with: .automatic)
+            tableView.insertRows(at: index_paths_inserted, with: .automatic)
+        }
+*/
         
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
-        tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+
+//        tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+
     }
 
     // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {
-        setTitle(info)
+        //setTitle(info)
     }
     
     // MARK: - UIScrollViewDelegate
