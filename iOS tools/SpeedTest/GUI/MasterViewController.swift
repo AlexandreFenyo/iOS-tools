@@ -317,12 +317,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Main thread
     func addNode(_ node: Node) {
-        tableView.beginUpdates()
+//        tableView.beginUpdates()
+//        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
+//        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+//        tableView.insertRows(at: index_paths_inserted, with: .automatic)
+//        tableView.endUpdates()
+
         let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        tableView.deleteRows(at: index_paths_removed, with: .automatic)
-        tableView.insertRows(at: index_paths_inserted, with: .automatic)
-        tableView.endUpdates()
-        
+        tableView.performBatchUpdates {
+            tableView.deleteRows(at: index_paths_removed, with: .automatic)
+            tableView.insertRows(at: index_paths_inserted, with: .automatic)
+        }
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }

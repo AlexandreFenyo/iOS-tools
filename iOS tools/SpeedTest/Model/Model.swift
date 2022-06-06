@@ -208,6 +208,7 @@ class DBMaster {
     static public let shared = DBMaster()
 
     // Returns a pair (x, y) with x < y
+    // Algo en N^2 à réduire en N puis renvoyer toutes les occurences en une fois
     private func findSimilar(_ arr_nodes : [Node]) -> (Int, Int)? {
         for i in 0 ..< arr_nodes.count {
             for j in (i + 1) ..< arr_nodes.count {
