@@ -107,7 +107,7 @@ class NetworkBrowser {
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
-                    print("manageAnswer() FOUND IPv6:" , info)
+//                    print("manageAnswer() FOUND IPv6:" , info)
                 }
 
             default:
@@ -341,28 +341,44 @@ class NetworkBrowser {
 
             
             // Catch IPv6 replies
+            var cpt = 0
             dispatchGroup.enter()
-            DispatchQueue.global(qos: q).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
+                    
+//                    usleep(25000000)
+
+                    
+                    cpt += 1
+                    print("cpt:\(cpt)")
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
                     var from = Data(count: MemoryLayout<sockaddr_in6>.size)
                     var from_len : socklen_t = UInt32(from.count)
-                    
+
+                    let start_time = Date()
                     let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
                         from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
                             buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
                         }
                     }
+                    GenericTools.printDuration(idx: cpt, start_time: start_time)
+
                     if ret < 0 {
                         GenericTools.perror("reply from IPv6")
                         continue
                     }
-                    
+                    print("ret=\(ret)")
+
+                    // LENT ici :
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-//                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
+
+                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
+
                     
                 } while !self.isFinishedOrEverythingDone()
+                
+                
                 dispatchGroup.leave()
             }
             dispatchGroup.wait()

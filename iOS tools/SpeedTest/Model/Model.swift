@@ -322,8 +322,8 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
-        let start_time = Date()
-        GenericTools.printDuration(idx: 0, start_time: start_time)
+//        let start_time = Date()
+//        GenericTools.printDuration(idx: 0, start_time: start_time)
 
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
@@ -333,7 +333,7 @@ class DBMaster {
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
 
-        GenericTools.printDuration(idx: 1, start_time: start_time)
+//        GenericTools.printDuration(idx: 1, start_time: start_time)
 
         if add {
             var merged = false
@@ -347,7 +347,7 @@ class DBMaster {
             if !merged { arr_nodes.append(new_node) }
         } else { arr_nodes.removeAll { $0 == new_node } }
 
-        GenericTools.printDuration(idx: 2, start_time: start_time)
+//        GenericTools.printDuration(idx: 2, start_time: start_time)
 
         // In each section, locate and remove nodes that have been removed
         SectionType.allCases.forEach {
@@ -359,7 +359,7 @@ class DBMaster {
             }
         }
 
-        GenericTools.printDuration(idx: 3, start_time: start_time)
+//        GenericTools.printDuration(idx: 3, start_time: start_time)
 
         // Add the new nodes in each section
         SectionType.allCases.forEach {
@@ -372,7 +372,7 @@ class DBMaster {
         }
         nodes = Set(arr_nodes)
         
-        GenericTools.printDuration(idx: 4, start_time: start_time)
+//        GenericTools.printDuration(idx: 4, start_time: start_time)
 
         return (index_paths_removed, index_paths_inserted)
     }

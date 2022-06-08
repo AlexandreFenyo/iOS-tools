@@ -72,9 +72,9 @@ final class GenericTools : AutoTrace {
     // - GenericTools.printDuration(idx: 0, start_time: start_time)
     public static func printDuration(idx: Int, start_time: Date) {
         let duration = Date().timeIntervalSince(start_time)
-        if duration > 0.001 {
+//        if duration > 0.001 {
             print("duration:\(idx): \(duration)")
-        }
+//        }
     }
     
     public static func dateToString(_ date: Date) -> String {
