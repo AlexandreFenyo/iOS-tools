@@ -33,10 +33,11 @@ struct TracesSwiftUIView: View {
             traces = str
         }
         
+        // LENT
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             if _level.rawValue <= level.rawValue {
                 print("str:(\(str))")
-                traces += "\n" + df.string(from: Date()) + ": " + str
+//                traces += "\n" + df.string(from: Date()) + ": " + str
             }
         }
         

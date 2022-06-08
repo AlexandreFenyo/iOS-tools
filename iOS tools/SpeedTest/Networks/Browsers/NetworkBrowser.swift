@@ -81,13 +81,15 @@ class NetworkBrowser {
         }
     }
 
+    // LENT
     // Any thread
     private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
-            
+
             print("ON VA FAIRE UNE TRACE")
+            // LENT ICI !
             device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
-            
+
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
@@ -95,7 +97,7 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
-                    device_manager.setInformation("found " + info)
+//                    device_manager.setInformation("found " + info)
 //                    print("manageAnswer() FOUND IPv4:" , info)
                 }
                 // Do not try to reach this address with unicast anymore
@@ -176,7 +178,6 @@ class NetworkBrowser {
 
 
 
-/*
             // Send unicast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
@@ -257,7 +258,11 @@ class NetworkBrowser {
 
                 dispatchGroup.leave()
             }
-*/
+
+            
+            
+            
+            
             
             // LENT : même avec uniquement envoi et réception multicast
             // Send multicast ICMPv6
@@ -311,7 +316,6 @@ class NetworkBrowser {
             
             
             
-            /*
             // Catch IPv4 replies
             dispatchGroup.enter()
             DispatchQueue.global(qos: q).async {
@@ -331,13 +335,13 @@ class NetworkBrowser {
                         continue
                     }
 
+                    // LENT ici :
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                     print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
-*/
 
             
             // Catch IPv6 replies
@@ -371,7 +375,7 @@ class NetworkBrowser {
                     print("ret=\(ret)")
 
                     // LENT ici :
-                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+//                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
 
                     print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
 
