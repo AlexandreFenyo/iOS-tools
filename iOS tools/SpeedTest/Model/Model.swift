@@ -359,7 +359,6 @@ class DBMaster {
             }
         }
 
-        
         GenericTools.printDuration(idx: 3, start_time: start_time)
 
         // Add the new nodes in each section
