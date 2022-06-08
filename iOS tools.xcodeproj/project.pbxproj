@@ -113,6 +113,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D0A7E0C2850FC9C00CCCF0C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5D1351E2208538DB00E4A76D = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +127,7 @@
 				5D135204208538E300E4A76D /* iOS toolsTests */,
 				5D13520F208538E300E4A76D /* iOS toolsUITests */,
 				5D1351EC208538DB00E4A76D /* Products */,
+				5D0A7E0C2850FC9C00CCCF0C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -308,6 +316,8 @@
 			dependencies = (
 			);
 			name = "iOS tools";
+			packageProductDependencies = (
+			);
 			productName = "iOS tools";
 			productReference = 5D1351EB208538DB00E4A76D /* iOS tools.app */;
 			productType = "com.apple.product-type.application";
@@ -337,6 +347,8 @@
 				Base,
 			);
 			mainGroup = 5D1351E2208538DB00E4A76D;
+			packageReferences = (
+			);
 			productRefGroup = 5D1351EC208538DB00E4A76D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

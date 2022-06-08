@@ -166,7 +166,6 @@ class Node : Hashable {
         dns_names.formUnion(node.dns_names)
         names.formUnion(node.names)
         v4_addresses.formUnion(node.v4_addresses)
-        // de temps en temps : Duplicate elements of type 'IPv6Address' were found in a Set
         v6_addresses.formUnion(node.v6_addresses)
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
@@ -341,19 +340,18 @@ class DBMaster {
 
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
-        
-        if add { arr_nodes.append(new_node) }
-        else { arr_nodes.removeAll { $0 == new_node } }
-        
-        while let (i, j) = findSimilar(arr_nodes) {
-            // Nodes at i and j positions are not equal but only similar. Therefore, merging them together creates a new node distinct from i and j.
-            let node = Node()
-            node.merge(arr_nodes[i])
-            node.merge(arr_nodes[j])
-            arr_nodes.append(node)
-            arr_nodes.remove(at: j)
-            arr_nodes.remove(at: i)
-        }
+
+        if add {
+            var merged = false
+            for i in 0..<arr_nodes.count {
+                if arr_nodes[i].isSimilar(with: new_node) {
+                    arr_nodes[i].merge(new_node)
+                    merged = true
+                    break
+                }
+            }
+            if !merged { arr_nodes.append(new_node) }
+        } else { arr_nodes.removeAll { $0 == new_node } }
 
         // In each section, locate and remove nodes that have been removed
         SectionType.allCases.forEach {
