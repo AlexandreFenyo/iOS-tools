@@ -66,6 +66,10 @@ final class GenericTools : AutoTrace {
     public static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
     public static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
 
+    // Débugger les perfs
+    // Utilisation :
+    // - let start_time = Date()
+    // - GenericTools.printDuration(idx: 0, start_time: start_time)
     public static func printDuration(idx: Int, start_time: Date) {
         let duration = Date().timeIntervalSince(start_time)
         if duration > 0.001 {

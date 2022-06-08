@@ -8,6 +8,10 @@
 
 import Foundation
 
+let q = DispatchQoS.QoSClass.userInitiated
+//let q = DispatchQoS.QoSClass.userInteractive
+
+
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
     private let device_manager : DeviceManager
@@ -133,9 +137,10 @@ class NetworkBrowser {
         return DispatchQueue.main.sync { return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished) }
     }
     
+    // LENT ?
     // Main thread
     public func browse() {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: q).async {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
@@ -168,11 +173,14 @@ class NetworkBrowser {
             }
 
             let dispatchGroup = DispatchGroup()
-            
+
+
+
+/*
             // Send unicast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: q).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
@@ -208,11 +216,12 @@ class NetworkBrowser {
                 
                 dispatchGroup.leave()
             }
-
+            
+            
             // Send broadcast ICMPv4
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: q).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
                         var hdr = icmp()
@@ -248,11 +257,13 @@ class NetworkBrowser {
 
                 dispatchGroup.leave()
             }
-
+*/
+            
+            // LENT : même avec uniquement envoi et réception multicast
             // Send multicast ICMPv6
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: q).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
                         var saddr = address.toSockAddress()!.getData()
@@ -293,10 +304,17 @@ class NetworkBrowser {
 
                 dispatchGroup.leave()
             }
-
+            
+            
+            
+            
+            
+            
+            
+            /*
             // Catch IPv4 replies
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: q).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -319,10 +337,12 @@ class NetworkBrowser {
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
+*/
 
+            
             // Catch IPv6 replies
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: q).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -345,13 +365,15 @@ class NetworkBrowser {
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
             }
-            
             dispatchGroup.wait()
-  
+
+
+
+
             close(s)
             close(s6)
 
-            self.browser_tcp.browse()
+//            self.browser_tcp.browse()
         }
     }
 }
