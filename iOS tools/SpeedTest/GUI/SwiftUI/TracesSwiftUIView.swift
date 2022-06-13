@@ -6,6 +6,15 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
+/*
+ScrollView {
+    LazyVStack {
+        //            Text(txt)
+        ForEach(1..<20000) { _ in Text("toto") }
+    }
+}*/
+
+
 import SwiftUI
 
 struct TracesSwiftUIView: View {
@@ -15,8 +24,7 @@ struct TracesSwiftUIView: View {
         case ALL
     }
     
-    public class TracesViewModel : ObservableObject
-    {
+    public class TracesViewModel : ObservableObject {
         private let df: DateFormatter = {
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -37,7 +45,8 @@ struct TracesSwiftUIView: View {
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             if _level.rawValue <= level.rawValue {
                 print("str:(\(str))")
-//                traces += "\n" + df.string(from: Date()) + ": " + str
+                // LENT
+                traces += "\n" + df.string(from: Date()) + ": " + str
             }
         }
         
@@ -82,14 +91,31 @@ struct TracesSwiftUIView: View {
                         }
                     }.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                            print("value: \(value)")
+//                            print("value: \(value)")
                         }
                     
                     VStack {
                         HStack {
                             Button {
-                                model.setLevel(.INFO)
+//                                model.setLevel(.INFO)
                                 model.append("set trace level to INFO", level: .INFO)
+                                
+                                
+                                
+                                
+                                
+                                // lancer une bcle de traces en bg
+                                var i = 0
+
+                                Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: true) { [self] _ in
+                                    print("XSALUT:\(i)")
+                                    model.append("XSALUT:\(i)", level: .ALL)
+                                    i += 1
+                                }
+
+                                
+                                
+                                
                             } label: {
                                 Label("Level 1", systemImage: "rectangle.split.2x2")
                                     .foregroundColor(model.level != .INFO ? Color.gray : Color.blue)

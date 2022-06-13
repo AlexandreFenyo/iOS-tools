@@ -66,6 +66,21 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Update nodes and find new nodes
     // Main thread
     private func startBrowsing() {
+        var i = 0
+//        DispatchQueue.global(qos: .background).async {
+            //DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: true) { [self] _ in
+                print("salut:\(i)")
+//                traces_view_controller!.addTrace("UIKit to swiftUI:\(i)", level: .ALL)
+                i += 1
+            }
+
+//}
+        
+        
+        return;
+
+        
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
             _ in
             self.stop_button!.isEnabled = true
@@ -133,6 +148,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
 
+    
     @IBAction func update_pressed(_ sender: Any) {
         refreshControl!.beginRefreshing()
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)

@@ -14,7 +14,7 @@ let q = DispatchQoS.QoSClass.userInitiated
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
-    private let device_manager : DeviceManager
+    public let device_manager : DeviceManager
     private let browser_tcp : TCPPortBrowser
     private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
