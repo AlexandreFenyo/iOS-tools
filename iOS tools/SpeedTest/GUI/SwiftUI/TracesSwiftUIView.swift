@@ -34,14 +34,14 @@ struct TracesSwiftUIView: View {
         }()
 
         fileprivate func clear() {
-            traces = [""]
+            traces = [ "" ]
         }
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
-            if _level.rawValue <= level.rawValue {
+//            if _level.rawValue <= level.rawValue {
                 print("str:(\(str))")
                 traces.append(df.string(from: Date()) + ": " + str)
-            }
+//            }
         }
         
         @Published private(set) var level: LogLevel = .ALL
@@ -108,6 +108,18 @@ struct TracesSwiftUIView: View {
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
+
+                                // Timer pour les tests
+                                DispatchQueue.global(qos: .userInitiated).sync {
+                                    var i = 0
+                                    Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                        print("timer\(i)")
+                                        model.append("timer\(i)")
+                                        i += 1
+                                    }
+                                }
+
+                                
                             } label: {
                                 Label("Level 2", systemImage: "tablecells")
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.blue)
