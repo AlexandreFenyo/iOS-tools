@@ -50,8 +50,7 @@ class DetailViewController: UIViewController {
     
     
     
-    
-
+/*
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
     private let ts = TimeSeries()
@@ -60,15 +59,12 @@ class DetailViewController: UIViewController {
     private static var cl2: LocalDiscardClient?
     private static var cl3: LocalPingClient?
     private static var cl4: LocalFloodClient?
-
+*/
     @IBOutlet weak var view1: UIView!
-
     @IBOutlet private weak var detail_label: UILabel!
-
     @IBOutlet private weak var ingress_chart: SKView!
-
     @IBOutlet weak var chart_switch1: UISwitch!
-    
+/*
     // Node selected by the user
     public var node : Node? {
         didSet {
@@ -86,11 +82,12 @@ class DetailViewController: UIViewController {
             }
         }
     }
-
+ */
+/*
     private func refreshUI() {
         print("refresh UI")
         loadViewIfNeeded()
-        detail_label.text = node == nil ? "no selection" : (node!.mcast_dns_names.map { $0.toString() } + node!.dns_names.map { $0.toString() }).first
+//        detail_label.text = node == nil ? "no selection" : (node!.mcast_dns_names.map { $0.toString() } + node!.dns_names.map { $0.toString() }).first
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -100,7 +97,8 @@ class DetailViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
 //        chart_node!.scene!.view!.isPaused = true
     }
-
+*/
+/*
     @objc
     private func switchChanged(_ sender: Any) {
         if sender as? UISwitch == chart_switch1, chart_switch1.isOn == true {
@@ -164,6 +162,7 @@ class DetailViewController: UIViewController {
             DetailViewController.cl2!.stop()
         }
     }
+ */
 
     /*
     override func viewDidLoad() {
