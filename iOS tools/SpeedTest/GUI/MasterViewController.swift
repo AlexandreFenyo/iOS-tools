@@ -181,6 +181,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.standard_background
+        // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
+        stopBrowsing()
     }
     
     override func viewDidLoad() {
@@ -248,13 +250,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
+        refreshControl!.endRefreshing()
         if editing {
-            refreshControl!.endRefreshing()
             stop_button!.isEnabled = false
             add_button!.isEnabled = false
             update_button!.isEnabled = false
         } else {
-            refreshControl!.endRefreshing()
             stop_button!.isEnabled = false
             add_button!.isEnabled = true
             update_button!.isEnabled = true
