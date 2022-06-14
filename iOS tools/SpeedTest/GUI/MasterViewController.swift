@@ -265,13 +265,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
         print(address.toNumericString()!, "selected")
-        detail_view_controller!.address = address
+//        detail_view_controller!.address = address
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
     public func addressDeselected() {
         print("address deselected")
-        detail_view_controller!.address = nil
+//        detail_view_controller!.address = nil
     }
 
     override func didReceiveMemoryWarning() {
@@ -427,7 +427,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        detail_view_controller!.node = getNode(indexPath: indexPath)
+//        detail_view_controller!.node = getNode(indexPath: indexPath)
         stopBrowsing()
 
         // for iPhone, make the detail view controller visible

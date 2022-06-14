@@ -8,7 +8,7 @@
 
 import UIKit
 import SpriteKit
-
+import SwiftUI
 class MySKSceneDelegate : NSObject, SKSceneDelegate {
     public var nodes : [SKChartNode] = []
 
@@ -18,6 +18,40 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
 }
 
 class DetailViewController: UIViewController {
+
+    private lazy var hostingViewController = makeHostingController()
+
+    private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
+        let hostingController = UIHostingController(rootView: DetailSwiftUIView())
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        return hostingController
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        addChild(hostingViewController)
+        view.addSubview(hostingViewController.view)
+        hostingViewController.didMove(toParent: self)
+
+        NSLayoutConstraint.activate([
+            hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
+            hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
+        ])
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
     private let ts = TimeSeries()
@@ -60,11 +94,11 @@ class DetailViewController: UIViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        chart_node!.scene!.view!.isPaused = false
+//        chart_node!.scene!.view!.isPaused = false
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        chart_node!.scene!.view!.isPaused = true
+//        chart_node!.scene!.view!.isPaused = true
     }
 
     @objc
@@ -131,6 +165,7 @@ class DetailViewController: UIViewController {
         }
     }
 
+    /*
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -191,7 +226,8 @@ class DetailViewController: UIViewController {
 //        }
 
     }
-
+*/
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -207,5 +243,7 @@ class DetailViewController: UIViewController {
 
         print("DetailViewController.prepare(for segue)")
     }
-
+    
+    
+    
 }
