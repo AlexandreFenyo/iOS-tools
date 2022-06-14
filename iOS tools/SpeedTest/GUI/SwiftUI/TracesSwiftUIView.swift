@@ -36,7 +36,7 @@ struct TracesSwiftUIView: View {
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             //            if _level.rawValue <= level.rawValue {
-            print("str:(\(str))")
+//            print("str:(\(str))")
             traces.append(df.string(from: Date()) + ": " + str)
             //            }
         }
@@ -62,8 +62,11 @@ struct TracesSwiftUIView: View {
     var drag: some Gesture {
         DragGesture()
             .onChanged { _ in
-                print("GESTURE")
+                print("DEBUT GESTURE")
                 self.locked = false
+            }
+            .onEnded { _ in
+                print("FIN GESTURE")
             }
     }
 
@@ -100,11 +103,17 @@ struct TracesSwiftUIView: View {
                     }.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
 //                            print("value: \(value)")
+
+                            if value > 0 {
+                                locked = true
+                            }
+                            /*
                             if abs(value) < 100 {
 //                                model.locked = true
                             } else {
   //                              model.locked = false
                             }
+ */
                         }
                         .gesture(drag)
                     
@@ -130,11 +139,11 @@ struct TracesSwiftUIView: View {
                                 DispatchQueue.global(qos: .userInitiated).sync {
                                     var i = 0
                                     Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                                        print("timer\(i)")
+//                                        print("timer\(i)")
                                         model.append("timer\(i)")
-//                                        if model.locked {
-  //                                          withAnimation { scrollViewProxy.scrollTo(bottomID) }
-   //                                     }
+                                        if locked {
+                                          withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                     }
                                         i += 1
                                     }
                                 }
@@ -169,14 +178,15 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
                             
                             Button {
+                                locked = true
                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
                             } label: {
                                 Image("arrow down")
                                     .renderingMode(.template)
                                     .foregroundColor(.gray).padding(12)
                             }
-                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                            
+                            .background(locked ? Color.blue : Color(COLORS.standard_background).darker().darker()   ).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                                                    
                             Button {
                                 model.clear()
                             } label: {
