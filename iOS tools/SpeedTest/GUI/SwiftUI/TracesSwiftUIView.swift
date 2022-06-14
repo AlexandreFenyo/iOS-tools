@@ -22,21 +22,23 @@ struct TracesSwiftUIView: View {
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
             return df
         }()
-        
-        @Published private(set) var traces: String = {
-            var str : String = "première ligne"
-            for i in 1...200 { str += "\nSpeed Test - Traces \(i)" }
-            return str
+
+        // Contrainte à respecter : il faut toujours au moins 1 chaîne dans traces
+        @Published private(set) var traces: [String] = {
+            var arr = [String]()
+            arr.append("")
+            for i in 1...200 { arr.append("Speed Test - Traces \(i)") }
+            return arr
         }()
-        
-        fileprivate func update(str: String) {
-            traces = str
+
+        fileprivate func clear() {
+            traces = [""]
         }
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             if _level.rawValue <= level.rawValue {
                 print("str:(\(str))")
-                traces += "\n" + df.string(from: Date()) + ": " + str
+                traces.append(df.string(from: Date()) + ": " + str)
             }
         }
         
@@ -66,7 +68,12 @@ struct TracesSwiftUIView: View {
                         ZStack {
                             LazyVStack {
                                 Spacer().id(topID)
-                                Text(model.traces)
+                                
+                                ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
+                                    Text(model.traces[i]).font(.footnote)
+                                        .lineLimit(nil)
+                                }
+                                Text(model.traces.last!)
                                     .font(.footnote)
                                     .id(bottomID)
                                     .lineLimit(nil)
@@ -137,7 +144,7 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
                             
                             Button {
-                                model.update(str: "")
+                                model.clear()
                             } label: {
                                 Image(systemName: "delete.left.fill")
                                     .renderingMode(.template)
