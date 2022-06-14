@@ -35,10 +35,9 @@ struct TracesSwiftUIView: View {
         }
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
-            //            if _level.rawValue <= level.rawValue {
-//            print("str:(\(str))")
-            traces.append(df.string(from: Date()) + ": " + str)
-            //            }
+            if _level.rawValue <= level.rawValue {
+                traces.append(df.string(from: Date()) + ": " + str)
+            }
         }
         
         @Published private(set) var level: LogLevel = .ALL
@@ -46,7 +45,7 @@ struct TracesSwiftUIView: View {
     }
     
     @ObservedObject var model = TracesViewModel()
-    
+    @State public var locked = true
     @Namespace var topID
     @Namespace var bottomID
     
@@ -58,31 +57,14 @@ struct TracesSwiftUIView: View {
         }
     }
     
-    @State public var locked = true
-    var drag: some Gesture {
-        DragGesture()
-            .onChanged { _ in
-                print("DEBUT GESTURE")
-                self.locked = false
-            }
-            .onEnded { _ in
-                print("FIN GESTURE")
-            }
-    }
-
-    
     var body: some View {
-        
-
         GeometryReader { traceGeom in
             ScrollViewReader { scrollViewProxy in
                 ZStack {
                     ScrollView {
-                        
                         ZStack {
                             LazyVStack {
                                 Spacer().id(topID)
-                                
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
                                     Text(model.traces[i]).font(.footnote)
                                         .lineLimit(nil)
@@ -95,27 +77,17 @@ struct TracesSwiftUIView: View {
                             //                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
                             // Pousser le texte en bas :
                             //                        .frame(minHeight: traceGeom.size.height)
-                            
                             GeometryReader { scrollViewContentGeom in
                                 Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                             }
                         }
                     }.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-//                            print("value: \(value)")
-
-                            if value > 0 {
-                                locked = true
-                            }
-                            /*
-                            if abs(value) < 100 {
-//                                model.locked = true
-                            } else {
-  //                              model.locked = false
-                            }
- */
+                            if value > 0 { locked = true }
                         }
-                        .gesture(drag)
+                        .gesture(DragGesture().onChanged { _ in
+                            locked = false
+                        })
                     
                     VStack {
                         HStack {
@@ -133,9 +105,8 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
                                 
-                                
-                                
                                 // Timer pour les tests
+                                /*
                                 DispatchQueue.global(qos: .userInitiated).sync {
                                     var i = 0
                                     Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
@@ -146,7 +117,7 @@ struct TracesSwiftUIView: View {
                                      }
                                         i += 1
                                     }
-                                }
+                                }*/
                                 
                                 
                             } label: {
