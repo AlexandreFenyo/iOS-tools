@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct TracesSwiftUIView: View {
+    private var locked = true
+    
     public enum LogLevel : Int {
         case INFO = 0
         case DEBUG
