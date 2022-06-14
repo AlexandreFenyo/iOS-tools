@@ -42,14 +42,6 @@ class DetailViewController: UIViewController {
     }
 
     
-    
-    
-    
-    
-    
-    
-    
-    
 /*
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
@@ -60,11 +52,13 @@ class DetailViewController: UIViewController {
     private static var cl3: LocalPingClient?
     private static var cl4: LocalFloodClient?
 */
+/*
     @IBOutlet weak var view1: UIView!
     @IBOutlet private weak var detail_label: UILabel!
     @IBOutlet private weak var ingress_chart: SKView!
     @IBOutlet weak var chart_switch1: UISwitch!
-/*
+*/
+    /*
     // Node selected by the user
     public var node : Node? {
         didSet {

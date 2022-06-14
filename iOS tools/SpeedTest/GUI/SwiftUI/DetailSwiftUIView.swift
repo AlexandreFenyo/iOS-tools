@@ -33,17 +33,24 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         ScrollView {
-            
-            Text("salut")
-            SpriteView(scene: scene)
-                .frame(width: 300, height: 400)
-                .ignoresSafeArea()
-            Text("salut2")
-            SpriteView(scene: scene)
-                .frame(width: 300, height: 400)
-                .ignoresSafeArea()
+            VStack {
+                Text("salut")
+                HStack {
+                    Text("truc")
+                    SpriteView(scene: scene)
+                    //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .ignoresSafeArea()
+                }
+                HStack {
+                    Text("truc")
+                    Text("salut2")
+                    SpriteView(scene: scene)
+                        .frame(width: 300, height: 400)
+                        .ignoresSafeArea()
+                }
+                
+            }
         }
-        
     }
 }
 
