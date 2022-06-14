@@ -56,7 +56,9 @@ struct TracesSwiftUIView: View {
             value += nextValue()
         }
     }
-    
+
+    @State private var timer: Timer?
+
     var body: some View {
         GeometryReader { traceGeom in
             ScrollViewReader { scrollViewProxy in
@@ -88,6 +90,16 @@ struct TracesSwiftUIView: View {
                         .gesture(DragGesture().onChanged { _ in
                             locked = false
                         })
+                        .onAppear() {
+                            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                if locked {
+                                  withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                             }
+                            }
+                        }
+                        .onDisappear() {
+                            timer?.invalidate()
+                        }
                     
                     VStack {
                         HStack {
@@ -105,6 +117,7 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
                                 
+                                // remettre car c'est essentiel pour que ça fonctionne
                                 // Timer pour les tests
                                 /*
                                 DispatchQueue.global(qos: .userInitiated).sync {
