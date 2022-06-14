@@ -9,22 +9,19 @@
 import SwiftUI
 
 struct TracesSwiftUIView: View {
-    private var locked = true
-    
     public enum LogLevel : Int {
         case INFO = 0
         case DEBUG
         case ALL
     }
     
-    public class TracesViewModel : ObservableObject
-    {
+    public class TracesViewModel : ObservableObject {
         private let df: DateFormatter = {
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
             return df
         }()
-
+        
         // Contrainte à respecter : il faut toujours au moins 1 chaîne dans traces
         @Published private(set) var traces: [String] = {
             var arr = [String]()
@@ -32,16 +29,16 @@ struct TracesSwiftUIView: View {
             for i in 1...200 { arr.append("Speed Test - Traces \(i)") }
             return arr
         }()
-
+        
         fileprivate func clear() {
             traces = [ "" ]
         }
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
-//            if _level.rawValue <= level.rawValue {
-                print("str:(\(str))")
-                traces.append(df.string(from: Date()) + ": " + str)
-//            }
+            //            if _level.rawValue <= level.rawValue {
+            print("str:(\(str))")
+            traces.append(df.string(from: Date()) + ": " + str)
+            //            }
         }
         
         @Published private(set) var level: LogLevel = .ALL
@@ -61,7 +58,19 @@ struct TracesSwiftUIView: View {
         }
     }
     
+    @State public var locked = true
+    var drag: some Gesture {
+        DragGesture()
+            .onChanged { _ in
+                print("GESTURE")
+                self.locked = false
+            }
+    }
+
+    
     var body: some View {
+        
+
         GeometryReader { traceGeom in
             ScrollViewReader { scrollViewProxy in
                 ZStack {
@@ -90,8 +99,14 @@ struct TracesSwiftUIView: View {
                         }
                     }.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                            print("value: \(value)")
+//                            print("value: \(value)")
+                            if abs(value) < 100 {
+//                                model.locked = true
+                            } else {
+  //                              model.locked = false
+                            }
                         }
+                        .gesture(drag)
                     
                     VStack {
                         HStack {
@@ -108,17 +123,22 @@ struct TracesSwiftUIView: View {
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
-
+                                
+                                
+                                
                                 // Timer pour les tests
                                 DispatchQueue.global(qos: .userInitiated).sync {
                                     var i = 0
                                     Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                                         print("timer\(i)")
                                         model.append("timer\(i)")
+//                                        if model.locked {
+  //                                          withAnimation { scrollViewProxy.scrollTo(bottomID) }
+   //                                     }
                                         i += 1
                                     }
                                 }
-
+                                
                                 
                             } label: {
                                 Label("Level 2", systemImage: "tablecells")
