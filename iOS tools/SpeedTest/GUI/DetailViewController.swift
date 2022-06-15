@@ -17,7 +17,6 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
         for n in nodes { n.updateWidth() }
     }*/
 }
-
 class DetailViewController: UIViewController {
 
     private lazy var hostingViewController = makeHostingController()
@@ -34,6 +33,9 @@ class DetailViewController: UIViewController {
         view.addSubview(hostingViewController.view)
         hostingViewController.didMove(toParent: self)
 
+        hostingViewController.rootView.pingloop = PingLoop()
+//        hostingViewController.rootView.pingloop?.start(ts: hostingViewController.rootView.ts)
+        
         NSLayoutConstraint.activate([
             hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
             hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -41,6 +43,29 @@ class DetailViewController: UIViewController {
             hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
     }
+    
+    public func stopReceivingICMP() {
+        Task {
+            await hostingViewController.rootView.pingloop?.stop()
+        }
+    }
+    
+    // Address selected by the user
+    public var address : IPAddress? {
+        didSet {
+            if oldValue != address {
+//                refreshUI()
+                hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
+                if address != nil {
+                    Task {
+                        try await hostingViewController.rootView.pingloop?.start(ts: hostingViewController.rootView.ts, address: address!)
+                    }
+                }
+
+            }
+        }
+    }
+
 
     
 /*
@@ -78,7 +103,9 @@ class DetailViewController: UIViewController {
         }
     }
  */
-/*
+
+   
+    /*
     private func refreshUI() {
         print("refresh UI")
         loadViewIfNeeded()

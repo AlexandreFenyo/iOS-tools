@@ -11,10 +11,87 @@ import SpriteKit
 
 var delta: CGFloat?
 
+actor PingLoop {
+    private var s: Int32?
+    
+    init() {
+        s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
+        if s == nil || s! < 0 {
+            GenericTools.perror("socket")
+            fatalError("chart: socket")
+        }
+    }
+    
+    public func start(ts: TimeSeries, address: IPAddress) async throws {
+        stop()
+        
+        if  address.getFamily() == AF_INET {
+            print("SALUT")
+            
+            //            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            print("PING LOOP for \(address)")
+            ts.add(TimeSeriesElement(date: Date(), value: 50))
+            
+            //                DispatchQueue.global(qos: .userInitiated).async {
+            repeat {
+                print("envoi ICMP")
+                
+                var hdr = icmp()
+                hdr.icmp_type = UInt8(ICMP_ECHO)
+                hdr.icmp_code = 0
+                hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                    $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                        var sum : u_short = 0
+                        for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                        sum ^= u_short.max
+                        return sum
+                    }
+                }
+                
+                let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                    address.toSockAddress()!.getData().withUnsafeBytes {
+                        sendto(s!, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
+                    }
+                }
+                if ret < 0 { GenericTools.perror("sendto") }
+                
+                print("après ICMP-")
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                
+                if ret < 0 {
+                    GenericTools.perror("recvfrom")
+                    continue
+                }
+                
+                
+                
+            } while s != nil
+            
+            close(self.s!)
+            //                } // DispatchQueue.global
+        }
+    }
+    
+    public func stop() {
+        s = nil
+        //        if let timer = timer {
+        //            timer.invalidate()
+        //            self.timer = nil
+        //}
+        //}
+        
+    }
+    
+}
+
 struct DetailSwiftUIView: View {
-    private let ts = TimeSeries()
+    public let ts = TimeSeries()
     
     public let view: UIView
+    
+    public var pingloop: PingLoop? = nil
     
     var body: some View {
         ScrollView {
@@ -33,7 +110,7 @@ struct DetailSwiftUIView: View {
                         return scene
                     }())
                 }
-                .frame(minWidth: 0, idealWidth: .infinity, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
+                .frame(minWidth: 0, idealWidth: UIScreen.main.bounds.size.width, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
                 
             }
             

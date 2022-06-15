@@ -76,6 +76,9 @@ class MasterViewController: UITableViewController, DeviceManager {
 
             self.updateLocalNodeAndGateways()
 
+            // Stop receiving ICMP for the chart
+            self.detail_view_controller?.stopReceivingICMP()
+        
             // Use ICMP to find new nodes
             let tb = TCPPortBrowser(device_manager: self)
             self.browser_tcp = tb
@@ -265,7 +268,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
         print(address.toNumericString()!, "selected")
-//        detail_view_controller!.address = address
+        detail_view_controller!.address = address
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
