@@ -17,17 +17,17 @@ struct DetailSwiftUIView: View {
     public let view: UIView
     
     var body: some View {
-        GeometryReader { geomx in
             ScrollView {
                 VStack {
-                    
+
                     Text("sdalut")
                     Text("sezffezzefalut")
                     Text("salut")
                     Text("salut")
                     Text("salutrt")
                     
-                    ZStack {
+                    VStack {
+
                         GeometryReader { geom in
                             SpriteView(scene: {
                                 print("(re-)create scene")
@@ -50,16 +50,10 @@ struct DetailSwiftUIView: View {
                                 
                                 
                                 return scene
-                            }()).frame(width: geom.size.width, height: 300, alignment: .center)
-                            
-                            //                    Text("height: \(geom.frame(in: CoordinateSpace.global).minY)")
-                            
+                            }())
                         }
                         
-                        
-                        
-                    }.frame(width: geomx.size.width, height: 300, alignment: .center)
-                    
+                    }.frame(minWidth: 0, idealWidth: .infinity, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
                 }
                 
                 Text("Séparation")
@@ -73,7 +67,6 @@ struct DetailSwiftUIView: View {
                 
                 
             }
-        }
     }
 }
 
