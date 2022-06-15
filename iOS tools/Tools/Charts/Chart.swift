@@ -130,8 +130,8 @@ class SCNChartNode : SCNNode {
         self.scale = SCNVector3(x: 1, y: -1, z: 1)
     }
     
-    public func registerGestureRecognizers(view: UIView/*, delta: CGFloat*/) {
-        chart_node!.registerGestureRecognizers(view: view/*, delta: delta*/)
+    public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
+        chart_node!.registerGestureRecognizers(view: view, delta: delta)
     }
 
     required init(coder aDecoder: NSCoder) {
@@ -828,7 +828,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
 
-    public func registerGestureRecognizers(view: UIView/*, delta: CGFloat*/) {
+    public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
         // This creates a strong ref to the target
