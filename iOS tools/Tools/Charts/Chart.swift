@@ -130,8 +130,8 @@ class SCNChartNode : SCNNode {
         self.scale = SCNVector3(x: 1, y: -1, z: 1)
     }
     
-    public func registerGestureRecognizers(view: UIView) {
-            chart_node!.registerGestureRecognizers(view: view)
+    public func registerGestureRecognizers(view: UIView/*, delta: CGFloat*/) {
+        chart_node!.registerGestureRecognizers(view: view/*, delta: delta*/)
     }
 
     required init(coder aDecoder: NSCoder) {
@@ -199,6 +199,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
     private var follow_view : UIView?
 
+    private var delta: CGFloat? = 0
+    
     public func testDebug() {
     }
     
@@ -826,13 +828,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
 
-    public func registerGestureRecognizers(view: UIView) {
+    public func registerGestureRecognizers(view: UIView/*, delta: CGFloat*/) {
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
+//        self.delta = delta
     }
 
     // Tap gesture: display value/date or a time series element or restart follow_date mode
@@ -873,6 +876,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             finger.fillColor = .yellow
             root_node!.addChild(finger)
             finger.position = _point_relative_to_root_node
+
+            // ajustement manuel car la position est relative à la vue UIKit de l'hosting controller de DetailViewController
+            finger.position.y += delta!
+            
             finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
 
         }			

@@ -83,7 +83,7 @@ struct TracesSwiftUIView: View {
                                 Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                             }
                         }
-                    }.coordinateSpace(name: "scroll")
+                    }//.coordinateSpace(name: "scroll")
                         .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
                             if value > 0 { locked = true }
                         }

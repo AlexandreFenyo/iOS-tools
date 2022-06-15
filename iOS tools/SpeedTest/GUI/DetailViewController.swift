@@ -10,11 +10,12 @@ import UIKit
 import SpriteKit
 import SwiftUI
 class MySKSceneDelegate : NSObject, SKSceneDelegate {
-    public var nodes : [SKChartNode] = []
+//    public var nodes : [SKChartNode] = []
 
+    /*
     public func update(_ currentTime: TimeInterval, for scene: SKScene) {
         for n in nodes { n.updateWidth() }
-    }
+    }*/
 }
 
 class DetailViewController: UIViewController {
@@ -22,7 +23,7 @@ class DetailViewController: UIViewController {
     private lazy var hostingViewController = makeHostingController()
 
     private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
-        let hostingController = UIHostingController(rootView: DetailSwiftUIView())
+        let hostingController = UIHostingController(rootView: DetailSwiftUIView(view: view))
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }
