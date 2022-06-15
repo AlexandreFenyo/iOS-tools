@@ -12,7 +12,7 @@
 
 import Foundation
 
-class SockAddr {
+public class SockAddr {
     fileprivate let saddrdata : Data
 
     public func getData() -> Data {
@@ -114,7 +114,7 @@ class SockAddr6 : SockAddr {
     }
 }
 
-class IPAddress : Hashable {
+public class IPAddress : Hashable {
     fileprivate let inaddr : Data
 
     public func hash(into hasher: inout Hasher) {
@@ -203,7 +203,7 @@ class IPAddress : Hashable {
         fatalError("next on IPAddress")
     }
 
-    static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
+    public static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
         if let lhsv4 = lhs as? IPv4Address {
             if let rhsv4 = rhs as? IPv4Address {
                 return lhsv4 == rhsv4

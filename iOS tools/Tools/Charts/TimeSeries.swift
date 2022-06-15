@@ -8,16 +8,16 @@
 
 import Foundation
 
-struct TimeSeriesElement {
+public struct TimeSeriesElement {
     public let date : Date
     public let value : Float
 }
 
-protocol TimeSeriesReceiver {
+public protocol TimeSeriesReceiver {
     func cbNewData(ts: TimeSeries, tse: TimeSeriesElement)
 }
 
-class TimeSeries {
+public class TimeSeries {
     private var receivers: [TimeSeriesReceiver] = []
     private var data: [Date: TimeSeriesElement] = [:]
     // Ordered data keys (dates)

@@ -11,7 +11,7 @@ import SpriteKit
 
 var delta: CGFloat?
 
-actor PingLoop {
+public actor PingLoop {
     private var s: Int32?
     
     init() {
@@ -23,11 +23,7 @@ actor PingLoop {
     }
     
     public func start(ts: TimeSeries, address: IPAddress) async throws {
-        stop()
-        
         if  address.getFamily() == AF_INET {
-            print("SALUT")
-            
             //            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             print("PING LOOP for \(address)")
             ts.add(TimeSeriesElement(date: Date(), value: 50))
@@ -75,7 +71,7 @@ actor PingLoop {
     }
     
     public func stop() {
-        s = nil
+//        s = nil
         //        if let timer = timer {
         //            timer.invalidate()
         //            self.timer = nil
@@ -86,12 +82,12 @@ actor PingLoop {
     
 }
 
+public let pingLoop = PingLoop()
+
 struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
     
     public let view: UIView
-    
-    public var pingloop: PingLoop? = nil
     
     var body: some View {
         ScrollView {

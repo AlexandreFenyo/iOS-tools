@@ -33,7 +33,6 @@ class DetailViewController: UIViewController {
         view.addSubview(hostingViewController.view)
         hostingViewController.didMove(toParent: self)
 
-        hostingViewController.rootView.pingloop = PingLoop()
 //        hostingViewController.rootView.pingloop?.start(ts: hostingViewController.rootView.ts)
         
         NSLayoutConstraint.activate([
@@ -46,7 +45,7 @@ class DetailViewController: UIViewController {
     
     public func stopReceivingICMP() {
         Task {
-            await hostingViewController.rootView.pingloop?.stop()
+            await pingLoop.stop()
         }
     }
     
@@ -57,8 +56,9 @@ class DetailViewController: UIViewController {
 //                refreshUI()
                 hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
                 if address != nil {
+
                     Task {
-                        try await hostingViewController.rootView.pingloop?.start(ts: hostingViewController.rootView.ts, address: address!)
+                        try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
                     }
                 }
 
