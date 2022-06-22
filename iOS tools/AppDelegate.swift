@@ -47,7 +47,7 @@ extension Color {
 extension UIApplication {}
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+ class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
     public var window: UIWindow?
 

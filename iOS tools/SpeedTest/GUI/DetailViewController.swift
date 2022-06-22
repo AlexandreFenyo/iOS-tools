@@ -48,7 +48,7 @@ class DetailViewController: UIViewController {
 //            await pingLoop.stop()
 //        }
     }
-    
+
         // Address selected by the user
     public var address : IPAddress? {
         didSet {
@@ -58,11 +58,12 @@ class DetailViewController: UIViewController {
                 if address != nil {
                     if  address?.getFamily() == AF_INET {
                         Task {
+                            // c'est exécuté dans le MainActor car un sleep(100) bloque toute l'appli
                             try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
                         }
                     }
                 }
-
+                
             }
         }
     }

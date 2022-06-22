@@ -18,6 +18,7 @@ public actor PingLoop {
     init() {}
     
     public func start(ts: TimeSeries, address: IPAddress) async throws {
+        print("AVANT")
         if let address = address as? IPv4Address {
             let address: IPv4Address = address.copy() as! IPv4Address
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
@@ -29,6 +30,7 @@ public actor PingLoop {
             nthreads += 1
             repeat {
                 if  address.getFamily() == AF_INET {
+                    // CA PLANTE ICI à cause d'un problème de concurrence
                     ts.add(TimeSeriesElement(date: Date(), value: 50))
  
                     var hdr = icmp()
@@ -53,7 +55,8 @@ public actor PingLoop {
                     if ret < 0 { GenericTools.perror("sendto") }
                     
                 }
-                try await Task.sleep(nanoseconds: 1_000_000_000)
+//                try await Task.sleep(nanoseconds: 1_000_000_000)
+                try await Task.sleep(nanoseconds: 1_000_000_0)
             } while nthreads == 1
             close(s)
             nthreads -= 1
