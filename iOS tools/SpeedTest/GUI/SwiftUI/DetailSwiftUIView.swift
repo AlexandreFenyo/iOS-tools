@@ -13,7 +13,9 @@ var delta: CGFloat?
 
 public actor PingLoop {
     private var s: Int32?
-    
+    private var currentTask: Task<(), Error>?
+    private var address: IPAddress?
+
     init() {
         s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
         if s == nil || s! < 0 {
@@ -21,17 +23,18 @@ public actor PingLoop {
             fatalError("chart: socket")
         }
     }
-    
+
     public func start(ts: TimeSeries, address: IPAddress) async throws {
-        if  address.getFamily() == AF_INET {
-            //            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            print("PING LOOP for \(address)")
-            ts.add(TimeSeriesElement(date: Date(), value: 50))
-            
-            //                DispatchQueue.global(qos: .userInitiated).async {
+        print("DANS START()")
             repeat {
+                /*
+                if  address.getFamily() == AF_INET {
+                    //            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                    print("PING LOOP for \(address)")
+                    ts.add(TimeSeriesElement(date: Date(), value: 50))
+*/
                 print("envoi ICMP")
-                
+/*
                 var hdr = icmp()
                 hdr.icmp_type = UInt8(ICMP_ECHO)
                 hdr.icmp_code = 0
@@ -51,36 +54,19 @@ public actor PingLoop {
                         sendto(s!, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
                     }
                 }
-                if ret < 0 { GenericTools.perror("sendto") }
-                
-                print("après ICMP-")
+                    if ret < 0 { GenericTools.perror("sendto") }
+
+ */
+//                }
                 try await Task.sleep(nanoseconds: 1_000_000_000)
-                
-                if ret < 0 {
-                    GenericTools.perror("recvfrom")
-                    continue
-                }
-                
-                
-                
-            } while s != nil
+                    print("après SLEEP")
+               
+            } while /* s != nil */ true
             
             close(self.s!)
             //                } // DispatchQueue.global
         }
     }
-    
-    public func stop() {
-//        s = nil
-        //        if let timer = timer {
-        //            timer.invalidate()
-        //            self.timer = nil
-        //}
-        //}
-        
-    }
-    
-}
 
 public let pingLoop = PingLoop()
 

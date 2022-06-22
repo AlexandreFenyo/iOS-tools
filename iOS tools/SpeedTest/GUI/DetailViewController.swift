@@ -44,21 +44,30 @@ class DetailViewController: UIViewController {
     }
     
     public func stopReceivingICMP() {
-        Task {
-            await pingLoop.stop()
-        }
+//        Task {
+//            await pingLoop.stop()
+//        }
     }
     
-    // Address selected by the user
+    private var task: Task<(), Error>?
+        // Address selected by the user
     public var address : IPAddress? {
         didSet {
             if oldValue != address {
-//                refreshUI()
+                //                refreshUI()
                 hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
                 if address != nil {
+                    if task != nil {
+                        Task {
+//                            pingLoop.stop()
+                        }
+                    }
+                    if  address?.getFamily() == AF_INET {
 
-                    Task {
+                    /*task =*/ Task {
                         try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
+                        print("après didSet")
+                    }
                     }
                 }
 
