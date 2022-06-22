@@ -12,61 +12,54 @@ import SpriteKit
 var delta: CGFloat?
 
 public actor PingLoop {
-    private var s: Int32?
-    private var currentTask: Task<(), Error>?
     private var address: IPAddress?
-
-    init() {
-        s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
-        if s == nil || s! < 0 {
-            GenericTools.perror("socket")
-            fatalError("chart: socket")
-        }
-    }
-
+    private var nthreads = 0
+    
+    init() {}
+    
     public func start(ts: TimeSeries, address: IPAddress) async throws {
-        print("DANS START()")
-            repeat {
-                /*
-                if  address.getFamily() == AF_INET {
-                    //            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                    print("PING LOOP for \(address)")
-                    ts.add(TimeSeriesElement(date: Date(), value: 50))
-*/
-                print("envoi ICMP")
-/*
-                var hdr = icmp()
-                hdr.icmp_type = UInt8(ICMP_ECHO)
-                hdr.icmp_code = 0
-                hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
-                let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
-                hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
-                    $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
-                        var sum : u_short = 0
-                        for idx in 0..<capacity { sum = sum &+ $0[idx] }
-                        sum ^= u_short.max
-                        return sum
-                    }
-                }
-                
-                let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                    address.toSockAddress()!.getData().withUnsafeBytes {
-                        sendto(s!, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
-                    }
-                }
-                    if ret < 0 { GenericTools.perror("sendto") }
-
- */
-//                }
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-                    print("après SLEEP")
-               
-            } while /* s != nil */ true
+        if let address = address as? IPv4Address {
+            let address: IPv4Address = address.copy() as! IPv4Address
+            let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
+            if s < 0 {
+                GenericTools.perror("socket")
+                fatalError("chart: socket")
+            }
             
-            close(self.s!)
-            //                } // DispatchQueue.global
+            nthreads += 1
+            repeat {
+                if  address.getFamily() == AF_INET {
+                    ts.add(TimeSeriesElement(date: Date(), value: 50))
+ 
+                    var hdr = icmp()
+                    hdr.icmp_type = UInt8(ICMP_ECHO)
+                    hdr.icmp_code = 0
+                    hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                    let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                    hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                        $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                            var sum : u_short = 0
+                            for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                            sum ^= u_short.max
+                            return sum
+                        }
+                    }
+                    
+                    let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                        address.toSockAddress()!.getData().withUnsafeBytes {
+                            sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
+                        }
+                    }
+                    if ret < 0 { GenericTools.perror("sendto") }
+                    
+                }
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+            } while nthreads == 1
+            close(s)
+            nthreads -= 1
         }
     }
+}
 
 public let pingLoop = PingLoop()
 

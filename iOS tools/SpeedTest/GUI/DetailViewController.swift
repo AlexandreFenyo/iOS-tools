@@ -49,7 +49,6 @@ class DetailViewController: UIViewController {
 //        }
     }
     
-    private var task: Task<(), Error>?
         // Address selected by the user
     public var address : IPAddress? {
         didSet {
@@ -57,17 +56,10 @@ class DetailViewController: UIViewController {
                 //                refreshUI()
                 hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
                 if address != nil {
-                    if task != nil {
-                        Task {
-//                            pingLoop.stop()
-                        }
-                    }
                     if  address?.getFamily() == AF_INET {
-
-                    /*task =*/ Task {
-                        try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
-                        print("après didSet")
-                    }
+                        Task {
+                            try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
+                        }
                     }
                 }
 
