@@ -186,18 +186,19 @@ final class GenericTools : AutoTrace {
         return alternate_value
     }
 
-    public static func createScene(_ view: UIView) {
-        if (GenericTools.ts.getElements().count == 0) {
+    @MainActor
+    public static func createScene(_ view: UIView) async {
+        if await (GenericTools.ts.getElements().count == 0) {
             let date = Date() // test_date
-            GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-20.0)), value: 50.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
-            GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-55.0)), value: 12.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-20.0)), value: 50.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
+            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-55.0)), value: 12.0))
         }
-        if !alternate() { createSpriteScene(view as! SKView) }
-        else { create3DChartScene(view as! SCNView) }
+        if !alternate() { await createSpriteScene(view as! SKView) }
+        else { await create3DChartScene(view as! SCNView) }
     }
 
     // Insert the demo cube scene into a view
@@ -264,12 +265,13 @@ final class GenericTools : AutoTrace {
 //        view.addGestureRecognizer(tapGesture)
     }
 
-    public static func createSpriteScene(_ view: SKView) {
-        // Create a scene
+    @MainActor
+    public static func createSpriteScene(_ view: SKView) async {
+        // Create a await scene
         let scene = SKScene(size: CGSize(width: view.frame.size.width / 2, height: view.frame.size.height))
         scene.backgroundColor = .white
         view.presentScene(scene)
-
+        await
         chart_node = SKChartNode(ts: ts, full_size: CGSize(width: 410, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 80, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false)
         scene.addChild(chart_node!)
         chart_node!.position = CGPoint(x: 50, y: 100)
@@ -281,7 +283,8 @@ final class GenericTools : AutoTrace {
     }
     
     // Insert a 3D scene containing a 2D Chart into a view
-    public static func create3DChartScene(_ view: SCNView) {
+    @MainActor
+    public static func create3DChartScene(_ view: SCNView) async {
         // create a new scene
         let scene = SCNScene()
 
@@ -312,7 +315,7 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
 
-        plane_node = SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
+        plane_node = await SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
     }
     

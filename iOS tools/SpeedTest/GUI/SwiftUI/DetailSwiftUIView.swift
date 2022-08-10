@@ -31,7 +31,7 @@ public actor PingLoop {
             repeat {
                 if  address.getFamily() == AF_INET {
                     // CA PLANTE ICI à cause d'un problème de concurrence
-                    ts.add(TimeSeriesElement(date: Date(), value: 50))
+                    await ts.add(TimeSeriesElement(date: Date(), value: 50))
  
                     var hdr = icmp()
                     hdr.icmp_type = UInt8(ICMP_ECHO)
@@ -66,6 +66,7 @@ public actor PingLoop {
 
 public let pingLoop = PingLoop()
 
+@MainActor
 struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
     
@@ -73,18 +74,24 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         ScrollView {
+            
             VStack {
                 GeometryReader { geom in
                     SpriteView(scene: {
+                        
                         print("(re-)create scene")
                         let scene = SKScene()
                         scene.size = CGSize(width: geom.size.width, height: 300)
                         scene.scaleMode = .fill
-                        let chart_node = SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
+                        
+                        Task {
+                            let chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
                         scene.addChild(chart_node)
                         chart_node.registerGestureRecognizers(view: view, delta: 40)
                         chart_node.position = CGPoint(x: 0, y: 0)
-                        ts.add(TimeSeriesElement(date: Date(), value: 5.0))
+                            await ts.add(TimeSeriesElement(date: Date(), value: 5.0))
+                        }
+                        
                         return scene
                     }())
                 }

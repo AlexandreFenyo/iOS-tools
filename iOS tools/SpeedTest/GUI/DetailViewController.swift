@@ -17,6 +17,8 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
         for n in nodes { n.updateWidth() }
     }*/
 }
+
+@MainActor
 class DetailViewController: UIViewController {
 
     private lazy var hostingViewController = makeHostingController()
@@ -52,18 +54,19 @@ class DetailViewController: UIViewController {
         // Address selected by the user
     public var address : IPAddress? {
         didSet {
-            if oldValue != address {
-                //                refreshUI()
-                hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
-                if address != nil {
-                    if  address?.getFamily() == AF_INET {
-                        Task {
-                            // c'est exécuté dans le MainActor car un sleep(100) bloque toute l'appli
-                            try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
+            Task {
+                if oldValue != address {
+                    //                refreshUI()
+                    await hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
+                    if address != nil {
+                        if  address?.getFamily() == AF_INET {
+                            Task {
+                                // c'est exécuté dans le MainActor car un sleep(100) bloque toute l'appli
+                                try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
+                            }
                         }
                     }
                 }
-                
             }
         }
     }
