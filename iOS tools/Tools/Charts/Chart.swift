@@ -841,32 +841,23 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
-
-        // A SUPPRIMER - pour tester
-        return
-        
-        // A REMETTRE
-        /*
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
         self.delta = delta
-         */
     }
 
     // LE PB : ce async sur handleTap
     @objc
-    func handleTap(_ gesture: UITapGestureRecognizer) async {
+    func XXXhandleTap(_ gesture: UITapGestureRecognizer) async {
         return
     }
     
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
-    func XXXhandleTap(_ gesture: UITapGestureRecognizer) async {
-        
-        return
-        
+    func handleTap(_ gesture: UITapGestureRecognizer) {
+        Task {
         if gesture.state == .ended {
             let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
             let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
@@ -909,10 +900,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
 
         }			
-    }
+        }
+        }
 
     @objc
-    func XXXhandlePan(_ gesture: UIPanGestureRecognizer) async {
+    func handlePan(_ gesture: UIPanGestureRecognizer) {
+        Task {
         if gesture.state == .began {
             if mode == .followDate { current_date = Date() }
             date_at_start_of_gesture = current_date
@@ -934,19 +927,27 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             await drawCurveAsync(ts: ts)
         }
     }
+    }
 
     @objc
-    func handlePinch(_ gesture: UIPinchGestureRecognizer) async {
+    func handlePinch(_ gesture: UIPinchGestureRecognizer) {
+        let h = Task {
+
         if gesture.state == .began {
             if mode == .followDate { current_date = Date() }
             date_at_start_of_gesture = current_date
             grid_time_interval_at_start_of_gesture = grid_time_interval
             mode = .followGesture
+            
             await createChartComponentsAsync(date: current_date, max_val: highest)
             await drawCurveAsync(ts: ts)
         }
 
         if gesture.state == .changed {
+            // j'ai eu une fois un erreur car grid_time_interval_at_start_of_gesture valait nil, ça peut donc arriver, il faut trouver pourquoi : C'est car le Task fait une sorte de fork()
+            // DONC A PRENDRE EN COMPTE dans les fcts objc ici : A FAIRE
+            // CONTINUER ICI
+            
             grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture.scale)
             await createChartComponentsAsync(date: current_date, max_val: highest)
             await drawCurveAsync(ts: ts)
@@ -956,6 +957,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             mode = .manual
             await createChartComponentsAsync(date: current_date, max_val: highest)
             await drawCurveAsync(ts: ts)
+        }
         }
     }
 
