@@ -851,12 +851,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
-        Task {
-            print("handleTap")
-            print(gesture.state.rawValue)
+        // gesture est passé par adresse, or on va y accéder dans une Task alors que sa valeur aura donc pu être modifiée, donc on copie sa valeur pour l'utiliser plus tard
+        let gesture_state = gesture.state
+        let gesture_location = gesture.location(in: gesture.view!)
 
-            if gesture.state == .ended { // 3
-                let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
+        Task {
+            if gesture_state == .ended {
+                let _point = scene!.convertPoint(fromView: gesture_location)
                 let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
                 
                 let tapped_point = grid_node!.convert(_point_relative_to_root_node, from: self)
@@ -902,11 +903,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     @objc
     func handlePan(_ gesture: UIPanGestureRecognizer) {
+        // gesture est passé par adresse, or on va y accéder dans une Task alors que sa valeur aura donc pu être modifiée, donc on copie sa valeur pour l'utiliser plus tard
+        let gesture_state = gesture.state
+        let point = gesture_state == .changed ? gesture.translation(in: gesture.view!) : nil
+
         Task {
-            print("handlePan")
-//            print(gesture.state.rawValue)
-            
-            if gesture.state == .began {
+            if gesture_state == .began {
                 if mode == .followDate { current_date = Date() }
                 date_at_start_of_gesture = current_date
                 mode = .followGesture
@@ -914,14 +916,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 await drawCurveAsync(ts: ts)
             }
             
-            if gesture.state == .changed {
-                let point = gesture.translation(in: gesture.view!)
-                current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
+            if gesture_state == .changed {
+                current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point!.x / grid_size.width) * grid_time_interval)
                 await createChartComponentsAsync(date: current_date, max_val: highest)
                 await drawCurveAsync(ts: ts)
             }
             
-            if gesture.state != .began && gesture.state != .changed {
+            if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
                 await createChartComponentsAsync(date: current_date, max_val: highest)
                 await drawCurveAsync(ts: ts)
@@ -931,10 +932,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     @objc
     func handlePinch(_ gesture: UIPinchGestureRecognizer) {
-        let h = Task {
-            print("handlePinch")
+        // gesture est passé par adresse, or on va y accéder dans une Task alors que sa valeur aura donc pu être modifiée, donc on copie sa valeur pour l'utiliser plus tard
+        let gesture_state = gesture.state
+        let gesture_scale = gesture.scale
 
-            if gesture.state == .began {
+        Task {
+            if gesture_state == .began {
                 if mode == .followDate { current_date = Date() }
                 date_at_start_of_gesture = current_date
                 grid_time_interval_at_start_of_gesture = grid_time_interval
@@ -944,17 +947,17 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 await drawCurveAsync(ts: ts)
             }
             
-            if gesture.state == .changed {
+            if gesture_state == .changed {
                 // j'ai eu une fois un erreur car grid_time_interval_at_start_of_gesture valait nil, ça peut donc arriver, il faut trouver pourquoi : C'est car le Task fait une sorte de fork()
                 // DONC A PRENDRE EN COMPTE dans les fcts objc ici : A FAIRE
                 // CONTINUER ICI
                 
-                grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture.scale)
+                grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture_scale)
                 await createChartComponentsAsync(date: current_date, max_val: highest)
                 await drawCurveAsync(ts: ts)
             }
             
-            if gesture.state != .began && gesture.state != .changed {
+            if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
                 await createChartComponentsAsync(date: current_date, max_val: highest)
                 await drawCurveAsync(ts: ts)
