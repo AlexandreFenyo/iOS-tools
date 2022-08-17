@@ -367,8 +367,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Display only segments or points that can be viewed
     private func drawCurveAsync(ts: TimeSeries) async {
         let elts = await ts.getElements()
-        // REMETTRE ICI - on a tout les elts du moment
-        print("drawCurve dans drawCurveAsync() \(elts.count)")
         drawCurve(elts: elts)
     }
     
@@ -545,7 +543,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     // Create or update chart components
-    // PB ICI : elts n'est pas toujours à jour
     private func createChartComponentsFromElts(date: Date, max_val: Float, elts: [TimeSeriesElement]) {
         // Update state
         highest = max_val
@@ -948,10 +945,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
             
             if gesture_state == .changed {
-                // j'ai eu une fois un erreur car grid_time_interval_at_start_of_gesture valait nil, ça peut donc arriver, il faut trouver pourquoi : C'est car le Task fait une sorte de fork()
-                // DONC A PRENDRE EN COMPTE dans les fcts objc ici : A FAIRE
-                // CONTINUER ICI
-                
                 grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture_scale)
                 await createChartComponentsAsync(date: current_date, max_val: highest)
                 await drawCurveAsync(ts: ts)
