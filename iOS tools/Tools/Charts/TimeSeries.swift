@@ -37,16 +37,12 @@ public actor TimeSeries {
         keys.insert(tse.date, at: next_date != nil ? keys.firstIndex(of: next_date!)! : keys.count)
 
         // Signal about new value
-        // regarder si c'est ici que ça fait une erreur de concurrence
-        // les deux A REMETTRE doivent être remis en commun pour provoquer l'erreur
-        // A REMETTRE
         for receiver in receivers { await receiver.cbNewData(ts: self, tse: tse) }
     }
 
     // Ordered array of every elements
     public func getElements() -> [TimeSeriesElement] {
         var elts : [TimeSeriesElement] = []
-        // A REMETTRE
         for key in keys { elts.append(data[key]!) }
         return elts
     }

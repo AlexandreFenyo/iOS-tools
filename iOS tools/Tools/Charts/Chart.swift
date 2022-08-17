@@ -437,9 +437,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
         
         // Input: points to draw, time series element on which a triangle must be drawn
-        let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = {
-            (points, highest_tse) in
-            
+        let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = { (points, highest_tse) in
             let sqrt_3_div_2 : CGFloat = 0.87
             let triangle_width = 2 * self.line_width * 5
             let triangle_height = triangle_width * sqrt_3_div_2
@@ -777,11 +775,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     self.grid_node!.position.x += self.grid_size.width
                     self.curve_node!.position.x -= self.grid_size.width
                     self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
-
-                    // REMETTRE ICI - pas tous les elts
-                    print("drawCurve dans createChartComponentsFromElts() \(elts.count)")
-                    self.drawCurve(elts: elts)
-
                 }
             }
             // Launch animation
