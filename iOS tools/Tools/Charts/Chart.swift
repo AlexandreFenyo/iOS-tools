@@ -83,7 +83,7 @@ class SKExtLabelNode : SKLabelNode {
     public var date : Date? {
         willSet { self.text = SKExtLabelNode.formatter.string(from: newValue!) }
     }
-
+    
     // Static date formatter shared by every instances
     static private let formatter : DateFormatter = {
         let f = DateFormatter()
@@ -91,16 +91,16 @@ class SKExtLabelNode : SKLabelNode {
         f.locale = Locale(identifier: "en_US")
         return f
     }()
-
+    
     public override init() {
         super.init()
     }
-
+    
     public init(fontNamed fontName: String?, date: Date) {
         super.init(fontNamed: fontName)
         defer { self.date = date }
     }
-
+    
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -111,29 +111,29 @@ class SCNChartNode : SCNNode {
     
     public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true) async {
         super.init()
-
+        
         // Create a 2D scene
         let chart_scene = SKScene(size: full_size)
         chart_scene.backgroundColor = .white
-
+        
         // Create a 3D plan containing the 2D scene
         self.geometry = SCNPlane(width: full_size.width / density, height: full_size.height / density)
         self.geometry?.firstMaterial?.isDoubleSided = true
         self.geometry?.firstMaterial?.diffuse.contents = chart_scene
-
+        
         // Create a 2D chart and add it to the scene
         // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
         await chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, max_horizontal_font_size: max_horizontal_font_size, max_vertical_font_size: max_vertical_font_size, horizontal_font_size_ratio: horizontal_font_size_ratio, vertical_font_size_ratio: vertical_font_size_ratio, font_color: font_color, spline: spline, vertical_auto_layout: vertical_auto_layout, mode: mode, debug: debug)
         chart_node!.anchorPoint = CGPoint(x: 0, y: 0)
         chart_scene.addChild(chart_node!)
-
+        
         self.scale = SCNVector3(x: 1, y: -1, z: 1)
     }
     
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
         chart_node!.registerGestureRecognizers(view: view, delta: delta)
     }
-
+    
     required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -145,7 +145,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private let vertical_auto_layout: Bool
     
     private var highest : Float = 0
-
+    
     private var root_node : SKNode?
     
     // State variables
@@ -171,7 +171,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var crop: Bool
     private var mode: ChartPositionMode
     private var current_date: Date
-
+    
     // Properties computed from state variables
     private var graph_width : CGFloat?
     private var graph_height : CGFloat?
@@ -184,7 +184,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var replay_height : CGFloat?
     private var replay_horizontal_pos : CGFloat?
     private var replay_vertical_pos : CGFloat?
-
+    
     private var date_at_start_of_gesture: Date?
     private var grid_time_interval_at_start_of_gesture: TimeInterval?
     private var highlight_element: TimeSeriesElement? = nil
@@ -196,9 +196,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var curve_marker_date : Date?
     private var bottom_mask_node : SKSpriteNode?
     private var left_mask_node : SKSpriteNode?
-
+    
     private var follow_view : UIView?
-
+    
     private var delta: CGFloat? = 0
     
     public func testDebug() {
@@ -219,39 +219,39 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         replay_horizontal_pos = full_size.width - 3 * replay_width! / 2
         replay_vertical_pos = bottom_height + (graph_height! - replay_height!) / 2
     }
-
+    
     // Projection of a time series element into the curve coordinates system
     private func toPoint(tse: TimeSeriesElement) -> CGPoint {
         return CGPoint(x: curve_marker!.position.x + CGFloat(tse.date.timeIntervalSince(curve_marker_date!) / grid_time_interval) * grid_size.width, y: CGFloat(tse.value / grid_vertical_cost!) * grid_size.height)
     }
-
+    
     // Check that a point is not hidden
     private func isCurvePointOnScreen(point: CGPoint) -> Bool {
         let p = root_node!.convert(point, from: curve_node!)
         return p.x >= left_width && p.x < size.width
     }
-
+    
     // Check that a point is not hidden
     private func isCurvePointOnScreen(tse: TimeSeriesElement) -> Bool {
         return isCurvePointOnScreen(point: toPoint(tse: tse))
     }
-
+    
     // Check that a point is not on grid
     private func isCurvePointOnGrid(point: CGPoint) -> Bool {
         let p = grid_node!.convert(point, from: curve_node!)
         return p.x >= 0 && p.x <= grid_full_width!
     }
-
+    
     // Check that a point is not on grid
     private func isCurvePointOnGrid(tse: TimeSeriesElement) -> Bool {
         return isCurvePointOnGrid(point: toPoint(tse: tse))
     }
-
+    
     // Check that a segment is not hidden
     private func isCurveSegmentOnGrid(from: CGPoint, to: CGPoint) -> Bool {
         return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
     }
-
+    
     // Position of a curve point relative to screen
     private func positionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
         let p = grid_node!.convert(point, from: curve_node!)
@@ -259,7 +259,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if p.x > grid_full_width! { return .onRight }
         return .onScreen
     }
-
+    
     // Update everything that needs to be, when the width has changed because of auto-layout
     public func updateWidth() async {
         if let new_width = follow_view?.bounds.width, scene!.size.width != new_width {
@@ -273,7 +273,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             await drawCurveAsync(ts: ts)
         }
     }
-
+    
     // Rules:
     // - grid_size.width <= size.width - left_width
     // - grid_size.height <= size.height - bottom_height
@@ -289,7 +289,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         self.vertical_auto_layout = vertical_auto_layout
         self.crop = crop
         self.follow_view = follow_view
-
+        
         // Save state
         self.ts = ts
         self.full_size = full_size
@@ -311,19 +311,19 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         self.font_color = font_color
         self.mode = mode
         self.current_date = date
-
+        
         // Create self
         super.init(texture: nil, color: debug ? .cyan : background, size: full_size)
         updateStateVariables()
         self.anchorPoint = CGPoint(x: 0, y: 0)
         await ts.register(self)
-
+        
         // Crop the drawing when working in a 2D scene
         if crop {
             let crop_node = SKCropNode()
             let mask_node = SKSpriteNode(texture: nil, color: .black, size: full_size)
             mask_node.anchorPoint = CGPoint(x: 0, y: 0)
-
+            
             if !debug { crop_node.maskNode = mask_node }
             root_node = crop_node
             self.addChild(root_node!)
@@ -335,27 +335,27 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: max_val)
         await drawCurveAsync(ts: ts)
     }
-
+    
     // Update displayed dates
     private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode) {
         // Move date nodes to the left
         bottom_mask_node.enumerateChildNodes(withName: "//date-*") { node, _ in node.position.x -= self.grid_size.width }
-
+        
         // Find both extreme date nodes
         var leftmost_node : SKNode?
         var rightmost_node : SKNode?
         bottom_mask_node.enumerateChildNodes(withName: "//date-*") {
             node, _ in
-
+            
             if let posx = leftmost_node?.position.x {
                 if node.position.x < posx { leftmost_node = node }
             } else { leftmost_node = node }
-
+            
             if let posx = rightmost_node?.position.x {
                 if node.position.x > posx { rightmost_node = node }
             } else { rightmost_node = node }
         }
-
+        
         // Set the left-most node to the right of the right-most node
         if leftmost_node != nil && rightmost_node != nil {
             let node = leftmost_node! as! SKExtLabelNode
@@ -363,7 +363,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             node.position.x = rightmost_node!.position.x + grid_size.width
         }
     }
-
+    
     // Display only segments or points that can be viewed
     private func drawCurveAsync(ts: TimeSeries) async {
         let elts = await ts.getElements()
@@ -373,8 +373,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Display only segments or points that can be viewed
     private func drawCurve(elts: [TimeSeriesElement]) {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
-       if hasActions() { return }
-
+        if hasActions() { return }
+        
         // Returns points to draw, highest value (if higher than ChartDefaults.minimum_highest) and the element corresponding to the highest value (if higher than ChartDefaults.minimum_highest)
         let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?, TimeSeriesElement?) = {
             var highest : Float = ChartDefaults.minimum_highest
@@ -402,10 +402,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     if self.isCurveSegmentOnGrid(from: all_points[i - 1], to: all_points[i]) {
                         prev_segment_was_on_grid = true
                         points.append(all_points[i - 1])
-
+                        
                         // Handle last segment
                         if i == all_points.count - 1 { points.append(all_points[i]) }
-
+                        
                         // Handle highest value
                         let foo = self.grid_vertical_cost! * Float(all_points[i - 1].y / self.grid_size.height)
                         let bar = self.grid_vertical_cost! * Float(all_points[i].y / self.grid_size.height)
@@ -417,7 +417,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                             highest = bar
                             highest_elt = elts[i]
                         }
-
+                        
                         // Handle highest displayed element
                         for _i in [ i - 1, i ] {
                             if self.isCurvePointOnScreen(point: all_points[_i]) {
@@ -433,11 +433,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
             return (points, highest, highest_elt, highest_elt_displayed)
         }
-
+        
         // Input: points to draw, time series element on which a triangle must be drawn
         let drawPoints: (inout [CGPoint], TimeSeriesElement?) -> () = {
             (points, highest_tse) in
-
+            
             let sqrt_3_div_2 : CGFloat = 0.87
             let triangle_width = 2 * self.line_width * 5
             let triangle_height = triangle_width * sqrt_3_div_2
@@ -446,14 +446,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             let f = DateFormatter()
             f.dateFormat = "HH:mm:ss"
             f.locale = Locale(identifier: "en_US")
-
+            
             // Draw curve
             if self.spline { self.curve_node!.path = SKShapeNode(splinePoints: &points, count: points.count).path }
             else { self.curve_node!.path = SKShapeNode(points: &points, count: points.count).path }
-
+            
             // Add points
             self.curve_node!.removeAllChildren()
-
+            
             for point in points {
                 let point_node = SKShapeNode(circleOfRadius: point_radius)
                 point_node.fillColor = .black
@@ -461,7 +461,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 point_node.lineWidth = self.line_width
                 self.curve_node!.addChild(point_node)
                 point_node.position = CGPoint(x: point.x, y: point.y)
-
+                
                 // Display informations for user's selected point
                 if self.highlight_element != nil && point == self.toPoint(tse: self.highlight_element!) {
                     let point_label = SKLabelNode(fontNamed: self.font_name)
@@ -473,7 +473,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     point_label.verticalAlignmentMode = .top
                     point_node.addChild(point_label)
                     point_label.position = CGPoint(x: 0, y: -triangle_relative_height)
-
+                    
                     let point_label_date = SKLabelNode(fontNamed: self.font_name)
                     point_label_date.text = f.string(from: self.highlight_element!.date)
                     point_label_date.fontSize = triangle_height
@@ -484,10 +484,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     point_label_date.position = CGPoint(x: 0, y: -triangle_relative_height - triangle_height)
                 }
             }
-
+            
             if highest_tse != nil {
                 let highest_point = self.toPoint(tse: highest_tse!)
-
+                
                 // Create blinking triangle
                 // When in followDate mode, the time series point that gets a triangle is not computed at each frame but only when the grid is moved right, so it can temporarily not be the highest point displayed - a better way to handle this triangle would be to compute the highest point at each frame
                 var points = [CGPoint(x: 0, y: 0),
@@ -500,12 +500,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 self.curve_node!.addChild(triangle_node)
                 triangle_node.position = CGPoint(x: highest_point.x, y: highest_point.y + triangle_relative_height)
                 triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
-
+                
                 // Add corresponding value under triangle
                 let max_label = SKLabelNode(fontNamed: self.font_name)
                 max_label.text = String(Int(highest_tse!.value))
                 if max_label.text!.count > self.grid_vertical_factor! { max_label.text! = max_label.text!.sub(0, max_label.text!.count - self.grid_vertical_factor!) }
-
+                
                 max_label.fontSize = triangle_height
                 max_label.fontColor = .yellow
                 max_label.horizontalAlignmentMode = .center
@@ -514,9 +514,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 max_label.position = CGPoint(x: 0, y: -triangle_relative_height * 2)
             }
         }
-
+        
         var (points, target_h, _, tse_displayed) = computePoints()
-
+        
         // Vertical animation
         if highest != target_h {
             var start_height = highest
@@ -538,7 +538,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
         } else { drawPoints(&points, tse_displayed) }
     }
-
+    
     private func createChartComponentsAsync(date: Date, max_val: Float) async {
         let elts = await ts.getElements()
         createChartComponentsFromElts(date: date, max_val: max_val, elts: elts)
@@ -548,7 +548,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func createChartComponentsFromElts(date: Date, max_val: Float, elts: [TimeSeriesElement]) {
         // Update state
         highest = max_val
-
+        
         // Remove curve
         curve_node?.removeAllChildren()
         
@@ -563,7 +563,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         
         // Remove grid_node, left_mask_node and associated hyphens
         root_node?.removeAllChildren()
-
+        
         if vertical_auto_layout {
             let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5)
             
@@ -572,7 +572,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             vertical_unit = _unit
             grid_vertical_cost = _cost
             grid_vertical_factor = _factor
-
+            
             updateStateVariables()
         }
         
@@ -583,7 +583,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         assert(mode != .followDate || grid_time_interval >= 60 || 60.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)
         assert(mode != .followDate || ((grid_time_interval < 60 || grid_time_interval > 3600) || (grid_time_interval.truncatingRemainder(dividingBy: 60) == 0 && 3600.0.truncatingRemainder(dividingBy: grid_time_interval) == 0)))
         assert(mode != .followDate || grid_time_interval < 3600 || grid_time_interval.truncatingRemainder(dividingBy: 3600) == 0)
-
+        
         // Create the main grid
         // Since vertical grid lines have a thickness, we need to include one more right-most grid line (horizontal lines up to this right-most position are not sufficient)
         // Idem for horizontal grid lines: include one more top-most grid line
@@ -606,7 +606,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.path = grid_path
         grid_node!.strokeColor = .red
         grid_node!.lineWidth = line_width
-
+        
         // Create the subgrid
         let subgrid_node: SKShapeNode?
         if (subgrid_size != nil) {
@@ -636,18 +636,18 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         } else {
             subgrid_node = nil
         }
-
+        
         // Add left mask
         left_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: left_width, height: full_size.height))
         left_mask_node!.anchorPoint = CGPoint(x: 0, y: 0)
         if debug { left_mask_node!.alpha = 0.5 }
         // left_mask_node must be higher than bottom_mask
         left_mask_node!.zPosition = 2
-
+        
         // Instanciate font to get informations about it
         // font.pointSize is set to size parameter - it can be set to any value since we compute the size using font.pointSize
         let font = UIFont(name: font_name, size: 2) ?? UIFont.preferredFont(forTextStyle: .body)
-
+        
         // Create y-axis values
         y = 0
         while y <= graph_height! {
@@ -660,21 +660,21 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             // Help select correct font size
             if debug { print("vertical fontsize:", left_label_node.fontSize)}
             if !debug && max_vertical_font_size != nil && left_label_node.fontSize > max_vertical_font_size! { left_label_node.fontSize = max_vertical_font_size! }
-
+            
             left_label_node.fontColor = font_color
             left_label_node.horizontalAlignmentMode = .right
             left_mask_node!.addChild(left_label_node)
             left_label_node.position = CGPoint(x: left_width - left_label_node.fontSize / 2, y: y + bottom_height - 0.7 * left_label_node.fontSize / 2)
-
+            
             // Add hyphen
             let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: left_label_node.fontSize / 4, height: grid_node!.lineWidth))
             hyphen_node.anchorPoint = CGPoint(x: 1, y: 0.5)
             left_mask_node!.addChild(hyphen_node)
             hyphen_node.position = CGPoint(x: left_width, y: y + bottom_height)
-
+            
             y += grid_size.height
         }
-
+        
         // Add bottom mask
         bottom_mask_node = SKSpriteNode(color: debug ? .blue : background, size: CGSize(width: grid_full_width!, height: bottom_height))
         bottom_mask_node!.anchorPoint = CGPoint(x: 0, y: 1)
@@ -690,7 +690,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let hours_today = TimeInterval(_s.sub(0, 2))!
         let minutes_today = TimeInterval(_s.sub(2, 2))!
         let seconds_today = TimeInterval(_s.sub(4))!
-
+        
         // time_offset: time interval between the current date and the nearest date in the past that is aligned with grid_time_interval, so that it can be written simply
         // time_offset < grid_time_interval
         var time_offset = date.timeIntervalSince1970.truncatingRemainder(dividingBy: 1) + seconds_today.truncatingRemainder(dividingBy: grid_time_interval)
@@ -700,7 +700,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let date_rounded = date.addingTimeInterval(-time_offset)
         // horizontal length corresponding to time_offset
         let horizontal_time_offset = grid_size.width * CGFloat(time_offset / grid_time_interval)
-
+        
         var current_date = date_rounded
         x = grid_full_width!
         if horizontal_time_offset >= horizontal_remainder! {
@@ -710,13 +710,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             grid_node!.position = CGPoint(x: left_width + (horizontal_remainder! - horizontal_time_offset) - grid_size.width, y: bottom_height)
             current_date = date_rounded.addingTimeInterval(grid_time_interval)
         }
-
+        
         while x >= 0 {
             // Add date
             let bottom_label_node = SKExtLabelNode(fontNamed: font_name, date: current_date)
             bottom_label_node.verticalAlignmentMode = .top
             bottom_label_node.horizontalAlignmentMode = .left
-
+            
             bottom_label_node.zRotation = -CGFloat.pi / 4
             bottom_label_node.fontSize = horizontal_font_size_ratio * grid_size.width / font.capHeight * font.pointSize
             // Help select correct font size
@@ -726,30 +726,30 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             bottom_mask_node!.addChild(bottom_label_node)
             bottom_label_node.position = CGPoint(x: x, y: -bottom_label_node.fontSize / 2)
             bottom_label_node.name = "date-" + String(date_rounded.timeIntervalSince1970)
-
+            
             // Add hyphen
             let hyphen_node = SKSpriteNode(color: grid_node!.strokeColor, size: CGSize(width: grid_node!.lineWidth, height: bottom_label_node.fontSize / 4))
             hyphen_node.anchorPoint = CGPoint(x: 0.5, y: 1)
             bottom_mask_node!.addChild(hyphen_node)
             hyphen_node.position = CGPoint(x: x, y: 0)
-
+            
             x -= grid_size.width
             current_date.addTimeInterval(-grid_time_interval)
         }
-
+        
         // Add curve
         curve_node = SKShapeNode()
-
+        
         // Add marker to be able to make a projection of a date into the curve coordinates system
         curve_marker = SKNode()
         curve_marker_date = date
         curve_node!.addChild(curve_marker!)
         curve_marker!.position.x = left_width - grid_node!.position.x + graph_width!
-
+        
         // Initialize curve
         curve_node!.lineWidth = line_width
         curve_node!.strokeColor = .black
-
+        
         // Create blinking right replay button
         if mode == .manual {
             var points = [CGPoint(x: replay_horizontal_pos!, y: replay_vertical_pos!),
@@ -764,9 +764,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             alpha_node.alpha = 0.5
             alpha_node.addChild(replay_node)
             root_node!.addChild(alpha_node)
-        replay_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.5), SKAction.fadeOut(withDuration: 0.5)])))
+            replay_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.5), SKAction.fadeOut(withDuration: 0.5)])))
         }
-
+        
         // Animate
         if (mode == .followDate) {
             func getOperations(after: TimeInterval) -> () -> () {
@@ -790,19 +790,19 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 }
             }
         }
-
+        
         root_node!.addChild(grid_node!)
         if subgrid_node != nil { grid_node!.addChild(subgrid_node!) }
         root_node!.addChild(left_mask_node!)
-
+        
         grid_node!.addChild(bottom_mask_node!)
         grid_node!.addChild(curve_node!)
     }
-
+    
     public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) async {
         await drawCurveAsync(ts: ts)
     }
-
+    
     // Compute best vertical parameters
     // input:
     // - height
@@ -817,7 +817,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var max_val = max_val
         max_val *= Float(ChartDefaults.optimal_vertical_resolution_ratio)
         if max_val < Float(nlines) { max_val = Float(nlines) }
-
+        
         let first_label = String(Int((max_val / Float(nlines)).rounded(.down)))
         var left_digit = first_label.sub(0, 1)
         switch left_digit {
@@ -837,7 +837,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let grid_vertical_cost = Float(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
-
+    
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
@@ -847,114 +847,121 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
         self.delta = delta
     }
-
+    
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
         Task {
-        if gesture.state == .ended {
-            let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
-            let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
+            print("handleTap")
+            print(gesture.state.rawValue)
 
-            let tapped_point = grid_node!.convert(_point_relative_to_root_node, from: self)
-
-            var tapped_element : TimeSeriesElement?
-            var best_dist : Double?
-            for elt in await ts.getElements() {
-                let point = toPoint(tse: elt)
-                if isCurvePointOnScreen(point: point) {
-                    let dist = pow(Double(tapped_point.x - point.x), 2) + pow(Double(tapped_point.y - point.y), 2)
-                    if best_dist == nil || best_dist! >= dist {
-                        tapped_element = elt
-                        best_dist = dist
+            if gesture.state == .ended { // 3
+                let _point = scene!.convertPoint(fromView: gesture.location(in: gesture.view!))
+                let _point_relative_to_root_node = CGPoint(x: _point.x - position.x, y: _point.y - position.y)
+                
+                let tapped_point = grid_node!.convert(_point_relative_to_root_node, from: self)
+                
+                var tapped_element : TimeSeriesElement?
+                var best_dist : Double?
+                for elt in await ts.getElements() {
+                    let point = toPoint(tse: elt)
+                    if isCurvePointOnScreen(point: point) {
+                        let dist = pow(Double(tapped_point.x - point.x), 2) + pow(Double(tapped_point.y - point.y), 2)
+                        if best_dist == nil || best_dist! >= dist {
+                            tapped_element = elt
+                            best_dist = dist
+                        }
                     }
+                    highlight_element = tapped_element
                 }
-                highlight_element = tapped_element
+                if mode == .manual {
+                    // tapped_point.x is relative to grid node, replay_horizontal_pos is relative to root node
+                    if tapped_point.x >= replay_horizontal_pos! - grid_node!.position.x {
+                        mode = .followDate
+                        grid_time_interval = initial_grid_time_interval
+                        
+                        await createChartComponentsAsync(date: Date(), max_val: highest)
+                        
+                    } else { await createChartComponentsAsync(date: current_date, max_val: highest) }
+                } else if mode == .followDate { await createChartComponentsAsync(date: Date(), max_val: highest) }
+                await drawCurveAsync(ts: ts)
+                
+                let finger = SKShapeNode(circleOfRadius: 5.0)
+                finger.fillColor = .yellow
+                root_node!.addChild(finger)
+                finger.position = _point_relative_to_root_node
+                
+                // ajustement manuel car la position est relative à la vue UIKit de l'hosting controller de DetailViewController
+                finger.position.y += delta!
+                
+                finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
+                
             }
-            if mode == .manual {
-                // tapped_point.x is relative to grid node, replay_horizontal_pos is relative to root node
-                if tapped_point.x >= replay_horizontal_pos! - grid_node!.position.x {
-                    mode = .followDate
-                    grid_time_interval = initial_grid_time_interval
-
-                    await createChartComponentsAsync(date: Date(), max_val: highest)
-
-                } else { await createChartComponentsAsync(date: current_date, max_val: highest) }
-            } else if mode == .followDate { await createChartComponentsAsync(date: Date(), max_val: highest) }
-            await drawCurveAsync(ts: ts)
-
-            let finger = SKShapeNode(circleOfRadius: 5.0)
-            finger.fillColor = .yellow
-            root_node!.addChild(finger)
-            finger.position = _point_relative_to_root_node
-
-            // ajustement manuel car la position est relative à la vue UIKit de l'hosting controller de DetailViewController
-            finger.position.y += delta!
-            
-            finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
-
-        }			
         }
-        }
-
+    }
+    
     @objc
     func handlePan(_ gesture: UIPanGestureRecognizer) {
         Task {
-        if gesture.state == .began {
-            if mode == .followDate { current_date = Date() }
-            date_at_start_of_gesture = current_date
-            mode = .followGesture
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
-        }
-
-        if gesture.state == .changed {
-            let point = gesture.translation(in: gesture.view!)
-            current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
-        }
-
-        if gesture.state != .began && gesture.state != .changed {
-            mode = .manual
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
+            print("handlePan")
+//            print(gesture.state.rawValue)
+            
+            if gesture.state == .began {
+                if mode == .followDate { current_date = Date() }
+                date_at_start_of_gesture = current_date
+                mode = .followGesture
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
+            
+            if gesture.state == .changed {
+                let point = gesture.translation(in: gesture.view!)
+                current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point.x / grid_size.width) * grid_time_interval)
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
+            
+            if gesture.state != .began && gesture.state != .changed {
+                mode = .manual
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
         }
     }
-    }
-
+    
     @objc
     func handlePinch(_ gesture: UIPinchGestureRecognizer) {
         let h = Task {
+            print("handlePinch")
 
-        if gesture.state == .began {
-            if mode == .followDate { current_date = Date() }
-            date_at_start_of_gesture = current_date
-            grid_time_interval_at_start_of_gesture = grid_time_interval
-            mode = .followGesture
+            if gesture.state == .began {
+                if mode == .followDate { current_date = Date() }
+                date_at_start_of_gesture = current_date
+                grid_time_interval_at_start_of_gesture = grid_time_interval
+                mode = .followGesture
+                
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
             
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
-        }
-
-        if gesture.state == .changed {
-            // j'ai eu une fois un erreur car grid_time_interval_at_start_of_gesture valait nil, ça peut donc arriver, il faut trouver pourquoi : C'est car le Task fait une sorte de fork()
-            // DONC A PRENDRE EN COMPTE dans les fcts objc ici : A FAIRE
-            // CONTINUER ICI
+            if gesture.state == .changed {
+                // j'ai eu une fois un erreur car grid_time_interval_at_start_of_gesture valait nil, ça peut donc arriver, il faut trouver pourquoi : C'est car le Task fait une sorte de fork()
+                // DONC A PRENDRE EN COMPTE dans les fcts objc ici : A FAIRE
+                // CONTINUER ICI
+                
+                grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture.scale)
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
             
-            grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture.scale)
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
-        }
-
-        if gesture.state != .began && gesture.state != .changed {
-            mode = .manual
-            await createChartComponentsAsync(date: current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
-        }
+            if gesture.state != .began && gesture.state != .changed {
+                mode = .manual
+                await createChartComponentsAsync(date: current_date, max_val: highest)
+                await drawCurveAsync(ts: ts)
+            }
         }
     }
-
+    
     public required init(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
