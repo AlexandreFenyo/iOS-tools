@@ -55,8 +55,8 @@ public actor PingLoop {
                     if ret < 0 { GenericTools.perror("sendto") }
                     
                 }
-//                try await Task.sleep(nanoseconds: 1_000_000_000)
-                try await Task.sleep(nanoseconds: 1_000_000_0)
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+//                try await Task.sleep(nanoseconds: 1_000_000_0)
             } while nthreads == 1
             close(s)
             nthreads -= 1

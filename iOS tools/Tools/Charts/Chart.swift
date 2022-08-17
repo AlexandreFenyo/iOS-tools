@@ -848,12 +848,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         self.delta = delta
     }
 
-    // LE PB : ce async sur handleTap
-    @objc
-    func XXXhandleTap(_ gesture: UITapGestureRecognizer) async {
-        return
-    }
-    
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
