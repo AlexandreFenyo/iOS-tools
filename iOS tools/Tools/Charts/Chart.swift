@@ -367,6 +367,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Display only segments or points that can be viewed
     private func drawCurveAsync(ts: TimeSeries) async {
         let elts = await ts.getElements()
+        // REMETTRE ICI - on a tout les elts du moment
+        print("drawCurve dans drawCurveAsync() \(elts.count)")
         drawCurve(elts: elts)
     }
     
@@ -545,6 +547,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     // Create or update chart components
+    // PB ICI : elts n'est pas toujours à jour
     private func createChartComponentsFromElts(date: Date, max_val: Float, elts: [TimeSeriesElement]) {
         // Update state
         highest = max_val
@@ -774,7 +777,11 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     self.grid_node!.position.x += self.grid_size.width
                     self.curve_node!.position.x -= self.grid_size.width
                     self.updateXaxis(bottom_mask_node: self.bottom_mask_node!, curve_node: self.curve_node!)
+
+                    // REMETTRE ICI - pas tous les elts
+                    print("drawCurve dans createChartComponentsFromElts() \(elts.count)")
                     self.drawCurve(elts: elts)
+
                 }
             }
             // Launch animation
