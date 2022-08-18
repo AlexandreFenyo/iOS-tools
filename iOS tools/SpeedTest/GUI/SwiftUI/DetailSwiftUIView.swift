@@ -32,7 +32,7 @@ public actor PingLoop {
                 if  address.getFamily() == AF_INET {
                     // CA PLANTE ICI à cause d'un problème de concurrence
                     await ts.add(TimeSeriesElement(date: Date(), value: 50))
- 
+                    
                     var hdr = icmp()
                     hdr.icmp_type = UInt8(ICMP_ECHO)
                     hdr.icmp_code = 0
@@ -56,7 +56,7 @@ public actor PingLoop {
                     
                 }
                 try await Task.sleep(nanoseconds: 1_000_000_000)
-//                try await Task.sleep(nanoseconds: 1_000_000_0)
+                //                try await Task.sleep(nanoseconds: 1_000_000_0)
             } while nthreads == 1
             close(s)
             nthreads -= 1
@@ -76,36 +76,135 @@ struct DetailSwiftUIView: View {
         ScrollView {
             
             VStack {
-                GeometryReader { geom in
-                    SpriteView(scene: {
-                        
-                        print("(re-)create scene")
-                        let scene = SKScene()
-                        scene.size = CGSize(width: geom.size.width, height: 300)
-                        scene.scaleMode = .fill
-                        
-                        Task {
-                            let chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
-                            scene.addChild(chart_node)
-                            chart_node.registerGestureRecognizers(view: view, delta: 40)
-                            chart_node.position = CGPoint(x: 0, y: 0)
-                            await ts.add(TimeSeriesElement(date: Date(), value: 5.0))
-                        }
-                        
-                        return scene
-                    }())
+                
+                VStack {
+                    GeometryReader { geom in
+                        SpriteView(scene: {
+                            
+                            print("(re-)create scene")
+                            let scene = SKScene()
+                            scene.size = CGSize(width: geom.size.width, height: 300)
+                            scene.scaleMode = .fill
+                            
+                            Task {
+                                let chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
+                                scene.addChild(chart_node)
+                                chart_node.registerGestureRecognizers(view: view, delta: 40)
+                                chart_node.position = CGPoint(x: 0, y: 0)
+                                await ts.add(TimeSeriesElement(date: Date(), value: 5.0))
+                            }
+                            
+                            return scene
+                        }())
+                    }
+                    .frame(minWidth: 0, idealWidth: UIScreen.main.bounds.size.width, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
+                    
                 }
-                .frame(minWidth: 0, idealWidth: UIScreen.main.bounds.size.width, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
+                
+                Text("Séparation")
+
+                HStack {
+                    Button {
+                    } label: {
+                        Label("scan TCP ports", systemImage: "rectangle.split.2x2")
+                    }
+                    
+                    Spacer()
+
+                    Button {
+                    } label: {
+                        Label("UDP flood", systemImage: "rectangle.split.2x2")
+                    }
+
+                    Spacer()
+                    
+                    Button {
+                    } label: {
+                        Label("TCP flood", systemImage: "rectangle.split.2x2")
+                    }
+
+                    Spacer()
+
+                    Button {
+                    } label: {
+                        Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2")
+                    }
+
+                    Button {
+                    } label: {
+                        Label("ICMP (ping)", systemImage: "rectangle.split.2x2")
+                    }
+                }
+
+                Group {
+                    HStack {
+                        Text("UDP sent throughput")
+                        Spacer()
+                        Text("20 Mbit/s")
+                    }
+                    
+                    HStack {
+                        Text("UDP packets sent throughput")
+                        Spacer()
+                        Text("10 pkt/s")
+                    }
+                    
+                    HStack {
+                        Text("TCP bits received throughput")
+                        Spacer()
+                        Text("20 Mbit/s")
+                    }
+                    
+                    HStack {
+                        Text("TCP bits sent throughput")
+                        Spacer()
+                        Text("10 Mbit/s")
+                    }
+                    
+                    HStack {
+                        Text("ICMP latency")
+                        Spacer()
+                        Text("12 ms")
+                    }
+                    
+                    HStack {
+                        Text("IP address")
+                        Spacer()
+                        Text("127.0.0.1")
+                    }
+                    
+                    HStack {
+                        Text("names")
+                        Spacer()
+                        VStack {
+                            Text("ipad.toto")
+                            Text("localhost")
+                        }
+                    }
+                }
+
+                Group {
+                    
+                    HStack {
+                        Text("ports")
+                        Spacer()
+                        VStack {
+                            Text("TCP/22")
+                            Text("TCP/80")
+                        }
+                    }
+                
+                    HStack {
+                        Text("interface")
+                        Spacer()
+                        Text("en0")
+                    }
+
+                }
+                
+                // boutons : pour envoyer ICMP, pour se connecter au chargen, pour faire un scan TCP
                 
             }
-            
-            Text("Séparation")
-            Button {
-            } label: {
-                Label("Level 1", systemImage: "rectangle.split.2x2")
-            }
-            
-            // CONTINUER ICI POUR METTRE LES ELEMENTS A AFFICHER DANS LA FENETRE DE DROITE
             
         } // ScrollView
         
