@@ -51,15 +51,63 @@ class DetailViewController: UIViewController {
 //        }
     }
 
-        // Address selected by the user
+    // called by MasterViewController when the user selects an address
+    public func addressSelected(_ address: IPAddress) {
+        // retrouver le node
+        var node: Node? = nil
+        if address.getFamily() == AF_INET {
+            let v4addr = address as! IPv4Address
+            for n in DBMaster.shared.nodes {
+                if n.v4_addresses.contains(v4addr) {
+                    node = n
+                }
+            }
+        } else {
+            let v6addr = address as! IPv6Address
+            for n in DBMaster.shared.nodes {
+                if n.v6_addresses.contains(v6addr) {
+                    node = n
+                }
+            }
+        }
+        
+        print("set current_node")
+        // mettre à jour l'état de DetailSwiftUIView
+        hostingViewController.rootView.current_node = node
+        hostingViewController.rootView.current_node_test = "toto"
+        
+    }
+
+    // Address selected by the user
+    /*
     public var address : IPAddress? {
         didSet {
+            // retrouver le node
+            var node: Node? = nil
+            if address?.getFamily() == AF_INET {
+                let v4addr = address as! IPv4Address
+                for n in DBMaster.shared.nodes {
+                    if n.v4_addresses.contains(v4addr) {
+                        node = n
+                    }
+                }
+            } else {
+                let v6addr = address as! IPv6Address
+                for n in DBMaster.shared.nodes {
+                    if n.v6_addresses.contains(v6addr) {
+                        node = n
+                    }
+                }
+            }
+            print("node:\(node)")
+                
+            
             Task {
                 if oldValue != address {
                     //                refreshUI()
                     await hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
                     if address != nil {
-                        if  address?.getFamily() == AF_INET {
+                        if address?.getFamily() == AF_INET {
                             Task {
                                 // c'est exécuté dans le MainActor car un sleep(100) bloque toute l'appli
                                 try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
@@ -70,7 +118,7 @@ class DetailViewController: UIViewController {
             }
         }
     }
-
+*/
 
     
 /*

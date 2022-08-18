@@ -18,7 +18,7 @@ public actor PingLoop {
     init() {}
     
     public func start(ts: TimeSeries, address: IPAddress) async throws {
-        print("AVANT")
+        print("PingLoop.start()")
         if let address = address as? IPv4Address {
             let address: IPv4Address = address.copy() as! IPv4Address
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
@@ -70,7 +70,11 @@ struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
     
     public let view: UIView
-    
+
+    // trouver comment faire une modif de ce state depuis UIKit
+    @State public var current_node: Node? = nil
+    @State public var current_node_test: String? = nil
+
     var body: some View {
         ScrollView {
             
@@ -101,6 +105,7 @@ struct DetailSwiftUIView: View {
                 }
                 
                 Text("Séparation")
+                Text(current_node_test == nil ? "nil" : current_node_test!)
 
                 HStack {
                     Button {

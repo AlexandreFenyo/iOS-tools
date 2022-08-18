@@ -36,7 +36,7 @@ class DeviceCell : UITableViewCell {
     @IBOutlet weak var rect2: UIView!
 }
 
-// The MasterViewController instance is the delegate for the UITableView
+// The MasterViewController instance is the delegate for the main UITableView
 class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
@@ -268,7 +268,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
         print(address.toNumericString()!, "selected")
-        detail_view_controller!.address = address
+//        detail_view_controller!.address = address
+        detail_view_controller!.addressSelected(address)
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected

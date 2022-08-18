@@ -204,6 +204,7 @@ class DBMaster {
     public var sections : [SectionType: Section]
     public var nodes : Set<Node>
     public var networks : Set<IPNetwork>
+    
     static public let shared = DBMaster()
 
     public func addNode(_ new_node: Node) -> ([IndexPath], [IndexPath]) {
