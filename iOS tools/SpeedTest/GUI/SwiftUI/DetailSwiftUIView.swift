@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SpriteKit
+//import Foundation
 
 var delta: CGFloat?
 
@@ -71,10 +72,29 @@ struct DetailSwiftUIView: View {
     
     public let view: UIView
 
-    // trouver comment faire une modif de ce state depuis UIKit
-    @State public var current_node: Node? = nil
-    @State public var current_node_test: String? = nil
+    // trouver comment faire une modif de ce state depuis UIKit: cf TracesSwiftUIView.swift
+    public class DetailViewModel : ObservableObject {
+        @Published private(set) var node: Node? = nil
+        @Published private(set) var family: Int32? = nil
+        @Published private(set) var v4address: IPv4Address? = nil
+        @Published private(set) var v6address: IPv6Address? = nil
+        @Published private(set) var address_str: String? = nil
+        public func setNodeAddress(_ val: Node, _ address: IPAddress) {
+            node = val
+            family = address.getFamily()
+            address_str = address.toNumericString()
+            if family == AF_INET {
+                v4address = address as? IPv4Address
+                v6address = nil
+            } else {
+                v6address = address as? IPv6Address
+                v4address = nil
+            }
+        }
+    }
+    @ObservedObject var model = DetailViewModel()
 
+    
     var body: some View {
         ScrollView {
             
@@ -105,7 +125,7 @@ struct DetailSwiftUIView: View {
                 }
                 
                 Text("Séparation")
-                Text(current_node_test == nil ? "nil" : current_node_test!)
+                Text(model.address_str == nil ? "none" : model.address_str!) // CONTINUER ICI
 
                 HStack {
                     Button {

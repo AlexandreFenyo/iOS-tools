@@ -193,6 +193,7 @@
 				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
 				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 				5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */,
+				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -242,7 +243,6 @@
 				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
 				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
 				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
-				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
 				5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */,
 				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,

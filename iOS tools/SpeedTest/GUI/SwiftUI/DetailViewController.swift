@@ -72,10 +72,7 @@ class DetailViewController: UIViewController {
         }
         
         print("set current_node")
-        // mettre à jour l'état de DetailSwiftUIView
-        hostingViewController.rootView.current_node = node
-        hostingViewController.rootView.current_node_test = "toto"
-        
+        hostingViewController.rootView.model.setNodeAddress(node!, address)
     }
 
     // Address selected by the user
