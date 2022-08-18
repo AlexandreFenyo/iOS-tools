@@ -464,12 +464,16 @@ class MasterViewController: UITableViewController, DeviceManager {
         let node = section!.nodes[index_path.item]
         master_ip_view_controller.node = node
         master_ip_view_controller.master_view_controller = self
+
+        /* si on voulait sélectionner une adresse, on pourrait le faire comme ceci mais pas ici car la première fois où prepare est appelé, on n'a pas le droit d'appeler selectRow ou cellForRow : on a alors un warning pour signaler que ça peut conduire à des bugs
         if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {
             let indexPath = IndexPath(row: 0, section: 0), table_view = master_ip_view_controller.tableView!
             table_view.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
             table_view.cellForRow(at: indexPath)!.setHighlighted(true, animated: true)
+            print("prepare()")
             addressSelected(address: node.v4_addresses.count > 0 ? node.v4_addresses.first! : node.v6_addresses.first!)
         }
+       */
     }
 }
 

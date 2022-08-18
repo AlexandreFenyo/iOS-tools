@@ -30,7 +30,6 @@ public actor PingLoop {
             nthreads += 1
             repeat {
                 if  address.getFamily() == AF_INET {
-                    // CA PLANTE ICI à cause d'un problème de concurrence
                     await ts.add(TimeSeriesElement(date: Date(), value: 50))
                     
                     var hdr = icmp()
