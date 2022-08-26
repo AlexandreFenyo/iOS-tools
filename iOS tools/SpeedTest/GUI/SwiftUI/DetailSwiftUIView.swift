@@ -104,7 +104,7 @@ struct DetailSwiftUIView: View {
                     GeometryReader { geom in
                         SpriteView(scene: {
                             
-                            print("(re-)create scene")
+                            print("(re-)create scene") // BUG : j'ai l'impression que lorsque je recrée la scène, je n'ai plus la possibilité de faire pinch et autres tap sur le graph
                             let scene = SKScene()
                             scene.size = CGSize(width: geom.size.width, height: 300)
                             scene.scaleMode = .fill
