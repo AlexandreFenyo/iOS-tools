@@ -118,6 +118,7 @@ struct DetailSwiftUIView: View {
                                     my_chart_node!.removeGestureRecognizers(view: view)
                                 }
                                 // BUG : les SKChartNode ne sont pas détruits, il doit y avoir des référence qui restent
+                                // Une solution serait de permettre de mettre à jour width et de conserver le même SKChartNode
                                 my_chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
                                 my_scene!.addChild(my_chart_node!)
                                 my_chart_node!.registerGestureRecognizers(view: view, delta: 40)

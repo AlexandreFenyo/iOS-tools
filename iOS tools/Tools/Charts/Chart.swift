@@ -317,7 +317,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         updateStateVariables()
         self.anchorPoint = CGPoint(x: 0, y: 0)
         
-        await ts.register(self)
+//        await ts.register(self)
         
         // Crop the drawing when working in a 2D scene
         if crop {
