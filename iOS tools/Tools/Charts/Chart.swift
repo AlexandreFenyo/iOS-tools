@@ -316,6 +316,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         super.init(texture: nil, color: debug ? .cyan : background, size: full_size)
         updateStateVariables()
         self.anchorPoint = CGPoint(x: 0, y: 0)
+        
         await ts.register(self)
         
         // Crop the drawing when working in a 2D scene
@@ -834,15 +835,29 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let grid_vertical_cost = Float(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)
     }
+
+    var tap_rec: UIGestureRecognizer?
+    var pan_rec: UIGestureRecognizer?
+    var pinch_rec: UIGestureRecognizer?
+    weak var view_rec: UIView?
+
+    public func removeGestureRecognizers(view: UIView) {
+        view_rec = view
+        if tap_rec != nil { view.removeGestureRecognizer(tap_rec!) }
+        if pan_rec != nil { view.removeGestureRecognizer(pan_rec!) }
+        if pinch_rec != nil { view.removeGestureRecognizer(pinch_rec!) }
+    }
     
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
-        print("registerGestureRecognizers")
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
+        tap_rec = UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:)))
+        view.addGestureRecognizer(tap_rec!)
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
+        pan_rec = UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:)))
+        view.addGestureRecognizer(pan_rec!)
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
+        pinch_rec = UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:)))
+        view.addGestureRecognizer(pinch_rec!)
         self.delta = delta
     }
     

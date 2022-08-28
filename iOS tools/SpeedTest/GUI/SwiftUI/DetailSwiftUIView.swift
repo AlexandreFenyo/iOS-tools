@@ -67,6 +67,7 @@ public actor PingLoop {
 public let pingLoop = PingLoop()
 
 var my_scene: SKScene?
+var my_chart_node: SKChartNode?
 
 @MainActor
 struct DetailSwiftUIView: View {
@@ -102,19 +103,25 @@ struct DetailSwiftUIView: View {
                 VStack {
                     GeometryReader { geom in
                         SpriteView(scene: {
-                            if my_scene != nil {
-                                return my_scene!
-                            }
 
+                            if my_scene != nil {
+                                my_scene!.removeChildren(in: [my_chart_node!])
+                            }
+                            print("re-create view=\(view)")
+                            
                             my_scene = SKScene()
                             my_scene!.size = CGSize(width: geom.size.width, height: 300)
                             my_scene!.scaleMode = .fill
                             
                             Task {
-                                let chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
-                                my_scene!.addChild(chart_node)
-                                chart_node.registerGestureRecognizers(view: view, delta: 40)
-                                chart_node.position = CGPoint(x: 0, y: 0)
+                                if my_chart_node != nil {
+                                    my_chart_node!.removeGestureRecognizers(view: view)
+                                }
+                                // BUG : les SKChartNode ne sont pas détruits, il doit y avoir des référence qui restent
+                                my_chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
+                                my_scene!.addChild(my_chart_node!)
+                                my_chart_node!.registerGestureRecognizers(view: view, delta: 40)
+                                my_chart_node!.position = CGPoint(x: 0, y: 0)
                                 await ts.add(TimeSeriesElement(date: Date(), value: 5.0))
                             }
                             

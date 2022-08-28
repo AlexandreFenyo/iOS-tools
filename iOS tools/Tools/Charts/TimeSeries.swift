@@ -26,7 +26,14 @@ public actor TimeSeries {
     public init() { }
 
     public func register(_ receiver: TimeSeriesReceiver) {
+        // acceptable uniquement car on utilise un seul receiver dans cette app, et ça permet d'éviter les références croisées vers les SKChartNode plus utilisés
+        unRegisterAll()
+
         receivers.append(receiver)
+    }
+
+    public func unRegisterAll() {
+        receivers.removeAll()
     }
 
     public func add(_ tse: TimeSeriesElement) async {
