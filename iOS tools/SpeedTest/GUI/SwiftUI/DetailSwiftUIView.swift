@@ -66,6 +66,8 @@ public actor PingLoop {
 
 public let pingLoop = PingLoop()
 
+var my_scene: SKScene?
+
 @MainActor
 struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
@@ -96,27 +98,27 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         ScrollView {
-            
             VStack {
-                
                 VStack {
                     GeometryReader { geom in
                         SpriteView(scene: {
-                            
-                            print("(re-)create scene") // BUG : j'ai l'impression que lorsque je recrée la scène, je n'ai plus la possibilité de faire pinch et autres tap sur le graph
-                            let scene = SKScene()
-                            scene.size = CGSize(width: geom.size.width, height: 300)
-                            scene.scaleMode = .fill
+                            if my_scene != nil {
+                                return my_scene!
+                            }
+
+                            my_scene = SKScene()
+                            my_scene!.size = CGSize(width: geom.size.width, height: 300)
+                            my_scene!.scaleMode = .fill
                             
                             Task {
                                 let chart_node = await SKChartNode(ts: ts, full_size: CGSize(width: geom.size.width, height: 300), grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: nil)
-                                scene.addChild(chart_node)
+                                my_scene!.addChild(chart_node)
                                 chart_node.registerGestureRecognizers(view: view, delta: 40)
                                 chart_node.position = CGPoint(x: 0, y: 0)
                                 await ts.add(TimeSeriesElement(date: Date(), value: 5.0))
                             }
                             
-                            return scene
+                            return my_scene!
                         }())
                     }
                     .frame(minWidth: 0, idealWidth: UIScreen.main.bounds.size.width, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
