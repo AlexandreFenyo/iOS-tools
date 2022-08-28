@@ -93,7 +93,6 @@ struct DetailSwiftUIView: View {
         }
     }
     @ObservedObject var model = DetailViewModel()
-
     
     var body: some View {
         ScrollView {
