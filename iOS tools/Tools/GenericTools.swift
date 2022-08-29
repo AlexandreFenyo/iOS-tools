@@ -40,7 +40,7 @@ extension String {
 }
 
 final class GenericTools : AutoTrace {
-    public static var plane_node : SCNChartNode?
+//    public static var plane_node : SCNChartNode?
     public static var chart_node : SKChartNode?
     
     // holding strong refs to tap targets
@@ -188,15 +188,6 @@ final class GenericTools : AutoTrace {
 
     @MainActor
     public static func createScene(_ view: UIView) async {
-        if await (GenericTools.ts.getElements().count == 0) {
-            let date = Date() // test_date
-            await GenericTools.ts.add(TimeSeriesElement(date: date, value: 10.0))
-            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-5.0)), value: 40.0))
-            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-10.0)), value: 30.0))
-            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-20.0)), value: 50.0))
-            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-45.0)), value: 15.0))
-            await GenericTools.ts.add(TimeSeriesElement(date: date.addingTimeInterval(TimeInterval(-55.0)), value: 12.0))
-        }
         if !alternate() { await createSpriteScene(view as! SKView) }
         else { await create3DChartScene(view as! SCNView) }
     }
@@ -285,38 +276,7 @@ final class GenericTools : AutoTrace {
     // Insert a 3D scene containing a 2D Chart into a view
     @MainActor
     public static func create3DChartScene(_ view: SCNView) async {
-        // create a new scene
-        let scene = SCNScene()
 
-        // create and add a camera to the scene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 5)
-        
-        // set the scene to the view
-        view.scene = scene
-        
-        // allows the user to manipulate the camera
-        view.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
-        view.showsStatistics = true
-
-        // configure the view
-        view.backgroundColor = .black
-     
-        // add a tap gesture recognizer
-        let manage_tap = ManageTapCube(view)
-        // create a strong ref to the target
-        tap_cube_manager.append(manage_tap)
-        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
-        view.addGestureRecognizer(tapGesture)
-
-        plane_node = await SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
-        scene.rootNode.addChildNode(plane_node!)
     }
     
     // Insert the demo ship scene into a view
