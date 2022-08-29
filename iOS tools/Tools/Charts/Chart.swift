@@ -192,8 +192,7 @@ class SKChartNode : SKSpriteNode {
             if crop, let mask_node = ((root_node as! SKCropNode).maskNode as? SKSpriteNode) {
                 mask_node.size.width = new_width
             }
-            await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: highest)
-//            await drawCurveAsync(ts: ts)
+            createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: highest)
         }
     }
     
@@ -206,7 +205,7 @@ class SKChartNode : SKSpriteNode {
     //   - if < 60: must divide 60
     //   - if >= 60 and < 3600: must be a multiple of 60 and divide 3600
     //   - if >= 3600: must be a multiple of 3600
-    public init(ts: TimeSeries, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true, follow_view : UIView? = nil) async {
+    public init(full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, crop: Bool = true, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true, follow_view : UIView? = nil) {
         self.debug = debug
         self.spline = spline
         self.vertical_auto_layout = vertical_auto_layout
@@ -253,9 +252,8 @@ class SKChartNode : SKSpriteNode {
         } else { root_node = self }
         
         // Create chart components
-        var max_val : Float = 0
-        await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: max_val)
-//        await drawCurveAsync(ts: ts)
+        let max_val : Float = 0
+        createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: max_val)
     }
     
     // Update displayed dates
@@ -457,7 +455,7 @@ class SKChartNode : SKSpriteNode {
         } else { drawPoints(&points, tse_displayed) }
     }
     
-    private func createChartComponentsAsync(date: Date, max_val: Float) async {
+    private func createChartComponentsAsync(date: Date, max_val: Float) {
         let elts = [TimeSeriesElement]()
         createChartComponentsFromElts(date: date, max_val: max_val, elts: elts)
     }
@@ -799,10 +797,10 @@ class SKChartNode : SKSpriteNode {
                         mode = .followDate
                         grid_time_interval = initial_grid_time_interval
                         
-                        await createChartComponentsAsync(date: Date(), max_val: highest)
+                        createChartComponentsAsync(date: Date(), max_val: highest)
                         
-                    } else { await createChartComponentsAsync(date: current_date, max_val: highest) }
-                } else if mode == .followDate { await createChartComponentsAsync(date: Date(), max_val: highest) }
+                    } else { createChartComponentsAsync(date: current_date, max_val: highest) }
+                } else if mode == .followDate { createChartComponentsAsync(date: Date(), max_val: highest) }
 //                await drawCurveAsync(ts: ts)
                 
                 let finger = SKShapeNode(circleOfRadius: 5.0)
@@ -830,19 +828,19 @@ class SKChartNode : SKSpriteNode {
                 if mode == .followDate { current_date = Date() }
                 date_at_start_of_gesture = current_date
                 mode = .followGesture
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
             
             if gesture_state == .changed {
                 current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point!.x / grid_size.width) * grid_time_interval)
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
             
             if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
         }
@@ -861,19 +859,19 @@ class SKChartNode : SKSpriteNode {
                 grid_time_interval_at_start_of_gesture = grid_time_interval
                 mode = .followGesture
                 
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
             
             if gesture_state == .changed {
                 grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture_scale)
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
             
             if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
-                await createChartComponentsAsync(date: current_date, max_val: highest)
+                createChartComponentsAsync(date: current_date, max_val: highest)
 //                await drawCurveAsync(ts: ts)
             }
         }
