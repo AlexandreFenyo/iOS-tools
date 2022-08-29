@@ -105,7 +105,11 @@ struct DetailSwiftUIView: View {
                         SpriteView(scene: {
 
                             if my_scene != nil {
-                                my_scene!.removeChildren(in: [my_chart_node!])
+//                                my_scene!.removeChildren(in: [my_chart_node!])
+                                Task {
+                                    await my_chart_node!.updateWidth(geom.size.width)
+                                }
+                                return my_scene!
                             }
                             print("re-create view=\(view)")
                             

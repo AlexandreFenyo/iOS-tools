@@ -204,6 +204,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     public func testDebug() {
     }
     
+    public func updateWidth(_ new_width: CGFloat) async {
+        print("update width: new width = \(new_width)")
+        full_size.width = new_width
+        size.width = new_width
+        await createChartComponentsAsync(date: current_date, max_val: highest)
+        updateStateVariables()
+    }
+    
     // Update properties derivated from state
     private func updateStateVariables() {
         // Graph displayed size
