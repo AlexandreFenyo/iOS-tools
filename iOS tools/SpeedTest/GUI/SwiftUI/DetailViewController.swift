@@ -9,14 +9,6 @@
 import UIKit
 import SpriteKit
 import SwiftUI
-class MySKSceneDelegate : NSObject, SKSceneDelegate {
-//    public var nodes : [SKChartNode] = []
-
-    /*
-    public func update(_ currentTime: TimeInterval, for scene: SKScene) {
-        for n in nodes { n.updateWidth() }
-    }*/
-}
 
 @MainActor
 class DetailViewController: UIViewController {

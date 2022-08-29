@@ -1,4 +1,6 @@
 
+// SOLUTION : ne pas mettre le SKScene dans SwiftUI !
+
 import SwiftUI
 import SpriteKit
 
@@ -6,11 +8,8 @@ var cpt: Int = 0
 
 @MainActor
 struct DetailSwiftUIView: View {
-    public let ts = TimeSeries()
-    
     public let view: UIView
     
-    // trouver comment faire une modif de ce state depuis UIKit: cf TracesSwiftUIView.swift
     public class DetailViewModel : ObservableObject {
         @Published private(set) var address_str: String = "vide"
         public func setNodeAddress() {
