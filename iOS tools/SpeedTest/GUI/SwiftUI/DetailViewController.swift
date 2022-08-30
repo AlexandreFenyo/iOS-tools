@@ -10,20 +10,24 @@ import UIKit
 import SpriteKit
 import SwiftUI
 class MySKSceneDelegate : NSObject, SKSceneDelegate {
-//    public var nodes : [SKChartNode] = []
+    public var nodes : [SKChartNode] = []
 
-    /*
     public func update(_ currentTime: TimeInterval, for scene: SKScene) {
-        for n in nodes { n.updateWidth() }
-    }*/
+        //for n in nodes { n.updateWidth() }
+    }
 }
 
 @MainActor
 class DetailViewController: UIViewController {
+    private var chart_node : SKChartNode?
+    private var scene_delegate : MySKSceneDelegate?
+    private let ts = TimeSeries()
 
-    @IBOutlet weak var view1: UIView!
-    @IBOutlet weak var view2: UIView!
     
+    @IBOutlet weak var view1: SKView!
+    @IBOutlet weak var view2: UIView!
+//    @IBOutlet private weak var ingress_chart: SKView!
+
     private lazy var hostingViewController = makeHostingController()
 
     private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
@@ -51,6 +55,26 @@ class DetailViewController: UIViewController {
             hostingViewController.view.widthAnchor.constraint(equalTo: view2.widthAnchor),
             hostingViewController.view.heightAnchor.constraint(equalTo: view2.heightAnchor)
         ])
+
+        let scene = SKScene(size: view1.bounds.size)
+        scene.backgroundColor = .brown
+
+        scene_delegate = MySKSceneDelegate()
+        scene.delegate = scene_delegate
+
+        view1.presentScene(scene)
+
+        Task {
+            await chart_node = SKChartNode(ts: ts, full_size: view1.bounds.size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
+            scene.addChild(chart_node!)
+            scene_delegate!.nodes.append(chart_node!)
+            
+            chart_node!.position = CGPoint(x: 0, y: 0)
+            chart_node!.registerGestureRecognizers(view: view)
+        }
+
+
+
     }
     
     public func stopReceivingICMP() {
@@ -178,71 +202,6 @@ class DetailViewController: UIViewController {
 //        chart_node!.scene!.view!.isPaused = true
     }
 */
-/*
-    @objc
-    private func switchChanged(_ sender: Any) {
-        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == true {
-            if DetailViewController.cl != nil {
-                print("switchChanged warning: already running")
-                chart_switch1.setOn(false, animated: true)
-                return
-            }
-
-            // démarrer les stats
-            print("address:", address!)
-// à remettre
-//            DetailViewController.cl = LocalChargenClient(address: address!)
-//            DetailViewController.cl!.start()
-            
-// à remettre
-// test ping
-//            DetailViewController.cl3 = LocalPingClient(address: address!)
-//            DetailViewController.cl3!.start()
-
-            // à remettre
-            // test flood
-            DetailViewController.cl4 = LocalFloodClient(address: address!)
-            DetailViewController.cl4!.start()
-
-        }
-
-        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == false {
-            if DetailViewController.cl == nil {
-                print("switchChanged warning: was not running")
-                return
-            }
-
-            print("disconnect from:", address!)
-            DetailViewController.cl!.stop()
-        }
-    }
-
-    @objc
-    private func switch2Changed(_ sender: Any) {
-        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == true {
-            if DetailViewController.cl2 != nil {
-                print("switchChanged warning: already running")
-                chart_switch1.setOn(false, animated: true)
-                return
-            }
-            
-            // démarrer les stats
-            print("address:", address!)
-            DetailViewController.cl2 = LocalDiscardClient(address: address!)
-            DetailViewController.cl2!.start()
-        }
-        
-        if sender as? UISwitch == chart_switch1, chart_switch1.isOn == false {
-            if DetailViewController.cl2 == nil {
-                print("switchChanged warning: was not running")
-                return
-            }
-            
-            print("disconnect from:", address!)
-            DetailViewController.cl2!.stop()
-        }
-    }
- */
 
     /*
     override func viewDidLoad() {

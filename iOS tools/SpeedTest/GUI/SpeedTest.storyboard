@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="63W-kR-2zS">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="63W-kR-2zS" customClass="SKView">
                                 <rect key="frame" x="0.0" y="0.0" width="1024" height="400"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <constraints>
