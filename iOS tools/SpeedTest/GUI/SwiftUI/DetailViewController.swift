@@ -13,7 +13,9 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
     public var nodes : [SKChartNode] = []
 
     public func update(_ currentTime: TimeInterval, for scene: SKScene) {
-        //for n in nodes { n.updateWidth() }
+        Task {
+        for n in nodes { await n.updateWidth() }
+        }
     }
 }
 
@@ -26,7 +28,6 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
-//    @IBOutlet private weak var ingress_chart: SKView!
 
     private lazy var hostingViewController = makeHostingController()
 
@@ -38,6 +39,9 @@ class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // sert à rien
+//        navigationItem.leftItemsSupplementBackButton = true
 
         addChild(hostingViewController)
         view2.addSubview(hostingViewController.view)
@@ -57,6 +61,7 @@ class DetailViewController: UIViewController {
         ])
 
         let scene = SKScene(size: view1.bounds.size)
+        // pour débugguer si taille mal ajustée
         scene.backgroundColor = .brown
 
         scene_delegate = MySKSceneDelegate()
@@ -71,18 +76,14 @@ class DetailViewController: UIViewController {
             
             chart_node!.position = CGPoint(x: 0, y: 0)
             chart_node!.registerGestureRecognizers(view: view)
+
+            // view1.showsFPS = true
+            // view1.showsQuadCount = true
+
         }
-
-
 
     }
     
-    public func stopReceivingICMP() {
-//        Task {
-//            await pingLoop.stop()
-//        }
-    }
-
     // called by MasterViewController when the user selects an address
     public func addressSelected(_ address: IPAddress) {
         // retrouver le node
@@ -107,111 +108,31 @@ class DetailViewController: UIViewController {
         hostingViewController.rootView.model.setNodeAddress(node!, address)
     }
 
-    // Address selected by the user
-    /*
-    public var address : IPAddress? {
-        didSet {
-            // retrouver le node
-            var node: Node? = nil
-            if address?.getFamily() == AF_INET {
-                let v4addr = address as! IPv4Address
-                for n in DBMaster.shared.nodes {
-                    if n.v4_addresses.contains(v4addr) {
-                        node = n
-                    }
-                }
-            } else {
-                let v6addr = address as! IPv6Address
-                for n in DBMaster.shared.nodes {
-                    if n.v6_addresses.contains(v6addr) {
-                        node = n
-                    }
-                }
-            }
-            print("node:\(node)")
-                
-            
-            Task {
-                if oldValue != address {
-                    //                refreshUI()
-                    await hostingViewController.rootView.ts.add(TimeSeriesElement(date: Date(), value: 50))
-                    if address != nil {
-                        if address?.getFamily() == AF_INET {
-                            Task {
-                                // c'est exécuté dans le MainActor car un sleep(100) bloque toute l'appli
-                                try await pingLoop.start(ts: hostingViewController.rootView.ts, address: address!)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-*/
-
-    
-/*
-    private var chart_node : SKChartNode?
-    private var scene_delegate : MySKSceneDelegate?
-    private let ts = TimeSeries()
-
-    private static var cl: LocalChargenClient?
-    private static var cl2: LocalDiscardClient?
-    private static var cl3: LocalPingClient?
-    private static var cl4: LocalFloodClient?
-*/
-/*
-    @IBOutlet weak var view1: UIView!
-    @IBOutlet private weak var detail_label: UILabel!
-    @IBOutlet private weak var ingress_chart: SKView!
-    @IBOutlet weak var chart_switch1: UISwitch!
-*/
-    /*
-    // Node selected by the user
-    public var node : Node? {
-        didSet {
-            if oldValue !== node {
-                refreshUI()
-            }
-        }
-    }
-
-    // Address selected by the user
-    public var address : IPAddress? {
-        didSet {
-            if oldValue != address {
-                refreshUI()
-            }
-        }
-    }
- */
-
-   
     /*
     private func refreshUI() {
         print("refresh UI")
         loadViewIfNeeded()
 //        detail_label.text = node == nil ? "no selection" : (node!.mcast_dns_names.map { $0.toString() } + node!.dns_names.map { $0.toString() }).first
     }
-
+*/
+    
     override func viewDidAppear(_ animated: Bool) {
-//        chart_node!.scene!.view!.isPaused = false
+        if chart_node != nil {
+            chart_node!.scene!.view!.isPaused = false
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-//        chart_node!.scene!.view!.isPaused = true
+        if chart_node != nil {
+            chart_node!.scene!.view!.isPaused = true
+        }
     }
-*/
 
     /*
     override func viewDidLoad() {
         super.viewDidLoad()
 
         navigationItem.leftItemsSupplementBackButton = true
-
-        // enable 1 of the 2 following lines to test
-        chart_switch1!.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
-        // chart_switch1!.addTarget(self, action: #selector(switch2Changed(_:)), for: .valueChanged)
 
         let scene = SKScene(size: ingress_chart.bounds.size)
         scene.backgroundColor = .brown

@@ -77,7 +77,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.updateLocalNodeAndGateways()
 
             // Stop receiving ICMP for the chart
-            self.detail_view_controller?.stopReceivingICMP()
+//            self.detail_view_controller?.stopReceivingICMP()
         
             // Use ICMP to find new nodes
             let tb = TCPPortBrowser(device_manager: self)
