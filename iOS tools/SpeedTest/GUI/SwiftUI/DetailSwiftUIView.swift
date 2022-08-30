@@ -98,9 +98,11 @@ struct DetailSwiftUIView: View {
         ScrollView {
             
             VStack {
-                
+ 
+                /*
                 VStack {
                     GeometryReader { geom in
+
                         SpriteView(scene: {
                             
                             print("(re-)create scene") // BUG : j'ai l'impression que lorsque je recrée la scène, je n'ai plus la possibilité de faire pinch et autres tap sur le graph
@@ -122,6 +124,7 @@ struct DetailSwiftUIView: View {
                     .frame(minWidth: 0, idealWidth: UIScreen.main.bounds.size.width, maxWidth: .infinity, minHeight: 0, idealHeight: 300, maxHeight: .infinity, alignment: .center)
                     
                 }
+                */
                 
                 Text("Séparation")
                 Text(model.address_str == nil ? "none" : model.address_str!) // CONTINUER ICI
