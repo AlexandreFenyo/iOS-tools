@@ -70,7 +70,7 @@ class DetailViewController: UIViewController {
             scene_delegate!.nodes.append(chart_node!)
             
             chart_node!.position = CGPoint(x: 0, y: 0)
-            chart_node!.registerGestureRecognizers(view: view)
+            chart_node!.registerGestureRecognizers(view: view1)
 
             // view1.showsFPS = true
             // view1.showsQuadCount = true
