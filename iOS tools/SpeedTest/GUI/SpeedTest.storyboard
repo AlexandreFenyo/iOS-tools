@@ -13,28 +13,44 @@
         <scene sceneID="cb1-aX-Sez">
             <objects>
                 <viewController id="XbL-sj-fir" customClass="DetailViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
-                    <stackView key="view" opaque="NO" contentMode="scaleToFill" axis="vertical" id="lpj-D0-w2o">
+                    <view key="view" contentMode="scaleToFill" id="Qqr-xO-lIB">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="63W-kR-2zS" customClass="SKView">
-                                <rect key="frame" x="0.0" y="0.0" width="1024" height="400"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
+                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
+                                <subviews>
+                                    <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="400"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="400" id="sQ2-GI-tMh"/>
+                                        </constraints>
+                                    </skView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Ku-Sp-0Me" userLabel="view2">
+                                        <rect key="frame" x="0.0" y="400" width="1024" height="836"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="400" id="ArV-VU-HKf"/>
+                                    <constraint firstItem="7Ku-Sp-0Me" firstAttribute="top" secondItem="tyb-c3-KLe" secondAttribute="bottom" id="0MR-qu-ctk"/>
+                                    <constraint firstItem="tyb-c3-KLe" firstAttribute="top" secondItem="nKf-do-woU" secondAttribute="top" id="ys8-AM-YrO"/>
                                 </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uvg-Qm-XXL">
-                                <rect key="frame" x="0.0" y="400" width="1024" height="966"/>
-                                <color key="backgroundColor" systemColor="systemPinkColor"/>
-                            </view>
+                            </stackView>
                         </subviews>
-                        <viewLayoutGuide key="safeArea" id="n9i-OZ-14C"/>
-                    </stackView>
+                        <viewLayoutGuide key="safeArea" id="wSB-Fv-k0s"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="centerY" secondItem="Qqr-xO-lIB" secondAttribute="centerY" id="6yv-bm-E9k"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="7pf-xK-QiN"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="width" secondItem="nKf-do-woU" secondAttribute="width" id="Gfi-Et-4AW"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="centerX" secondItem="Qqr-xO-lIB" secondAttribute="centerX" id="K9E-e7-5up"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="T8K-Rg-IH4"/>
+                        </constraints>
+                    </view>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
                     <connections>
-                        <outlet property="view1" destination="63W-kR-2zS" id="Tbf-wU-vfK"/>
-                        <outlet property="view2" destination="uvg-Qm-XXL" id="Wo1-1F-ILj"/>
+                        <outlet property="view1" destination="tyb-c3-KLe" id="OW4-XM-h95"/>
+                        <outlet property="view2" destination="7Ku-Sp-0Me" id="k9t-j6-ucc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jo3-ET-mk8" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -303,7 +319,7 @@
                     <view key="view" contentMode="scaleToFill" id="mpn-fn-ggL">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="AM3-10-Cs8"/>
+                        <viewLayoutGuide key="safeArea" id="GHG-J4-doc"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Traces" image="text.justify" catalog="system" id="tYh-kU-aKM"/>
@@ -319,7 +335,7 @@
                     <view key="view" contentMode="scaleToFill" id="0O5-Tp-Ub9">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="myy-AV-da8"/>
+                        <viewLayoutGuide key="safeArea" id="yMl-Hs-n6r"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="CLI" image="terminal" catalog="system" id="W16-9t-txw"/>
@@ -376,12 +392,6 @@
         <image name="text.justify" catalog="system" width="128" height="100"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemPinkColor">
-            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
