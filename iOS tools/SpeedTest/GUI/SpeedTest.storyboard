@@ -13,17 +13,33 @@
         <scene sceneID="cb1-aX-Sez">
             <objects>
                 <viewController id="XbL-sj-fir" customClass="DetailViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="TgX-dh-OJP">
+                    <stackView key="view" opaque="NO" contentMode="scaleToFill" axis="vertical" id="lpj-D0-w2o">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="M3G-gV-pJK"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </view>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="63W-kR-2zS">
+                                <rect key="frame" x="0.0" y="0.0" width="1024" height="400"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="400" id="ArV-VU-HKf"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uvg-Qm-XXL">
+                                <rect key="frame" x="0.0" y="400" width="1024" height="966"/>
+                                <color key="backgroundColor" systemColor="systemPinkColor"/>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="n9i-OZ-14C"/>
+                    </stackView>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
+                    <connections>
+                        <outlet property="view1" destination="63W-kR-2zS" id="Tbf-wU-vfK"/>
+                        <outlet property="view2" destination="uvg-Qm-XXL" id="Wo1-1F-ILj"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jo3-ET-mk8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1108.2733812949641" y="302.15827338129498"/>
+            <point key="canvasLocation" x="1108.0078125" y="301.75695461200581"/>
         </scene>
         <!--Target List-->
         <scene sceneID="pIG-58-iAL">
@@ -360,6 +376,12 @@
         <image name="text.justify" catalog="system" width="128" height="100"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPinkColor">
+            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

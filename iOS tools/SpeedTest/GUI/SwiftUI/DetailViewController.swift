@@ -21,6 +21,9 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
 @MainActor
 class DetailViewController: UIViewController {
 
+    @IBOutlet weak var view1: UIView!
+    @IBOutlet weak var view2: UIView!
+    
     private lazy var hostingViewController = makeHostingController()
 
     private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
@@ -31,17 +34,22 @@ class DetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         addChild(hostingViewController)
-        view.addSubview(hostingViewController.view)
+        view2.addSubview(hostingViewController.view)
+
+        //        addChild(hostingViewController)
+        //        view.addSubview(hostingViewController.view)
+
         hostingViewController.didMove(toParent: self)
 
 //        hostingViewController.rootView.pingloop?.start(ts: hostingViewController.rootView.ts)
         
         NSLayoutConstraint.activate([
-            hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-            hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
+            hostingViewController.view.topAnchor.constraint(equalTo: view2.topAnchor),
+            hostingViewController.view.leadingAnchor.constraint(equalTo: view2.leadingAnchor),
+            hostingViewController.view.widthAnchor.constraint(equalTo: view2.widthAnchor),
+            hostingViewController.view.heightAnchor.constraint(equalTo: view2.heightAnchor)
         ])
     }
     
