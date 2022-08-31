@@ -39,8 +39,8 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // sert à rien
-//        navigationItem.leftItemsSupplementBackButton = true
+        // utile sur iPhone, pour pouvoir revenir en arrière depuis la vue avec le chart
+        navigationItem.leftItemsSupplementBackButton = true
 
         addChild(hostingViewController)
         view2.addSubview(hostingViewController.view)
