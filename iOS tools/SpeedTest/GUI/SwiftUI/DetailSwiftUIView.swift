@@ -71,16 +71,31 @@ struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
     
     public let view: UIView
-
+    
     // trouver comment faire une modif de ce state depuis UIKit: cf TracesSwiftUIView.swift
     public class DetailViewModel : ObservableObject {
-        @Published private(set) var node: Node? = nil
         @Published private(set) var family: Int32? = nil
         @Published private(set) var v4address: IPv4Address? = nil
         @Published private(set) var v6address: IPv6Address? = nil
         @Published private(set) var address_str: String? = nil
-        public func setNodeAddress(_ val: Node, _ address: IPAddress) {
-            node = val
+        @Published private(set) var names: [String] = []
+        @Published private(set) var addresses: [String] = []
+        @Published private(set) var ports: [String] = []
+        @Published private(set) var interfaces: [String] = []
+
+        public func setNodeAddress(_ node: Node, _ address: IPAddress) {
+            names = node.dns_names.map { $0.toString() }
+            addresses = node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }
+            interfaces.removeAll()
+            for addr in node.v6_addresses {
+                if let substrings = addr.toNumericString()?.split(separator: "%") {
+                    if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
+                        interfaces.append(String(substrings[1]))
+                    }
+                }
+            }
+            ports = node.tcp_ports.map { "TCP/\($0)" }
+            
             family = address.getFamily()
             address_str = address.toNumericString()
             if family == AF_INET {
@@ -98,9 +113,8 @@ struct DetailSwiftUIView: View {
         ScrollView {
             
             VStack {
-                Text("Séparation")
-                Text(model.address_str == nil ? "none" : model.address_str!) // CONTINUER ICI
-
+                Text(model.address_str == nil ? "none" : model.address_str!)
+                
                 HStack {
                     Button {
                     } label: {
@@ -108,32 +122,32 @@ struct DetailSwiftUIView: View {
                     }
                     
                     Spacer()
-
+                    
                     Button {
                     } label: {
                         Label("UDP flood", systemImage: "rectangle.split.2x2")
                     }
-
+                    
                     Spacer()
                     
                     Button {
                     } label: {
                         Label("TCP flood", systemImage: "rectangle.split.2x2")
                     }
-
+                    
                     Spacer()
-
+                    
                     Button {
                     } label: {
                         Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2")
                     }
-
+                    
                     Button {
                     } label: {
                         Label("ICMP (ping)", systemImage: "rectangle.split.2x2")
                     }
                 }
-
+                
                 Group {
                     HStack {
                         Text("UDP sent throughput")
@@ -168,36 +182,46 @@ struct DetailSwiftUIView: View {
                     HStack {
                         Text("IP address")
                         Spacer()
-                        Text("127.0.0.1")
+                        VStack {
+                            ForEach(model.addresses, id: \.self) { name in
+                                Text(name)
+                            }
+                        }
                     }
                     
                     HStack {
                         Text("names")
                         Spacer()
                         VStack {
-                            Text("ipad.toto")
-                            Text("localhost")
+                            ForEach(model.names, id: \.self) { name in
+                                Text(name)
+                            }
                         }
                     }
                 }
-
+                
                 Group {
                     
                     HStack {
                         Text("ports")
                         Spacer()
                         VStack {
-                            Text("TCP/22")
-                            Text("TCP/80")
+                            ForEach(model.ports, id: \.self) { name in
+                                Text(name)
+                            }
                         }
                     }
-                
+                    
                     HStack {
-                        Text("interface")
+                        Text("interfaces")
                         Spacer()
-                        Text("en0")
+                        VStack {
+                            ForEach(model.interfaces, id: \.self) { name in
+                                Text(name)
+                            }
+                        }
                     }
-
+                    
                 }
                 
                 // boutons : pour envoyer ICMP, pour se connecter au chargen, pour faire un scan TCP
