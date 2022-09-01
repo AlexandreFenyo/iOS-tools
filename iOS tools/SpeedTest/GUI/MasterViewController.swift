@@ -66,8 +66,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Update nodes and find new nodes
     // Main thread
     private func startBrowsing() {
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {
-            _ in
+        // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
             self.add_button!.isEnabled = false
             self.update_button!.isEnabled = false
@@ -334,6 +334,22 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
         // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+    }
+    
+    // MARK: - Calls from DetailSwiftUIView
+    func scanTCP() {
+        stopBrowsing()
+        
+        self.stop_button!.isEnabled = true
+        self.add_button!.isEnabled = false
+        self.update_button!.isEnabled = false
+
+        let tb = TCPPortBrowser(device_manager: self)
+        self.browser_tcp = tb
+        DispatchQueue.global(qos: .userInitiated).async {
+//            self.browser_tcp?.browse() LIMITER A UNE IP // CONTINUER ICI
+        }
+
     }
 
     // MARK: - DeviceManager protocol

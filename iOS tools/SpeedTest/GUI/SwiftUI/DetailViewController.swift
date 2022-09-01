@@ -14,13 +14,15 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
 
     public func update(_ currentTime: TimeInterval, for scene: SKScene) {
         Task {
-        for n in nodes { await n.updateWidth() }
+            for n in nodes { await n.updateWidth() }
         }
     }
 }
 
 @MainActor
 class DetailViewController: UIViewController {
+    public var master_view_controller: MasterViewController?
+    
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
     private let ts = TimeSeries()
@@ -31,7 +33,7 @@ class DetailViewController: UIViewController {
     private lazy var hostingViewController = makeHostingController()
 
     private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
-        let hostingController = UIHostingController(rootView: DetailSwiftUIView(view: view))
+        let hostingController = UIHostingController(rootView: DetailSwiftUIView(view: view, master_view_controller: master_view_controller!))
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }

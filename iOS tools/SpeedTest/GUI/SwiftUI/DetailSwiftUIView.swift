@@ -69,6 +69,7 @@ struct DetailSwiftUIView: View {
     public let ts = TimeSeries()
     
     public let view: UIView
+    public let master_view_controller: MasterViewController
     
     // trouver comment faire une modif de ce state depuis UIKit: cf TracesSwiftUIView.swift
     public class DetailViewModel : ObservableObject {
@@ -121,6 +122,7 @@ struct DetailSwiftUIView: View {
                 
                 HStack {
                     Button {
+                        master_view_controller.scanTCP()
                     } label: {
                         Label("scan TCP ports", systemImage: "rectangle.split.2x2")
                     }

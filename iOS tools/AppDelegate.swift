@@ -85,6 +85,7 @@ extension UIApplication {}
         masterViewController.traces_view_controller = tracesViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        detailViewController.master_view_controller = masterViewController
         
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
