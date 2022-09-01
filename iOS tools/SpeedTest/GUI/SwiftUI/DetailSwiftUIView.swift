@@ -216,6 +216,7 @@ struct DetailSwiftUIView: View {
                         Text("interfaces")
                         Spacer()
                         VStack {
+                        // BUG ici et pour tous les ForEach ici : id n'est pas un bon id, car deux string contenant la même chose auront le même ID et on aura donc un warning à l'exécution et des bugs qui s'en suivront : cf Demystify SwiftUI dans Apple Developer à 25:30
                             ForEach(model.interfaces, id: \.self) { name in
                                 Text(name)
                             }
