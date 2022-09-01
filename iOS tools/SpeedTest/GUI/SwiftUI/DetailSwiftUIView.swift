@@ -10,8 +10,6 @@ import SwiftUI
 import SpriteKit
 //import Foundation
 
-//var delta: CGFloat?
-
 public actor PingLoop {
     private var address: IPAddress?
     private var nthreads = 0
@@ -78,15 +76,20 @@ struct DetailSwiftUIView: View {
         @Published private(set) var v4address: IPv4Address? = nil
         @Published private(set) var v6address: IPv6Address? = nil
         @Published private(set) var address_str: String? = nil
-        @Published private(set) var names: [String] = []
-        @Published private(set) var addresses: [String] = []
-        @Published private(set) var ports: [String] = []
-        @Published private(set) var interfaces: [String] = []
+
+        @Published private(set) var display_names: String = ""
+        @Published private(set) var display_addresses: String = ""
+        @Published private(set) var display_ports: String = ""
+        @Published private(set) var display_interfaces: String = ""
 
         public func setNodeAddress(_ node: Node, _ address: IPAddress) {
-            names = node.dns_names.map { $0.toString() }
-            addresses = node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }
-            interfaces.removeAll()
+            let sep = "\n"
+
+            display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
+            display_addresses = (node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }).joined(separator: sep)
+            display_ports = node.tcp_ports.map { "TCP/\($0)" }.joined(separator: sep)
+
+            var interfaces = [""]
             for addr in node.v6_addresses {
                 if let substrings = addr.toNumericString()?.split(separator: "%") {
                     if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
@@ -94,7 +97,7 @@ struct DetailSwiftUIView: View {
                     }
                 }
             }
-            ports = node.tcp_ports.map { "TCP/\($0)" }
+            display_interfaces = interfaces.joined(separator: sep)
             
             family = address.getFamily()
             address_str = address.toNumericString()
@@ -107,6 +110,7 @@ struct DetailSwiftUIView: View {
             }
         }
     }
+    
     @ObservedObject var model = DetailViewModel()
     
     var body: some View {
@@ -182,21 +186,13 @@ struct DetailSwiftUIView: View {
                     HStack {
                         Text("IP address")
                         Spacer()
-                        VStack {
-                            ForEach(model.addresses, id: \.self) { name in
-                                Text(name)
-                            }
-                        }
+                        Text(model.display_addresses)
                     }
                     
                     HStack {
                         Text("names")
                         Spacer()
-                        VStack {
-                            ForEach(model.names, id: \.self) { name in
-                                Text(name)
-                            }
-                        }
+                        Text(model.display_names)
                     }
                 }
                 
@@ -205,22 +201,13 @@ struct DetailSwiftUIView: View {
                     HStack {
                         Text("ports")
                         Spacer()
-                        VStack {
-                            ForEach(model.ports, id: \.self) { name in
-                                Text(name)
-                            }
-                        }
+                        Text(model.display_ports)
                     }
                     
                     HStack {
                         Text("interfaces")
                         Spacer()
-                        VStack {
-                        // BUG ici et pour tous les ForEach ici : id n'est pas un bon id, car deux string contenant la même chose auront le même ID et on aura donc un warning à l'exécution et des bugs qui s'en suivront : cf Demystify SwiftUI dans Apple Developer à 25:30
-                            ForEach(model.interfaces, id: \.self) { name in
-                                Text(name)
-                            }
-                        }
+                        Text(model.display_interfaces)
                     }
                     
                 }
