@@ -261,7 +261,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0dh-35-JiP" userLabel="Cells separation">
-                                            <rect key="frame" x="132" y="-79" width="110" height="200"/>
+                                            <rect key="frame" x="132" y="-79" width="0.0" height="200"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </stackView>
                                     </subviews>
@@ -273,6 +273,13 @@
                             <outlet property="delegate" destination="JJz-SI-hJs" id="6df-qQ-kdL"/>
                         </connections>
                     </tableView>
+                    <toolbarItems>
+                        <barButtonItem enabled="NO" title="Stop" image="stop.circle" catalog="system" id="QYk-XG-u6D"/>
+                    </toolbarItems>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="stop_button" destination="QYk-XG-u6D" id="exs-os-bRL"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Y5-5d-xwp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

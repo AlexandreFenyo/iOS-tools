@@ -30,6 +30,8 @@ class DeviceAddressCell : UITableViewCell {
 class MasterIPViewController: UITableViewController {
     public var master_view_controller : MasterViewController?
     public var node : Node?
+    
+    @IBOutlet weak var stop_button: UIBarButtonItem!
 
     public func applicationWillResignActive() {
     }
@@ -37,6 +39,9 @@ class MasterIPViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print("DID LOAD")
+        
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
     }
