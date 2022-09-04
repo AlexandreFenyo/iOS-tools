@@ -84,7 +84,11 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_tcp = tb
             let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
             self.browser_network = nb
-            nb.browse()
+            nb.browse() {
+                DispatchQueue.main.sync {
+                    self.stopBrowsing()
+                }
+            }
         }
     }
 
@@ -233,13 +237,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     private func updateLocalNodeAndGateways() {
         // Update local node
         let node = DBMaster.shared.getLocalNode()
-        self.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         // Update local gateways
         for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
+        
         updateLocalNodeAndGateways()
 
         navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
@@ -328,28 +334,37 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        tableView.endUpdates()
 
         let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        tableView.performBatchUpdates {
-            tableView.deleteRows(at: index_paths_removed, with: .automatic)
-            tableView.insertRows(at: index_paths_inserted, with: .automatic)
-        }
-        // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
-        tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-    }
-    
-    // MARK: - Calls from DetailSwiftUIView
-    func scanTCP() {
-        stopBrowsing()
         
+        if tableView.window != nil {
+            // la liste des noeuds est affichée à gauche (et non pas la liste des IP d'un noeud)
+            
+            tableView.performBatchUpdates {
+                tableView.deleteRows(at: index_paths_removed, with: .automatic)
+                tableView.insertRows(at: index_paths_inserted, with: .automatic)
+            }
+            // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
+            tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+            
+            tableView.reloadData()
+        }
+
+        // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
+        detail_view_controller!.updateDetailsIfNodeDisplayed(node)
+    }
+
+    // MARK: - Calls from DetailSwiftUIView
+    func scanTCP(_ address: IPAddress) {
+        stopBrowsing()
         self.stop_button!.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         let tb = TCPPortBrowser(device_manager: self)
         self.browser_tcp = tb
-        DispatchQueue.global(qos: .userInitiated).async {
-//            self.browser_tcp?.browse() LIMITER A UNE IP // CONTINUER ICI
-        }
 
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.browser_tcp?.browse(address: address)
+        }
     }
 
     // MARK: - DeviceManager protocol

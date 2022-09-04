@@ -11,8 +11,15 @@ import Foundation
 let debug = true
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
+    // liste des ports à scanner lors d'un browse du réseau complet
     private static let ports_set : Set<UInt16> = Set(1...65535)
-//    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 30, 80]))
+//    private static let ports_set : Set<UInt16> = Set(8020...8022)
+
+    // liste des ports à scanner lors d'un browse d'une IP spécifique
+    private static let ports_set_one_host : Set<UInt16> = Set(1...65535)
+//    private static let ports_set_one_host : Set<UInt16> = Set(8020...8022)
+
+    //    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 30, 80]))
     private let device_manager : DeviceManager
     private var finished : Bool = false // Set by Main thread
     private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:] // Browse thread
@@ -24,7 +31,7 @@ class TCPPortBrowser {
     }
     
     private func addPort(addr: IPAddress, port: UInt16) {
-        DispatchQueue.main.sync {
+        DispatchQueue.main.async {
             let node = Node()
             if addr.getFamily() == AF_INET { node.v4_addresses.insert(addr as! IPv4Address) }
             else { node.v6_addresses.insert(addr as! IPv6Address) }
@@ -35,23 +42,29 @@ class TCPPortBrowser {
     }
     
     // userInitiated thread (Browse thread)
-    public func browse() {
+    public func browse(address: IPAddress? = nil, doAtEnd: @escaping () -> Void = {}) {
         // Initialize port lists to connect to
         
 //        let a = IPv4Address("192.168.1.254")!
 //        let a = IPv4Address("10.69.184.194")!
 //        let a = IPv4Address("1.2.3.4")!
 //        ip_to_tcp_port[a] = TCPPortBrowser.ports_set
-        DispatchQueue.main.sync {
-            for node in DBMaster.shared.nodes {
-                if let addr = node.v4_addresses.first {
-                    ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-                } else if let addr = node.v6_addresses.first {
-                    ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+
+        if let address = address {
+            ip_to_tcp_port[address] = TCPPortBrowser.ports_set_one_host
+        } else {
+            // ne pas rescanner les ports déjà identifiés
+            DispatchQueue.main.sync {
+                for node in DBMaster.shared.nodes {
+                    if let addr = node.v4_addresses.first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+                    } else if let addr = node.v6_addresses.first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+                    }
                 }
             }
         }
-
+        
         let dispatchGroup = DispatchGroup()
         DispatchQueue.main.sync { device_manager.setInformation("browsing TCP ports") }
 
@@ -68,6 +81,7 @@ class TCPPortBrowser {
                 for delay : Int32 in [ 1000, 5000, 20000 /* , 800000 */ ] {
                     if self.finished { break }
                     
+                    // à partir du 2ième essai, on ne teste plus que les ports inférieurs à 1024
                     if delay > 1000 { ports.formIntersection(Set(1...1023)) }
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
@@ -201,8 +215,13 @@ class TCPPortBrowser {
         dispatchGroup.wait()
         print("TCP browse ADDRESSE: FIN")
 //        exit(1)
-        
-        DispatchQueue.main.sync { device_manager.setInformation("") }
+
+        // peut etre mettre ceci dans le doAtEnd au moment où il est construit
+        DispatchQueue.main.sync {
+            device_manager.setInformation("")
+        }
+ 
+        doAtEnd()
     }
 
     // Browse a set of networks

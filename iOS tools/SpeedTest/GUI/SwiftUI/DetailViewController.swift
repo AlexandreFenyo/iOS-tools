@@ -102,9 +102,45 @@ class DetailViewController: UIViewController {
         }
         
         print("set current_node")
-        hostingViewController.rootView.model.setNodeAddress(node!, address)
+        hostingViewController.rootView.model.updateDetails(node!, address)
     }
 
+    public func updateDetailsIfNodeDisplayed(_ node: Node) {
+        if let v4 = hostingViewController.rootView.model.v4address {
+            if node.v4_addresses.contains(v4) {
+                if let node = findNodeFromAddress(v4) {
+                    hostingViewController.rootView.model.updateDetails(node, v4)
+                }
+            }
+        }
+        if let v6 = hostingViewController.rootView.model.v6address {
+            if node.v6_addresses.contains(v6) {
+                if let node = findNodeFromAddress(v6) {
+                    hostingViewController.rootView.model.updateDetails(node, v6)
+                }
+            }
+        }
+    }
+
+    public func findNodeFromAddress(_ address: IPAddress) -> Node? {
+        if address.getFamily() == AF_INET {
+            let v4addr = address as! IPv4Address
+            for n in DBMaster.shared.nodes {
+                if n.v4_addresses.contains(v4addr) {
+                    return n
+                }
+            }
+        } else {
+            let v6addr = address as! IPv6Address
+            for n in DBMaster.shared.nodes {
+                if n.v6_addresses.contains(v6addr) {
+                    return n
+                }
+            }
+        }
+        return nil
+    }
+    
     /*
     private func refreshUI() {
         print("refresh UI")

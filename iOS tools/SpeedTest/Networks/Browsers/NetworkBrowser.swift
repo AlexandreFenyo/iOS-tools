@@ -134,7 +134,7 @@ class NetworkBrowser {
     }
     
     // Main thread
-    public func browse() {
+    public func browse(_ doAtEnd: @escaping () -> Void = {}) {
         DispatchQueue.global(qos: .userInitiated).async {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
@@ -351,7 +351,7 @@ class NetworkBrowser {
             close(s)
             close(s6)
 
-            self.browser_tcp.browse()
+            self.browser_tcp.browse(doAtEnd: doAtEnd)
         }
     }
 }

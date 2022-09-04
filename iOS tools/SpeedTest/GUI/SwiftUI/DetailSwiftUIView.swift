@@ -74,6 +74,7 @@ struct DetailSwiftUIView: View {
     // trouver comment faire une modif de ce state depuis UIKit: cf TracesSwiftUIView.swift
     public class DetailViewModel : ObservableObject {
         @Published private(set) var family: Int32? = nil
+        @Published private(set) var address: IPAddress? = nil
         @Published private(set) var v4address: IPv4Address? = nil
         @Published private(set) var v6address: IPv6Address? = nil
         @Published private(set) var address_str: String? = nil
@@ -83,7 +84,7 @@ struct DetailSwiftUIView: View {
         @Published private(set) var display_ports: String = ""
         @Published private(set) var display_interfaces: String = ""
 
-        public func setNodeAddress(_ node: Node, _ address: IPAddress) {
+        public func updateDetails(_ node: Node, _ address: IPAddress) {
             let sep = "\n"
 
             display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
@@ -100,6 +101,7 @@ struct DetailSwiftUIView: View {
             }
             display_interfaces = interfaces.joined(separator: sep)
             
+            self.address = address
             family = address.getFamily()
             address_str = address.toNumericString()
             if family == AF_INET {
@@ -122,7 +124,9 @@ struct DetailSwiftUIView: View {
                 
                 HStack {
                     Button {
-                        master_view_controller.scanTCP()
+                        if model.address != nil {
+                            master_view_controller.scanTCP(model.address!)
+                        }
                     } label: {
                         Label("scan TCP ports", systemImage: "rectangle.split.2x2")
                     }
