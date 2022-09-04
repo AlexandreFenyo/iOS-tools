@@ -47,7 +47,7 @@ class MasterIPViewController: UITableViewController {
 
     // Since we highlight the default selected row in MasterViewController.prepare(), we need to unhighlight this row when another cell is selected
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        tableView.cellForRow(at: IndexPath(row: 0, section: 0))!.setHighlighted(false, animated: false)
+        tableView.cellForRow(at: IndexPath(row: 0, section: 0))?.setHighlighted(false, animated: false)
         return indexPath
     }
 
