@@ -31,6 +31,8 @@ class MasterIPViewController: UITableViewController {
     public var master_view_controller : MasterViewController?
     public var node : Node?
 
+    @IBOutlet weak var stop_button: UIBarButtonItem!
+
     public func applicationWillResignActive() {
     }
 
