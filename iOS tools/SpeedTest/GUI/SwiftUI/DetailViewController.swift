@@ -82,7 +82,7 @@ class DetailViewController: UIViewController {
     }
     
     // called by MasterViewController when the user selects an address
-    public func addressSelected(_ address: IPAddress) {
+    public func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
         // retrouver le node
         var node: Node? = nil
         if address.getFamily() == AF_INET {
@@ -102,21 +102,29 @@ class DetailViewController: UIViewController {
         }
         
         print("set current_node")
-        hostingViewController.rootView.model.updateDetails(node!, address)
+        hostingViewController.rootView.model.updateDetails(node!, address, buttons_enabled)
+    }
+    
+    public func enableButtons(_ state: Bool) {
+        // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
+        // il est async pour éviter une exception
+        DispatchQueue.main.async {
+            let _ = self.hostingViewController.rootView.model.setButtonsEnabled(state)
+        }
     }
 
-    public func updateDetailsIfNodeDisplayed(_ node: Node) {
+    public func updateDetailsIfNodeDisplayed(_ node: Node, _ buttons_enabled: Bool) {
         if let v4 = hostingViewController.rootView.model.v4address {
             if node.v4_addresses.contains(v4) {
                 if let node = findNodeFromAddress(v4) {
-                    hostingViewController.rootView.model.updateDetails(node, v4)
+                    hostingViewController.rootView.model.updateDetails(node, v4, buttons_enabled)
                 }
             }
         }
         if let v6 = hostingViewController.rootView.model.v6address {
             if node.v6_addresses.contains(v6) {
                 if let node = findNodeFromAddress(v6) {
-                    hostingViewController.rootView.model.updateDetails(node, v6)
+                    hostingViewController.rootView.model.updateDetails(node, v6, buttons_enabled)
                 }
             }
         }

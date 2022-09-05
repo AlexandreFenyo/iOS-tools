@@ -78,13 +78,20 @@ struct DetailSwiftUIView: View {
         @Published private(set) var v4address: IPv4Address? = nil
         @Published private(set) var v6address: IPv6Address? = nil
         @Published private(set) var address_str: String? = nil
+        @Published private(set) var display_names = ""
+        @Published private(set) var display_addresses = ""
+        @Published private(set) var display_ports = ""
+        @Published private(set) var display_interfaces = ""
+        @Published private(set) var buttons_enabled = false
 
-        @Published private(set) var display_names: String = ""
-        @Published private(set) var display_addresses: String = ""
-        @Published private(set) var display_ports: String = ""
-        @Published private(set) var display_interfaces: String = ""
-
-        public func updateDetails(_ node: Node, _ address: IPAddress) {
+        public func setButtonsEnabled(_ state: Bool) {
+            print("setButtonsEnabled(\(state))")
+            buttons_enabled = address == nil ? false : state
+        }
+        
+        public func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
+            print("UPDATE DETAILS")
+            
             let sep = "\n"
 
             display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
@@ -111,6 +118,8 @@ struct DetailSwiftUIView: View {
                 v6address = address as? IPv6Address
                 v4address = nil
             }
+
+            setButtonsEnabled(buttons_enabled)
         }
     }
     
@@ -124,38 +133,40 @@ struct DetailSwiftUIView: View {
                 
                 HStack {
                     Button {
+                        print("BUTTON SCAN TCP PRESSED")
                         if model.address != nil {
                             master_view_controller.scanTCP(model.address!)
                         }
                     } label: {
                         Label("scan TCP ports", systemImage: "rectangle.split.2x2")
-                    }
+                    }.disabled(!model.buttons_enabled)
+                    .foregroundColor(model.buttons_enabled ? .green : .red)
                     
                     Spacer()
                     
                     Button {
                     } label: {
                         Label("UDP flood", systemImage: "rectangle.split.2x2")
-                    }
+                    }//.disabled(!model.buttons_enabled)
                     
                     Spacer()
                     
                     Button {
                     } label: {
                         Label("TCP flood", systemImage: "rectangle.split.2x2")
-                    }
+                    }//.disabled(!model.buttons_enabled)
                     
                     Spacer()
                     
                     Button {
                     } label: {
                         Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2")
-                    }
+                    }//.disabled(!model.buttons_enabled)
                     
                     Button {
                     } label: {
                         Label("ICMP (ping)", systemImage: "rectangle.split.2x2")
-                    }
+                    }//.disabled(!model.buttons_enabled)
                 }
                 
                 Group {

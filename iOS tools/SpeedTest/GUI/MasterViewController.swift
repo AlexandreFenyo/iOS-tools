@@ -70,6 +70,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
+            self.detail_view_controller?.enableButtons(false)
             self.master_ip_view_controller?.stop_button.isEnabled = true
             self.add_button!.isEnabled = false
             self.update_button!.isEnabled = false
@@ -99,6 +100,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     private func stopBrowsing() {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
+        detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = true
         update_button!.isEnabled = true
@@ -148,6 +150,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
         stop_button!.isEnabled = false
+        detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
@@ -180,6 +183,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     @objc
     private func userRefresh(_ sender: Any) {
         stop_button!.isEnabled = false
+        detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
@@ -267,11 +271,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl!.endRefreshing()
         if editing {
             stop_button!.isEnabled = false
+            detail_view_controller?.enableButtons(true)
             master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = false
             update_button!.isEnabled = false
         } else {
             stop_button!.isEnabled = false
+            detail_view_controller?.enableButtons(true)
             master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = true
             update_button!.isEnabled = true
@@ -282,7 +288,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public func addressSelected(address: IPAddress) {
         print(address.toNumericString()!, "selected")
 //        detail_view_controller!.address = address
-        detail_view_controller!.addressSelected(address)
+        detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
@@ -356,13 +362,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
 
         // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
-        detail_view_controller!.updateDetailsIfNodeDisplayed(node)
+        detail_view_controller!.updateDetailsIfNodeDisplayed(node, !stop_button!.isEnabled)
     }
 
     // MARK: - Calls from DetailSwiftUIView
     func scanTCP(_ address: IPAddress) {
         stopBrowsing()
         self.stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false

@@ -22,6 +22,16 @@
                </BreakpointActionProxy>
             </Actions>
             <Locations>
+               <Location
+                  uuid = "72173410-5ACF-47A6-BBD6-2B832DD22096 - 620169ab4c7c265a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "UITableViewAlertForLayoutOutsideViewHierarchy"
+                  moduleName = "UIKitCore"
+                  usesParentBreakpointCondition = "Yes"
+                  offsetFromSymbolStart = "0">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
