@@ -133,40 +133,38 @@ struct DetailSwiftUIView: View {
                 
                 HStack {
                     Button {
-                        print("BUTTON SCAN TCP PRESSED")
                         if model.address != nil {
                             master_view_controller.scanTCP(model.address!)
                         }
                     } label: {
-                        Label("scan TCP ports", systemImage: "rectangle.split.2x2")
+                        Label("scan TCP ports", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
                     }.disabled(!model.buttons_enabled)
-                    .foregroundColor(model.buttons_enabled ? .green : .red)
                     
                     Spacer()
                     
                     Button {
                     } label: {
-                        Label("UDP flood", systemImage: "rectangle.split.2x2")
-                    }//.disabled(!model.buttons_enabled)
+                        Label("UDP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                    }.disabled(!model.buttons_enabled)
                     
                     Spacer()
                     
                     Button {
                     } label: {
-                        Label("TCP flood", systemImage: "rectangle.split.2x2")
-                    }//.disabled(!model.buttons_enabled)
+                        Label("TCP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                    }.disabled(!model.buttons_enabled)
                     
                     Spacer()
                     
                     Button {
                     } label: {
-                        Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2")
-                    }//.disabled(!model.buttons_enabled)
+                        Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                    }.disabled(!model.buttons_enabled)
                     
                     Button {
                     } label: {
-                        Label("ICMP (ping)", systemImage: "rectangle.split.2x2")
-                    }//.disabled(!model.buttons_enabled)
+                        Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                    }.disabled(!model.buttons_enabled)
                 }
                 
                 Group {
