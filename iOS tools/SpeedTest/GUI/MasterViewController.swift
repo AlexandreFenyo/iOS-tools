@@ -46,10 +46,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
 
-    public var detail_view_controller : DetailViewController?
-    public var detail_navigation_controller : UINavigationController?
-    public var split_view_controller : SplitViewController?
-    public var traces_view_controller : TracesViewController?
+    public var detail_view_controller: DetailViewController?
+    public var detail_navigation_controller: UINavigationController?
+    public var split_view_controller: SplitViewController?
+    public var traces_view_controller: TracesViewController?
+    public var master_ip_view_controller: MasterIPViewController?
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
@@ -69,6 +70,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
+            self.master_ip_view_controller?.stop_button.isEnabled = true
             self.add_button!.isEnabled = false
             self.update_button!.isEnabled = false
             self.browser_chargen?.search()
@@ -97,6 +99,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     private func stopBrowsing() {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
+        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = true
         update_button!.isEnabled = true
 
@@ -145,6 +148,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
         stop_button!.isEnabled = false
+        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
@@ -176,6 +180,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     @objc
     private func userRefresh(_ sender: Any) {
         stop_button!.isEnabled = false
+        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
@@ -262,10 +267,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl!.endRefreshing()
         if editing {
             stop_button!.isEnabled = false
+            master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = false
             update_button!.isEnabled = false
         } else {
             stop_button!.isEnabled = false
+            master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = true
             update_button!.isEnabled = true
         }
@@ -356,6 +363,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     func scanTCP(_ address: IPAddress) {
         stopBrowsing()
         self.stop_button!.isEnabled = true
+        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -488,13 +496,13 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let master_ip_view_controller = segue.destination as! MasterIPViewController
+        master_ip_view_controller = segue.destination as? MasterIPViewController
         let index_path = tableView.indexPathForSelectedRow!
         let type = SectionType(rawValue: index_path.section)
         let section = DBMaster.shared.sections[type!]
         let node = section!.nodes[index_path.item]
-        master_ip_view_controller.node = node
-        master_ip_view_controller.master_view_controller = self
+        master_ip_view_controller!.node = node
+        master_ip_view_controller!.master_view_controller = self
 
         /* si on voulait sélectionner une adresse, on pourrait le faire comme ceci mais pas ici car la première fois où prepare est appelé, on n'a pas le droit d'appeler selectRow ou cellForRow : on a alors un warning pour signaler que ça peut conduire à des bugs
         if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {

@@ -28,7 +28,7 @@ class DeviceAddressCell : UITableViewCell {
 
 // The MasterIPViewController instance is the delegate for the UITableView
 class MasterIPViewController: UITableViewController {
-    public var master_view_controller : MasterViewController?
+    public var master_view_controller: MasterViewController?
     public var node : Node?
 
     @IBOutlet weak var stop_button: UIBarButtonItem!
@@ -51,6 +51,14 @@ class MasterIPViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         tableView.cellForRow(at: IndexPath(row: 0, section: 0))?.setHighlighted(false, animated: false)
         return indexPath
+    }
+    
+    @IBAction func help_pressed(_ sender: Any) {
+        master_view_controller?.help_pressed(sender)
+    }
+
+    @IBAction func stop_pressed(_ sender: Any) {
+        master_view_controller?.stop_pressed(sender)
     }
 
     // MARK: - UIScrollViewDelegate

@@ -274,8 +274,16 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Debug" image="info.circle" catalog="system" id="IUH-ID-65D" userLabel="Debug"/>
-                        <barButtonItem enabled="NO" title="Stop" image="stop.circle" catalog="system" id="GvR-Yn-FTs"/>
+                        <barButtonItem title="Debug" image="info.circle" catalog="system" id="IUH-ID-65D" userLabel="Debug">
+                            <connections>
+                                <action selector="help_pressed:" destination="JJz-SI-hJs" id="JbW-SR-FiH"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem enabled="NO" title="Stop" image="stop.circle" catalog="system" id="GvR-Yn-FTs">
+                            <connections>
+                                <action selector="stop_pressed:" destination="JJz-SI-hJs" id="wnV-yc-b8e"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
