@@ -71,6 +71,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var local_ping_sync : LocalPingSync?
 
     private var local_flood_client : LocalFloodClient?
+    private var local_flood_sync : LocalFloodSync?
+    
     private var local_chargen_client : LocalChargenClient?
     private var local_discard_client : LocalDiscardClient?
 
@@ -133,6 +135,14 @@ class MasterViewController: UITableViewController, DeviceManager {
                 await local_ping_sync?.close()
                 local_ping_sync = nil
                 local_ping_client = nil
+            }
+        }
+        if action != .FLOOD_UDP {
+            Task {
+                await local_flood_sync?.stop()
+                await local_flood_sync?.close()
+                local_flood_sync = nil
+                local_flood_client = nil
             }
         }
 
@@ -440,6 +450,45 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
+    func floodUDP(_ address: IPAddress) {
+        stopBrowsing(.FLOOD_UDP)
+        self.stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
+        self.master_ip_view_controller?.stop_button.isEnabled = true
+        self.add_button!.isEnabled = false
+        self.update_button!.isEnabled = false
+
+        local_flood_client = LocalFloodClient(address: address)
+        local_flood_sync = LocalFloodSync(local_flood_client!)
+        local_flood_client!.start()
+
+        Task.detached(priority: .userInitiated) {
+            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+            await self.detail_view_controller?.ts.removeAll()
+            var first_skipped = false
+            while true {
+                if let throughput = await self.local_flood_client?.getThroughput() {
+                    if throughput > 0 {
+                        if first_skipped == false {
+                            first_skipped = true
+                        } else {
+                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
+                        }
+                    }
+                } else { break }
+                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+            }
+            // objectif : arrivé ici, la boucle de flood est terminée
+        }
+    }
+
+    func floodTCP(_ address: IPAddress) {
+    }
+
+    func chargenTCP(_ address: IPAddress) {
+    }
+
+    
     // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {

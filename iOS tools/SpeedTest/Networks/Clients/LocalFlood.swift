@@ -8,6 +8,21 @@
 
 import Foundation
 
+actor LocalFloodSync {
+    private let local_flood_client: LocalFloodClient
+    
+    public func close() {
+        local_flood_client.close()
+    }
+    
+    public func stop() {
+        local_flood_client.stop()
+    }
+    
+    init(_ local_flood_client: LocalFloodClient) {
+        self.local_flood_client = local_flood_client
+    }
+}
 class LocalFloodClient : Thread {
     private let address : IPAddress
     private var last_nwrite : Int?
@@ -43,7 +58,7 @@ class LocalFloodClient : Thread {
     }
     
     // Main thread
-    public func close() {
+    fileprivate func close() {
         let ret = localFloodClientClose()
         if ret != 0 {
             fatalError()
@@ -51,7 +66,7 @@ class LocalFloodClient : Thread {
     }
     
     // Main thread
-    public func stop() {
+    fileprivate func stop() {
         let ret = localFloodClientStop()
         if ret != 0 {
             fatalError()

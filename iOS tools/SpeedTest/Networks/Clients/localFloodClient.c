@@ -17,7 +17,7 @@ static long nwrite;
 // return values:
 // - >= 0: last_errno value
 // - < 0 : mutex error, should not happen
-int localFloodClientGetLastErrorNo() {
+int localFloodClientGetLastErrorNo(void) {
     int retval, ret;
     
     ret = pthread_mutex_lock(&mutex);
@@ -64,6 +64,8 @@ static int setLastErrorNo() {
 static int addToNWrite(long newval) {
     int ret;
     
+    if (newval == 0) return 0;
+    
     ret = pthread_mutex_lock(&mutex);
     if (ret < 0) {
         perror("setLastErrorNo pthread_mutex_lock");
@@ -84,7 +86,7 @@ static int addToNWrite(long newval) {
 // return values:
 // - >= 0: nwrite value
 // - < 0 : mutex error, should not happen
-long localFloodClientGetNWrite() {
+long localFloodClientGetNWrite(void) {
     long retval;
     int ret;
     
@@ -108,7 +110,7 @@ long localFloodClientGetNWrite() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_init
-int localFloodClientOpen() {
+int localFloodClientOpen(void) {
     last_errno = 0;
     nwrite = 0;
     
@@ -121,7 +123,7 @@ int localFloodClientOpen() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localFloodClientClose() {
+int localFloodClientClose(void) {
     int ret = pthread_mutex_destroy(&mutex);
     if (ret < 0) perror("close pthread_mutex_destroy");
     
@@ -131,7 +133,7 @@ int localFloodClientClose() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localFloodClientStop() {
+int localFloodClientStop(void) {
     if (sock < 0) return -1;
     close(sock);
     return 0;
@@ -165,15 +167,23 @@ int localFloodClientLoop(const struct sockaddr *saddr) {
 //        return (setLastErrorNo() << 8) - 4;
 //    }
     
+    // on devrait partir du MTU de l'interface
+    char buffer[1400];
+    memset(buffer, 'A', sizeof buffer);
     while (1) {
-        // on devrait partir du MTU de l'interface
-        char buffer[1400];
-        memset(buffer, 'A', sizeof buffer);
-        
+
         ssize_t len = sendto(sock, buffer, sizeof buffer, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-        printf("sendto UDP retval:%ld\n", len);
+//        printf("sendto UDP retval:%ld\n", len);
         if  (len < 0) {
-            perror("sendto()");
+            if (errno != ENOBUFS) {
+                perror("sendto()");
+                int retval = (setLastErrorNo() << 8) - 5;
+                close(sock);
+                return retval;
+            }
+//            printf("loop again");
+            len = 0;
+//            break;
         }
         if (addToNWrite(len) < 0) return -6;
     }
