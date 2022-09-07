@@ -17,7 +17,7 @@ static long nread;
 // return values:
 // - >= 0: last_errno value
 // - < 0 : mutex error, should not happen
-int localChargenClientGetLastErrorNo() {
+int localChargenClientGetLastErrorNo(void) {
     int retval, ret;
     
     ret = pthread_mutex_lock(&mutex);
@@ -84,7 +84,7 @@ static int addToNRead(long newval) {
 // return values:
 // - >= 0: nread value
 // - < 0 : mutex error, should not happen
-long localChargenClientGetNRead() {
+long localChargenClientGetNRead(void) {
     long retval;
     int ret;
     
@@ -108,7 +108,7 @@ long localChargenClientGetNRead() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_init
-int localChargenClientOpen() {
+int localChargenClientOpen(void) {
     last_errno = 0;
     nread = 0;
     
@@ -121,7 +121,7 @@ int localChargenClientOpen() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localChargenClientClose() {
+int localChargenClientClose(void) {
     int ret = pthread_mutex_destroy(&mutex);
     if (ret < 0) perror("close pthread_mutex_destroy");
     
@@ -131,7 +131,7 @@ int localChargenClientClose() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localChargenClientStop() {
+int localChargenClientStop(void) {
     if (sock < 0) return -1;
     close(sock);
     return 0;

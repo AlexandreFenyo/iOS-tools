@@ -9,10 +9,27 @@
 
 import Foundation
 
+actor LocalPingSync {
+    private let local_ping_client: LocalPingClient
+    
+    public func close() {
+        local_ping_client.close()
+    }
+    
+    public func stop() {
+        local_ping_client.stop()
+    }
+    
+    init(_ local_ping_client: LocalPingClient) {
+        self.local_ping_client = local_ping_client
+    }
+}
+
 class LocalPingClient : Thread {
     private let address : IPAddress
     private var last_nread : Int?
     private var last_date : Date?
+    private let count : Int32
     
     // Dedicated background Thread
     override internal func main() {
@@ -20,7 +37,7 @@ class LocalPingClient : Thread {
         
         if let saddr = address.toSockAddress()?.getData() {
             let retval = saddr.withUnsafeBytes {
-                localPingClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
+                localPingClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!), count)
             }
             print("localPingClientLoop() returned:", retval)
         }
@@ -33,16 +50,17 @@ class LocalPingClient : Thread {
         super.start()
     }
     
-    // Main thread
-    public init(address: IPAddress) {
+    // Main thread ou user initiated thread
+    public init(address: IPAddress, count: Int32) {
         let ret = localPingClientOpen()
         if ret != 0 {
             fatalError()
         }
         self.address = address
+        self.count = count
     }
     
-    // Main thread
+    // Main thread ou user initiated thread
     public func close() {
         let ret = localPingClientClose()
         if ret != 0 {
@@ -50,18 +68,18 @@ class LocalPingClient : Thread {
         }
     }
     
-    // Main thread
-    public func stop() {
+    // Main thread ou user initiated thread
+    fileprivate func stop() {
         let ret = localPingClientStop()
         if ret != 0 {
             fatalError()
         }
     }
     
-    // Main thread
-    public func getRTT() -> Int {
+    // Main thread ou user initiated thread
+    func getRTT() -> Int {
         let ret = localPingClientGetRTT()
         if ret < 0 { fatalError() }
         return ret
     }
-    }
+}

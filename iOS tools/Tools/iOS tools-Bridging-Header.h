@@ -21,7 +21,7 @@ int localPingClientClose();
 int localPingClientStop();
 int localPingClientGetLastErrorNo();
 long localPingClientGetRTT();
-int localPingClientLoop(const struct sockaddr *saddr);
+int localPingClientLoop(const struct sockaddr *saddr, const int);
 
 int localFloodClientOpen();
 int localFloodClientClose();

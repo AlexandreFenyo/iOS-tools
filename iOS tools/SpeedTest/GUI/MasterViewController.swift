@@ -14,6 +14,15 @@
 
 import UIKit
 
+enum NewRunAction {
+    case SCAN_TCP
+    case FLOOD_UDP
+    case FLOOD_TCP
+    case CHARGEN_TCP
+    case LOOP_ICMP
+    case OTHER_ACTION
+}
+
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
     func addNode(_ node: Node)
@@ -58,6 +67,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var browser_network : NetworkBrowser?
     private var browser_tcp : TCPPortBrowser?
 
+    private var local_ping_client : LocalPingClient?
+    private var local_ping_sync : LocalPingSync?
+
+    private var local_flood_client : LocalFloodClient?
+    private var local_chargen_client : LocalChargenClient?
+    private var local_discard_client : LocalDiscardClient?
+
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }
@@ -89,15 +105,15 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_network = nb
             nb.browse() {
                 DispatchQueue.main.sync {
-                    self.stopBrowsing()
+                    self.stopBrowsing(.OTHER_ACTION)
                 }
             }
         }
     }
 
     // Stop looking for new nodes
-    // Main thread
-    private func stopBrowsing() {
+    // Main thread ?
+    private func stopBrowsing(_ action: NewRunAction) {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
@@ -108,9 +124,17 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_discard?.stop()
         browser_chargen?.stop()
         browser_network?.stop()
-        browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
+        browser_tcp?.stop()
+        if action != .LOOP_ICMP {
+            Task {
+                await local_ping_sync?.stop()
+                await local_ping_sync?.close()
+                local_ping_sync = nil
+                local_ping_client = nil
+            }
+        }
 
         setTitle("Target List")
     }
@@ -140,7 +164,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
-        stopBrowsing()
+        stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
@@ -191,14 +215,14 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func applicationWillResignActive() {
-        stopBrowsing()
+        stopBrowsing(.OTHER_ACTION)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.standard_background
         // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
-        stopBrowsing()
+        stopBrowsing(.OTHER_ACTION)
     }
     
     override func viewDidLoad() {
@@ -367,7 +391,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // MARK: - Calls from DetailSwiftUIView
     func scanTCP(_ address: IPAddress) {
-        stopBrowsing()
+        stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -377,8 +401,35 @@ class MasterViewController: UITableViewController, DeviceManager {
         let tb = TCPPortBrowser(device_manager: self)
         self.browser_tcp = tb
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.browser_tcp?.browse(address: address)
+        // DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
+            await self.browser_tcp?.browse(address: address)
+            // arrivé ici, le browse est terminé
+        }
+    }
+
+    func loopICMP(_ address: IPAddress) {
+        stopBrowsing(.LOOP_ICMP)
+        self.stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
+        self.master_ip_view_controller?.stop_button.isEnabled = true
+        self.add_button!.isEnabled = false
+        self.update_button!.isEnabled = false
+
+        local_ping_client = LocalPingClient(address: address, count: 10000)
+        local_ping_sync = LocalPingSync(local_ping_client!)
+        local_ping_client!.start()
+
+        Task.detached(priority: .userInitiated) {
+            while true {
+                if let rtt = await self.local_ping_client?.getRTT() {
+                    print("RTT:\(rtt)")
+                }
+                try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+            }
+            await self.local_ping_sync!.stop() // une race condition peut conduire à ce que pc.stop() soit appelé alors que le thread n'a pas démarré, ce qui fait qu'on aura une erreur fatale
+            await self.local_ping_client!.close()
+            // objectif : arrivé ici, la boucle de ping est terminée
         }
     }
 
@@ -477,7 +528,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        detail_view_controller!.node = getNode(indexPath: indexPath)
-        stopBrowsing()
+        stopBrowsing(.OTHER_ACTION)
 
         // for iPhone, make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)

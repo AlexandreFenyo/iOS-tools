@@ -17,7 +17,7 @@ static long rtt;
 // return values:
 // - >= 0: last_errno value
 // - < 0 : mutex error, should not happen
-int localPingClientGetLastErrorNo() {
+int localPingClientGetLastErrorNo(void) {
     int retval, ret;
     
     ret = pthread_mutex_lock(&mutex);
@@ -84,7 +84,7 @@ static int setRTT(long newval) {
 // return values:
 // - >= 0: RTT value
 // - < 0 : mutex error, should not happen
-long localPingClientGetRTT() {
+long localPingClientGetRTT(void) {
     long retval;
     int ret;
     
@@ -95,6 +95,7 @@ long localPingClientGetRTT() {
     }
     
     retval = rtt;
+    rtt = 0;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -108,7 +109,7 @@ long localPingClientGetRTT() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_init
-int localPingClientOpen() {
+int localPingClientOpen(void) {
     last_errno = 0;
     rtt = 0;
     
@@ -121,7 +122,7 @@ int localPingClientOpen() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localPingClientClose() {
+int localPingClientClose(void) {
     int ret = pthread_mutex_destroy(&mutex);
     if (ret < 0) perror("close pthread_mutex_destroy");
     
@@ -131,7 +132,7 @@ int localPingClientClose() {
 // return values:
 // - 0  : no error
 // - > 0: value of errno after calling pthread_mutex_destroy
-int localPingClientStop() {
+int localPingClientStop(void) {
     if (sock < 0) return -1;
     close(sock);
     return 0;
@@ -140,7 +141,7 @@ int localPingClientStop() {
 // https://stackoverflow.com/questions/8290046/icmp-sockets-linux
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/in.h
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/ip_icmp.h
-int localPingClientLoop(const struct sockaddr *saddr) {
+int localPingClientLoop(const struct sockaddr *saddr, int count) {
     struct icmp icmp_hdr;
     struct icmp6_hdr icmp6_hdr;
     struct timeval tv;
@@ -179,19 +180,19 @@ int localPingClientLoop(const struct sockaddr *saddr) {
         return (setLastErrorNo() << 8) - 4;
     }
 
-    while (1) {
+    while (--count >= 0) {
         struct timeval tv, tv2;
         
         gettimeofday(&tv, NULL);
         ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-        printf("sendto ICMP retval:%ld\n", len);
+//        printf("sendto ICMP retval:%ld\n", len);
         if  (len < 0) {
             perror("sendto()");
         }
         
         char buf[10000];
         socklen_t foo = 0;
-        printf("avant recvfrom\n");
+//        printf("avant recvfrom\n");
         long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
         if (retval < 0 && errno != EAGAIN) {
             printf("%d\n", errno);
@@ -200,12 +201,12 @@ int localPingClientLoop(const struct sockaddr *saddr) {
         }
         gettimeofday(&tv2, NULL);
         long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
-        printf("duration: %ld\n", duration);
+//        printf("duration: %ld\n", duration);
         if (setRTT(duration) < 0) return -6;
 
-        printf("après recvfrom\n");
+//        printf("recvfrom : retval = %ld\n", retval);
         
-        printf("recvfrom : retval = %ld\n", retval);
+        usleep(1000000);
     }
 
     ret = close(sock);
