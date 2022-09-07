@@ -124,9 +124,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_discard?.stop()
         browser_chargen?.stop()
         browser_network?.stop()
+        browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
-        browser_tcp?.stop()
         if action != .LOOP_ICMP {
             Task {
                 await local_ping_sync?.stop()
