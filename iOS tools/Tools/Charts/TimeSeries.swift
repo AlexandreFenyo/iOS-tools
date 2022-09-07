@@ -8,13 +8,22 @@
 
 import Foundation
 
+public struct ChartUnits {
+    public static let RTT = ChartUnits(base: "µs", base_x10: "ms", base_x100: "s", base_x1000: "error")
+    public static let BANDWIDTH = ChartUnits(base: "bit/s", base_x10: "kbit/s", base_x100: "Mbit/s", base_x1000: "Gbit/s")
+    public let base: String
+    public let base_x10: String
+    public let base_x100: String
+    public let base_x1000: String
+}
+
 public struct TimeSeriesElement {
     public let date : Date
     public let value : Float
 }
 
 public protocol TimeSeriesReceiver {
-    func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) async
+    func cbNewData(ts: TimeSeries, tse: TimeSeriesElement?) async
 }
 
 public actor TimeSeries {
@@ -23,7 +32,17 @@ public actor TimeSeries {
     // Ordered data keys (dates)
     private var keys: [Date] = []
 
+    private var units: ChartUnits = .RTT
+    
     public init() { }
+
+    public func setUnits(units: ChartUnits) {
+        self.units = units
+    }
+
+    public func getUnits() -> ChartUnits {
+        return units
+    }
 
     public func register(_ receiver: TimeSeriesReceiver) {
         receivers.append(receiver)
@@ -38,6 +57,14 @@ public actor TimeSeries {
 
         // Signal about new value
         for receiver in receivers { await receiver.cbNewData(ts: self, tse: tse) }
+    }
+
+    public func removeAll() async {
+        // Update backing store
+        data.removeAll()
+        keys.removeAll()
+        // Signal about news values
+        for receiver in receivers { await receiver.cbNewData(ts: self, tse: nil) }
     }
 
     // Ordered array of every elements

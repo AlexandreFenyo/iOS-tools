@@ -199,11 +199,12 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             perror("recvfrom()");
             return (setLastErrorNo() << 8) - 5;
         }
-        gettimeofday(&tv2, NULL);
-        long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
+        if (retval >= 0 || errno != EAGAIN) {
+            gettimeofday(&tv2, NULL);
+            long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
 //        printf("duration: %ld\n", duration);
-        if (setRTT(duration) < 0) return -6;
-
+            if (setRTT(duration) < 0) return -6;
+        }
 //        printf("recvfrom : retval = %ld\n", retval);
         
         usleep(1000000);

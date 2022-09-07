@@ -421,14 +421,21 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_ping_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            await self.detail_view_controller?.ts.setUnits(units: .RTT)
+            await self.detail_view_controller?.ts.removeAll()
+            var first_skipped = false
             while true {
                 if let rtt = await self.local_ping_client?.getRTT() {
-                    print("RTT:\(rtt)")
-                }
+                    if rtt > 0 {
+                        if first_skipped == false {
+                            first_skipped = true
+                        } else {
+                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
+                        }
+                    }
+                } else { break }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
             }
-            await self.local_ping_sync!.stop() // une race condition peut conduire à ce que pc.stop() soit appelé alors que le thread n'a pas démarré, ce qui fait qu'on aura une erreur fatale
-            await self.local_ping_client!.close()
             // objectif : arrivé ici, la boucle de ping est terminée
         }
     }

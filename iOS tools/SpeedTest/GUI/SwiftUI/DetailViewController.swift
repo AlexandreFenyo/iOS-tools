@@ -25,7 +25,8 @@ class DetailViewController: UIViewController {
     
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
-    private let ts = TimeSeries()
+
+    public let ts = TimeSeries()
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!

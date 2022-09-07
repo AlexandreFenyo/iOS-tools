@@ -367,11 +367,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Display only segments or points that can be viewed
     private func drawCurveAsync(ts: TimeSeries) async {
         let elts = await ts.getElements()
-        drawCurve(elts: elts)
+        let units = await ts.getUnits()
+        drawCurve(elts: elts, units: units)
     }
     
     // Display only segments or points that can be viewed
-    private func drawCurve(elts: [TimeSeriesElement]) {
+    private func drawCurve(elts: [TimeSeriesElement], units: ChartUnits) {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
         if hasActions() { return }
         
@@ -522,7 +523,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var runnable: ((SKNode, CGFloat) -> ())?
             runnable = {
                 (node, t) in
-                self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts)
+                self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
                 let check_h : Float
                 (points, check_h, _, tse_displayed) = computePoints()
                 drawPoints(&points, tse_displayed)
@@ -539,11 +540,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     private func createChartComponentsAsync(date: Date, max_val: Float) async {
         let elts = await ts.getElements()
-        createChartComponentsFromElts(date: date, max_val: max_val, elts: elts)
+        let units = await ts.getUnits()
+        createChartComponentsFromElts(date: date, max_val: max_val, elts: elts, units: units)
     }
     
     // Create or update chart components
-    private func createChartComponentsFromElts(date: Date, max_val: Float, elts: [TimeSeriesElement]) {
+    private func createChartComponentsFromElts(date: Date, max_val: Float, elts: [TimeSeriesElement], units: ChartUnits) {
         // Update state
         highest = max_val
         
@@ -563,7 +565,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         root_node?.removeAllChildren()
         
         if vertical_auto_layout {
-            let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5)
+            let (_grid_height, _cost, _unit, _factor) = SKChartNode.getOptimizedVerticalParameters(height: graph_height!, max_val: max_val, nlines: 5, units: units)
             
             grid_size.height = _grid_height
             subgrid_size?.height = grid_size.height / 5.0
@@ -796,7 +798,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         grid_node!.addChild(curve_node!)
     }
     
-    public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement) async {
+    public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement? = nil) async {
         await drawCurveAsync(ts: ts)
     }
     
@@ -810,7 +812,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // - grid_vertical_cost
     // - vertical_unit
     // - factor
-    public static func getOptimizedVerticalParameters(height: CGFloat, max_val: Float, nlines: Int) -> (CGFloat, Float, String, Int) {
+    public static func getOptimizedVerticalParameters(height: CGFloat, max_val: Float, nlines: Int, units: ChartUnits) -> (CGFloat, Float, String, Int) {
         var max_val = max_val
         max_val *= Float(ChartDefaults.optimal_vertical_resolution_ratio)
         if max_val < Float(nlines) { max_val = Float(nlines) }
@@ -826,10 +828,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             break
         }
         let (unit, factor) : (String, Int) = {
-            if first_label.count < 4 { return ("bit/s", 0) }
-            if first_label.count < 7 { return ("Kbit/s", 3) }
-            if first_label.count < 10 { return ("Mbit/s", 6) }
-            return ("Gbit/s", 9)
+            if first_label.count < 4 { return (units.base, 0) }
+            if first_label.count < 7 { return (units.base_x10, 3) }
+            if first_label.count < 10 { return (units.base_x100, 6) }
+            return (units.base_x1000, 9)
         }()
         let grid_vertical_cost = Float(Int(left_digit + String(repeating: "0", count: first_label.count - 1))!)
         return (height * CGFloat(grid_vertical_cost / max_val), grid_vertical_cost, unit, factor)

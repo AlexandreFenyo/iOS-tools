@@ -68,8 +68,6 @@ import SpriteKit
 
 @MainActor
 struct DetailSwiftUIView: View {
-    public let ts = TimeSeries()
-    
     public let view: UIView
     public let master_view_controller: MasterViewController
     
