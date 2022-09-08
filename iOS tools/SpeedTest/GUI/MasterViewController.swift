@@ -74,7 +74,10 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var local_flood_sync : LocalFloodSync?
     
     private var local_chargen_client : LocalChargenClient?
+    private var local_chargen_sync : LocalChargenSync?
+
     private var local_discard_client : LocalDiscardClient?
+    private var local_discard_sync : LocalDiscardSync?
 
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
@@ -129,6 +132,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
+        
         if action != .LOOP_ICMP {
             Task {
                 await local_ping_sync?.stop()
@@ -137,12 +141,31 @@ class MasterViewController: UITableViewController, DeviceManager {
                 local_ping_client = nil
             }
         }
+        
         if action != .FLOOD_UDP {
             Task {
                 await local_flood_sync?.stop()
                 await local_flood_sync?.close()
                 local_flood_sync = nil
                 local_flood_client = nil
+            }
+        }
+        
+        if action != .CHARGEN_TCP {
+            Task {
+                await local_chargen_sync?.stop()
+                await local_chargen_sync?.close()
+                local_chargen_sync = nil
+                local_chargen_client = nil
+            }
+        }
+        
+        if action != .FLOOD_TCP {
+            Task {
+                await local_discard_sync?.stop()
+                await local_discard_sync?.close()
+                local_discard_sync = nil
+                local_discard_client = nil
             }
         }
 
@@ -195,7 +218,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         print("debug pressed")
         let node = Node()
         node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
-        node.v4_addresses.insert(IPv4Address("1.2.3.6")!)
+        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
+        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)
+        node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
+        node.v4_addresses.insert(IPv4Address("192.168.1.12")!)
+        node.v4_addresses.insert(IPv4Address("192.168.0.85")!)
         addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         //print(traitCollection.horizontalSizeClass.rawValue)
@@ -481,13 +508,64 @@ class MasterViewController: UITableViewController, DeviceManager {
             // objectif : arrivé ici, la boucle de flood est terminée
         }
     }
-
+    
     func floodTCP(_ address: IPAddress) {
+        stopBrowsing(.FLOOD_TCP)
+        self.stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
+        self.master_ip_view_controller?.stop_button.isEnabled = true
+        self.add_button!.isEnabled = false
+        self.update_button!.isEnabled = false
+
+        local_discard_client = LocalDiscardClient(address: address)
+        local_discard_sync = LocalDiscardSync(local_discard_client!)
+        local_discard_client!.start()
+
+        Task.detached(priority: .userInitiated) {
+            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+            await self.detail_view_controller?.ts.removeAll()
+            while true {
+                if let throughput = await self.local_discard_client?.getThroughput() {
+                    if throughput > 0 {
+                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
+                    }
+                    if throughput < 0 { break }
+                } else { break }
+                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+            }
+            await self.stopBrowsing(.OTHER_ACTION)
+            // objectif : arrivé ici, la boucle de chargen est terminée
+        }
     }
 
     func chargenTCP(_ address: IPAddress) {
-    }
+        stopBrowsing(.CHARGEN_TCP)
+        self.stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
+        self.master_ip_view_controller?.stop_button.isEnabled = true
+        self.add_button!.isEnabled = false
+        self.update_button!.isEnabled = false
 
+        local_chargen_client = LocalChargenClient(address: address)
+        local_chargen_sync = LocalChargenSync(local_chargen_client!)
+        local_chargen_client!.start()
+
+        Task.detached(priority: .userInitiated) {
+            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+            await self.detail_view_controller?.ts.removeAll()
+            while true {
+                if let throughput = await self.local_chargen_client?.getThroughput() {
+                    if throughput > 0 {
+                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
+                    }
+                    if throughput < 0 { break }
+                } else { break }
+                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+            }
+            await self.stopBrowsing(.OTHER_ACTION)
+            // objectif : arrivé ici, la boucle de chargen est terminée
+        }
+    }
     
     // MARK: - DeviceManager protocol
 

@@ -8,6 +8,22 @@
 
 import Foundation
 
+actor LocalChargenSync {
+    private let local_chargen_client: LocalChargenClient
+    
+    public func close() {
+        local_chargen_client.close()
+    }
+    
+    public func stop() {
+        local_chargen_client.stop()
+    }
+    
+    init(_ local_chargen_client: LocalChargenClient) {
+        self.local_chargen_client = local_chargen_client
+    }
+}
+
 class LocalChargenClient : Thread {
     private let address : IPAddress
     private var last_nread : Int?
@@ -68,7 +84,9 @@ class LocalChargenClient : Thread {
     // Main thread
     public func getThroughput() -> Double {
         let ret = localChargenClientGetNRead()
-        if ret < 0 { fatalError() }
+        if ret < 0 {
+            return Double(ret)
+        }
         let now = Date()
         let retval = 8 * Double.init(ret - last_nread!) / now.timeIntervalSince(last_date!)
         last_nread = ret

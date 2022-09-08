@@ -8,6 +8,22 @@
 
 import Foundation
 
+actor LocalDiscardSync {
+    private let local_discard_client: LocalDiscardClient
+    
+    public func close() {
+        local_discard_client.close()
+    }
+    
+    public func stop() {
+        local_discard_client.stop()
+    }
+    
+    init(_ local_discard_client: LocalDiscardClient) {
+        self.local_discard_client = local_discard_client
+    }
+}
+
 class LocalDiscardClient : Thread {
     private let address : IPAddress
     private var last_nwrite : Int?
@@ -68,7 +84,9 @@ class LocalDiscardClient : Thread {
     // Main thread
     public func getThroughput() -> Double {
         let ret = localDiscardClientGetNWrite()
-        if ret < 0 { fatalError() }
+        if ret < 0 {
+            return Double(ret)
+        }
         let now = Date()
         let retval = 8 * Double.init(ret - last_nwrite!) / now.timeIntervalSince(last_date!)
         last_nwrite = ret

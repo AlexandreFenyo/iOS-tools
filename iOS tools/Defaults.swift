@@ -10,8 +10,8 @@ import Foundation
 
 // Default values
 struct NetworkDefaults {
-    public static let speed_test_chargen_port: UInt16 = 1919
-    public static let speed_test_discard_port: UInt16 = 1920
+    public static let speed_test_chargen_port: UInt16 = 19
+    public static let speed_test_discard_port: UInt16 = 9
     public static let buffer_size = 3000
     public static let local_domain_for_browsing = "local."
     public static let speed_test_chargen_service_type = "_speedtestchargen._tcp."
