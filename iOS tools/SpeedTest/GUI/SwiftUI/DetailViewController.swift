@@ -13,7 +13,6 @@ class DetailViewController: UIViewController {
     public let ts = TimeSeries()
     
     @IBOutlet weak var view1: SKView!
-    @IBOutlet weak var view2: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
