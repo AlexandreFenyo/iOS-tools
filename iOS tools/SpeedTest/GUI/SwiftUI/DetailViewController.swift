@@ -8,10 +8,11 @@ class DetailViewController: UIViewController {
     public var master_view_controller: MasterViewController?
     public let ts = TimeSeries()
     
-    @IBOutlet weak var view1: SKView!
+    @IBOutlet weak var view1: UITextView!// SKView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        view1.backgroundColor = .red
     }
     
     // called by MasterViewController when the user selects an address
