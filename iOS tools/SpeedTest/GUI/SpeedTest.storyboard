@@ -19,16 +19,7 @@
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
                                 <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
-                                <subviews>
-                                    <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
-                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1236"/>
-                                        <color key="backgroundColor" systemColor="systemPurpleColor"/>
-                                    </skView>
-                                </subviews>
                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
-                                <constraints>
-                                    <constraint firstItem="tyb-c3-KLe" firstAttribute="top" secondItem="nKf-do-woU" secondAttribute="top" id="ys8-AM-YrO"/>
-                                </constraints>
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wSB-Fv-k0s"/>
@@ -42,9 +33,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
-                    <connections>
-                        <outlet property="view1" destination="tyb-c3-KLe" id="OW4-XM-h95"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jo3-ET-mk8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -390,6 +378,7 @@
             <point key="canvasLocation" x="155" y="304"/>
         </scene>
     </scenes>
+    <color key="tintColor" systemColor="systemCyanColor"/>
     <resources>
         <image name="info.circle" catalog="system" width="128" height="121"/>
         <image name="note.text" catalog="system" width="128" height="106"/>
@@ -402,11 +391,11 @@
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
+        <systemColor name="systemCyanColor">
+            <color red="0.19607843137254902" green="0.67843137254901964" blue="0.90196078431372551" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemPurpleColor">
-            <color red="0.68627450980392157" green="0.32156862745098042" blue="0.87058823529411766" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
