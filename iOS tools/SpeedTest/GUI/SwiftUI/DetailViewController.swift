@@ -17,10 +17,6 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // utile sur iPhone, pour pouvoir revenir en arrière depuis la vue avec le chart
-        navigationItem.leftItemsSupplementBackButton = true
-
     }
     
     // called by MasterViewController when the user selects an address

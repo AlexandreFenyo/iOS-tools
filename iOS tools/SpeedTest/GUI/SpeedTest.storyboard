@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
-                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
+                                <rect key="frame" x="0.0" y="951" width="1024" height="350"/>
                                 <subviews>
                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="350"/>
@@ -26,14 +26,8 @@
                                             <constraint firstAttribute="height" constant="350" id="sQ2-GI-tMh" userLabel="height"/>
                                         </constraints>
                                     </skView>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Ku-Sp-0Me" userLabel="view2">
-                                        <rect key="frame" x="0.0" y="350" width="1024" height="886"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    </view>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="7Ku-Sp-0Me" firstAttribute="top" secondItem="tyb-c3-KLe" secondAttribute="bottom" id="0MR-qu-ctk"/>
-                                    <constraint firstItem="7Ku-Sp-0Me" firstAttribute="width" secondItem="tyb-c3-KLe" secondAttribute="width" id="GyB-qc-Xl3"/>
                                     <constraint firstItem="tyb-c3-KLe" firstAttribute="top" secondItem="nKf-do-woU" secondAttribute="top" id="ys8-AM-YrO"/>
                                 </constraints>
                             </stackView>
@@ -51,7 +45,6 @@
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
                     <connections>
                         <outlet property="view1" destination="tyb-c3-KLe" id="OW4-XM-h95"/>
-                        <outlet property="view2" destination="7Ku-Sp-0Me" id="k9t-j6-ucc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jo3-ET-mk8" userLabel="First Responder" sceneMemberID="firstResponder"/>
