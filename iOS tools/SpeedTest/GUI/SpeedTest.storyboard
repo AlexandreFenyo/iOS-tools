@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU" userLabel="Stack View vertical">
-                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
+                                <rect key="frame" x="0.0" y="74" width="1024" height="1227"/>
                                 <subviews>
                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="350"/>
@@ -27,7 +27,7 @@
                                         </constraints>
                                     </skView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Ku-Sp-0Me" userLabel="view2">
-                                        <rect key="frame" x="0.0" y="350" width="1024" height="886"/>
+                                        <rect key="frame" x="0.0" y="350" width="1024" height="877"/>
                                         <color key="backgroundColor" name="systemBackgroundColor" catalog="iPhoneSDK" colorSpace="catalog"/>
                                     </view>
                                 </subviews>
@@ -41,11 +41,16 @@
                         <viewLayoutGuide key="safeArea" id="wSB-Fv-k0s"/>
                         <color key="backgroundColor" name="systemBackgroundColor" catalog="iPhoneSDK" colorSpace="catalog"/>
                         <constraints>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="centerY" secondItem="Qqr-xO-lIB" secondAttribute="centerY" id="6yv-bm-E9k"/>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="7pf-xK-QiN"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="4bL-B9-j7X"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="top" secondItem="wSB-Fv-k0s" secondAttribute="top" id="6Du-xg-I5d"/>
                             <constraint firstItem="wSB-Fv-k0s" firstAttribute="width" secondItem="nKf-do-woU" secondAttribute="width" id="Gfi-Et-4AW"/>
                             <constraint firstItem="nKf-do-woU" firstAttribute="centerX" secondItem="Qqr-xO-lIB" secondAttribute="centerX" id="K9E-e7-5up"/>
                             <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="T8K-Rg-IH4"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="trailing" secondItem="wSB-Fv-k0s" secondAttribute="trailing" id="bEd-22-zbJ"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="trailing" secondItem="nKf-do-woU" secondAttribute="trailing" id="fSE-Pm-kQR"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="leading" secondItem="wSB-Fv-k0s" secondAttribute="leading" id="lNN-ch-CkO"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="leading" secondItem="nKf-do-woU" secondAttribute="leading" id="tix-QT-4Fg"/>
+                            <constraint firstItem="nKf-do-woU" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="tun-UU-Mc4"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
