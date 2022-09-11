@@ -6,8 +6,6 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
-// TEST
-
 // https://www.raywenderlich.com/173753/uisplitviewcontroller-tutorial-getting-started-2
 // https://medium.com/swift-programming/swift-enums-and-uitableview-sections-1806b74b8138
 // http://theapplady.net/how-to-use-the-ios-8-split-view-controller-part-3/
