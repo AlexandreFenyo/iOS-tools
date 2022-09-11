@@ -17,19 +17,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
-                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
-                                <color key="backgroundColor" systemColor="systemGreenColor"/>
-                            </stackView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="xFc-2t-3pv">
+                                <rect key="frame" x="0.0" y="74" width="1024" height="1227"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wSB-Fv-k0s"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
                         <constraints>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="centerY" secondItem="Qqr-xO-lIB" secondAttribute="centerY" id="6yv-bm-E9k"/>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="7pf-xK-QiN"/>
-                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="width" secondItem="nKf-do-woU" secondAttribute="width" id="Gfi-Et-4AW"/>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="centerX" secondItem="Qqr-xO-lIB" secondAttribute="centerX" id="K9E-e7-5up"/>
-                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="T8K-Rg-IH4"/>
+                            <constraint firstItem="xFc-2t-3pv" firstAttribute="leading" secondItem="wSB-Fv-k0s" secondAttribute="leading" id="Q6r-fg-BIH"/>
+                            <constraint firstItem="xFc-2t-3pv" firstAttribute="trailing" secondItem="wSB-Fv-k0s" secondAttribute="trailing" id="mTl-gn-vZY"/>
+                            <constraint firstItem="xFc-2t-3pv" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="pS1-xi-QCR"/>
+                            <constraint firstItem="xFc-2t-3pv" firstAttribute="top" secondItem="wSB-Fv-k0s" secondAttribute="top" id="quA-AF-zNr"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
@@ -388,14 +391,14 @@
         <image name="stop.circle" catalog="system" width="128" height="121"/>
         <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="text.justify" catalog="system" width="128" height="100"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemCyanColor">
             <color red="0.19607843137254902" green="0.67843137254901964" blue="0.90196078431372551" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
