@@ -18,13 +18,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
-                                <rect key="frame" x="0.0" y="951" width="1024" height="350"/>
+                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
                                 <subviews>
                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
-                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="350"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="350" id="sQ2-GI-tMh" userLabel="height"/>
-                                        </constraints>
+                                        <rect key="frame" x="0.0" y="0.0" width="1024" height="1236"/>
                                     </skView>
                                 </subviews>
                                 <constraints>
