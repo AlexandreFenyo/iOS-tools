@@ -6,10 +6,6 @@ import SwiftUI
 @MainActor
 class DetailViewController: UIViewController {
     public var master_view_controller: MasterViewController?
-    
-//    private var chart_node : SKChartNode?
-//    private var scene_delegate : MySKSceneDelegate?
-
     public let ts = TimeSeries()
     
     @IBOutlet weak var view1: SKView!
