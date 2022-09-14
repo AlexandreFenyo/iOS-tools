@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -18,7 +18,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nKf-do-woU">
-                                <rect key="frame" x="0.0" y="65" width="1024" height="1236"/>
+                                <rect key="frame" x="0.0" y="74" width="1024" height="1227"/>
                                 <subviews>
                                     <skView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tyb-c3-KLe" userLabel="view1">
                                         <rect key="frame" x="0.0" y="0.0" width="1024" height="350"/>
@@ -27,7 +27,7 @@
                                         </constraints>
                                     </skView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Ku-Sp-0Me" userLabel="view2">
-                                        <rect key="frame" x="0.0" y="350" width="1024" height="886"/>
+                                        <rect key="frame" x="0.0" y="350" width="1024" height="877"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
@@ -41,9 +41,12 @@
                         <viewLayoutGuide key="safeArea" id="wSB-Fv-k0s"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="nKf-do-woU" firstAttribute="centerY" secondItem="Qqr-xO-lIB" secondAttribute="centerY" id="6yv-bm-E9k"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="leading" secondItem="nKf-do-woU" secondAttribute="leading" id="7RD-bl-RfE"/>
                             <constraint firstItem="nKf-do-woU" firstAttribute="bottom" secondItem="wSB-Fv-k0s" secondAttribute="bottom" id="7pf-xK-QiN"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="top" secondItem="nKf-do-woU" secondAttribute="top" id="AIH-d7-Fwi"/>
                             <constraint firstItem="wSB-Fv-k0s" firstAttribute="width" secondItem="nKf-do-woU" secondAttribute="width" id="Gfi-Et-4AW"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="Gsk-Ov-JXQ"/>
+                            <constraint firstItem="wSB-Fv-k0s" firstAttribute="trailing" secondItem="nKf-do-woU" secondAttribute="trailing" id="IKM-yB-85X"/>
                             <constraint firstItem="nKf-do-woU" firstAttribute="centerX" secondItem="Qqr-xO-lIB" secondAttribute="centerX" id="K9E-e7-5up"/>
                             <constraint firstItem="wSB-Fv-k0s" firstAttribute="bottom" secondItem="nKf-do-woU" secondAttribute="bottom" id="T8K-Rg-IH4"/>
                         </constraints>
@@ -68,7 +71,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="DeviceCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeviceCell" rowHeight="99" id="HNq-FQ-1QM" customClass="DeviceCell" customModule="iOS_tools" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44.5" width="308" height="99"/>
+                                <rect key="frame" x="0.0" y="50" width="308" height="99"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HNq-FQ-1QM" id="bA0-0K-nIQ">
                                     <rect key="frame" x="0.0" y="0.0" width="308" height="99"/>
@@ -247,7 +250,7 @@
                         <color key="backgroundColor" red="0.48251372580000002" green="0.53472679850000004" blue="0.59773141149999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <prototypes>
                             <tableViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="DeviceAddressCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="DeviceAddressCell" textLabel="Rc2-K5-rQo" style="IBUITableViewCellStyleDefault" id="nxW-0O-cHP" customClass="DeviceAddressCell" customModule="iOS_tools" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="44.5" width="308" height="51.5"/>
+                                <rect key="frame" x="0.0" y="50" width="308" height="51.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nxW-0O-cHP" id="qE4-Zr-fZ6">
                                     <rect key="frame" x="0.0" y="0.0" width="308" height="51.5"/>
@@ -399,14 +402,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="info.circle" catalog="system" width="128" height="121"/>
-        <image name="note.text" catalog="system" width="128" height="106"/>
-        <image name="questionmark.circle" catalog="system" width="128" height="121"/>
-        <image name="rectangle.badge.plus" catalog="system" width="128" height="95"/>
+        <image name="info.circle" catalog="system" width="32" height="32"/>
+        <image name="note.text" catalog="system" width="128" height="107"/>
+        <image name="questionmark.circle" catalog="system" width="128" height="123"/>
+        <image name="rectangle.badge.plus" catalog="system" width="128" height="96"/>
         <image name="repeat" catalog="system" width="128" height="98"/>
-        <image name="stop.circle" catalog="system" width="128" height="121"/>
+        <image name="stop.circle" catalog="system" width="128" height="123"/>
         <image name="terminal" catalog="system" width="128" height="93"/>
-        <image name="text.justify" catalog="system" width="128" height="100"/>
+        <image name="text.justify" catalog="system" width="128" height="99"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
