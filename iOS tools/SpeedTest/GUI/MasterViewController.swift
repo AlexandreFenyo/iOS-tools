@@ -197,13 +197,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         return refreshControl!.frame.height
     }
 
-//    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-//        let header = view as! UITableViewHeaderFooterView
-//        header.backgroundView?.backgroundColor = UIColor(red: 253.0/255.0, green: 240.0/255.0, blue: 196.0/255.0, alpha: 1)
-//        header.textLabel?.textColor = .black
-//        header.textLabel?.font = UIFont(name: "Helvetica-Bold", size: 19)
-//    }
-
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -269,7 +262,3 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 }
 
-// let frame = navigationController!.navigationBar.frame
-// tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-// tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-// tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)

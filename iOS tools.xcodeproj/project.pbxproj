@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
-		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
@@ -26,11 +25,6 @@
 		5D1351EB208538DB00E4A76D /* iOS tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D1351EE208538DB00E4A76D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D1351FC208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D135205208538E300E4A76D /* iOS_toolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_toolsTests.swift; sourceTree = "<group>"; };
-		5D135207208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D135210208538E300E4A76D /* iOS_toolsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_toolsUITests.swift; sourceTree = "<group>"; };
-		5D135212208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D13521F20853BEA00E4A76D /* GenericTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTools.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
@@ -66,8 +60,6 @@
 			isa = PBXGroup;
 			children = (
 				5D1351ED208538DB00E4A76D /* iOS tools */,
-				5D135204208538E300E4A76D /* iOS toolsTests */,
-				5D13520F208538E300E4A76D /* iOS toolsUITests */,
 				5D1351EC208538DB00E4A76D /* Products */,
 				5D0A7E0C2850FC9C00CCCF0C /* Frameworks */,
 			);
@@ -92,28 +84,9 @@
 			path = "iOS tools";
 			sourceTree = "<group>";
 		};
-		5D135204208538E300E4A76D /* iOS toolsTests */ = {
-			isa = PBXGroup;
-			children = (
-				5D135205208538E300E4A76D /* iOS_toolsTests.swift */,
-				5D135207208538E300E4A76D /* Info.plist */,
-			);
-			path = "iOS toolsTests";
-			sourceTree = "<group>";
-		};
-		5D13520F208538E300E4A76D /* iOS toolsUITests */ = {
-			isa = PBXGroup;
-			children = (
-				5D135210208538E300E4A76D /* iOS_toolsUITests.swift */,
-				5D135212208538E300E4A76D /* Info.plist */,
-			);
-			path = "iOS toolsUITests";
-			sourceTree = "<group>";
-		};
 		5D13521E20853BB400E4A76D /* Tools */ = {
 			isa = PBXGroup;
 			children = (
-				5D13521F20853BEA00E4A76D /* GenericTools.swift */,
 				5D38680F20963915009FE239 /* config.plist */,
 				5D4B385520A2ECD9006AC172 /* Tools.xcassets */,
 			);
@@ -253,7 +226,6 @@
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,
-				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
