@@ -3,7 +3,6 @@ import UIKit
 
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
-    func addNode(_ node: Node)
     func setInformation(_ info: String)
 }
 
@@ -29,12 +28,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_view_controller: DetailViewController?
     public var detail_navigation_controller: UINavigationController?
     public var split_view_controller: SplitViewController?
-
-    // Get the node corresponding to an indexPath in the table
-    private func getNode(indexPath index_path: IndexPath) -> Node {
-        guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }
-        return section.nodes[index_path.item]
-    }
 
     // Update nodes and find new nodes
     // Main thread
@@ -77,9 +70,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
-        let node = Node()
-        addNode(node)
-
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
@@ -132,16 +122,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MasterSectionHeader")
         let header = cell as! MasterSectionHeader
-        
-        if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
-            header.titleLabel.text = section.description
-            header.titleLabel.textColor = COLORS.section_label
-            header.subTitleLabel.text = section.detailed_description
-            header.subTitleLabel.textColor = COLORS.section_label
-            header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
-            header.mainView.backgroundColor = COLORS.section_background
-        }
-        
         return cell
     }
 
@@ -197,30 +177,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     func addNode() {
     }
 
-    // Main thread
-    func addNode(_ node: Node) {
-//        tableView.beginUpdates()
-//        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-//        tableView.deleteRows(at: index_paths_removed, with: .automatic)
-//        tableView.insertRows(at: index_paths_inserted, with: .automatic)
-//        tableView.endUpdates()
-
-        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        
-        if tableView.window != nil {
-            // la liste des noeuds est affichée à gauche (et non pas la liste des IP d'un noeud)
-            
-            tableView.performBatchUpdates {
-                tableView.deleteRows(at: index_paths_removed, with: .automatic)
-                tableView.insertRows(at: index_paths_inserted, with: .automatic)
-            }
-            // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
-            tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-            
-            tableView.reloadData()
-        }
-    }
-
   
     // MARK: - DeviceManager protocol
 
@@ -251,19 +207,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return DBMaster.shared.sections.count
+        return 0
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
-            return section.nodes.count
-        }
-        fatalError()
+        return 0
     }
 
     // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
 
         cell.layer.shadowColor = UIColor.clear.cgColor
@@ -282,8 +234,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
-        cell.nPorts.text = String(node.tcp_ports.count) + " port" + (node.tcp_ports.count > 1 ? "s" : "")
+        cell.name.text = "truc"
+        cell.nPorts.text = "troc"
 
        return cell
     }
@@ -298,28 +250,12 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !getNode(indexPath: indexPath).types.contains(.localhost)
+        return false
     }
-
-    // Delete every rows corresponding to a node
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle != .delete { fatalError("editingStyle invalid") }
-        let node = getNode(indexPath: indexPath)
-
-        tableView.beginUpdates()
-        let index_paths_removed = DBMaster.shared.removeNode(node)
-        tableView.deleteRows(at: index_paths_removed, with: .automatic)
-        tableView.endUpdates()
-    }
-
-    // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let index_path = tableView.indexPathForSelectedRow!
-        let type = SectionType(rawValue: index_path.section)
-        let section = DBMaster.shared.sections[type!]
-        let node = section!.nodes[index_path.item]
 
         /* si on voulait sélectionner une adresse, on pourrait le faire comme ceci mais pas ici car la première fois où prepare est appelé, on n'a pas le droit d'appeler selectRow ou cellForRow : on a alors un warning pour signaler que ça peut conduire à des bugs
         if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {

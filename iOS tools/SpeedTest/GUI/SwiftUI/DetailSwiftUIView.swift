@@ -21,10 +21,6 @@ struct DetailSwiftUIView: View {
         public func setButtonsEnabled(_ state: Bool) {
             print("setButtonsEnabled(\(state))")
         }
-        
-        public func updateDetails(_ node: Node, _ buttons_enabled: Bool) {
-            setButtonsEnabled(buttons_enabled)
-        }
     }
     
     @ObservedObject var model = DetailViewModel()
