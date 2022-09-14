@@ -19,13 +19,9 @@
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
-		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
-		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
-		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
 		5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */; };
 		5DF21516212D7C13002B7603 /* genericTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21514212D7C13002B7603 /* genericTools.c */; };
-		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,16 +43,11 @@
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
-		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
 		5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS tools-Bridging-Header.h"; sourceTree = "<group>"; };
-		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
-		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = leftNavController.swift; sourceTree = "<group>"; };
 		5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightNavController.swift; sourceTree = "<group>"; };
 		5DF21514212D7C13002B7603 /* genericTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = genericTools.c; sourceTree = "<group>"; };
 		5DF21515212D7C13002B7603 /* genericTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = genericTools.h; sourceTree = "<group>"; };
-		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,8 +122,6 @@
 				5DF21515212D7C13002B7603 /* genericTools.h */,
 				5DF21514212D7C13002B7603 /* genericTools.c */,
 				5D13521F20853BEA00E4A76D /* GenericTools.swift */,
-				5DF21500211B4FD7002B7603 /* Charts */,
-				5DF214FF211B4FCE002B7603 /* Networks */,
 				5D38680F20963915009FE239 /* config.plist */,
 				5D4B385520A2ECD9006AC172 /* Tools.xcassets */,
 				5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */,
@@ -164,25 +153,6 @@
 				5DF21501211B5D98002B7603 /* GUI */,
 			);
 			path = SpeedTest;
-			sourceTree = "<group>";
-		};
-		5DF214FF211B4FCE002B7603 /* Networks */ = {
-			isa = PBXGroup;
-			children = (
-				5DC736C220D3A55600C2A199 /* NetTools.c */,
-				5DC736C320D3A55600C2A199 /* NetTools.h */,
-				5D945D0B2100CF51007E4844 /* NetTools.swift */,
-			);
-			path = Networks;
-			sourceTree = "<group>";
-		};
-		5DF21500211B4FD7002B7603 /* Charts */ = {
-			isa = PBXGroup;
-			children = (
-				5D8944A120A57C7800E26476 /* Chart.swift */,
-				5DFF67E920B61E8C003605BF /* TimeSeries.swift */,
-			);
-			path = Charts;
 			sourceTree = "<group>";
 		};
 		5DF21501211B5D98002B7603 /* GUI */ = {
@@ -294,15 +264,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
-				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
-				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5DF21516212D7C13002B7603 /* genericTools.c in Sources */,
 				5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */,
 				5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */,
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
-				5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,

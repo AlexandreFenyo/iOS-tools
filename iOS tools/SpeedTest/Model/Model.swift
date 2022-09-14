@@ -110,8 +110,6 @@ class Node : Hashable {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
         hasher.combine(names)
-        hasher.combine(v4_addresses)
-        hasher.combine(v6_addresses)
         hasher.combine(tcp_ports)
         hasher.combine(types)
     }
@@ -119,17 +117,11 @@ class Node : Hashable {
     public var mcast_dns_names = Set<FQDN>()
     public var dns_names = Set<DomainName>()
     public var names = Set<String>()
-    public var v4_addresses = Set<IPv4Address>()
-    public var v6_addresses = Set<IPv6Address>()
     public var tcp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
 
     public init() { }
     
-    private var adresses: Set<IPAddress> {
-        return (v4_addresses as Set<IPAddress>).union(v6_addresses)
-    }
-
     private var fqdn_dns_names: Set<FQDN> {
         return dns_names.filter { (dns_name) -> Bool in
             dns_name.isFQDN()
@@ -165,26 +157,18 @@ class Node : Hashable {
         mcast_dns_names.formUnion(node.mcast_dns_names)
         dns_names.formUnion(node.dns_names)
         names.formUnion(node.names)
-        v4_addresses.formUnion(node.v4_addresses)
-        v6_addresses.formUnion(node.v6_addresses)
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
     }
 
     public func isSimilar(with: Node) -> Bool {
-        if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
-
-        if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
-
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
-
         if !dns_names.intersection(with.dns_names).isEmpty { return true }
-
         return false
     }
 
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
     }
 }
 
@@ -203,7 +187,6 @@ class Section {
 class DBMaster {
     public var sections : [SectionType: Section]
     public var nodes : Set<Node>
-    public var networks : Set<IPNetwork>
     
     static public let shared = DBMaster()
 
@@ -216,112 +199,15 @@ class DBMaster {
         return index_paths_removed
     }
 
-    /* 1 gateway per IP */
-    /*
-    public func getLocalGateways() -> [Node] {
-        var gateways = [Node]()
-
-        var idx : Int32 = 0, ret : Int32
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocalgatewayipv4(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-
-            if (ret >= 0) {
-                let addr = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
-                let gw = Node()
-                gw.types.insert(.gateway)
-                gw.v4_addresses.insert(addr)
-                gateways.append(gw)
-            }
-            idx += 1
-        } while ret >= 0
-
-        idx = 0
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocalgatewayipv6(idx, $0, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            
-            if (ret >= 0) {
-                let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-                let gw = Node()
-                gw.types.insert(.gateway)
-                gw.v6_addresses.insert(addr)
-                gateways.append(gw)
-            }
-            idx += 1
-        } while ret >= 0
-
-        return gateways
-    }
- */
-
     /* A unique gateway */
     public func getLocalGateways() -> [Node] {
         var gateways = [Node]()
         let gw = Node()
         gw.types.insert(.gateway)
-        
-        var idx : Int32 = 0, ret : Int32
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes {
-                getlocalgatewayipv4(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size))
-            }
-            if (ret >= 0) {
-                let addr = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
-                gw.v4_addresses.insert(addr)
-            }
-            idx += 1
-        } while ret >= 0
-        
-        idx = 0
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            ret = data.withUnsafeMutableBytes { getlocalgatewayipv6(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-
-            if (ret >= 0) {
-                let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-                gw.v6_addresses.insert(addr)
-            }
-            idx += 1
-        } while ret >= 0
-        
         gateways.append(gw)
         return gateways
     }
     
-    public func getLocalNode() -> Node {
-        let node = Node()
-        node.types = [ .localhost ]
-        var idx : Int32 = 0, mask_len : Int32
-        repeat {
-            var data = Data(count: MemoryLayout<sockaddr_storage>.size)
-            mask_len = data.withUnsafeMutableBytes { getlocaladdr(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size)) }
-            if mask_len >= 0 {
-                let my_sock_addr = SockAddr.getSockAddr(data)
-                switch my_sock_addr.getFamily() {
-                case AF_INET:
-                    let address = my_sock_addr.getIPAddress() as! IPv4Address
-                    node.v4_addresses.insert(address)
-                    networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
-
-                case AF_INET6:
-                    let address = my_sock_addr.getIPAddress() as! IPv6Address
-                    node.v6_addresses.insert(address)
-                    networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
-                    
-                default:
-                    fatalError("bad address family")
-                }
-            }
-            idx += 1
-        } while mask_len >= 0
-
-        node.names.insert(UIDevice.current.name)
-        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
-        return node
-    }
-
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
         let start_time = Date()
         GenericTools.printDuration(idx: 0, start_time: start_time)
@@ -378,8 +264,8 @@ class DBMaster {
         return (index_paths_removed, index_paths_inserted)
     }
 
+
     public init() {
-        networks = Set<IPNetwork>()
         nodes = Set<Node>()
         sections = [
             .localhost: Section("localhost", "this host"),

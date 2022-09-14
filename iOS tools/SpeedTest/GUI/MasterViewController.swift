@@ -1,33 +1,9 @@
-//
-//  MasterViewController.swift
-//  iOS tools
-//
-//  Created by Alexandre Fenyo on 02/07/2018.
-//  Copyright © 2018 Alexandre Fenyo. All rights reserved.
-//
-
-// https://www.raywenderlich.com/173753/uisplitviewcontroller-tutorial-getting-started-2
-// https://medium.com/swift-programming/swift-enums-and-uitableview-sections-1806b74b8138
-// http://theapplady.net/how-to-use-the-ios-8-split-view-controller-part-3/
-// https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/WindowsandViews/WindowsandViews.html
-// https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
 
 import UIKit
-
-enum NewRunAction {
-    case SCAN_TCP
-    case FLOOD_UDP
-    case FLOOD_TCP
-    case CHARGEN_TCP
-    case LOOP_ICMP
-    case OTHER_ACTION
-}
 
 // MasterViewController is a DeviceManager
 protocol DeviceManager {
     func addNode(_ node: Node)
-    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
-    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
 }
 
@@ -73,18 +49,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    // Stop looking for new nodes
-    // Main thread ?
-    private func stopBrowsing(_ action: NewRunAction) {
-        print("STOP BROWSING")
-        refreshControl!.endRefreshing()
-        stop_button!.isEnabled = false
-        detail_view_controller?.enableButtons(true)
-        add_button!.isEnabled = true
-        update_button!.isEnabled = true
-        setTitle("Target List")
-    }
-
     public func setTitle(_ title: String) {
         navigationItem.title = title
     }
@@ -96,7 +60,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func stop_pressed(_ sender: Any) {
-        stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
@@ -115,13 +78,10 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
         let node = Node()
-        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
-        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
-        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)
-        node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
-        node.v4_addresses.insert(IPv4Address("192.168.1.12")!)
-        node.v4_addresses.insert(IPv4Address("192.168.0.85")!)
-        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        addNode(node)
+
+        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
+        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
     // Refresh started with gesture
@@ -135,14 +95,12 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func applicationWillResignActive() {
-        stopBrowsing(.OTHER_ACTION)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.standard_background
         // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
-        stopBrowsing(.OTHER_ACTION)
     }
     
     override func viewDidLoad() {
@@ -188,12 +146,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     private func updateLocalNodeAndGateways() {
-        // Update local node
-        let node = DBMaster.shared.getLocalNode()
-        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
-        
-        // Update local gateways
-        for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -227,14 +179,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Called by MasterIPViewController when an address is selected
-    public func addressSelected(address: IPAddress) {
-        print(address.toNumericString()!, "selected")
-//        detail_view_controller!.address = address
-        detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
-
+    public func addressSelected() {
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
-
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
@@ -247,41 +194,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
-        addNode(node)
-        for address in resolve_ipv4_addresses {
-            DispatchQueue.global(qos: .background).async {
-                guard let name = address.resolveHostName() else { return }
-                DispatchQueue.main.async {
-//                    print("reverse IPv4 résolue:", name)
-                    // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
-                    let node = Node()
-                    node.v4_addresses.insert(address)
-                    guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
-                    self.addNode(node)
-                }
-            }
-        }
-    }
-
-    // Main thread
-    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
-        addNode(node)
-        for address in resolve_ipv6_addresses {
-            DispatchQueue.global(qos: .background).async {
-                guard let name = address.resolveHostName() else { return }
-                DispatchQueue.main.async {
-//                    print("reverse IPv6 résolue:", name)
-                    // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
-                    let node = Node()
-                    node.v6_addresses.insert(address)
-                    guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
-                    self.addNode(node)
-                }
-            }
-        }
+    func addNode() {
     }
 
     // Main thread
@@ -306,53 +219,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             
             tableView.reloadData()
         }
-
-        // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
-        detail_view_controller!.updateDetailsIfNodeDisplayed(node, !stop_button!.isEnabled)
     }
 
-    // MARK: - Calls from DetailSwiftUIView
-    func scanTCP(_ address: IPAddress) {
-        stopBrowsing(.SCAN_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-        // DispatchQueue.global(qos: .userInitiated).async {
-    }
-
-    func loopICMP(_ address: IPAddress) {
-        stopBrowsing(.LOOP_ICMP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-    }
-
-    func floodUDP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_UDP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-    }
-    
-    func floodTCP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-    }
-
-    func chargenTCP(_ address: IPAddress) {
-        stopBrowsing(.CHARGEN_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.add_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-    }
-    
+  
     // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {
@@ -414,32 +283,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         // cell.textLabel!.text = ...
 
         cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
-        
-        if let best = (Array(node.v4_addresses.filter { (address) -> Bool in
-            // 1st choice: public (not autoconfig) && unicast
-            !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
-            // 2nd choice: private && not autoconfig
-            address.isPrivate() && !address.isAutoConfig()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
-            // 3rd choice: autoconfig
-            address.isAutoConfig()
-        })).first { cell.detail1.text = best.toNumericString() }
-        else { cell.detail1.text = "no IPv4 address" }
-
-        if let best = (Array(node.v6_addresses.filter { (address) -> Bool in
-            // 1st choice: unicast public
-            address.isUnicastPublic()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
-            // 2nd choice: ULA
-            address.isULA()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
-            // 3rd choice: LLA
-            address.isLLA()
-        })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
-        else { cell.detail2.text = "no IPv6 address" }
-
-        cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
         cell.nPorts.text = String(node.tcp_ports.count) + " port" + (node.tcp_ports.count > 1 ? "s" : "")
 
        return cell
@@ -448,8 +291,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        detail_view_controller!.node = getNode(indexPath: indexPath)
-        stopBrowsing(.OTHER_ACTION)
-        
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
 

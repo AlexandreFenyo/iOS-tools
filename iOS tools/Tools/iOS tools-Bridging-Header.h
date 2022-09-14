@@ -47,6 +47,4 @@ __uint16_t _htons(__uint16_t x);
 __uint16_t _ntohs(__uint16_t x);
 
 int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen);
-int getlocalgatewayipv4(int ifindex, struct sockaddr *sa, socklen_t salen);
-int getlocalgatewayipv6(int ifindex, struct sockaddr *sa, socklen_t salen);
 int multicasticmp6();
