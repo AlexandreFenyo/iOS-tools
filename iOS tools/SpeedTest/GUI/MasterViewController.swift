@@ -635,6 +635,10 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        detail_view_controller!.node = getNode(indexPath: indexPath)
         stopBrowsing(.OTHER_ACTION)
+        
+        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
+        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
+
     }
 
     // Local gateway and Internet rows can not be removed
