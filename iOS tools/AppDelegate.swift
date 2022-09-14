@@ -31,7 +31,6 @@ extension UIApplication {}
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController
-//            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
         
         self.masterViewController = masterViewController
@@ -42,9 +41,6 @@ extension UIApplication {}
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController
-        
-        // Placeholder for some tests
-//        if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
         return true
     }
 

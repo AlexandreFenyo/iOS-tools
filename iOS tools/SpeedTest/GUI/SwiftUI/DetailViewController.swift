@@ -41,12 +41,6 @@ class DetailViewController: UIViewController {
             hostingViewController.view.widthAnchor.constraint(equalTo: view2.widthAnchor),
             hostingViewController.view.heightAnchor.constraint(equalTo: view2.heightAnchor)
         ])
-
-//        let scene = SKScene(size: view1.bounds.size)
-        // pour débugguer si taille mal ajustée
-//        scene.backgroundColor = .brown
-
-//        view1.presentScene(scene)
     }
     
     public func enableButtons(_ state: Bool) {
@@ -73,9 +67,6 @@ class DetailViewController: UIViewController {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-
         print("DetailViewController.prepare(for segue)")
     }
     

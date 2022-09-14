@@ -91,68 +91,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     func setInformation(_ info: String) {
         setTitle(info)
     }
-    
-    // MARK: - UIScrollViewDelegate
-
-    override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-//        print("fin de scroll")
-    }
-
-    // MARK: - Table view headers
-
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        // A section must cover the refresh control if we do not want this control to appear over a row when refreshing, so the section height must be greater or equal to the refresh control height
-        return refreshControl!.frame.height
-    }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 0
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
-    }
-
-    // cellForRowAt
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
-
-        cell.layer.shadowColor = UIColor.clear.cgColor
-        
-        // Create some sort of shadow
-//        cell.rect1.backgroundColor = COLORS.section_background
-//        cell.rect2.backgroundColor = COLORS.rect2_background
-
-        // Couleur de fond quand on clique sur éditer pour supprimer une cellule
-//        cell.backgroundColor = COLORS.standard_background
-
-        // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
-//        cell.contentView.backgroundColor = COLORS.standard_background
-        
-        
-        // Not used since the cell style is 'custom' (style set from the storyboard):
-        // cell.textLabel!.text = ...
-
-        cell.name.text = "truc"
-        cell.nPorts.text = "troc"
-
-       return cell
-    }
-
-    // didSelectRowAt
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        detail_view_controller!.node = getNode(indexPath: indexPath)
-        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
-        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
-
-    }
-
-    // Local gateway and Internet rows can not be removed
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return false
-    }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
