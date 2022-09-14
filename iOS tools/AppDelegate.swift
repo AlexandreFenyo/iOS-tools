@@ -80,7 +80,7 @@ extension UIApplication {}
         detailViewController.master_view_controller = masterViewController
         
         // Placeholder for some tests
-        if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
+//        if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
         return true
     }
 
