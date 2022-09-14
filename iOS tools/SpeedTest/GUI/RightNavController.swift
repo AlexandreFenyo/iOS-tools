@@ -19,7 +19,7 @@ class RightNavController : UINavigationController {
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = COLORS.top_down_background
+//        appearance.backgroundColor = COLORS.top_down_background
         navigationBar.standardAppearance = appearance;
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
     }

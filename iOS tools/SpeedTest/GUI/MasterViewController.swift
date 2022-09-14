@@ -58,7 +58,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.backgroundColor = COLORS.standard_background
+//        tableView.backgroundColor = COLORS.standard_background
         // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
     }
     
@@ -83,7 +83,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewDidAppear(_ animated: Bool) {
         tableView.reloadData()
         updateLocalNodeAndGateways()
-        navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
+//        navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
     }
     
     // MARK: - DeviceManager protocol
@@ -122,14 +122,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         cell.layer.shadowColor = UIColor.clear.cgColor
         
         // Create some sort of shadow
-        cell.rect1.backgroundColor = COLORS.section_background
-        cell.rect2.backgroundColor = COLORS.rect2_background
+//        cell.rect1.backgroundColor = COLORS.section_background
+//        cell.rect2.backgroundColor = COLORS.rect2_background
 
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
-        cell.backgroundColor = COLORS.standard_background
+//        cell.backgroundColor = COLORS.standard_background
 
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
-        cell.contentView.backgroundColor = COLORS.standard_background
+//        cell.contentView.backgroundColor = COLORS.standard_background
         
         
         // Not used since the cell style is 'custom' (style set from the storyboard):

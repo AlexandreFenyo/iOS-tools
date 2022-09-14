@@ -10,39 +10,6 @@ import UIKit
 import SwiftUI
 import ModelIO
 
-public enum COLORS {
-    static let standard_background = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
-
-    static let top_down_background =
-    //UIColor.yellow
-    UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    
-    static let section_label = /* UIColor.red */ UIColor(red: 146/255, green: 150/255, blue: 156/255, alpha: 1)
-    static let section_background = UIColor(red: 60/255, green: 57/255, blue: 77/255, alpha: 1)
-    static let rect2_background = UIColor(red: 152/255, green: 171/255, blue: 173/255, alpha: 1)
-}
-
-// Code from https://stackoverflow.com/questions/56586055/how-to-get-rgb-components-from-color-in-swiftui
-extension Color {
-    var components: (hue: Double, saturation: Double, brightness: Double, opacity: Double) {
-        var h: CGFloat = 0
-        var s: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-
-        guard UIColor(self).getHue(&h, saturation: &s, brightness: &b, alpha: &a) else {
-            fatalError("getHue()")
-        }
-        
-        return (hue: Double(h), saturation: Double(s), brightness: Double(b), opacity: Double(a))
-    }
-}
-
-extension Color {
-    public func darker() -> Color {
-        return Color(hue: components.hue, saturation: components.saturation, brightness: components.brightness * 0.9, opacity: components.opacity)
-    }
-}
 
 extension UIApplication {}
 
@@ -67,9 +34,6 @@ extension UIApplication {}
 //            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
         
-        // Set the first device displayed in the detail view controller
-//        detailViewController.device = devices.first
-
         self.masterViewController = masterViewController
 
         masterViewController.detail_view_controller = detailViewController
@@ -84,46 +48,4 @@ extension UIApplication {}
         return true
     }
 
-    // Tester ce qui se passe si le bg vient d'un appel tél reçu
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-        masterViewController?.applicationWillResignActive()
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
-    override init() {
-        // call super.init() to be able to use self
-        super.init()
-//        GenericTools.here("init()", self)
-    }
-
 }
-
-// Example: changing the tab bar height
-//public var tabbar_height: CGFloat?
-//extension UITabBar {
-//    override open func sizeThatFits(_ size: CGSize) -> CGSize {
-//        var sizeThatFits = super.sizeThatFits(size)
-//        if let h = tabbar_height { sizeThatFits.height = h }
-//        else { sizeThatFits.height = 80 }
-//        return sizeThatFits
-//    }
-//}

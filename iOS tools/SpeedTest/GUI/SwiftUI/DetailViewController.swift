@@ -13,7 +13,6 @@ import SwiftUI
 @MainActor
 class DetailViewController: UIViewController {
     public var master_view_controller: MasterViewController?
-    @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
     
     private lazy var hostingViewController = makeHostingController()
@@ -43,11 +42,11 @@ class DetailViewController: UIViewController {
             hostingViewController.view.heightAnchor.constraint(equalTo: view2.heightAnchor)
         ])
 
-        let scene = SKScene(size: view1.bounds.size)
+//        let scene = SKScene(size: view1.bounds.size)
         // pour débugguer si taille mal ajustée
-        scene.backgroundColor = .brown
+//        scene.backgroundColor = .brown
 
-        view1.presentScene(scene)
+//        view1.presentScene(scene)
     }
     
     public func enableButtons(_ state: Bool) {
