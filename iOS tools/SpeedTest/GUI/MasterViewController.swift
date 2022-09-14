@@ -119,6 +119,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Stop looking for new nodes
     // Main thread ?
     private func stopBrowsing(_ action: NewRunAction) {
+        print("STOP BROWSING")
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)

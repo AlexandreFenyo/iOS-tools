@@ -27,13 +27,11 @@ struct DetailSwiftUIView: View {
         @Published private(set) var buttons_enabled = false
         
         public func setButtonsEnabled(_ state: Bool) {
-            print("setButtonsEnabled(\(state))")
+            print("setButtonsEnabled(\(state)) - addresse=\(address)")
             buttons_enabled = address == nil ? false : state
         }
         
         public func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
-            print("UPDATE DETAILS")
-            
             let sep = "\n"
             
             display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
