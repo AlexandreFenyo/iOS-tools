@@ -130,7 +130,10 @@ public class IPAddress : Hashable {
         inaddr.withUnsafeMutableBytes {
             var byte = 0, bit = 7
             for _ in 0..<mask_len {
+                // pour éviter une erreur du compilateur à la ligne d'après, on met ceci (ambiguous use of subscript, found candidates UnsafeMutablePointer, UnsageMutableRawBufferPointer
+                let _ = $0
                 $0[byte] |= 1<<bit
+
                 bit -= 1
                 if bit < 0 {
                     byte += 1
@@ -169,6 +172,9 @@ public class IPAddress : Hashable {
         let mask_bytes = [UInt8](netmask.inaddr)
         
         addr.withUnsafeMutableBytes {
+            // pour éviter une erreur du compilateur à la ligne d'après, on met ceci (ambiguous use of subscript, found candidates UnsafeMutablePointer, UnsageMutableRawBufferPointer
+            let _ = $0
+
             for idx in 0..<mask_bytes.count { $0[idx] = map($0[idx], mask_bytes[idx]) }
         }
         
