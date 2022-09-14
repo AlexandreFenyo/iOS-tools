@@ -54,24 +54,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_navigation_controller: UINavigationController?
     public var split_view_controller: SplitViewController?
 
-    public weak var browser_chargen : ServiceBrowser?
-    public weak var browser_discard : ServiceBrowser?
-
-    private var browser_network : NetworkBrowser?
-    private var browser_tcp : TCPPortBrowser?
-
-    private var local_ping_client : LocalPingClient?
-    private var local_ping_sync : LocalPingSync?
-
-    private var local_flood_client : LocalFloodClient?
-    private var local_flood_sync : LocalFloodSync?
-    
-    private var local_chargen_client : LocalChargenClient?
-    private var local_chargen_sync : LocalChargenSync?
-
-    private var local_discard_client : LocalDiscardClient?
-    private var local_discard_sync : LocalDiscardSync?
-
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }
@@ -87,24 +69,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.detail_view_controller?.enableButtons(false)
             self.add_button!.isEnabled = false
             self.update_button!.isEnabled = false
-            self.browser_chargen?.search()
-            self.browser_discard?.search()
-
             self.updateLocalNodeAndGateways()
-
-            // Stop receiving ICMP for the chart
-//            self.detail_view_controller?.stopReceivingICMP()
-        
-            // Use ICMP to find new nodes
-            let tb = TCPPortBrowser(device_manager: self)
-            self.browser_tcp = tb
-            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
-            self.browser_network = nb
-            nb.browse() {
-                DispatchQueue.main.sync {
-                    self.stopBrowsing(.OTHER_ACTION)
-                }
-            }
         }
     }
 
@@ -117,68 +82,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(true)
         add_button!.isEnabled = true
         update_button!.isEnabled = true
-
-        browser_discard?.stop()
-        browser_chargen?.stop()
-        browser_network?.stop()
-        browser_tcp?.stop()
-        browser_network = nil
-        browser_tcp = nil
-        
-        if action != .LOOP_ICMP {
-            Task {
-                await local_ping_sync?.stop()
-                await local_ping_sync?.close()
-                local_ping_sync = nil
-                local_ping_client = nil
-            }
-        }
-        
-        if action != .FLOOD_UDP {
-            Task {
-                await local_flood_sync?.stop()
-                await local_flood_sync?.close()
-                local_flood_sync = nil
-                local_flood_client = nil
-            }
-        }
-        
-        if action != .CHARGEN_TCP {
-            Task {
-                await local_chargen_sync?.stop()
-                await local_chargen_sync?.close()
-                local_chargen_sync = nil
-                local_chargen_client = nil
-            }
-        }
-        
-        if action != .FLOOD_TCP {
-            Task {
-                await local_discard_sync?.stop()
-                await local_discard_sync?.close()
-                local_discard_sync = nil
-                local_discard_client = nil
-            }
-        }
-
         setTitle("Target List")
     }
 
     public func setTitle(_ title: String) {
         navigationItem.title = title
-
-        // changer la couleur du texte qui est en noir par défaut
-
-//        navigationController!.navigationBar.barStyle = .default
-//        navigationController?.navigationBar.barTintColor = .red
-//        print(navigationController?.navigationBar.barTintColor)
-//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
-        
-        // Couleur du Edit
-        // navigationController?.navigationBar.tintColor = .red
-        // Couleur des boutons en bas (reload par ex.)
-        // navigationController?.toolbar.tintColor = .green
-
     }
 
     @IBAction func help_pressed(_ sender: Any) {
@@ -410,15 +318,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(false)
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
-
-        let tb = TCPPortBrowser(device_manager: self)
-        self.browser_tcp = tb
-
         // DispatchQueue.global(qos: .userInitiated).async {
-        Task.detached(priority: .userInitiated) {
-            await self.browser_tcp?.browse(address: address)
-            // arrivé ici, le browse est terminé
-        }
     }
 
     func loopICMP(_ address: IPAddress) {
@@ -427,29 +327,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(false)
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
-
-        local_ping_client = LocalPingClient(address: address, count: 10000)
-        local_ping_sync = LocalPingSync(local_ping_client!)
-        local_ping_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            await self.detail_view_controller?.ts.setUnits(units: .RTT)
-            await self.detail_view_controller?.ts.removeAll()
-            var first_skipped = false
-            while true {
-                if let rtt = await self.local_ping_client?.getRTT() {
-                    if rtt > 0 {
-                        if first_skipped == false {
-                            first_skipped = true
-                        } else {
-                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
-                        }
-                    }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
-            }
-            // objectif : arrivé ici, la boucle de ping est terminée
-        }
     }
 
     func floodUDP(_ address: IPAddress) {
@@ -458,29 +335,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(false)
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
-
-        local_flood_client = LocalFloodClient(address: address)
-        local_flood_sync = LocalFloodSync(local_flood_client!)
-        local_flood_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            var first_skipped = false
-            while true {
-                if let throughput = await self.local_flood_client?.getThroughput() {
-                    if throughput > 0 {
-                        if first_skipped == false {
-                            first_skipped = true
-                        } else {
-                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                        }
-                    }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-            }
-            // objectif : arrivé ici, la boucle de flood est terminée
-        }
     }
     
     func floodTCP(_ address: IPAddress) {
@@ -489,26 +343,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(false)
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
-
-        local_discard_client = LocalDiscardClient(address: address)
-        local_discard_sync = LocalDiscardSync(local_discard_client!)
-        local_discard_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            while true {
-                if let throughput = await self.local_discard_client?.getThroughput() {
-                    if throughput > 0 {
-                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                    }
-                    if throughput < 0 { break }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-            }
-            await self.stopBrowsing(.OTHER_ACTION)
-            // objectif : arrivé ici, la boucle de chargen est terminée
-        }
     }
 
     func chargenTCP(_ address: IPAddress) {
@@ -517,26 +351,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.enableButtons(false)
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
-
-        local_chargen_client = LocalChargenClient(address: address)
-        local_chargen_sync = LocalChargenSync(local_chargen_client!)
-        local_chargen_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            while true {
-                if let throughput = await self.local_chargen_client?.getThroughput() {
-                    if throughput > 0 {
-                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                    }
-                    if throughput < 0 { break }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-            }
-            await self.stopBrowsing(.OTHER_ACTION)
-            // objectif : arrivé ici, la boucle de chargen est terminée
-        }
     }
     
     // MARK: - DeviceManager protocol

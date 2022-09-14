@@ -52,11 +52,7 @@ extension UIApplication {}
     public var window: UIWindow?
 
     private var local_chargen_service: NetService?
-    private var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
     private var local_discard_service: NetService?
-    private var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
-    private var browser_chargen: ServiceBrowser?
-    private var browser_discard: ServiceBrowser?
     private var masterViewController : MasterViewController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -85,25 +81,6 @@ extension UIApplication {}
         
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
-
-        // Start local services
-        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: Int32(NetworkDefaults.speed_test_chargen_port))
-        local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true)
-        local_chargen_service!.delegate = local_chargen_service_delegate
-        local_chargen_service!.publish(options: .listenForConnections)
-
-        local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: Int32(NetworkDefaults.speed_test_discard_port))
-        local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false)
-        local_discard_service!.delegate = local_discard_service_delegate
-        local_discard_service!.publish(options: .listenForConnections)
-
-        // Start browsing for remote services
-        // We can test easily to browse using _ssh._tcp.
-        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
-        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
-        masterViewController.browser_chargen = browser_chargen
-        masterViewController.browser_discard = browser_discard
-
         return true
     }
 
