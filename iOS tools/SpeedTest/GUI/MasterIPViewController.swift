@@ -91,7 +91,6 @@ class MasterIPViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
-
         master_view_controller!.addressSelected(address: address)
     }
 

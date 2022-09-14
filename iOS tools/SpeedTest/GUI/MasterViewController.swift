@@ -350,6 +350,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         print(address.toNumericString()!, "selected")
 //        detail_view_controller!.address = address
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
+
+        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
+        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
+
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
@@ -663,9 +667,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        detail_view_controller!.node = getNode(indexPath: indexPath)
         stopBrowsing(.OTHER_ACTION)
-
-        // for iPhone, make the detail view controller visible
-        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
     // Local gateway and Internet rows can not be removed
