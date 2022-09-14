@@ -58,19 +58,16 @@ extension UIApplication {}
     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
     private var masterViewController : MasterViewController?
-    private var tracesViewController : TracesViewController?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
         guard
-            let tabBarController = window?.rootViewController as? UITabBarController,
-            let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
+            let splitViewController = window?.rootViewController as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
-            let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController
+            let detailViewController = rightNavController.topViewController as? DetailViewController
 //            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
         
@@ -82,7 +79,6 @@ extension UIApplication {}
         masterViewController.detail_view_controller = detailViewController
         masterViewController.detail_navigation_controller = rightNavController
         masterViewController.split_view_controller = splitViewController
-        masterViewController.traces_view_controller = tracesViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController

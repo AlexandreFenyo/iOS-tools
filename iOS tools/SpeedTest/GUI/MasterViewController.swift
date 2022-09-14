@@ -29,7 +29,6 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel)
 }
 
 // foncé: 70 80 91
@@ -47,10 +46,6 @@ class DeviceCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the main UITableView
 class MasterViewController: UITableViewController, DeviceManager {
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
-        traces_view_controller?.addTrace(content, level: level)
-    }
-
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
@@ -58,8 +53,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var detail_view_controller: DetailViewController?
     public var detail_navigation_controller: UINavigationController?
     public var split_view_controller: SplitViewController?
-    public var traces_view_controller: TracesViewController?
-    public var master_ip_view_controller: MasterIPViewController?
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
@@ -92,7 +85,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
             self.detail_view_controller?.enableButtons(false)
-            self.master_ip_view_controller?.stop_button.isEnabled = true
             self.add_button!.isEnabled = false
             self.update_button!.isEnabled = false
             self.browser_chargen?.search()
@@ -123,7 +115,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
-        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = true
         update_button!.isEnabled = true
 
@@ -193,7 +184,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBAction func help_pressed(_ sender: Any) {
         if let link = URL(string: "https://x.org") {
           UIApplication.shared.open(link)
-          addTrace("HTTPS")
         }
     }
 
@@ -209,7 +199,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
-        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
@@ -225,20 +214,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         node.v4_addresses.insert(IPv4Address("192.168.1.12")!)
         node.v4_addresses.insert(IPv4Address("192.168.0.85")!)
         addNode(node, resolve_ipv4_addresses: node.v4_addresses)
-        
-        //print(traitCollection.horizontalSizeClass.rawValue)
-
-        // TEST
-        print("ON VA FAIRE UNE TRACE DEBUG PRESSED")
-        addTrace("ON VA FAIRE UNE TRACE DEBUG PRESSED")
-
-        // Exemple qui fonctionne de modification visuelle de composant UIKit
-        // let tabBarController = UIApplication.shared.windows.first?.rootViewController as? UITabBarController
-        // tabBarController?.tabBar.barTintColor = .yellow
-
-        
-        // ca marche :
-//        setTitle("FGIRJZEFJEIZFJ")
     }
 
     // Refresh started with gesture
@@ -246,7 +221,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     private func userRefresh(_ sender: Any) {
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
-        master_ip_view_controller?.stop_button.isEnabled = false
         add_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
@@ -334,13 +308,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         if editing {
             stop_button!.isEnabled = false
             detail_view_controller?.enableButtons(true)
-            master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = false
             update_button!.isEnabled = false
         } else {
             stop_button!.isEnabled = false
             detail_view_controller?.enableButtons(true)
-            master_ip_view_controller?.stop_button.isEnabled = false
             add_button!.isEnabled = true
             update_button!.isEnabled = true
         }
@@ -436,7 +408,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -454,7 +425,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -486,7 +456,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing(.FLOOD_UDP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -518,7 +487,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -547,7 +515,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
@@ -690,13 +657,10 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        master_ip_view_controller = segue.destination as? MasterIPViewController
         let index_path = tableView.indexPathForSelectedRow!
         let type = SectionType(rawValue: index_path.section)
         let section = DBMaster.shared.sections[type!]
         let node = section!.nodes[index_path.item]
-        master_ip_view_controller!.node = node
-        master_ip_view_controller!.master_view_controller = self
 
         /* si on voulait sélectionner une adresse, on pourrait le faire comme ceci mais pas ici car la première fois où prepare est appelé, on n'a pas le droit d'appeler selectRow ou cellForRow : on a alors un warning pour signaler que ça peut conduire à des bugs
         if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {

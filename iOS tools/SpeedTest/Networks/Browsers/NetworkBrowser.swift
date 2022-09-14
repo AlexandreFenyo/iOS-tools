@@ -50,8 +50,6 @@ class NetworkBrowser {
                     repeat {
                         if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
                             
-                            device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
-                            
                             reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
                         current = current.next() as! IPv4Address
                     } while current != broadcast
@@ -80,10 +78,6 @@ class NetworkBrowser {
     // Any thread
     private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
-            
-            print("ON VA FAIRE UNE TRACE")
-            device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
-            
             let node = Node()
             switch from.getFamily() {
             case AF_INET:

@@ -11,22 +11,9 @@ import UIKit
 
 class RightNavController : UINavigationController {
     let r : CGFloat = 20
-    var rv : RoundedCornerView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        rv = RoundedCornerView(radius: r, startAngle: -0.5 * CGFloat.pi, endAngle: 0.0 * CGFloat.pi, arc_center: CGPoint(x: 0, y: r))
-        navigationBar.addSubview(rv!)
-        
-        rv!.translatesAutoresizingMaskIntoConstraints = false
-        view.addConstraints(
-            [
-                NSLayoutConstraint(item: view!, attribute: .trailing, relatedBy: .equal, toItem: rv, attribute: .trailing, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: navigationBar, attribute: .top, relatedBy: .equal, toItem: rv, attribute: .top, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
-                NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
-            ])
 
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420

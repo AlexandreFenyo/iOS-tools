@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
-		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
-		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
@@ -23,7 +21,6 @@
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
-		5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */; };
 		5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
@@ -32,7 +29,6 @@
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
 		5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */; };
-		5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */; };
 		5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DF214FC211B4EF7002B7603 /* localChargenClient.c */; };
 		5DF21507211C6F8E002B7603 /* LocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21506211C6F8E002B7603 /* LocalService.swift */; };
 		5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF21508211C9455002B7603 /* LocalDiscardService.swift */; };
@@ -57,8 +53,6 @@
 		5D135210208538E300E4A76D /* iOS_toolsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_toolsUITests.swift; sourceTree = "<group>"; };
 		5D135212208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D13521F20853BEA00E4A76D /* GenericTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTools.swift; sourceTree = "<group>"; };
-		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
-		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
@@ -72,7 +66,6 @@
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterIPViewController.swift; sourceTree = "<group>"; };
 		5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenClient.swift; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
@@ -83,7 +76,6 @@
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
 		5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = leftNavController.swift; sourceTree = "<group>"; };
 		5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightNavController.swift; sourceTree = "<group>"; };
-		5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornerView.swift; sourceTree = "<group>"; };
 		5DF214FC211B4EF7002B7603 /* localChargenClient.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = localChargenClient.c; sourceTree = "<group>"; };
 		5DF21503211B5EE5002B7603 /* localChargenClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = localChargenClient.h; sourceTree = "<group>"; };
 		5DF21506211C6F8E002B7603 /* LocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalService.swift; sourceTree = "<group>"; };
@@ -190,8 +182,6 @@
 		5D1F12462728300F00656D0D /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
-				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 				5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */,
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 			);
@@ -242,11 +232,9 @@
 				5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */,
 				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
 				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
-				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
 				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
 				5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */,
 				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
-				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
 				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
 			);
 			path = GUI;
@@ -398,11 +386,9 @@
 			files = (
 				5DF2151B212D8B62002B7603 /* localFloodClient.c in Sources */,
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
-				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
-				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
 				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5DF215222133D7DA002B7603 /* NetworkBrowser.swift in Sources */,
@@ -415,7 +401,6 @@
 				5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
 				5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */,
-				5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */,
 				5DF215132121EBA8002B7603 /* LocalPingClient.swift in Sources */,
 				5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */,
 				5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */,
@@ -426,7 +411,6 @@
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
-				5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */,
 				5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */,
 				5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */,
 				5DF215112121E16C002B7603 /* localPingClient.c in Sources */,
