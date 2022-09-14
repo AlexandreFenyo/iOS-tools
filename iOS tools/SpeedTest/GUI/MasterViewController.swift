@@ -46,43 +46,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         navigationItem.title = title
     }
 
-    @IBAction func help_pressed(_ sender: Any) {
-        if let link = URL(string: "https://x.org") {
-          UIApplication.shared.open(link)
-        }
-    }
-
-    @IBAction func stop_pressed(_ sender: Any) {
-        // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
-        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-    }
-
-    @IBAction func update_pressed(_ sender: Any) {
-        refreshControl!.beginRefreshing()
-//        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-        tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-        stop_button!.isEnabled = false
-        detail_view_controller?.enableButtons(true)
-        add_button!.isEnabled = false
-        update_button!.isEnabled = false
-        startBrowsing()
-    }
-
     @IBAction func debug_pressed(_ sender: Any) {
         print("debug pressed")
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }
 
-    // Refresh started with gesture
-    @objc
-    private func userRefresh(_ sender: Any) {
-        stop_button!.isEnabled = false
-        detail_view_controller?.enableButtons(true)
-        add_button!.isEnabled = false
-        update_button!.isEnabled = false
-        startBrowsing()
-    }
 
     public func applicationWillResignActive() {
     }
@@ -96,32 +65,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // view.backgroundColor = .red
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
         // Display an Edit button in the navigation bar for this view controller.
         navigationItem.rightBarButtonItem = editButtonItem
         
         // Add a refresh control
         refreshControl = UIRefreshControl()
-        // Call userRefresh() when refreshing with gesture
-        refreshControl!.addTarget(self, action: #selector(userRefresh(_:)), for: .valueChanged)
-
-        // Prepare the section headers
-        let nib = UINib(nibName: "MasterSectionHeader", bundle: nil)
-        tableView.register(nib, forHeaderFooterViewReuseIdentifier: "MasterSectionHeader")
-
-        // remove the section heading on iOS 15
-        if #available(iOS 15.0, *) {
-            // à remettre : ça pose pb avec MacCatalyst
-            UITableView.appearance().sectionHeaderTopPadding = 0
-        }
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let cell = self.tableView.dequeueReusableHeaderFooterView(withIdentifier: "MasterSectionHeader")
-        let header = cell as! MasterSectionHeader
         return cell
     }
 
@@ -130,54 +82,10 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidAppear(_ animated: Bool) {
         tableView.reloadData()
-        
         updateLocalNodeAndGateways()
-
         navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
-
-        // Pour changement des couleurs du texte
-        // navigationController!.navigationBar.largeTitleTextAttributes = [ .foregroundColor: UIColor.orange ]
-        // navigationController!.navigationBar.titleTextAttributes = [ .foregroundColor: UIColor.orange ]
-        // tabBarController?.tabBar.tintColor = UIColor.red
     }
     
-    // Disable other actions while editing
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        refreshControl!.endRefreshing()
-        if editing {
-            stop_button!.isEnabled = false
-            detail_view_controller?.enableButtons(true)
-            add_button!.isEnabled = false
-            update_button!.isEnabled = false
-        } else {
-            stop_button!.isEnabled = false
-            detail_view_controller?.enableButtons(true)
-            add_button!.isEnabled = true
-            update_button!.isEnabled = true
-        }
-    }
-
-    // Called by MasterIPViewController when an address is selected
-    public func addressSelected() {
-        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
-        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
-    }
-
-    // Called by MasterIPViewController when an address is deselected and no other address is selected
-    public func addressDeselected() {
-        print("address deselected")
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-
-    // Main thread
-    func addNode() {
-    }
-
-  
     // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {
