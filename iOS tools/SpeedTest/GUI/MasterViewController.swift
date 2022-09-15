@@ -47,7 +47,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func debug_pressed(_ sender: Any) {
-        print("debug pressed")
+        print("debug pressed - MasterViewController - bouton debug")
+//        setText("valeur positionnée par icone debug")
+
+        detail_view_controller!.setText("positionné par MasterViewController bouton debug")
+        
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
     }

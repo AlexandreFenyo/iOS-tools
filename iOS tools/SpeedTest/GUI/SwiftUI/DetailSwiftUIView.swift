@@ -16,13 +16,23 @@ struct DetailSwiftUIView: View {
     
     public class DetailViewModel : ObservableObject {
         @Published private(set) var family: Int32? = nil
-        @Published private(set) var address_str : String = "valeur initiale1"
+        @Published private(set) var address_str : String = "valeur initiale dans le binaire"
+
+        public func setText(_ str: String) {
+            print("setText() dans le modèle: \(str)")
+            address_str = str
+        }
         
         public func setButtonsEnabled(_ state: Bool) {
             print("setButtonsEnabled(\(state))")
         }
     }
     
+    public func setText(_ str: String) {
+        print("setText() dans la vue swiftUI: \(str)")
+        model.setText(str)
+    }
+
     @ObservedObject var model = DetailViewModel()
     
     var body: some View {
@@ -33,7 +43,8 @@ struct DetailSwiftUIView: View {
                 
                 HStack {
                     Button {
-                        // action si click
+                        print("bouton appuyé")
+                        setText("valeur positionnée par le bouton")
                     } label: {
                         Text("bouton")
                     }

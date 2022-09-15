@@ -43,6 +43,13 @@ class DetailViewController: UIViewController {
         ])
     }
     
+    public func setText(_ str: String) {
+        print("setText() dans DetailViewController: : \(str)")
+//        DispatchQueue.main.async {
+            let _ = self.hostingViewController.rootView.model.setText(str)
+  //      }
+    }
+    
     public func enableButtons(_ state: Bool) {
         // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
         // il est async pour éviter une exception
