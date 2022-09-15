@@ -44,10 +44,11 @@ class DetailViewController: UIViewController {
     }
     
     public func setText(_ str: String) {
-        print("setText() dans DetailViewController: : \(str)")
-//        DispatchQueue.main.async {
+        print("setText() dans DetailViewController: ")
+        // la solution au pb iPhone :
+        DispatchQueue.main.async {
             let _ = self.hostingViewController.rootView.model.setText(str)
-  //      }
+        }
     }
     
     public func enableButtons(_ state: Bool) {
