@@ -382,9 +382,9 @@ class DBMaster {
         networks = Set<IPNetwork>()
         nodes = Set<Node>()
         sections = [
-            .localhost: Section("localhost", "this host"),
+            .localhost: Section("Localhost", "this host"),
             .ios: Section("iOS devices", "other devices running this app"),
-            .chargen_discard: Section("Chargen/Discard services", "other devices running these services"),
+            .chargen_discard: Section("ChargenDiscard services", "other devices running these services"),
             .gateway: Section("Local gateway", "local router"),
             .internet: Section("Internet", "remote host on the Internet"),
             .other: Section("Other hosts", "any host")
