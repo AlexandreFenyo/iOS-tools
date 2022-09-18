@@ -35,6 +35,8 @@ class DetailViewController: UIViewController {
 
     private func makeHostingController() -> UIHostingController<DetailSwiftUIView> {
         let hostingController = UIHostingController(rootView: DetailSwiftUIView(view: view, master_view_controller: master_view_controller!))
+//        hostingViewController.rootView.environmentObject(DetailViewModel())
+        
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }

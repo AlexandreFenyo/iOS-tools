@@ -96,7 +96,7 @@ class DomainName : Hashable {
 
 // A FQDN is a domain name that both contains a host part and a domain part
 // ex: {www, fenyo.net}, {localhost, localdomain}
-class FQDN : DomainName {
+internal class FQDN : DomainName {
     public init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
@@ -105,8 +105,8 @@ class FQDN : DomainName {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-class Node : Hashable {
-    func hash(into hasher: inout Hasher) {
+public class Node : Hashable {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
         hasher.combine(names)
@@ -116,13 +116,13 @@ class Node : Hashable {
         hasher.combine(types)
     }
 
-    public var mcast_dns_names = Set<FQDN>()
-    public var dns_names = Set<DomainName>()
-    public var names = Set<String>()
-    public var v4_addresses = Set<IPv4Address>()
-    public var v6_addresses = Set<IPv6Address>()
-    public var tcp_ports = Set<UInt16>()
-    public var types = Set<NodeType>()
+    var mcast_dns_names = Set<FQDN>()
+    var dns_names = Set<DomainName>()
+    var names = Set<String>()
+    var v4_addresses = Set<IPv4Address>()
+    var v6_addresses = Set<IPv6Address>()
+    var tcp_ports = Set<UInt16>()
+    var types = Set<NodeType>()
 
     public init() { }
     
@@ -144,7 +144,7 @@ class Node : Hashable {
         return Set(mcast_dns_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
     }
 
-    public func toSectionTypes() -> Set<SectionType> {
+    internal func toSectionTypes() -> Set<SectionType> {
         var section_types = Set<SectionType>()
 
         if types.contains(.localhost) {

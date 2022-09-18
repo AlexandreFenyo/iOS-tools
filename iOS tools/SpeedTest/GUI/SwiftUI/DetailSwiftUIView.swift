@@ -9,61 +9,93 @@
 import SwiftUI
 import SpriteKit
 
+internal class DetailViewModel : ObservableObject {
+    public static let shared = DetailViewModel()
+    
+    @Published private(set) var family: Int32? = nil
+    @Published private(set) var address: IPAddress? = nil
+    @Published private(set) var v4address: IPv4Address? = nil
+    @Published private(set) var v6address: IPv6Address? = nil
+    @Published private(set) var address_str: String? = nil
+    @Published private(set) var display_names = ""
+    @Published private(set) var display_addresses = ""
+    @Published private(set) var display_ports = ""
+    @Published private(set) var display_interfaces = ""
+    @Published private(set) var buttons_enabled = false
+    
+    private func _setButtonsEnabled(_ state: Bool) {
+        print("setButtonsEnabled(\(state)) - addresse=\(address)")
+        buttons_enabled = address == nil ? false : state
+    }
+
+    public func setButtonsEnabled(_ state: Bool)  {
+        // tentative de résoudre le pb du model sur iPhone :
+        DispatchQueue.main.async {
+            print("DISPATCH QUEUE updateDetails")
+            self._setButtonsEnabled(state)
+        }
+    }
+
+    private func _updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
+        let sep = "\n"
+        
+        display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
+        display_addresses = (node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }).joined(separator: sep)
+        display_ports = node.tcp_ports.map { "TCP/\($0)" }.joined(separator: sep)
+        
+        var interfaces = [""]
+        for addr in node.v6_addresses {
+            if let substrings = addr.toNumericString()?.split(separator: "%") {
+                if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
+                    interfaces.append(String(substrings[1]))
+                }
+            }
+        }
+        display_interfaces = interfaces.joined(separator: sep)
+        
+        self.address = address
+        family = address.getFamily()
+        address_str = address.toNumericString()
+        if family == AF_INET {
+            v4address = address as? IPv4Address
+            v6address = nil
+        } else {
+            v6address = address as? IPv6Address
+            v4address = nil
+        }
+        
+        setButtonsEnabled(buttons_enabled)
+    }
+
+    public func TESTupdateDetails(_ address: IPAddress, _ buttons_enabled: Bool) {
+        
+    }
+
+    public func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
+        
+        // tentative de résoudre le pb du model sur iPhone :
+        DispatchQueue.main.async {
+            print("DISPATCH QUEUE updateDetails")
+            self._updateDetails(node, address, buttons_enabled)
+        }
+    }
+}
+
+//@ObservedObject var model = DetailViewModel()
+
+
 @MainActor
 struct DetailSwiftUIView: View {
     public let view: UIView
     public let master_view_controller: MasterViewController
     
-    public class DetailViewModel : ObservableObject {
-        @Published private(set) var family: Int32? = nil
-        @Published private(set) var address: IPAddress? = nil
-        @Published private(set) var v4address: IPv4Address? = nil
-        @Published private(set) var v6address: IPv6Address? = nil
-        @Published private(set) var address_str: String? = nil
-        @Published private(set) var display_names = ""
-        @Published private(set) var display_addresses = ""
-        @Published private(set) var display_ports = ""
-        @Published private(set) var display_interfaces = ""
-        @Published private(set) var buttons_enabled = false
-        
-        public func setButtonsEnabled(_ state: Bool) {
-            print("setButtonsEnabled(\(state)) - addresse=\(address)")
-            buttons_enabled = address == nil ? false : state
-        }
-        
-        public func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
-            let sep = "\n"
-            
-            display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
-            display_addresses = (node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }).joined(separator: sep)
-            display_ports = node.tcp_ports.map { "TCP/\($0)" }.joined(separator: sep)
-            
-            var interfaces = [""]
-            for addr in node.v6_addresses {
-                if let substrings = addr.toNumericString()?.split(separator: "%") {
-                    if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
-                        interfaces.append(String(substrings[1]))
-                    }
-                }
-            }
-            display_interfaces = interfaces.joined(separator: sep)
-            
-            self.address = address
-            family = address.getFamily()
-            address_str = address.toNumericString()
-            if family == AF_INET {
-                v4address = address as? IPv4Address
-                v6address = nil
-            } else {
-                v6address = address as? IPv6Address
-                v4address = nil
-            }
-            
-            setButtonsEnabled(buttons_enabled)
-        }
-    }
+   
+    @ObservedObject var model = DetailViewModel.shared
     
-    @ObservedObject var model = DetailViewModel()
+//    @ObservedObject var model = DetailViewModel()
+    //    @EnvironmentObject var model: DetailViewModel
+//    @StateObject var model = DetailViewModel()
+
     
     var body: some View {
         ScrollView {
