@@ -226,7 +226,7 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
 #define MAXPACKETLEN    131072
 #define ICMP6ECHOLEN    8       /* icmp echo header len excluding time */
 
-int multicasticmp6() {
+int multicasticmp6(void) {
     printf("\n\n1--- START multicast icmp6\n");
 
     struct addrinfo hints, *res;
@@ -274,7 +274,7 @@ int multicasticmp6() {
     return 0;
 }
 
-void net_test() {
+void net_test(void) {
     char str[INET6_ADDRSTRLEN];
 //    char hostname[] = "www.fenyo.net";
     char hostname[] = "google.com";
@@ -452,7 +452,7 @@ void net_test() {
     
     // reverse DNS: IP to hostname
     char host[512];
-    ret = getnameinfo(&addr, sizeof addr, host, sizeof host, 0, 0, NI_NAMEREQD);
+    ret = getnameinfo((const struct sockaddr *) &addr, sizeof addr, host, sizeof host, 0, 0, NI_NAMEREQD);
     if (ret) {
         printf("getnameinfo(): %s\n", gai_strerror(ret));
         return;
