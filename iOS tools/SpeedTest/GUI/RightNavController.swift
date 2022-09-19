@@ -30,6 +30,7 @@ class RightNavController : UINavigationController {
 
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
+        // voir aussi https://developer.apple.com/forums/thread/714278 si warning dans la console avec iOS15
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = COLORS.top_down_background

@@ -145,12 +145,13 @@ int getlocalgatewayipv4(int gwindex, struct sockaddr *sa, socklen_t salen) {
 
     for (void *next = msg; next < msg + needed; next += ((struct rt_msghdr *) next)->rtm_msglen) {
         // Is it a route with a gateway?
-        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
+        // initialement ça marchait avec la valeur 2, maintenant on a la valeur 39, mais si on ne teste pas, on a bien les routes qu'on attend
+        // if (((struct rt_msghdr *) next)->rtm_addrs != 2) continue;
 
         struct sockaddr_in *sin = next + sizeof(struct rt_msghdr);
         // Is it a default route?
         if (sin->sin_addr.s_addr) continue;
-
+        
         if (gwindex-- == 0) {
             memcpy(sa, sin + 1, sizeof(struct sockaddr_in));
             free(msg);
@@ -185,17 +186,29 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
     
     for (void *next = msg; next < msg + needed; next += ((struct rt_msghdr *) next)->rtm_msglen) {
         // Is it a route with a gateway?
-        if (((struct rt_msghdr *) next)->rtm_addrs != 7) continue;
-        
+        // initialement ça marchait avec la valeur 7, maintenance c'est 39, mais si on ne teste pas, on a bien les routes qu'on attend
+        // if (((struct rt_msghdr *) next)->rtm_addrs != /*7*/ 39) continue;
+      
         // Is it a default route?
         struct sockaddr_in6 *sin = next + sizeof(struct rt_msghdr);
+        
         if (sin->sin6_addr.__u6_addr.__u6_addr32[0] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[1] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[2] ||
             sin->sin6_addr.__u6_addr.__u6_addr32[3]
             ) continue;
 
+        if ((((sin+1)->sin6_addr.__u6_addr.__u6_addr32[0] & 0x0000c0ff) == 0x80fe ||
+            ((sin+1)->sin6_addr.__u6_addr.__u6_addr32[0] & 0x0000c0ff) == 0x81fe) &&
+            (sin+1)->sin6_addr.__u6_addr.__u6_addr32[1] == 0 &&
+            (sin+1)->sin6_addr.__u6_addr.__u6_addr32[2] == 0 &&
+            (sin+1)->sin6_addr.__u6_addr.__u6_addr32[3] == 0) continue;
+
         if (gwindex-- == 0) {
+//            printf("addr: %x %x %x %x\n", sin->sin6_addr.__u6_addr.__u6_addr32[0],
+//                  sin->sin6_addr.__u6_addr.__u6_addr32[1],
+//                  sin->sin6_addr.__u6_addr.__u6_addr32[2],
+//                  sin->sin6_addr.__u6_addr.__u6_addr32[3]);
             memcpy(sa, sin + 1, sizeof(struct sockaddr_in6));
             free(msg);
             return 0;

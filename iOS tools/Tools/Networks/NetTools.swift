@@ -398,10 +398,12 @@ class IPv6Address : IPAddress, Comparable {
         self.scope = scope
         super.init(inaddr)
 
+        /*
         if ret.scope != 0 {
             print(getRawBytes())
             fatalError("invalid scope in data")
         }
+      */
     }
 
     public init(mask_len: UInt8) {
