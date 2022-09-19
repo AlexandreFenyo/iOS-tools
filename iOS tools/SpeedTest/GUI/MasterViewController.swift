@@ -63,6 +63,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     public weak var browser_chargen : ServiceBrowser?
     public weak var browser_discard : ServiceBrowser?
+    public weak var browser_app : ServiceBrowser?
 
     private var browser_network : NetworkBrowser?
     private var browser_tcp : TCPPortBrowser?

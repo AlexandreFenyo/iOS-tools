@@ -28,6 +28,7 @@
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
+		5DC7307C28D90CD0004094BB /* LocalAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7307B28D90CD0004094BB /* LocalAppService.swift */; };
 		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
@@ -77,6 +78,7 @@
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		5DC7307B28D90CD0004094BB /* LocalAppService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAppService.swift; sourceTree = "<group>"; };
 		5DC736C120D3A55600C2A199 /* iOS tools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iOS tools-Bridging-Header.h"; sourceTree = "<group>"; };
 		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
 		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 			children = (
 				5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */,
 				5DF21508211C9455002B7603 /* LocalDiscardService.swift */,
+				5DC7307B28D90CD0004094BB /* LocalAppService.swift */,
 				5DF21506211C6F8E002B7603 /* LocalService.swift */,
 			);
 			path = Servers;
@@ -409,6 +412,7 @@
 				5DF21516212D7C13002B7603 /* genericTools.c in Sources */,
 				5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */,
 				5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */,
+				5DC7307C28D90CD0004094BB /* LocalAppService.swift in Sources */,
 				5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */,
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
 				5DF21518212D8A1C002B7603 /* LocalFlood.swift in Sources */,

@@ -89,6 +89,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         node.types = [ .chargen , .discard, .ios ]
         node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
         node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
+        node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
 
         if sender.addresses != nil {
             for data in sender.addresses! {

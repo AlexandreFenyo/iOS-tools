@@ -55,8 +55,11 @@ extension UIApplication {}
     private var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
     private var local_discard_service: NetService?
     private var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
+     private var local_app_service: NetService?
+     private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
+     private var browser_app: ServiceBrowser?
     private var masterViewController : MasterViewController?
     private var tracesViewController : TracesViewController?
     
@@ -101,13 +104,20 @@ extension UIApplication {}
         local_discard_service!.delegate = local_discard_service_delegate
         local_discard_service!.publish(options: .listenForConnections)
 
+        local_app_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_app_service_type, name: "", port: Int32(NetworkDefaults.speed_test_app_port))
+        local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false)
+        local_app_service!.delegate = local_app_service_delegate
+        local_app_service!.publish(options: .listenForConnections)
+
         // Start browsing for remote services
         // We can test easily to browse using _ssh._tcp.
         browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
         browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
+        browser_app = ServiceBrowser(NetworkDefaults.speed_test_app_service_type, deviceManager: masterViewController)
         masterViewController.browser_chargen = browser_chargen
         masterViewController.browser_discard = browser_discard
-
+        masterViewController.browser_app = browser_app
+        
         return true
     }
 
