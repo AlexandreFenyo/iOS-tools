@@ -37,10 +37,20 @@ class TCPPortBrowser {
             else { node.v6_addresses.insert(addr as! IPv6Address) }
             node.tcp_ports.insert(port)
             self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
+            switch port {
+            case 9:
+                node.types.insert(.discard)
+            case 19:
+                node.types.insert(.chargen)
+            case 4:
+                node.types.insert(.ios)
+            default:
+                ()
+            }
             self.device_manager.addNode(node)
         }
     }
-    
+
     // userInitiated thread (Browse thread)
     public func browse(address: IPAddress? = nil, doAtEnd: @escaping () -> Void = {}) {
         // Initialize port lists to connect to
@@ -78,11 +88,16 @@ class TCPPortBrowser {
             DispatchQueue.global(qos: .userInitiated).async {
                 var ports = self.ip_to_tcp_port[addr]!
 
-                for delay : Int32 in [ 1000, 5000, 20000 /* , 800000 */ ] {
+// pour TESTER A SUPPRIMER
+                for delay : Int32 in [ 80000 ] {
+//                    for delay : Int32 in [ 1000, 5000, 20000 /* , 800000 */ ] {
                     if self.finished { break }
                     
                     // à partir du 2ième essai, on ne teste plus que les ports inférieurs à 1024
                     if delay > 1000 { ports.formIntersection(Set(1...1023)) }
+
+// pour TESTER A SUPPRIMER
+ports.formIntersection(Set(1...20))
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
                         if self.finished { break }

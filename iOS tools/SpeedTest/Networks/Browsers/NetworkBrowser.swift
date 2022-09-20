@@ -29,6 +29,9 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
+// pour TESTER A SUPPRIMER
+continue
+                
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 if network_addr == IPv6Address("::1") { continue }
                 if network_addr.isLLA() {
@@ -49,9 +52,11 @@ class NetworkBrowser {
                     var current = network_addr.and(netmask).next() as! IPv4Address
                     repeat {
                         if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+
+// pour TESTER A SUPPRIMER
+if current != IPv4Address("192.168.0.6") && current != IPv4Address("192.168.0.13") { current = current.next() as! IPv4Address; continue }
                             
                             device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
-                            
                             reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
                         current = current.next() as! IPv4Address
                     } while current != broadcast
