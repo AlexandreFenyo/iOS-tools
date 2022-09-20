@@ -86,18 +86,16 @@ class TCPPortBrowser {
             
             // Create a thread for each address
             DispatchQueue.global(qos: .userInitiated).async {
-                var ports = self.ip_to_tcp_port[addr]!
+                let _ports = self.ip_to_tcp_port[addr]!
 
-// pour TESTER A SUPPRIMER
-                for delay : Int32 in [ 80000 ] {
-//                    for delay : Int32 in [ 1000, 5000, 20000 /* , 800000 */ ] {
+                for delay : Int32 in [ 100000, 1000, 5000, 20000, 800000 ] {
                     if self.finished { break }
+
+                    var ports = _ports
                     
                     // à partir du 2ième essai, on ne teste plus que les ports inférieurs à 1024
                     if delay > 1000 { ports.formIntersection(Set(1...1023)) }
-
-// pour TESTER A SUPPRIMER
-ports.formIntersection(Set(1...20))
+                    if delay == 100000 { ports.formIntersection(Set(1...20)) }
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
                         if self.finished { break }
