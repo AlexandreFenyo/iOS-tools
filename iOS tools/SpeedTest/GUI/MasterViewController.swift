@@ -89,6 +89,15 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Update nodes and find new nodes
     // Main thread
     private func startBrowsing() {
+        // Supprimer tous les noeuds
+        while !DBMaster.shared.nodes.isEmpty {
+            tableView.beginUpdates()
+            let node = DBMaster.shared.nodes.first!
+            let index_paths_removed = DBMaster.shared.removeNode(node)
+            tableView.deleteRows(at: index_paths_removed, with: .automatic)
+            tableView.endUpdates()
+        }
+
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
@@ -101,9 +110,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
             self.updateLocalNodeAndGateways()
 
-            // Stop receiving ICMP for the chart
-//            self.detail_view_controller?.stopReceivingICMP()
-        
             // Use ICMP to find new nodes
             let tb = TCPPortBrowser(device_manager: self)
             self.browser_tcp = tb

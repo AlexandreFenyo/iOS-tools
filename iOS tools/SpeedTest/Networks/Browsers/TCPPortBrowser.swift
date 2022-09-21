@@ -95,7 +95,7 @@ class TCPPortBrowser {
                     
                     // à partir du 2ième essai, on ne teste plus que les ports inférieurs à 1024
                     if delay > 1000 { ports.formIntersection(Set(1...1023)) }
-                    if delay == 100000 { ports.formIntersection(Set(1...20)) }
+                    if delay == 100000 { ports.formIntersection(Set(1...23)) }
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
                         if self.finished { break }

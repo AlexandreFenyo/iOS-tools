@@ -43,9 +43,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
 //        print("didNotSearch")
-        for err in errorDict {
+//        for err in errorDict {
 //            print("didNotSearch:", err.key, ":", err.value)
-        }
+//        }
 
         // Restart browsing
         // ce n'est pas la bonne méthode pour redémarrer la recherche car ce searchForServices rappelle netServiceBrowser avec didNotSearch donc on boucle jusqu'à saturer la pile, il faudrait déléguer à plus tard cette recherche, ou afficher un pop-up pour que l'utilisateur le fasse
@@ -86,7 +86,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
         let node = Node()
 
-        node.types = [ .chargen , .discard, .ios ]
+        node.types = [ .chargen, .discard, .ios ]
         node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
         node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
         node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
@@ -118,6 +118,8 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             node.dns_names.insert(domain)
             device_manager.setInformation("found " + sender.name)
         }
+
+//        print(sender.description.)
 
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
