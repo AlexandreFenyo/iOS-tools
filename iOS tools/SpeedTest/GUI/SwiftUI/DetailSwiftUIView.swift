@@ -119,9 +119,16 @@ struct DetailSwiftUIView: View {
                     } label: {
                         Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
                     }.disabled(!model.buttons_enabled)
+
+                    Button {
+                        master_view_controller.stop_pressed()
+                    } label: {
+                        Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
+                    }.disabled(model.buttons_enabled)
                 }
                 
                 Group {
+                    /*
                     HStack {
                         Text("UDP sent throughput")
                         Spacer()
@@ -151,6 +158,7 @@ struct DetailSwiftUIView: View {
                         Spacer()
                         Text("12 ms")
                     }
+                    */
                     
                     HStack {
                         Text("IP address")
@@ -173,11 +181,13 @@ struct DetailSwiftUIView: View {
                         Text(model.display_ports)
                     }
                     
+                    /*
                     HStack {
                         Text("interfaces")
                         Spacer()
                         Text(model.display_interfaces)
                     }
+                    */
                 }
             }
         } // ScrollView

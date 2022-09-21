@@ -204,10 +204,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    @IBAction func stop_pressed(_ sender: Any) {
+    public func stop_pressed() {
         stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+    }
+    
+    @IBAction func stop_pressed(_ sender: Any) {
+        stop_pressed()
     }
 
     @IBAction func update_pressed(_ sender: Any) {
