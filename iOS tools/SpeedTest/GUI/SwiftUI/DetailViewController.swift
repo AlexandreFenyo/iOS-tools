@@ -82,6 +82,20 @@ class DetailViewController: UIViewController {
 
     }
     
+    public func stopButtonDidAppear() {
+        DispatchQueue.main.async {
+            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+        }
+
+    }
+    
+    public func stopButtonDidDisappear() {
+        DispatchQueue.main.async {
+            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+        }
+
+    }
+
     // called by MasterViewController when the user selects an address
     public func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
         // retrouver le node

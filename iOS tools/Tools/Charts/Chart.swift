@@ -576,7 +576,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             updateStateVariables()
         }
         
+        // ce assert peut bloquer si on manipule la taille de l'appli en splitant
         assert(grid_size.width <= full_size.width - left_width)
+        
         assert(grid_size.height <= full_size.height - bottom_height)
         assert(subgrid_size != nil ? grid_size.width.truncatingRemainder(dividingBy: subgrid_size!.width) == 0 : true)
         if !vertical_auto_layout { assert(subgrid_size != nil ? grid_size.height.truncatingRemainder(dividingBy: subgrid_size!.height) == 0 : true) }

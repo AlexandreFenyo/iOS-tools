@@ -22,12 +22,17 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var display_ports = ""
     @Published private(set) var display_interfaces = ""
     @Published private(set) var buttons_enabled = false
-    
+    @Published private(set) var stop_button_enabled = false
+
     public func setButtonsEnabled(_ state: Bool) {
         print("setButtonsEnabled(\(state)) - addresse=\(address)")
         buttons_enabled = address == nil ? false : state
     }
-    
+
+    public func setStopButtonEnabled(_ state: Bool) {
+        stop_button_enabled = state
+    }
+
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         let sep = "\n"
         
@@ -120,11 +125,13 @@ struct DetailSwiftUIView: View {
                         Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
                     }.disabled(!model.buttons_enabled)
 
-                    Button {
-                        master_view_controller.stop_pressed()
-                    } label: {
-                        Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
-                    }.disabled(model.buttons_enabled)
+                    if model.stop_button_enabled {
+                        Button {
+                            master_view_controller.stop_pressed()
+                        } label: {
+                            Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
+                        }.disabled(model.buttons_enabled)
+                    }
                 }
                 
                 Group {

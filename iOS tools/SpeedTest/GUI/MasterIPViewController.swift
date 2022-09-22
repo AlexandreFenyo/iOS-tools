@@ -36,6 +36,13 @@ class MasterIPViewController: UITableViewController {
     public func applicationWillResignActive() {
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        master_view_controller?.stopButtonDidAppear()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        master_view_controller?.stopButtonDidDisappear()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

@@ -328,7 +328,17 @@ class MasterViewController: UITableViewController, DeviceManager {
         for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
+    public func stopButtonDidAppear() {
+        detail_view_controller?.stopButtonDidAppear()
+    }
+    
+    public func stopButtonDidDisappear() {
+        detail_view_controller?.stopButtonDidDisappear()
+    }
+
     override func viewDidAppear(_ animated: Bool) {
+        stopButtonDidAppear()
+        
         tableView.reloadData()
         
         updateLocalNodeAndGateways()
@@ -341,6 +351,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         // tabBarController?.tabBar.tintColor = UIColor.red
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        stopButtonDidDisappear()
+    }
+
     // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
