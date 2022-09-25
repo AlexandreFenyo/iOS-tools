@@ -57,7 +57,7 @@ struct ChartDefaults {
     // If ratio == 1, there is no space between lines of text
     static let horizontal_font_size_ratio : CGFloat = 0.5
     static let vertical_font_size_ratio : CGFloat = 0.5
-    static let font_color = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+    static let font_color = COLORS.chart_scale
     static let optimal_vertical_resolution_ratio : CGFloat = 1.2
     static let vertical_transition_duration : Double = 1
     static let minimum_highest : Float = 1
@@ -106,38 +106,8 @@ class SKExtLabelNode : SKLabelNode {
     }
 }
 
-class SCNChartNode : SCNNode {
-    public var chart_node: SKChartNode?
-    
-    public init(ts: TimeSeries, density: CGFloat, full_size: CGSize, grid_size: CGSize, subgrid_size: CGSize? = nil, line_width: CGFloat, left_width: CGFloat = 0, bottom_height: CGFloat = 0, vertical_unit: String, grid_vertical_cost: Float, date: Date, grid_time_interval: TimeInterval, background: SKColor = .clear, font_name: String = ChartDefaults.font_name, max_horizontal_font_size: CGFloat? = nil, max_vertical_font_size: CGFloat? = nil, horizontal_font_size_ratio: CGFloat = ChartDefaults.horizontal_font_size_ratio, vertical_font_size_ratio: CGFloat = ChartDefaults.vertical_font_size_ratio, font_color: SKColor = ChartDefaults.font_color, spline: Bool = true, vertical_auto_layout: Bool = true, mode: ChartPositionMode = .followDate, debug: Bool = true) async {
-        super.init()
-        
-        // Create a 2D scene
-        let chart_scene = SKScene(size: full_size)
-        chart_scene.backgroundColor = .white
-        
-        // Create a 3D plan containing the 2D scene
-        self.geometry = SCNPlane(width: full_size.width / density, height: full_size.height / density)
-        self.geometry?.firstMaterial?.isDoubleSided = true
-        self.geometry?.firstMaterial?.diffuse.contents = chart_scene
-        
-        // Create a 2D chart and add it to the scene
-        // Note: cropping this way does not seem to work in a 3D env with GL instead of Metal (ex.: Hackintosh running on esx-i)
-        await chart_node = SKChartNode(ts: ts, full_size: full_size, grid_size: grid_size, subgrid_size: subgrid_size, line_width: line_width, left_width: left_width, bottom_height: bottom_height, vertical_unit: vertical_unit, grid_vertical_cost: grid_vertical_cost, date: date, grid_time_interval: grid_time_interval, crop: false, background: background, font_name: font_name, max_horizontal_font_size: max_horizontal_font_size, max_vertical_font_size: max_vertical_font_size, horizontal_font_size_ratio: horizontal_font_size_ratio, vertical_font_size_ratio: vertical_font_size_ratio, font_color: font_color, spline: spline, vertical_auto_layout: vertical_auto_layout, mode: mode, debug: debug)
-        chart_node!.anchorPoint = CGPoint(x: 0, y: 0)
-        chart_scene.addChild(chart_node!)
-        
-        self.scale = SCNVector3(x: 1, y: -1, z: 1)
-    }
-    
-//    public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
-//        chart_node!.registerGestureRecognizers(view: view, delta: delta)
-//    }
-    
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
+
+
 @MainActor
 class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
@@ -455,8 +425,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             
             for point in points {
                 let point_node = SKShapeNode(circleOfRadius: point_radius)
-                point_node.fillColor = .black
-                point_node.strokeColor = .red
+                point_node.fillColor = COLORS.chart_point
+                point_node.strokeColor = COLORS.chart_point_circle
                 point_node.lineWidth = self.line_width
                 self.curve_node!.addChild(point_node)
                 point_node.position = CGPoint(x: point.x, y: point.y)
@@ -467,7 +437,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     point_label.text = String(Int(self.highlight_element!.value))
                     if point_label.text!.count > self.grid_vertical_factor! { point_label.text! = point_label.text!.sub(0, point_label.text!.count - self.grid_vertical_factor!) }
                     point_label.fontSize = triangle_height
-                    point_label.fontColor = .yellow
+                    point_label.fontColor = COLORS.chart_selected_value
                     point_label.horizontalAlignmentMode = .center
                     point_label.verticalAlignmentMode = .top
                     point_node.addChild(point_label)
@@ -476,7 +446,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     let point_label_date = SKLabelNode(fontNamed: self.font_name)
                     point_label_date.text = f.string(from: self.highlight_element!.date)
                     point_label_date.fontSize = triangle_height
-                    point_label_date.fontColor = .yellow
+                    point_label_date.fontColor = COLORS.chart_selected_date
                     point_label_date.horizontalAlignmentMode = .center
                     point_label_date.verticalAlignmentMode = .top
                     point_node.addChild(point_label_date)
@@ -495,7 +465,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                               CGPoint(x: 0, y: 0)]
                 let triangle_node = SKShapeNode(points: &points, count: points.count)
                 triangle_node.lineWidth = self.line_width * 1.5
-                triangle_node.strokeColor = .yellow
+                triangle_node.strokeColor = COLORS.chart_highest_point_triangle
                 self.curve_node!.addChild(triangle_node)
                 triangle_node.position = CGPoint(x: highest_point.x, y: highest_point.y + triangle_relative_height)
                 triangle_node.run(SKAction.repeatForever(SKAction.sequence([SKAction.fadeIn(withDuration: 0.3), SKAction.fadeOut(withDuration: 0.3)])))
@@ -506,7 +476,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 if max_label.text!.count > self.grid_vertical_factor! { max_label.text! = max_label.text!.sub(0, max_label.text!.count - self.grid_vertical_factor!) }
                 
                 max_label.fontSize = triangle_height
-                max_label.fontColor = .yellow
+                max_label.fontColor = COLORS.chart_highest_point_value
                 max_label.horizontalAlignmentMode = .center
                 max_label.verticalAlignmentMode = .top
                 triangle_node.addChild(max_label)
@@ -606,7 +576,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
         grid_node = SKShapeNode(path: grid_path)
         grid_node!.path = grid_path
-        grid_node!.strokeColor = .red
+        grid_node!.strokeColor = COLORS.chart_main_grid
         grid_node!.lineWidth = line_width
         
         // Create the subgrid
@@ -631,7 +601,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             }
             subgrid_node = SKShapeNode(path: subgrid_path)
             subgrid_node?.path = subgrid_path
-            subgrid_node?.strokeColor = .red
+            subgrid_node?.strokeColor = COLORS.chart_sub_grid
             // In order to avoid flickering on black or dark background, linewidth must be greater than 1
             subgrid_node?.lineWidth = line_width
             subgrid_node?.alpha = 0.3
@@ -750,7 +720,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         
         // Initialize curve
         curve_node!.lineWidth = line_width
-        curve_node!.strokeColor = .black
+        curve_node!.strokeColor = COLORS.chart_curve
         
         // Create blinking right replay button
         if mode == .manual {
@@ -760,8 +730,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                           CGPoint(x: replay_horizontal_pos!, y: replay_vertical_pos!)]
             let replay_node = SKShapeNode(points: &points, count: points.count)
             replay_node.lineWidth = self.line_width
-            replay_node.strokeColor = .red
-            replay_node.fillColor = .red
+            replay_node.strokeColor = COLORS.chart_arrow_stroke
+            replay_node.fillColor = COLORS.chart_arrow_fill
             let alpha_node = SKNode()
             alpha_node.alpha = 0.5
             alpha_node.addChild(replay_node)
@@ -890,7 +860,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 await drawCurveAsync(ts: ts)
                 
                 let finger = SKShapeNode(circleOfRadius: 5.0)
-                finger.fillColor = .yellow
+                finger.fillColor = COLORS.chart_finger
                 root_node!.addChild(finger)
                 finger.position = _point_relative_to_root_node
                 

@@ -40,11 +40,12 @@ extension String {
 }
 
 final class GenericTools : AutoTrace {
-    public static var plane_node : SCNChartNode?
+//    public static var plane_node : SCNChartNode?
     public static var chart_node : SKChartNode?
     
     // holding strong refs to tap targets
-    private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
+    // NOT IN MVP
+    // private static var tap_demo_ship_manager: [ManageTapDemoShip] = []
 
     // holding strong refs to tap cube targets
     private static var tap_cube_manager: [ManageTapCube] = []
@@ -186,6 +187,7 @@ final class GenericTools : AutoTrace {
         return alternate_value
     }
 
+    /* NOT IN MVP
     @MainActor
     public static func createScene(_ view: UIView) async {
         if await (GenericTools.ts.getElements().count == 0) {
@@ -200,7 +202,9 @@ final class GenericTools : AutoTrace {
         if !alternate() { await createSpriteScene(view as! SKView) }
         else { await create3DChartScene(view as! SCNView) }
     }
+     */
 
+    /* NOT IN MVP
     // Insert the demo cube scene into a view
     public static func createCubeSceneTest(_ view: SCNView) {
         // create a new scene
@@ -264,7 +268,9 @@ final class GenericTools : AutoTrace {
 //        let tapGesture = UITapGestureRecognizer(target: manage_tap, action: #selector(ManageTapCube.handleTap(_:)))
 //        view.addGestureRecognizer(tapGesture)
     }
+    */
 
+    /* NOT IN MVP
     @MainActor
     public static func createSpriteScene(_ view: SKView) async {
         // Create a await scene
@@ -281,7 +287,9 @@ final class GenericTools : AutoTrace {
         view.showsFPS = true
         view.showsQuadCount = true
     }
+     */
     
+    /* NOT IN MVP
     // Insert a 3D scene containing a 2D Chart into a view
     @MainActor
     public static func create3DChartScene(_ view: SCNView) async {
@@ -318,7 +326,9 @@ final class GenericTools : AutoTrace {
         plane_node = await SCNChartNode(ts: ts, density: 450, full_size: CGSize(width: 800, height: 600), grid_size: CGSize(width: 800 / 5, height: 800 / 5), subgrid_size: CGSize(width: 20, height: 20), line_width: 5, left_width: 250, bottom_height: 150, vertical_unit: "Kbit/s", grid_vertical_cost: 20, date: Date(), grid_time_interval: 10, background: .gray, max_horizontal_font_size: 38, max_vertical_font_size: 45, vertical_auto_layout: true, debug: false)
         scene.rootNode.addChildNode(plane_node!)
     }
+     */
     
+    /* NOT IN MVP
     // Insert the demo ship scene into a view
     public static func createDemoShipScene(_ view: SCNView) {
         // create a new scene
@@ -371,8 +381,10 @@ final class GenericTools : AutoTrace {
         let tapGesture = UITapGestureRecognizer(target: manageTap, action: #selector(manageTap.handleTap(_:)))
         view.addGestureRecognizer(tapGesture)
     }
+     */
 }
 
+/* NOT IN MVP
 // manage a tap on a demo ship scene view
 private class ManageTapDemoShip {
     let scnView: SCNView
@@ -415,6 +427,7 @@ private class ManageTapDemoShip {
         }
     }
 }
+*/
 
 // manage a tap on a Cube scene view
 private class ManageTapCube {

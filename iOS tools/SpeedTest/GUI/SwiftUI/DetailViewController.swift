@@ -69,7 +69,7 @@ class DetailViewController: UIViewController {
         view1.presentScene(scene)
 
         Task {
-            await chart_node = SKChartNode(ts: ts, full_size: view1.bounds.size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: .gray, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
+            await chart_node = SKChartNode(ts: ts, full_size: view1.bounds.size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: COLORS.chart_bg, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
             scene.addChild(chart_node!)
             scene_delegate!.nodes.append(chart_node!)
             

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import SpriteKit
 
 // Default values
 struct NetworkDefaults {
@@ -91,11 +92,38 @@ public enum COLORS {
     static let leftpannel_bg = test2
 
     // Right pannel
-    // font de la top bar du right pannel
+    // Fond de la top bar du right pannel
     static let rightpannel_topbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     // Chart
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = test2
+    // Fond du chart
+    static let chart_bg = UIC_RGB(127, 127, 127)
+    // Couleur du texte des échelles
+    static let chart_scale = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+    // Couleur de la valeur du point sélectionné
+    static let chart_selected_value = UIC_RGB(247, 242, 5)
+    // Couleur de la date du point sélectionné
+    static let chart_selected_date = UIC_RGB(247, 242, 5)
+    // Couleur des points
+    static let chart_point = UIC_RGB(0, 0, 0)
+    // Couleur du cercle autour des points
+    static let chart_point_circle = UIC_RGB(179, 0, 0)
+    // Couleur du triangle du point le plus haut
+    static let chart_highest_point_triangle = UIC_RGB(247, 242, 5)
+    // Couleur de la valeur du point le plus haut
+    static let chart_highest_point_value = UIC_RGB(247, 242, 5)
+    // Couleur du grid principal
+    static let chart_main_grid = UIC_RGB(255, 0, 0)
+    // Couleur du grid secondaire
+    static let chart_sub_grid = UIC_RGB(255, 0, 0)
+    // Couleur de la courbe
+    static let chart_curve = UIC_RGB(0, 0, 0)
+    // Flèche
+    static let chart_arrow_stroke = UIC_RGB(255, 0, 0)
+    static let chart_arrow_fill = UIC_RGB(255, 0, 0)
+    // Disque de la position du doigt
+    static let chart_finger = UIC_RGB(255, 255, 0)
     
     private static func UIC_RGB(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> UIColor {
         return UIColor(red: r / 255, green: g / 255, blue: b / 255, alpha: a)
