@@ -33,8 +33,12 @@ public enum COLORS {
     // //////////
     // Thème
 
-    static let standard_background = UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
+    static let standard_background = UIC_RGB(24, 99, 111) // UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
 
+    static let global_background: UIColor = .systemYellow// UIC_RGB(200, 200, 240)
+    static let toolbar_background : UIColor = .systemYellow//global_background.lighter().lighter()
+
+    
     // //////////
     // Couleurs des éléments graphiques
 
@@ -43,13 +47,14 @@ public enum COLORS {
     static let tabbar_title = UIC_RGB(0, 122, 255)
 
     // Tab bar background
-    static let tabbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+    static let tabbar_bg = global_background
+    
     static let tabbar_bg5 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     static let tabbar_bg6 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     static let tabbar_bg7 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
 
     // Couleur de fond de la tool bar
-    static let toolbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+    static let toolbar_bg = toolbar_background
 
     // Sections du left pannel : texte principal
     // Titre
@@ -79,22 +84,22 @@ public enum COLORS {
     
     // Left pannel
     // Fond de la top bar du left pannel
-    static let leftpannel_topbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+    static let leftpannel_topbar_bg = global_background
     // Barre du haut du left pannel
     static let leftpannel_topbar_buttons = UIC_RGB(16, 105, 219)
     // Icones de la tool bar
     static let leftpannel_bottombar_buttons = UIC_RGB(16, 105, 219)
     // Fond du left pannel
-    static let leftpannel_bg = test2
+    static let leftpannel_bg = COLORS.standard_background
 
     // Right pannel
     // Fond de la top bar du right pannel
-    static let rightpannel_topbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+    static let rightpannel_topbar_bg = global_background
     // Chart
-    // Fond du chart avant qu'il ne s'affiche
-    static let chart_view_bg = test2
     // Fond du chart
-    static let chart_bg = UIC_RGB(127, 127, 127)
+    static let chart_bg = standard_background
+    // Fond du chart avant qu'il ne s'affiche
+    static let chart_view_bg = chart_bg
     // Couleur du texte des échelles
     static let chart_scale = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
     // Couleur de la valeur du point sélectionné
@@ -126,6 +131,16 @@ public enum COLORS {
     }
 }
 
+extension UIColor {
+    public func darker() -> UIColor {
+        UIColor(Color(cgColor: self.cgColor).darker())
+    }
+    
+    public func lighter() -> UIColor {
+        UIColor(Color(cgColor: self.cgColor).lighter())
+    }
+}
+
 // Code from https://stackoverflow.com/questions/56586055/how-to-get-rgb-components-from-color-in-swiftui
 extension Color {
     var components: (hue: Double, saturation: Double, brightness: Double, opacity: Double) {
@@ -145,5 +160,9 @@ extension Color {
 extension Color {
     public func darker() -> Color {
         return Color(hue: components.hue, saturation: components.saturation, brightness: components.brightness * 0.9, opacity: components.opacity)
+    }
+    
+    public func lighter() -> Color {
+        return Color(hue: components.hue, saturation: components.saturation, brightness: components.brightness * 1.1, opacity: components.opacity)
     }
 }
