@@ -111,7 +111,7 @@ struct TracesSwiftUIView: View {
                                     .foregroundColor(model.level != .INFO ? Color.gray : Color.blue)
                                     .disabled(model.level != .INFO).padding(12)
                             }
-                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg5)).cornerRadius(20).font(.footnote)
                             
                             Button {
                                 model.setLevel(.DEBUG)
@@ -138,7 +138,7 @@ struct TracesSwiftUIView: View {
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.blue)
                                     .disabled(model.level != .DEBUG).padding(12)
                             }
-                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg6)).cornerRadius(20).font(.footnote)
                             
                             Button {
                                 model.setLevel(.ALL)
@@ -148,7 +148,7 @@ struct TracesSwiftUIView: View {
                                     .foregroundColor(model.level != .ALL ? Color.gray : Color.blue)
                                     .disabled(model.level != .ALL).padding(12)
                             }
-                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.top_down_background)).cornerRadius(20).font(.footnote)
+                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg7)).cornerRadius(20).font(.footnote)
                             
                             Spacer()
                             

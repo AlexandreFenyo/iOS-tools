@@ -29,7 +29,7 @@ class LeftNavController : UINavigationController {
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: h, height: h))
         let image1 = renderer.image { (context) in
             UIColor.darkGray.setStroke()
-            COLORS.top_down_background.setFill()
+            COLORS.tabbar_bg3.setFill()
             context.cgContext.fillEllipse(in: CGRect(x: margin, y: margin, width: d, height: d))
         }
         let image = image1.resizableImage(withCapInsets: UIEdgeInsets(top: h / 2, left: h / 2, bottom: h / 2, right: h / 2))
@@ -63,7 +63,7 @@ class LeftNavController : UINavigationController {
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = COLORS.top_down_background
+        appearance.backgroundColor = COLORS.tabbar_bg4
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
         

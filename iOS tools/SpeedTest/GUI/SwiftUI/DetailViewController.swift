@@ -9,6 +9,7 @@
 import UIKit
 import SpriteKit
 import SwiftUI
+
 class MySKSceneDelegate : NSObject, SKSceneDelegate {
     public var nodes : [SKChartNode] = []
 
@@ -60,7 +61,7 @@ class DetailViewController: UIViewController {
 
         let scene = SKScene(size: view1.bounds.size)
         // pour débugguer si taille mal ajustée
-        scene.backgroundColor = .brown
+        scene.backgroundColor = COLORS.chart_view_bg
 
         scene_delegate = MySKSceneDelegate()
         scene.delegate = scene_delegate

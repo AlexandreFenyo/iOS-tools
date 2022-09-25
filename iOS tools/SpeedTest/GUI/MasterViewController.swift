@@ -186,15 +186,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         // changer la couleur du texte qui est en noir par défaut
 
 //        navigationController!.navigationBar.barStyle = .default
-//        navigationController?.navigationBar.barTintColor = .red
+//        navigationController?.navigationBar.barTintColor = .blue
 //        print(navigationController?.navigationBar.barTintColor)
 //        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
         
         // Couleur du Edit
-        // navigationController?.navigationBar.tintColor = .red
+        navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
         // Couleur des boutons en bas (reload par ex.)
-        // navigationController?.toolbar.tintColor = .green
-
+        navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
     }
 
     @IBAction func help_pressed(_ sender: Any) {
@@ -272,7 +271,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.backgroundColor = COLORS.standard_background
+        tableView.backgroundColor = COLORS.leftpannel_bg
         // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
         stopBrowsing(.OTHER_ACTION)
     }
@@ -309,11 +308,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         
         if let type = SectionType(rawValue: section), let section = DBMaster.shared.sections[type] {
             header.titleLabel.text = section.description
-            header.titleLabel.textColor = COLORS.section_label
+            header.titleLabel.textColor = COLORS.leftpannel_section_title
             header.subTitleLabel.text = section.detailed_description
-            header.subTitleLabel.textColor = COLORS.section_label
+            header.subTitleLabel.textColor = COLORS.leftpannel_section_subtitle
             header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
-            header.mainView.backgroundColor = COLORS.section_background
+            header.mainView.backgroundColor = COLORS.leftpannel_section_bg
         }
         
         return cell
@@ -343,12 +342,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         
         updateLocalNodeAndGateways()
 
-        navigationController!.tabBarController?.tabBar.barTintColor = COLORS.top_down_background
+        navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
 
         // Pour changement des couleurs du texte
         // navigationController!.navigationBar.largeTitleTextAttributes = [ .foregroundColor: UIColor.orange ]
         // navigationController!.navigationBar.titleTextAttributes = [ .foregroundColor: UIColor.orange ]
-        // tabBarController?.tabBar.tintColor = UIColor.red
+        // Titres dans la tab bar
+        tabBarController?.tabBar.tintColor = COLORS.tabbar_title
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -651,15 +651,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         cell.layer.shadowColor = UIColor.clear.cgColor
         
         // Create some sort of shadow
-        cell.rect1.backgroundColor = COLORS.section_background
-        cell.rect2.backgroundColor = COLORS.rect2_background
+        cell.rect1.backgroundColor = COLORS.leftpannel_node_rect1_bg
+        cell.rect2.backgroundColor = COLORS.leftpannel_node_rect2_bg
 
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
-        cell.backgroundColor = COLORS.standard_background
+        cell.backgroundColor = COLORS.leftpannel_node_edit_bg
 
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
-        cell.contentView.backgroundColor = COLORS.standard_background
-        
+        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
