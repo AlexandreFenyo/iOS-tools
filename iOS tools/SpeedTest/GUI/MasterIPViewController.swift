@@ -86,11 +86,11 @@ class MasterIPViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
         cell.textLabel!.text = address.toNumericString()
 
-        cell.textLabel!.textColor = .black
-        cell.textLabel!.layer.opacity = 0.7
-        cell.textLabel!.highlightedTextColor = .blue
+        cell.textLabel!.textColor = COLORS.leftpannel_ip_text //.black
+        cell.textLabel!.layer.opacity = COLORS.leftpannel_ip_text_opacity
+        cell.textLabel!.highlightedTextColor = COLORS.leftpannel_ip_text_selected
 
-        cell.backgroundColor = COLORS.standard_background
+        cell.backgroundColor = COLORS.leftpannel_ip_bg
         
         return cell
     }

@@ -15,7 +15,7 @@ import UIKit
 
 class LeftNavController : UINavigationController {
     let r : CGFloat = 20
-    var rv : RoundedCornerView?
+//    var rv : RoundedCornerView? // SUPPRIME POUR LE MVP
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,8 +28,10 @@ class LeftNavController : UINavigationController {
         let d = h - 2 * margin
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: h, height: h))
         let image1 = renderer.image { (context) in
-            UIColor.darkGray.setStroke()
-            COLORS.tabbar_bg3.setFill()
+            // n'a pas d'effet apparemmment
+//            UIColor.darkGray.setStroke()
+
+            COLORS.toolbar_bg.setFill()
             context.cgContext.fillEllipse(in: CGRect(x: margin, y: margin, width: d, height: d))
         }
         let image = image1.resizableImage(withCapInsets: UIEdgeInsets(top: h / 2, left: h / 2, bottom: h / 2, right: h / 2))
@@ -56,18 +58,23 @@ class LeftNavController : UINavigationController {
         ////////////////////////////////////////////////////////////
         // Manage the top left rounded corner
 
+        /* SUPPRIME POUR LE MVP
         rv = RoundedCornerView(radius: r, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, arc_center: CGPoint(x: r, y: r))
         navigationBar.addSubview(rv!)
+         */
 
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = COLORS.tabbar_bg4
+
+        appearance.backgroundColor = COLORS.leftpannel_topbar_bg
+
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
         
         // Manage constraints for auto resizing
+        /* SUPPRIME POUR LE MVP
         rv!.translatesAutoresizingMaskIntoConstraints = false
         view.addConstraints(
             [
@@ -76,5 +83,6 @@ class LeftNavController : UINavigationController {
                 NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
                 NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
             ])
+         */
     }
 }

@@ -576,7 +576,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             updateStateVariables()
         }
         
-        // ce assert peut bloquer si on manipule la taille de l'appli en splitant
+        // ce assert peut bloquer si on manipule la taille de l'appli en splitant ou en la mettant de côté (slide over)
         assert(grid_size.width <= full_size.width - left_width)
         
         assert(grid_size.height <= full_size.height - bottom_height)

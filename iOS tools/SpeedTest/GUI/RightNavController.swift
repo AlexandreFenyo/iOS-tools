@@ -11,11 +11,12 @@ import UIKit
 
 class RightNavController : UINavigationController {
     let r : CGFloat = 20
-    var rv : RoundedCornerView?
+//    var rv : RoundedCornerView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        /* SUPPRIME POUR LE MVP
         rv = RoundedCornerView(radius: r, startAngle: -0.5 * CGFloat.pi, endAngle: 0.0 * CGFloat.pi, arc_center: CGPoint(x: 0, y: r))
         navigationBar.addSubview(rv!)
         
@@ -27,14 +28,15 @@ class RightNavController : UINavigationController {
                 NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
                 NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
             ])
-
+         */
+        
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         // voir aussi https://developer.apple.com/forums/thread/714278 si warning dans la console avec iOS15
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = COLORS.tabbar_bg2
-        navigationBar.standardAppearance = appearance;
+        appearance.backgroundColor = COLORS.rightpannel_topbar_bg
+        navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
     }
 }

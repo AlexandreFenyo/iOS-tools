@@ -648,8 +648,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
 
-        cell.layer.shadowColor = UIColor.clear.cgColor
-        
+        // apparemment aucun effet de ce positionnement de couleur
+//        cell.layer.shadowColor = UIColor.clear.cgColor
+//        cell.layer.shadowColor = UIColor.red.cgColor
+
         // Create some sort of shadow
         cell.rect1.backgroundColor = COLORS.leftpannel_node_rect1_bg
         cell.rect2.backgroundColor = COLORS.leftpannel_node_rect2_bg

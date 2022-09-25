@@ -44,18 +44,15 @@ public enum COLORS {
     // Tab bar background
     static let tabbar_bg =
     UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    static let tabbar_bg2 =
-    UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    static let tabbar_bg3 =
-    UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    static let tabbar_bg4 =
-    UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     static let tabbar_bg5 =
     UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     static let tabbar_bg6 =
     UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     static let tabbar_bg7 =
     UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
+
+    // Couleur de fond de la tool bar
+    static let toolbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
 
     // Sections du left pannel : texte principal
     // Titre
@@ -65,7 +62,7 @@ public enum COLORS {
     // Fond
     static let leftpannel_section_bg = UIColor(red: 60/255, green: 57/255, blue: 77/255, alpha: 1)
     
-    // Cellules du left pannel
+    // Cellules du left pannel quand ce sont les noeuds qui sont affichés
     // Effet 3D entre les cellules
     static let leftpannel_node_rect1_bg = leftpannel_section_bg
     static let leftpannel_node_rect2_bg = UIColor(red: 152/255, green: 171/255, blue: 173/255, alpha: 1)
@@ -74,15 +71,28 @@ public enum COLORS {
     // Couleur de fond en cas de sélection d'un node
     static let leftpannel_node_select_bg = COLORS.standard_background
 
+    // Cellules du left pannel quand ce sont les IPs qui sont affichés
+    // Couleur du texte
+    static let leftpannel_ip_text = UIC_RGB(0, 0, 0)
+    // Couleur du texte quand sélectionné
+    static let leftpannel_ip_text_selected = UIC_RGB(82, 83, 239)
+    // Opacité du texte
+    static let leftpannel_ip_text_opacity : Float = 0.7
+    static let leftpannel_ip_bg = UIC_RGB(123, 136, 152)
+    
     // Left pannel
+    // Fond de la top bar du left pannel
+    static let leftpannel_topbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     // Barre du haut du left pannel
     static let leftpannel_topbar_buttons = UIC_RGB(16, 105, 219)
-    // Barre du bas du left pannel
+    // Icones de la tool bar
     static let leftpannel_bottombar_buttons = UIC_RGB(16, 105, 219)
     // Fond du left pannel
     static let leftpannel_bg = test2
 
     // Right pannel
+    // font de la top bar du right pannel
+    static let rightpannel_topbar_bg = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
     // Chart
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = test2
