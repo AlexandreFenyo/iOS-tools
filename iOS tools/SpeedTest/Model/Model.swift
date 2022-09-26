@@ -268,8 +268,10 @@ class DBMaster {
                 getlocalgatewayipv4(idx, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_storage>.size))
             }
             if (ret >= 0) {
-                let addr = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size))!.getIPAddress() as! IPv4Address
-                gw.v4_addresses.insert(addr)
+                if let s = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size)) {
+                    let addr = s.getIPAddress() as! IPv4Address
+                    gw.v4_addresses.insert(addr)
+                }
             }
             idx += 1
         } while ret >= 0

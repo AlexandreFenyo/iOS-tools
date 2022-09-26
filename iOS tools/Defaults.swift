@@ -33,19 +33,16 @@ public enum COLORS {
     // //////////
     // Thème
 
-    static let standard_background = UIC_RGB(24, 99, 111) // UIColor(red: 123/255, green: 136/255, blue: 152/255, alpha: 1)
-
-    static let tst = UIC_RGB(208, 186, 69)
-    static let global_background: UIColor = tst//.systemYellow// UIC_RGB(200, 200, 240)
-    static let toolbar_background : UIColor = tst//.systemYellow//global_background.lighter().lighter()
-
+    static let standard_background = UIC_RGB(24, 99, 111)
+    static let global_background: UIColor = UIC_RGB(208, 186, 69)
+    static let toolbar_background : UIColor = global_background
     
     // //////////
     // Couleurs des éléments graphiques
 
     // Tab bar
     // Titres
-    static let tabbar_title = UIC_RGB(0, 122, 255)
+    static let tabbar_title = standard_background // UIC_RGB(0, 122, 255)
 
     // Tab bar background
     static let tabbar_bg = global_background
@@ -76,20 +73,19 @@ public enum COLORS {
 
     // Cellules du left pannel quand ce sont les IPs qui sont affichés
     // Couleur du texte
-    static let leftpannel_ip_text = UIC_RGB(0, 0, 0)
+    static let leftpannel_ip_text = UIC_RGB(255, 255, 255)
     // Couleur du texte quand sélectionné
     static let leftpannel_ip_text_selected = UIC_RGB(82, 83, 239)
     // Opacité du texte
-    static let leftpannel_ip_text_opacity : Float = 0.7
-    static let leftpannel_ip_bg = UIC_RGB(123, 136, 152)
+    static let leftpannel_ip_text_opacity : Float = 0.8
     
     // Left pannel
     // Fond de la top bar du left pannel
     static let leftpannel_topbar_bg = global_background
     // Barre du haut du left pannel
-    static let leftpannel_topbar_buttons = UIC_RGB(16, 105, 219)
+    static let leftpannel_topbar_buttons = standard_background // UIC_RGB(16, 105, 219)
     // Icones de la tool bar
-    static let leftpannel_bottombar_buttons = UIC_RGB(16, 105, 219)
+    static let leftpannel_bottombar_buttons = standard_background // UIC_RGB(16, 105, 219)
     // Fond du left pannel
     static let leftpannel_bg = COLORS.standard_background
 
@@ -98,11 +94,11 @@ public enum COLORS {
     static let rightpannel_topbar_bg = global_background
     // Chart
     // Fond du chart
-    static let chart_bg = standard_background
+    static let chart_bg :UIColor = UIC_RGB(220,220,200) // .lightGray.lighter()// standard_background.lighter().lighter() // standard_background
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = chart_bg
     // Couleur du texte des échelles
-    static let chart_scale = SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+    static let chart_scale : UIColor = .systemYellow.darker().darker().darker() // SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
     // Couleur de la valeur du point sélectionné
     static let chart_selected_value = UIC_RGB(247, 242, 5)
     // Couleur de la date du point sélectionné
@@ -116,9 +112,9 @@ public enum COLORS {
     // Couleur de la valeur du point le plus haut
     static let chart_highest_point_value = UIC_RGB(247, 242, 5)
     // Couleur du grid principal
-    static let chart_main_grid = UIC_RGB(255, 0, 0)
+    static let chart_main_grid : UIColor = .systemYellow.darker().darker().darker()//.systemYellow // UIC_RGB(255, 0, 0)
     // Couleur du grid secondaire
-    static let chart_sub_grid = UIC_RGB(255, 0, 0)
+    static let chart_sub_grid = chart_main_grid // UIC_RGB(255, 0, 0)
     // Couleur de la courbe
     static let chart_curve = UIC_RGB(0, 0, 0)
     // Flèche
@@ -126,6 +122,9 @@ public enum COLORS {
     static let chart_arrow_fill = UIC_RGB(255, 0, 0)
     // Disque de la position du doigt
     static let chart_finger = UIC_RGB(255, 255, 0)
+    // Partie sous le chart
+    // Couleur du fond
+    static let right_pannel_bg = chart_bg
     
     private static func UIC_RGB(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> UIColor {
         return UIColor(red: r / 255, green: g / 255, blue: b / 255, alpha: a)

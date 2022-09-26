@@ -15,7 +15,10 @@ class RightNavController : UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        // Couleur du Edit
+        navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
+
         /* SUPPRIME POUR LE MVP
         rv = RoundedCornerView(radius: r, startAngle: -0.5 * CGFloat.pi, endAngle: 0.0 * CGFloat.pi, arc_center: CGPoint(x: 0, y: r))
         navigationBar.addSubview(rv!)

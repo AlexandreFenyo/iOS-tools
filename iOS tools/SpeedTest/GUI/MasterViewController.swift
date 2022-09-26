@@ -190,10 +190,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        print(navigationController?.navigationBar.barTintColor)
 //        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
         
-        // Couleur du Edit
-        navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
-        // Couleur des boutons en bas (reload par ex.)
-        navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
     }
 
     @IBAction func help_pressed(_ sender: Any) {
@@ -278,6 +274,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Couleur du Edit
+        navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
+        // Couleur des boutons en bas (reload par ex.)
+        navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
 
         // view.backgroundColor = .red
         // Uncomment the following line to preserve selection between presentations

@@ -50,6 +50,11 @@ class MasterIPViewController: UITableViewController {
         // self.clearsSelectionOnViewWillAppear = false
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.backgroundColor = COLORS.leftpannel_bg
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -90,7 +95,7 @@ class MasterIPViewController: UITableViewController {
         cell.textLabel!.layer.opacity = COLORS.leftpannel_ip_text_opacity
         cell.textLabel!.highlightedTextColor = COLORS.leftpannel_ip_text_selected
 
-        cell.backgroundColor = COLORS.leftpannel_ip_bg
+        cell.backgroundColor = COLORS.standard_background
         
         return cell
     }

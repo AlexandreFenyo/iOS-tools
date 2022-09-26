@@ -197,6 +197,6 @@ struct DetailSwiftUIView: View {
                     */
                 }
             }
-        }.background(Color(COLORS.standard_background)) // ScrollView
+        }.background(Color(COLORS.right_pannel_bg)) // ScrollView
     }
 }
