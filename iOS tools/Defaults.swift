@@ -94,7 +94,7 @@ public enum COLORS {
     static let rightpannel_topbar_bg = global_background
     // Chart
     // Fond du chart
-    static let chart_bg :UIColor = UIC_RGB(220,220,200) // .lightGray.lighter()// standard_background.lighter().lighter() // standard_background
+    static let chart_bg: UIColor = UIC_RGB(220,220,200) // .lightGray.lighter()// standard_background.lighter().lighter() // standard_background
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = chart_bg
     // Couleur du texte des échelles
@@ -125,6 +125,7 @@ public enum COLORS {
     // Partie sous le chart
     // Couleur du fond
     static let right_pannel_bg = chart_bg
+    static let right_pannel_scroll_bg = chart_bg.lighter()
     
     private static func UIC_RGB(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> UIColor {
         return UIColor(red: r / 255, green: g / 255, blue: b / 255, alpha: a)

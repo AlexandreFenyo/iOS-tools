@@ -74,129 +74,136 @@ struct DetailSwiftUIView: View {
 
     var body: some View {
         ScrollView {
-            
             VStack {
-                Text(model.address_str == nil ? "none" : model.address_str!)
-                
-                HStack {
-                    Button {
-                        if model.address != nil {
-                            master_view_controller.scanTCP(model.address!)
-                        }
-                    } label: {
-                        Label("scan TCP ports", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                    }.disabled(!model.buttons_enabled)
+                VStack {
+                    Text(model.address_str == nil ? "none" : model.address_str!)
                     
-                    Spacer()
-                    
-                    Button {
-                        if model.address != nil {
-                            master_view_controller.floodUDP(model.address!)
-                        }
-                    } label: {
-                        Label("UDP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                    }.disabled(!model.buttons_enabled)
-                    
-                    Spacer()
-                    
-                    Button {
-                        if model.address != nil {
-                            master_view_controller.floodTCP(model.address!)
-                        }
-                    } label: {
-                        Label("TCP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                    }.disabled(!model.buttons_enabled)
-                    
-                    Spacer()
-                    
-                    Button {
-                        if model.address != nil {
-                            master_view_controller.chargenTCP(model.address!)
-                        }
-                    } label: {
-                        Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                    }.disabled(!model.buttons_enabled)
-                    
-                    Button {
-                        if model.address != nil {
-                            master_view_controller.loopICMP(model.address!)
-                        }
-                    } label: {
-                        Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                    }.disabled(!model.buttons_enabled)
-
-                    if model.stop_button_enabled {
+                    HStack {
                         Button {
-                            master_view_controller.stop_pressed()
+                            if model.address != nil {
+                                master_view_controller.scanTCP(model.address!)
+                            }
                         } label: {
-                            Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
-                        }.disabled(model.buttons_enabled)
-                    }
-                }
-                
-                Group {
-                    /*
-                    HStack {
-                        Text("UDP sent throughput")
+                            VStack {
+                                Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
+                                Text("scan TCP ports").font(.footnote)
+                            }
+                        }.disabled(!model.buttons_enabled)
+                        
                         Spacer()
-                        Text("20 Mbit/s")
+                        
+                        Button {
+                            if model.address != nil {
+                                master_view_controller.floodUDP(model.address!)
+                            }
+                        } label: {
+//                            VStack {
+  //                              Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
+                                Text("flood").font(.footnote)
+      //                      }
+                        }.disabled(!model.buttons_enabled)
+                        
+                        Spacer()
+                        
+                        Button {
+                            if model.address != nil {
+                                master_view_controller.floodTCP(model.address!)
+                            }
+                        } label: {
+                            Label("TCP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                        }.disabled(!model.buttons_enabled)
+                        
+                        Spacer()
+                        
+                        Button {
+                            if model.address != nil {
+                                master_view_controller.chargenTCP(model.address!)
+                            }
+                        } label: {
+                            Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                        }.disabled(!model.buttons_enabled)
+                        
+                        Button {
+                            if model.address != nil {
+                                master_view_controller.loopICMP(model.address!)
+                            }
+                        } label: {
+                            Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
+                        }.disabled(!model.buttons_enabled)
+                        
+                        if model.stop_button_enabled {
+                            Button {
+                                master_view_controller.stop_pressed()
+                            } label: {
+                                Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
+                            }.disabled(model.buttons_enabled)
+                        }
                     }
                     
-                    HStack {
-                        Text("UDP packets sent throughput")
-                        Spacer()
-                        Text("10 pkt/s")
+                    Group {
+                        /*
+                         HStack {
+                         Text("UDP sent throughput")
+                         Spacer()
+                         Text("20 Mbit/s")
+                         }
+                         
+                         HStack {
+                         Text("UDP packets sent throughput")
+                         Spacer()
+                         Text("10 pkt/s")
+                         }
+                         
+                         HStack {
+                         Text("TCP bits received throughput")
+                         Spacer()
+                         Text("20 Mbit/s")
+                         }
+                         
+                         HStack {
+                         Text("TCP bits sent throughput")
+                         Spacer()
+                         Text("10 Mbit/s")
+                         }
+                         
+                         HStack {
+                         Text("ICMP latency")
+                         Spacer()
+                         Text("12 ms")
+                         }
+                         */
+                        
+                        HStack {
+                            Text("IP address")
+                            Spacer()
+                            Text(model.display_addresses)
+                        }
+                        
+                        HStack {
+                            Text("names")
+                            Spacer()
+                            Text(model.display_names)
+                        }
                     }
                     
-                    HStack {
-                        Text("TCP bits received throughput")
-                        Spacer()
-                        Text("20 Mbit/s")
+                    Group {
+                        
+                        HStack {
+                            Text("ports")
+                            Spacer()
+                            Text(model.display_ports)
+                        }
+                        
+                        /*
+                         HStack {
+                         Text("interfaces")
+                         Spacer()
+                         Text(model.display_interfaces)
+                         }
+                         */
                     }
-                    
-                    HStack {
-                        Text("TCP bits sent throughput")
-                        Spacer()
-                        Text("10 Mbit/s")
-                    }
-                    
-                    HStack {
-                        Text("ICMP latency")
-                        Spacer()
-                        Text("12 ms")
-                    }
-                    */
-                    
-                    HStack {
-                        Text("IP address")
-                        Spacer()
-                        Text(model.display_addresses)
-                    }
-                    
-                    HStack {
-                        Text("names")
-                        Spacer()
-                        Text(model.display_names)
-                    }
-                }
-                
-                Group {
-                    
-                    HStack {
-                        Text("ports")
-                        Spacer()
-                        Text(model.display_ports)
-                    }
-                    
-                    /*
-                    HStack {
-                        Text("interfaces")
-                        Spacer()
-                        Text(model.display_interfaces)
-                    }
-                    */
-                }
-            }
+                }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
+            }.cornerRadius(15).padding(7) // .background(.red) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
     }
 }
