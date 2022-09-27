@@ -77,7 +77,7 @@ struct DetailSwiftUIView: View {
             VStack {
                 VStack {
                     Text(model.address_str == nil ? "none" : model.address_str!)
-                    
+                    let button_width: CGFloat = 120
                     HStack {
                         Button {
                             if model.address != nil {
@@ -88,7 +88,7 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
                                 Text("scan TCP ports").font(.footnote)
                             }
-                        }.disabled(!model.buttons_enabled)
+                        }.frame(width: button_width).disabled(!model.buttons_enabled)
                         
                         Spacer()
                         
@@ -97,11 +97,11 @@ struct DetailSwiftUIView: View {
                                 master_view_controller.floodUDP(model.address!)
                             }
                         } label: {
-//                            VStack {
-  //                              Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
+                            VStack {
+                                Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
                                 Text("flood").font(.footnote)
-      //                      }
-                        }.disabled(!model.buttons_enabled)
+                            }
+                        }.frame(width: button_width).disabled(!model.buttons_enabled)
                         
                         Spacer()
                         
@@ -110,8 +110,11 @@ struct DetailSwiftUIView: View {
                                 master_view_controller.floodTCP(model.address!)
                             }
                         } label: {
-                            Label("TCP flood", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                        }.disabled(!model.buttons_enabled)
+                            VStack {
+                                Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
+                                Text("TCP flood").font(.footnote)
+                            }
+                        }.frame(width: button_width).disabled(!model.buttons_enabled)
                         
                         Spacer()
                         
@@ -120,18 +123,27 @@ struct DetailSwiftUIView: View {
                                 master_view_controller.chargenTCP(model.address!)
                             }
                         } label: {
-                            Label("connect to TCP chargen service", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                        }.disabled(!model.buttons_enabled)
+                            VStack {
+                                Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
+                                Text("TCP chargen").font(.footnote)
+                            }
+                        }.frame(width: button_width).disabled(!model.buttons_enabled)
                         
+                        Spacer()
+
                         Button {
                             if model.address != nil {
                                 master_view_controller.loopICMP(model.address!)
                             }
                         } label: {
-                            Label("ICMP (ping)", systemImage: "rectangle.split.2x2").disabled(!model.buttons_enabled)
-                        }.disabled(!model.buttons_enabled)
+                            VStack {
+                                Image(systemName: "clock").resizable().frame(width: 30, height: 30)
+                                Text("ICMP (ping)").font(.footnote)
+                            }
+                        }.frame(width: button_width).disabled(!model.buttons_enabled)
                         
                         if model.stop_button_enabled {
+                            Spacer()
                             Button {
                                 master_view_controller.stop_pressed()
                             } label: {
