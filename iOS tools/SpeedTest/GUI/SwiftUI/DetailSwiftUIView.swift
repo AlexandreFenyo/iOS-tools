@@ -75,10 +75,15 @@ struct DetailSwiftUIView: View {
     @ObservedObject var model = DetailViewModel.shared
 
     var body: some View {
+        HStack {
+            Text("new target:").opacity(0.6)
+            Text(model.address_str == nil ? "none" : model.address_str!)
+        }
+
         ScrollView {
             VStack {
                 VStack {
-                    Text(model.address_str == nil ? "none" : model.address_str!)
+//                    Text(model.address_str == nil ? "none" : model.address_str!)
                     HStack(alignment: .top) {
                         Button {
                             if model.address != nil {
