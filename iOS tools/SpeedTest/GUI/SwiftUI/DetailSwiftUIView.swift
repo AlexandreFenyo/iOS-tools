@@ -25,7 +25,7 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var stop_button_enabled = false
 
     public func setButtonsEnabled(_ state: Bool) {
-        print("setButtonsEnabled(\(state)) - addresse=\(address)")
+//        print("setButtonsEnabled(\(state)) - addresse=\(address)")
         buttons_enabled = address == nil ? false : state
     }
 
@@ -83,7 +83,6 @@ struct DetailSwiftUIView: View {
         ScrollView {
             VStack {
                 VStack {
-//                    Text(model.address_str == nil ? "none" : model.address_str!)
                     HStack(alignment: .top) {
                         Button {
                             if model.address != nil {
@@ -96,21 +95,6 @@ struct DetailSwiftUIView: View {
                             }
                         }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-//                        Spacer()
-                        
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.floodUDP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
-                                Text("flood").font(.footnote)
-                            }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
-                        
-//                        Spacer()
-                        
                         Button {
                             if model.address != nil {
                                 master_view_controller.floodTCP(model.address!)
@@ -121,8 +105,6 @@ struct DetailSwiftUIView: View {
                                 Text("TCP flood").font(.footnote)
                             }
                         }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
-                        
-//                        Spacer()
                         
                         Button {
                             if model.address != nil {
@@ -135,7 +117,16 @@ struct DetailSwiftUIView: View {
                             }
                         }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-//                        Spacer()
+                        Button {
+                            if model.address != nil {
+                                master_view_controller.floodUDP(model.address!)
+                            }
+                        } label: {
+                            VStack {
+                                Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
+                                Text("UDP flood").font(.footnote)
+                            }
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
 
                         Button {
                             if model.address != nil {
@@ -158,7 +149,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }.frame(maxWidth: 200).disabled(model.buttons_enabled) // .background(.red)
                         }
-                    } //.fixedSize(horizontal: false, vertical: false)
+                    }
                     
                     Group {
                         /*
@@ -223,7 +214,7 @@ struct DetailSwiftUIView: View {
                          */
                     }
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
-            }.cornerRadius(15).padding(7) // .background(.red) // VStack
+            }.cornerRadius(15).padding(7) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
     }
 }
