@@ -65,6 +65,8 @@ public class DetailViewModel : ObservableObject {
     }
 }
 
+// custom layout grid: https://developer.apple.com/documentation/swiftui/composing_custom_layouts_with_swiftui
+
 @MainActor
 struct DetailSwiftUIView: View {
     public let view: UIView
@@ -77,8 +79,7 @@ struct DetailSwiftUIView: View {
             VStack {
                 VStack {
                     Text(model.address_str == nil ? "none" : model.address_str!)
-                    let button_width: CGFloat = 120
-                    HStack {
+                    HStack(alignment: .top) {
                         Button {
                             if model.address != nil {
                                 master_view_controller.scanTCP(model.address!)
@@ -86,11 +87,11 @@ struct DetailSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
-                                Text("scan TCP ports").font(.footnote)
+                                Text("scan TCP ports").font(.footnote).frame(maxWidth: 200)
                             }
-                        }.frame(width: button_width).disabled(!model.buttons_enabled)
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-                        Spacer()
+//                        Spacer()
                         
                         Button {
                             if model.address != nil {
@@ -101,9 +102,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
                                 Text("flood").font(.footnote)
                             }
-                        }.frame(width: button_width).disabled(!model.buttons_enabled)
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-                        Spacer()
+//                        Spacer()
                         
                         Button {
                             if model.address != nil {
@@ -114,9 +115,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
                                 Text("TCP flood").font(.footnote)
                             }
-                        }.frame(width: button_width).disabled(!model.buttons_enabled)
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-                        Spacer()
+//                        Spacer()
                         
                         Button {
                             if model.address != nil {
@@ -127,9 +128,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
                                 Text("TCP chargen").font(.footnote)
                             }
-                        }.frame(width: button_width).disabled(!model.buttons_enabled)
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
-                        Spacer()
+//                        Spacer()
 
                         Button {
                             if model.address != nil {
@@ -140,17 +141,19 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "clock").resizable().frame(width: 30, height: 30)
                                 Text("ICMP (ping)").font(.footnote)
                             }
-                        }.frame(width: button_width).disabled(!model.buttons_enabled)
+                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
                         
                         if model.stop_button_enabled {
-                            Spacer()
                             Button {
                                 master_view_controller.stop_pressed()
                             } label: {
-                                Label("Stop", systemImage: "stop.circle").disabled(model.buttons_enabled)
-                            }.disabled(model.buttons_enabled)
+                                VStack {
+                                    Image(systemName: "stop.circle").resizable().frame(width: 30, height: 30)
+                                    Text("Stop").font(.footnote)
+                                }
+                            }.frame(maxWidth: 200).disabled(model.buttons_enabled) // .background(.red)
                         }
-                    }
+                    } //.fixedSize(horizontal: false, vertical: false)
                     
                     Group {
                         /*
