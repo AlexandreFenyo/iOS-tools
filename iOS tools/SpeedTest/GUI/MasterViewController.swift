@@ -97,6 +97,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             tableView.deleteRows(at: index_paths_removed, with: .automatic)
             tableView.endUpdates()
         }
+        
+        // Supprimer les réseaux
+        DBMaster.shared.networks = Set<IPNetwork>()
 
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
