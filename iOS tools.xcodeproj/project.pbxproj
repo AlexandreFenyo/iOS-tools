@@ -25,6 +25,7 @@
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
 		5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */; };
 		5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */; };
+		5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
@@ -75,6 +76,7 @@
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterIPViewController.swift; sourceTree = "<group>"; };
 		5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenClient.swift; sourceTree = "<group>"; };
+		5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPorts2Services.swift; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				5DC736C220D3A55600C2A199 /* NetTools.c */,
 				5DC736C320D3A55600C2A199 /* NetTools.h */,
 				5D945D0B2100CF51007E4844 /* NetTools.swift */,
+				5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */,
 			);
 			path = Networks;
 			sourceTree = "<group>";
@@ -403,6 +406,7 @@
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
+				5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,

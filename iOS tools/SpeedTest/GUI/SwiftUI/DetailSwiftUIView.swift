@@ -87,10 +87,10 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var v4address: IPv4Address? = nil
     @Published private(set) var v6address: IPv6Address? = nil
     @Published private(set) var address_str: String? = nil
-    @Published private(set) var display_names = ""
-    @Published private(set) var display_addresses = ""
-    @Published private(set) var display_ports = ""
-    @Published private(set) var display_interfaces = ""
+//    @Published private(set) var display_names = ""
+//    @Published private(set) var display_addresses = ""
+//    @Published private(set) var display_ports = ""
+//    @Published private(set) var display_interfaces = ""
     @Published private(set) var buttons_enabled = false
     @Published private(set) var stop_button_enabled = false
     @Published private(set) var text_addresses: [String] = [String]()
@@ -98,7 +98,6 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_ports: [String] = [String]()
     
     public func setButtonsEnabled(_ state: Bool) {
-        //        print("setButtonsEnabled(\(state)) - addresse=\(address)")
         buttons_enabled = address == nil ? false : state
     }
     
@@ -107,16 +106,10 @@ public class DetailViewModel : ObservableObject {
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
-        let sep = "\n"
-        
-        display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
-        display_addresses = (node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }).joined(separator: sep)
-        display_ports = node.tcp_ports.map { "TCP/\($0)" }.joined(separator: sep)
-        
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
         text_names = node.dns_names.map { $0.toString() }
-        text_ports = node.tcp_ports.map { "TCP/\($0)" }
-        
+        text_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+
         var interfaces = [""]
         for addr in node.v6_addresses {
             if let substrings = addr.toNumericString()?.split(separator: "%") {
@@ -125,7 +118,6 @@ public class DetailViewModel : ObservableObject {
                 }
             }
         }
-        display_interfaces = interfaces.joined(separator: sep)
         
         self.address = address
         family = address.getFamily()
