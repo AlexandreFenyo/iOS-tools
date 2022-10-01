@@ -13,9 +13,7 @@ import SpriteKit
 struct TagCloudView: View {
     var tags: [String]
     
-    @State private var totalHeight
-    = CGFloat.zero       // << variant for ScrollView/List
-    //    = CGFloat.infinity   // << variant for VStack
+    @State private var totalHeight = CGFloat.zero
     
     var body: some View {
         VStack {
@@ -23,8 +21,7 @@ struct TagCloudView: View {
                 self.generateContent(in: geometry)
             }
         }
-        .frame(height: totalHeight)// << variant for ScrollView/List
-        //.frame(maxHeight: totalHeight) // << variant for VStack
+        .frame(height: totalHeight)
     }
     
     private func generateContent(in g: GeometryProxy) -> some View {
@@ -64,8 +61,10 @@ struct TagCloudView: View {
         Text(text)
             .padding(.all, 5)
             .font(.body)
-            .background(Color.blue)
+            .background(Color(COLORS.standard_background))
             .foregroundColor(Color.white)
+//            .background(Color.blue)
+//            .foregroundColor(Color.white)
             .cornerRadius(5)
     }
     
@@ -169,7 +168,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
                                 Text("scan TCP ports").font(.footnote).frame(maxWidth: 200)
                             }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         Button {
                             if model.address != nil {
@@ -180,7 +181,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
                                 Text("TCP flood").font(.footnote)
                             }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         Button {
                             if model.address != nil {
@@ -191,7 +194,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
                                 Text("TCP chargen").font(.footnote)
                             }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         Button {
                             if model.address != nil {
@@ -202,7 +207,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
                                 Text("UDP flood").font(.footnote)
                             }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         Button {
                             if model.address != nil {
@@ -213,7 +220,9 @@ struct DetailSwiftUIView: View {
                                 Image(systemName: "clock").resizable().frame(width: 30, height: 30)
                                 Text("ICMP (ping)").font(.footnote)
                             }
-                        }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         if model.stop_button_enabled {
                             Button {
@@ -223,21 +232,32 @@ struct DetailSwiftUIView: View {
                                     Image(systemName: "stop.circle").resizable().frame(width: 30, height: 30)
                                     Text("Stop").font(.footnote)
                                 }
-                            }.frame(maxWidth: 200).disabled(model.buttons_enabled) // .background(.red)
+                            }
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200).disabled(model.buttons_enabled)
                         }
                     }
                     
                     VStack {
                         if !model.text_names.isEmpty {
-                            Divider()
+                            HStack {
+                                VStack { Divider() }
+                                Text("mDNS and DNS host names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                            }
                         }
                         TagCloudView(tags: model.text_names)
                         if !model.text_ports.isEmpty {
-                            Divider()
+                            HStack {
+                                VStack { Divider() }
+                                Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                            }
                         }
                         TagCloudView(tags: model.text_ports)
                         if !model.text_addresses.isEmpty {
-                            Divider()
+                            HStack {
+                                VStack { Divider() }
+                                Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                            }
                         }
                         TagCloudView(tags: model.text_addresses)
                     }

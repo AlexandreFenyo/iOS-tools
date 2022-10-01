@@ -35,7 +35,7 @@ public enum COLORS {
 
     static let standard_background = UIC_RGB(24, 99, 111)
     static let global_background: UIColor = UIC_RGB(208, 186, 69)
-    static let toolbar_background : UIColor = global_background
+    static let toolbar_background: UIColor = global_background
     
     // //////////
     // Couleurs des éléments graphiques
