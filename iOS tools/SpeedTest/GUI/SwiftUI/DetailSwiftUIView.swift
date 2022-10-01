@@ -9,6 +9,92 @@
 import SwiftUI
 import SpriteKit
 
+// TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
+struct TagCloudView: View {
+    var tags: [String]
+    
+    @State private var totalHeight
+    = CGFloat.zero       // << variant for ScrollView/List
+    //    = CGFloat.infinity   // << variant for VStack
+    
+    var body: some View {
+        VStack {
+            GeometryReader { geometry in
+                self.generateContent(in: geometry)
+            }
+        }
+        .frame(height: totalHeight)// << variant for ScrollView/List
+        //.frame(maxHeight: totalHeight) // << variant for VStack
+    }
+    
+    private func generateContent(in g: GeometryProxy) -> some View {
+        var width = CGFloat.zero
+        var height = CGFloat.zero
+        
+        return ZStack(alignment: .topLeading) {
+            ForEach(self.tags, id: \.self) { tag in
+                self.item(for: tag)
+                    .padding([.horizontal, .vertical], 4)
+                    .alignmentGuide(.leading, computeValue: { d in
+                        if (abs(width - d.width) > g.size.width)
+                        {
+                            width = 0
+                            height -= d.height
+                        }
+                        let result = width
+                        if tag == self.tags.last! {
+                            width = 0 //last item
+                        } else {
+                            width -= d.width
+                        }
+                        return result
+                    })
+                    .alignmentGuide(.top, computeValue: {d in
+                        let result = height
+                        if tag == self.tags.last! {
+                            height = 0 // last item
+                        }
+                        return result
+                    })
+            }
+        }.background(viewHeightReader($totalHeight))
+    }
+    
+    private func item(for text: String) -> some View {
+        Text(text)
+            .padding(.all, 5)
+            .font(.body)
+            .background(Color.blue)
+            .foregroundColor(Color.white)
+            .cornerRadius(5)
+    }
+    
+    private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
+        return GeometryReader { geometry -> Color in
+            let rect = geometry.frame(in: .local)
+            DispatchQueue.main.async {
+                binding.wrappedValue = rect.size.height
+            }
+            return .clear
+        }
+    }
+}
+
+/*
+ struct TestTagCloudView : View {
+ var body: some View {
+ VStack {
+ Text("Header").font(.largeTitle)
+ TagCloudView(tags: ["Ninetendo", "XBox", "PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4"])
+ Text("Some other text")
+ Divider()
+ Text("Some other cloud")
+ TagCloudView(tags: ["Apple", "Google", "Amazon", "Microsoft", "Oracle", "Facebook"])
+ }
+ }
+ }
+ */
+
 public class DetailViewModel : ObservableObject {
     static let shared = DetailViewModel()
     
@@ -23,22 +109,29 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var display_interfaces = ""
     @Published private(set) var buttons_enabled = false
     @Published private(set) var stop_button_enabled = false
-
+    @Published private(set) var text_addresses: [String] = [String]()
+    @Published private(set) var text_names: [String] = [String]()
+    @Published private(set) var text_ports: [String] = [String]()
+    
     public func setButtonsEnabled(_ state: Bool) {
-//        print("setButtonsEnabled(\(state)) - addresse=\(address)")
+        //        print("setButtonsEnabled(\(state)) - addresse=\(address)")
         buttons_enabled = address == nil ? false : state
     }
-
+    
     public func setStopButtonEnabled(_ state: Bool) {
         stop_button_enabled = state
     }
-
+    
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         let sep = "\n"
         
         display_names = node.dns_names.map { $0.toString() }.joined(separator: sep)
         display_addresses = (node.v4_addresses.map { $0.toNumericString() ?? "" } + node.v6_addresses.map { $0.toNumericString() ?? "" }).joined(separator: sep)
         display_ports = node.tcp_ports.map { "TCP/\($0)" }.joined(separator: sep)
+        
+        text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
+        text_names = node.dns_names.map { $0.toString() }
+        text_ports = node.tcp_ports.map { "TCP/\($0)" }
         
         var interfaces = [""]
         for addr in node.v6_addresses {
@@ -71,15 +164,15 @@ public class DetailViewModel : ObservableObject {
 struct DetailSwiftUIView: View {
     public let view: UIView
     public let master_view_controller: MasterViewController
-
+    
     @ObservedObject var model = DetailViewModel.shared
-
+    
     var body: some View {
         HStack {
             Text("new target:").opacity(0.6)
             Text(model.address_str == nil ? "none" : model.address_str!)
         }
-
+        
         ScrollView {
             VStack {
                 VStack {
@@ -127,7 +220,7 @@ struct DetailSwiftUIView: View {
                                 Text("UDP flood").font(.footnote)
                             }
                         }.frame(maxWidth: 200).disabled(!model.buttons_enabled) // .background(.red)
-
+                        
                         Button {
                             if model.address != nil {
                                 master_view_controller.loopICMP(model.address!)
@@ -151,68 +244,21 @@ struct DetailSwiftUIView: View {
                         }
                     }
                     
-                    Group {
-                        /*
-                         HStack {
-                         Text("UDP sent throughput")
-                         Spacer()
-                         Text("20 Mbit/s")
-                         }
-                         
-                         HStack {
-                         Text("UDP packets sent throughput")
-                         Spacer()
-                         Text("10 pkt/s")
-                         }
-                         
-                         HStack {
-                         Text("TCP bits received throughput")
-                         Spacer()
-                         Text("20 Mbit/s")
-                         }
-                         
-                         HStack {
-                         Text("TCP bits sent throughput")
-                         Spacer()
-                         Text("10 Mbit/s")
-                         }
-                         
-                         HStack {
-                         Text("ICMP latency")
-                         Spacer()
-                         Text("12 ms")
-                         }
-                         */
-                        
-                        HStack {
-                            Text("IP address")
-                            Spacer()
-                            Text(model.display_addresses)
+                    VStack {
+                        if !model.text_names.isEmpty {
+                            Divider()
                         }
-                        
-                        HStack {
-                            Text("names")
-                            Spacer()
-                            Text(model.display_names)
+                        TagCloudView(tags: model.text_names)
+                        if !model.text_ports.isEmpty {
+                            Divider()
                         }
+                        TagCloudView(tags: model.text_ports)
+                        if !model.text_addresses.isEmpty {
+                            Divider()
+                        }
+                        TagCloudView(tags: model.text_addresses)
                     }
                     
-                    Group {
-                        
-                        HStack {
-                            Text("ports")
-                            Spacer()
-                            Text(model.display_ports)
-                        }
-                        
-                        /*
-                         HStack {
-                         Text("interfaces")
-                         Spacer()
-                         Text(model.display_interfaces)
-                         }
-                         */
-                    }
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
             }.cornerRadius(15).padding(7) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
