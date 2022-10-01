@@ -9,7 +9,7 @@
 import SwiftUI
 import SpriteKit
 
-// TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
+// struct TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct TagCloudView: View {
     var tags: [String]
     
@@ -80,21 +80,6 @@ struct TagCloudView: View {
     }
 }
 
-/*
- struct TestTagCloudView : View {
- var body: some View {
- VStack {
- Text("Header").font(.largeTitle)
- TagCloudView(tags: ["Ninetendo", "XBox", "PlayStation", "PlayStation 2", "PlayStation 3", "PlayStation 4"])
- Text("Some other text")
- Divider()
- Text("Some other cloud")
- TagCloudView(tags: ["Apple", "Google", "Amazon", "Microsoft", "Oracle", "Facebook"])
- }
- }
- }
- */
-
 public class DetailViewModel : ObservableObject {
     static let shared = DetailViewModel()
     
@@ -158,8 +143,6 @@ public class DetailViewModel : ObservableObject {
     }
 }
 
-// custom layout grid: https://developer.apple.com/documentation/swiftui/composing_custom_layouts_with_swiftui
-
 @MainActor
 struct DetailSwiftUIView: View {
     public let view: UIView
@@ -169,7 +152,7 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         HStack {
-            Text("new target:").opacity(0.6)
+            Text("next target:").opacity(0.6)
             Text(model.address_str == nil ? "none" : model.address_str!)
         }
         
