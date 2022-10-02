@@ -26,7 +26,10 @@ struct TracesSwiftUIView: View {
         @Published private(set) var traces: [String] = {
             var arr = [String]()
             arr.append("")
-            for i in 1...200 { arr.append("Speed Test - Traces \(i)") }
+            for i in 1...200 {
+//                arr.append("Speed Test - Traces zfeiopjf oifj o jefozi jeofjioj ei jozefij ezoi jezo ijezo ijezoi ejzfo jzeo jzefi oezfj ziefo jzeo ijzef oizejfoize jfezo ijzefo ijzef ozefj zieo jezio jzeoi jzeofi jezo ijzeoi jzeoi jzeoi jezo ijzeo ijzeo ijzeio jzeio j \(i)")
+                arr.append("Speed Test - Traces \(i)")
+            }
             return arr
         }()
         
@@ -65,7 +68,7 @@ struct TracesSwiftUIView: View {
                 ZStack {
                     ScrollView {
                         ZStack {
-                            LazyVStack {
+                            LazyVStack(alignment: .leading, spacing: 0) {
                                 Spacer().id(topID)
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
                                     Text(model.traces[i]).font(.footnote)
@@ -77,17 +80,13 @@ struct TracesSwiftUIView: View {
                                     .id(bottomID)
                                     .lineLimit(nil)
                                     .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                            }
-                            
-                            //                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
-                            // Pousser le texte en bas :
-                            //                        .frame(minHeight: traceGeom.size.height)
+                            }.padding()
                             
                             GeometryReader { scrollViewContentGeom in
                                 Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                             }
                         }
-                    }//.coordinateSpace(name: "scroll")
+                    }
                     .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
                         if value > 0 { locked = true }
                     }
