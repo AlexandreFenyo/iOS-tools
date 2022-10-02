@@ -12,6 +12,8 @@ import ModelIO
 
 // extension UIApplication {}
 
+// bug : je lance un update et je passe dans l'onglet traces et je reviens une fois qu'il y a des nouveaux noeuds => exception
+
 @UIApplicationMain
  class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
@@ -41,8 +43,8 @@ import ModelIO
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController,
-            let consoleViewController = tabBarController.viewControllers?[2]
+            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController /* ,
+            let consoleViewController = tabBarController.viewControllers?[2] */
 //            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
         
