@@ -363,6 +363,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         updateLocalNodeAndGateways()
 
         navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
+        navigationController!.tabBarController?.tabBar.backgroundColor = COLORS.tabbar_bg
 
         // Pour changement des couleurs du texte
         // navigationController!.navigationBar.largeTitleTextAttributes = [ .foregroundColor: UIColor.orange ]

@@ -26,9 +26,12 @@ class TracesViewController : UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         addChild(hostingViewController)
         view.addSubview(hostingViewController.view)
         hostingViewController.didMove(toParent: self)
+
+//        hostingViewController.view.backgroundColor = .blue //COLORS.right_pannel_bg
 
         NSLayoutConstraint.activate([
             hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),

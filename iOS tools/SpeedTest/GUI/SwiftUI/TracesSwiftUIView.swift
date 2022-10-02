@@ -187,9 +187,10 @@ struct TracesSwiftUIView: View {
                     //.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
                     
                 }
+                .background(Color(COLORS.right_pannel_bg))
                 // Couleur de fond qui s'affiche quand on scroll au delà des limites
-                .background(Color.orange)
-                .background(Color(COLORS.standard_background))
+//                .background(Color.orange)
+//                .background(Color(COLORS.standard_background))
             }
         }
     }
