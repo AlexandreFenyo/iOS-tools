@@ -56,9 +56,9 @@ struct TracesSwiftUIView: View {
             value += nextValue()
         }
     }
-
+    
     @State private var timer: Timer?
-
+    
     var body: some View {
         GeometryReader { traceGeom in
             ScrollViewReader { scrollViewProxy in
@@ -78,30 +78,32 @@ struct TracesSwiftUIView: View {
                                     .lineLimit(nil)
                                     .foregroundColor(Color(COLORS.standard_background.darker().darker()))
                             }
+                            
                             //                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
                             // Pousser le texte en bas :
                             //                        .frame(minHeight: traceGeom.size.height)
+                            
                             GeometryReader { scrollViewContentGeom in
                                 Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                             }
                         }
                     }//.coordinateSpace(name: "scroll")
-                        .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                            if value > 0 { locked = true }
-                        }
-                        .gesture(DragGesture().onChanged { _ in
-                            locked = false
-                        })
-                        .onAppear() {
-                            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                                if locked {
-                                  withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                             }
+                    .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
+                        if value > 0 { locked = true }
+                    }
+                    .gesture(DragGesture().onChanged { _ in
+                        locked = false
+                    })
+                    .onAppear() {
+                        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                            if locked {
+                                withAnimation { scrollViewProxy.scrollTo(bottomID) }
                             }
                         }
-                        .onDisappear() {
-                            timer?.invalidate()
-                        }
+                    }
+                    .onDisappear() {
+                        timer?.invalidate()
+                    }
                     
                     VStack {
                         HStack {
@@ -117,7 +119,7 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20).font(.footnote)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
@@ -125,17 +127,17 @@ struct TracesSwiftUIView: View {
                                 // remettre car c'est essentiel pour que ça fonctionne
                                 // Timer pour les tests
                                 /*
-                                DispatchQueue.global(qos: .userInitiated).sync {
-                                    var i = 0
-                                    Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-//                                        print("timer\(i)")
-                                        model.append("timer\(i)")
-                                        if locked {
-                                          withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                                     }
-                                        i += 1
-                                    }
-                                }*/
+                                 DispatchQueue.global(qos: .userInitiated).sync {
+                                 var i = 0
+                                 Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                 //                                        print("timer\(i)")
+                                 model.append("timer\(i)")
+                                 if locked {
+                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                 }
+                                 i += 1
+                                 }
+                                 }*/
                             } label: {
                                 Label("Level 2", systemImage: "tablecells")
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
@@ -145,7 +147,7 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                             Button {
                                 model.setLevel(.ALL)
                                 model.append("set trace level to ALL", level: .INFO)
@@ -158,7 +160,7 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                             Spacer()
                             
                             Button {
@@ -171,7 +173,7 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                             Button {
                                 locked = true
                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
@@ -184,7 +186,7 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker())
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                             Button {
                                 model.clear()
                             } label: {
@@ -195,7 +197,7 @@ struct TracesSwiftUIView: View {
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-
+                            
                         }.background(Color.clear).lineLimit(1)
                         
                         Spacer()
