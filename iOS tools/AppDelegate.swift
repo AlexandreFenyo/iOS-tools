@@ -32,6 +32,8 @@ import ModelIO
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 
+        InitTCPPort2Service()
+        
         guard
             let tabBarController = window?.rootViewController as? UITabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,

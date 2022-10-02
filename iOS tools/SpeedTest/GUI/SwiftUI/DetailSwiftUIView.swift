@@ -87,10 +87,6 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var v4address: IPv4Address? = nil
     @Published private(set) var v6address: IPv6Address? = nil
     @Published private(set) var address_str: String? = nil
-//    @Published private(set) var display_names = ""
-//    @Published private(set) var display_addresses = ""
-//    @Published private(set) var display_ports = ""
-//    @Published private(set) var display_interfaces = ""
     @Published private(set) var buttons_enabled = false
     @Published private(set) var stop_button_enabled = false
     @Published private(set) var text_addresses: [String] = [String]()
@@ -143,8 +139,8 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         HStack {
-            Text("next target:").opacity(0.6)
-            Text(model.address_str == nil ? "none" : model.address_str!)
+            Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+            Text(model.address_str == nil ? "none" : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
         }
         
         ScrollView {
