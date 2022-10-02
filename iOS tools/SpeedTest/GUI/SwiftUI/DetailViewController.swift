@@ -48,7 +48,6 @@ class DetailViewController: UIViewController {
 
         hostingViewController.view.backgroundColor = COLORS.right_pannel_bg
         
-        
         addChild(hostingViewController)
         view2.addSubview(hostingViewController.view)
 
