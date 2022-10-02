@@ -19,7 +19,7 @@ class LeftNavController : UINavigationController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         ////////////////////////////////////////////////////////////
         // Manage the toolbar background
 
@@ -84,5 +84,6 @@ class LeftNavController : UINavigationController {
                 NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
             ])
          */
+
     }
 }

@@ -41,13 +41,17 @@ import ModelIO
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController
+            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController,
+            let consoleViewController = tabBarController.viewControllers?[2]
 //            let devices = masterViewController.devices[.localGateway]
             else { fatalError() }
         
         // Set the first device displayed in the detail view controller
 //        detailViewController.device = devices.first
 
+        // suppression du 3ième view controller (console) pour le MVP
+        tabBarController.viewControllers?.remove(at: 2)
+        
         self.masterViewController = masterViewController
 
         masterViewController.detail_view_controller = detailViewController

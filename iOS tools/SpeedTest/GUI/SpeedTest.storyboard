@@ -215,12 +215,12 @@
                                 <action selector="stop_pressed:" destination="9rn-U2-Uvj" id="ah7-ZC-teK"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH"/>
                         <barButtonItem title="Update" image="repeat" catalog="system" id="Hoh-gZ-vw9">
                             <connections>
                                 <action selector="update_pressed:" destination="9rn-U2-Uvj" id="muL-rx-85B"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH"/>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc">

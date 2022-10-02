@@ -39,6 +39,7 @@ class MasterIPViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         master_view_controller?.stopButtonDidAppear()
     }
+
     override func viewDidDisappear(_ animated: Bool) {
         master_view_controller?.stopButtonDidDisappear()
     }
