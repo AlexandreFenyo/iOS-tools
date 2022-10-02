@@ -122,21 +122,6 @@ struct TracesSwiftUIView: View {
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
-                                
-                                // remettre car c'est essentiel pour que ça fonctionne
-                                // Timer pour les tests
-                                /*
-                                 DispatchQueue.global(qos: .userInitiated).sync {
-                                 var i = 0
-                                 Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                                 //                                        print("timer\(i)")
-                                 model.append("timer\(i)")
-                                 if locked {
-                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                                 }
-                                 i += 1
-                                 }
-                                 }*/
                             } label: {
                                 Label("Level 2", systemImage: "tablecells")
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
@@ -202,7 +187,6 @@ struct TracesSwiftUIView: View {
                         Spacer()
                     }
                     .padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
-                    
                 }
                 .background(Color(COLORS.right_pannel_bg))
             }
