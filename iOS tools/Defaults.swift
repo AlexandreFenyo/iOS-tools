@@ -35,7 +35,7 @@ public enum COLORS {
 
     static let standard_background = UIC_RGB(24, 99, 111)
     static let global_background: UIColor = UIC_RGB(208, 186, 69)
-    static let toolbar_background: UIColor = global_background
+    static let toolbar_background = global_background
     
     // //////////
     // Couleurs des éléments graphiques
@@ -81,22 +81,22 @@ public enum COLORS {
     // Fond de la top bar du left pannel
     static let leftpannel_topbar_bg = global_background
     // Barre du haut du left pannel
-    static let leftpannel_topbar_buttons = standard_background // UIC_RGB(16, 105, 219)
+    static let leftpannel_topbar_buttons = standard_background
     // Icones de la tool bar
-    static let leftpannel_bottombar_buttons = standard_background // UIC_RGB(16, 105, 219)
+    static let leftpannel_bottombar_buttons = standard_background
     // Fond du left pannel
-    static let leftpannel_bg = COLORS.standard_background
+    static let leftpannel_bg = standard_background
 
     // Right pannel
     // Fond de la top bar du right pannel
     static let rightpannel_topbar_bg = global_background
     // Chart
     // Fond du chart
-    static let chart_bg: UIColor = UIC_RGB(220,220,200) // .lightGray.lighter()// standard_background.lighter().lighter() // standard_background
+    static let chart_bg: UIColor = UIC_RGB(220,220,200)
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = chart_bg
     // Couleur du texte des échelles
-    static let chart_scale : UIColor = .systemYellow.darker().darker().darker() // SKColor(red: 0.7, green: 0, blue: 0, alpha: 1)
+    static let chart_scale : UIColor = .systemYellow.darker().darker().darker()
     // Couleur de la valeur du point sélectionné
     static let chart_selected_value = UIC_RGB(247, 242, 5)
     // Couleur de la date du point sélectionné
@@ -110,7 +110,7 @@ public enum COLORS {
     // Couleur de la valeur du point le plus haut
     static let chart_highest_point_value = UIC_RGB(247, 242, 5)
     // Couleur du grid principal
-    static let chart_main_grid : UIColor = .systemYellow.darker().darker().darker()//.systemYellow // UIC_RGB(255, 0, 0)
+    static let chart_main_grid : UIColor = .systemYellow.darker().darker().darker()
     // Couleur du grid secondaire
     static let chart_sub_grid = chart_main_grid // UIC_RGB(255, 0, 0)
     // Couleur de la courbe

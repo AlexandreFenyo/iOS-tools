@@ -70,11 +70,13 @@ struct TracesSwiftUIView: View {
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
                                     Text(model.traces[i]).font(.footnote)
                                         .lineLimit(nil)
+                                        .foregroundColor(Color(COLORS.standard_background.darker().darker()))
                                 }
                                 Text(model.traces.last!)
                                     .font(.footnote)
                                     .id(bottomID)
                                     .lineLimit(nil)
+                                    .foregroundColor(Color(COLORS.standard_background.darker().darker()))
                             }
                             //                        .frame(maxWidth: .infinity).background(Color(COLORS.standard_background))
                             // Pousser le texte en bas :
