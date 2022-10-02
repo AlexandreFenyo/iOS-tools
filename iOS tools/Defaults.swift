@@ -47,10 +47,8 @@ public enum COLORS {
     // Tab bar background
     static let tabbar_bg = global_background
     
-    static let tabbar_bg5 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    static let tabbar_bg6 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-    static let tabbar_bg7 = UIColor(red: 242/255, green: 140/255, blue: 135/255, alpha: 1)
-
+    static let tabbar_bg5 = Color.red.darker().darker()
+    
     // Couleur de fond de la tool bar
     static let toolbar_bg = toolbar_background
 

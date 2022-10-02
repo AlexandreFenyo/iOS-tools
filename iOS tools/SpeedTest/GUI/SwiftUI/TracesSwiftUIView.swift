@@ -108,11 +108,14 @@ struct TracesSwiftUIView: View {
                                 model.append("set trace level to INFO", level: .INFO)
                             } label: {
                                 Label("Level 1", systemImage: "rectangle.split.2x2")
-                                    .foregroundColor(model.level != .INFO ? Color.gray : Color.blue)
+                                    .foregroundColor(model.level != .INFO ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .INFO).padding(12)
+                                    .font(.footnote)
                             }
-                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg5)).cornerRadius(20).font(.footnote)
-                            
+                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20).font(.footnote)
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
@@ -131,25 +134,29 @@ struct TracesSwiftUIView: View {
                                         i += 1
                                     }
                                 }*/
-                                
-                                
                             } label: {
                                 Label("Level 2", systemImage: "tablecells")
-                                    .foregroundColor(model.level != .DEBUG ? Color.gray : Color.blue)
+                                    .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .DEBUG).padding(12)
+                                    .font(.footnote)
                             }
-                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg6)).cornerRadius(20).font(.footnote)
-                            
+                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                             Button {
                                 model.setLevel(.ALL)
                                 model.append("set trace level to ALL", level: .INFO)
                             } label: {
                                 Label("Level 3", systemImage: "rectangle.split.3x3")
-                                    .foregroundColor(model.level != .ALL ? Color.gray : Color.blue)
+                                    .foregroundColor(model.level != .ALL ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .ALL).padding(12)
+                                    .font(.footnote)
                             }
-                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : Color(COLORS.tabbar_bg7)).cornerRadius(20).font(.footnote)
-                            
+                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                             Spacer()
                             
                             Button {
@@ -160,17 +167,22 @@ struct TracesSwiftUIView: View {
                                     .foregroundColor(.gray).padding(12)
                             }
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                            
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                             Button {
                                 locked = true
                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
                             } label: {
                                 Image("arrow down")
                                     .renderingMode(.template)
-                                    .foregroundColor(.gray).padding(12)
+                                    .foregroundColor(locked ? Color.white : .gray)
+                                    .padding(12)
                             }
-                            .background(locked ? Color.blue : Color(COLORS.standard_background).darker().darker()   ).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                                                    
+                            .background(Color(COLORS.standard_background).darker().darker())
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                             Button {
                                 model.clear()
                             } label: {
@@ -179,18 +191,17 @@ struct TracesSwiftUIView: View {
                                     .foregroundColor(.gray).padding(12)
                             }
                             .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                            
+                            .cornerRadius(20)
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
                         }.background(Color.clear).lineLimit(1)
                         
                         Spacer()
                     }
-                    //.padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
+                    .padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
                     
                 }
                 .background(Color(COLORS.right_pannel_bg))
-                // Couleur de fond qui s'affiche quand on scroll au delà des limites
-//                .background(Color.orange)
-//                .background(Color(COLORS.standard_background))
             }
         }
     }
