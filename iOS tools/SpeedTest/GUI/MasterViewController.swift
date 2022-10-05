@@ -12,6 +12,37 @@
 // https://developer.apple.com/library/archive/documentation/WindowsViews/Conceptual/ViewPG_iPhoneOS/WindowsandViews/WindowsandViews.html
 // https://cocoacasts.com/how-to-add-pull-to-refresh-to-a-table-view-or-collection-view
 
+/* Introduction de la dépendance à CTHelp :
+  sudo gem install cocoapods
+  sudo arch -arm64e gem install ffi
+  arch -x86_64 pod install
+  
+ fenyo@mac iOS-tools-help % cat Podfile
+ platform :ios, '11.0'
+ workspace 'iOS tools.xcodeproj'
+
+ #pod 'CTHelp'
+
+ def available_pods
+     pod 'CTHelp'
+ end
+
+ target 'iOS tools' do
+   available_pods
+ end
+
+ ET ouvrir comme ceci xcode :
+ fenyo@mac iOS-tools-help % open iOS\ tools.xcodeproj.xcworkspace
+  
+  masterviewcontroller :
+  let ctHelp = CTHelp()
+  ctHelp.new(CTHelpItem(title:"No Image-Text Only",
+                           helpText: "Eu tempor suscipit dis sed. Tortor velit orci bibendum mattis non metus ornare consequat. Condimentum habitasse dictumst eros nibh rhoncus non pulvinar fermentum. Maecenas convallis gravida facilisis. Interdum, conubia lacinia magnis duis nec quisque.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                           imageName:""))
+  ctHelp.appendDefaults(companyName: "Your Company Name", emailAddress: "yourContactEmail@somewhere.com", data: nil, webSite: "https://www.yourWebsite.com", companyImageName: "CompanyLogo")
+  ctHelp.presentHelp(from: self)
+*/
+
 import UIKit
 
 let removeAddButtonForMVP = true
