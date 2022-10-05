@@ -98,17 +98,17 @@ public enum COLORS {
     // Couleur du texte des échelles
     static let chart_scale : UIColor = .systemYellow.darker().darker().darker()
     // Couleur de la valeur du point sélectionné
-    static let chart_selected_value = UIC_RGB(247, 242, 5)
+    static let chart_selected_value = UIC_RGB(0, 0, 0)
     // Couleur de la date du point sélectionné
-    static let chart_selected_date = UIC_RGB(247, 242, 5)
+    static let chart_selected_date = chart_selected_value
     // Couleur des points
     static let chart_point = UIC_RGB(0, 0, 0)
     // Couleur du cercle autour des points
     static let chart_point_circle = UIC_RGB(179, 0, 0)
     // Couleur du triangle du point le plus haut
-    static let chart_highest_point_triangle = UIC_RGB(247, 242, 5)
+    static let chart_highest_point_triangle = UIColor.systemYellow.darker().darker().darker()
     // Couleur de la valeur du point le plus haut
-    static let chart_highest_point_value = UIC_RGB(247, 242, 5)
+    static let chart_highest_point_value = UIColor.systemYellow.darker().darker().darker()
     // Couleur du grid principal
     static let chart_main_grid : UIColor = .systemYellow.darker().darker().darker()
     // Couleur du grid secondaire
