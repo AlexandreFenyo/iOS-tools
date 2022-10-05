@@ -1,0 +1,6 @@
+module CTHelp {
+  umbrella header "CTHelp-umbrella.h"
+
+  export *
+  module * { export * }
+}

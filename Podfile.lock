@@ -1,0 +1,16 @@
+PODS:
+  - CTHelp (0.4.0)
+
+DEPENDENCIES:
+  - CTHelp
+
+SPEC REPOS:
+  trunk:
+    - CTHelp
+
+SPEC CHECKSUMS:
+  CTHelp: 9b6cac769bc805ae559b235f0150c0b1eec27cdf
+
+PODFILE CHECKSUM: 01c4c9cc5522c4fe7a6f308f2312d0942fad5e64
+
+COCOAPODS: 1.11.3

@@ -44,6 +44,7 @@
 */
 
 import UIKit
+import CTHelp
 
 let removeAddButtonForMVP = true
 var removedAddButtonForMVP = false
@@ -234,10 +235,18 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func help_pressed(_ sender: Any) {
+
+        let ctHelp = CTHelp()
+        ctHelp.new(CTHelpItem(title:"No Image-Text Only",
+                                 helpText: "Eu tempor suscipit dis sed. Tortor velit orci bibendum mattis non metus ornare consequat. Condimentum habitasse dictumst eros nibh rhoncus non pulvinar fermentum. Maecenas convallis gravida facilisis. Interdum, conubia lacinia magnis duis nec quisque.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                                 imageName:""))
+        ctHelp.appendDefaults(companyName: "Your Company Name", emailAddress: "yourContactEmail@somewhere.com", data: nil, webSite: "https://www.yourWebsite.com", companyImageName: "CompanyLogo")
+        ctHelp.presentHelp(from: self)
+        /*
         if let link = URL(string: "https://x.org") {
           UIApplication.shared.open(link)
           addTrace("HTTPS")
-        }
+        }*/
     }
 
     public func stop_pressed() {

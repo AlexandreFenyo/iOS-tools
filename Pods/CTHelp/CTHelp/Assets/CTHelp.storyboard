@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Help View Controller-->
+        <scene sceneID="GVL-cw-Rg0">
+            <objects>
+                <viewController storyboardIdentifier="CTHelpViewController" id="ISV-M2-WiE" customClass="CTHelpViewController" customModule="CTHelp" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vFS-dR-yGA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qx5-9a-eOC">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                            </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aAi-kC-Ljc">
+                                <rect key="frame" x="0.0" y="41" width="375" height="378"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            </scrollView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="LuW-3s-iAH">
+                                <rect key="frame" x="140" y="421" width="94" height="37"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="pageIndicatorTintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="currentPageIndicatorTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <action selector="moveViewLeftRight:" destination="ISV-M2-WiE" eventType="valueChanged" id="gSR-Uy-f5W"/>
+                                </connections>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" red="0.5764058232" green="0.57650798560000005" blue="0.57639932630000001" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="L3t-Hr-jhy" firstAttribute="bottom" secondItem="qx5-9a-eOC" secondAttribute="bottom" id="O27-81-7LW"/>
+                            <constraint firstItem="qx5-9a-eOC" firstAttribute="leading" secondItem="L3t-Hr-jhy" secondAttribute="leading" id="QEG-6b-r6H"/>
+                            <constraint firstItem="L3t-Hr-jhy" firstAttribute="trailing" secondItem="qx5-9a-eOC" secondAttribute="trailing" id="b3g-Hd-CA8"/>
+                            <constraint firstItem="qx5-9a-eOC" firstAttribute="top" secondItem="L3t-Hr-jhy" secondAttribute="top" id="eyk-W5-b9p"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="L3t-Hr-jhy"/>
+                    </view>
+                    <connections>
+                        <outlet property="ctHelpPageControl" destination="LuW-3s-iAH" id="Ebh-qf-VzI"/>
+                        <outlet property="scrollView" destination="aAi-kC-Ljc" id="0h6-4N-YRs"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="39L-c2-FYj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-3071" y="-3205"/>
+        </scene>
+    </scenes>
+</document>
