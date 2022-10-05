@@ -394,7 +394,7 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     public init(_ inaddr: Data, scope: UInt32) {
-        let ret = IPv6Address.filterScope(inaddr)
+        let _ = IPv6Address.filterScope(inaddr)
         self.scope = scope
         super.init(inaddr)
 

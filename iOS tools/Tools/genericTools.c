@@ -8,7 +8,7 @@
 
 #include "genericTools.h"
 
-int c_test() {
+int c_test(void) {
     printf("c_test\n");
     unsigned short ck = 0b1000000000000000;
     ck += 0b1000000000000001;

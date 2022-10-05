@@ -143,8 +143,6 @@ int localFloodClientStop(void) {
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/in.h
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/ip_icmp.h
 int localFloodClientLoop(const struct sockaddr *saddr) {
-    int ret;
-    
     if (saddr == NULL) return -1;
     else printf("family: %d\n", saddr->sa_family);
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
@@ -187,11 +185,4 @@ int localFloodClientLoop(const struct sockaddr *saddr) {
         }
         if (addToNWrite(len) < 0) return -6;
     }
-    
-    ret = close(sock);
-    if  (ret < 0) {
-        perror("close()");
-    }
-    
-    return 0;
 }
