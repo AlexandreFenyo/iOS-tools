@@ -23,11 +23,11 @@ import ModelIO
     private var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
     private var local_discard_service: NetService?
     private var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
-     private var local_app_service: NetService?
-     private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
+    private var local_app_service: NetService?
+    private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
-     private var browser_app: ServiceBrowser?
+    private var browser_app: ServiceBrowser?
     private var masterViewController : MasterViewController?
     private var tracesViewController : TracesViewController?
     
