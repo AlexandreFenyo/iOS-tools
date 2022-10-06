@@ -566,15 +566,15 @@ class MasterViewController: UITableViewController, DeviceManager {
         Task.detached(priority: .userInitiated) {
             await self.detail_view_controller?.ts.setUnits(units: .RTT)
             await self.detail_view_controller?.ts.removeAll()
-            var first_skipped = false
+//            var first_skipped = false
             while true {
                 if let rtt = await self.local_ping_client?.getRTT() {
                     if rtt > 0 {
-                        if first_skipped == false {
-                            first_skipped = true
-                        } else {
+//                        if first_skipped == false {
+//                            first_skipped = true
+//                        } else {
                             await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
-                        }
+//                        }
                     }
                 } else { break }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
