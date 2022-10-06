@@ -322,8 +322,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.leftpannel_bg
-        // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt
-        stopBrowsing(.OTHER_ACTION)
+        // Le refresh control ne se rafraichit plus quand on revient sur cette vue depuis une autre vue, donc on force un arrêt / relance
+        if refreshControl!.isRefreshing {
+            refreshControl!.endRefreshing()
+            refreshControl!.beginRefreshing()
+        }
     }
     
     override func viewDidLoad() {
