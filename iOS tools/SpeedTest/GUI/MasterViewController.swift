@@ -132,7 +132,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             tableView.deleteRows(at: index_paths_removed, with: .automatic)
             tableView.endUpdates()
         }
-        
+
         // Supprimer les réseaux
         DBMaster.shared.networks = Set<IPNetwork>()
 
