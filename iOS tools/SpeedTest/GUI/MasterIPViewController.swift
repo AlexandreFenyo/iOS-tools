@@ -37,7 +37,17 @@ class MasterIPViewController: UITableViewController {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         master_view_controller?.stopButtonDidAppear()
+
+        if tableView.indexPathForSelectedRow == nil {
+            let indexPath = IndexPath(row: 0, section: 0)
+            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
+            let ips = Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted())
+            if !ips.isEmpty {
+                master_view_controller!.addressSelected(address: ips.first!)
+            }
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -48,7 +58,7 @@ class MasterIPViewController: UITableViewController {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        clearsSelectionOnViewWillAppear = false
     }
 
     override func viewWillAppear(_ animated: Bool) {

@@ -402,6 +402,8 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         stopButtonDidAppear()
 
         if removeAddButtonForMVP && !removedAddButtonForMVP {
@@ -817,6 +819,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
         master_ip_view_controller = segue.destination as? MasterIPViewController
         let index_path = tableView.indexPathForSelectedRow!
         let type = SectionType(rawValue: index_path.section)
@@ -836,8 +839,3 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
        */
     }
 }
-
-// let frame = navigationController!.navigationBar.frame
-// tableView.setContentOffset(CGPoint(x: 0, y: -(frame.height + frame.origin.y + refreshControl!.frame.size.height)), animated: true)
-// tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-// tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
