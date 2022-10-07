@@ -38,7 +38,6 @@ class MasterIPViewController: UITableViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        master_view_controller?.stopButtonDidAppear()
 
         if tableView.indexPathForSelectedRow == nil {
             let indexPath = IndexPath(row: 0, section: 0)
@@ -51,7 +50,7 @@ class MasterIPViewController: UITableViewController {
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        master_view_controller?.stopButtonDidDisappear()
+        super.viewDidDisappear(animated)
     }
 
     override func viewDidLoad() {
@@ -64,8 +63,10 @@ class MasterIPViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.backgroundColor = COLORS.leftpannel_bg
+        
+        master_view_controller?.stopButtonWillAppear()
     }
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -131,6 +132,8 @@ class MasterIPViewController: UITableViewController {
         if isMovingFromParent {
             master_view_controller!.addressDeselected()
         }
+
+        master_view_controller?.stopButtonWillDisappear()
     }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

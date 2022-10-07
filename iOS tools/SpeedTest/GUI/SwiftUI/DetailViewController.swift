@@ -85,14 +85,14 @@ class DetailViewController: UIViewController {
 
     }
     
-    public func stopButtonDidAppear() {
+    public func stopButtonWillAppear() {
         DispatchQueue.main.async {
             let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
         }
 
     }
     
-    public func stopButtonDidDisappear() {
+    public func stopButtonWillDisappear() {
         DispatchQueue.main.async {
             let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
         }
@@ -202,7 +202,5 @@ class DetailViewController: UIViewController {
 
         print("DetailViewController.prepare(for segue)")
     }
-    
-    
     
 }

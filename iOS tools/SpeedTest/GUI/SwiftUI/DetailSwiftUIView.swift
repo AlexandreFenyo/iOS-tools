@@ -137,6 +137,8 @@ struct DetailSwiftUIView: View {
     
     @ObservedObject var model = DetailViewModel.shared
     
+    @State var animated_width: CGFloat = 0
+    
     var body: some View {
         HStack {
             Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
@@ -224,8 +226,15 @@ struct DetailSwiftUIView: View {
                                     Text("Stop").font(.footnote)
                                 }
                             }
+                            .onAppear {
+                                animated_width = 200
+                            }
+                            .onDisappear {
+                                animated_width = 0
+                            }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(model.buttons_enabled)
+                            .frame(maxWidth: animated_width).disabled(model.buttons_enabled)
+                            .animation(.easeOut(duration: 0.5), value: animated_width)
                         }
                     }
                     
@@ -256,5 +265,6 @@ struct DetailSwiftUIView: View {
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
             }.cornerRadius(15).padding(7) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
+
     }
 }

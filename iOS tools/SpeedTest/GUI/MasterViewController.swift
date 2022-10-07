@@ -393,18 +393,18 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
         for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
-    public func stopButtonDidAppear() {
-        detail_view_controller?.stopButtonDidAppear()
+    public func stopButtonWillAppear() {
+        detail_view_controller?.stopButtonWillAppear()
     }
     
-    public func stopButtonDidDisappear() {
-        detail_view_controller?.stopButtonDidDisappear()
+    public func stopButtonWillDisappear() {
+        detail_view_controller?.stopButtonWillDisappear()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        stopButtonDidAppear()
+        stopButtonWillAppear()
 
         if removeAddButtonForMVP && !removedAddButtonForMVP {
             toolbarItems?.remove(at: 3)
@@ -426,7 +426,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        stopButtonDidDisappear()
+        stopButtonWillDisappear()
     }
 
     // Disable other actions while editing
