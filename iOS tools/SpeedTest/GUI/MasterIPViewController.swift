@@ -48,6 +48,11 @@ class MasterIPViewController: UITableViewController {
                 master_view_controller!.addressSelected(address: ips.first!)
             }
         }
+        
+        Task.detached(priority: .userInitiated) {
+            await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+            await self.master_view_controller?.detail_view_controller?.ts.removeAll()
+        }
     }
 
     override func viewDidDisappear(_ animated: Bool) {

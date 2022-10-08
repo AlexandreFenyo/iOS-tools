@@ -169,7 +169,7 @@ struct DetailSwiftUIView: View {
     
     var body: some View {
         HStack {
-            Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+            // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
             Text(model.address_str == nil ? "none" : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
         }
         
