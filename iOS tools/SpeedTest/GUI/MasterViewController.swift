@@ -338,9 +338,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
 
         print("XXXX MASTER will appear")
         detail_view_controller?.setButtonMasterHiddenState(false)
-        Task.detached(priority: .userInitiated) {
-            await stop_button_state.setStateNodes(false)
-        }
     }
     
     override func viewDidLoad() {
@@ -426,14 +423,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
-        // TEST A REMETTRE
-//        detail_view_controller?.stopButtonWillDisappear()
-        print("XXXX MASTER did disappear")
         detail_view_controller?.setButtonMasterHiddenState(true)
-        Task.detached(priority: .userInitiated) {
-            await stop_button_state.setStateNodes(true)
-        }
     }
 
     // Disable other actions while editing

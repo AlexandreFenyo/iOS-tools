@@ -88,16 +88,13 @@ class DetailViewController: UIViewController {
     public func stopButtonWillAppear() {
         DispatchQueue.main.async {
             let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
-//            await self.hostingViewController.rootView.model.setStopButtonEnabled(false)
         }
-
     }
     
     public func stopButtonWillDisappear() {
         DispatchQueue.main.async {
             let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
         }
-
     }
     
     public func setButtonMasterHiddenState(_ state: Bool) {
@@ -115,40 +112,23 @@ class DetailViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        print("XXXX DETAIL will appear")
-        DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
-        }
+        let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        print("XXXX DETAIL will disappear")
-        DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
-        }
-
+        let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-//        print("XXXX DETAIL did appear")
-        
         if chart_node != nil {
             chart_node!.scene!.view!.isPaused = false
         }
-
-
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-
-//        print("XXXX DETAIL did disappear")
-
         if chart_node != nil {
             chart_node!.scene!.view!.isPaused = true
         }

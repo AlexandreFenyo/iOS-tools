@@ -51,10 +51,6 @@ class MasterIPViewController: UITableViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        master_view_controller?.detail_view_controller?.setButtonMasterIPHiddenState(true)
-        Task.detached(priority: .userInitiated) {
-            await stop_button_state.setStateIps(true)
-        }
     }
 
     override func viewDidLoad() {
@@ -66,21 +62,13 @@ class MasterIPViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.backgroundColor = COLORS.leftpannel_bg
-
-        print("XXXX MASTER IP will appear")
-        
         master_view_controller?.detail_view_controller?.setButtonMasterIPHiddenState(false)
-        Task.detached(priority: .userInitiated) {
-            await stop_button_state.setStateIps(false)
-        }
+        tableView.backgroundColor = COLORS.leftpannel_bg
     }
 
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
-
         master_view_controller?.detail_view_controller?.setButtonMasterIPHiddenState(true)
-
         if isMovingFromParent {
             master_view_controller!.addressDeselected()
         }
