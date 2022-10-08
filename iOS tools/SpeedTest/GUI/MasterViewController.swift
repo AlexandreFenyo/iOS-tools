@@ -90,6 +90,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
 
+    private var stop_button_toggle = false
+    
     public var detail_view_controller: DetailViewController?
     public var detail_navigation_controller: UINavigationController?
     public var split_view_controller: SplitViewController?
@@ -336,10 +338,11 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
             refreshControl!.beginRefreshing()
         }
 
-        print("XXXX MASTER will appear")
         detail_view_controller?.setButtonMasterHiddenState(false)
     }
     
+//    var timer: Timer?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -368,6 +371,13 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
         if #available(iOS 15.0, *) {
             // à remettre : ça pose pb avec MacCatalyst
             UITableView.appearance().sectionHeaderTopPadding = 0
+        }
+
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
+            self.stop_button_toggle.toggle()
+            if self.stop_button.isEnabled {
+                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter()
+            }
         }
     }
 

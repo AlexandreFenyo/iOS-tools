@@ -32,6 +32,7 @@ class MasterIPViewController: UITableViewController {
     public var node : Node?
 
     @IBOutlet weak var stop_button: UIBarButtonItem!
+    private var stop_button_toggle = false
 
     public func applicationWillResignActive() {
     }
@@ -58,6 +59,13 @@ class MasterIPViewController: UITableViewController {
 
         // Uncomment the following line to preserve selection between presentations
         clearsSelectionOnViewWillAppear = false
+        
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
+            self.stop_button_toggle.toggle()
+            if self.stop_button.isEnabled {
+                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter()
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
