@@ -9,6 +9,33 @@
 import SwiftUI
 import SpriteKit
 
+actor StopButtonsState {
+    private var nodes_hidden = false
+    private var ips_hidden = false
+
+    public func setStateNodes(_ state: Bool) {
+        nodes_hidden = state
+    }
+
+    public func setStateIps(_ state: Bool) {
+        ips_hidden = state
+        print("XXXX setStateIps: \(ips_hidden)")
+        if ips_hidden == false {
+            print("XXXX ICI")
+        }
+    }
+    
+    public func getStateNodes() -> Bool {
+        return nodes_hidden
+    }
+
+    public func getStateIps() -> Bool {
+        return ips_hidden
+    }
+}
+
+let stop_button_state = StopButtonsState()
+
 // struct TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct TagCloudView: View {
     var tags: [String]
@@ -92,13 +119,68 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_addresses: [String] = [String]()
     @Published private(set) var text_names: [String] = [String]()
     @Published private(set) var text_ports: [String] = [String]()
-    
+
+    @Published private(set) var stop_button_master_view_hidden = true
+    @Published private(set) var stop_button_master_ip_view_hidden = true
+
+    public func setButtonMasterHiddenState(_ state: Bool) {
+        print("XXXX setButtonMasterHiddenState(state: \(state))")
+        stop_button_master_view_hidden = state
+    }
+
+    public func setButtonMasterIPHiddenState(_ state: Bool) {
+        stop_button_master_ip_view_hidden = state
+    }
+
     public func setButtonsEnabled(_ state: Bool) {
         buttons_enabled = address == nil ? false : state
     }
     
     public func setStopButtonEnabled(_ state: Bool) {
-        stop_button_enabled = state
+
+        DispatchQueue.main.async {
+            Task {
+                print("XXXX POTENTIAL CHANGE setStopButtonEnabled(\(state))")
+                print ("XXXX CHANGEMENT ETAT button master hidden:\(self.stop_button_master_view_hidden) - button ip master hidden:\(self.stop_button_master_ip_view_hidden)")
+
+                await print("XXXX 1:", stop_button_state.getStateNodes())
+                await print("XXXX 2:", stop_button_state.getStateIps())
+                //self.stop_button_enabled = state
+                //                if  !self.stop_button_master_view_hidden && !self.stop_button_master_ip_view_hidden {
+                //                self.stop_button_enabled = state
+
+                switch state {
+                case true:
+                    if self.stop_button_master_view_hidden && self.stop_button_master_ip_view_hidden {
+                        self.stop_button_enabled = true
+                    } else {
+                        self.stop_button_enabled = false
+                    }
+                    
+                case false:
+                    self.stop_button_enabled = false
+                    
+                }
+                
+                /*
+                 switch state {
+                 case true:
+                 let x = await stop_button_state.getStateNodes()
+                 let y = await stop_button_state.getStateIps()
+                 if x && y {
+                 self.stop_button_enabled = true
+                 } else {
+                 self.stop_button_enabled = false
+                 }
+                 case false:
+                 self.stop_button_enabled = false
+                 }
+                 }*/
+                
+//                self.stop_button_enabled = state
+            }
+        }
+
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {

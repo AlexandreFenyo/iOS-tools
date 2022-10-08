@@ -335,6 +335,12 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
             refreshControl!.endRefreshing()
             refreshControl!.beginRefreshing()
         }
+
+        print("XXXX MASTER will appear")
+        detail_view_controller?.setButtonMasterHiddenState(false)
+        Task.detached(priority: .userInitiated) {
+            await stop_button_state.setStateNodes(false)
+        }
     }
     
     override func viewDidLoad() {
@@ -393,18 +399,11 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
         for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
     }
     
-    public func stopButtonWillAppear() {
-        detail_view_controller?.stopButtonWillAppear()
-    }
-    
-    public func stopButtonWillDisappear() {
-        detail_view_controller?.stopButtonWillDisappear()
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        stopButtonWillAppear()
+
+// TEST A REMETTRE
+//        detail_view_controller?.stopButtonWillAppear()
 
         if removeAddButtonForMVP && !removedAddButtonForMVP {
             toolbarItems?.remove(at: 3)
@@ -426,7 +425,15 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        stopButtonWillDisappear()
+        super.viewDidDisappear(animated)
+
+        // TEST A REMETTRE
+//        detail_view_controller?.stopButtonWillDisappear()
+        print("XXXX MASTER did disappear")
+        detail_view_controller?.setButtonMasterHiddenState(true)
+        Task.detached(priority: .userInitiated) {
+            await stop_button_state.setStateNodes(true)
+        }
     }
 
     // Disable other actions while editing
