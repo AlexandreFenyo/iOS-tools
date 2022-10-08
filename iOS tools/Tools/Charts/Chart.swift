@@ -547,7 +547,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
         
         // ce assert peut bloquer si on manipule la taille de l'appli en splitant ou en la mettant de côté (slide over)
-        assert(grid_size.width <= full_size.width - left_width)
+        // ce assert crée une erreur si on est sur iPad en mode paysage, qu'on a l'app sur 2 tiers de l'écran et qu'on la réduit à 1 tier
+        // assert(grid_size.width <= full_size.width - left_width)
         
         assert(grid_size.height <= full_size.height - bottom_height)
         assert(subgrid_size != nil ? grid_size.width.truncatingRemainder(dividingBy: subgrid_size!.width) == 0 : true)
