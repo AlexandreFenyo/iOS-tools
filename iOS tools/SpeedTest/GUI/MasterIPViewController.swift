@@ -40,7 +40,7 @@ class MasterIPViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if tableView.indexPathForSelectedRow == nil {
+        if node!.v4_addresses.count + node!.v6_addresses.count > 0 && tableView.indexPathForSelectedRow == nil {
             let indexPath = IndexPath(row: 0, section: 0)
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
             let ips = Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted())
@@ -48,7 +48,7 @@ class MasterIPViewController: UITableViewController {
                 master_view_controller!.addressSelected(address: ips.first!)
             }
         }
-        
+
         Task.detached(priority: .userInitiated) {
             await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.master_view_controller?.detail_view_controller?.ts.removeAll()
