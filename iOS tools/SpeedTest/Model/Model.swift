@@ -288,7 +288,10 @@ class DBMaster {
             idx += 1
         } while ret >= 0
         
-        gateways.append(gw)
+        if !gw.v4_addresses.isEmpty || !gw.v6_addresses.isEmpty {
+            gateways.append(gw)
+        }
+        
         return gateways
     }
     
