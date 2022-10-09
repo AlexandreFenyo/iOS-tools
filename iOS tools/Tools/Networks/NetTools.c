@@ -261,7 +261,7 @@ int multicasticmp6(void) {
     smsghdr.msg_iov = iov;
     smsghdr.msg_iovlen = 1;
 
-    long i = sendmsg(s, &smsghdr, 0);
+    /* long i = */ sendmsg(s, &smsghdr, 0);
     // printf("SENDMSG returnd %ld\n\n", i);
     perror("sendmsg");
 
