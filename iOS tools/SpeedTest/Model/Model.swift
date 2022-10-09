@@ -115,7 +115,7 @@ class Node : Hashable {
         hasher.combine(tcp_ports)
         hasher.combine(types)
     }
-
+    
     public var mcast_dns_names = Set<FQDN>()
     public var dns_names = Set<DomainName>()
     public var names = Set<String>()
@@ -123,19 +123,19 @@ class Node : Hashable {
     public var v6_addresses = Set<IPv6Address>()
     public var tcp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
-
+    
     public init() { }
     
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
     }
-
+    
     private var fqdn_dns_names: Set<FQDN> {
         return dns_names.filter { (dns_name) -> Bool in
             dns_name.isFQDN()
         } as! Set<FQDN>
     }
-
+    
     private var fqdn_names: Set<FQDN> {
         return fqdn_dns_names.union(mcast_dns_names)
     }
@@ -143,10 +143,10 @@ class Node : Hashable {
     private var short_names: Set<HostPart> {
         return Set(mcast_dns_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
     }
-
+    
     public func toSectionTypes() -> Set<SectionType> {
         var section_types = Set<SectionType>()
-
+        
         if types.contains(.localhost) {
             section_types.insert(.localhost)
             return section_types
@@ -155,9 +155,9 @@ class Node : Hashable {
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
         if types.contains(.gateway) { section_types.insert(.gateway) }
         if types.contains(.internet) { section_types.insert(.internet) }
-
+        
         if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) { section_types.insert(.other) }
-
+        
         return section_types
     }
     
@@ -170,21 +170,38 @@ class Node : Hashable {
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
     }
-
+    
     public func isSimilar(with: Node) -> Bool {
         if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
-
+        
         if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
-
+        
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
-
+        
         if !dns_names.intersection(with.dns_names).isEmpty { return true }
-
+        
         return false
     }
-
+    
     public static func == (lhs: Node, rhs: Node) -> Bool {
         return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
+    }
+
+    public func dump() -> String {
+        var ret = "DUMP NODE: "
+/*        ret = ret + "mcast_dns_names: "
+        for foo in mcast_dns_names {
+            ret = ret + foo.toString() + "; "
+        } */
+        ret = ret + "dns_names: "
+        for foo in dns_names {
+            ret = ret + foo.toString() + "; "
+        }/*
+        ret = ret + "names: "
+        for foo in names {
+            ret = ret + foo + "; "
+        }*/
+        return ret
     }
 }
 
@@ -328,20 +345,33 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
-        let start_time = Date()
-        GenericTools.printDuration(idx: 0, start_time: start_time)
+
+        if new_node.dump().contains("mac-mini-de-alexandre") {
+            print("XXXX\nXXXX MAC MINI DETECTED " + new_node.dump())
+        }
+        
+        // pour débugguer la complexité de l'algo de création d'un noeud
+//        let start_time = Date()
+//        GenericTools.printDuration(idx: 0, start_time: start_time)
 
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
 
         if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted) }
-
+        
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
+        
+        // Track deduplicated nodes
+        var dedup = [Node]()
 
-        GenericTools.printDuration(idx: 1, start_time: start_time)
+        // pour débugguer la complexité de l'algo de création d'un noeud
+//        GenericTools.printDuration(idx: 1, start_time: start_time)
 
+//        print("XXXX: " + new_node.dump())
+        
         if add {
+/*
             var merged = false
             for i in 0..<arr_nodes.count {
                 if arr_nodes[i].isSimilar(with: new_node) {
@@ -351,9 +381,114 @@ class DBMaster {
                 }
             }
             if !merged { arr_nodes.append(new_node) }
+*/
+
+            for i in 0..<arr_nodes.count {
+                print("XXXX ARRAY[\(i)]=" + arr_nodes[i].dump())
+            }
+            
+            var merged_index: Int = -1
+            for i in 0..<arr_nodes.count {
+                if arr_nodes[i].isSimilar(with: new_node) {
+                    if new_node.dump().contains("mac-mini-de-alexandre") {
+                        print("XXXX FIRST LOOP \(i):")
+                        print("XXXX FIRST LOOP \(i)- " + new_node.dump())
+                        print("XXXX FIRST LOOP \(i)- " + arr_nodes[i].dump())
+                    }
+                    arr_nodes[i].merge(new_node)
+                    merged_index = i
+                    break
+                }
+            }
+            if merged_index == -1 {
+                arr_nodes.append(new_node)
+                if new_node.dump().contains("mac-mini-de-alexandre") {
+                    print("XXXX ADD +1 SINCE NOT MERGED")
+                }
+            }
+            else {
+                repeat {
+                    if new_node.dump().contains("mac-mini-de-alexandre") {
+                        print("XXXX REPEAT SINCE MERGED")
+                    }
+                    var merged = false
+                    for i in 0..<arr_nodes.count {
+                        if i == merged_index { continue }
+                        if new_node.dump().contains("mac-mini-de-alexandre") {
+                            print("XXXX LOOP \(i):")
+                            print("XXXX LOOP \(i)- " + arr_nodes[i].dump())
+                            print("XXXX LOOP \(i)- " + arr_nodes[merged_index].dump())
+                        }
+                        if arr_nodes[i].isSimilar(with: arr_nodes[merged_index]) {
+                            arr_nodes[i].merge(arr_nodes[merged_index])
+                            dedup.append(arr_nodes[i])
+                            arr_nodes.remove(at: merged_index)
+                            if i < merged_index {
+                                merged_index = i
+                            } else {
+                                merged_index = i - 1
+                            }
+                            merged = true
+                            if new_node.dump().contains("mac-mini-de-alexandre") {
+                                print("XXXX DEL -1 SINCE MERGED")
+                            }
+                            break
+                        } else {
+                            if new_node.dump().contains("mac-mini-de-alexandre") {
+                                print("XXXX MAC MINI HAS NOT BEEN MERGED")
+                            }
+                        }
+                    }
+                    if !merged {
+                        merged_index = -1
+                    }
+                } while merged_index != -1
+            }
+            
         } else { arr_nodes.removeAll { $0 == new_node } }
 
-        GenericTools.printDuration(idx: 2, start_time: start_time)
+        for i in 0..<arr_nodes.count {
+            print("XXXX AFTER COMPUTE ARRAY[\(i)]=" + arr_nodes[i].dump())
+        }
+
+        
+        
+        // pour débugguer la complexité de l'algo de création d'un noeud
+//        GenericTools.printDuration(idx: 2, start_time: start_time)
+
+        for foo in sections[SectionType.other]!.nodes {
+            print("XXXX SCREEN PHASE -1: " + foo.dump())
+        }
+
+        // In each section, locate and let only one node for those that have been deduplicated
+        for n in dedup {
+            print("XXXX SCREEN PHASE -1 WILL DEDUP: " + n.dump())
+            SectionType.allCases.forEach {
+                var cnt = 0
+                for idx in (0..<sections[$0]!.nodes.count).reversed() {
+                    if n.isSimilar(with: sections[$0]!.nodes[idx]) { cnt += 1 }
+                }
+                print("XXXX SCREEN FOUND \(cnt)")
+                if cnt >= 2 {
+                    for _ in 1..<cnt {
+                        for idx in (0..<sections[$0]!.nodes.count).reversed() {
+                            if n.isSimilar(with: sections[$0]!.nodes[idx]) {
+                                print("XXX SCREEN PHASE -1 DEDUP")
+                                index_paths_removed.append(IndexPath(row: idx, section: $0.rawValue))
+                                sections[$0]!.nodes.remove(at: idx)
+                                break
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+        
+        for foo in sections[SectionType.other]!.nodes {
+            print("XXXX SCREEN PHASE 0: " + foo.dump())
+        }
 
         // In each section, locate and remove nodes that have been removed
         SectionType.allCases.forEach {
@@ -365,7 +500,12 @@ class DBMaster {
             }
         }
 
-        GenericTools.printDuration(idx: 3, start_time: start_time)
+        for foo in sections[SectionType.other]!.nodes {
+            print("XXXX SCREEN PHASE 1: " + foo.dump())
+        }
+
+        // pour débugguer la complexité de l'algo de création d'un noeud
+//        GenericTools.printDuration(idx: 3, start_time: start_time)
 
         // Add the new nodes in each section
         SectionType.allCases.forEach {
@@ -376,9 +516,16 @@ class DBMaster {
                 }
             }
         }
+
+        for foo in sections[SectionType.other]!.nodes {
+            print("XXXX SCREEN PHASE 2: " + foo.dump())
+        }
+
         nodes = Set(arr_nodes)
+
         
-        GenericTools.printDuration(idx: 4, start_time: start_time)
+        // pour débugguer la complexité de l'algo de création d'un noeud
+//        GenericTools.printDuration(idx: 4, start_time: start_time)
 
         return (index_paths_removed, index_paths_inserted)
     }
