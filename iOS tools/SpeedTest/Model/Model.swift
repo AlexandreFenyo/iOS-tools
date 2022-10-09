@@ -447,18 +447,7 @@ class DBMaster {
         return (index_paths_removed, index_paths_inserted)
     }
 
-    public init() {
-        networks = Set<IPNetwork>()
-        nodes = Set<Node>()
-        sections = [
-            .localhost: Section("Localhost", "this host"),
-            .ios: Section("iOS devices", "other devices running this app"),
-            .chargen_discard: Section("ChargenDiscard services", "other devices running these services"),
-            .gateway: Section("Local gateway", "local router"),
-            .internet: Section("Internet", "remote host on the Internet"),
-            .other: Section("Other hosts", "any host")
-        ]
-
+    public func addDefaultNodes() {
         var node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         node.v4_addresses.insert(IPv4Address("8.8.4.4")!)
@@ -476,6 +465,22 @@ class DBMaster {
         node.v6_addresses.insert(IPv6Address("2620:fe::fe:9")!)
         node.types = [ .internet ]
         _ = addNode(node)
+    }
+    
+    public init() {
+        networks = Set<IPNetwork>()
+
+        nodes = Set<Node>()
+        sections = [
+            .localhost: Section("Localhost", "this host"),
+            .ios: Section("iOS devices", "other devices running this app"),
+            .chargen_discard: Section("ChargenDiscard services", "other devices running these services"),
+            .gateway: Section("Local gateway", "local router"),
+            .internet: Section("Internet", "remote host on the Internet"),
+            .other: Section("Other hosts", "any host")
+        ]
+
+        addDefaultNodes()
         
 //        var node = Node()
         /*

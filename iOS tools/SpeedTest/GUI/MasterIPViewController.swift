@@ -68,7 +68,7 @@ class MasterIPViewController: UITableViewController {
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
             self.stop_button_toggle.toggle()
             if self.stop_button.isEnabled {
-                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter()
+                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
             }
         }
     }

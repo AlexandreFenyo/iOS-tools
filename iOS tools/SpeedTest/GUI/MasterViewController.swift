@@ -138,6 +138,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Supprimer les réseaux
         DBMaster.shared.networks = Set<IPNetwork>()
 
+        // Ajouter les noeuds par défaut
+        DBMaster.shared.addDefaultNodes()
+        
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
@@ -148,11 +151,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             self.update_button!.isEnabled = false
 
-// A REMETTRE - commenté pour debug
-            /*
             self.browser_chargen?.search()
             self.browser_discard?.search()
-*/
             self.updateLocalNodeAndGateways()
 
             
@@ -160,9 +160,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             let tb = TCPPortBrowser(device_manager: self)
             self.browser_tcp = tb
 
-            // A REMETTRE : modif pour debug
-//            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
-let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
+            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
+            // let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
 
             self.browser_network = nb
             nb.browse() {
@@ -360,7 +359,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
             self.stop_button_toggle.toggle()
             if self.stop_button.isEnabled {
-                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter()
+                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
             }
         }
     }
@@ -392,9 +391,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-// TEST A REMETTRE
-//        detail_view_controller?.stopButtonWillAppear()
 
         if removeAddButtonForMVP && !removedAddButtonForMVP {
             toolbarItems?.remove(at: 3)

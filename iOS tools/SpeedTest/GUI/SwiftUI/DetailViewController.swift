@@ -87,37 +87,37 @@ class DetailViewController: UIViewController {
     
     public func stopButtonWillAppear() {
         DispatchQueue.main.async {
-            _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+            self.hostingViewController.rootView.model.setStopButtonEnabled(false)
         }
     }
     
     public func stopButtonWillDisappear() {
         DispatchQueue.main.async {
-            _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+            self.hostingViewController.rootView.model.setStopButtonEnabled(true)
         }
     }
     
     public func setButtonMasterHiddenState(_ state: Bool) {
         DispatchQueue.main.async {
-            _ = self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
+            self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
         }
     }
 
     public func setButtonMasterIPHiddenState(_ state: Bool) {
         DispatchQueue.main.async {
-            _ = self.hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
+            self.hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
         }
     }
 
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+        self.hostingViewController.rootView.model.setStopButtonEnabled(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+        self.hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
