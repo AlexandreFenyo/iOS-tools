@@ -345,11 +345,6 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
-
-        if new_node.dump().contains("mac-mini-de-alexandre") {
-            print("XXXX\nXXXX MAC MINI DETECTED " + new_node.dump())
-        }
-        
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
@@ -368,112 +363,49 @@ class DBMaster {
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 1, start_time: start_time)
 
-//        print("XXXX: " + new_node.dump())
-        
         if add {
-/*
-            var merged = false
-            for i in 0..<arr_nodes.count {
-                if arr_nodes[i].isSimilar(with: new_node) {
-                    arr_nodes[i].merge(new_node)
-                    merged = true
-                    break
-                }
-            }
-            if !merged { arr_nodes.append(new_node) }
-*/
-
-            for i in 0..<arr_nodes.count {
-                print("XXXX ARRAY[\(i)]=" + arr_nodes[i].dump())
-            }
-            
             var merged_index: Int = -1
             for i in 0..<arr_nodes.count {
                 if arr_nodes[i].isSimilar(with: new_node) {
-                    if new_node.dump().contains("mac-mini-de-alexandre") {
-                        print("XXXX FIRST LOOP \(i):")
-                        print("XXXX FIRST LOOP \(i)- " + new_node.dump())
-                        print("XXXX FIRST LOOP \(i)- " + arr_nodes[i].dump())
-                    }
                     arr_nodes[i].merge(new_node)
                     merged_index = i
                     break
                 }
             }
-            if merged_index == -1 {
-                arr_nodes.append(new_node)
-                if new_node.dump().contains("mac-mini-de-alexandre") {
-                    print("XXXX ADD +1 SINCE NOT MERGED")
-                }
-            }
+            if merged_index == -1 { arr_nodes.append(new_node) }
             else {
                 repeat {
-                    if new_node.dump().contains("mac-mini-de-alexandre") {
-                        print("XXXX REPEAT SINCE MERGED")
-                    }
                     var merged = false
                     for i in 0..<arr_nodes.count {
                         if i == merged_index { continue }
-                        if new_node.dump().contains("mac-mini-de-alexandre") {
-                            print("XXXX LOOP \(i):")
-                            print("XXXX LOOP \(i)- " + arr_nodes[i].dump())
-                            print("XXXX LOOP \(i)- " + arr_nodes[merged_index].dump())
-                        }
                         if arr_nodes[i].isSimilar(with: arr_nodes[merged_index]) {
                             arr_nodes[i].merge(arr_nodes[merged_index])
                             dedup.append(arr_nodes[i])
                             arr_nodes.remove(at: merged_index)
-                            if i < merged_index {
-                                merged_index = i
-                            } else {
-                                merged_index = i - 1
-                            }
+                            if i < merged_index { merged_index = i } else { merged_index = i - 1 }
                             merged = true
-                            if new_node.dump().contains("mac-mini-de-alexandre") {
-                                print("XXXX DEL -1 SINCE MERGED")
-                            }
                             break
-                        } else {
-                            if new_node.dump().contains("mac-mini-de-alexandre") {
-                                print("XXXX MAC MINI HAS NOT BEEN MERGED")
-                            }
                         }
                     }
-                    if !merged {
-                        merged_index = -1
-                    }
+                    if !merged { merged_index = -1 }
                 } while merged_index != -1
             }
-            
         } else { arr_nodes.removeAll { $0 == new_node } }
 
-        for i in 0..<arr_nodes.count {
-            print("XXXX AFTER COMPUTE ARRAY[\(i)]=" + arr_nodes[i].dump())
-        }
-
-        
-        
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 2, start_time: start_time)
 
-        for foo in sections[SectionType.other]!.nodes {
-            print("XXXX SCREEN PHASE -1: " + foo.dump())
-        }
-
         // In each section, locate and let only one node for those that have been deduplicated
         for n in dedup {
-            print("XXXX SCREEN PHASE -1 WILL DEDUP: " + n.dump())
             SectionType.allCases.forEach {
                 var cnt = 0
                 for idx in (0..<sections[$0]!.nodes.count).reversed() {
                     if n.isSimilar(with: sections[$0]!.nodes[idx]) { cnt += 1 }
                 }
-                print("XXXX SCREEN FOUND \(cnt)")
                 if cnt >= 2 {
                     for _ in 1..<cnt {
                         for idx in (0..<sections[$0]!.nodes.count).reversed() {
                             if n.isSimilar(with: sections[$0]!.nodes[idx]) {
-                                print("XXX SCREEN PHASE -1 DEDUP")
                                 index_paths_removed.append(IndexPath(row: idx, section: $0.rawValue))
                                 sections[$0]!.nodes.remove(at: idx)
                                 break
@@ -481,13 +413,7 @@ class DBMaster {
                         }
                     }
                 }
-
             }
-        }
-
-        
-        for foo in sections[SectionType.other]!.nodes {
-            print("XXXX SCREEN PHASE 0: " + foo.dump())
         }
 
         // In each section, locate and remove nodes that have been removed
@@ -498,10 +424,6 @@ class DBMaster {
                     sections[$0]!.nodes.remove(at: idx)
                 }
             }
-        }
-
-        for foo in sections[SectionType.other]!.nodes {
-            print("XXXX SCREEN PHASE 1: " + foo.dump())
         }
 
         // pour débugguer la complexité de l'algo de création d'un noeud
@@ -517,13 +439,8 @@ class DBMaster {
             }
         }
 
-        for foo in sections[SectionType.other]!.nodes {
-            print("XXXX SCREEN PHASE 2: " + foo.dump())
-        }
-
         nodes = Set(arr_nodes)
 
-        
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 4, start_time: start_time)
 
