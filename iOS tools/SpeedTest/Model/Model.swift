@@ -459,6 +459,24 @@ class DBMaster {
             .other: Section("Other hosts", "any host")
         ]
 
+        var node = Node()
+        node.mcast_dns_names.insert(FQDN("dns", "google"))
+        node.v4_addresses.insert(IPv4Address("8.8.4.4")!)
+        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
+        node.v6_addresses.insert(IPv6Address("2001:4860:4860::8844")!)
+        node.v6_addresses.insert(IPv6Address("2001:4860:4860::8888")!)
+        node.types = [ .internet ]
+        _ = addNode(node)
+
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
+        node.v4_addresses.insert(IPv4Address("9.9.9.9")!)
+        node.v4_addresses.insert(IPv4Address("149.112.112.9")!)
+        node.v6_addresses.insert(IPv6Address("2620:fe::9")!)
+        node.v6_addresses.insert(IPv6Address("2620:fe::fe:9")!)
+        node.types = [ .internet ]
+        _ = addNode(node)
+        
 //        var node = Node()
         /*
         node.mcast_dns_names.insert(FQDN("iOS device 1", "local"))

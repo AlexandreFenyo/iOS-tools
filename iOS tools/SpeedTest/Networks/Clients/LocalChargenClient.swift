@@ -32,7 +32,7 @@ class LocalChargenClient : Thread {
     // Dedicated background Thread
     override internal func main() {
         if let saddr = address.toSockAddress()?.getData() {
-            let _ = saddr.withUnsafeBytes {
+            _ = saddr.withUnsafeBytes {
                 localChargenClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
         }

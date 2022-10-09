@@ -131,7 +131,8 @@ public class IPAddress : Hashable {
             var byte = 0, bit = 7
             for _ in 0..<mask_len {
                 // pour éviter une erreur du compilateur à la ligne d'après, on met ceci (ambiguous use of subscript, found candidates UnsafeMutablePointer, UnsageMutableRawBufferPointer
-                let _ = $0
+                _ = $0
+                
                 $0[byte] |= 1<<bit
 
                 bit -= 1
@@ -173,7 +174,7 @@ public class IPAddress : Hashable {
         
         addr.withUnsafeMutableBytes {
             // pour éviter une erreur du compilateur à la ligne d'après, on met ceci (ambiguous use of subscript, found candidates UnsafeMutablePointer, UnsageMutableRawBufferPointer
-            let _ = $0
+            _ = $0
 
             for idx in 0..<mask_bytes.count { $0[idx] = map($0[idx], mask_bytes[idx]) }
         }
@@ -394,7 +395,7 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     public init(_ inaddr: Data, scope: UInt32) {
-        let _ = IPv6Address.filterScope(inaddr)
+        _ = IPv6Address.filterScope(inaddr)
         self.scope = scope
         super.init(inaddr)
 

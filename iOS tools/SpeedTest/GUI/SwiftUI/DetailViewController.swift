@@ -87,37 +87,37 @@ class DetailViewController: UIViewController {
     
     public func stopButtonWillAppear() {
         DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+            _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
         }
     }
     
     public func stopButtonWillDisappear() {
         DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+            _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
         }
     }
     
     public func setButtonMasterHiddenState(_ state: Bool) {
         DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
+            _ = self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
         }
     }
 
     public func setButtonMasterIPHiddenState(_ state: Bool) {
         DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
+            _ = self.hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
         }
     }
 
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+        _ = self.hostingViewController.rootView.model.setStopButtonEnabled(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        let _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+        _ = self.hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -161,7 +161,7 @@ class DetailViewController: UIViewController {
         // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
         // il est async pour éviter une exception
         DispatchQueue.main.async {
-            let _ = self.hostingViewController.rootView.model.setButtonsEnabled(state)
+            _ = self.hostingViewController.rootView.model.setButtonsEnabled(state)
         }
     }
 
