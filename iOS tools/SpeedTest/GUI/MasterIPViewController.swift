@@ -110,7 +110,6 @@ class MasterIPViewController: UITableViewController {
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-//        print("fin de scroll")
     }
 
     // MARK: - Table view data source
@@ -150,7 +149,6 @@ class MasterIPViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        print("MasterIPViewController.prepare(for segue)")
     }
 
 }

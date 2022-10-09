@@ -32,7 +32,6 @@ class SpeedTestDiscardClient : SpeedTestClient {
             
         case .hasSpaceAvailable:
             // should not happen
-            print("error: hasSpaceAvailable on discard service")
             end(stream)
 
         case .errorOccurred:

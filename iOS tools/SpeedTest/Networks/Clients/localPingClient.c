@@ -148,7 +148,9 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
     int ret;
 
     if (saddr == NULL) return -1;
-    else printf("family: %d\n", saddr->sa_family);
+    else {
+        // printf("family: %d\n", saddr->sa_family);
+    }
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
     
     sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname((saddr->sa_family == AF_INET) ? "icmp" : "icmp6")->p_proto);
@@ -185,14 +187,13 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
         
         gettimeofday(&tv, NULL);
         ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-//        printf("sendto ICMP retval:%ld\n", len);
+        // printf("sendto ICMP retval:%ld\n", len);
         if  (len < 0) {
             perror("sendto()");
         }
         
         char buf[10000];
         socklen_t foo = 0;
-//        printf("avant recvfrom\n");
         long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
         if (retval < 0 && errno != EAGAIN) {
             printf("%d\n", errno);
@@ -202,10 +203,9 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
         if (retval >= 0 || errno != EAGAIN) {
             gettimeofday(&tv2, NULL);
             long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
-//        printf("duration: %ld\n", duration);
             if (setRTT(duration) < 0) return -6;
         }
-//        printf("recvfrom : retval = %ld\n", retval);
+        // printf("recvfrom : retval = %ld\n", retval);
         
         usleep(1000000);
     }

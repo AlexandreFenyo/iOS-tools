@@ -154,7 +154,6 @@ class DetailViewController: UIViewController {
             }
         }
         
-        print("set current_node")
         hostingViewController.rootView.model.updateDetails(node!, address, buttons_enabled)
     }
     
@@ -202,14 +201,6 @@ class DetailViewController: UIViewController {
         return nil
     }
     
-    /*
-    private func refreshUI() {
-        print("refresh UI")
-        loadViewIfNeeded()
-//        detail_label.text = node == nil ? "no selection" : (node!.mcast_dns_names.map { $0.toString() } + node!.dns_names.map { $0.toString() }).first
-    }
-*/
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -222,8 +213,6 @@ class DetailViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-
-        print("DetailViewController.prepare(for segue)")
     }
     
 }

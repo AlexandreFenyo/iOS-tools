@@ -159,16 +159,18 @@ int localDiscardClientStop(void) {
 
 int localDiscardClientLoop(const struct sockaddr *saddr) {
     if (saddr == NULL) return -1;
-    else printf("family: %d\n", saddr->sa_family);
+    else {
+        // printf("family: %d\n", saddr->sa_family);
+    }
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
     
     if (saddr->sa_family == AF_INET) {
         ((struct sockaddr_in *) saddr)->sin_port = htons(9);
-        printf("sin_port: %d\n", ((struct sockaddr_in *) saddr)->sin_port);
+        // printf("sin_port: %d\n", ((struct sockaddr_in *) saddr)->sin_port);
     }
     if (saddr->sa_family == AF_INET6) {
         ((struct sockaddr_in6 *) saddr)->sin6_port = htons(9);
-        printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
+        // printf("sin_port: %d\n", ((struct sockaddr_in6 *) saddr)->sin6_port);
     }
     
     sock = socket(saddr->sa_family, SOCK_STREAM, getprotobyname("tcp")->p_proto);

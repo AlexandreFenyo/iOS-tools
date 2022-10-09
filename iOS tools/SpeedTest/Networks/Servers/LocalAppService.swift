@@ -33,7 +33,6 @@ class SpeedTestAppClient : SpeedTestClient {
             
         case .hasSpaceAvailable:
             // should not happen
-            print("error: hasSpaceAvailable on app service")
             end(stream)
 
         case .errorOccurred:

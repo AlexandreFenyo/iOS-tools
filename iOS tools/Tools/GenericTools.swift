@@ -125,8 +125,6 @@ final class GenericTools : AutoTrace {
         
 //        print("infos sur le device:", UIDevice.current.localizedModel, UIDevice.current.name, UIDevice.current.systemName, UIDevice.current.systemVersion, UIDevice.current.userInterfaceIdiom)
 
-        print("TESTS INITIAUX")
-        
         // RFC 3513 section 4 : IPv6 address space
         // link-local : FE80::/10
         // site-local : FEC0::/10
@@ -163,8 +161,6 @@ final class GenericTools : AutoTrace {
 
 //        exit(0)
 */
-
-        print("FIN DES TESTS INITIAUX")
     }
 
     // Espace insécable
@@ -181,7 +177,8 @@ final class GenericTools : AutoTrace {
         svc.preferredPrimaryColumnWidthFraction = 0.5
     }
 
-    // créer un alternate() indexé sur une chaîne de caractères
+    // Créer un alternate() indexé sur une chaîne de caractères
+    // Préférer Bool.toggle()
     private static func alternate() -> Bool {
         alternate_value = !alternate_value
         return alternate_value
@@ -498,5 +495,4 @@ protocol AutoTrace {
 }
 
 extension AutoTrace {
-    
 }

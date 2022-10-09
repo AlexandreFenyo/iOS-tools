@@ -31,16 +31,11 @@ class LocalDiscardClient : Thread {
     
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD DISCARD", address)
-        
         if let saddr = address.toSockAddress()?.getData() {
-            let retval = saddr.withUnsafeBytes {
+            let _ = saddr.withUnsafeBytes {
                 localDiscardClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
-            print("localDiscardClientLoop() returned:", retval)
         }
-        
-        print("CLIENT SORTIE THREAD DISCARD")
     }
     
     override public func start() {

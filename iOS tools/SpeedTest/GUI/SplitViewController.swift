@@ -31,57 +31,11 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
          */
     }
 
-//    func targetDisplayModeForAction(in svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
-//        print("BUTTON EXPAND APPUYE")
-//        print(displayMode.rawValue)
-//        if 1 == displayMode.rawValue {
-//            print("SUPPRESSION DE LA BARRE")
-//            tabbar_height = 0
-//            // marche pas
-//            tabbarViewController!.view.setNeedsDisplay()
-//            tabbarViewController!.view.layoutIfNeeded()
-//            tabbarViewController!.view.setNeedsLayout()
-//            tabbarViewController!.view.setNeedsDisplay()
-//            for vc in tabbarViewController!.viewControllers! {
-//                vc.view.setNeedsDisplay()
-//                vc.view.setNeedsLayout()
-//                vc.view.layoutSubviews()
-//                vc.view.layoutIfNeeded()
-//                vc.view.setNeedsDisplay()
-//                vc.view.setNeedsLayout()
-//                vc.view.layoutSubviews()
-//                vc.view.layoutIfNeeded()
-//            }
-//        }
-//        if 2 == displayMode.rawValue {
-//            print("REMISE DE LA BARRE")
-//            tabbar_height = nil
-//            // marche pas
-//            tabbarViewController!.view.setNeedsDisplay()
-//            tabbarViewController!.view.setNeedsLayout()
-//            tabbarViewController!.view.layoutIfNeeded()
-//            tabbarViewController!.view.setNeedsDisplay()
-//            for vc in tabbarViewController!.viewControllers! {
-//                vc.view.setNeedsDisplay()
-//                vc.view.setNeedsLayout()
-//                vc.view.layoutSubviews()
-//                vc.view.layoutIfNeeded()
-//                vc.view.setNeedsDisplay()
-//                vc.view.setNeedsLayout()
-//                vc.view.layoutSubviews()
-//                vc.view.layoutIfNeeded()
-//            }
-//        }
-//        return .automatic
-//    }
-   
     override func viewWillLayoutSubviews() {
-//        preferredPrimaryColumnWidthFraction = 0.3
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // On iPhone, show the primary view controller's view by default
@@ -96,8 +50,6 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-
-            print("SplitViewController.prepare(for segue)")
     }
 
 }

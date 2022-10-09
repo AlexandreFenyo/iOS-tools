@@ -31,16 +31,11 @@ class LocalChargenClient : Thread {
 
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD CHARGEN", address)
-
         if let saddr = address.toSockAddress()?.getData() {
-            let retval = saddr.withUnsafeBytes {
+            let _ = saddr.withUnsafeBytes {
                 localChargenClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
-            print("localChargenClientLoop returned:", retval)
         }
-
-        print("CLIENT SORTIE THREAD CHARGEN")
     }
     
     override public func start() {

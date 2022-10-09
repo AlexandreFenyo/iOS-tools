@@ -85,8 +85,6 @@ class NetworkBrowser {
     // Any thread
     private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
-            
-            print("ON VA FAIRE UNE TRACE")
             device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
             
             let node = Node()
@@ -97,7 +95,6 @@ class NetworkBrowser {
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
-//                    print("manageAnswer() FOUND IPv4:" , info)
                 }
                 // Do not try to reach this address with unicast anymore
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
@@ -108,7 +105,6 @@ class NetworkBrowser {
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
                     device_manager.setInformation("found " + info)
-                    print("manageAnswer() FOUND IPv6:" , info)
                 }
 
             default:
@@ -319,7 +315,7 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
+                    // print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
@@ -345,7 +341,7 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-//                    print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
+                    // print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
                     
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()

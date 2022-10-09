@@ -106,8 +106,6 @@ class SKExtLabelNode : SKLabelNode {
     }
 }
 
-
-
 @MainActor
 class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var debug: Bool
@@ -811,7 +809,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
-        print("registerGestureRecognizers")
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
         // This creates a strong ref to the target

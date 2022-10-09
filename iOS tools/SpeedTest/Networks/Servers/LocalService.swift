@@ -31,7 +31,6 @@ class StreamNetworkThread : Thread {
     public var run_loop : RunLoop?
     
     deinit {
-        print("StreamNetworkThread deinit")
     }
     
     public init(_ stream: Stream) {
@@ -40,13 +39,11 @@ class StreamNetworkThread : Thread {
     
     // Called in the dedicated thread
     override public func main() {
-        print("ENTREE")
         stream.open()
         stream.schedule(in: .current, forMode: RunLoop.Mode.common)
         run_loop = RunLoop.current
         RunLoop.current.run()
         stream.close()
-        print("SORTIE")
     }
 }
 
@@ -59,7 +56,6 @@ class SpeedTestClient : NSObject, StreamDelegate {
     private weak var from : LocalDelegate?
     
     deinit {
-        print("SpeedTestClient deinit")
     }
     
     public func threadsFinished() -> Bool {
@@ -69,7 +65,6 @@ class SpeedTestClient : NSObject, StreamDelegate {
     // May be called in any thread
     public func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
-        print("exitThreads")
         input_stream?.close()
         output_stream?.close()
     }
@@ -136,16 +131,14 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         super.init()
         
         // Add a background job that sweeps terminated connections
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) {
-            _ in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) { _ in
             var nothing_removed : Bool
-//            print("TRY TO SWEEP CLIENTS")
+
             repeat {
                 nothing_removed = true
 
                 for idx in self.clients.indices {
-                    print("  TRY TO SWEEP CLIENT IDX", idx)
-
+                    // Try to sweep client idx
                     // heuristique non thread-safe pour débloquer un thread qui ne veut pas terminer mais dont le stream lié à sa run loop est fermé - ca marche pas forcément immédiatement mais au bout d'une minute environ dans certains cas
                     let cl = self.clients[idx]
                     if let stream : Stream = cl.input_stream,
@@ -158,7 +151,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                     }
 
                     if self.clients[idx].threadsFinished() {
-                        print("  REMOVE CLIENT IDX", idx)
+                        // Remove client idx
                         self.clients.remove(at: idx)
                         nothing_removed = false
                         break
@@ -170,13 +163,11 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     
     // If one client stream is closed, close the other to end communications with this client
     public func refClosed(_ client: SpeedTestClient) {
-        print("REF CLOSED")
         client.exitThreads()
     }
     
     // Wait in the main thread until stream dedicated threads quit, in order to avoid discarding objects (strongly referenced by SpeedTestClient properties in 'clients' array) accessed by those threads. This will freeze the GUI until every clients are disconnected.
     deinit {
-        print("deinit NetServiceSpeedTestDelegate")
         for client in clients { client.exitThreads() }
         while true {
             if clients.count == 0 { break }
@@ -185,34 +176,26 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
-//        print("didNotPublish")
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
-//        print("netServiceDidPublish")
     }
     
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
-        print("didNotResolve")
     }
     
     public func netServiceDidStop(_ sender: NetService) {
-        print("netServiceDidStop")
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
-//        print("netServiceWillPublish")
     }
     
     public func netServiceWillResolve(_ sender: NetService) {
-        print("netServiceWillResolve")
     }
     
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("netServiceDidResolveAddress")
     }
     
     public func netService(_ sender: NetService, didUpdateTXTRecord data: Data) {
-        print("didUpdateTXTRecord")
     }
 }

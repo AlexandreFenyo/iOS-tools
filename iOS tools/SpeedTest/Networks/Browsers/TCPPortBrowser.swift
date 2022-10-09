@@ -9,6 +9,7 @@
 import Foundation
 
 let debug = true
+
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     // liste des ports à scanner lors d'un browse du réseau complet
@@ -212,7 +213,7 @@ class TCPPortBrowser {
                                 
                         } else {
                             // connect(): no error, successful completion
-                            print("port found", port)
+                            if debug { print("port found", port) }
                             self.ip_to_tcp_port_open[addr]!.insert(port)
                             // do not retry this port
                             ports.remove(port)
@@ -227,7 +228,6 @@ class TCPPortBrowser {
 
         dispatchGroup.wait()
         print("TCP browse ADDRESSE: FIN")
-//        exit(1)
 
         // peut etre mettre ceci dans le doAtEnd au moment où il est construit
         DispatchQueue.main.sync {

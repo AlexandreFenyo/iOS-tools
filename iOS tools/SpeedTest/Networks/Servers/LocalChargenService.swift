@@ -35,7 +35,6 @@ class SpeedTestChargenClient : SpeedTestClient {
             let inputStream = stream as! InputStream
             let ret = inputStream.read(bufMutablePointer, maxLength: NetworkDefaults.buffer_size)
             if ret <= 0 {
-                print("inputStream end")
                 end(stream)
             }
 
@@ -43,7 +42,6 @@ class SpeedTestChargenClient : SpeedTestClient {
             let outputStream = stream as! OutputStream
             let ret = outputStream.write(dataPointer, maxLength: NetworkDefaults.buffer_size)
             if ret < 0 {
-                print("outputStream end")
                 end(stream)
             }
 

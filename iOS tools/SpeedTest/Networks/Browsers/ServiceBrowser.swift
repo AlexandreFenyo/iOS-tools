@@ -33,7 +33,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
-//        print("didRemove")
         if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
         else {
             print("warning: service app closed but not previously discovered")
@@ -55,12 +54,10 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
-//        print("netServiceBrowserWillSearch")
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
-//        print("netServiceBrowserDidStopSearch")
     }
 
     // MARK: - NetServiceDelegate
@@ -68,7 +65,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Service that the browser had found but has not been resolved
     // Simulate by setting a TimeInterval of 0.1 when resolving the service
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
-//        print("didNotResolve")
         for err in errorDict { print("didNotResolve:", err.key, ":", err.value) }
         if let idx = services.firstIndex(of: sender) { services.remove(at: idx) }
         else { print("warning: service browsed but not resolved") }
@@ -81,7 +77,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
+        // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
         let node = Node()
@@ -118,8 +114,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             node.dns_names.insert(domain)
             device_manager.setInformation("found " + sender.name)
         }
-
-//        print(sender.description.)
 
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }

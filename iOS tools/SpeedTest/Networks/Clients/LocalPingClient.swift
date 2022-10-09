@@ -33,15 +33,11 @@ class LocalPingClient : Thread {
     
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD PING", address)
-        
         if let saddr = address.toSockAddress()?.getData() {
-            let retval = saddr.withUnsafeBytes {
+            let _ = saddr.withUnsafeBytes {
                 localPingClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!), count)
             }
-            print("localPingClientLoop() returned:", retval)
         }
-        print("CLIENT SORTIE THREAD PING")
     }
     
     override public func start() {

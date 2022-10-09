@@ -435,7 +435,7 @@ class IPv6Address : IPAddress, Comparable {
         var inaddr_clean = inaddr
         inaddr_clean.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) in
             if (bytes[0] == 0xFF && (bytes[1] == 0x01 || bytes[1] == 0x02)) || (bytes[0] == 0xFE && (bytes[1] & 0xC0 == 0x80)) {
-//                print("toSockAddress() CLEANING bytes 2 & 3 :", bytes[2], bytes[3])
+                // Cleaning bytes 2 & 3
                 bytes[2] = 0
                 bytes[3] = 0
             }

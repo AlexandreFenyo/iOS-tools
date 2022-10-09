@@ -176,7 +176,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     // Stop looking for new nodes
     // Main thread ?
     private func stopBrowsing(_ action: NewRunAction) {
-        print("STOP BROWSING")
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
@@ -284,11 +283,10 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     }
 
     @IBAction func debug_pressed(_ sender: Any) {
-        print("debug pressed")
         let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
 //        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
-        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)
+//        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)
 //        node.types.insert(.ios)
 //        node.types.insert(.chargen)
 //        node.types.insert(.gateway)
@@ -296,20 +294,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
 //        node.v4_addresses.insert(IPv4Address("192.168.1.12")!)
 //        node.v4_addresses.insert(IPv4Address("192.168.0.85")!)
         addNode(node, resolve_ipv4_addresses: node.v4_addresses)
-        
-        //print(traitCollection.horizontalSizeClass.rawValue)
-
-        // TEST
-        print("ON VA FAIRE UNE TRACE DEBUG PRESSED")
-        addTrace("ON VA FAIRE UNE TRACE DEBUG PRESSED")
-
-        // Exemple qui fonctionne de modification visuelle de composant UIKit
-        // let tabBarController = UIApplication.shared.windows.first?.rootViewController as? UITabBarController
-        // tabBarController?.tabBar.barTintColor = .yellow
-
-        
-        // ca marche :
-//        setTitle("FGIRJZEFJEIZFJ")
     }
 
     // Refresh started with gesture
@@ -461,8 +445,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
 
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
-        print(address.toNumericString()!, "selected")
-//        detail_view_controller!.address = address
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
@@ -472,7 +454,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
     public func addressDeselected() {
-        print("address deselected")
     }
 
     override func didReceiveMemoryWarning() {
@@ -486,7 +467,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
-//                    print("reverse IPv4 résolue:", name)
+                    // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v4_addresses.insert(address)
@@ -505,7 +486,7 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
             DispatchQueue.global(qos: .background).async {
                 guard let name = address.resolveHostName() else { return }
                 DispatchQueue.main.async {
-//                    print("reverse IPv6 résolue:", name)
+                    // Reverse IPv6 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
                     node.v6_addresses.insert(address)
@@ -716,7 +697,6 @@ let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self
     // MARK: - UIScrollViewDelegate
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-//        print("fin de scroll")
     }
 
     // MARK: - Table view headers

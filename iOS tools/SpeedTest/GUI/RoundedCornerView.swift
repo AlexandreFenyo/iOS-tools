@@ -13,26 +13,6 @@ class RoundedCornerView : UIView {
     let radius, startAngle, endAngle: CGFloat
     let arc_center: CGPoint
 
-//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        print("XXDID CHANGE")
-//        print(traitCollection.horizontalSizeClass.rawValue)
-//        if traitCollection.horizontalSizeClass.rawValue == 2 {
-//            print("no hidden")
-////            self.isHidden = false
-//            layer.isHidden = false
-//        }
-//        else {
-//            print("hidden")
-// //           self.isHidden = true
-//            layer.isHidden = true
-//        }
-//        layer.setNeedsDisplay()
-//        setNeedsDisplay()
-//        setNeedsLayout()
-//        layer.setNeedsLayout()
-//        backgroundColor = .red
-//    }
-
     public init(radius: CGFloat, startAngle: CGFloat, endAngle: CGFloat, arc_center: CGPoint) {
         self.radius = radius
         self.startAngle = startAngle

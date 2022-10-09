@@ -31,16 +31,11 @@ class LocalFloodClient : Thread {
     
     // Dedicated background Thread
     override internal func main() {
-        print("CLIENT ENTREE THREAD FLOOD", address)
-
         if let saddr = address.toSockAddress()?.getData() {
-            let retval = saddr.withUnsafeBytes {
+            let _ = saddr.withUnsafeBytes {
                 localFloodClientLoop(OpaquePointer($0.bindMemory(to: sockaddr_storage.self).baseAddress!))
             }
-            print("localFloodClientLoop() returned:", retval)
         }
-        
-        print("CLIENT SORTIE THREAD FLOOD")
     }
     
     override public func start() {

@@ -205,10 +205,11 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
             (sin+1)->sin6_addr.__u6_addr.__u6_addr32[3] == 0) continue;
 
         if (gwindex-- == 0) {
-//            printf("addr: %x %x %x %x\n", sin->sin6_addr.__u6_addr.__u6_addr32[0],
-//                  sin->sin6_addr.__u6_addr.__u6_addr32[1],
-//                  sin->sin6_addr.__u6_addr.__u6_addr32[2],
-//                  sin->sin6_addr.__u6_addr.__u6_addr32[3]);
+            // printf("addr: %x %x %x %x\n",
+            //        sin->sin6_addr.__u6_addr.__u6_addr32[0],
+            //        sin->sin6_addr.__u6_addr.__u6_addr32[1],
+            //        sin->sin6_addr.__u6_addr.__u6_addr32[2],
+            //        sin->sin6_addr.__u6_addr.__u6_addr32[3]);
             memcpy(sa, sin + 1, sizeof(struct sockaddr_in6));
             free(msg);
             return 0;
@@ -219,16 +220,10 @@ int getlocalgatewayipv6(int gwindex, struct sockaddr *sa, socklen_t salen) {
     return -4;
 }
 
-//struct tv32 {
-//    u_int32_t tv32_sec;
-//    u_int32_t tv32_usec;
-//};
 #define MAXPACKETLEN    131072
 #define ICMP6ECHOLEN    8       /* icmp echo header len excluding time */
 
 int multicasticmp6(void) {
-    printf("\n\n1--- START multicast icmp6\n");
-
     struct addrinfo hints, *res;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET6;
@@ -267,7 +262,7 @@ int multicasticmp6(void) {
     smsghdr.msg_iovlen = 1;
 
     long i = sendmsg(s, &smsghdr, 0);
-    printf("SENDMSG returnd %ld\n\n", i);
+    // printf("SENDMSG returnd %ld\n\n", i);
     perror("sendmsg");
 
     freeaddrinfo(res);
@@ -458,17 +453,4 @@ void net_test(void) {
         return;
     }
     printf("hostname from DNS: %s\n", host);
-    
-    
-    // Flood with UDP
-//    while (1) {
-//        len = sendto(s, buf, sizeof buf, 0, (struct sockaddr *) &addr, sizeof addr);
-//        if (len < 1) {
-//            printf("len: %ld\n", len);
-//            perror("sendto v4");
-//            return;
-//        }
-////        printf("envoyés: %ld\n", len);
-//    }
 }
-

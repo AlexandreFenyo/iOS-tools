@@ -144,7 +144,9 @@ int localFloodClientStop(void) {
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/ip_icmp.h
 int localFloodClientLoop(const struct sockaddr *saddr) {
     if (saddr == NULL) return -1;
-    else printf("family: %d\n", saddr->sa_family);
+    else {
+        // printf("family: %d\n", saddr->sa_family);
+    }
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
 
     if (saddr->sa_family == AF_INET) ((struct sockaddr_in *) saddr)->sin_port = htons(8888);
@@ -171,7 +173,6 @@ int localFloodClientLoop(const struct sockaddr *saddr) {
     while (1) {
 
         ssize_t len = sendto(sock, buffer, sizeof buffer, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-//        printf("sendto UDP retval:%ld\n", len);
         if  (len < 0) {
             if (errno != ENOBUFS) {
                 perror("sendto()");
@@ -179,9 +180,7 @@ int localFloodClientLoop(const struct sockaddr *saddr) {
                 close(sock);
                 return retval;
             }
-//            printf("loop again");
             len = 0;
-//            break;
         }
         if (addToNWrite(len) < 0) return -6;
     }
