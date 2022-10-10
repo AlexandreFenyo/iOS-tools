@@ -45,15 +45,16 @@ class NetworkBrowser {
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
                 if network.mask_len < 22 {
                     broadcast_ipv4.insert(broadcast)
-                }
-                else {
-                    var current = network_addr.and(netmask).next() as! IPv4Address
-                    repeat {
-                        if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
-                            device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
-                            reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
-                        current = current.next() as! IPv4Address
-                    } while current != broadcast
+                } else {
+                    if network.mask_len != 32 {
+                        var current = network_addr.and(netmask).next() as! IPv4Address
+                        repeat {
+                            if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+                                device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
+                                reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
+                            current = current.next() as! IPv4Address
+                        } while current != broadcast
+                    }
                 }
             }
         }
