@@ -28,6 +28,8 @@ class DetailViewController: UIViewController {
     private var scene_delegate : MySKSceneDelegate?
 
     public let ts = TimeSeries()
+
+    public var prev_addr_selected = ""
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
@@ -134,6 +136,18 @@ class DetailViewController: UIViewController {
         }
     }
 
+    // Clear chart and stop browsing if selected address changes
+    private func clearChart(new_address: IPAddress) {
+        if prev_addr_selected != new_address.toNumericString() {
+            prev_addr_selected = new_address.toNumericString() ?? ""
+            Task.detached(priority: .userInitiated) {
+                await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+                await self.master_view_controller?.detail_view_controller?.ts.removeAll()
+                await self.master_view_controller?.stopBrowsing(.OTHER_ACTION)
+            }
+        }
+    }
+
     // called by MasterViewController when the user selects an address
     public func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
         // retrouver le node
@@ -153,6 +167,8 @@ class DetailViewController: UIViewController {
                 }
             }
         }
+
+        clearChart(new_address: address)
         
         hostingViewController.rootView.model.updateDetails(node!, address, buttons_enabled)
     }
@@ -161,7 +177,7 @@ class DetailViewController: UIViewController {
         // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
         // il est async pour éviter une exception
         DispatchQueue.main.async {
-            _ = self.hostingViewController.rootView.model.setButtonsEnabled(state)
+            self.hostingViewController.rootView.model.setButtonsEnabled(state)
         }
     }
 
@@ -170,6 +186,7 @@ class DetailViewController: UIViewController {
             if node.v4_addresses.contains(v4) {
                 if let node = findNodeFromAddress(v4) {
                     hostingViewController.rootView.model.updateDetails(node, v4, buttons_enabled)
+                    clearChart(new_address: v4)
                 }
             }
         }
@@ -177,6 +194,7 @@ class DetailViewController: UIViewController {
             if node.v6_addresses.contains(v6) {
                 if let node = findNodeFromAddress(v6) {
                     hostingViewController.rootView.model.updateDetails(node, v6, buttons_enabled)
+                    clearChart(new_address: v6)
                 }
             }
         }

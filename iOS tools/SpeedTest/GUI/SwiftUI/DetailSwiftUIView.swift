@@ -109,7 +109,6 @@ public class DetailViewModel : ObservableObject {
     }
     
     public func setStopButtonEnabled(_ state: Bool) {
-
         DispatchQueue.main.async {
             Task {
                 switch state {
@@ -126,7 +125,6 @@ public class DetailViewModel : ObservableObject {
                 }
             }
         }
-
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {

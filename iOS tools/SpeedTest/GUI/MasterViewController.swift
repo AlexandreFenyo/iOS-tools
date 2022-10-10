@@ -174,7 +174,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Stop looking for new nodes
     // Main thread ?
-    private func stopBrowsing(_ action: NewRunAction) {
+    public func stopBrowsing(_ action: NewRunAction) {
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
@@ -447,7 +447,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
-
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
