@@ -447,24 +447,30 @@ class DBMaster {
         return (index_paths_removed, index_paths_inserted)
     }
 
+    private let ips_v4_google = [ "8.8.4.4", "8.8.8.8" ]
+    private let ips_v6_google = [ "2001:4860:4860::8844", "2001:4860:4860::8888" ]
+    private let ips_v4_quad9 = [ "9.9.9.9", "149.112.112.9" ]
+    private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
+
     public func addDefaultNodes() {
         var node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
-        node.v4_addresses.insert(IPv4Address("8.8.4.4")!)
-        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
-        node.v6_addresses.insert(IPv6Address("2001:4860:4860::8844")!)
-        node.v6_addresses.insert(IPv6Address("2001:4860:4860::8888")!)
+        for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
+        for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
         _ = addNode(node)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
-        node.v4_addresses.insert(IPv4Address("9.9.9.9")!)
-        node.v4_addresses.insert(IPv4Address("149.112.112.9")!)
-        node.v6_addresses.insert(IPv6Address("2620:fe::9")!)
-        node.v6_addresses.insert(IPv6Address("2620:fe::fe:9")!)
+        for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
+        for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
         _ = addNode(node)
+    }
+
+    public func isPublicDefaultService(_ ip: String) -> Bool {
+        if ips_v4_google.contains(ip) || ips_v6_google.contains(ip) || ips_v4_quad9.contains(ip) || ips_v6_quad9.contains(ip) { return true }
+        return false
     }
     
     public init() {

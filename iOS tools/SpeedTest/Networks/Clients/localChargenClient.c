@@ -11,7 +11,7 @@
 static pthread_mutex_t mutex;
 static int sock = -1;
 
-static int last_errno;
+static int last_errno = 0;
 static long nread = 0;
 
 // return values:

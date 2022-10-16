@@ -623,6 +623,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
+    // connect to discard service
     func floodTCP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
@@ -638,16 +639,34 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_discard_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            var is_connected = false
+            var nsec = 0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             while true {
                 if let throughput = await self.local_discard_client?.getThroughput() {
                     if throughput > 0 {
+                        is_connected = true
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
-                    if throughput < 0 { break }
+                    if throughput < 0 {
+                        let errno = await self.local_discard_client?.getLastErrno()
+                        if errno == ECONNREFUSED {
+                            await self.popUp("TCP discard", "connection refused", "continue")
+                        }
+                        break
+                    }
                 } else { break }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+                nsec += 1
+                if is_connected == false && nsec > 5 {
+                    var message = "timeout occured"
+                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                        message = "timeout occured - public DNS services do not offer Chargen service support"
+                    }
+                    await self.popUp("TCP chargen", message, "continue")
+                    break
+                }
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
@@ -669,20 +688,47 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_chargen_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            var is_connected = false
+            var nsec = 0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             while true {
                 if let throughput = await self.local_chargen_client?.getThroughput() {
                     if throughput > 0 {
+                        is_connected = true
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
-                    if throughput < 0 { break }
+                    if throughput < 0 {
+                        let errno = await self.local_chargen_client?.getLastErrno()
+                        if errno == ECONNREFUSED {
+                            await self.popUp("TCP chargen", "connection refused", "continue")
+                        }
+                        break
+                    }
                 } else { break }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+                nsec += 1
+                if is_connected == false && nsec > 5 {
+                    var message = "timeout occured"
+                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                        message = "timeout occured - public DNS services do not offer Chargen service support"
+                    }
+                    await self.popUp("TCP chargen", message, "continue")
+                    break
+                }
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
         }
+    }
+
+    private func popUp(_ title: String, _ message: String, _ ok: String) async {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: ok, style: .default) { (action) in
+            print(action)
+        }
+        alert.addAction(action)
+        present(alert, animated: true) { }
     }
     
     // MARK: - DeviceManager protocol

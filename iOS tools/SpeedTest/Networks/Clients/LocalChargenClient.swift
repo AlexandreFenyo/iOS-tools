@@ -75,6 +75,13 @@ class LocalChargenClient : Thread {
         if ret < 0 { fatalError() }
         return ret
     }
+    
+    // Main thread
+    public func getLastErrno() -> Int32 {
+        let ret = localChargenClientGetLastErrorNo()
+        if ret < 0 { fatalError() }
+        return ret
+    }
 
     // Main thread
     public func getThroughput() -> Double {
