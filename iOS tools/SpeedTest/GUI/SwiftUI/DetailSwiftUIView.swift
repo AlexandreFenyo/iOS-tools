@@ -215,7 +215,6 @@ struct DetailSwiftUIView: View {
                         .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                         
                         // supprimé pour le MVP
-                        /*
                         Button {
                             if model.address != nil {
                                 master_view_controller.floodUDP(model.address!)
@@ -228,7 +227,6 @@ struct DetailSwiftUIView: View {
                         }
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                         */
                         
                         Button {
                             if model.address != nil {

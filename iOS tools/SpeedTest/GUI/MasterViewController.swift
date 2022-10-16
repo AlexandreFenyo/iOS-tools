@@ -581,7 +581,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
                 nloop += 1
                 if has_answered == false && nloop > 50 {
-                    await self.popUp("ICMP", "timeout occured, no answer from target", "continue")
+                    await self.popUp("ICMP", "timeout occurred, no answer from target", "continue")
                     break
                 }
             }
@@ -604,6 +604,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_flood_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            await self.popUp("UDP flood", "UDP flooding sends packets asynchronously to the target at a maximum rate, but many packets can be lost at software, hardware or network stages. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", "I understand")
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             var first_skipped = false
@@ -666,9 +667,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
                 if is_connected == false && nsec > 5 {
-                    var message = "timeout occured"
+                    var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occured - public DNS services do not offer Chargen service support"
+                        message = "timeout occurred - public DNS services do not offer Chargen service support"
                     }
                     await self.popUp("TCP chargen", message, "continue")
                     break
@@ -721,9 +722,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
                 if is_connected == false && nsec > 5 {
-                    var message = "timeout occured"
+                    var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occured - public DNS services do not offer Chargen service support"
+                        message = "timeout occurred - public DNS services do not offer Chargen service support"
                     }
                     await self.popUp("TCP chargen", message, "continue")
                     break
