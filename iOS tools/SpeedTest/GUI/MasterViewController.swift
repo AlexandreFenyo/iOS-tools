@@ -567,20 +567,23 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_ping_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            var has_answered = false
+            var nloop = 0
             await self.detail_view_controller?.ts.setUnits(units: .RTT)
             await self.detail_view_controller?.ts.removeAll()
-//            var first_skipped = false
             while true {
                 if let rtt = await self.local_ping_client?.getRTT() {
                     if rtt > 0 {
-//                        if first_skipped == false {
-//                            first_skipped = true
-//                        } else {
-                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
-//                        }
+                        has_answered = true
+                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
                     }
                 } else { break }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+                nloop += 1
+                if has_answered == false && nloop > 50 {
+                    await self.popUp("ICMP", "timeout occured, no answer from target", "continue")
+                    break
+                }
             }
             // objectif : arrivé ici, la boucle de ping est terminée
         }
@@ -647,13 +650,19 @@ class MasterViewController: UITableViewController, DeviceManager {
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
+                        print("throughput < 0 (0)")
                         let errno = await self.local_discard_client?.getLastErrno()
                         if errno == ECONNREFUSED {
                             await self.popUp("TCP discard", "connection refused", "continue")
+                        } else {
+                            await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
                         }
                         break
                     }
-                } else { break }
+                } else {
+                    print("break (0)")
+                    break
+                }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
                 if is_connected == false && nsec > 5 {
@@ -696,13 +705,19 @@ class MasterViewController: UITableViewController, DeviceManager {
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
+                        print("throughput < 0 (1)")
                         let errno = await self.local_chargen_client?.getLastErrno()
                         if errno == ECONNREFUSED {
                             await self.popUp("TCP chargen", "connection refused", "continue")
+                        } else {
+                            await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
                         }
                         break
                     }
-                } else { break }
+                } else {
+                    print("break (1)")
+                    break
+                }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
                 if is_connected == false && nsec > 5 {
