@@ -162,9 +162,9 @@ struct DetailSwiftUIView: View {
     public let master_view_controller: MasterViewController
     
     @ObservedObject var model = DetailViewModel.shared
-    
     @State var animated_width: CGFloat = 0
-    
+//    @State private var showing_popover = true
+
     var body: some View {
         HStack {
             // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
@@ -291,6 +291,7 @@ struct DetailSwiftUIView: View {
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
             }.cornerRadius(15).padding(7) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
+//            .popover(isPresented: $showing_popover) { Text("SALUT")}
 
     }
 }
