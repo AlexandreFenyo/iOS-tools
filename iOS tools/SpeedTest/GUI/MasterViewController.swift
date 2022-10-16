@@ -243,7 +243,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func help_pressed(_ sender: Any) {
-
         let ctHelp = CTHelp()
         ctHelp.new(CTHelpItem(title:"No Image-Text Only",
                                  helpText: "Eu tempor suscipit dis sed. Tortor velit orci bibendum mattis non metus ornare consequat. Condimentum habitasse dictumst eros nibh rhoncus non pulvinar fermentum. Maecenas convallis gravida facilisis. Interdum, conubia lacinia magnis duis nec quisque.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
@@ -324,8 +323,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.setButtonMasterHiddenState(false)
     }
     
-//    var timer: Timer?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -723,12 +720,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     private func popUp(_ title: String, _ message: String, _ ok: String) async {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: ok, style: .default) { (action) in
-            print(action)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let action = UIAlertAction(title: ok, style: .default)
+            alert.addAction(action)
+            // self.parent!.present au lieu de self.present pour éviter le message d'erreur "Presenting view controllers on detached view controllers is discouraged"
+            self.parent!.present(alert, animated: true)
         }
-        alert.addAction(action)
-        present(alert, animated: true) { }
     }
     
     // MARK: - DeviceManager protocol
