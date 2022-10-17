@@ -818,6 +818,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 //        self.delta = delta
     }
     
+    public func resetMode() {
+        mode = .followDate
+    }
+    
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {

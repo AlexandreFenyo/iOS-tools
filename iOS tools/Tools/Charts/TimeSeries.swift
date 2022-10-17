@@ -24,6 +24,7 @@ public struct TimeSeriesElement {
 
 public protocol TimeSeriesReceiver {
     func cbNewData(ts: TimeSeries, tse: TimeSeriesElement?) async
+    func resetMode()
 }
 
 public actor TimeSeries {
@@ -38,6 +39,8 @@ public actor TimeSeries {
 
     public func setUnits(units: ChartUnits) {
         self.units = units
+        for receiver in receivers { receiver.resetMode() }
+
     }
 
     public func getUnits() -> ChartUnits {
