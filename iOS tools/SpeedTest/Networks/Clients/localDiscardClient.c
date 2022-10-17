@@ -43,11 +43,29 @@ int localDiscardClientGetLastErrorNo(void) {
 static int setLastErrorNo() {
     int ret = pthread_mutex_lock(&mutex);
     if (ret < 0) {
-        perror("setLastErrorNo pthread_mutex_lock");
+        perror("clearLastErrorNo pthread_mutex_lock");
         return -1;
     }
     
     last_errno = errno;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("clearLastErrorNo pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return 0;
+}
+
+static int clearLastErrorNo() {
+    int ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("setLastErrorNo pthread_mutex_lock");
+        return -1;
+    }
+    
+    last_errno = 0;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -71,6 +89,7 @@ static int addToNWrite(long newval) {
     }
     
     nwrite += newval;
+    last_errno = 0;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -91,6 +110,7 @@ static int setNWrite(long newval) {
     }
     
     nwrite = newval;
+    if (nwrite > 0) last_errno = 0;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -158,6 +178,8 @@ int localDiscardClientStop(void) {
 }
 
 int localDiscardClientLoop(const struct sockaddr *saddr) {
+    clearLastErrorNo();
+
     if (saddr == NULL) return -1;
     else {
         // printf("family: %d\n", saddr->sa_family);

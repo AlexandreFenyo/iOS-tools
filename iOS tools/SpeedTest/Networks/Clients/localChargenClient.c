@@ -58,6 +58,24 @@ static int setLastErrorNo() {
     return 0;
 }
 
+static int clearLastErrorNo() {
+    int ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("clearLastErrorNo pthread_mutex_lock");
+        return -1;
+    }
+    
+    last_errno = 0;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("clearLastErrorNo pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return 0;
+}
+
 // return values:
 // - 0  : no error
 // - < 0: mutex error, should not happen
@@ -71,6 +89,7 @@ static int addToNRead(long newval) {
     }
     
     nread += newval;
+    last_errno = 0;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -91,7 +110,8 @@ static int setNRead(long newval) {
     }
     
     nread = newval;
-    
+    if (nread > 0) last_errno = 0;
+
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
         perror("setLastErrorNo pthread_mutex_unlock");
@@ -159,6 +179,8 @@ int localChargenClientStop(void) {
 }
 
 int localChargenClientLoop(const struct sockaddr *saddr) {
+    clearLastErrorNo();
+    
     if (saddr == NULL) return -1;
     else {
         // printf("family: %d\n", saddr->sa_family);
