@@ -653,21 +653,30 @@ class MasterViewController: UITableViewController, DeviceManager {
                     if throughput < 0 {
                         print("throughput < 0 (0)")
                         let errno = await self.local_discard_client?.getLastErrno()
-                        if errno == ECONNREFUSED {
-                            var message = "connection refused"
-                            if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                message = "connection refused - public DNS services do not offer Discard service support"
+                        if errno != 0 {
+                            if errno == ECONNREFUSED || errno == ECONNABORTED {
+                                let str = errno == ECONNABORTED ? "aborted" : "refused"
+                                var message = str
+                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                    message = "connection \(str) - public DNS services do not offer Discard service support"
+                                }
+                                await self.popUp("TCP discard", message, "continue")
+                            } else {
+                                await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
                             }
-                            await self.popUp("TCP discard", message, "continue")
-                        } else {
-                            await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                            break
                         }
-                        break
                     }
                 } else {
                     print("break (0)")
                     break
                 }
+
+                // BUG
+                //                bug tcp flood discard : pas de message
+                //              connect(): Software caused connection abort
+                //            break (0)
+
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
                 if is_connected == false && nsec > 5 {
@@ -714,14 +723,17 @@ class MasterViewController: UITableViewController, DeviceManager {
                     if throughput < 0 {
                         print("throughput < 0 (1)")
                         let errno = await self.local_chargen_client?.getLastErrno()
-                        if errno == ECONNREFUSED {
-                            var message = "connection refused"
-                            if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                message = "connection refused - public DNS services do not offer Chargen service support"
+                        if errno != 0 {
+                            if errno == ECONNREFUSED || errno == ECONNABORTED {
+                                let str = errno == ECONNABORTED ? "aborted" : "refused"
+                                var message = "connection refused"
+                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                    message = "connection \(str) - public DNS services do not offer Chargen service support"
+                                }
+                                await self.popUp("TCP chargen", message, "continue")
+                            } else {
+                                await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
                             }
-                            await self.popUp("TCP chargen", message, "continue")
-                        } else {
-                            await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
                         }
                         break
                     }
