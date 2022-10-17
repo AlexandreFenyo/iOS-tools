@@ -693,8 +693,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    // RESTE A FAIRE : tester les messages d'erreur avec les DNS publics
-    
     func chargenTCP(_ address: IPAddress) {
         stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
