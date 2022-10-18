@@ -211,7 +211,7 @@ struct DetailSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood (discard)").font(.footnote)
+                                Text("TCP flood discard").font(.footnote)
                             }
                         }
                         .accentColor(Color(COLORS.standard_background))
@@ -224,7 +224,7 @@ struct DetailSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood (chargen)").font(.footnote)
+                                Text("TCP flood chargen").font(.footnote)
                             }
                         }
                         .accentColor(Color(COLORS.standard_background))
@@ -251,7 +251,7 @@ struct DetailSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "clock").resizable().frame(width: 30, height: 30)
-                                Text("ICMP (ping)").font(.footnote)
+                                Text("ICMP ping").font(.footnote)
                             }
                         }
                         .accentColor(Color(COLORS.standard_background))
