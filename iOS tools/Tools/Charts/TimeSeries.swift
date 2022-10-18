@@ -24,7 +24,6 @@ public struct TimeSeriesElement {
 
 public protocol TimeSeriesReceiver {
     func cbNewData(ts: TimeSeries, tse: TimeSeriesElement?) async
-    func resetMode()
 }
 
 public actor TimeSeries {
@@ -32,36 +31,34 @@ public actor TimeSeries {
     private var data: [Date: TimeSeriesElement] = [:]
     // Ordered data keys (dates)
     private var keys: [Date] = []
-
+    
     private var units: ChartUnits = .RTT
     
     public init() { }
-
+    
     public func setUnits(units: ChartUnits) {
         self.units = units
-        for receiver in receivers { receiver.resetMode() }
-
     }
-
+    
     public func getUnits() -> ChartUnits {
         return units
     }
-
+    
     public func register(_ receiver: TimeSeriesReceiver) {
         receivers.append(receiver)
     }
-
+    
     public func add(_ tse: TimeSeriesElement) async {
         // Update backing store
         if data[tse.date] != nil { return }
         data[tse.date] = tse
         let next_date = keys.first { (date) in date > tse.date }
         keys.insert(tse.date, at: next_date != nil ? keys.firstIndex(of: next_date!)! : keys.count)
-
+        
         // Signal about new value
         for receiver in receivers { await receiver.cbNewData(ts: self, tse: tse) }
     }
-
+    
     public func removeAll() async {
         // Update backing store
         data.removeAll()
@@ -69,11 +66,15 @@ public actor TimeSeries {
         // Signal about news values
         for receiver in receivers { await receiver.cbNewData(ts: self, tse: nil) }
     }
-
+    
     // Ordered array of every elements
     public func getElements() -> [TimeSeriesElement] {
         var elts : [TimeSeriesElement] = []
         for key in keys { elts.append(data[key]!) }
         return elts
+    }
+    
+    public func count() -> Int {
+        return keys.count
     }
 }

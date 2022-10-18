@@ -151,6 +151,10 @@ class DetailViewController: UIViewController {
         }
     }
 
+    public func clearChartAndNode() {
+        hostingViewController.rootView.model.clearDetails()
+    }
+
     // called by MasterViewController when the user selects an address
     public func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
         // retrouver le node

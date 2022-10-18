@@ -770,6 +770,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement? = nil) async {
+        if await ts.count() == 0 { mode = .followDate }
         await drawCurveAsync(ts: ts)
     }
     
@@ -817,11 +818,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
 //        self.delta = delta
     }
-    
-    public func resetMode() {
-        mode = .followDate
-    }
-    
+
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {

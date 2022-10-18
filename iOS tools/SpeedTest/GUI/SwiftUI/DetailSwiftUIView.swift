@@ -131,7 +131,18 @@ public class DetailViewModel : ObservableObject {
             }
         }
     }
-    
+
+    internal func clearDetails() {
+        text_addresses.removeAll()
+        text_names.removeAll()
+        text_ports.removeAll()
+        family = nil
+        address = nil
+        v4address = nil
+        v6address = nil
+        address_str = nil
+    }
+
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
         text_names = node.dns_names.map { $0.toString() }
