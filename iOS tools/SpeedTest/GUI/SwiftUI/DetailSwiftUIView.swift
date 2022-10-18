@@ -13,7 +13,9 @@ import SpriteKit
 struct TagCloudView: View {
     var tags: [ String ]
     let master_view_controller: MasterViewController
-
+    
+    let on_tap: (String) -> Void
+    
     @State private var totalHeight = CGFloat.zero
     
     var body: some View {
@@ -54,22 +56,7 @@ struct TagCloudView: View {
                         return result
                     })
                     .onTapGesture {
-                        print("salut")
-                        DispatchQueue.main.async {
-                            Task {
-                                master_view_controller.master_ip_view_controller?.auto_select = tag
-                                _ = master_view_controller.navigationController?.popViewController(animated: true)
-
-                            }
-                        }
-                        /*
-                        let indexPath = IndexPath(row: 2, section: 0)
-                        master_view_controller.master_ip_view_controller!.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
-                        let ips = Array(master_view_controller.master_ip_view_controller!.node!.v4_addresses.sorted()) + Array(master_view_controller.master_ip_view_controller!.node!.v6_addresses.sorted())
-                        if !ips.isEmpty {
-                            master_view_controller.addressSelected(address: ips.first!)
-                        }
-                       */
+                        on_tap(tag)
                     }
             }
         }.background(viewHeightReader($totalHeight))
@@ -81,8 +68,8 @@ struct TagCloudView: View {
             .font(.body)
             .background(Color(COLORS.standard_background))
             .foregroundColor(Color.white)
-//            .background(Color.blue)
-//            .foregroundColor(Color.white)
+        //            .background(Color.blue)
+        //            .foregroundColor(Color.white)
             .cornerRadius(5)
     }
     
@@ -110,18 +97,18 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_addresses: [String] = [String]()
     @Published private(set) var text_names: [String] = [String]()
     @Published private(set) var text_ports: [String] = [String]()
-
+    
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
-
+    
     public func setButtonMasterHiddenState(_ state: Bool) {
         stop_button_master_view_hidden = state
     }
-
+    
     public func setButtonMasterIPHiddenState(_ state: Bool) {
         stop_button_master_ip_view_hidden = state
     }
-
+    
     public func setButtonsEnabled(_ state: Bool) {
         buttons_enabled = address == nil ? false : state
     }
@@ -149,7 +136,7 @@ public class DetailViewModel : ObservableObject {
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
         text_names = node.dns_names.map { $0.toString() }
         text_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
-
+        
         var interfaces = [""]
         for addr in node.v6_addresses {
             if let substrings = addr.toNumericString()?.split(separator: "%") {
@@ -181,8 +168,8 @@ struct DetailSwiftUIView: View {
     
     @ObservedObject var model = DetailViewModel.shared
     @State var animated_width: CGFloat = 0
-//    @State private var showing_popover = true
-
+    //    @State private var showing_popover = true
+    
     var body: some View {
         HStack {
             // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
@@ -287,27 +274,44 @@ struct DetailSwiftUIView: View {
                                 Text("mDNS and DNS host names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller)
+                        
+                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller) { _ in }
                         if !model.text_ports.isEmpty {
                             HStack {
                                 VStack { Divider() }
                                 Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller)
+                        
+                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller) { tag in
+                        }
+                        
                         if !model.text_addresses.isEmpty {
                             HStack {
                                 VStack { Divider() }
                                 Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller)
+                        
+                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller) { tag in
+                            DispatchQueue.main.async {
+                                Task {
+                                    if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
+                                        master_view_controller.master_ip_view_controller?.auto_select = tag
+                                        master_view_controller.master_ip_view_controller?.viewDidAppear(true)
+                                    } else {
+                                        master_view_controller.master_ip_view_controller?.auto_select = tag
+                                        _ = master_view_controller.navigationController?.popViewController(animated: true)
+                                    }
+                                }
+                            }
+                        }
                     }
                     
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
             }.cornerRadius(15).padding(7) // VStack
         }.background(Color(COLORS.right_pannel_bg)) // ScrollView
-//            .popover(isPresented: $showing_popover) { Text("SALUT")}
-
+        //            .popover(isPresented: $showing_popover) { Text("SALUT")}
+        
     }
 }

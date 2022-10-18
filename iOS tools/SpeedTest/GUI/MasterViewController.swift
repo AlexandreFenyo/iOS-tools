@@ -444,7 +444,13 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.splitViewController?.showDetailViewController(self.detail_navigation_controller!, sender: nil)
+            if self.detail_view_controller?.can_be_launched == true {
+                if self.detail_view_controller?.view.window == nil {
+                    self.detail_view_controller?.can_be_launched = false
+                }
+                
+                self.splitViewController?.showDetailViewController(self.detail_navigation_controller!, sender: nil)
+            }
         }
     }
 

@@ -33,6 +33,8 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
+
+     public var can_be_launched = true
     
     private lazy var hostingViewController = makeHostingController()
 
@@ -127,6 +129,7 @@ class DetailViewController: UIViewController {
         if chart_node != nil {
             chart_node!.scene!.view!.isPaused = false
         }
+        can_be_launched = true
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -170,7 +173,11 @@ class DetailViewController: UIViewController {
 
         clearChart(new_address: address)
         
-        hostingViewController.rootView.model.updateDetails(node!, address, buttons_enabled)
+        if let node {
+            hostingViewController.rootView.model.updateDetails(node, address, buttons_enabled)
+        } else {
+            print("error: node is null")
+        }
     }
     
     public func enableButtons(_ state: Bool) {
