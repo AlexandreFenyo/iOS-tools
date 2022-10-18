@@ -764,7 +764,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    private func popUp(_ title: String, _ message: String, _ ok: String) async {
+    public func popUp(_ title: String, _ message: String, _ ok: String) async {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)

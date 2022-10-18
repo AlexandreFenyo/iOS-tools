@@ -295,6 +295,30 @@ struct DetailSwiftUIView: View {
                         }
                         
                         TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller) { tag in
+                                DispatchQueue.main.async {
+                                    Task {
+                                        let _first = tag.firstIndex(of: "(")
+                                        let _last = tag.firstIndex(of: ")")
+                                        var port_str = ""
+                                        if let _first, let _last {
+                                            let first = tag.index(_first, offsetBy: 1)
+                                            let last = tag.index(_last, offsetBy: -1)
+                                            port_str = String(tag[first...last])
+                                        } else {
+                                            port_str = tag
+                                        }
+                                        let port = UInt16(port_str)!
+                                        
+                                        var message = ""
+                                        if let descr = TCPPort2Description[port] {
+                                            message = descr
+                                        } else {
+                                            message = "The TCP port number \(port) has no description."
+                                        }
+
+                                        await master_view_controller.popUp(tag, message, "continue")
+                                    }
+                                }
                         }
                         
                         if !model.text_addresses.isEmpty {
