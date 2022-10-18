@@ -443,7 +443,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible
-        splitViewController?.showDetailViewController(detail_navigation_controller!, sender: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.splitViewController?.showDetailViewController(self.detail_navigation_controller!, sender: nil)
+        }
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected

@@ -30,7 +30,8 @@ class DeviceAddressCell : UITableViewCell {
 class MasterIPViewController: UITableViewController {
     public var master_view_controller: MasterViewController?
     public var node : Node?
-
+    public var auto_select: String?
+    
     @IBOutlet weak var stop_button: UIBarButtonItem!
     private var stop_button_toggle = false
 
@@ -40,21 +41,50 @@ class MasterIPViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if node!.v4_addresses.count + node!.v6_addresses.count > 0 && tableView.indexPathForSelectedRow == nil {
-            let indexPath = IndexPath(row: 0, section: 0)
-            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
-            let ips = Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted())
-            if !ips.isEmpty {
-                master_view_controller!.addressSelected(address: ips.first!)
+            if self.auto_select != nil {
+                var found = false
+                var cnt = 0
+                for n in self.node!.v4_addresses.sorted() {
+                    if n.toNumericString() == self.auto_select! {
+                        found = true
+                        break
+                    }
+                    cnt += 1
+                }
+                if found == false {
+                    for n in self.node!.v6_addresses.sorted() {
+                        if n.toNumericString() == self.auto_select! {
+                            found = true
+                            break
+                        }
+                        cnt += 1
+                    }
+                }
+                if found {
+                    let indexPath = IndexPath(row: cnt, section: 0)
+                    self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
+                    let addr = toIpAddress(self.auto_select!)
+                    self.master_view_controller!.addressSelected(address: addr)
+                }
+                self.auto_select = nil
+                
+            } else {
+                if self.node!.v4_addresses.count + self.node!.v6_addresses.count > 0 && self.tableView.indexPathForSelectedRow == nil {
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
+                    let ips = Array(self.node!.v4_addresses.sorted()) + Array(self.node!.v6_addresses.sorted())
+                    if !ips.isEmpty {
+                        self.master_view_controller!.addressSelected(address: ips.first!)
+                    }
+                }
             }
-        }
-/*
-        Task.detached(priority: .userInitiated) {
-            await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.master_view_controller?.detail_view_controller?.ts.removeAll()
-        }
-*/
-        
+            /*
+             Task.detached(priority: .userInitiated) {
+             await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
+             await self.master_view_controller?.detail_view_controller?.ts.removeAll()
+             }
+             */
+            
     }
 
     override func viewDidDisappear(_ animated: Bool) {

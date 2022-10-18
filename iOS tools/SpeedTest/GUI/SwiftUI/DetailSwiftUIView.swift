@@ -11,8 +11,9 @@ import SpriteKit
 
 // struct TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct TagCloudView: View {
-    var tags: [String]
-    
+    var tags: [ String ]
+    let master_view_controller: MasterViewController
+
     @State private var totalHeight = CGFloat.zero
     
     var body: some View {
@@ -33,8 +34,7 @@ struct TagCloudView: View {
                 self.item(for: tag)
                     .padding([.horizontal, .vertical], 4)
                     .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > g.size.width)
-                        {
+                        if (abs(width - d.width) > g.size.width) {
                             width = 0
                             height -= d.height
                         }
@@ -46,13 +46,31 @@ struct TagCloudView: View {
                         }
                         return result
                     })
-                    .alignmentGuide(.top, computeValue: {d in
+                    .alignmentGuide(.top, computeValue: { d in
                         let result = height
                         if tag == self.tags.last! {
                             height = 0 // last item
                         }
                         return result
                     })
+                    .onTapGesture {
+                        print("salut")
+                        DispatchQueue.main.async {
+                            Task {
+                                master_view_controller.master_ip_view_controller?.auto_select = tag
+                                _ = master_view_controller.navigationController?.popViewController(animated: true)
+
+                            }
+                        }
+                        /*
+                        let indexPath = IndexPath(row: 2, section: 0)
+                        master_view_controller.master_ip_view_controller!.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
+                        let ips = Array(master_view_controller.master_ip_view_controller!.node!.v4_addresses.sorted()) + Array(master_view_controller.master_ip_view_controller!.node!.v6_addresses.sorted())
+                        if !ips.isEmpty {
+                            master_view_controller.addressSelected(address: ips.first!)
+                        }
+                       */
+                    }
             }
         }.background(viewHeightReader($totalHeight))
     }
@@ -269,21 +287,21 @@ struct DetailSwiftUIView: View {
                                 Text("mDNS and DNS host names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_names)
+                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller)
                         if !model.text_ports.isEmpty {
                             HStack {
                                 VStack { Divider() }
                                 Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_ports)
+                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller)
                         if !model.text_addresses.isEmpty {
                             HStack {
                                 VStack { Divider() }
                                 Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
                         }
-                        TagCloudView(tags: model.text_addresses)
+                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller)
                     }
                     
                 }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack

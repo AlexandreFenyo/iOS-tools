@@ -12,6 +12,14 @@
 
 import Foundation
 
+public func isIPv4(_ str: String) -> Bool {
+    return str.components(separatedBy: ".").count == 4 && !str.contains(":")
+}
+
+public func toIpAddress(_ str: String) -> IPAddress {
+    return isIPv4(str) ? (IPv4Address(str)! as IPAddress) : (IPv6Address(str)! as IPAddress)
+}
+
 public class SockAddr {
     fileprivate let saddrdata : Data
 
