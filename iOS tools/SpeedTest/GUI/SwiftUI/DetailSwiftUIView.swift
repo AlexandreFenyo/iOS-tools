@@ -14,8 +14,9 @@ struct TagCloudView: View {
     var tags: [ String ]
     let master_view_controller: MasterViewController
     
+    let font: Font
     let on_tap: (String) -> Void
-    
+
     @State private var totalHeight = CGFloat.zero
     
     var body: some View {
@@ -65,7 +66,7 @@ struct TagCloudView: View {
     private func item(for text: String) -> some View {
         Text(text)
             .padding(.all, 5)
-            .font(.body)
+            .font(font)
             .background(Color(COLORS.standard_background))
             .foregroundColor(Color.white)
         //            .background(Color.blue)
@@ -193,6 +194,7 @@ struct DetailSwiftUIView: View {
                     HStack(alignment: .top) {
                         Button {
                             if model.address != nil {
+                                master_view_controller.popUpHelp("scan TCP ports", "truc efzoij jzefoi jezfoi jefzio jfoeizfj efiozj oeizjf eiozfj ")
                                 master_view_controller.scanTCP(model.address!)
                             }
                         } label: {
@@ -286,7 +288,7 @@ struct DetailSwiftUIView: View {
                             }
                         }
                         
-                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller) { _ in }
+                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { _ in }
                         if !model.text_ports.isEmpty {
                             HStack {
                                 VStack { Divider() }
@@ -294,7 +296,7 @@ struct DetailSwiftUIView: View {
                             }
                         }
                         
-                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller) { tag in
+                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
                                 DispatchQueue.main.async {
                                     Task {
                                         let _first = tag.firstIndex(of: "(")
@@ -328,7 +330,7 @@ struct DetailSwiftUIView: View {
                             }
                         }
                         
-                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller) { tag in
+                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
                             DispatchQueue.main.async {
                                 Task {
                                     if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
