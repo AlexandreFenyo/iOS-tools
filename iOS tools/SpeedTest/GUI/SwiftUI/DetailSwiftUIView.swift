@@ -16,7 +16,7 @@ struct TagCloudView: View {
     
     let font: Font
     let on_tap: (String) -> Void
-
+    
     @State private var totalHeight = CGFloat.zero
     
     var body: some View {
@@ -102,6 +102,8 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
     
+    @Published private(set) var scroll_to_top = false
+    
     public func setButtonMasterHiddenState(_ state: Bool) {
         stop_button_master_view_hidden = state
     }
@@ -132,7 +134,15 @@ public class DetailViewModel : ObservableObject {
             }
         }
     }
-
+    
+    public func scrollToTop() {
+        scroll_to_top = true
+    }
+    
+    public func resetScrollToTop() {
+        scroll_to_top = false
+    }
+    
     internal func clearDetails() {
         text_addresses.removeAll()
         text_names.removeAll()
@@ -143,7 +153,7 @@ public class DetailViewModel : ObservableObject {
         v6address = nil
         address_str = nil
     }
-
+    
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
         text_names = node.dns_names.map { $0.toString() }
@@ -178,6 +188,8 @@ struct DetailSwiftUIView: View {
     public let view: UIView
     public let master_view_controller: MasterViewController
     
+    @Namespace var topID
+    
     @ObservedObject var model = DetailViewModel.shared
     @State var animated_width: CGFloat = 0
     //    @State private var showing_popover = true
@@ -188,182 +200,193 @@ struct DetailSwiftUIView: View {
             Text(model.address_str == nil ? "none" : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
         }
         
-        ScrollView {
-            VStack {
+        ScrollViewReader { scrollViewProxy in
+            ScrollView {
+                Color.clear.frame(height: 0)
+                    .id(topID).onChange(of: model.scroll_to_top) { _ in
+                        model.resetScrollToTop()
+                        withAnimation { scrollViewProxy.scrollTo(topID) }
+                    }
                 VStack {
-                    HStack(alignment: .top) {
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.popUpHelp("scan TCP ports", "truc efzoij jzefoi jezfoi jefzio jfoeizfj efiozj oeizjf eiozfj ")
-                                master_view_controller.scanTCP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
-                                Text("scan TCP ports").font(.footnote).frame(maxWidth: 200)
-                            }
-                        }
-                        .accentColor(Color(COLORS.standard_background))
-                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                        
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.floodTCP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood discard").font(.footnote)
-                            }
-                        }
-                        .accentColor(Color(COLORS.standard_background))
-                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                        
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.chargenTCP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood chargen").font(.footnote)
-                            }
-                        }
-                        .accentColor(Color(COLORS.standard_background))
-                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                        
-                        // supprimé pour le MVP
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.floodUDP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
-                                Text("UDP flood").font(.footnote)
-                            }
-                        }
-                        .accentColor(Color(COLORS.standard_background))
-                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                        
-                        Button {
-                            if model.address != nil {
-                                master_view_controller.loopICMP(model.address!)
-                            }
-                        } label: {
-                            VStack {
-                                Image(systemName: "clock").resizable().frame(width: 30, height: 30)
-                                Text("ICMP ping").font(.footnote)
-                            }
-                        }
-                        .accentColor(Color(COLORS.standard_background))
-                        .frame(maxWidth: 200).disabled(!model.buttons_enabled)
-                        
-                        if model.stop_button_enabled {
+                    VStack {
+                        HStack(alignment: .top) {
                             Button {
-                                master_view_controller.stop_pressed()
+                                if model.address != nil {
+                                    master_view_controller.popUpHelp("scan TCP ports", "truc efzoij jzefoi jezfoi jefzio jfoeizfj efiozj oeizjf eiozfj ")
+                                    master_view_controller.scanTCP(model.address!)
+                                }
                             } label: {
                                 VStack {
-                                    Image(systemName: "stop.circle").resizable().frame(width: 30, height: 30)
-                                    Text("Stop").font(.footnote)
+                                    Image(systemName: "scanner").resizable().frame(width: 40, height: 30)
+                                    Text("scan TCP ports").font(.footnote).frame(maxWidth: 200)
                                 }
-                            }
-                            .onAppear {
-                                animated_width = 200
-                            }
-                            .onDisappear {
-                                animated_width = 0
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: animated_width).disabled(model.buttons_enabled)
-                            .animation(.easeOut(duration: 0.5), value: animated_width)
-                        }
-                    }
-                    
-                    VStack {
-                        if !model.text_names.isEmpty {
-                            HStack {
-                                VStack { Divider() }
-                                Text("mDNS and DNS host names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
-                            }
-                        }
-                        
-                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { _ in }
-                        if !model.text_ports.isEmpty {
-                            HStack {
-                                VStack { Divider() }
-                                Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
-                            }
-                        }
-                        
-                        TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
                             
-                            let _first = tag.firstIndex(of: "(")
-                            let _last = tag.firstIndex(of: ")")
-                            var port_str = ""
-                            if let _first, let _last {
-                                let first = tag.index(_first, offsetBy: 1)
-                                let last = tag.index(_last, offsetBy: -1)
-                                port_str = String(tag[first...last])
-                            } else {
-                                port_str = tag
+                            Button {
+                                if model.address != nil {
+                                    master_view_controller.floodTCP(model.address!)
+                                }
+                            } label: {
+                                VStack {
+                                    Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
+                                    Text("TCP flood discard").font(.footnote)
+                                }
                             }
-                            UIApplication.shared.open(URL(string: "https://www.speedguide.net/port.php?port=\(port_str)")!)
-
-                            /* Affichage d'un texte explicatif du port récupéré dans le fichier de conf - supprimé au profit du décrochage sur un site web
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            
+                            Button {
+                                if model.address != nil {
+                                    master_view_controller.chargenTCP(model.address!)
+                                }
+                            } label: {
+                                VStack {
+                                    Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
+                                    Text("TCP flood chargen").font(.footnote)
+                                }
+                            }
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            
+                            // supprimé pour le MVP
+                            Button {
+                                if model.address != nil {
+                                    master_view_controller.floodUDP(model.address!)
+                                }
+                            } label: {
+                                VStack {
+                                    Image(systemName: "dot.radiowaves.right").resizable().rotationEffect(.degrees(-90)).frame(width: 25, height: 30)
+                                    Text("UDP flood").font(.footnote)
+                                }
+                            }
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            
+                            Button {
+                                if model.address != nil {
+                                    master_view_controller.loopICMP(model.address!)
+                                }
+                            } label: {
+                                VStack {
+                                    Image(systemName: "clock").resizable().frame(width: 30, height: 30)
+                                    Text("ICMP ping").font(.footnote)
+                                }
+                            }
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            
+                            if model.stop_button_enabled {
+                                Button {
+                                    master_view_controller.stop_pressed()
+                                } label: {
+                                    VStack {
+                                        Image(systemName: "stop.circle").resizable().frame(width: 30, height: 30)
+                                        Text("Stop").font(.footnote)
+                                    }
+                                }
+                                .onAppear {
+                                    animated_width = 200
+                                }
+                                .onDisappear {
+                                    animated_width = 0
+                                }
+                                .accentColor(Color(COLORS.standard_background))
+                                .frame(maxWidth: animated_width).disabled(model.buttons_enabled)
+                                .animation(.easeOut(duration: 0.5), value: animated_width)
+                            }
+                        }
+                        
+                        VStack {
+                            if !model.text_names.isEmpty {
+                                HStack {
+                                    VStack { Divider() }
+                                    Text("mDNS and DNS host names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                }
+                            }
+                            
+                            TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { _ in }
+                            if !model.text_ports.isEmpty {
+                                HStack {
+                                    VStack { Divider() }
+                                    Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                }
+                            }
+                            
+                            TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
+                                
+                                let _first = tag.firstIndex(of: "(")
+                                let _last = tag.firstIndex(of: ")")
+                                var port_str = ""
+                                if let _first, let _last {
+                                    let first = tag.index(_first, offsetBy: 1)
+                                    let last = tag.index(_last, offsetBy: -1)
+                                    port_str = String(tag[first...last])
+                                } else {
+                                    port_str = tag
+                                }
+                                UIApplication.shared.open(URL(string: "https://www.speedguide.net/port.php?port=\(port_str)")!)
+                                
+                                /* Affichage d'un texte explicatif du port récupéré dans le fichier de conf - supprimé au profit du décrochage sur un site web
+                                 DispatchQueue.main.async {
+                                 Task {
+                                 let _first = tag.firstIndex(of: "(")
+                                 let _last = tag.firstIndex(of: ")")
+                                 var port_str = ""
+                                 if let _first, let _last {
+                                 let first = tag.index(_first, offsetBy: 1)
+                                 let last = tag.index(_last, offsetBy: -1)
+                                 port_str = String(tag[first...last])
+                                 } else {
+                                 port_str = tag
+                                 }
+                                 let port = UInt16(port_str)!
+                                 
+                                 var message = ""
+                                 if let descr = TCPPort2Description[port] {
+                                 message = descr
+                                 } else {
+                                 message = "The TCP port number \(port) has no description."
+                                 }
+                                 
+                                 await master_view_controller.popUp(tag, message, "continue")
+                                 }
+                                 }
+                                 */
+                            }
+                            
+                            if !model.text_addresses.isEmpty {
+                                HStack {
+                                    VStack { Divider() }
+                                    Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                }
+                            }
+                            
+                            TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
                                 DispatchQueue.main.async {
                                     Task {
-                                        let _first = tag.firstIndex(of: "(")
-                                        let _last = tag.firstIndex(of: ")")
-                                        var port_str = ""
-                                        if let _first, let _last {
-                                            let first = tag.index(_first, offsetBy: 1)
-                                            let last = tag.index(_last, offsetBy: -1)
-                                            port_str = String(tag[first...last])
+                                        if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
+                                            master_view_controller.master_ip_view_controller?.auto_select = tag
+                                            master_view_controller.master_ip_view_controller?.viewDidAppear(true)
                                         } else {
-                                            port_str = tag
+                                            master_view_controller.master_ip_view_controller?.auto_select = tag
+                                            _ = master_view_controller.navigationController?.popViewController(animated: true)
                                         }
-                                        let port = UInt16(port_str)!
-                                        
-                                        var message = ""
-                                        if let descr = TCPPort2Description[port] {
-                                            message = descr
-                                        } else {
-                                            message = "The TCP port number \(port) has no description."
-                                        }
-
-                                        await master_view_controller.popUp(tag, message, "continue")
-                                    }
-                                }
-                             */
-                        }
-                        
-                        if !model.text_addresses.isEmpty {
-                            HStack {
-                                VStack { Divider() }
-                                Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
-                            }
-                        }
-                        
-                        TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
-                            DispatchQueue.main.async {
-                                Task {
-                                    if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
-                                        master_view_controller.master_ip_view_controller?.auto_select = tag
-                                        master_view_controller.master_ip_view_controller?.viewDidAppear(true)
-                                    } else {
-                                        master_view_controller.master_ip_view_controller?.auto_select = tag
-                                        _ = master_view_controller.navigationController?.popViewController(animated: true)
                                     }
                                 }
                             }
                         }
-                    }
-                    
-                }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
-            }.cornerRadius(15).padding(7) // VStack
-        }.background(Color(COLORS.right_pannel_bg)) // ScrollView
-        //            .popover(isPresented: $showing_popover) { Text("SALUT")}
+                        
+                    }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
+                }//.id(topID)
+                .cornerRadius(15).padding(7) // VStack
+            }.background(Color(COLORS.right_pannel_bg)) // ScrollView
+            //            .popover(isPresented: $showing_popover) { Text("SALUT")}
+            
+        }
+        
+        
         
     }
 }

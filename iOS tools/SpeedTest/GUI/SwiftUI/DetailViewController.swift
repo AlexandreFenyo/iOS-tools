@@ -100,7 +100,13 @@ class DetailViewController: UIViewController {
             self.hostingViewController.rootView.model.setStopButtonEnabled(true)
         }
     }
-    
+
+    public func scrollToTop() {
+        DispatchQueue.main.async {
+            self.hostingViewController.rootView.model.scrollToTop()
+        }
+    }
+
     public func setButtonMasterHiddenState(_ state: Bool) {
         DispatchQueue.main.async {
             self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
