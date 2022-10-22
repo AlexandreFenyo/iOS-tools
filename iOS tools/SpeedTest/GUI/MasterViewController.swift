@@ -267,7 +267,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func update_pressed(_ sender: Any) {
-        popUpHelp(PopUpMessages.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. Press the stop button to cancel this task later. Look at the Traces pane to get progress informations.")
+        popUpHelp(.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. Press the stop button to cancel this task later. Look at the Traces pane to get progress informations.")
         
         refreshControl!.beginRefreshing()
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
@@ -283,7 +283,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func debug_pressed(_ sender: Any) {
-        let node = Node()
+        popUp("node list", "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target.", "OK")
+//        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
 //        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
 //        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)
@@ -293,7 +294,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
 //        node.v4_addresses.insert(IPv4Address("192.168.1.12")!)
 //        node.v4_addresses.insert(IPv4Address("192.168.0.85")!)
-        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+//        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
 
     // Refresh started with gesture
@@ -792,7 +793,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
-    public func popUp(_ title: String, _ message: String, _ ok: String) async {
+    public func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)
