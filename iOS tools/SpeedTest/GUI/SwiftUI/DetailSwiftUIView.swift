@@ -134,13 +134,9 @@ public class DetailViewModel : ObservableObject {
             }
         }
     }
-    
-    public func scrollToTop() {
-        scroll_to_top = true
-    }
-    
-    public func resetScrollToTop() {
-        scroll_to_top = false
+
+    public func toggleScrollToTop() {
+        scroll_to_top.toggle()
     }
     
     internal func clearDetails() {
@@ -204,7 +200,8 @@ struct DetailSwiftUIView: View {
             ScrollView {
                 Color.clear.frame(height: 0)
                     .id(topID).onChange(of: model.scroll_to_top) { _ in
-                        model.resetScrollToTop()
+                        print("ScrollView onChange()")
+//                        model.resetScrollToTop()
                         withAnimation { scrollViewProxy.scrollTo(topID) }
                     }
                 VStack {

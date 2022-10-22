@@ -329,7 +329,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Couleur du Edit
         navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
         // Couleur des boutons en bas (reload par ex.)
@@ -445,7 +445,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Called by MasterIPViewController when an address is selected
     public func addressSelected(address: IPAddress) {
         detail_view_controller?.scrollToTop()
-        
+  
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (pas d'effet sur iPad), make the detail view controller visible

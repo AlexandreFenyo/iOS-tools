@@ -103,8 +103,9 @@ class DetailViewController: UIViewController {
 
     public func scrollToTop() {
         DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.scrollToTop()
+            self.hostingViewController.rootView.model.toggleScrollToTop()
         }
+
     }
 
     public func setButtonMasterHiddenState(_ state: Bool) {
