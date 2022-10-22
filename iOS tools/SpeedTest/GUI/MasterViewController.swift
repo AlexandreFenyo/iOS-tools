@@ -767,7 +767,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func popUpHelp(_ title: String, _ message: String) {
-        let key = "help2." + title
+        let key = "help." + title
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
             let alert = UIAlertController(title: "Help: " + title, message: message, preferredStyle: .alert)

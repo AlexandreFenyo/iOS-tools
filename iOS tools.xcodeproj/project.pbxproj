@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,7 @@
 		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
 		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
+		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
@@ -64,6 +65,7 @@
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
+		5D2DFC332902DBBD0080A9EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "iOS tools/SpeedTest/Settings.bundle"; sourceTree = SOURCE_ROOT; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 		5D7C30D420EA15DD00BF0CF8 /* SpeedTest */ = {
 			isa = PBXGroup;
 			children = (
+				5D2DFC332902DBBD0080A9EA /* Settings.bundle */,
 				5D63644C213EE0DF00BFEB0F /* Model */,
 				5DF21502211B5DA0002B7603 /* Networks */,
 				5DF21501211B5D98002B7603 /* GUI */,
@@ -324,7 +327,6 @@
 				F56DDF129AA99A901A294BE2 /* Pods-iOS tools.debug.xcconfig */,
 				FE1B554AAEFF369AC974FA67 /* Pods-iOS tools.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -394,6 +396,7 @@
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
+				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

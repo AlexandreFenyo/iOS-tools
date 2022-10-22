@@ -114,6 +114,20 @@ import ModelIO
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+
+        if UserDefaults.standard.bool(forKey: "reset_help_popups_key") {
+            UserDefaults.standard.set(false, forKey: "reset_help_popups_key")
+            let settings = UserDefaults.standard.dictionaryRepresentation()
+            for foo in settings {
+                if foo.key.starts(with: "help.") {
+                    UserDefaults.standard.set(false, forKey: foo.key)
+                }
+            }
+        }
+
+        if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
+            UserDefaults.standard.set(false, forKey: "remove_nodes_key")
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

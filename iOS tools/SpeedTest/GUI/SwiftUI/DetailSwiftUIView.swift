@@ -297,6 +297,20 @@ struct DetailSwiftUIView: View {
                         }
                         
                         TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
+                            
+                            let _first = tag.firstIndex(of: "(")
+                            let _last = tag.firstIndex(of: ")")
+                            var port_str = ""
+                            if let _first, let _last {
+                                let first = tag.index(_first, offsetBy: 1)
+                                let last = tag.index(_last, offsetBy: -1)
+                                port_str = String(tag[first...last])
+                            } else {
+                                port_str = tag
+                            }
+                            UIApplication.shared.open(URL(string: "https://www.speedguide.net/port.php?port=\(port_str)")!)
+
+                            /* Affichage d'un texte explicatif du port récupéré dans le fichier de conf - supprimé au profit du décrochage sur un site web
                                 DispatchQueue.main.async {
                                     Task {
                                         let _first = tag.firstIndex(of: "(")
@@ -321,6 +335,7 @@ struct DetailSwiftUIView: View {
                                         await master_view_controller.popUp(tag, message, "continue")
                                     }
                                 }
+                             */
                         }
                         
                         if !model.text_addresses.isEmpty {
