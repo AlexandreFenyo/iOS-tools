@@ -595,6 +595,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
                 nloop += 1
                 if has_answered == false && nloop > 50 {
+                    await self.stopBrowsing(.OTHER_ACTION)
                     await self.popUp("ICMP", "timeout occurred, no answer from target", "continue")
                     break
                 }
