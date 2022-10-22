@@ -84,7 +84,6 @@ class MasterIPViewController: UITableViewController {
          await self.master_view_controller?.detail_view_controller?.ts.removeAll()
          }
          */
-        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
