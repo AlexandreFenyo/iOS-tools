@@ -24,6 +24,13 @@ struct NetworkDefaults {
     public static let n_icmp_echo_reply = 3
 }
 
+enum PopUpMessages: String, CaseIterable {
+    case scan_TCP_ports = "scan TCP ports"
+    case TCP_flood_discard = "TCP flood discard: outgoing throuhgput"
+    case TCP_flood_chargen = "TCP flood chargen: incoming throuhgput"
+    case update_nodes = "update nodes"
+}
+
 public enum COLORS {
     // Utilisé pour retrouver un élément graphique rapidement
     static let test = UIColor.green // vert fluo

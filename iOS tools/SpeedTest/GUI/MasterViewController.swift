@@ -267,7 +267,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func update_pressed(_ sender: Any) {
-        popUpHelp("update nodes", "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. Press the stop button to cancel this task later. Look at the Traces pane to get progress informations.")
+        popUpHelp(PopUpMessages.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. Press the stop button to cancel this task later. Look at the Traces pane to get progress informations.")
         
         refreshControl!.beginRefreshing()
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
@@ -768,17 +768,27 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    public func popUpHelp(_ title: String, _ message: String) {
-        let key = "help." + title
+    public func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
+        let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
-            let alert = UIAlertController(title: "Help: " + title, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Don't show again", style: .default, handler: { _ in
+            let alert = UIAlertController(title: "Help: " + title.rawValue, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Don't show this message again", style: .default, handler: { _ in
                 defaults.set(true, forKey: key)
+                completion?()
+            }))
+            alert.addAction(UIAlertAction(title: "Dismiss further help messages", style: .default, handler: { _ in
+                for msg in (PopUpMessages.allCases.map { $0 }) {
+                    defaults.set(true, forKey: "help." + msg.rawValue)
+                }
+                completion?()
             }))
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction!) in
+                completion?()
             }))
             parent!.present(alert, animated: true, completion: nil)
+        } else {
+            completion?()
         }
     }
     
@@ -910,7 +920,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
         master_ip_view_controller = segue.destination as? MasterIPViewController
         let index_path = tableView.indexPathForSelectedRow!
         let type = SectionType(rawValue: index_path.section)

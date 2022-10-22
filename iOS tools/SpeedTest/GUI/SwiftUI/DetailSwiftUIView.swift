@@ -212,8 +212,9 @@ struct DetailSwiftUIView: View {
                         HStack(alignment: .top) {
                             Button {
                                 if model.address != nil {
-                                    master_view_controller.popUpHelp("scan TCP ports", "truc efzoij jzefoi jezfoi jefzio jfoeizfj efiozj oeizjf eiozfj ")
-                                    master_view_controller.scanTCP(model.address!)
+                                    master_view_controller.popUpHelp(PopUpMessages.scan_TCP_ports, "Parallel TCP connections will be established to \(model.address_str ?? "") on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.") {
+                                        master_view_controller.scanTCP(model.address!)
+                                    }
                                 }
                             } label: {
                                 VStack {
@@ -226,7 +227,9 @@ struct DetailSwiftUIView: View {
                             
                             Button {
                                 if model.address != nil {
-                                    master_view_controller.floodTCP(model.address!)
+                                    master_view_controller.popUpHelp(PopUpMessages.TCP_flood_discard, "A TCP connection to the Discard port (9/TCP) of \(model.address_str ?? "") will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.") {
+                                        master_view_controller.floodTCP(model.address!)
+                                    }
                                 }
                             } label: {
                                 VStack {
@@ -239,7 +242,9 @@ struct DetailSwiftUIView: View {
                             
                             Button {
                                 if model.address != nil {
-                                    master_view_controller.chargenTCP(model.address!)
+                                    master_view_controller.popUpHelp(PopUpMessages.TCP_flood_chargen, "A TCP connection to the Chargen port (19/TCP) of \(model.address_str ?? "") will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button.") {
+                                        master_view_controller.chargenTCP(model.address!)
+                                    }
                                 }
                             } label: {
                                 VStack {

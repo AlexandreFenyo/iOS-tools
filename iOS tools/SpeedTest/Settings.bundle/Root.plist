@@ -34,7 +34,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Display every help popups</string>
+			<string>Enable every help popups</string>
 			<key>Key</key>
 			<string>reset_help_popups_key</string>
 			<key>DefaultValue</key>
