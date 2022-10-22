@@ -222,7 +222,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
                             Button {
                                 if model.address != nil {
@@ -235,7 +235,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
                             Button {
                                 if model.address != nil {
@@ -248,7 +248,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
                             // supprimé pour le MVP
                             Button {
@@ -262,7 +262,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
                             Button {
                                 if model.address != nil {
@@ -275,7 +275,7 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             .accentColor(Color(COLORS.standard_background))
-                            .frame(maxWidth: 200).disabled(!model.buttons_enabled)
+                            .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
                             if model.stop_button_enabled {
                                 Button {
@@ -293,7 +293,7 @@ struct DetailSwiftUIView: View {
                                     animated_width = 0
                                 }
                                 .accentColor(Color(COLORS.standard_background))
-                                .frame(maxWidth: animated_width).disabled(model.buttons_enabled)
+                                .frame(maxWidth: animated_width).disabled(model.buttons_enabled || model.address_str == nil)
                                 .animation(.easeOut(duration: 0.5), value: animated_width)
                             }
                         }
