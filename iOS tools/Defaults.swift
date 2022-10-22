@@ -25,6 +25,7 @@ struct NetworkDefaults {
 }
 
 enum PopUpMessages: String, CaseIterable {
+    case node_info_public_host = "public host"
     case scan_TCP_ports = "scan TCP ports"
     case TCP_flood_discard = "TCP flood discard: outgoing throuhgput"
     case TCP_flood_chargen = "TCP flood chargen: incoming throuhgput"
