@@ -905,6 +905,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         node2.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
             popUpHelp(.node_info_public_host, "This type of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
+        } else if node.types.contains(.localhost) {
+            popUpHelp(.localhost, "This node corresponds to this Apple device. You can see its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
         }
         
         stopBrowsing(.OTHER_ACTION)
