@@ -29,6 +29,7 @@ enum PopUpMessages: String, CaseIterable {
     case scan_TCP_ports = "scan TCP ports"
     case TCP_flood_discard = "TCP flood discard: outgoing throuhgput"
     case TCP_flood_chargen = "TCP flood chargen: incoming throuhgput"
+    case ICMP_ping = "ICMP (ping)"
     case update_nodes = "update nodes"
 }
 
