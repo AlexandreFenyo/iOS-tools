@@ -148,7 +148,8 @@ class TCPPortBrowser {
                                     var tv = timeval(tv_sec: 0, tv_usec: delay)
                                     
                                     ret = select(s + 1, &read_fds, &write_fds, &except_fds, &tv)
-                                    if debug { var d1 = 1000000 * (NSDate().timeIntervalSince1970 - t1); d1.round(.down)
+                                    if debug {
+                                        var d1 = 1000000 * (NSDate().timeIntervalSince1970 - t1); d1.round(.down)
                                         print(addr.toNumericString()!, "duration select", d1)
                                     }
                                     if ret > 0 {
