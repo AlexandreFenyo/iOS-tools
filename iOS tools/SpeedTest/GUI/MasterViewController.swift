@@ -899,9 +899,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let node = getNode(indexPath: indexPath)
-        var node1 = Node()
+        let node1 = Node()
         node1.mcast_dns_names.insert(FQDN("dns", "google"))
-        var node2 = Node()
+        let node2 = Node()
         node2.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
             popUpHelp(.node_info_public_host, "This type of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
