@@ -17,8 +17,21 @@ class LeftNavController : UINavigationController {
     let r : CGFloat = 20
 //    var rv : RoundedCornerView? // SUPPRIME POUR LE MVP
 
+    @objc
+    func tapScrollView(_ sender: UITapGestureRecognizer) {
+        let topRow = IndexPath(row: 0, section: 0)
+        let masterViewController = topViewController as? MasterViewController
+        masterViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
+        let masterIPViewController = topViewController as? MasterIPViewController
+        masterIPViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Scroll to top when touching the top of screen
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapScrollView(_:)))
+        navigationBar.addGestureRecognizer(tapGestureRecognizer)
         
         ////////////////////////////////////////////////////////////
         // Manage the toolbar background
