@@ -244,10 +244,28 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
-        ctHelp.new(CTHelpItem(title:"No Image-Text Only",
-                                 helpText: "Eu tempor suscipit dis sed. Tortor velit orci bibendum mattis non metus ornare consequat. Condimentum habitasse dictumst eros nibh rhoncus non pulvinar fermentum. Maecenas convallis gravida facilisis. Interdum, conubia lacinia magnis duis nec quisque.Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                                 imageName:""))
-        ctHelp.appendDefaults(companyName: "Your Company Name", emailAddress: "yourContactEmail@somewhere.com", data: nil, webSite: "https://www.yourWebsite.com", companyImageName: "CompanyLogo")
+        ctHelp.new(CTHelpItem(title:"actions 1/2",
+                                 helpText: "",
+                                 imageName:"docs-actions"))
+        ctHelp.new(CTHelpItem(title:"actions 2/2",
+                                 helpText: "",
+                                 imageName:"docs-actions-2"))
+        ctHelp.new(CTHelpItem(title:"scan local network",
+                                 helpText: "",
+                                 imageName:"docs-browse-stop"))
+        ctHelp.new(CTHelpItem(title:"chart usage",
+                                 helpText: "",
+                                 imageName:"docs-chart"))
+        ctHelp.new(CTHelpItem(title:"Internet speed test",
+                                 helpText: "",
+                                 imageName:"docs-hosts"))
+        ctHelp.new(CTHelpItem(title:"open ports explorer",
+                                 helpText: "",
+                                 imageName:"docs-ports"))
+        ctHelp.new(CTHelpItem(title: "Licensing",
+                                         helpText: "This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody.",
+                                         imageName:""))
+        ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "appstore@fenyo.net", data: nil, webSite: "https://www.fenyo.net", companyImageName: "")
         ctHelp.presentHelp(from: self)
         /*
         if let link = URL(string: "https://x.org") {
