@@ -244,14 +244,24 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     @IBAction func add_pressed(_ sender: Any) {
         print("ADD pressed")
-        let addViewController = AddViewController()
-        addViewController.master_view_controller = self
-//        addViewController.view.frame = CGRectMake(0, 0, 200, 200)
-        addViewController.modalPresentationStyle = .popover
-        tabBarController!.addChild(addViewController)
-        tabBarController!.view.addSubview(addViewController.view)
-        addViewController.didMove(toParent: tabBarController!)
+        let add_view_controller = AddViewController()
+        add_view_controller.master_view_controller = self
 
+        // marche pas
+//        add_view_controller.modalPresentationStyle = .popover
+
+        // Application tried to present modally a view controller <iOS_tools.AddViewController: 0x141e63400> that has a parent view controller
+        
+        tabBarController!.addChild(add_view_controller)
+        print(add_view_controller.view)
+        tabBarController!.view.addSubview(add_view_controller.view)
+        add_view_controller.didMove(toParent: tabBarController!)
+
+//        add_view_controller.popoverPresentationController?.sourceView = self.view
+        
+//        tabBarController!.present(add_view_controller, animated: false)
+
+        
         /*
         let button = UIButton()
        button.frame = CGRect(x: 200, y: 200, width: 250, height: 250)

@@ -111,6 +111,9 @@ struct AddSwiftUIView: View {
     @ObservedObject var model = DetailViewModel.shared
     
     var body: some View {
-        Text("SALUT")
+        VStack {
+            Spacer()
+            Text("SALUT")
+        }.background(.red)
     }
 }

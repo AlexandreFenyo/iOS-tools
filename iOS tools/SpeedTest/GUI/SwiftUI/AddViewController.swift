@@ -17,12 +17,13 @@ class AddViewController: UIViewController {
     //    @IBOutlet weak var view1: SKView!
     //    @IBOutlet weak var view2: UIView!
     
-    private lazy var hostingViewController = makeHostingController()
+    private lazy var hosting_view_controller = makeHostingController()
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hostingController = UIHostingController(rootView: AddSwiftUIView(view: view))
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        return hostingController
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(view: view))
+        hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
+//        hosting_view_controller.modalPresentationStyle = .overCurrentContext
+        return hosting_view_controller
     }
     
     override func viewDidLoad() {
@@ -33,28 +34,37 @@ class AddViewController: UIViewController {
         
         //        hostingViewController.view.backgroundColor = COLORS.right_pannel_bg
         
-        addChild(hostingViewController)
-        view.addSubview(hostingViewController.view)
-        hostingViewController.didMove(toParent: self)
+        addChild(hosting_view_controller)
+        view.addSubview(hosting_view_controller.view)
+        hosting_view_controller.didMove(toParent: self)
+        
+//        tabBarController!.present(self, animated: false)
+        
+//        present(hostingViewController, animated: false)
+        
         
         let ref_frame = parent!.view.frame
-        let w : CGFloat = 600
-        let h : CGFloat = 400
-        view.frame = CGRectMake(ref_frame.width / 2 - w / 2, ref_frame.height / 2 - h / 2, w, h)
+      let w : CGFloat = 600
+    let h : CGFloat = 400
+  view.frame = CGRectMake(ref_frame.width/2 - w/2, ref_frame.height/2 - h/2, w, h)
+
+//        view.frame = CGRectMake(200, 200, 200, 200)
 
         
         //        view2.addSubview(hostingViewController.view)
         
-        //        hostingViewController.didMove(toParent: self)
+//       hosting_view_controller.didMove(toParent: self)
         
         // nécessaire pour que les vues SwiftUI s'élargissent quand la vue UIKit s'élargit
-         NSLayoutConstraint.activate([
-            hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-            hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
+
+        /*
+        NSLayoutConstraint.activate([
+            hosting_view_controller.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hosting_view_controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hosting_view_controller.view.widthAnchor.constraint(equalTo: view.widthAnchor),
+            hosting_view_controller.view.heightAnchor.constraint(equalTo: view.heightAnchor)
          ])
-        
+        */
         //        view1.presentScene(scene)
     }
     
