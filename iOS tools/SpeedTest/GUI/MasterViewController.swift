@@ -283,7 +283,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func debug_pressed(_ sender: Any) {
-        popUp("node list", "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target.", "OK")
+        popUp("node list", "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", "OK")
 //        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
 //        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
@@ -903,10 +903,15 @@ class MasterViewController: UITableViewController, DeviceManager {
         node1.mcast_dns_names.insert(FQDN("dns", "google"))
         let node2 = Node()
         node2.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
+        let node3 = Node()
+        node3.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
             popUpHelp(.node_info_public_host, "This type of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
         } else if node.types.contains(.localhost) {
             popUpHelp(.localhost, "This node corresponds to this Apple device. You can see its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
+        } else if node.isSimilar(with: node3) {
+            popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node is dedicated to this app and is deployed in a cloud on the Internet, to let you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will evaluate your incoming/download bandwidth.")
+
         }
         
         stopBrowsing(.OTHER_ACTION)
