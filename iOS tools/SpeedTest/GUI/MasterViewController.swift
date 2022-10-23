@@ -247,19 +247,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         let add_view_controller = AddViewController()
         add_view_controller.master_view_controller = self
 
-        // marche pas
-//        add_view_controller.modalPresentationStyle = .popover
 
-        // Application tried to present modally a view controller <iOS_tools.AddViewController: 0x141e63400> that has a parent view controller
-        
+//        add_view_controller.modalPresentationStyle = .overFullScreen
         tabBarController!.addChild(add_view_controller)
-        print(add_view_controller.view)
         tabBarController!.view.addSubview(add_view_controller.view)
         add_view_controller.didMove(toParent: tabBarController!)
-
-//        add_view_controller.popoverPresentationController?.sourceView = self.view
-        
-//        tabBarController!.present(add_view_controller, animated: false)
+//        present(addViewController, animated: false)
 
         
         /*
