@@ -196,7 +196,7 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
         socklen_t foo = 0;
         long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
         if (retval < 0 && errno != EAGAIN) {
-            printf("%d\n", errno);
+//            printf("%d\n", errno);
             perror("recvfrom()");
             return (setLastErrorNo() << 8) - 5;
         }
