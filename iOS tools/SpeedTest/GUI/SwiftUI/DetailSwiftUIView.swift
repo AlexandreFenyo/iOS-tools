@@ -200,8 +200,6 @@ struct DetailSwiftUIView: View {
             ScrollView {
                 Color.clear.frame(height: 0)
                     .id(topID).onChange(of: model.scroll_to_top) { _ in
-                        print("ScrollView onChange()")
-//                        model.resetScrollToTop()
                         withAnimation { scrollViewProxy.scrollTo(topID) }
                     }
                 VStack {

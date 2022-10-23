@@ -168,6 +168,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private var follow_view : UIView?
     
 //    private var delta: CGFloat? = 0
+
+    private var last_forced_vertical_check = Date()
     
     public func testDebug() {
     }
@@ -341,6 +343,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     // Display only segments or points that can be viewed
     private func drawCurve(elts: [TimeSeriesElement], units: ChartUnits) {
+        print("XXXX drawCurve()")
+        
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
         if hasActions() { return }
         
@@ -485,7 +489,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var (points, target_h, _, tse_displayed) = computePoints()
         
         // Vertical animation
-        if highest != target_h {
+        // le faire au moins 1 fois toutes les 3 secondes à cause d'un bug qui fait qu'il arrive qu'un PING prenne 10 secondes par ex. avant de s'afficher
+        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 3.0 {
+            last_forced_vertical_check = Date()
+
             var start_height = highest
             
             var runnable: ((SKNode, CGFloat) -> ())?
@@ -739,7 +746,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         }
         
         // Animate
-        if (mode == .followDate) {
+        if mode == .followDate {
             func getOperations(after: TimeInterval) -> () -> () {
                 return {
                     self.grid_node!.position.x += self.grid_size.width
@@ -785,6 +792,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // - vertical_unit
     // - factor
     public static func getOptimizedVerticalParameters(height: CGFloat, max_val: Float, nlines: Int, units: ChartUnits) -> (CGFloat, Float, String, Int) {
+        print("XXXX getOptimized...()\(Date().timeIntervalSince1970)")
+        
         var max_val = max_val
         max_val *= Float(ChartDefaults.optimal_vertical_resolution_ratio)
         if max_val < Float(nlines) { max_val = Float(nlines) }

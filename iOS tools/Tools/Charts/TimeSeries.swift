@@ -48,7 +48,28 @@ public actor TimeSeries {
         receivers.append(receiver)
     }
     
+//    var foo = 0
     public func add(_ tse: TimeSeriesElement) async {
+        /*
+        print("XXXX TimeSeries.add()")
+        var newtsedate: Date?
+        if foo == 0 {
+            foo += 1
+            newtsedate = Date(timeInterval: 1.5, since: tse.date)
+        } else {
+            newtsedate = tse.date
+        }
+        let newtse = TimeSeriesElement(date: newtsedate!, value: tse.value)
+        // Update backing store
+        if data[newtse.date] != nil { return }
+        data[newtse.date] = newtse
+        let next_date = keys.first { (date) in date > newtse.date }
+        keys.insert(newtse.date, at: next_date != nil ? keys.firstIndex(of: next_date!)! : keys.count)
+        // Signal about new value
+        for receiver in receivers { await receiver.cbNewData(ts: self, tse: newtse) }
+*/
+        
+        
         // Update backing store
         if data[tse.date] != nil { return }
         data[tse.date] = tse
