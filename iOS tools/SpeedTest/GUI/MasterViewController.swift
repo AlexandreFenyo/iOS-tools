@@ -262,6 +262,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         ctHelp.new(CTHelpItem(title:"open ports explorer",
                                  helpText: "",
                                  imageName:"docs-ports"))
+        ctHelp.new(CTHelpItem(title: "app settings",
+                                         helpText: "You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list.",
+                                         imageName:""))
         ctHelp.new(CTHelpItem(title: "Licensing",
                                          helpText: "This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody.",
                                          imageName:""))
