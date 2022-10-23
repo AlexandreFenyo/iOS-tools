@@ -209,7 +209,11 @@
                                 <action selector="update_pressed:" destination="9rn-U2-Uvj" id="muL-rx-85B"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH"/>
+                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH">
+                            <connections>
+                                <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc">

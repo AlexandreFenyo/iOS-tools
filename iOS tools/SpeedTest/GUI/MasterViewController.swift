@@ -46,7 +46,7 @@
 import UIKit
 import CTHelp
 
-let removeAddButtonForMVP = true
+let removeAddButtonForMVP = false
 var removedAddButtonForMVP = false
 
 enum NewRunAction {
@@ -241,6 +241,26 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
         
     }
+    
+    @IBAction func add_pressed(_ sender: Any) {
+        print("ADD pressed")
+        let addViewController = AddViewController()
+        addViewController.master_view_controller = self
+//        addViewController.view.frame = CGRectMake(0, 0, 200, 200)
+        addViewController.modalPresentationStyle = .popover
+        tabBarController!.addChild(addViewController)
+        tabBarController!.view.addSubview(addViewController.view)
+        addViewController.didMove(toParent: tabBarController!)
+
+        /*
+        let button = UIButton()
+       button.frame = CGRect(x: 200, y: 200, width: 250, height: 250)
+       button.backgroundColor = UIColor.red
+         button.setTitle("Name your Button ", for: .normal)
+        addViewController.view.addSubview(button)
+*/
+    }
+   
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
