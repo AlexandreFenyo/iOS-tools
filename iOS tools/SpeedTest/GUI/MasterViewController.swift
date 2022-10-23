@@ -244,18 +244,21 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     @IBAction func add_pressed(_ sender: Any) {
         print("ADD pressed")
+
+        /* OK pour présenter un contrôleur UIKit */
+        /*
         let add_view_controller = AddViewController()
         add_view_controller.master_view_controller = self
-
-
-//        add_view_controller.modalPresentationStyle = .overFullScreen
         tabBarController!.addChild(add_view_controller)
         tabBarController!.view.addSubview(add_view_controller.view)
         add_view_controller.didMove(toParent: tabBarController!)
-//        present(addViewController, animated: false)
+         */
+        
+        let add_view_controller = AddViewController()
+        present(add_view_controller, animated: true)
 
         
-        /*
+        /* OK pour présenter un bouton UIKit
         let button = UIButton()
        button.frame = CGRect(x: 200, y: 200, width: 250, height: 250)
        button.backgroundColor = UIColor.red
