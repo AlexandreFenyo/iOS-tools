@@ -13,9 +13,19 @@ class RightNavController : UINavigationController {
     let r : CGFloat = 20
 //    var rv : RoundedCornerView?
 
+    @objc
+    func tapScrollView(_ sender: UITapGestureRecognizer) {
+        let detail_view_controller = viewControllers[0] as? DetailViewController
+        detail_view_controller?.scrollToTop()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Scroll to top when touching the top of screen
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapScrollView(_:)))
+        navigationBar.addGestureRecognizer(tapGestureRecognizer)
+        
         // Couleur du Edit
         navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
 
