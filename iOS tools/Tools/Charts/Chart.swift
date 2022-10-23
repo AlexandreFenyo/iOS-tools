@@ -485,7 +485,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 max_label.position = CGPoint(x: 0, y: -triangle_relative_height * 2)
             }
         }
-        
+
         var (points, target_h, _, tse_displayed) = computePoints()
         
         // Vertical animation
