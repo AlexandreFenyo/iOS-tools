@@ -270,25 +270,25 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
-        ctHelp.new(CTHelpItem(title:"actions 1/2",
+        ctHelp.new(CTHelpItem(title:"Actions 1/2",
                                  helpText: "",
                                  imageName:"docs-actions"))
-        ctHelp.new(CTHelpItem(title:"actions 2/2",
+        ctHelp.new(CTHelpItem(title:"Actions 2/2",
                                  helpText: "",
                                  imageName:"docs-actions-2"))
-        ctHelp.new(CTHelpItem(title:"scan local network",
+        ctHelp.new(CTHelpItem(title:"Scan local network",
                                  helpText: "",
                                  imageName:"docs-browse-stop"))
-        ctHelp.new(CTHelpItem(title:"chart usage",
+        ctHelp.new(CTHelpItem(title:"Chart usage",
                                  helpText: "",
                                  imageName:"docs-chart"))
         ctHelp.new(CTHelpItem(title:"Internet speed test",
                                  helpText: "",
                                  imageName:"docs-hosts"))
-        ctHelp.new(CTHelpItem(title:"open ports explorer",
+        ctHelp.new(CTHelpItem(title:"Open ports explorer",
                                  helpText: "",
                                  imageName:"docs-ports"))
-        ctHelp.new(CTHelpItem(title: "app settings",
+        ctHelp.new(CTHelpItem(title: "App settings",
                                          helpText: "You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list.",
                                          imageName:""))
         ctHelp.new(CTHelpItem(title: "Licensing",
@@ -330,7 +330,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func debug_pressed(_ sender: Any) {
-        popUp("node list", "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", "OK")
+        popUp("Target List", "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", "OK")
 //        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
 //        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
@@ -503,6 +503,8 @@ class MasterViewController: UITableViewController, DeviceManager {
                 }
                 
                 self.splitViewController?.showDetailViewController(self.detail_navigation_controller!, sender: nil)
+
+                self.master_ip_view_controller?.info_button.isEnabled = true
             }
         }
     }
@@ -713,14 +715,13 @@ class MasterViewController: UITableViewController, DeviceManager {
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
-                        print("throughput < 0 (0)")
                         let errno = await self.local_discard_client?.getLastErrno()
                         if errno != 0 {
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
-                                let str = errno == ECONNABORTED ? "aborted" : "refused"
+                                let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
                                 var message = str
                                 if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                    message = "connection \(str) - public DNS services do not offer Discard service support"
+                                    message = "connection \(str) - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                                 }
                                 await self.popUp("TCP discard", message, "continue")
                             } else {
@@ -744,9 +745,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occurred - public DNS services do not offer Chargen service support"
+                        message = "timeout occurred - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                     }
-                    await self.popUp("TCP chargen", message, "continue")
+                    await self.popUp("TCP discard", message, "continue")
                     break
                 }
             }
@@ -781,14 +782,13 @@ class MasterViewController: UITableViewController, DeviceManager {
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
-                        print("throughput < 0 (1)")
                         let errno = await self.local_chargen_client?.getLastErrno()
                         if errno != 0 {
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
-                                let str = errno == ECONNABORTED ? "aborted" : "refused"
-                                var message = "connection refused"
+                                let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
+                                var message = str
                                 if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                    message = "connection \(str) - public DNS services do not offer Chargen service support"
+                                    message = "connection \(str) - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
                             } else {
@@ -806,7 +806,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occurred - public DNS services do not offer Chargen service support"
+                        message = "timeout occurred - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                     }
                     await self.popUp("TCP chargen", message, "continue")
                     break

@@ -35,6 +35,8 @@ class MasterIPViewController: UITableViewController {
     @IBOutlet weak var stop_button: UIBarButtonItem!
     private var stop_button_toggle = false
     
+    @IBOutlet weak var info_button: UIBarButtonItem!
+    
     public func applicationWillResignActive() {
     }
     
@@ -42,6 +44,8 @@ class MasterIPViewController: UITableViewController {
         super.viewDidAppear(animated)
         
         if self.auto_select != nil {
+            info_button.isEnabled = false
+
             var found = false
             var cnt = 0
             for n in self.node!.v4_addresses.sorted() {
@@ -67,8 +71,9 @@ class MasterIPViewController: UITableViewController {
                 self.master_view_controller!.addressSelected(address: addr)
             }
             self.auto_select = nil
-            
         } else {
+            info_button.isEnabled = true
+
             if self.node!.v4_addresses.count + self.node!.v6_addresses.count > 0 && self.tableView.indexPathForSelectedRow == nil {
                 let indexPath = IndexPath(row: 0, section: 0)
                 self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
@@ -133,7 +138,7 @@ class MasterIPViewController: UITableViewController {
     }
     
     @IBAction func help_pressed(_ sender: Any) {
-        master_view_controller?.popUp("IP list", "You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping).", "OK")
+        master_view_controller?.popUp("IP List", "You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping).", "OK")
     }
     
     @IBAction func stop_pressed(_ sender: Any) {

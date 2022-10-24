@@ -283,6 +283,7 @@
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="info_button" destination="IUH-ID-65D" id="K4X-D0-aaa"/>
                         <outlet property="stop_button" destination="GvR-Yn-FTs" id="8x7-oa-Y0x"/>
                     </connections>
                 </tableViewController>
