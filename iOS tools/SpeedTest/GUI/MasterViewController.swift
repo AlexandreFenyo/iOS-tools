@@ -725,7 +725,11 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 }
                                 await self.popUp("TCP discard", message, "continue")
                             } else {
-                                await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                                if errno == ENETUNREACH {
+                                    await self.popUp("TCP discard", "network unreachable - check your Internet connection", "continue")
+                                } else {
+                                    await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                                }
                             }
                             break
                         }
@@ -792,7 +796,11 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
                             } else {
-                                await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
+                                if errno == ENETUNREACH {
+                                    await self.popUp("TCP chargen", "network unreachable - check your Internet connection", "continue")
+                                } else {
+                                    await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
+                                }
                             }
                         }
                         break
