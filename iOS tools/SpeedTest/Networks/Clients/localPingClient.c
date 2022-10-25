@@ -146,32 +146,22 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
     struct icmp6_hdr icmp6_hdr;
     struct timeval tv;
     int ret;
+    unsigned short seq = 0x10;
+    int is_v4;
 
     if (saddr == NULL) return -1;
     else {
         // printf("family: %d\n", saddr->sa_family);
     }
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
+
+    is_v4 = (saddr->sa_family == AF_INET) ? 1 : 0;
     
-    sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname((saddr->sa_family == AF_INET) ? "icmp" : "icmp6")->p_proto);
+    sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname(is_v4 ? "icmp" : "icmp6")->p_proto);
     if (sock < 0) {
         perror("socket()");
         return (setLastErrorNo() << 8) - 3;
     }
-
-    memset(&icmp_hdr, 0, sizeof icmp_hdr);
-    memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
-    icmp_hdr.icmp_type = ICMP_ECHO;
-    icmp_hdr.icmp_code = 0;
-    icmp_hdr.icmp_seq = htons(12);
-
-    icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
-    icmp6_hdr.icmp6_code = 0;
-    icmp6_hdr.icmp6_seq = htons(12);
-
-    unsigned short ck = 0;
-    for (int i = 0; i < sizeof icmp_hdr / 2; i++) ck += ((unsigned short *) &icmp_hdr)[i];
-    icmp_hdr.icmp_cksum = 0b1111111111111111 ^ ck;
 
     // Timeout when receive an ICMP response
     tv.tv_sec = 3;
@@ -182,18 +172,46 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
         return (setLastErrorNo() << 8) - 4;
     }
 
+    int first_loop = 1;
     while (--count >= 0) {
         struct timeval tv, tv2;
         
+        if (!first_loop) usleep(1000000);
+        else first_loop = 0;
+
+        seq++;
+
+        if (is_v4) {
+            memset(&icmp_hdr, 0, sizeof icmp_hdr);
+            icmp_hdr.icmp_type = ICMP_ECHO;
+            icmp_hdr.icmp_code = 0;
+            icmp_hdr.icmp_hun.ih_idseq.icd_id = htons(0xafaf);
+            icmp_hdr.icmp_hun.ih_idseq.icd_seq = htons(seq);
+            
+            unsigned short ck = 0;
+            for (int i = 0; i < sizeof icmp_hdr / 2; i++) ck += ((unsigned short *) &icmp_hdr)[i];
+            icmp_hdr.icmp_cksum = 0b1111111111111111 ^ ck;
+        } else {
+            memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
+            icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
+            icmp6_hdr.icmp6_code = 0;
+            icmp6_hdr.icmp6_id = htons(0xafaf);
+            icmp6_hdr.icmp6_seq = htons(seq);
+        }
+
         gettimeofday(&tv, NULL);
-        ssize_t len = sendto(sock, (saddr->sa_family == AF_INET) ? (const void *) &icmp_hdr : &icmp6_hdr, (saddr->sa_family == AF_INET) ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, (saddr->sa_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
+        ssize_t len = sendto(sock, is_v4 ? (const void *) &icmp_hdr : &icmp6_hdr, is_v4 ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, is_v4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
         // printf("sendto ICMP retval:%ld\n", len);
         if  (len < 0) {
             perror("sendto()");
         }
+        printf("XXXX sendto() len=%ld\n", len);
         
         char buf[10000];
         socklen_t foo = 0;
+        
+        // il faut boucler car il y en a peut etre une file d'attente d'où les décalages d'ID
+        
         long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
         if (retval < 0 && errno != EAGAIN) {
 //            printf("%d\n", errno);
@@ -201,13 +219,65 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             return (setLastErrorNo() << 8) - 5;
         }
         if (retval >= 0 || errno != EAGAIN) {
+            for (int bar = 0; bar < retval; bar++) {
+//                printf("XXXX buf[%d]=0x%x\n", bar, (unsigned char) (buf[bar]));
+            }
+            struct icmp *icmp_p;
+            struct icmp6_hdr *icmp6_hdr_p;
+            if (is_v4) {
+                if (retval != 48 || buf[0] != 0x45) {
+                    printf("unattended ICMP size: %u\n", (int) retval);
+                    continue;
+                }
+                icmp_p = (struct icmp *) (20 + (void *) buf);
+                if (icmp_p->icmp_code != 0) {
+                    printf("unattended ICMP code received: %d\n", icmp_p->icmp_code);
+                    continue;
+                }
+                if (icmp_p->icmp_type != 0) {
+                    printf("unattended ICMP type received: %d\n", icmp_p->icmp_type);
+                    continue;
+                }
+                if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_id) != 0xafaf) {
+                    printf("unattended ICMP id received: %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_id));
+                    continue;
+                }
+                if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq) != seq) {
+                    printf("unattended ICMP seq received: %d instead of %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq), seq);
+                    continue;
+                }
+            } else {
+                if (retval != 8) {
+                    printf("unattended ICMPv6 size: %u\n", (int) retval);
+                    continue;
+                }
+                icmp6_hdr_p = (struct icmp6_hdr *) buf;
+                if (icmp6_hdr_p->icmp6_code != 0) {
+                    printf("unattended ICMPv6 code received: %d\n", icmp6_hdr_p->icmp6_code);
+                    continue;
+                }
+                if (icmp6_hdr_p->icmp6_type != 0x81) {
+                    printf("unattended ICMPv6 type received: %d\n", icmp6_hdr_p->icmp6_type);
+                    continue;
+                }
+                if (ntohs(icmp6_hdr_p->icmp6_id) != 0xafaf) {
+                    printf("unattended ICMPv6 id received: %d\n", ntohs(icmp6_hdr_p->icmp6_id));
+                    continue;
+                }
+                if (ntohs(icmp6_hdr_p->icmp6_seq) != seq) {
+                    printf("unattended ICMPv6 seq received: %d instead of %d\n", ntohs(icmp6_hdr_p->icmp6_seq), seq);
+                    continue;
+                }
+            }
+            
+//            printf("XXXX recvfrom() retval=%ld\n", retval);
+// man icmp6 sur macOS a plein d'infos
+            
             gettimeofday(&tv2, NULL);
             long duration = 1000000 * (tv2.tv_sec - tv.tv_sec) + tv2.tv_usec - tv.tv_usec;
             if (setRTT(duration) < 0) return -6;
         }
         // printf("recvfrom : retval = %ld\n", retval);
-        
-        usleep(1000000);
     }
 
     ret = close(sock);

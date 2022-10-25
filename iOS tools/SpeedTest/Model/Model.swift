@@ -454,6 +454,13 @@ class DBMaster {
 
     public func addDefaultNodes() {
         var node = Node()
+        node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
+        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
+        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
+        node.types = [ .chargen, .internet ]
+        _ = addNode(node)
+
+        node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
@@ -465,13 +472,6 @@ class DBMaster {
         for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        _ = addNode(node)
-
-        node = Node()
-        node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
-        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
-        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
-        node.types = [ .chargen, .internet ]
         _ = addNode(node)
     }
 
