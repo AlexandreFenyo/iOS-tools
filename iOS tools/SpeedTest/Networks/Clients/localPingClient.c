@@ -15,6 +15,7 @@ static int last_errno;
 static long rtt;
 
 #define RTT_TIMEOUT 3
+#define ICMP_ID 0xafaf
 
 // return values:
 // - >= 0: last_errno value
@@ -152,9 +153,6 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
     int ret;
     
     if (saddr == NULL) return -1;
-    else {
-        // printf("family: %d\n", saddr->sa_family);
-    }
     if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
     
     is_v4 = (saddr->sa_family == AF_INET) ? 1 : 0;
@@ -187,7 +185,7 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             memset(&icmp_hdr, 0, sizeof icmp_hdr);
             icmp_hdr.icmp_type = ICMP_ECHO;
             icmp_hdr.icmp_code = 0;
-            icmp_hdr.icmp_hun.ih_idseq.icd_id = htons(0xafaf);
+            icmp_hdr.icmp_hun.ih_idseq.icd_id = htons(ICMP_ID);
             icmp_hdr.icmp_hun.ih_idseq.icd_seq = htons(seq);
             
             unsigned short ck = 0;
@@ -197,13 +195,12 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             memset(&icmp6_hdr, 0, sizeof icmp6_hdr);
             icmp6_hdr.icmp6_type = ICMP6_ECHO_REQUEST;
             icmp6_hdr.icmp6_code = 0;
-            icmp6_hdr.icmp6_id = htons(0xafaf);
+            icmp6_hdr.icmp6_id = htons(ICMP_ID);
             icmp6_hdr.icmp6_seq = htons(seq);
         }
         
         gettimeofday(&tv_send, NULL);
         ssize_t len = sendto(sock, is_v4 ? (const void *) &icmp_hdr : &icmp6_hdr, is_v4 ? sizeof icmp_hdr : sizeof icmp6_hdr, 0, saddr, is_v4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6));
-        // printf("sendto ICMP retval:%ld\n", len);
         if  (len < 0) {
             perror("sendto()");
         }
@@ -222,7 +219,9 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
                 return (setLastErrorNo() << 8) - 5;
             }
             
-            //                for (int bar = 0; bar < retval; bar++) { printf("XXXX buf[%d]=0x%x\n", bar, (unsigned char) (buf[bar])); }
+            // Dump the content of the received buffer
+            // or (int bar = 0; bar < retval; bar++) { printf("XXXX buf[%d]=0x%x\n", bar, (unsigned char) (buf[bar])); }
+            
             if (is_v4) {
                 struct icmp *icmp_p;
                 if (retval != 48 || buf[0] != 0x45) {
@@ -238,7 +237,7 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
                     printf("unattended ICMP type received: %d\n", icmp_p->icmp_type);
                     redo_loop = 1;
                 }
-                if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_id) != 0xafaf) {
+                if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_id) != ICMP_ID) {
                     printf("unattended ICMP id received: %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_id));
                     redo_loop = 1;
                 }
@@ -261,7 +260,7 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
                     printf("unattended ICMPv6 type received: %d\n", icmp6_hdr_p->icmp6_type);
                     redo_loop = 1;
                 }
-                if (ntohs(icmp6_hdr_p->icmp6_id) != 0xafaf) {
+                if (ntohs(icmp6_hdr_p->icmp6_id) != ICMP_ID) {
                     printf("unattended ICMPv6 id received: %d\n", ntohs(icmp6_hdr_p->icmp6_id));
                     redo_loop = 1;
                 }
@@ -278,7 +277,6 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             }
             
         } while (redo_loop == 1 && 1000000 * (tv_now.tv_sec - tv_send.tv_sec) + tv_now.tv_usec - tv_send.tv_usec < 1000000 * RTT_TIMEOUT);
-        // printf("recvfrom : retval = %ld\n", retval);
     }
     
     ret = close(sock);
