@@ -44,9 +44,9 @@ public enum COLORS {
     // //////////
     // Thème
 
-    static let standard_background = UIC_RGB(24, 99, 111)
-    static let global_background: UIColor = UIC_RGB(208, 186, 69)
-    static let toolbar_background = global_background
+    static let standard_background = UIC_RGB(24, 99, 111) // vert foncé
+    static let global_background: UIColor = UIC_RGB(208, 186, 69) // jaune
+    static let toolbar_background = global_background // jaune
     
     // //////////
     // Couleurs des éléments graphiques
@@ -82,7 +82,7 @@ public enum COLORS {
 
     // Cellules du left pannel quand ce sont les IPs qui sont affichés
     // Couleur du texte
-    static let leftpannel_ip_text = UIC_RGB(255, 255, 255)
+    static let leftpannel_ip_text = UIC_RGB(255, 255, 255) // blanc
     // Couleur du texte quand sélectionné
     static let leftpannel_ip_text_selected = UIC_RGB(82, 83, 239)
     // Opacité du texte
@@ -133,7 +133,7 @@ public enum COLORS {
     static let chart_finger = UIC_RGB(255, 255, 0)
     // Partie sous le chart
     // Couleur du fond
-    static let right_pannel_bg = chart_bg
+    static let right_pannel_bg = chart_bg // jaune clair
     static let right_pannel_scroll_bg = chart_bg.lighter()
     
     private static func UIC_RGB(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> UIColor {

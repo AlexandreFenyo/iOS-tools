@@ -205,7 +205,7 @@ class Node : Hashable {
     }
 }
 
-class Section {
+class ModelSection {
     public var description: String
     public var detailed_description: String
     public var nodes = [Node]()
@@ -218,7 +218,7 @@ class Section {
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    public var sections : [SectionType: Section]
+    public var sections : [SectionType: ModelSection]
     public var nodes : Set<Node>
     public var networks : Set<IPNetwork>
     
@@ -485,12 +485,12 @@ class DBMaster {
 
         nodes = Set<Node>()
         sections = [
-            .localhost: Section("Localhost", "this host"),
-            .ios: Section("iOS devices", "other devices running this app"),
-            .chargen_discard: Section("Chargen Discard services", "other devices running these services"),
-            .gateway: Section("Local gateway", "local router"),
-            .internet: Section("Internet", "remote host on the Internet"),
-            .other: Section("Other hosts", "any host")
+            .localhost: ModelSection("Localhost", "this host"),
+            .ios: ModelSection("iOS devices", "other devices running this app"),
+            .chargen_discard: ModelSection("Chargen Discard services", "other devices running these services"),
+            .gateway: ModelSection("Local gateway", "local router"),
+            .internet: ModelSection("Internet", "remote host on the Internet"),
+            .other: ModelSection("Other hosts", "any host")
         ]
 
         addDefaultNodes()

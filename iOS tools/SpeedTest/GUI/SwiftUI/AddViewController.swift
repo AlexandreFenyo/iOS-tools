@@ -10,6 +10,8 @@ import UIKit
 import SpriteKit
 import SwiftUI
 
+// Si on veut changer la taille de ce view controller : https://stackoverflow.com/questions/54737884/changing-the-size-of-a-modal-view-controller
+
 @MainActor
 class AddViewController: UIViewController {
     public var master_view_controller: MasterViewController?
@@ -20,62 +22,27 @@ class AddViewController: UIViewController {
     private lazy var hosting_view_controller = makeHostingController()
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(view: view))
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller
     }
     
     override func viewDidLoad() {
-        /* OK pour présenter un contrôleur UIKit
-         super.viewDidLoad()
-         addChild(hosting_view_controller)
-         view.addSubview(hosting_view_controller.view)
-         hosting_view_controller.didMove(toParent: self)
-         let ref_frame = parent!.view.frame
-         let w : CGFloat = 600
-         let h : CGFloat = 400
-         view.frame = CGRectMake(ref_frame.width/2 - w/2, ref_frame.height/2 - h/2, w, h)
-          NSLayoutConstraint.activate([
-             hosting_view_controller.view.topAnchor.constraint(equalTo: view.topAnchor),
-             hosting_view_controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-             hosting_view_controller.view.widthAnchor.constraint(equalTo: view.widthAnchor),
-             hosting_view_controller.view.heightAnchor.constraint(equalTo: view.heightAnchor)
-          ])
-         */
         super.viewDidLoad()
-        
-        // utile sur iPhone, pour pouvoir revenir en arrière depuis la vue avec le chart
-        //        navigationItem.leftItemsSupplementBackButton = true
-        
-        //        hostingViewController.view.backgroundColor = COLORS.right_pannel_bg
-        
+
         addChild(hosting_view_controller)
         view.addSubview(hosting_view_controller.view)
         hosting_view_controller.didMove(toParent: self)
-        
-//        present(hostingViewController, animated: false)
-        
-        
-//        let ref_frame = parent!.view.frame
-        let w : CGFloat = 600
-//        view.frame = CGRectMake(ref_frame.width/2 - w/2, ref_frame.height/2 - h/2, w, h)
-        view.frame = CGRectMake(200, 200, 400, 400)
 
-        
-        //        view2.addSubview(hostingViewController.view)
-        
-        //        hostingViewController.didMove(toParent: self)
-        
         // nécessaire pour que les vues SwiftUI s'élargissent quand la vue UIKit s'élargit
-        
          NSLayoutConstraint.activate([
             hosting_view_controller.view.topAnchor.constraint(equalTo: view.topAnchor),
             hosting_view_controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             hosting_view_controller.view.widthAnchor.constraint(equalTo: view.widthAnchor),
             hosting_view_controller.view.heightAnchor.constraint(equalTo: view.heightAnchor)
          ])
-        
+
         //        view1.presentScene(scene)
     }
     

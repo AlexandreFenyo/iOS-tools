@@ -13,7 +13,13 @@
 import Foundation
 
 public func isIPv4(_ str: String) -> Bool {
-    return str.components(separatedBy: ".").count == 4 && !str.contains(":")
+    var sin = sockaddr_in()
+    return str.withCString({ cstring in inet_pton(AF_INET, cstring, &sin.sin_addr) }) == 1
+}
+
+public func isIPv6(_ str: String) -> Bool {
+    var sin = sockaddr_in6()
+    return str.withCString({ cstring in inet_pton(AF_INET6, cstring, &sin.sin6_addr) }) == 1
 }
 
 public func toIpAddress(_ str: String) -> IPAddress {

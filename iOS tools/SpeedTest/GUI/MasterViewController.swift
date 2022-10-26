@@ -243,28 +243,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     @IBAction func add_pressed(_ sender: Any) {
-        print("ADD pressed")
-
-        /* OK pour présenter un contrôleur UIKit */
-        /*
         let add_view_controller = AddViewController()
         add_view_controller.master_view_controller = self
-        tabBarController!.addChild(add_view_controller)
-        tabBarController!.view.addSubview(add_view_controller.view)
-        add_view_controller.didMove(toParent: tabBarController!)
-         */
-        
-        let add_view_controller = AddViewController()
         present(add_view_controller, animated: true)
-
-        
-        /* OK pour présenter un bouton UIKit
-        let button = UIButton()
-       button.frame = CGRect(x: 200, y: 200, width: 250, height: 250)
-       button.backgroundColor = UIColor.red
-         button.setTitle("Name your Button ", for: .normal)
-        addViewController.view.addSubview(button)
-*/
     }
    
 
@@ -441,7 +422,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         if removeAddButtonForMVP && !removedAddButtonForMVP {
             toolbarItems?.remove(at: 3)
             removedAddButtonForMVP = true
@@ -459,6 +440,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         // navigationController!.navigationBar.titleTextAttributes = [ .foregroundColor: UIColor.orange ]
         // Titres dans la tab bar
         tabBarController?.tabBar.tintColor = COLORS.tabbar_title
+
+        // A SUPPRIMER - pour faciliter DEBUG
+        // add_pressed("")
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -738,11 +722,6 @@ class MasterViewController: UITableViewController, DeviceManager {
                     print("break (0)")
                     break
                 }
-
-                // BUG
-                //                bug tcp flood discard : pas de message
-                //              connect(): Software caused connection abort
-                //            break (0)
 
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
                 nsec += 1
