@@ -152,7 +152,14 @@ public class DetailViewModel : ObservableObject {
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
-        text_names = node.dns_names.map { $0.toString() }
+
+        let _text_names = node.names.map { $0 } + node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }
+        for name in _text_names {
+            if !text_names.contains(name) {
+                text_names.insert(name, at: text_names.endIndex)
+            }
+        }
+
         text_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         
         var interfaces = [""]
