@@ -89,7 +89,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var update_button: UIBarButtonItem!
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
-
+    @IBOutlet weak var heatmap_button: UIBarButtonItem!
+    
     private var stop_button_toggle = false
     
     public var detail_view_controller: DetailViewController?
@@ -335,6 +336,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
+    @IBAction func launch_heatmap(_ sender: Any) {
+        let heatmap_view_controller = HeatMapViewController()
+        heatmap_view_controller.master_view_controller = self
+        present(heatmap_view_controller, animated: true)
+    }
+    
     // Refresh started with gesture
     @objc
     private func userRefresh(_ sender: Any) {

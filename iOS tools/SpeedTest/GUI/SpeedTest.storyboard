@@ -214,6 +214,11 @@
                                 <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Add" image="map" catalog="system" id="MOv-aN-EaL" userLabel="Heatmap button">
+                            <connections>
+                                <action selector="launch_heatmap:" destination="9rn-U2-Uvj" id="dAO-E8-TFb"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem title="Add" image="gearshape" catalog="system" id="7F6-g0-bjU" userLabel="Settings button">
                             <connections>
                                 <action selector="settings_button:" destination="9rn-U2-Uvj" id="dih-dP-pLv"/>
@@ -230,6 +235,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="add_button" destination="w26-jr-JrH" id="l6P-Nt-TeA"/>
+                        <outlet property="heatmap_button" destination="MOv-aN-EaL" id="SmC-uf-RUI"/>
                         <outlet property="stop_button" destination="9XB-83-j13" id="aQ2-NI-bch"/>
                         <outlet property="update_button" destination="Hoh-gZ-vw9" id="syK-5d-kg7"/>
                     </connections>
@@ -288,6 +294,11 @@
                         <barButtonItem title="Stop" image="map" catalog="system" id="AG8-ji-YkN" userLabel="HeatMap button">
                             <connections>
                                 <action selector="launch_heatmap:" destination="JJz-SI-hJs" id="Fz7-FN-4ku"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem title="Stop" image="gearshape" catalog="system" id="BfU-ZZ-5VE" userLabel="Settings button">
+                            <connections>
+                                <action selector="settings_button:" destination="JJz-SI-hJs" id="Uca-oy-qkD"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>

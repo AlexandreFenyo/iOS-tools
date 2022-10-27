@@ -12,6 +12,8 @@ import PhotosUI
 
 // app équivalente : WiFi All In One Network Survey (18,99€)
 
+// ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
+
 @MainActor
 struct HeatMapSwiftUIView: View {
     let heatmap_view_controller: HeatMapViewController
@@ -34,9 +36,12 @@ struct HeatMapSwiftUIView: View {
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                     .onChange(of: inputImage) { _ in loadImage() }
+
+                
                     .sheet(isPresented: $showingImagePicker) {
                         ImagePicker(image: $inputImage)
                     }
+
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
             
@@ -45,11 +50,11 @@ struct HeatMapSwiftUIView: View {
 
                     HStack(alignment: .top) {
                         Button {
-
+                            /* Si on voulait accéder aux photos sans passer par le picker
                             PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
                                 print("XXXX status: \(status)")
-//                                PHPhotoLibrary.shared().register(self)
-                            }
+                             // PHPhotoLibrary.shared().register(self)
+                            }*/
 
                             showingImagePicker = true
                         } label: {

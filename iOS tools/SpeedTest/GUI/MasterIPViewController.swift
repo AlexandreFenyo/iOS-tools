@@ -39,6 +39,12 @@ class MasterIPViewController: UITableViewController {
     
     @IBOutlet weak var heatmap_button: UIBarButtonItem!
 
+    @IBAction func settings_button(_ sender: Any) {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+    
     @IBAction func launch_heatmap(_ sender: Any) {
         let heatmap_view_controller = HeatMapViewController()
         heatmap_view_controller.master_view_controller = master_view_controller
