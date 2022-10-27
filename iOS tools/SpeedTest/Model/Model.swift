@@ -475,7 +475,6 @@ class DBMaster {
         _ = addNode(node)
 
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        
         for str in config {
             let str_fields = str.split(separator: ";", maxSplits: 2)
             let (target_name, target_ip, scope_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
@@ -490,7 +489,7 @@ class DBMaster {
             if Int(scope_str) != NodeType.localhost.rawValue {
                 node.types = [ scope ]
             }
-            addNode(node)
+            _ = addNode(node)
         }
     }
 

@@ -972,6 +972,17 @@ class MasterViewController: UITableViewController, DeviceManager {
         if editingStyle != .delete { fatalError("editingStyle invalid") }
         let node = getNode(indexPath: indexPath)
 
+        var new_persistent_node_list = [String]()
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for str in config {
+            let str_fields = str.split(separator: ";", maxSplits: 2)
+            let target_name = String(str_fields[0])
+            if !node.dns_names.map({ $0.toString() }).contains(target_name) {
+                new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+            }
+        }
+        UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
+            
         tableView.beginUpdates()
         let index_paths_removed = DBMaster.shared.removeNode(node)
         tableView.deleteRows(at: index_paths_removed, with: .automatic)
