@@ -214,6 +214,11 @@
                                 <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Add" image="trash" catalog="system" id="7F6-g0-bjU" userLabel="Settings button">
+                            <connections>
+                                <action selector="settings_button:" destination="9rn-U2-Uvj" id="dih-dP-pLv"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <navigationItem key="navigationItem" title="Target List" id="bwG-g9-tTY">
                         <barButtonItem key="leftBarButtonItem" title="Item" image="questionmark.circle" catalog="system" id="Mvn-mF-1uc">
@@ -404,6 +409,7 @@
         <image name="stop.circle" catalog="system" width="128" height="123"/>
         <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="text.justify" catalog="system" width="128" height="99"/>
+        <image name="trash" catalog="system" width="117" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

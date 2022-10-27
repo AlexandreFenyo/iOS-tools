@@ -12,6 +12,22 @@
 
 import Foundation
 
+public func resolveHostname(_ target_name: String, _ ipv4: Bool) -> String? {
+    let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
+    CFHostStartInfoResolution(host, .addresses, nil)
+    var success: DarwinBoolean = false
+    if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
+        for case let theAddress as NSData in addresses {
+            var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+            if getnameinfo(theAddress.bytes.assumingMemoryBound(to: sockaddr.self), socklen_t(theAddress.length),
+                           &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 && ((ipv4 && isIPv4(String(cString: hostname))) || (!ipv4 && isIPv6(String(cString: hostname)))) {
+                return String(cString: hostname)
+            }
+        }
+    }
+    return nil
+}
+
 public func isIPv4(_ str: String) -> Bool {
     var sin = sockaddr_in()
     return str.withCString({ cstring in inet_pton(AF_INET, cstring, &sin.sin_addr) }) == 1

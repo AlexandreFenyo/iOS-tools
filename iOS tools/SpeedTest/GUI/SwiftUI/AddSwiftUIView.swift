@@ -100,38 +100,14 @@ struct AddSwiftUIView: View {
 
                         Button("Resolve target IPv4 from target name") {
                             target_ip = ""
-
-                            let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
-                            CFHostStartInfoResolution(host, .addresses, nil)
-                            var success: DarwinBoolean = false
-                            if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
-                                for case let theAddress as NSData in addresses {
-                                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                                    if getnameinfo(theAddress.bytes.assumingMemoryBound(to: sockaddr.self), socklen_t(theAddress.length),
-                                                   &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 {
-                                        let numAddress = String(cString: hostname)
-                                        if isIPv4(numAddress) { target_ip = numAddress }
-                                    }
-                                }
-                            }
+                            let numAddress = resolveHostname(target_name, true)
+                            if isIPv4(numAddress ?? "") { target_ip = numAddress! }
                         }
 
                         Button("Resolve target IPv6 from target name") {
                             target_ip = ""
-
-                            let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
-                            CFHostStartInfoResolution(host, .addresses, nil)
-                            var success: DarwinBoolean = false
-                            if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
-                                for case let theAddress as NSData in addresses {
-                                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                                    if getnameinfo(theAddress.bytes.assumingMemoryBound(to: sockaddr.self), socklen_t(theAddress.length),
-                                                   &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 {
-                                        let numAddress = String(cString: hostname)
-                                        if isIPv6(numAddress) { target_ip = numAddress }
-                                    }
-                                }
-                            }
+                            let numAddress = resolveHostname(target_name, false)
+                            if isIPv6(numAddress ?? "") { target_ip = numAddress! }
                         }
                     }
 

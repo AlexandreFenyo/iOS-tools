@@ -123,10 +123,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         return section.nodes[index_path.item]
     }
 
-    // Update nodes and find new nodes
-    // Main thread
-    private func startBrowsing() {
-        // Supprimer tous les noeuds
+    public func resetToDefaultHosts() {
+        // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
             tableView.beginUpdates()
             let node = DBMaster.shared.nodes.first!
@@ -140,6 +138,13 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // Ajouter les noeuds par défaut
         DBMaster.shared.addDefaultNodes()
+    }
+
+    // Update nodes and find new nodes
+    // Main thread
+    private func startBrowsing() {
+        // Supprimer tous les noeuds
+        resetToDefaultHosts()
         
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
@@ -325,6 +330,12 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
 
+    @IBAction func settings_button(_ sender: Any) {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
     // Refresh started with gesture
     @objc
     private func userRefresh(_ sender: Any) {
@@ -410,8 +421,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         
         return cell
     }
-
-    private func updateLocalNodeAndGateways() {
+    
+    public func updateLocalNodeAndGateways() {
         // Update local node
         let node = DBMaster.shared.getLocalNode()
         addNode(node, resolve_ipv4_addresses: node.v4_addresses)
