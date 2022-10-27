@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SpriteKit
+import PhotosUI
 
 // app équivalente : WiFi All In One Network Survey (18,99€)
 
@@ -15,14 +16,16 @@ import SpriteKit
 struct HeatMapSwiftUIView: View {
     let heatmap_view_controller: HeatMapViewController
 
-    @State private var scope: NodeType = .internet
-    @State private var foo = 0
+    @State private var showingImagePicker = false
+    @State private var inputImage: UIImage?
+    @State private var image: Image?
 
-    @State private var isPermanent = true
 
-    @State private var target_name: String = ""
-    @State private var target_ip: String = ""
-    
+    func loadImage() {
+        guard let inputImage = inputImage else { return }
+        image = Image(uiImage: inputImage)
+    }
+
     var body: some View {
         VStack {
             HStack {
@@ -30,17 +33,67 @@ struct HeatMapSwiftUIView: View {
                 Text("Heat Map Builder")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
+                    .onChange(of: inputImage) { _ in loadImage() }
+                    .sheet(isPresented: $showingImagePicker) {
+                        ImagePicker(image: $inputImage)
+                    }
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
             
             VStack {
-                Spacer()
                 HStack() {
-                    Spacer()
-                    Text("slaut")
-                    Spacer()
+
+                    HStack(alignment: .top) {
+                        Button {
+
+                            PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
+                                print("XXXX status: \(status)")
+//                                PHPhotoLibrary.shared().register(self)
+                            }
+
+                            showingImagePicker = true
+                        } label: {
+                            VStack {
+                                Image(systemName: "map").resizable().frame(width: 40, height: 30)
+                                Text("Select your map").font(.footnote).frame(maxWidth: 200)
+                            }
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+                        
+                        Button {
+                        } label: {
+                            VStack {
+                                Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
+                                Text("TCP flood discard").font(.footnote)
+                            }
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+                        
+                        Button {
+                        } label: {
+                            VStack {
+                                Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
+                                Text("TCP flood chargen").font(.footnote)
+                            }
+                        }
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+                        
+                    }.padding()
+                    
+                }
+
+                if let image {
+                    image
+                       .resizable()
+                       .aspectRatio(contentMode: .fit)
+                    
                 }
                 Spacer()
+                Text("saltu")
+                
             }
                 .background(Color(COLORS.right_pannel_scroll_bg))
                 .cornerRadius(15).padding(10)

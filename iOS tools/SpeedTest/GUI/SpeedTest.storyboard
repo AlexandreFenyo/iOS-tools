@@ -214,7 +214,7 @@
                                 <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="trash" catalog="system" id="7F6-g0-bjU" userLabel="Settings button">
+                        <barButtonItem title="Add" image="gearshape" catalog="system" id="7F6-g0-bjU" userLabel="Settings button">
                             <connections>
                                 <action selector="settings_button:" destination="9rn-U2-Uvj" id="dih-dP-pLv"/>
                             </connections>
@@ -407,6 +407,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="gearshape" catalog="system" width="128" height="123"/>
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="map" catalog="system" width="128" height="112"/>
         <image name="note.text" catalog="system" width="128" height="107"/>
@@ -416,7 +417,6 @@
         <image name="stop.circle" catalog="system" width="128" height="123"/>
         <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="text.justify" catalog="system" width="128" height="99"/>
-        <image name="trash" catalog="system" width="117" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
