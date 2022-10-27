@@ -9,111 +9,14 @@
 import SwiftUI
 import SpriteKit
 
-public class AddViewModel : ObservableObject {
-    static let shared = DetailViewModel()
-    
-    @Published private(set) var family: Int32? = nil
-    @Published private(set) var address: IPAddress? = nil
-    @Published private(set) var v4address: IPv4Address? = nil
-    @Published private(set) var v6address: IPv6Address? = nil
-    @Published private(set) var address_str: String? = nil
-    @Published private(set) var buttons_enabled = false
-    @Published private(set) var stop_button_enabled = false
-    @Published private(set) var text_addresses: [String] = [String]()
-    @Published private(set) var text_names: [String] = [String]()
-    @Published private(set) var text_ports: [String] = [String]()
-    
-    @Published private(set) var stop_button_master_view_hidden = true
-    @Published private(set) var stop_button_master_ip_view_hidden = true
-    
-    @Published private(set) var scroll_to_top = false
-    
-    public func setButtonMasterHiddenState(_ state: Bool) {
-        stop_button_master_view_hidden = state
-    }
-    
-    public func setButtonMasterIPHiddenState(_ state: Bool) {
-        stop_button_master_ip_view_hidden = state
-    }
-    
-    public func setButtonsEnabled(_ state: Bool) {
-        buttons_enabled = address == nil ? false : state
-    }
-    
-    public func setStopButtonEnabled(_ state: Bool) {
-        DispatchQueue.main.async {
-            Task {
-                switch state {
-                case true:
-                    if self.stop_button_master_view_hidden && self.stop_button_master_ip_view_hidden {
-                        self.stop_button_enabled = true
-                    } else {
-                        self.stop_button_enabled = false
-                    }
-                    
-                case false:
-                    self.stop_button_enabled = false
-                    
-                }
-            }
-        }
-    }
-    
-    public func toggleScrollToTop() {
-        scroll_to_top.toggle()
-    }
-    
-    internal func clearDetails() {
-        text_addresses.removeAll()
-        text_names.removeAll()
-        text_ports.removeAll()
-        family = nil
-        address = nil
-        v4address = nil
-        v6address = nil
-        address_str = nil
-    }
-    
-    internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
-        text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
-        text_names = node.dns_names.map { $0.toString() }
-        text_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
-        
-        var interfaces = [""]
-        for addr in node.v6_addresses {
-            if let substrings = addr.toNumericString()?.split(separator: "%") {
-                if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
-                    interfaces.append(String(substrings[1]))
-                }
-            }
-        }
-        
-        self.address = address
-        family = address.getFamily()
-        address_str = address.toNumericString()
-        if family == AF_INET {
-            v4address = address as? IPv4Address
-            v6address = nil
-        } else {
-            v6address = address as? IPv6Address
-            v4address = nil
-        }
-        
-        setButtonsEnabled(buttons_enabled)
-    }
-}
-
 @MainActor
 struct AddSwiftUIView: View {
-    //    public let view: UIView
-    //    public let master_view_controller: MasterViewController
-    //    @ObservedObject var model = DetailViewModel.shared
     let add_view_controller: AddViewController
 
-    @State private var scope: NodeType = .localhost
-    
+    @State private var scope: NodeType = .internet
+    @State private var foo = 0
+
     @State private var isPermanent = true
-//    @State private var need_resolve = true
 
     @State private var target_name: String = ""
     @State private var target_ip: String = ""
@@ -164,13 +67,13 @@ struct AddSwiftUIView: View {
                 Form {
                     Section(header: Text("New node properties")) {
                         Picker("Section", selection: $scope) {
-                            Text("IOS devices").tag(NodeType.ios)
-                            Text("Chargen Discard services").tag(NodeType.chargen)
+                            Text("IOS device").tag(NodeType.ios).disabled(false)
+                            Text("Chargen Discard").tag(NodeType.chargen)
                             Text("Local gateway").tag(NodeType.gateway)
                             Text("Internet").tag(NodeType.internet)
-                            Text("Other hosts").tag(NodeType.localhost)
-                        }
-                        
+                            Text("Other host").tag(NodeType.localhost)
+                        }.pickerStyle(.segmented)
+
                         Toggle(isOn: $isPermanent) {
                             Text("Add permanently")
                         }
@@ -198,7 +101,7 @@ struct AddSwiftUIView: View {
                         Button("Resolve target IPv4 from target name") {
                             target_ip = ""
 
-                            let host = CFHostCreateWithName(nil,"www.google.com" as CFString).takeRetainedValue()
+                            let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
                             CFHostStartInfoResolution(host, .addresses, nil)
                             var success: DarwinBoolean = false
                             if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
@@ -216,7 +119,7 @@ struct AddSwiftUIView: View {
                         Button("Resolve target IPv6 from target name") {
                             target_ip = ""
 
-                            let host = CFHostCreateWithName(nil,"www.google.com" as CFString).takeRetainedValue()
+                            let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
                             CFHostStartInfoResolution(host, .addresses, nil)
                             var success: DarwinBoolean = false
                             if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
@@ -277,7 +180,7 @@ struct AddSwiftUIView: View {
                     }
                 }
             }.cornerRadius(15).padding(10)
-            
+          
         }.background(Color(COLORS.right_pannel_bg))
     }
 }
