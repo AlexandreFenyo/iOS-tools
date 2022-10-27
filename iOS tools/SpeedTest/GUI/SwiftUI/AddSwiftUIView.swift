@@ -110,14 +110,6 @@ struct AddSwiftUIView: View {
     //    @ObservedObject var model = DetailViewModel.shared
     let add_view_controller: AddViewController
 
-    /*
-    enum NodeSection {
-        case ios_devices
-        case chargen_discard_devices
-        case local_gateway
-        case internet
-        case other
-    }*/
     @State private var scope: NodeType = .localhost
     
     @State private var isPermanent = true
@@ -192,12 +184,6 @@ struct AddSwiftUIView: View {
                             }
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
-
-                        /*
-                        Toggle(isOn: $need_resolve) {
-                            Text("Resolve host name")
-                        }
-                         */
                         
                         TextField("Target IP", text: $target_ip)
                             .onChange(of: target_ip) { new_value in
@@ -208,8 +194,44 @@ struct AddSwiftUIView: View {
                             }
                             .textInputAutocapitalization(.never)
                             .disableAutocorrection(true)
+
+                        Button("Resolve target IPv4 from target name") {
+                            target_ip = ""
+
+                            let host = CFHostCreateWithName(nil,"www.google.com" as CFString).takeRetainedValue()
+                            CFHostStartInfoResolution(host, .addresses, nil)
+                            var success: DarwinBoolean = false
+                            if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
+                                for case let theAddress as NSData in addresses {
+                                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                                    if getnameinfo(theAddress.bytes.assumingMemoryBound(to: sockaddr.self), socklen_t(theAddress.length),
+                                                   &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 {
+                                        let numAddress = String(cString: hostname)
+                                        if isIPv4(numAddress) { target_ip = numAddress }
+                                    }
+                                }
+                            }
+                        }
+
+                        Button("Resolve target IPv6 from target name") {
+                            target_ip = ""
+
+                            let host = CFHostCreateWithName(nil,"www.google.com" as CFString).takeRetainedValue()
+                            CFHostStartInfoResolution(host, .addresses, nil)
+                            var success: DarwinBoolean = false
+                            if let addresses = CFHostGetAddressing(host, &success)?.takeUnretainedValue() as NSArray? {
+                                for case let theAddress as NSData in addresses {
+                                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                                    if getnameinfo(theAddress.bytes.assumingMemoryBound(to: sockaddr.self), socklen_t(theAddress.length),
+                                                   &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST) == 0 {
+                                        let numAddress = String(cString: hostname)
+                                        if isIPv6(numAddress) { target_ip = numAddress }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    
+
                     Button("Add this new node") {
                         DispatchQueue.main.async {
                             let node = Node()
@@ -248,7 +270,7 @@ struct AddSwiftUIView: View {
                                 node.types = [ scope ]
                             }
                             add_view_controller.master_view_controller!.addNode(node)
-                        }
+                         ...
                          */
 
                         add_view_controller.dismiss(animated: true)
