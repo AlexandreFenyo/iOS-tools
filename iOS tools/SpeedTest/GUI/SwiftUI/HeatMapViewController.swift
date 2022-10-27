@@ -13,16 +13,13 @@ import SwiftUI
 // Si on veut changer la taille de ce view controller : https://stackoverflow.com/questions/54737884/changing-the-size-of-a-modal-view-controller
 
 @MainActor
-class AddViewController: UIViewController {
+class HeatMapViewController: UIViewController {
     public var master_view_controller: MasterViewController?
-    
-    //    @IBOutlet weak var view1: SKView!
-    //    @IBOutlet weak var view2: UIView!
     
     private lazy var hosting_view_controller = makeHostingController()
     
-    private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self))
+    private func makeHostingController() -> UIHostingController<HeatMapSwiftUIView> {
+        let hosting_view_controller = UIHostingController(rootView: HeatMapSwiftUIView(heatmap_view_controller: self))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

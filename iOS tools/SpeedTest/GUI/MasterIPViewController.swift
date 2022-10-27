@@ -37,6 +37,14 @@ class MasterIPViewController: UITableViewController {
     
     @IBOutlet weak var info_button: UIBarButtonItem!
     
+    @IBOutlet weak var heatmap_button: UIBarButtonItem!
+
+    @IBAction func launch_heatmap(_ sender: Any) {
+        let heatmap_view_controller = HeatMapViewController()
+        heatmap_view_controller.master_view_controller = master_view_controller
+        present(heatmap_view_controller, animated: true)
+    }
+    
     public func applicationWillResignActive() {
     }
     

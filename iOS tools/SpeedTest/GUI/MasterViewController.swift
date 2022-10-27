@@ -252,7 +252,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         add_view_controller.master_view_controller = self
         present(add_view_controller, animated: true)
     }
-   
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
@@ -720,7 +719,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 }
                                 await self.popUp("TCP discard", message, "continue")
                             } else {
-                                if errno == ENETUNREACH || errno == EHOSTUNREACH {
+                                if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
                                     await self.popUp("TCP discard", "network unreachable - check your Internet connection", "continue")
                                 } else {
                                     await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
@@ -786,7 +785,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
                             } else {
-                                if errno == ENETUNREACH || errno == EHOSTUNREACH {
+                                if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
                                     await self.popUp("TCP chargen", "network unreachable - check your Internet connection", "continue")
                                 } else {
                                     await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")

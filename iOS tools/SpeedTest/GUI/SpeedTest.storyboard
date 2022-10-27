@@ -285,9 +285,15 @@
                                 <action selector="stop_pressed:" destination="JJz-SI-hJs" id="wnV-yc-b8e"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Stop" image="map" catalog="system" id="AG8-ji-YkN" userLabel="HeatMap button">
+                            <connections>
+                                <action selector="launch_heatmap:" destination="JJz-SI-hJs" id="Fz7-FN-4ku"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="heatmap_button" destination="AG8-ji-YkN" id="UTw-bi-NVc"/>
                         <outlet property="info_button" destination="IUH-ID-65D" id="K4X-D0-aaa"/>
                         <outlet property="stop_button" destination="GvR-Yn-FTs" id="8x7-oa-Y0x"/>
                     </connections>
@@ -402,6 +408,7 @@
     </scenes>
     <resources>
         <image name="info.circle" catalog="system" width="128" height="123"/>
+        <image name="map" catalog="system" width="128" height="112"/>
         <image name="note.text" catalog="system" width="128" height="107"/>
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
         <image name="rectangle.badge.plus" catalog="system" width="128" height="96"/>
