@@ -473,6 +473,25 @@ class DBMaster {
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
         _ = addNode(node)
+
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        
+        for str in config {
+            let str_fields = str.split(separator: ";", maxSplits: 2)
+            let (target_name, target_ip, scope_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
+            let scope: NodeType = NodeType(rawValue: Int(scope_str)!)!
+            let node = Node()
+            node.dns_names.insert(DomainName(target_name)!)
+            if isIPv4(target_ip) {
+                node.v4_addresses.insert(IPv4Address(target_ip)!)
+            } else if isIPv6(target_ip) {
+                node.v6_addresses.insert(IPv6Address(target_ip)!)
+            }
+            if Int(scope_str) != NodeType.localhost.rawValue {
+                node.types = [ scope ]
+            }
+            addNode(node)
+        }
     }
 
     public func isPublicDefaultService(_ ip: String) -> Bool {

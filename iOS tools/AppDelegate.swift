@@ -126,7 +126,7 @@ import ModelIO
         }
 
         if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
-            UserDefaults.standard.set(false, forKey: "remove_nodes_key")
+            UserDefaults.standard.set([], forKey: "nodes")
         }
     }
 
