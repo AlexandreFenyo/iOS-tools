@@ -57,7 +57,7 @@ struct AddSwiftUIView: View {
         VStack {
             HStack {
                 Spacer()
-                Text("Add New Node")
+                Text("Add new target or new IP to existing target")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                 Spacer()
@@ -116,9 +116,13 @@ struct AddSwiftUIView: View {
                             let node = Node()
                             node.dns_names.insert(DomainName(target_name)!)
                             if isIPv4(target_ip) {
-                                node.v4_addresses.insert(IPv4Address(target_ip)!)
+                                if !node.v4_addresses.contains(IPv4Address(target_ip)!) {
+                                    node.v4_addresses.insert(IPv4Address(target_ip)!)
+                                }
                             } else if isIPv6(target_ip) {
-                                node.v6_addresses.insert(IPv6Address(target_ip)!)
+                                if !node.v6_addresses.contains(IPv6Address(target_ip)!) {
+                                    node.v6_addresses.insert(IPv6Address(target_ip)!)
+                                }
                             }
                             if scope != .localhost {
                                 node.types = [ scope ]
