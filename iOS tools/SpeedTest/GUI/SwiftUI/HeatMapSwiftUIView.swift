@@ -116,9 +116,12 @@ struct HeatMapSwiftUIView: View {
                         }
                         .onReceive(timer_get_average) { _ in
                             Task {
-                                self.average_last_update = Date()
-                                self.average_prev = self.average_next
-                                self.average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                average_last_update = Date()
+                                average_prev = average_next
+                                average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                if average_prev == 0.0 {
+                                    average_prev = average_next
+                                }
                             }
                         }
                         .padding()

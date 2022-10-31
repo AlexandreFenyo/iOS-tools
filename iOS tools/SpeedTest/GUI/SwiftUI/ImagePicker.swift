@@ -37,6 +37,7 @@ struct ImagePicker: UIViewControllerRepresentable {
             if provider.canLoadObject(ofClass: UIImage.self) {
                 provider.loadObject(ofClass: UIImage.self) { image, _ in
                     Task {
+                        print("XXXX picker ici")
                         self.parent.image = image as? UIImage
                     }
                 }
