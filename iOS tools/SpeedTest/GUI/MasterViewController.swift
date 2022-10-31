@@ -802,7 +802,6 @@ class MasterViewController: UITableViewController, DeviceManager {
                         break
                     }
                 } else {
-                    print("break (1)")
                     break
                 }
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)

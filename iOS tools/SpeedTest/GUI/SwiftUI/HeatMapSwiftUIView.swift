@@ -26,7 +26,16 @@ struct HeatMapSwiftUIView: View {
     
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
-    
+
+    @State private var speed: Float = 0
+
+    @State private var average_last_update = Date()
+    @State private var average_prev: Float = 0
+    @State private var average_next: Float = 0
+
+    let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+
     var body: some View {
         VStack {
             HStack {
@@ -82,10 +91,39 @@ struct HeatMapSwiftUIView: View {
                 if model.input_map_image != nil {
                     Image(uiImage: model.input_map_image!)
                         .resizable().aspectRatio(contentMode: .fit).grayscale(1.0)
+                        .gesture(
+                            DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                .onChanged { value in
+                                  print("\(value.location)")
+                                }
+                                .onEnded { _ in
+//                                  self.position = .zero
+                                }
+                        )
                 }
                 Spacer()
-                Text("saltu")
-                
+                HStack {
+                    Text("average throughput: \(UInt64(speed)) bit/s")
+                        .font(.system(size: 16).monospacedDigit())
+                        .onReceive(timer) { _ in
+                            let interval = Float(Date().timeIntervalSince(self.average_last_update))
+                            let UPDATE_DELAY: Float = 1.0
+                            if interval < UPDATE_DELAY {
+                                speed = average_prev * (UPDATE_DELAY - interval) / UPDATE_DELAY + average_next * interval / UPDATE_DELAY
+                            } else {
+                                speed = average_next
+                            }
+                        }
+                        .onReceive(timer_get_average) { _ in
+                            Task {
+                                self.average_last_update = Date()
+                                self.average_prev = self.average_next
+                                self.average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                            }
+                        }
+                        .padding()
+                    Spacer()
+                }
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15).padding(10)

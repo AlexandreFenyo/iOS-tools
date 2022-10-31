@@ -26,15 +26,22 @@ public protocol TimeSeriesReceiver {
     func cbNewData(ts: TimeSeries, tse: TimeSeriesElement?) async
 }
 
+let AVERAGE_EXPONENT: Float = 0.3
+
 public actor TimeSeries {
     private var receivers: [TimeSeriesReceiver] = []
     private var data: [Date: TimeSeriesElement] = [:]
     // Ordered data keys (dates)
     private var keys: [Date] = []
+    private var average: Float = 0.0
     
     private var units: ChartUnits = .RTT
     
     public init() { }
+    
+    public func getAverage() -> Float {
+        return average
+    }
     
     public func setUnits(units: ChartUnits) {
         self.units = units
@@ -48,8 +55,9 @@ public actor TimeSeries {
         receivers.append(receiver)
     }
     
-//    var foo = 0
     public func add(_ tse: TimeSeriesElement) async {
+        average = average * AVERAGE_EXPONENT + tse.value * (1.0 - AVERAGE_EXPONENT)
+        
         /*
         print("XXXX TimeSeries.add()")
         var newtsedate: Date?
@@ -84,6 +92,7 @@ public actor TimeSeries {
         // Update backing store
         data.removeAll()
         keys.removeAll()
+        average = 0.0
         // Signal about news values
         for receiver in receivers { await receiver.cbNewData(ts: self, tse: nil) }
     }
