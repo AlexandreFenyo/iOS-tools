@@ -7,8 +7,6 @@
 // https://fr.wikipedia.org/wiki/Pondération_inverse_à_la_distance
 
 import SwiftUI
-import Accelerate.vImage
-import CoreGraphics
 
 private let NTHREADS = 10
 public typealias IDWValueType = UInt16
@@ -19,7 +17,6 @@ public enum ProbeType {
 }
 
 public struct IDWValue: Hashable {
-    
     public var type: ProbeType = .probe
     public let x: UInt16
     public let y: UInt16
@@ -47,6 +44,7 @@ public struct IDWImage {
     
     // power / 2 correspond à l'exposant dans le calcul de la distance, donc power == 1 implique sqrt, plus on augmente et plus on valorise les points les plus proches
     public let power: Float = 1.0
+    
     // yellow_size indique l'importance du jaune dans les couleurs utilisées
     public static let yellow_size: Float = 1.5
     
@@ -352,10 +350,6 @@ struct ContentView: View {
                     if cpt2 < 50 {
                         cpt2 += 1
                        print("cpt2=\(cpt2)")
-
-                        if cg_image_prev != nil && cg_image_next != nil {
-                        }
-
                     }
                 }
 
