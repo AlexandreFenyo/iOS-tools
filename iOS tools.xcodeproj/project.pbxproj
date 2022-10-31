@@ -22,6 +22,7 @@
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
+		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
@@ -92,6 +93,7 @@
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		5D78EF6D290FC56400842B76 /* IDWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDWView.swift; sourceTree = "<group>"; };
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 				5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */,
 				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
 				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
+				5D78EF6D290FC56400842B76 /* IDWView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
 				5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */,
+				5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
 				5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */,

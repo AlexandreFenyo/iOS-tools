@@ -14,6 +14,8 @@ import PhotosUI
 
 // ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
 
+// https://www.hackingwithswift.com/books/ios-swiftui/integrating-core-image-with-swiftui
+
 @MainActor
 struct HeatMapSwiftUIView: View {
     let heatmap_view_controller: HeatMapViewController
@@ -21,7 +23,6 @@ struct HeatMapSwiftUIView: View {
     @State private var showingImagePicker = false
     @State private var inputImage: UIImage?
     @State private var image: Image?
-
 
     func loadImage() {
         guard let inputImage = inputImage else { return }
