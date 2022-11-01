@@ -17,7 +17,9 @@ import PhotosUI
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
+
     @Published var input_map_image: UIImage?
+    @Published var idw_values = Set<IDWValue>()
 }
 
 @MainActor
@@ -33,6 +35,9 @@ struct HeatMapSwiftUIView: View {
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
 
+    @State private var idw_prev: IDWImage?
+    @State private var idw_next: IDWImage?
+
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
 
@@ -44,14 +49,13 @@ struct HeatMapSwiftUIView: View {
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                     .sheet(isPresented: $showing_map_picker) {
-                        ImagePicker(image: $model.input_map_image)
+                        ImagePicker(image: $model.input_map_image, idw_values: $model.idw_values)
                     }
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
             
             VStack {
                 HStack() {
-                    
                     HStack(alignment: .top) {
                         Button {
                             showing_map_picker = true
@@ -83,9 +87,7 @@ struct HeatMapSwiftUIView: View {
                         }
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-                        
                     }.padding()
-                    
                 }
                 
                 if model.input_map_image != nil {

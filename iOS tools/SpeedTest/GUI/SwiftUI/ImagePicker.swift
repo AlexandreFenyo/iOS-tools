@@ -6,7 +6,8 @@ import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
-    
+    @Binding var idw_values: Set<IDWValue>
+
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
         config.filter = .images
@@ -39,6 +40,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
                             self.parent.image = image
+                            self.parent.idw_values = Set<IDWValue>()
                         }
                     }
                 }
@@ -47,6 +49,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
                             self.parent.image = image as? UIImage
+                            self.parent.idw_values = Set<IDWValue>()
                         }
                     }
                 }
