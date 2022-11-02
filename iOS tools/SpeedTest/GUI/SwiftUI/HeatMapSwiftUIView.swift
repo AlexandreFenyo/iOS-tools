@@ -17,9 +17,11 @@ import PhotosUI
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
+    static let step2String = [ "step 1/5: select your floor plan", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
 
     @Published var input_map_image: UIImage?
     @Published var idw_values = Set<IDWValue>()
+    @Published var step = 0
 }
 
 @MainActor
@@ -39,6 +41,7 @@ struct HeatMapSwiftUIView: View {
     @State private var cg_image_next: CGImage?
 
     @State private var idw_values = Set<IDWValue>()
+    @State private var display_steps = false
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
@@ -59,6 +62,17 @@ struct HeatMapSwiftUIView: View {
         
     }
      */
+    
+    private func updateSteps() {
+        if model.input_map_image == nil { model.step = 0 }
+        else {
+            if average_next == 0 {
+                model.step = 1
+            } else {
+                model.step = 2
+            }
+        }
+    }
 
     var body: some View {
         VStack {
@@ -113,6 +127,7 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
+                            updateSteps()
                         } label: {
                             VStack {
                                 Image(systemName: "trash").resizable().frame(width: 30, height: 30)
@@ -133,8 +148,33 @@ struct HeatMapSwiftUIView: View {
                         .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-                    }.padding()
+                    }.padding(.top)
                 }
+                
+                
+                
+                
+                
+                
+                HStack {
+                    Spacer()
+                    Text(MapViewModel.step2String[model.step])
+                        .font(Font.system(size: 14).bold())
+                        .foregroundColor(.white)
+                        .padding(5.0)
+                    Spacer()
+                }
+                .background(.gray)
+                .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
+                .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
+                .onChange(of: cg_image_next, perform: { _ in
+                    updateSteps()
+                })
+                
+                
+                
+                
+                
                 
                 if model.input_map_image != nil {
                     ZStack {
@@ -174,6 +214,7 @@ struct HeatMapSwiftUIView: View {
                             }
                         }
                         .onReceive(timer_get_average) { _ in
+                            display_steps.toggle()
                             Task {
                                 average_last_update = Date()
                                 average_prev = average_next
