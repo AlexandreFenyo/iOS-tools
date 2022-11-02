@@ -131,6 +131,8 @@ import ModelIO
             masterViewController?.resetToDefaultHosts()
             masterViewController?.updateLocalNodeAndGateways()
         }
+
+        masterViewController?.detail_view_controller?.applicationDidBecomeActive()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {

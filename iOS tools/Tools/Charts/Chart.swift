@@ -174,6 +174,14 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     public func testDebug() {
     }
     
+    public func applicationDidBecomeActive() async {
+        current_date = Date()
+        if mode == .followDate {
+            await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: highest)
+            await drawCurveAsync(ts: ts)
+        }
+    }
+    
     // Update properties derivated from state
     private func updateStateVariables() {
         // Graph displayed size
