@@ -35,11 +35,30 @@ struct HeatMapSwiftUIView: View {
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
 
-    @State private var idw_prev: IDWImage?
-    @State private var idw_next: IDWImage?
+    @State private var cg_image_prev: CGImage?
+    @State private var cg_image_next: CGImage?
 
+    @State private var idw_values = Set<IDWValue>()
+    
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-    let timer = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+    let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+
+    let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+//    @State var cpt = 0
+//    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+ //   @State var cpt2 = 0
+
+    /*
+    private func screenToMap(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
+        let width = UInt16(model.input_map_image!.cgImage!.width)
+        let height = UInt16(model.input_map_image!.cgImage!.height)
+//        let xx =
+    }
+
+    private func MapToScreen(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
+        
+    }
+     */
 
     var body: some View {
         VStack {
@@ -61,20 +80,22 @@ struct HeatMapSwiftUIView: View {
                             showing_map_picker = true
                         } label: {
                             VStack {
-                                Image(systemName: "map").resizable().frame(width: 40, height: 30)
+                                Image(systemName: "map").resizable().frame(width: 30, height: 30)
                                 Text("Select your floor plan").font(.footnote).frame(maxWidth: 200)
                             }
                         }
+                        .disabled(model.input_map_image != nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
                         
                         Button {
                         } label: {
                             VStack {
-                                Image(systemName: "square.and.arrow.up.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood discard").font(.footnote)
+                                Image(systemName: "antenna.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
+                                Text("Add an access point or repeater").font(.footnote)
                             }
                         }
+                        .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
                         
@@ -82,32 +103,68 @@ struct HeatMapSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.down.on.square").resizable().frame(width: 30, height: 30)
-                                Text("TCP flood chargen").font(.footnote)
+                                Text("Add a measure").font(.footnote)
                             }
                         }
+                        .disabled(model.input_map_image == nil)
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+
+                        Button {
+                            model.input_map_image = nil
+                            model.idw_values = Set<IDWValue>()
+                        } label: {
+                            VStack {
+                                Image(systemName: "trash").resizable().frame(width: 30, height: 30)
+                                Text("Reset all").font(.footnote)
+                            }
+                        }
+                        .disabled(model.input_map_image == nil)
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+
+                        Button {
+                        } label: {
+                            VStack {
+                                Image(systemName: "square.and.arrow.up").resizable().frame(width: 30, height: 30)
+                                Text("Share your map").font(.footnote)
+                            }
+                        }
+                        .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
                     }.padding()
                 }
                 
                 if model.input_map_image != nil {
-                    Image(uiImage: model.input_map_image!)
-                        .resizable().aspectRatio(contentMode: .fit).grayscale(1.0)
-                        .gesture(
-                            DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                .onChanged { value in
-                                  print("\(value.location)")
-                                }
-                                .onEnded { _ in
-//                                  self.position = .zero
-                                }
-                        )
+                    ZStack {
+                        //                        Image(decorative: cg_image_prev, scale: 1.0).opacity(1 - Double(cpt2) / 50.0)
+                        if cg_image_next != nil {
+                            Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
+                                .resizable().aspectRatio(contentMode: .fit)
+                        }
+
+                        Image(uiImage: model.input_map_image!)
+                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
+                            .gesture(
+                                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                    .onChanged { position in
+                                        print("\(position.location)")
+                                        idw_values.removeAll()
+                                        idw_values.insert(IDWValue(x: UInt16(position.location.x), y: UInt16(position.location.y), v: 200, type: .ap))
+                                        idw_values.insert(IDWValue(x: UInt16(position.location.x), y: UInt16(position.location.y), v: IDWValueType.max, type: .probe))
+                                    }
+                                    .onEnded { _ in
+                                        //                                  self.position = .zero
+                                    }
+                            )
+                    }
                 }
                 Spacer()
                 HStack {
                     Text("average throughput: \(UInt64(speed)) bit/s")
                         .font(.system(size: 16).monospacedDigit())
-                        .onReceive(timer) { _ in
+                        .onReceive(timer_set_speed) { _ in
                             let interval = Float(Date().timeIntervalSince(self.average_last_update))
                             let UPDATE_DELAY: Float = 1.0
                             if interval < UPDATE_DELAY {
@@ -123,6 +180,24 @@ struct HeatMapSwiftUIView: View {
                                 average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
                                 if average_prev == 0.0 {
                                     average_prev = average_next
+                                }
+                            }
+                        }
+                        .onReceive(timer_create_map) { _ in
+                            if model.input_map_image != nil {
+                                print("create map")
+                                let width = UInt16(model.input_map_image!.cgImage!.width)
+                                let height = UInt16(model.input_map_image!.cgImage!.height)
+                                var idw_image = IDWImage(width: width, height: height)
+                                for val in model.idw_values {
+//                                    _ = idw_image.addValue(val)
+                                }
+                                for value in idw_values {
+                                    _ = idw_image.addValue(value)
+                                }
+
+                                Task {
+                                    cg_image_next = await idw_image.computeCGImageAsync()
                                 }
                             }
                         }

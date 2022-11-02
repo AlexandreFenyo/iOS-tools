@@ -729,7 +729,15 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
                                     await self.popUp("TCP discard", "network unreachable - check your Internet connection", "continue")
                                 } else {
-                                    await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                                    if errno == ECONNRESET {
+                                        await self.popUp("TCP discard", "Connection reset by peer", "continue")
+                                    } else {
+                                        if errno == nil || errno == EBADF {
+                                            await self.popUp("TCP discard", "Connection closed", "continue")
+                                        } else {
+                                            await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                                        }
+                                    }
                                 }
                             }
                             break
@@ -795,7 +803,15 @@ class MasterViewController: UITableViewController, DeviceManager {
                                 if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
                                     await self.popUp("TCP chargen", "network unreachable - check your Internet connection", "continue")
                                 } else {
-                                    await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
+                                    if errno == ECONNRESET {
+                                        await self.popUp("TCP chargen", "Connection reset by peer", "continue")
+                                    } else {
+                                        if errno == nil || errno == EBADF {
+                                            await self.popUp("TCP chargen", "Connection closed", "continue")
+                                        } else {
+                                            await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
+                                        }
+                                    }
                                 }
                             }
                         }

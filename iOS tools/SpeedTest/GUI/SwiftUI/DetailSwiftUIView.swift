@@ -315,7 +315,12 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             
-                            TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { _ in }
+                            TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
+                                if tag.contains("(") || tag.contains(")") || tag.contains(" ") || tag.contains(".local") || tag == "localhost" {
+                                    return
+                                }
+                                UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)
+                            }
                             if !model.text_ports.isEmpty {
                                 HStack {
                                     VStack { Divider() }
@@ -324,7 +329,6 @@ struct DetailSwiftUIView: View {
                             }
                             
                             TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
-                                
                                 let _first = tag.firstIndex(of: "(")
                                 let _last = tag.firstIndex(of: ")")
                                 var port_str = ""
