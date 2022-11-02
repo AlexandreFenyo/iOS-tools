@@ -52,7 +52,7 @@ import ModelIO
 //        detailViewController.device = devices.first
 
         // suppression du 3ième view controller (console) pour le MVP
-        tabBarController.viewControllers?.remove(at: 2)
+//        tabBarController.viewControllers?.remove(at: 2)
         
         self.masterViewController = masterViewController
 

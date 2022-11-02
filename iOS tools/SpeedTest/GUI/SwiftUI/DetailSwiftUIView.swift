@@ -257,7 +257,6 @@ struct DetailSwiftUIView: View {
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
                             
-                            // supprimé pour le MVP
                             Button {
                                 if model.address != nil {
                                     master_view_controller.floodUDP(model.address!)
@@ -317,6 +316,8 @@ struct DetailSwiftUIView: View {
                             
                             TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
                                 if tag.contains("(") || tag.contains(")") || tag.contains(" ") || tag.contains(".local") || tag == "localhost" {
+                                    master_view_controller.popUpHelp(.no_dns, "This node has not any public DNS record. Select a node with public DNS records to get those records.") {
+                                    }
                                     return
                                 }
                                 UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)

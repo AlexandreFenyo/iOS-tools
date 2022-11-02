@@ -32,7 +32,9 @@ enum PopUpMessages: String, CaseIterable {
     case TCP_flood_chargen = "TCP flood chargen: incoming throuhgput"
     case ICMP_ping = "ICMP (ping)"
     case update_nodes = "update nodes"
+    case remove_nodes = "remove nodes"
     case internet_speed = "Internet speed"
+    case no_dns = "no public DNS record"
 }
 
 public enum COLORS {

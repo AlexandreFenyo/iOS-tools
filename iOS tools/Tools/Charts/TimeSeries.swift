@@ -55,6 +55,10 @@ public actor TimeSeries {
         receivers.append(receiver)
     }
     
+    public func clearAverage() {
+        average = 0
+    }
+    
     public func add(_ tse: TimeSeriesElement) async {
         average = average * AVERAGE_EXPONENT + tse.value * (1.0 - AVERAGE_EXPONENT)
         

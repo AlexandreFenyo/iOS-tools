@@ -12,7 +12,8 @@
 
 import Foundation
 
-public func resolveHostname(_ target_name: String, _ ipv4: Bool) -> String? {
+// reproduire long timeout : blocage step 1 si wifi avec DNS manuel vers 1.2.3.4 et hostname pas dans le cache
+public func resolveHostname(_ target_name: String, _ ipv4: Bool) async -> String? {
     let host = CFHostCreateWithName(nil, target_name as CFString).takeRetainedValue()
     CFHostStartInfoResolution(host, .addresses, nil)
     var success: DarwinBoolean = false

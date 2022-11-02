@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="exY-Dk-vj4">
     <device id="ipad12_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21207"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -214,6 +214,11 @@
                                 <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem title="Add" image="rectangle.badge.minus" catalog="system" id="gZ9-Eb-5vN" userLabel="Remove button">
+                            <connections>
+                                <action selector="remove_pressed:" destination="9rn-U2-Uvj" id="Avf-qI-6sX"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem title="Add" image="map" catalog="system" id="MOv-aN-EaL" userLabel="Heatmap button">
                             <connections>
                                 <action selector="launch_heatmap:" destination="9rn-U2-Uvj" id="dAO-E8-TFb"/>
@@ -236,6 +241,7 @@
                     <connections>
                         <outlet property="add_button" destination="w26-jr-JrH" id="l6P-Nt-TeA"/>
                         <outlet property="heatmap_button" destination="MOv-aN-EaL" id="SmC-uf-RUI"/>
+                        <outlet property="remove_button" destination="gZ9-Eb-5vN" id="WwO-It-s0P"/>
                         <outlet property="stop_button" destination="9XB-83-j13" id="aQ2-NI-bch"/>
                         <outlet property="update_button" destination="Hoh-gZ-vw9" id="syK-5d-kg7"/>
                     </connections>
@@ -423,6 +429,7 @@
         <image name="map" catalog="system" width="128" height="112"/>
         <image name="note.text" catalog="system" width="128" height="107"/>
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
+        <image name="rectangle.badge.minus" catalog="system" width="128" height="96"/>
         <image name="rectangle.badge.plus" catalog="system" width="128" height="96"/>
         <image name="repeat" catalog="system" width="128" height="98"/>
         <image name="stop.circle" catalog="system" width="128" height="123"/>

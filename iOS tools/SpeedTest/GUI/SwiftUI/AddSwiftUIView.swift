@@ -100,14 +100,18 @@ struct AddSwiftUIView: View {
 
                         Button("Resolve target IPv4 from target name") {
                             target_ip = ""
-                            let numAddress = resolveHostname(target_name, true)
-                            if isIPv4(numAddress ?? "") { target_ip = numAddress! }
+                            Task {
+                                let numAddress = await resolveHostname(target_name, true)
+                                if isIPv4(numAddress ?? "") { target_ip = numAddress! }
+                            }
                         }
 
                         Button("Resolve target IPv6 from target name") {
                             target_ip = ""
-                            let numAddress = resolveHostname(target_name, false)
-                            if isIPv6(numAddress ?? "") { target_ip = numAddress! }
+                            Task {
+                                let numAddress = await resolveHostname(target_name, false)
+                                if isIPv6(numAddress ?? "") { target_ip = numAddress! }
+                            }
                         }
                     }
 

@@ -46,9 +46,6 @@
 import UIKit
 import CTHelp
 
-let removeAddButtonForMVP = false
-var removedAddButtonForMVP = false
-
 enum NewRunAction {
     case SCAN_TCP
     case FLOOD_UDP
@@ -90,7 +87,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     @IBOutlet weak var stop_button: UIBarButtonItem!
     @IBOutlet weak var add_button: UIBarButtonItem!
     @IBOutlet weak var heatmap_button: UIBarButtonItem!
-    
+    @IBOutlet weak var remove_button: UIBarButtonItem!
+
     private var stop_button_toggle = false
     
     public var detail_view_controller: DetailViewController?
@@ -152,9 +150,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.stop_button!.isEnabled = true
             self.detail_view_controller?.enableButtons(false)
             self.master_ip_view_controller?.stop_button.isEnabled = true
-            if !removeAddButtonForMVP {
-                self.add_button!.isEnabled = false
-            }
+            self.add_button!.isEnabled = false
+            self.remove_button!.isEnabled = false
             self.update_button!.isEnabled = false
 
             self.browser_chargen?.search()
@@ -181,13 +178,14 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Stop looking for new nodes
     // Main thread ?
     public func stopBrowsing(_ action: NewRunAction) {
+        Task { await detail_view_controller?.ts.clearAverage() }
+
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
-        if !removeAddButtonForMVP {
-            add_button!.isEnabled = true
-        }
+        add_button!.isEnabled = true
+        remove_button!.isEnabled = true
         update_button!.isEnabled = true
 
         browser_discard?.stop()
@@ -245,7 +243,14 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        navigationController?.navigationBar.barTintColor = .blue
 //        print(navigationController?.navigationBar.barTintColor)
 //        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
-        
+    }
+    
+    @IBAction func remove_pressed(_ sender: Any) {
+        popUpHelp(.remove_nodes, "This button will remove every nodes automatically discovered during this session. It will not affect the local host, the local gateway, the static default nodes nor the nodes you added manually. To remove nodes you added manually, swipe left on the node.") {
+            self.resetToDefaultHosts()
+            DBMaster.shared.addDefaultNodes()
+            self.updateLocalNodeAndGateways()
+        }
     }
     
     @IBAction func add_pressed(_ sender: Any) {
@@ -308,9 +313,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
-        if !removeAddButtonForMVP {
-            add_button!.isEnabled = false
-        }
+        add_button!.isEnabled = false
+        remove_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
     }
@@ -348,9 +352,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         stop_button!.isEnabled = false
         detail_view_controller?.enableButtons(true)
         master_ip_view_controller?.stop_button.isEnabled = false
-        if !removeAddButtonForMVP {
-            add_button!.isEnabled = false
-        }
+        add_button!.isEnabled = false
+        remove_button!.isEnabled = false
         update_button!.isEnabled = false
         startBrowsing()
     }
@@ -439,12 +442,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        if removeAddButtonForMVP && !removedAddButtonForMVP {
-            toolbarItems?.remove(at: 3)
-            removedAddButtonForMVP = true
-        }
-
         tableView.reloadData()
         
         updateLocalNodeAndGateways()
@@ -475,17 +472,15 @@ class MasterViewController: UITableViewController, DeviceManager {
             stop_button!.isEnabled = false
             detail_view_controller?.enableButtons(true)
             master_ip_view_controller?.stop_button.isEnabled = false
-            if !removeAddButtonForMVP {
-                add_button!.isEnabled = false
-            }
+            add_button!.isEnabled = false
+            remove_button!.isEnabled = false
             update_button!.isEnabled = false
         } else {
             stop_button!.isEnabled = false
             detail_view_controller?.enableButtons(true)
             master_ip_view_controller?.stop_button.isEnabled = false
-            if !removeAddButtonForMVP {
-                add_button!.isEnabled = true
-            }
+            add_button!.isEnabled = true
+            remove_button!.isEnabled = true
             update_button!.isEnabled = true
         }
     }
@@ -597,9 +592,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
-        if !removeAddButtonForMVP {
-            self.add_button!.isEnabled = false
-        }
+        self.add_button!.isEnabled = false
+        self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         let tb = TCPPortBrowser(device_manager: self)
@@ -621,9 +615,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
-        if !removeAddButtonForMVP {
-            self.add_button!.isEnabled = false
-        }
+        self.add_button!.isEnabled = false
+        self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         local_ping_client = LocalPingClient(address: address, count: 10000)
@@ -659,9 +652,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
-        if !removeAddButtonForMVP {
-            self.add_button!.isEnabled = false
-        }
+        self.add_button!.isEnabled = false
+        self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         local_flood_client = LocalFloodClient(address: address)
@@ -695,9 +687,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
-        if !removeAddButtonForMVP {
-            self.add_button!.isEnabled = false
-        }
+        self.add_button!.isEnabled = false
+        self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         local_discard_client = LocalDiscardClient(address: address)
@@ -769,9 +760,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
-        if !removeAddButtonForMVP {
-            self.add_button!.isEnabled = false
-        }
+        self.add_button!.isEnabled = false
+        self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
         local_chargen_client = LocalChargenClient(address: address)
