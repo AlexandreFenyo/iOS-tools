@@ -17,8 +17,9 @@ import PhotosUI
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
-    static let step2String = [ "step 1/5: select your floor plan", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
-
+    //    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", ".eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
+    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
+    
     @Published var input_map_image: UIImage?
     @Published var idw_values = Set<IDWValue>()
     @Published var step = 0
@@ -30,38 +31,38 @@ struct HeatMapSwiftUIView: View {
     
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
-
+    
     @State private var speed: Float = 0
-
+    
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
-
+    
     @State private var cg_image_prev: CGImage?
     @State private var cg_image_next: CGImage?
-
+    
     @State private var idw_values = Set<IDWValue>()
     @State private var display_steps = false
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
-
+    
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-//    @State var cpt = 0
-//    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
- //   @State var cpt2 = 0
+    //    @State var cpt = 0
+    //    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+    //   @State var cpt2 = 0
+    
+    /*
+     private func screenToMap(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
+         let width = Float(model.input_map_image!.cgImage!.width)
+         let height = Float(model.input_map_image!.cgImage!.height)
+         
+     }*/
 
     /*
-    private func screenToMap(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
-        let width = UInt16(model.input_map_image!.cgImage!.width)
-        let height = UInt16(model.input_map_image!.cgImage!.height)
-//        let xx =
-    }
-
-    private func MapToScreen(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
-        
-    }
-     */
+     private func MapToScreen(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
+     
+     }*/
     
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }
@@ -73,7 +74,7 @@ struct HeatMapSwiftUIView: View {
             }
         }
     }
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -123,7 +124,7 @@ struct HeatMapSwiftUIView: View {
                         .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-
+                        
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
@@ -137,7 +138,7 @@ struct HeatMapSwiftUIView: View {
                         .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-
+                        
                         Button {
                         } label: {
                             VStack {
@@ -175,31 +176,39 @@ struct HeatMapSwiftUIView: View {
                 
                 
                 
-                
                 if model.input_map_image != nil {
-                    ZStack {
-                        //                        Image(decorative: cg_image_prev, scale: 1.0).opacity(1 - Double(cpt2) / 50.0)
-                        if cg_image_next != nil {
-                            Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
-                                .resizable().aspectRatio(contentMode: .fit)
-                        }
+                    
+                    GeometryReader { geom in
+                        ZStack {
+                            if cg_image_next != nil {
+                                Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
+                                    .resizable().aspectRatio(contentMode: .fit)
+                                    .position(x: geom.frame(in: .local).midX, y: geom.frame(in: .local).midY)
+                            }
+                            
+                            Image(uiImage: model.input_map_image!)
+                                .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
+                                .gesture(
+                                    DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                        .onChanged { position in
+                                            idw_values.removeAll()
+                                            let loc_screen = position.location
+                                            let xx = UInt16(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
+                                            let yy = UInt16((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
 
-                        Image(uiImage: model.input_map_image!)
-                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
-                            .gesture(
-                                DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                    .onChanged { position in
-                                        print("\(position.location)")
-                                        idw_values.removeAll()
-                                        idw_values.insert(IDWValue(x: UInt16(position.location.x), y: UInt16(position.location.y), v: 200, type: .ap))
-                                        idw_values.insert(IDWValue(x: UInt16(position.location.x), y: UInt16(position.location.y), v: IDWValueType.max, type: .probe))
-                                    }
-                                    .onEnded { _ in
-                                        //                                  self.position = .zero
-                                    }
-                            )
+                                            print("XXXX loc_screen.x=\(loc_screen.x) width=\(geom.size.width) imagewidth=\(model.input_map_image!.cgImage!.width)")
+                                            
+                                            idw_values.insert(IDWValue(x: xx, y: yy, v: 200, type: .ap))
+                                            idw_values.insert(IDWValue(x: xx, y: yy, v: IDWValueType.max, type: .probe))
+                                        }
+                                        .onEnded { _ in
+                                            //                                  self.position = .zero
+                                        }
+                                )
+                        }
                     }
                 }
+                
                 Spacer()
                 HStack {
                     Text("average throughput: \(UInt64(speed)) bit/s")
@@ -231,12 +240,12 @@ struct HeatMapSwiftUIView: View {
                                 let height = UInt16(model.input_map_image!.cgImage!.height)
                                 var idw_image = IDWImage(width: width, height: height)
                                 for val in model.idw_values {
-//                                    _ = idw_image.addValue(val)
+                                    //                                    _ = idw_image.addValue(val)
                                 }
                                 for value in idw_values {
                                     _ = idw_image.addValue(value)
                                 }
-
+                                
                                 Task {
                                     cg_image_next = await idw_image.computeCGImageAsync()
                                 }
