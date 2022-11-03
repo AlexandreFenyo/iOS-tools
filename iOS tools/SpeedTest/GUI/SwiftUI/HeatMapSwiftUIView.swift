@@ -54,11 +54,11 @@ struct HeatMapSwiftUIView: View {
     
     /*
      private func screenToMap(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
-         let width = Float(model.input_map_image!.cgImage!.width)
-         let height = Float(model.input_map_image!.cgImage!.height)
-         
+     let width = Float(model.input_map_image!.cgImage!.width)
+     let height = Float(model.input_map_image!.cgImage!.height)
+     
      }*/
-
+    
     /*
      private func MapToScreen(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
      
@@ -151,12 +151,7 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                     }.padding(.top)
                 }
-                
-                
-                
-                
-                
-                
+
                 HStack {
                     Spacer()
                     Text(MapViewModel.step2String[model.step])
@@ -172,22 +167,18 @@ struct HeatMapSwiftUIView: View {
                     updateSteps()
                 })
                 
-                
-                
-                
-                
                 if model.input_map_image != nil {
-                    
-                    GeometryReader { geom in
-                        ZStack {
-                            if cg_image_next != nil {
-                                Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
-                                    .resizable().aspectRatio(contentMode: .fit)
-                                    .position(x: geom.frame(in: .local).midX, y: geom.frame(in: .local).midY)
-                            }
-                            
-                            Image(uiImage: model.input_map_image!)
-                                .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
+                    ZStack {
+                        if cg_image_next != nil {
+                            Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
+                                .resizable().aspectRatio(contentMode: .fit)
+                        }
+                        Image(uiImage: model.input_map_image!)
+                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
+                    }
+                    .overlay {
+                        GeometryReader { geom in
+                            Rectangle().foregroundColor(.gray).opacity(0.01)
                                 .gesture(
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                         .onChanged { position in
@@ -195,14 +186,8 @@ struct HeatMapSwiftUIView: View {
                                             let loc_screen = position.location
                                             let xx = UInt16(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
                                             let yy = UInt16((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
-
-                                            print("XXXX loc_screen.x=\(loc_screen.x) width=\(geom.size.width) imagewidth=\(model.input_map_image!.cgImage!.width)")
-                                            
                                             idw_values.insert(IDWValue(x: xx, y: yy, v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: xx, y: yy, v: IDWValueType.max, type: .probe))
-                                        }
-                                        .onEnded { _ in
-                                            //                                  self.position = .zero
                                         }
                                 )
                         }
