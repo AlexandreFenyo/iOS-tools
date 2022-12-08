@@ -247,10 +247,6 @@
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */,
 				5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */,
-				5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */,
-				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
-				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
-				5D78EF6D290FC56400842B76 /* IDWView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -293,6 +289,33 @@
 			path = SpeedTest;
 			sourceTree = "<group>";
 		};
+		5D95C170294286A200EBE9E8 /* HeatMap */ = {
+			isa = PBXGroup;
+			children = (
+				5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */,
+				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
+				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
+				5D78EF6D290FC56400842B76 /* IDWView.swift */,
+			);
+			path = HeatMap;
+			sourceTree = "<group>";
+		};
+		5D95C171294286DC00EBE9E8 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */,
+				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
+				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
+				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
+				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
+				5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */,
+				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
+				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
+				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		5DF214FF211B4FCE002B7603 /* Networks */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,17 +340,10 @@
 		5DF21501211B5D98002B7603 /* GUI */ = {
 			isa = PBXGroup;
 			children = (
+				5D95C171294286DC00EBE9E8 /* UIKit */,
+				5D95C170294286A200EBE9E8 /* HeatMap */,
 				5D2DFC3529057CE10080A9EA /* Assets */,
 				5D1F12462728300F00656D0D /* SwiftUI */,
-				5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */,
-				5D42E782216DE5890062A654 /* MasterSectionHeader.xib */,
-				5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */,
-				5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */,
-				5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */,
-				5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */,
-				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
-				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
-				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
 			);
 			path = GUI;
 			sourceTree = "<group>";
