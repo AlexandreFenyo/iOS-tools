@@ -25,8 +25,36 @@ public class MapViewModel : ObservableObject {
     @Published var step = 0
 }
 
+class MyMemoryTracker {
+    public var description: String
+    public init(_ description: String) {
+        self.description = description
+        print("XXXXX: MyMemoryTracker.init(\(description)) @\(Unmanaged.passUnretained(self).toOpaque())")
+    }
+    deinit {
+        print("XXXXX: MyMemoryTracker.deinit() - \(description) @\(Unmanaged.passUnretained(self).toOpaque())")
+    }
+}
+
 @MainActor
 struct HeatMapSwiftUIView: View {
+    var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
+    
+    init(_ heatmap_view_controller: HeatMapViewController) {
+        self.heatmap_view_controller = heatmap_view_controller
+        print("XXXXX: HeatMapSwiftUIView init")
+    }
+    
+    public func cleanUp() {
+        // pb chercher publisher dans les objets : on voit qu'ils ne disparaissent pas
+        print("XXXXX: dismiss")
+        timer_debug.upstream.connect().cancel()
+        
+        timer_get_average.upstream.connect().cancel()
+        timer_set_speed.upstream.connect().cancel()
+        timer_create_map.upstream.connect().cancel()
+    }
+    
     let heatmap_view_controller: HeatMapViewController
     
     @ObservedObject var model = MapViewModel.shared
@@ -44,9 +72,10 @@ struct HeatMapSwiftUIView: View {
     @State private var idw_values = Set<IDWValue>()
     @State private var display_steps = false
     
+    let timer_debug = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
-    
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     //    @State var cpt = 0
     //    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
@@ -151,7 +180,7 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                     }.padding(.top)
                 }
-
+                
                 HStack {
                     Spacer()
                     Text(MapViewModel.step2String[model.step])
@@ -199,6 +228,7 @@ struct HeatMapSwiftUIView: View {
                     Text("average throughput: \(UInt64(speed)) bit/s")
                         .font(.system(size: 16).monospacedDigit())
                         .onReceive(timer_set_speed) { _ in
+                            //                            print("XXXXX: timer_set_speed")
                             let interval = Float(Date().timeIntervalSince(self.average_last_update))
                             let UPDATE_DELAY: Float = 1.0
                             if interval < UPDATE_DELAY {
@@ -208,6 +238,7 @@ struct HeatMapSwiftUIView: View {
                             }
                         }
                         .onReceive(timer_get_average) { _ in
+                            print("XXXXX: timer_get_average")
                             display_steps.toggle()
                             Task {
                                 average_last_update = Date()

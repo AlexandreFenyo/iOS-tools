@@ -19,10 +19,14 @@ class HeatMapViewController: UIViewController {
     private lazy var hosting_view_controller = makeHostingController()
     
     private func makeHostingController() -> UIHostingController<HeatMapSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: HeatMapSwiftUIView(heatmap_view_controller: self))
+        let hosting_view_controller = UIHostingController(rootView: HeatMapSwiftUIView(self))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        hosting_view_controller.rootView.cleanUp()
     }
     
     override func viewDidLoad() {
