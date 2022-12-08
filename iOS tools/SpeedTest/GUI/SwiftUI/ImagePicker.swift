@@ -26,6 +26,23 @@ struct ImagePicker: UIViewControllerRepresentable {
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         let parent: ImagePicker
         
+        static let MAX_SIZE = 10240.0 // remettre 1024, no met 10240 pour trouver ce qui accroit la mémoire indéfiniement
+        static func resizeIfNeeded(_ img: UIImage) -> UIImage {
+            if img.size.width > MAX_SIZE || img.size.height > MAX_SIZE {
+                let size: CGSize
+                if img.size.width > img.size.height {
+                    size = CGSize(width: MAX_SIZE, height: img.size.height * MAX_SIZE / img.size.width)
+                } else {
+                    size = CGSize(width: img.size.width * MAX_SIZE / img.size.height, height: MAX_SIZE)
+                }
+                let image = UIGraphicsImageRenderer(size: size).image { _ in
+                    img.draw(in: CGRect(origin: .zero, size: size))
+                }
+                return image
+            }
+            return img
+        }
+        
         init(_ parent: ImagePicker) {
             self.parent = parent
         }
@@ -39,7 +56,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
-                            self.parent.image = image
+                            let resized_image = Coordinator.resizeIfNeeded(image)
+                            self.parent.image = resized_image
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }
@@ -48,7 +66,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
-                            self.parent.image = image as? UIImage
+                            let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
+                            self.parent.image = resized_image
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }
