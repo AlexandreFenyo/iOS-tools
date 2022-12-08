@@ -11,7 +11,7 @@ import SpriteKit
 
 @MainActor
 struct AddSwiftUIView: View {
-    let add_view_controller: AddViewController
+    weak var add_view_controller: AddViewController?
 
     @State private var scope: NodeType = .internet
     @State private var foo = 0
@@ -131,7 +131,7 @@ struct AddSwiftUIView: View {
                             if scope != .localhost {
                                 node.types = [ scope ]
                             }
-                            add_view_controller.master_view_controller!.addNode(node)
+                            add_view_controller?.master_view_controller!.addNode(node)
                         }
 
                         if isPermanent {
@@ -143,7 +143,7 @@ struct AddSwiftUIView: View {
                             UserDefaults.standard.set(config, forKey: "nodes")
                         }
 
-                        add_view_controller.dismiss(animated: true)
+                        add_view_controller?.dismiss(animated: true)
                     }
                     .disabled(target_name == "" || (isIPv4(target_ip) == false && isIPv6(target_ip) == false))
                     
@@ -160,7 +160,7 @@ struct AddSwiftUIView: View {
                          ...
                          */
 
-                        add_view_controller.dismiss(animated: true)
+                        add_view_controller?.dismiss(animated: true)
                     }
                 }
             }.cornerRadius(15).padding(10)

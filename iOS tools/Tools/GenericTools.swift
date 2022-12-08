@@ -27,6 +27,17 @@ import SpriteKit
 // Useful declaration to get definitions of Swift (right-click / "Jump to definition")
 import Swift
 
+class MyMemoryTracker {
+    public var description: String
+    public init(_ description: String) {
+        self.description = description
+        print("XXXXX: MyMemoryTracker.init(\(description)) @\(Unmanaged.passUnretained(self).toOpaque())")
+    }
+    deinit {
+        print("XXXXX: MyMemoryTracker.deinit() - \(description) @\(Unmanaged.passUnretained(self).toOpaque())")
+    }
+}
+
 extension String {
     // Substring starting at start with count chars
     func sub(_ start: Int, _ count: Int) -> String {

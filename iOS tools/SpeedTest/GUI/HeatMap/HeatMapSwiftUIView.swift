@@ -25,20 +25,9 @@ public class MapViewModel : ObservableObject {
     @Published var step = 0
 }
 
-class MyMemoryTracker {
-    public var description: String
-    public init(_ description: String) {
-        self.description = description
-        print("XXXXX: MyMemoryTracker.init(\(description)) @\(Unmanaged.passUnretained(self).toOpaque())")
-    }
-    deinit {
-        print("XXXXX: MyMemoryTracker.deinit() - \(description) @\(Unmanaged.passUnretained(self).toOpaque())")
-    }
-}
-
 @MainActor
 struct HeatMapSwiftUIView: View {
-    var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
+    private var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
     
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
@@ -46,16 +35,14 @@ struct HeatMapSwiftUIView: View {
     }
     
     public func cleanUp() {
-        // pb chercher publisher dans les objets : on voit qu'ils ne disparaissent pas
-        print("XXXXX: dismiss")
-        timer_debug.upstream.connect().cancel()
-        
-        timer_get_average.upstream.connect().cancel()
-        timer_set_speed.upstream.connect().cancel()
-        timer_create_map.upstream.connect().cancel()
+        /* inutile
+         timer_get_average.upstream.connect().cancel()
+         timer_set_speed.upstream.connect().cancel()
+         timer_create_map.upstream.connect().cancel()
+         */
     }
     
-    let heatmap_view_controller: HeatMapViewController
+    weak var heatmap_view_controller: HeatMapViewController?
     
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
@@ -106,6 +93,7 @@ struct HeatMapSwiftUIView: View {
     
     var body: some View {
         VStack {
+//            /*
             HStack {
                 Spacer()
                 Text("Heat Map Builder")
@@ -241,11 +229,13 @@ struct HeatMapSwiftUIView: View {
                             print("XXXXX: timer_get_average")
                             display_steps.toggle()
                             Task {
-                                average_last_update = Date()
-                                average_prev = average_next
-                                average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
-                                if average_prev == 0.0 {
+                                if let heatmap_view_controller {
+                                    average_last_update = Date()
                                     average_prev = average_next
+                                    average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                    if average_prev == 0.0 {
+                                        average_prev = average_next
+                                    }
                                 }
                             }
                         }
@@ -275,9 +265,10 @@ struct HeatMapSwiftUIView: View {
             .cornerRadius(15).padding(10)
             
             Button("Hide map") {
-                heatmap_view_controller.dismiss(animated: true)
+                heatmap_view_controller?.dismiss(animated: true)
             }.padding()
             
+//             */
         }.background(Color(COLORS.right_pannel_bg))
     }
 }

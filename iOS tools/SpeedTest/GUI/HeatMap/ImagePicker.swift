@@ -26,7 +26,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         let parent: ImagePicker
         
-        static let MAX_SIZE = 10240.0 // remettre 1024, no met 10240 pour trouver ce qui accroit la mémoire indéfiniement
+        static let MAX_SIZE = 1024.0 // remettre 1024, no met 10240 pour trouver ce qui accroit la mémoire indéfiniement
         static func resizeIfNeeded(_ img: UIImage) -> UIImage {
             if img.size.width > MAX_SIZE || img.size.height > MAX_SIZE {
                 let size: CGSize

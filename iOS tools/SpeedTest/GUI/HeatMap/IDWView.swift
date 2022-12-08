@@ -32,6 +32,8 @@ public struct IDWValue: Hashable {
 }
 
 public struct IDWImage {
+    private var my_memory_tracker = MyMemoryTracker("IDWImage")
+    
     public typealias PixelBytes = UnsafeMutablePointer<UInt8>
     private let bits_per_component = 8
     private let ncomponents = 3
