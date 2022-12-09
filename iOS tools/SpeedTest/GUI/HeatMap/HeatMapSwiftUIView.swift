@@ -27,11 +27,11 @@ public class MapViewModel : ObservableObject {
 
 @MainActor
 struct HeatMapSwiftUIView: View {
-    private var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
+//    private var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
     
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
-        print("XXXXX: HeatMapSwiftUIView init")
+//        print("XXXXX: HeatMapSwiftUIView init")
     }
     
     public func cleanUp() {
@@ -58,8 +58,6 @@ struct HeatMapSwiftUIView: View {
     
     @State private var idw_values = Set<IDWValue>()
     @State private var display_steps = false
-    
-    let timer_debug = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
@@ -200,9 +198,16 @@ struct HeatMapSwiftUIView: View {
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                         .onChanged { position in
                                             idw_values.removeAll()
-                                            let loc_screen = position.location
+                                            var loc_screen = position.location
+                                            // vérifier si c'est OK
+                                            if loc_screen.x >= geom.size.width { loc_screen.x = geom.size.width - 1 }
+                                            // vérifier si c'est OK
+                                            if loc_screen.y >= geom.size.height { loc_screen.y = geom.size.height - 1 }
+                                            if loc_screen.x < 0 { loc_screen.x = 0 }
+                                            if loc_screen.y < 0 { loc_screen.y = 0 }
                                             let xx = UInt16(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
                                             let yy = UInt16((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
+                                            print("xx=\(xx) yy=\(yy)")
                                             idw_values.insert(IDWValue(x: xx, y: yy, v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: xx, y: yy, v: IDWValueType.max, type: .probe))
                                         }
@@ -226,7 +231,7 @@ struct HeatMapSwiftUIView: View {
                             }
                         }
                         .onReceive(timer_get_average) { _ in
-                            print("XXXXX: timer_get_average")
+//                            print("XXXXX: timer_get_average")
                             display_steps.toggle()
                             Task {
                                 if let heatmap_view_controller {
@@ -241,11 +246,11 @@ struct HeatMapSwiftUIView: View {
                         }
                         .onReceive(timer_create_map) { _ in
                             if model.input_map_image != nil {
-                                print("create map")
+//                                print("create map")
                                 let width = UInt16(model.input_map_image!.cgImage!.width)
                                 let height = UInt16(model.input_map_image!.cgImage!.height)
                                 var idw_image = IDWImage(width: width, height: height)
-                                for val in model.idw_values {
+                                for _ in model.idw_values {
                                     //                                    _ = idw_image.addValue(val)
                                 }
                                 for value in idw_values {

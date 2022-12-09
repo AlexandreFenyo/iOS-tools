@@ -32,7 +32,7 @@ public struct IDWValue: Hashable {
 }
 
 public struct IDWImage {
-    private var my_memory_tracker = MyMemoryTracker("IDWImage")
+//    private var my_memory_tracker = MyMemoryTracker("IDWImage")
     
     public typealias PixelBytes = UnsafeMutablePointer<UInt8>
     private let bits_per_component = 8
@@ -164,7 +164,7 @@ public struct IDWImage {
             print("APRES")
         }
         
-        print("durée: \(Date().timeIntervalSince(now)) s")
+        print("durée computeBufferImageAsync: \(Date().timeIntervalSince(now)) s")
         return pixels
     }
     
@@ -231,7 +231,7 @@ public struct IDWImage {
         
         let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
-        print("durée: \(Date().timeIntervalSince(now)) s")
+        print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
         
         return cg_image
     }
@@ -285,12 +285,12 @@ public struct IDWImage {
         
         let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
-        print("durée: \(Date().timeIntervalSince(now)) s")
+        print("durée computeCGImage: \(Date().timeIntervalSince(now)) s")
         
         return cg_image
     }
 }
-
+/*
 struct ContentView: View {
     static let width: UInt16 = 600
     static let height: UInt16 = 200
@@ -364,4 +364,5 @@ struct ContentView: View {
     
 
 }
+*/
 

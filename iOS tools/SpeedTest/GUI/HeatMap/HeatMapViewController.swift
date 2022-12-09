@@ -14,7 +14,7 @@ import SwiftUI
 
 @MainActor
 class HeatMapViewController: UIViewController {
-    private var my_memory_tracker = MyMemoryTracker("HeatMapViewController")
+//    private var my_memory_tracker = MyMemoryTracker("HeatMapViewController")
 
     public var master_view_controller: MasterViewController?
 
