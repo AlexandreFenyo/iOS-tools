@@ -59,10 +59,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
-                            print("Picker avant resize: \(image.size.width) \(image.cgImage!.width)")
                             let resized_image = Coordinator.resizeIfNeeded(image)
                             self.parent.image = resized_image
-                            print("Picker après resize: \(resized_image.size.width) \(resized_image.cgImage!.width)")
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }
@@ -71,10 +69,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
-                            print("XPicker avant resize: \((image as! UIImage).size.width) \((image as! UIImage).cgImage!.width) - scale:\((image as! UIImage).scale)")
                             let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
-                            print("Picker après resize: \(resized_image.size.width) \(resized_image.cgImage!.width) - scale:\(resized_image.scale)")
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }

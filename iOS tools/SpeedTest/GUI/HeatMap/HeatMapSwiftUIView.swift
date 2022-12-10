@@ -31,16 +31,9 @@ struct HeatMapSwiftUIView: View {
     
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
-//        print("XXXXX: HeatMapSwiftUIView init")
     }
     
-    public func cleanUp() {
-        /* inutile
-         timer_get_average.upstream.connect().cancel()
-         timer_set_speed.upstream.connect().cancel()
-         timer_create_map.upstream.connect().cancel()
-         */
-    }
+    public func cleanUp() { }
     
     weak var heatmap_view_controller: HeatMapViewController?
     
@@ -91,7 +84,6 @@ struct HeatMapSwiftUIView: View {
     
     var body: some View {
         VStack {
-//            /*
             HStack {
                 Spacer()
                 Text("Heat Map Builder")
@@ -197,17 +189,8 @@ struct HeatMapSwiftUIView: View {
                                 .gesture(
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                         .onChanged { position in
-                                            print("model cg.width=\(model.input_map_image!.cgImage!.width) height=\(model.input_map_image!.cgImage!.height)")
-                                            print("model size.width=\(model.input_map_image!.size.width) height=\(model.input_map_image!.size.height)")
                                             idw_values.removeAll()
                                             var loc_screen = position.location
-                                            print("loc_screen: \(loc_screen) - geom:\(geom.size)")
-                                            // vérifier si c'est OK
-//                                            if loc_screen.x >= geom.size.width { loc_screen.x = geom.size.width - 1 }
-                                            // vérifier si c'est OK
-  //                                          if loc_screen.y >= geom.size.height { loc_screen.y = geom.size.height - 1 }
-    //                                        if loc_screen.x < 0 { loc_screen.x = 0 }
-      //                                      if loc_screen.y < 0 { loc_screen.y = 0 }
                                             var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
                                             var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
                                             
@@ -215,10 +198,6 @@ struct HeatMapSwiftUIView: View {
                                             if yy < 0 { yy = 0 }
                                             if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
-                                            print("xx=\(xx) yy=\(yy)")
-                                            if yy == 768 {
-                                                print("erreur")
-                                            }
                                             idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: IDWValueType.max, type: .probe))
                                         }
@@ -232,7 +211,6 @@ struct HeatMapSwiftUIView: View {
                     Text("average throughput: \(UInt64(speed)) bit/s")
                         .font(.system(size: 16).monospacedDigit())
                         .onReceive(timer_set_speed) { _ in
-                            //                            print("XXXXX: timer_set_speed")
                             let interval = Float(Date().timeIntervalSince(self.average_last_update))
                             let UPDATE_DELAY: Float = 1.0
                             if interval < UPDATE_DELAY {
@@ -242,7 +220,6 @@ struct HeatMapSwiftUIView: View {
                             }
                         }
                         .onReceive(timer_get_average) { _ in
-//                            print("XXXXX: timer_get_average")
                             display_steps.toggle()
                             Task {
                                 if let heatmap_view_controller {
@@ -257,10 +234,8 @@ struct HeatMapSwiftUIView: View {
                         }
                         .onReceive(timer_create_map) { _ in
                             if model.input_map_image != nil {
-//                                print("create map")
                                 let width = UInt16(model.input_map_image!.cgImage!.width)
                                 let height = UInt16(model.input_map_image!.cgImage!.height)
-                                print("IDWImage: width=\(width) height=\(height)")
 
                                 var idw_image = IDWImage(width: width, height: height)
                                 for _ in model.idw_values {
@@ -285,8 +260,6 @@ struct HeatMapSwiftUIView: View {
             Button("Hide map") {
                 heatmap_view_controller?.dismiss(animated: true)
             }.padding()
-            
-//             */
         }.background(Color(COLORS.right_pannel_bg))
     }
 }
