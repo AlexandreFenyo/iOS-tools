@@ -201,17 +201,26 @@ struct HeatMapSwiftUIView: View {
                                             print("model size.width=\(model.input_map_image!.size.width) height=\(model.input_map_image!.size.height)")
                                             idw_values.removeAll()
                                             var loc_screen = position.location
+                                            print("loc_screen: \(loc_screen) - geom:\(geom.size)")
                                             // vérifier si c'est OK
-                                            if loc_screen.x >= geom.size.width { loc_screen.x = geom.size.width - 1 }
+//                                            if loc_screen.x >= geom.size.width { loc_screen.x = geom.size.width - 1 }
                                             // vérifier si c'est OK
-                                            if loc_screen.y >= geom.size.height { loc_screen.y = geom.size.height - 1 }
-                                            if loc_screen.x < 0 { loc_screen.x = 0 }
-                                            if loc_screen.y < 0 { loc_screen.y = 0 }
-                                            let xx = UInt16(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
-                                            let yy = UInt16((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
+  //                                          if loc_screen.y >= geom.size.height { loc_screen.y = geom.size.height - 1 }
+    //                                        if loc_screen.x < 0 { loc_screen.x = 0 }
+      //                                      if loc_screen.y < 0 { loc_screen.y = 0 }
+                                            var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
+                                            var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
+                                            
+                                            if xx < 0 { xx = 0 }
+                                            if yy < 0 { yy = 0 }
+                                            if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
+                                            if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             print("xx=\(xx) yy=\(yy)")
-                                            idw_values.insert(IDWValue(x: xx, y: yy, v: 200, type: .ap))
-                                            idw_values.insert(IDWValue(x: xx, y: yy, v: IDWValueType.max, type: .probe))
+                                            if yy == 768 {
+                                                print("erreur")
+                                            }
+                                            idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: 200, type: .ap))
+                                            idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: IDWValueType.max, type: .probe))
                                         }
                                 )
                         }
