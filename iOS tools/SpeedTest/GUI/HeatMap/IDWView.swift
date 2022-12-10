@@ -110,6 +110,7 @@ public struct IDWImage {
         return dist
     }
     
+    /*
     public func computeBufferImageAsync(_ only_markers: Bool = false) async -> PixelBytes {
         let now = Date()
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
@@ -167,7 +168,7 @@ public struct IDWImage {
         print("durée computeBufferImageAsync: \(Date().timeIntervalSince(now)) s")
         return pixels
     }
-    
+     */
     
     public func computeCGImageAsync(_ only_markers: Bool = false) async -> CGImage? {
         let now = Date()
@@ -236,6 +237,7 @@ public struct IDWImage {
         return cg_image
     }
     
+    /*
     public func computeCGImage(_ only_markers: Bool = false) -> CGImage? {
         let now = Date()
         
@@ -289,6 +291,7 @@ public struct IDWImage {
         
         return cg_image
     }
+     */
 }
 /*
 struct ContentView: View {
