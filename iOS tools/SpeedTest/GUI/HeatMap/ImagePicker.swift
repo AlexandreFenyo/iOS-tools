@@ -26,16 +26,18 @@ struct ImagePicker: UIViewControllerRepresentable {
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         let parent: ImagePicker
         
-        static let MAX_SIZE = 1024.0 // remettre 1024, no met 10240 pour trouver ce qui accroit la mémoire indéfiniement
+        static let MAX_SIZE = 1024 // remettre 1024, on met 10240 pour trouver ce qui accroit la mémoire indéfiniement
         static func resizeIfNeeded(_ img: UIImage) -> UIImage {
-            if img.size.width > MAX_SIZE || img.size.height > MAX_SIZE {
+            if img.cgImage!.width > MAX_SIZE || img.cgImage!.height > MAX_SIZE {
                 let size: CGSize
-                if img.size.width > img.size.height {
-                    size = CGSize(width: MAX_SIZE, height: img.size.height * MAX_SIZE / img.size.width)
+                if img.cgImage!.width > img.cgImage!.height {
+                    size = CGSize(width: MAX_SIZE, height: img.cgImage!.height * MAX_SIZE / img.cgImage!.width)
                 } else {
-                    size = CGSize(width: img.size.width * MAX_SIZE / img.size.height, height: MAX_SIZE)
+                    size = CGSize(width: img.cgImage!.width * MAX_SIZE / img.cgImage!.height, height: MAX_SIZE)
                 }
-                let image = UIGraphicsImageRenderer(size: size).image { _ in
+                let format = UIGraphicsImageRendererFormat()
+                format.scale = 1
+                let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
                     img.draw(in: CGRect(origin: .zero, size: size))
                 }
                 return image
@@ -53,22 +55,26 @@ struct ImagePicker: UIViewControllerRepresentable {
             guard let provider = results.first?.itemProvider else { return }
 
             if provider.hasItemConformingToTypeIdentifier(UTType.webP.identifier) {
+                // support des images HEIF (ne fonctionne pas sur simulateur)
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
+                            print("Picker avant resize: \(image.size.width) \(image.cgImage!.width)")
                             let resized_image = Coordinator.resizeIfNeeded(image)
                             self.parent.image = resized_image
+                            print("Picker après resize: \(resized_image.size.width) \(resized_image.cgImage!.width)")
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }
                 }
             } else {
-                // support des images HEIF (ne fonctionne pas sur simulateur)
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
+                            print("XPicker avant resize: \((image as! UIImage).size.width) \((image as! UIImage).cgImage!.width) - scale:\((image as! UIImage).scale)")
                             let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
+                            print("Picker après resize: \(resized_image.size.width) \(resized_image.cgImage!.width) - scale:\(resized_image.scale)")
                             self.parent.idw_values = Set<IDWValue>()
                         }
                     }

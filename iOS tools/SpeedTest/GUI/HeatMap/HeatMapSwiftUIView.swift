@@ -197,6 +197,8 @@ struct HeatMapSwiftUIView: View {
                                 .gesture(
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                         .onChanged { position in
+                                            print("model cg.width=\(model.input_map_image!.cgImage!.width) height=\(model.input_map_image!.cgImage!.height)")
+                                            print("model size.width=\(model.input_map_image!.size.width) height=\(model.input_map_image!.size.height)")
                                             idw_values.removeAll()
                                             var loc_screen = position.location
                                             // vérifier si c'est OK
@@ -249,6 +251,8 @@ struct HeatMapSwiftUIView: View {
 //                                print("create map")
                                 let width = UInt16(model.input_map_image!.cgImage!.width)
                                 let height = UInt16(model.input_map_image!.cgImage!.height)
+                                print("IDWImage: width=\(width) height=\(height)")
+
                                 var idw_image = IDWImage(width: width, height: height)
                                 for _ in model.idw_values {
                                     //                                    _ = idw_image.addValue(val)
