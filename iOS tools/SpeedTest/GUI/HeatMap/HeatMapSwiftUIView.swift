@@ -82,6 +82,22 @@ struct HeatMapSwiftUIView: View {
         }
     }
     
+    private func updateMap() {
+        let width = UInt16(model.input_map_image!.cgImage!.width)
+        let height = UInt16(model.input_map_image!.cgImage!.height)
+        var idw_image = IDWImage(width: width, height: height)
+        for _ in model.idw_values {
+            //                                    _ = idw_image.addValue(val)
+        }
+        for value in idw_values {
+            _ = idw_image.addValue(value)
+        }
+        Task {
+            cg_image_prev = cg_image_next
+            cg_image_next = await idw_image.computeCGImageAsync()
+        }
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -177,29 +193,35 @@ struct HeatMapSwiftUIView: View {
                 if model.input_map_image != nil {
                     ZStack {
                         if cg_image_next != nil {
-                            Image(decorative: cg_image_next!, scale: 1.0)//.opacity(Double(cpt2) / 50.0)
+                            Image(decorative: cg_image_next!, scale: 1.0)
                                 .resizable().aspectRatio(contentMode: .fit)
                         }
+
+                        if cg_image_prev != nil {
+                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(0.2)
+                        }
+
+                        
                         Image(uiImage: model.input_map_image!)
-                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.1)
+                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
                     }
                     .overlay {
                         GeometryReader { geom in
                             Rectangle().foregroundColor(.gray).opacity(0.01)
                                 .gesture(
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                        .onChanged { position in
+                                        .onEnded { position in
                                             idw_values.removeAll()
-                                            var loc_screen = position.location
+                                            let loc_screen = position.location
                                             var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
                                             var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
-                                            
                                             if xx < 0 { xx = 0 }
                                             if yy < 0 { yy = 0 }
                                             if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: IDWValueType.max, type: .probe))
+                                            updateMap()
                                         }
                                 )
                         }
@@ -234,20 +256,7 @@ struct HeatMapSwiftUIView: View {
                         }
                         .onReceive(timer_create_map) { _ in
                             if model.input_map_image != nil {
-                                let width = UInt16(model.input_map_image!.cgImage!.width)
-                                let height = UInt16(model.input_map_image!.cgImage!.height)
-
-                                var idw_image = IDWImage(width: width, height: height)
-                                for _ in model.idw_values {
-                                    //                                    _ = idw_image.addValue(val)
-                                }
-                                for value in idw_values {
-                                    _ = idw_image.addValue(value)
-                                }
-                                
-                                Task {
-                                    cg_image_next = await idw_image.computeCGImageAsync()
-                                }
+                                updateMap()
                             }
                         }
                         .padding()
