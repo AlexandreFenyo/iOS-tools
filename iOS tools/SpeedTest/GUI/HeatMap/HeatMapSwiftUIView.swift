@@ -77,8 +77,7 @@ struct HeatMapSwiftUIView: View {
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
-        var max = model.idw_values.union(idw_values).filter { $0.type == .probe }.max { $0.v < $1.v }?.v
-        if let max {
+        if let max = (model.idw_values.union(idw_values).filter { $0.type == .probe }.max { $0.v < $1.v }?.v) {
             var values = model.idw_values.union(idw_values).filter { $0.type == .probe }.map {
                 IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
             }
@@ -218,7 +217,7 @@ struct HeatMapSwiftUIView: View {
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
-                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200000000.0, type: .probe))
+                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: .probe))
                                             updateMap()
                                         }
                                 )
@@ -254,6 +253,21 @@ struct HeatMapSwiftUIView: View {
                         }
                         .onReceive(timer_create_map) { _ in
                             if model.input_map_image != nil {
+                                if let probe = (idw_values.first { $0.type == .probe }) {
+                                    // pour tester des variations importantes de speed
+                                    var _v = speed
+                                    let r = arc4random()
+                                    if r < UInt32.max / 5 {
+                                        _v = 1000000.0
+                                    }
+                                    if r >= UInt32.max / 5 && r <= UInt32.max / 3 {
+                                        _v = 20000000.0
+                                    }
+
+                                    let replace_probe = IDWValue(x: probe.x, y: probe.y, v: _v, type: probe.type)
+                                    idw_values = idw_values.filter { $0.type == .ap }
+                                    idw_values.insert(replace_probe)
+                                }
                                 updateMap()
                             }
                         }
