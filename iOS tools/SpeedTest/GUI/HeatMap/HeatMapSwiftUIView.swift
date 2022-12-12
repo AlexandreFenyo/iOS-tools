@@ -62,18 +62,6 @@ struct HeatMapSwiftUIView: View {
     //    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     //   @State var cpt2 = 0
     
-    /*
-     private func screenToMap(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
-     let width = Float(model.input_map_image!.cgImage!.width)
-     let height = Float(model.input_map_image!.cgImage!.height)
-     
-     }*/
-    
-    /*
-     private func MapToScreen(_ x: UInt16, _ y: UInt16) -> (x: UInt16, y: UInt16) {
-     
-     }*/
-    
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }
         else {

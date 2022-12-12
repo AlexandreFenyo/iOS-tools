@@ -72,6 +72,10 @@ struct ImagePicker: UIViewControllerRepresentable {
                             let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
                             self.parent.idw_values = Set<IDWValue>()
+
+                            // pour tester avec une mesure déjà réalisée
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 100, y: 100, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 100, y: 100, v: 200000000.0, type: .probe))
                         }
                     }
                 }
