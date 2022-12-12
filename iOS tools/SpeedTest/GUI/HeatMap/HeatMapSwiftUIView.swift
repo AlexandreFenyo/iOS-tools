@@ -273,13 +273,15 @@ struct HeatMapSwiftUIView: View {
                                 if let probe = (idw_values.first { $0.type == .probe }) {
                                     // pour tester des variations importantes de speed
                                     var _v = speed
-                                    let r = arc4random()
-                                    if r < UInt32.max / 5 {
-                                        _v = 1000000.0
-                                    }
-                                    if r >= UInt32.max / 5 && r <= UInt32.max / 3 {
-                                        _v = 20000000.0
-                                    }
+                                    /*
+                                     let r = arc4random()
+                                     if r < UInt32.max / 5 {
+                                     _v = 1000000.0
+                                     }
+                                     if r >= UInt32.max / 5 && r <= UInt32.max / 3 {
+                                     _v = 20000000.0
+                                     }
+                                     */
 
                                     let replace_probe = IDWValue(x: probe.x, y: probe.y, v: _v, type: probe.type)
                                     idw_values = idw_values.filter { $0.type == .ap }
