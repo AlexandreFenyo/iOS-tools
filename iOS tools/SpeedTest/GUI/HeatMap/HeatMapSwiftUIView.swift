@@ -45,9 +45,11 @@ struct HeatMapSwiftUIView: View {
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
-    
+
+    @State private var image_last_update = Date()
     @State private var cg_image_prev: CGImage?
     @State private var cg_image_next: CGImage?
+    @State private var image_update_ratio: Float = 0
 
     @State private var last_loc_x: UInt16?
     @State private var last_loc_y: UInt16?
@@ -90,6 +92,8 @@ struct HeatMapSwiftUIView: View {
         Task {
             cg_image_prev = cg_image_next
             cg_image_next = await idw_image.computeCGImageAsync()
+            image_last_update = Date()
+            image_update_ratio = 0
         }
     }
     
@@ -187,16 +191,17 @@ struct HeatMapSwiftUIView: View {
                 
                 if model.input_map_image != nil {
                     ZStack {
-                        if cg_image_next != nil {
-                            Image(decorative: cg_image_next!, scale: 1.0)
-                                .resizable().aspectRatio(contentMode: .fit)
-                        }
-
                         if cg_image_prev != nil {
-                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(0.2)
+                            // Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(1.0 - Double(image_update_ratio))
+                            // à 0,7, je suis plus clair, à 0,5 je suis encore plus clair - la couleur normale est celle affichée pendant seulement 0,2s
+                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)//.opacity(image_update_ratio < 0.8 ? 1.0 : 1.0)
                         }
 
-                        
+                        if cg_image_next != nil {
+                            // Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                            Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                        }
+
                         Image(uiImage: model.input_map_image!)
                             .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
                     }
@@ -227,15 +232,27 @@ struct HeatMapSwiftUIView: View {
                 
                 Spacer()
                 HStack {
-                    Text("average throughput: \(UInt64(speed)) bit/s")
+                    // pour débugger opacity
+                    Text("average throughput: \(UInt64(speed)) bit/s - opacity: \(image_update_ratio)")
+                    //                    Text("average throughput: \(UInt64(speed)) bit/s")
                         .font(.system(size: 16).monospacedDigit())
                         .onReceive(timer_set_speed) { _ in
-                            let interval = Float(Date().timeIntervalSince(self.average_last_update))
-                            let UPDATE_DELAY: Float = 1.0
-                            if interval < UPDATE_DELAY {
-                                speed = average_prev * (UPDATE_DELAY - interval) / UPDATE_DELAY + average_next * interval / UPDATE_DELAY
+                            // Manage speed
+                            let interval_speed = Float(Date().timeIntervalSince(self.average_last_update))
+                            let UPDATE_SPEED_DELAY: Float = 1.0
+                            if interval_speed < UPDATE_SPEED_DELAY {
+                                speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
                             } else {
                                 speed = average_next
+                            }
+                            
+                            // Manage heat maps
+                            let interval_image = Float(Date().timeIntervalSince(self.image_last_update))
+                            let UPDATE_IMAGE_DELAY: Float = 1.0
+                            if interval_image < UPDATE_IMAGE_DELAY {
+                                image_update_ratio = interval_image
+                            } else {
+                                image_update_ratio = 1
                             }
                         }
                         .onReceive(timer_get_average) { _ in
