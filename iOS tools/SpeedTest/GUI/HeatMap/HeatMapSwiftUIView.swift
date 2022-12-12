@@ -52,7 +52,7 @@ struct HeatMapSwiftUIView: View {
     @State private var last_loc_x: UInt16?
     @State private var last_loc_y: UInt16?
 
-    @State private var idw_values = Set<IDWValue<UInt16>>()
+    @State private var idw_values = Set<IDWValue<Float>>()
     @State private var display_steps = false
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -89,11 +89,16 @@ struct HeatMapSwiftUIView: View {
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
-        for _ in model.idw_values {
-            //                                    _ = idw_image.addValue(val)
-        }
-        for value in idw_values {
-            _ = idw_image.addValue(value)
+        var max = model.idw_values.union(idw_values).filter { $0.type == .probe }.max { $0.v < $1.v }?.v
+        if let max {
+            var values = model.idw_values.union(idw_values).filter { $0.type == .probe }.map {
+                IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
+            }
+            let aps = model.idw_values.union(idw_values).filter { $0.type == .ap }.map {
+                IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v), type: .ap)
+            }
+            values.append(contentsOf: aps)
+            let _ = values.map { idw_image.addValue($0) }
         }
         Task {
             cg_image_prev = cg_image_next
@@ -225,7 +230,7 @@ struct HeatMapSwiftUIView: View {
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
-                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: UInt16.max, type: .probe))
+                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200000000.0, type: .probe))
                                             updateMap()
                                         }
                                 )
