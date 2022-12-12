@@ -6,7 +6,7 @@ import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
-    @Binding var idw_values: Set<IDWValue>
+    @Binding var idw_values: Set<IDWValue<Float>>
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()

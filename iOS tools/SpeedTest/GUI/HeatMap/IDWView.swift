@@ -9,21 +9,20 @@
 import SwiftUI
 
 private let NTHREADS = 10
-public typealias IDWValueType = UInt16
 
 public enum ProbeType {
     case probe
     case ap
 }
 
-public struct IDWValue: Hashable {
+public struct IDWValue<V: Hashable>: Hashable {
     public var type: ProbeType = .probe
     public let x: UInt16
     public let y: UInt16
     // si type == probe, alors v est une valeur de débit, sinon c'est le rayon en pixels d'un cercle centré en (x, y) et valant 0 sur toute sa circonférence et en dehors du cercle
-    public let v: IDWValueType
+    public let v: V
     
-    init(x: UInt16, y: UInt16, v: IDWValueType, type: ProbeType = .probe) {
+    init(x: UInt16, y: UInt16, v: V, type: ProbeType = .probe) {
         self.x = x
         self.y = y
         self.v = v
@@ -39,7 +38,7 @@ public struct IDWImage {
     private let ncomponents = 3
     private let width: UInt16
     private let height: UInt16
-    private var values = Set<IDWValue>()
+    private var values = Set<IDWValue<UInt16>>()
     public let npixels: Int
     public let nbytes_per_line: Int
     public let nbytes_per_pixel: Int
@@ -52,21 +51,21 @@ public struct IDWImage {
     
     public static let rgb_from_value: [(r: UInt8, g: UInt8, b: UInt8)] = {
         var tab = [(r: UInt8, g: UInt8, b: UInt8)]()
-        let fmax = Float(IDWValueType.max)
-        for i in 0...IDWValueType.max {
+        let fmax = Float(UInt16.max)
+        for i in 0...UInt16.max {
             var fi = Float(i)
             var ii = pow(abs((fi - fmax / 2.0)) / (fmax / 2.0), yellow_size)
             if fi < fmax / 2.0 { ii = -ii }
             ii = 0.5 + ii / 2.0
             ii = ii * fmax
-            let hue: Double = Double(Float(ii) / Float(IDWValueType.max) * 0.33)
+            let hue: Double = Double(Float(ii) / Float(UInt16.max) * 0.33)
             let c = Color(hue: hue, saturation: 1, brightness: 1, opacity: 1)
             tab.insert((r: UInt8((c.cgColor?.components)![0] * CGFloat(UInt8.max)), g: UInt8((c.cgColor?.components)![1] * CGFloat(UInt8.max)), b: UInt8((c.cgColor?.components)![2] * CGFloat(UInt8.max))), at: tab.count)
         }
         return tab
     }()
     
-    private func getRGB(_ val: IDWValueType) -> (r: UInt8, g: UInt8, b: UInt8) {
+    private func getRGB(_ val: UInt16) -> (r: UInt8, g: UInt8, b: UInt8) {
         return Self.rgb_from_value[Int(val)]
     }
     
@@ -78,17 +77,17 @@ public struct IDWImage {
         nbytes_per_line = Int(width) * nbytes_per_pixel
     }
     
-    public mutating func addValue(_ val: IDWValue) -> Bool {
+    public mutating func addValue(_ val: IDWValue<UInt16>) -> Bool {
         if values.contains(val) { return false }
         values.insert(val)
         return true
     }
     
-    public mutating func removeValue(_ val: IDWValue) -> Bool {
+    public mutating func removeValue(_ val: IDWValue<UInt16>) -> Bool {
         return values.remove(val) == nil ? false : true
     }
     
-    private func setPixel(_ pixels: PixelBytes, _ idwval: IDWValue) {
+    private func setPixel(_ pixels: PixelBytes, _ idwval: IDWValue<UInt16>) {
         let p = (pixels + ((Int(height) - Int(idwval.y) - 1) * nbytes_per_line)) + Int(idwval.x) * nbytes_per_pixel
         let rgb = getRGB(idwval.v)
         p.pointee = rgb.r
@@ -96,7 +95,7 @@ public struct IDWImage {
         (p + 2).pointee = rgb.b
     }
     
-    private func setBoldPixel(_ pixels: PixelBytes, _ idwval: IDWValue) {
+    private func setBoldPixel(_ pixels: PixelBytes, _ idwval: IDWValue<UInt16>) {
         setPixel(pixels, idwval)
         if idwval.x == 0 || idwval.x == UInt16.max || idwval.y == 0 || idwval.y == UInt16.max { return }
         setPixel(pixels, IDWValue(x: idwval.x, y: idwval.y - 1, v: idwval.v))

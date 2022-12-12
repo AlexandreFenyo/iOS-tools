@@ -21,7 +21,7 @@ public class MapViewModel : ObservableObject {
     static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
     
     @Published var input_map_image: UIImage?
-    @Published var idw_values = Set<IDWValue>()
+    @Published var idw_values = Set<IDWValue<Float>>()
     @Published var step = 0
 }
 
@@ -48,8 +48,11 @@ struct HeatMapSwiftUIView: View {
     
     @State private var cg_image_prev: CGImage?
     @State private var cg_image_next: CGImage?
-    
-    @State private var idw_values = Set<IDWValue>()
+
+    @State private var last_loc_x: UInt16?
+    @State private var last_loc_y: UInt16?
+
+    @State private var idw_values = Set<IDWValue<UInt16>>()
     @State private var display_steps = false
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -219,8 +222,10 @@ struct HeatMapSwiftUIView: View {
                                             if yy < 0 { yy = 0 }
                                             if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
-                                            idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: 200, type: .ap))
-                                            idw_values.insert(IDWValue(x: UInt16(xx), y: UInt16(yy), v: IDWValueType.max, type: .probe))
+                                            last_loc_x = UInt16(xx)
+                                            last_loc_y = UInt16(yy)
+                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
+                                            idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: UInt16.max, type: .probe))
                                             updateMap()
                                         }
                                 )
