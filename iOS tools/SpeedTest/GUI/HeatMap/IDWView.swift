@@ -31,7 +31,7 @@ public struct IDWValue<V: Hashable>: Hashable {
 }
 
 public struct IDWImage {
-//    private var my_memory_tracker = MyMemoryTracker("IDWImage")
+    //    private var my_memory_tracker = MyMemoryTracker("IDWImage")
     
     public typealias PixelBytes = UnsafeMutablePointer<UInt8>
     private let bits_per_component = 8
@@ -45,7 +45,8 @@ public struct IDWImage {
     
     // power / 2 correspond à l'exposant dans le calcul de la distance, donc power == 1 implique sqrt, plus on augmente et plus on valorise les points les plus proches
     public let power: Float = 1.0
-    
+//    public let power: Float = 1.5
+
     // yellow_size indique l'importance du jaune dans les couleurs utilisées
     public static let yellow_size: Float = 1.5
     
@@ -109,65 +110,6 @@ public struct IDWImage {
         return dist
     }
     
-    /*
-    public func computeBufferImageAsync(_ only_markers: Bool = false) async -> PixelBytes {
-        let now = Date()
-        let pixels = PixelBytes.allocate(capacity: npixels * 3)
-        pixels.initialize(repeating: 0, count: npixels * nbytes_per_pixel)
-        for idw in values {
-            setBoldPixel(pixels, idw)
-        }
-        if (!only_markers) {
-            await withTaskGroup(of: Void.self, body: { group in
-                let remainder = height % UInt16(NTHREADS)
-                let nthreads = remainder != 0 ? NTHREADS + 1 : NTHREADS
-                let lines_per_thread = height / UInt16(NTHREADS)
-                for thr in 0..<nthreads {
-                    group.addTask {
-                        let start_y = UInt16(thr) * lines_per_thread
-                        var end_y = start_y + lines_per_thread
-                        if end_y > height { end_y = height }
-                        for x in 0..<width {
-                            for y in start_y..<end_y {
-                                var val: Float = 0
-                                var denom: Float = 0
-                                for idw in values {
-                                    if idw.type == .probe {
-                                        let d = distance_power_p(x, y, idw.x, idw.y, power)
-                                        val += Float(idw.v) / d
-                                        denom += 1 / d
-                                    } else {
-                                        if (Int32(x) - Int32(idw.x)) * (Int32(x) - Int32(idw.x)) + (Int32(y) - Int32(idw.y)) * (Int32(y) - Int32(idw.y)) > Int32(idw.v) * Int32(idw.v) {
-                                            val = 0
-                                            denom = 1
-                                            break
-                                        } else {
-                                            let d = Float(idw.v) - distance_power_p(x, y, idw.x, idw.y, power)
-                                            val += Float(idw.v) / d
-                                            denom += 1 / d
-                                        }
-                                    }
-                                }
-                                if denom.isNormal && !denom.isZero && val.isNormal {
-                                    val = val / denom
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
-                                } else {
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: 0))
-                                }
-                            }
-                        }
-                        print("END THR \(thr)")
-                        return
-                    } // addTask
-                }
-            })
-            print("APRES")
-        }
-        
-        print("durée computeBufferImageAsync: \(Date().timeIntervalSince(now)) s")
-        return pixels
-    }
-     */
     
     public func computeCGImageAsync(_ only_markers: Bool = false) async -> CGImage? {
         let now = Date()
@@ -199,7 +141,8 @@ public struct IDWImage {
                                         val += Float(idw.v) / d
                                         denom += 1 / d
                                     } else {
-                                        if (Int32(x) - Int32(idw.x)) * (Int32(x) - Int32(idw.x)) + (Int32(y) - Int32(idw.y)) * (Int32(y) - Int32(idw.y)) > Int32(idw.v) * Int32(idw.v) {
+//                                        if (Int32(x) - Int32(idw.x)) * (Int32(x) - Int32(idw.x)) + (Int32(y) - Int32(idw.y)) * (Int32(y) - Int32(idw.y)) > Int32(idw.v) * Int32(idw.v) {
+                                        if distance_power_p(x, y, idw.x, idw.y, power) > Float(idw.v) {
                                             val = 0
                                             denom = 1
                                             break
@@ -235,136 +178,4 @@ public struct IDWImage {
         
         return cg_image
     }
-    
-    /*
-    public func computeCGImage(_ only_markers: Bool = false) -> CGImage? {
-        let now = Date()
-        
-        let pixels = PixelBytes.allocate(capacity: npixels * 3)
-        pixels.initialize(repeating: 0, count: npixels * nbytes_per_pixel)
-        
-        for idw in values {
-            setBoldPixel(pixels, idw)
-        }
-        
-        if (!only_markers) {
-            for x in 0..<width {
-                for y in 0..<height {
-                    var val: Float = 0
-                    var denom: Float = 0
-                    for idw in values {
-                        if idw.type == .probe {
-                            let d = distance_power_p(x, y, idw.x, idw.y, power)
-                            val += Float(idw.v) / d
-                            denom += 1 / d
-                        } else {
-                            if (Int32(x) - Int32(idw.x)) * (Int32(x) - Int32(idw.x)) + (Int32(y) - Int32(idw.y)) * (Int32(y) - Int32(idw.y)) > Int32(idw.v) * Int32(idw.v) {
-                                val = 0
-                                denom = 1
-                                break
-                            } else {
-                                let d = Float(idw.v) - distance_power_p(x, y, idw.x, idw.y, power)
-                                val += Float(idw.v) / d
-                                denom += 1 / d
-                            }
-                        }
-                    }
-                    if denom.isNormal && !denom.isZero && val.isNormal {
-                        val = val / denom
-                        setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
-                    } else {
-                        setPixel(pixels, IDWValue(x: x, y: y, v: 0))
-                    }
-                }
-            }
-        }
-        
-        let data = CFDataCreate(nil, pixels, npixels * 3)
-        pixels.deallocate()
-        
-        guard let provider = CGDataProvider(data: data!) else { return nil }
-        
-        let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
-        
-        print("durée computeCGImage: \(Date().timeIntervalSince(now)) s")
-        
-        return cg_image
-    }
-     */
 }
-/*
-struct ContentView: View {
-    static let width: UInt16 = 600
-    static let height: UInt16 = 200
-
-    @State var cg_image_prev: CGImage = {
-        var idw = IDWImage(width: Self.width, height: Self.height)
-        _ = idw.addValue(IDWValue(x: 0, y: Self.height / 2, v: 0))
-        _ = idw.addValue(IDWValue(x: Self.width - 1, y: Self.height / 2, v: IDWValueType.max))
-        return idw.computeCGImage()!
-    }()
-
-    @State var cg_image_next: CGImage = {
-        var idw = IDWImage(width: Self.width, height: Self.height)
-        _ = idw.addValue(IDWValue(x: 0, y: Self.height / 2, v: 0))
-        _ = idw.addValue(IDWValue(x: Self.width - 1, y: Self.height / 2, v: IDWValueType.max))
-        return idw.computeCGImage()!
-    }()
-
-    @State var cg_image: CGImage = {
-        var idw = IDWImage(width: Self.width, height: Self.height)
-        _ = idw.addValue(IDWValue(x: 0, y: Self.height / 2, v: 0))
-        _ = idw.addValue(IDWValue(x: Self.width - 1, y: Self.height / 2, v: IDWValueType.max))
-        return idw.computeCGImage()!
-    }()
-
-    let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-    @State var cpt = 0
-
-    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
-    @State var cpt2 = 0
-
-    var body: some View {
-        VStack {
-//            Image(decorative: cg_image_prev, scale: 1.0).opacity(1.0)
-//            Image(decorative: cg_image_next, scale: 1.0).opacity(1.0)
-            ZStack {
-                Image(decorative: cg_image_prev, scale: 1.0).opacity(1 - Double(cpt2) / 50.0)
-                Image(decorative: cg_image_next, scale: 1.0).opacity(Double(cpt2) / 50.0)
-            }
-
-            Text("salut")//                .animation(.default, value: cg_image)
-                .onReceive(timer) { input in
-                    Task {
-                        cpt += 3
-                        var idw = IDWImage(width: Self.width, height: Self.height)
-                        _ = idw.addValue(IDWValue(x: UInt16(cpt*20), y: Self.height / 2, v: 0))
-                        _ = idw.addValue(IDWValue(x: Self.width - 1, y: Self.height / 2, v: IDWValueType.max))
-                        let cg_image_new = await idw.computeCGImageAsync()!
-                        cg_image_prev = cg_image
-                        cg_image_next = cg_image_new
-                        cpt2 = 0
-                    }
-                }
-                .onReceive(timer2) { input in
-                    // il faut mixer les deux
-                    // https://developer.apple.com/documentation/accelerate/creating_a_core_graphics_image_format
-                    // https://developer.apple.com/documentation/accelerate/creating_and_populating_buffers_from_core_graphics_images
-                    cg_image = cg_image_next
-                    if cpt2 < 50 {
-                        cpt2 += 1
-                       print("cpt2=\(cpt2)")
-                    }
-                }
-
-        }
-        
-        
-        
-        .padding()
-    }
-    
-
-}
-*/
-
