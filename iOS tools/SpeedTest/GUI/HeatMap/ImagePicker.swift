@@ -74,8 +74,45 @@ struct ImagePicker: UIViewControllerRepresentable {
                             self.parent.idw_values = Set<IDWValue>()
 
                             // pour tester avec une mesure déjà réalisée
-                            self.parent.idw_values.insert(IDWValue<Float>(x: 100, y: 100, v: 600.0, type: .ap))
-                            self.parent.idw_values.insert(IDWValue<Float>(x: 100, y: 100, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 250, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350, y: 250, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 250, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 250, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650, y: 250, v: 10000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750, y: 250, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750, y: 250, v: 10000000.0, type: .probe))
+
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250+50, y: 350, v: 5000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350+50, y: 350, v: 5000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450+50, y: 350, v: 5000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550+50, y: 350, v: 5000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650+50, y: 350, v: 5000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750+50, y: 350, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750+50, y: 350, v: 5000000.0, type: .probe))
+                            
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 450, v: 1000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 350, y: 450, v: 1000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 450, v: 1000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 450, v: 1000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 650, y: 450, v: 1000000.0, type: .probe))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750, y: 450, v: 600.0, type: .ap))
+                            self.parent.idw_values.insert(IDWValue<Float>(x: 750, y: 450, v: 1000000.0, type: .probe))
+
                         }
                     }
                 }

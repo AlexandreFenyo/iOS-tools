@@ -9,6 +9,7 @@
 import SwiftUI
 
 private let NTHREADS = 10
+private let AP_RADIUS: Float = 100
 
 public enum ProbeType {
     case probe
@@ -30,6 +31,22 @@ public struct IDWValue<V: Hashable>: Hashable {
     }
 }
 
+private protocol FloatOrUInt16 {
+    func toFloat() -> Float
+}
+
+extension UInt16: FloatOrUInt16 {
+    func toFloat() -> Float { Float(self) }
+}
+
+extension Float: FloatOrUInt16 {
+    func toFloat() -> Float { self }
+}
+
+private func distanceFloat(_ x0: any FloatOrUInt16, _ y0: any FloatOrUInt16, _ x1: any FloatOrUInt16, _ y1: any FloatOrUInt16) -> Float {
+    pow(pow(x0.toFloat() - x1.toFloat(), 2) + pow(y0.toFloat() - y1.toFloat(), 2), 0.5)
+}
+
 public struct IDWImage {
     //    private var my_memory_tracker = MyMemoryTracker("IDWImage")
     
@@ -43,10 +60,6 @@ public struct IDWImage {
     public let nbytes_per_line: Int
     public let nbytes_per_pixel: Int
     
-    // power / 2 correspond à l'exposant dans le calcul de la distance, donc power == 1 implique sqrt, plus on augmente et plus on valorise les points les plus proches
-    public let power: Float = 1.0
-//    public let power: Float = 1.5
-
     // yellow_size indique l'importance du jaune dans les couleurs utilisées
     public static let yellow_size: Float = 1.5
     
@@ -105,13 +118,7 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
     
-    private func distance_power_p(_ x0: UInt16, _ y0: UInt16, _ x1: UInt16, _ y1: UInt16, _ p: Float) -> Float {
-        let dist = pow(pow(Float(x0) - Float(x1), 2) + pow(Float(y0) - Float(y1), 2), p / 2)
-        return dist
-    }
-    
-    
-    public func computeCGImageAsync(_ only_markers: Bool = false) async -> CGImage? {
+    public func computeCGImageAsync() async -> CGImage? {
         let now = Date()
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
@@ -121,51 +128,65 @@ public struct IDWImage {
             setBoldPixel(pixels, idw)
         }
         
-        if (!only_markers) {
-            await withTaskGroup(of: Void.self, body: { group in
-                let remainder = height % UInt16(NTHREADS)
-                let nthreads = remainder != 0 ? NTHREADS + 1 : NTHREADS
-                let lines_per_thread = height / UInt16(NTHREADS)
-                for thr in 0..<nthreads {
-                    group.addTask {
-                        let start_y = UInt16(thr) * lines_per_thread
-                        var end_y = start_y + lines_per_thread
-                        if end_y > height { end_y = height }
-                        for x in 0..<width {
-                            for y in start_y..<end_y {
-                                var val: Float = 0
-                                var denom: Float = 0
-                                for idw in values {
-                                    if idw.type == .probe {
-                                        let d = distance_power_p(x, y, idw.x, idw.y, power)
-                                        val += Float(idw.v) / d
-                                        denom += 1 / d
-                                    } else {
-//                                        if (Int32(x) - Int32(idw.x)) * (Int32(x) - Int32(idw.x)) + (Int32(y) - Int32(idw.y)) * (Int32(y) - Int32(idw.y)) > Int32(idw.v) * Int32(idw.v) {
-                                        if distance_power_p(x, y, idw.x, idw.y, power) > Float(idw.v) {
-                                            val = 0
-                                            denom = 1
-                                            break
-                                        } else {
-                                            let d = Float(idw.v) - distance_power_p(x, y, idw.x, idw.y, power)
-                                            val += Float(idw.v) / d
-                                            denom += 1 / d
-                                        }
-                                    }
-                                }
-                                if denom.isNormal && !denom.isZero && val.isNormal {
-                                    val = val / denom
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
-                                } else {
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: 0))
+        // On détermine le barycentre des AP et répéteurs
+        var (_bar_x, _bar_y, naps) = (Float(0), Float(0), Float(0))
+        let _ = values.filter { $0.type == .ap }.map {
+            (_bar_x, _bar_y) = (_bar_x + Float($0.x), _bar_y + Float($0.y))
+            naps += 1
+        }
+        (_bar_x, _bar_y) = naps != 0 ? (_bar_x / naps, _bar_y / naps) : (0, 0)
+        let (bar_x, bar_y) = (_bar_x, _bar_y)
+        
+        setBoldPixel(pixels, IDWValue(x: UInt16(bar_x), y: UInt16(bar_y), v: UInt16.max))
+        
+        let most_distant_idw = values.filter { $0.type == .ap }.map { (distanceFloat($0.x, $0.y, bar_x, bar_y), $0) }.max { $0.0 < $1.0 }?.1
+        let uncovered_zone_radius_around_bar = most_distant_idw != nil ? (distanceFloat(most_distant_idw!.x, most_distant_idw!.y, bar_x, bar_y) + AP_RADIUS) : nil
+    
+        await withTaskGroup(of: Void.self, body: { group in
+            let remainder = height % UInt16(NTHREADS)
+            let nthreads = remainder != 0 ? NTHREADS + 1 : NTHREADS
+            let lines_per_thread = height / UInt16(NTHREADS)
+            for thr in 0..<nthreads {
+                group.addTask {
+                    let start_y = UInt16(thr) * lines_per_thread
+                    var end_y = start_y + lines_per_thread
+                    if end_y > height { end_y = height }
+                    for x in 0..<width {
+                        for y in start_y..<end_y {
+                            var val: Float = 0
+                            var denom: Float = 0
+                            for idw in values {
+                                if idw.type == .probe {
+                                    let d = distanceFloat(x, y, idw.x, idw.y)
+                                    val += Float(idw.v) / d
+                                    denom += 1 / d
                                 }
                             }
+                            
+                            if let uncovered_zone_radius_around_bar {
+                                let dist_to_bar = distanceFloat(x, y, bar_x, bar_y)
+                                if dist_to_bar < uncovered_zone_radius_around_bar {
+                                    let d = uncovered_zone_radius_around_bar - dist_to_bar
+                                    val += Float(most_distant_idw!.v) / d
+                                    denom += 1 / d
+                                } else {
+                                    val = 0
+                                    denom = 1
+                                }
+                            }
+                            
+                            if denom.isNormal && !denom.isZero && val.isNormal {
+                                val = val / denom
+                                setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
+                            } else {
+                                setPixel(pixels, IDWValue(x: x, y: y, v: 0))
+                            }
                         }
-                        return
-                    } // addTask
-                }
-            })
-        }
+                    }
+                    return
+                } // addTask
+            }
+        })
         
         let data = CFDataCreate(nil, pixels, npixels * 3)
         pixels.deallocate()
