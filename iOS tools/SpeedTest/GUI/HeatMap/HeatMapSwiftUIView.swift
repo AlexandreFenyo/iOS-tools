@@ -56,13 +56,14 @@ struct HeatMapSwiftUIView: View {
 
     @State private var idw_values = Set<IDWValue<Float>>()
     @State private var display_steps = false
-    
+
+    @State private var power_scale: Float = 1
+    @State private var power_scale_radius: Float = 1
+    @State private var toggle_radius = false
+
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
-    //    @State var cpt = 0
-    //    let timer2 = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
-    //   @State var cpt2 = 0
     
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }
@@ -93,7 +94,7 @@ struct HeatMapSwiftUIView: View {
         }
         Task {
             cg_image_prev = cg_image_next
-            cg_image_next = await idw_image.computeCGImageAsync()
+            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0)
             image_last_update = Date()
             image_update_ratio = 0
         }
@@ -233,6 +234,12 @@ struct HeatMapSwiftUIView: View {
                     }
                 }
                 
+                Slider(value: $power_scale, in: 0...5)
+                HStack {
+                    Toggle("xxx", isOn: $toggle_radius)
+                    Slider(value: $power_scale_radius, in: 0...5).disabled(!toggle_radius)
+                }
+
                 Spacer()
                 HStack {
                     // pour débugger opacity

@@ -118,7 +118,7 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
     
-    public func computeCGImageAsync() async -> CGImage? {
+    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float) async -> CGImage? {
         let now = Date()
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
@@ -157,16 +157,20 @@ public struct IDWImage {
                             var denom: Float = 0
                             for idw in values {
                                 if idw.type == .probe {
-                                    let d = distanceFloat(x, y, idw.x, idw.y)
+                                    var d = distanceFloat(x, y, idw.x, idw.y)
+                                    d = pow(d, power_scale)
+                                    
                                     val += Float(idw.v) / d
                                     denom += 1 / d
                                 }
                             }
-                            
-                            if let uncovered_zone_radius_around_bar {
+
+                            if power_scale_radius > 0, let uncovered_zone_radius_around_bar {
                                 let dist_to_bar = distanceFloat(x, y, bar_x, bar_y)
                                 if dist_to_bar < uncovered_zone_radius_around_bar {
-                                    let d = uncovered_zone_radius_around_bar - dist_to_bar
+                                    var d = uncovered_zone_radius_around_bar - dist_to_bar
+                                    d = pow(d, power_scale_radius)
+
                                     val += Float(most_distant_idw!.v) / d
                                     denom += 1 / d
                                 } else {
