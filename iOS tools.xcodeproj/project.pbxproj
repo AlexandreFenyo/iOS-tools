@@ -53,6 +53,7 @@
 		5DE4ED9D290586740000B30A /* docs-hosts.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED91290586740000B30A /* docs-hosts.psd */; };
 		5DE4ED9F2905CB0D0000B30A /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */; };
 		5DE4EDA12905CB650000B30A /* AddSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */; };
+		5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE8DC41295074BB00FAE74D /* Graham.swift */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
 		5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */; };
 		5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */; };
@@ -126,6 +127,7 @@
 		5DE4ED91290586740000B30A /* docs-hosts.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-hosts.psd"; sourceTree = "<group>"; };
 		5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSwiftUIView.swift; sourceTree = "<group>"; };
+		5DE8DC41295074BB00FAE74D /* Graham.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graham.swift; sourceTree = "<group>"; };
 		5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = leftNavController.swift; sourceTree = "<group>"; };
 		5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightNavController.swift; sourceTree = "<group>"; };
 		5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornerView.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
 				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
 				5D78EF6D290FC56400842B76 /* IDWView.swift */,
+				5DE8DC41295074BB00FAE74D /* Graham.swift */,
 			);
 			path = HeatMap;
 			sourceTree = "<group>";
@@ -564,6 +567,7 @@
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
 				5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
+				5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */,
 				5DE4EDA12905CB650000B30A /* AddSwiftUIView.swift in Sources */,
 				5DE4ED9F2905CB0D0000B30A /* AddViewController.swift in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,

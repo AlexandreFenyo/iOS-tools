@@ -120,6 +120,13 @@ public struct IDWImage {
     
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float) async -> CGImage? {
         let now = Date()
+
+
+        // tester l'algo de Graham
+        var poly = Polygon(vertices: values.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
+        
+        
+        
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
         pixels.initialize(repeating: 0, count: npixels * nbytes_per_pixel)
