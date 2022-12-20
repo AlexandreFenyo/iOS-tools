@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// private var debugcnt = 0
+
 private let NTHREADS = 10
 private let AP_RADIUS: Float = 100
 
@@ -121,15 +123,33 @@ public struct IDWImage {
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float) async -> CGImage? {
         let now = Date()
 
-
         // tester l'algo de Graham
         var poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         poly.computeConvexHull()
         
         
-        
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
         pixels.initialize(repeating: 0, count: npixels * nbytes_per_pixel)
+
+
+        /*
+        // debug de Graham
+        debugcnt += 1
+        if debugcnt == 10 {
+            debugcnt = 0
+        }
+        if true {
+            for vertex in poly.vertices[0..<min(poly.vertices.count, debugcnt)] {
+                setBoldPixel(pixels, IDWValue<UInt16>(x: UInt16(vertex.x), y: UInt16(vertex.y), v:200, type: .ap))
+            }
+            let data = CFDataCreate(nil, pixels, npixels * 3)
+            pixels.deallocate()
+            guard let provider = CGDataProvider(data: data!) else { return nil }
+            let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+            print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+            return cg_image
+        }
+        */
         
         for idw in values {
             setBoldPixel(pixels, idw)
