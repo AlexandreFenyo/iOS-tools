@@ -123,8 +123,8 @@ public struct IDWImage {
 
 
         // tester l'algo de Graham
-        var poly = Polygon(vertices: values.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
-        
+        var poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
+        poly.computeConvexHull()
         
         
         
