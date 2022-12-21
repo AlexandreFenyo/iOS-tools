@@ -20,9 +20,9 @@ extension CGPoint : Hashable {
 
 struct Polygon {
     public var vertices: Array<CGPoint>
-
+    
     private static func distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
-        return pow((p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y), 0.5)
+        return pow(square_distance(p0, p1), 0.5)
     }
 
     private static func square_distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
@@ -40,6 +40,32 @@ struct Polygon {
     // positif si on tourne dans le sens trigo
     private static func vector_product(_ v0: CGPoint, _ v1: CGPoint) -> Double {
         return v0.x * v1.y - v0.y * v1.x
+    }
+
+    // algo qui ne fonctionne que si le polygone est convexe
+    public func isInside(_ p: CGPoint) -> Bool {
+        let sign = Self.vector_product(Self.vector(p, vertices[vertices.count - 1]), Self.vector(p, vertices[0])) < 0
+        for idx in 1..<vertices.count {
+            if (Self.vector_product(Self.vector(p, vertices[idx - 1]), Self.vector(p, vertices[idx])) < 0) != sign { return false }
+        }
+        return true
+    }
+    
+    private static func distanceToLine(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
+        abs(vector_product(vector(line_p0, line_p1), vector(line_p0, p))) / distance(line_p0, line_p1)
+    }
+
+    private static func distanceToSegment(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
+        [ distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p), distance(line_p0, p), distance(line_p1, p) ].sorted().first!
+    }
+
+    public func distanceToPolygon(_ p: CGPoint) -> Double {
+        if isInside(p) { return 0 }
+        var distances = vertices.map { Self.distance($0, p) }
+        for i in 0..<vertices.count {
+            distances.append(Self.distanceToSegment(line_p0: vertices[i], line_p1: vertices[i + 1 == vertices.count ? 0 : i + 1], p: p))
+        }
+        return distances.min()!
     }
 
     public mutating func computeConvexHull() {
