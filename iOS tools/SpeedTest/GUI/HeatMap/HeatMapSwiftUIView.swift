@@ -76,7 +76,7 @@ struct HeatMapSwiftUIView: View {
         }
     }
     
-    private func updateMap() {
+    private func updateMap(debug_x: UInt16? = nil, debug_y: UInt16? = nil) {
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
@@ -94,7 +94,7 @@ struct HeatMapSwiftUIView: View {
         }
         Task {
             cg_image_prev = cg_image_next
-            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0)
+            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y)
             image_last_update = Date()
             image_update_ratio = 0
         }
@@ -227,7 +227,7 @@ struct HeatMapSwiftUIView: View {
                                             last_loc_y = UInt16(yy)
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: .probe))
-                                            updateMap()
+                                            updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                         }
                                 )
                         }

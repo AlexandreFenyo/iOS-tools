@@ -56,7 +56,7 @@ struct Polygon {
     }
 
     private static func distanceToSegment(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
-        [ distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p), distance(line_p0, p), distance(line_p1, p) ].sorted().first!
+        [ distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p), distance(line_p0, p), distance(line_p1, p) ].min()!
     }
 
     public func distanceToPolygon(_ p: CGPoint) -> Double {

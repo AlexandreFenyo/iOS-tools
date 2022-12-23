@@ -120,13 +120,16 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
     
-    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float) async -> CGImage? {
+    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil) async -> CGImage? {
         let now = Date()
         
         
         // tester l'algo de Graham
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         _poly.computeConvexHull()
+        if let debug_x, let debug_y {
+            print("distance from (\(debug_x), \(debug_y)) to polygon: \(_poly.distanceToPolygon(CGPoint(x: Double(debug_x), y: Double(debug_y))))")
+        }
         let poly = _poly
         
         
