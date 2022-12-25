@@ -123,56 +123,29 @@ public struct IDWImage {
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil) async -> CGImage? {
         let now = Date()
         
-        
-        // tester l'algo de Graham
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         _poly.computeConvexHull()
+  
+        /*
+        print(_poly.distanceToPolygon(CGPoint(x:900.0, y: 256.0)))
+        print(_poly.fastDistanceToPolygon(FastCGPoint(x:900, y: 256)))
+        fatalError()
+        */
+        
         if let debug_x, let debug_y {
             print("distance from (\(debug_x), \(debug_y)) to polygon: \(_poly.distanceToPolygon(CGPoint(x: Double(debug_x), y: Double(debug_y))))")
+            print("fastdistance from (\(debug_x), \(debug_y)) to polygon: \(_poly.fastDistanceToPolygon(FastCGPoint(x: Int64(debug_x), y: Int64(debug_y))))")
         }
+//        return nil
+
         let poly = _poly
-        
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
         pixels.initialize(repeating: 0, count: npixels * nbytes_per_pixel)
         
-        
-        /*
-         // debug de Graham
-         debugcnt += 1
-         if debugcnt == 10 {
-         debugcnt = 0
-         }
-         if true {
-         for vertex in poly.vertices[0..<min(poly.vertices.count, debugcnt)] {
-         setBoldPixel(pixels, IDWValue<UInt16>(x: UInt16(vertex.x), y: UInt16(vertex.y), v:200, type: .ap))
-         }
-         let data = CFDataCreate(nil, pixels, npixels * 3)
-         pixels.deallocate()
-         guard let provider = CGDataProvider(data: data!) else { return nil }
-         let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
-         print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
-         return cg_image
-         }
-         */
-        
         for idw in values {
             setBoldPixel(pixels, idw)
         }
-        
-        // On détermine le barycentre des AP et répéteurs
-        var (_bar_x, _bar_y, naps) = (Float(0), Float(0), Float(0))
-        let _ = values.filter { $0.type == .ap }.map {
-            (_bar_x, _bar_y) = (_bar_x + Float($0.x), _bar_y + Float($0.y))
-            naps += 1
-        }
-        (_bar_x, _bar_y) = naps != 0 ? (_bar_x / naps, _bar_y / naps) : (0, 0)
-        let (bar_x, bar_y) = (_bar_x, _bar_y)
-        
-        setBoldPixel(pixels, IDWValue(x: UInt16(bar_x), y: UInt16(bar_y), v: UInt16.max))
-        
-        let most_distant_idw = values.filter { $0.type == .ap }.map { (distanceFloat($0.x, $0.y, bar_x, bar_y), $0) }.max { $0.0 < $1.0 }?.1
-        let uncovered_zone_radius_around_bar = most_distant_idw != nil ? (distanceFloat(most_distant_idw!.x, most_distant_idw!.y, bar_x, bar_y) + AP_RADIUS) : nil
         
         await withTaskGroup(of: Void.self, body: { group in
             let remainder = height % UInt16(NTHREADS)
@@ -190,6 +163,7 @@ public struct IDWImage {
                             for idw in values {
                                 if idw.type == .probe {
                                     var d = distanceFloat(x, y, idw.x, idw.y)
+                                    // prend du temps
                                     d = pow(d, power_scale)
                                     
                                     val += Float(idw.v) / d
@@ -197,27 +171,18 @@ public struct IDWImage {
                                 }
                             }
                             
-                            // pour tester
-                            /*
-                             if poly.isInside(CGPoint(x: Double(x), y: Double(y))) == false {
-                             val = 0
-                             denom = 1
-                             }*/
-                            
-                            if power_scale_radius > 0 {
-                                let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
+                            if true /* power_scale_radius > 0 */ {
+//                              let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
+                                let dist_to_poly = Float(poly.fastDistanceToPolygon(FastCGPoint(x: Int64(x), y: Int64(y))))
+
+                                
                                 
                                 if dist_to_poly > 0 {
-                                    // rouge
-//                                    print(dist_to_poly)
-                                    // setPixel(pixels, IDWValue(x: x, y: y, v: 2))
                                     setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(dist_to_poly / 400.0 * 60000.0)))
                                 } else {
                                     // vert
                                     setPixel(pixels, IDWValue(x: x, y: y, v: 65000))
                                 }
-                                
-                                
                                 
                                 if dist_to_poly != 0 {
                                     val += Float(4000) / dist_to_poly
@@ -228,22 +193,6 @@ public struct IDWImage {
                                 }*/
                             }
                             
-                            /*
-                             if power_scale_radius > 0, let uncovered_zone_radius_around_bar {
-                             let dist_to_bar = distanceFloat(x, y, bar_x, bar_y)
-                             if dist_to_bar < uncovered_zone_radius_around_bar {
-                             var d = uncovered_zone_radius_around_bar - dist_to_bar
-                             d = pow(d, power_scale_radius)
-                             
-                             val += Float(most_distant_idw!.v) / d
-                             denom += 1 / d
-                             } else {
-                             val = 0
-                             denom = 1
-                             }
-                             }*/
-                            
-                            // A REMETTRE
                             if false {
                                 if denom.isNormal && !denom.isZero && val.isNormal {
                                     val = val / denom
@@ -268,6 +217,7 @@ public struct IDWImage {
         
         print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
         
+//        fatalError()
         return cg_image
     }
 }

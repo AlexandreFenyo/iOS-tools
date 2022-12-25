@@ -11,25 +11,47 @@
 
 import CoreGraphics
 
-extension CGPoint : Hashable {
+extension CGPoint: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(x)
         hasher.combine(y)
       }
 }
 
+struct FastCGPoint: Hashable {
+    let x: Int64
+    let y: Int64
+    public func toCGPoint() -> CGPoint {
+        return CGPoint(x: Double(x), y: Double(y))
+    }
+}
+
 struct Polygon {
     public var vertices: Array<CGPoint>
+    public var fast_vertices: Array<FastCGPoint>
     
-    private static func distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
-        return pow(square_distance(p0, p1), 0.5)
+    public init(vertices: Array<CGPoint>) {
+        self.vertices = vertices
+        fast_vertices = self.vertices.map { FastCGPoint(x: Int64($0.x), y: Int64($0.y)) }
     }
 
-    private static func square_distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
+    private static func distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
+        return squareDistance(p0, p1).squareRoot()
+    }
+
+    private static func fastDistance(_ p0: FastCGPoint, _ p1: FastCGPoint) -> Int64 {
+        return Int64(distance(p0.toCGPoint(), p1.toCGPoint()))
+    }
+
+    private static func squareDistance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
         return (p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y)
     }
 
-    private static func cosin_lowest_to_vertex(lowest: CGPoint, vertex: CGPoint) -> Double {
+    private static func fastSquareDistance(_ p0: FastCGPoint, _ p1: FastCGPoint) -> Int64 {
+        return (p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y)
+    }
+
+    private static func cosinLowestToVertex(lowest: CGPoint, vertex: CGPoint) -> Double {
         return (vertex.x - lowest.x) / distance(lowest, vertex)
     }
 
@@ -37,59 +59,83 @@ struct Polygon {
         return CGPoint(x: p1.x - p0.x, y: p1.y - p0.y)
     }
 
-    // positif si on tourne dans le sens trigo
-    private static func vector_product(_ v0: CGPoint, _ v1: CGPoint) -> Double {
+    private static func fastVector(_ p0: FastCGPoint, _ p1: FastCGPoint) -> FastCGPoint {
+        return FastCGPoint(x: p1.x - p0.x, y: p1.y - p0.y)
+    }
+
+    private static func vectorProduct(_ v0: CGPoint, _ v1: CGPoint) -> Double {
         return v0.x * v1.y - v0.y * v1.x
     }
 
-    private static func scalar_product(_ v0: CGPoint, _ v1: CGPoint) -> Double {
+    private static func fastVectorProduct(_ v0: FastCGPoint, _ v1: FastCGPoint) -> Int64 {
+        return v0.x * v1.y - v0.y * v1.x
+    }
+
+    private static func scalarProduct(_ v0: CGPoint, _ v1: CGPoint) -> Double {
+        return v0.x * v1.x + v0.y * v1.y
+    }
+
+    private static func fastScalarProduct(_ v0: FastCGPoint, _ v1: FastCGPoint) -> Int64 {
         return v0.x * v1.x + v0.y * v1.y
     }
 
     // algo qui ne fonctionne que si le polygone est convexe
     public func isInside(_ p: CGPoint) -> Bool {
-        let sign = Self.vector_product(Self.vector(p, vertices[vertices.count - 1]), Self.vector(p, vertices[0])) < 0
+        let sign = Self.vectorProduct(Self.vector(p, vertices[vertices.count - 1]), Self.vector(p, vertices[0])) < 0
         for idx in 1..<vertices.count {
-            if (Self.vector_product(Self.vector(p, vertices[idx - 1]), Self.vector(p, vertices[idx])) < 0) != sign { return false }
+            if (Self.vectorProduct(Self.vector(p, vertices[idx - 1]), Self.vector(p, vertices[idx])) < 0) != sign { return false }
         }
         return true
     }
-    
-    private static func distanceToLine(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
-        abs(vector_product(vector(line_p0, line_p1), vector(line_p0, p))) / distance(line_p0, line_p1)
+
+    public func fastIsInside(_ p: FastCGPoint) -> Bool {
+        let sign = Self.fastVectorProduct(Self.fastVector(p, fast_vertices[fast_vertices.count - 1]), Self.fastVector(p, fast_vertices[0])) < 0
+        for idx in 1..<fast_vertices.count {
+            if (Self.fastVectorProduct(Self.fastVector(p, fast_vertices[idx - 1]), Self.fastVector(p, fast_vertices[idx])) < 0) != sign { return false }
+        }
+        return true
     }
 
-    private static func distanceToSegment(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
-        let dtol = distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p)
-        // print("distancetoline from (\(p.x), \(p.y)) to ((\(line_p0.x), \(line_p0.y)), (\(line_p1.x), \(line_p1.y))): \(dtol)")
+    private static func distanceToLine(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
+        abs(vectorProduct(vector(line_p0, line_p1), vector(line_p0, p))) / distance(line_p0, line_p1)
+    }
 
-        // ERREUR ICI
-        let sc0 = scalar_product(vector(line_p0, line_p1), vector(line_p0, p))
-        let sc1 = scalar_product(vector(line_p1, line_p0), vector(line_p1, p))
+    private static func fastDistanceToLine(line_p0: FastCGPoint, line_p1: FastCGPoint, p: FastCGPoint) -> Int64 {
+        abs(fastVectorProduct(fastVector(line_p0, line_p1), fastVector(line_p0, p))) / fastDistance(line_p0, line_p1)
+    }
+    
+    private static func distanceToSegment(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
+        let sc0 = scalarProduct(vector(line_p0, line_p1), vector(line_p0, p))
+        let sc1 = scalarProduct(vector(line_p1, line_p0), vector(line_p1, p))
         if sc0 <= 0 || sc1 <= 0 {
             return [ distance(line_p0, p), distance(line_p1, p) ].min()!
         }
         return distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p)
     }
 
+    private static func fastDistanceToSegment(line_p0: FastCGPoint, line_p1: FastCGPoint, p: FastCGPoint) -> Int64 {
+        let sc0 = fastScalarProduct(fastVector(line_p0, line_p1), fastVector(line_p0, p))
+        let sc1 = fastScalarProduct(fastVector(line_p1, line_p0), fastVector(line_p1, p))
+        if sc0 <= 0 || sc1 <= 0 {
+            return [ fastDistance(line_p0, p), fastDistance(line_p1, p) ].min()!
+        }
+        return fastDistanceToLine(line_p0: line_p0, line_p1: line_p1, p: p)
+    }
+
     public func distanceToPolygon(_ p: CGPoint) -> Double {
         if isInside(p) { return 0 }
         var distances = vertices.map { Self.distance($0, p) }
-//        print("distance to vertices: \(distances)")
         for i in 0..<vertices.count {
-
-            // to debug
-            let x0 = vertices[i].x
-            let y0 = vertices[i].y
-            let x1 = vertices[i + 1 == vertices.count ? 0 : i + 1].x
-            let y1 = vertices[i + 1 == vertices.count ? 0 : i + 1].y
-            let d = (Self.distanceToSegment(line_p0: vertices[i], line_p1: vertices[i + 1 == vertices.count ? 0 : i + 1], p: p))
-//            print("distance from (\(p.x), \(p.y)) to vertex[\(i)][(\(x0), \(y0)), (\(x1), \(y1))] = \(d)")
-            // si je clique en base à droite :
-            // distance from (1023.0, 0.0) to vertex[2][(800.0, 350.0), (750.0, 450.0)] = 42.93250516799596
-            // distancetoline from (1023.0, 0.0) to ((800.0, 350.0), (750.0, 450.0)): 42.93250516799596
-
             distances.append(Self.distanceToSegment(line_p0: vertices[i], line_p1: vertices[i + 1 == vertices.count ? 0 : i + 1], p: p))
+        }
+        return distances.min()!
+    }
+
+    public func fastDistanceToPolygon(_ p: FastCGPoint) -> Int64 {
+        if fastIsInside(p) { return 0 }
+        var distances = fast_vertices.map { Self.fastDistance($0, p) }
+        for i in 0..<fast_vertices.count {
+            distances.append(Self.fastDistanceToSegment(line_p0: fast_vertices[i], line_p1: fast_vertices[i + 1 == fast_vertices.count ? 0 : i + 1], p: p))
         }
         return distances.min()!
     }
@@ -110,14 +156,14 @@ struct Polygon {
 
         // tri dans le sens trigo (on teste avec > car cosinus est une fonction décroissante)
         vertices_except_lowest.sort {
-            Self.cosin_lowest_to_vertex(lowest: lowest_vertex, vertex: $0) > Self.cosin_lowest_to_vertex(lowest: lowest_vertex, vertex: $1)
+            Self.cosinLowestToVertex(lowest: lowest_vertex, vertex: $0) > Self.cosinLowestToVertex(lowest: lowest_vertex, vertex: $1)
         }
         
         // on supprime ceux qui sont alignés sauf le plus long par groupe d'alignés
         var prev_vertex = vertices_except_lowest.first!
         for next_vertex in (vertices_except_lowest.filter { $0 != prev_vertex }) {
-            if Self.vector_product(Self.vector(lowest_vertex, prev_vertex), Self.vector(lowest_vertex, next_vertex)) == 0 {
-                if Self.square_distance(lowest_vertex, prev_vertex) < Self.square_distance(lowest_vertex, next_vertex) {
+            if Self.vectorProduct(Self.vector(lowest_vertex, prev_vertex), Self.vector(lowest_vertex, next_vertex)) == 0 {
+                if Self.squareDistance(lowest_vertex, prev_vertex) < Self.squareDistance(lowest_vertex, next_vertex) {
                     vertices_except_lowest.remove(at: vertices_except_lowest.firstIndex(of: prev_vertex)!)
                     prev_vertex = next_vertex
                 } else {
@@ -135,7 +181,7 @@ struct Polygon {
             while true {
                 let p0 = stack[stack.count - 2]
                 let p1 = stack[stack.count - 1]
-                let orientation = Self.vector_product(Self.vector(p0, p1), Self.vector(p1, p2))
+                let orientation = Self.vectorProduct(Self.vector(p0, p1), Self.vector(p1, p2))
                 if orientation > 0 {
                     stack.append(p2)
                     break
@@ -146,5 +192,6 @@ struct Polygon {
         }
 
         vertices = stack
+        fast_vertices = vertices.map { FastCGPoint(x: Int64($0.x), y: Int64($0.y)) }
     }
 }
