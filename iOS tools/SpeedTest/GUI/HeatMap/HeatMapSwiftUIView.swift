@@ -225,8 +225,11 @@ struct HeatMapSwiftUIView: View {
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
+                                            
+                                            // A REMETTRE
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: .probe))
+                                            
                                             updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                         }
                                 )

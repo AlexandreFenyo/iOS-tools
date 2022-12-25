@@ -42,6 +42,10 @@ struct Polygon {
         return v0.x * v1.y - v0.y * v1.x
     }
 
+    private static func scalar_product(_ v0: CGPoint, _ v1: CGPoint) -> Double {
+        return v0.x * v1.x + v0.y * v1.y
+    }
+
     // algo qui ne fonctionne que si le polygone est convexe
     public func isInside(_ p: CGPoint) -> Bool {
         let sign = Self.vector_product(Self.vector(p, vertices[vertices.count - 1]), Self.vector(p, vertices[0])) < 0
@@ -56,13 +60,35 @@ struct Polygon {
     }
 
     private static func distanceToSegment(line_p0: CGPoint, line_p1: CGPoint, p: CGPoint) -> Double {
-        [ distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p), distance(line_p0, p), distance(line_p1, p) ].min()!
+        let dtol = distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p)
+        // print("distancetoline from (\(p.x), \(p.y)) to ((\(line_p0.x), \(line_p0.y)), (\(line_p1.x), \(line_p1.y))): \(dtol)")
+
+        // ERREUR ICI
+        let sc0 = scalar_product(vector(line_p0, line_p1), vector(line_p0, p))
+        let sc1 = scalar_product(vector(line_p1, line_p0), vector(line_p1, p))
+        if sc0 <= 0 || sc1 <= 0 {
+            return [ distance(line_p0, p), distance(line_p1, p) ].min()!
+        }
+        return distanceToLine(line_p0: line_p0, line_p1: line_p1, p: p)
     }
 
     public func distanceToPolygon(_ p: CGPoint) -> Double {
         if isInside(p) { return 0 }
         var distances = vertices.map { Self.distance($0, p) }
+//        print("distance to vertices: \(distances)")
         for i in 0..<vertices.count {
+
+            // to debug
+            let x0 = vertices[i].x
+            let y0 = vertices[i].y
+            let x1 = vertices[i + 1 == vertices.count ? 0 : i + 1].x
+            let y1 = vertices[i + 1 == vertices.count ? 0 : i + 1].y
+            let d = (Self.distanceToSegment(line_p0: vertices[i], line_p1: vertices[i + 1 == vertices.count ? 0 : i + 1], p: p))
+//            print("distance from (\(p.x), \(p.y)) to vertex[\(i)][(\(x0), \(y0)), (\(x1), \(y1))] = \(d)")
+            // si je clique en base à droite :
+            // distance from (1023.0, 0.0) to vertex[2][(800.0, 350.0), (750.0, 450.0)] = 42.93250516799596
+            // distancetoline from (1023.0, 0.0) to ((800.0, 350.0), (750.0, 450.0)): 42.93250516799596
+
             distances.append(Self.distanceToSegment(line_p0: vertices[i], line_p1: vertices[i + 1 == vertices.count ? 0 : i + 1], p: p))
         }
         return distances.min()!
