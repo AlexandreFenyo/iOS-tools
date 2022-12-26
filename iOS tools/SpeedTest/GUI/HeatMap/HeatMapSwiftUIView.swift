@@ -173,6 +173,7 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
+                            // CONTINNUER ICI : factoriser le code suivant
                             idw_values = [
                                 IDWValue<Float>(x: 20, y: 20, v: 600.0, type: .ap),
                                 IDWValue<Float>(x: 20, y: 20, v: 10000000.0, type: .probe)
