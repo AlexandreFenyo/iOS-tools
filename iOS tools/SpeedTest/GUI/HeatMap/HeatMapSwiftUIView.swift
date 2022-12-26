@@ -165,6 +165,7 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
+//                            idw_values = Set<IDWValue<Float>>()
                             updateSteps()
                         } label: {
                             VStack {
