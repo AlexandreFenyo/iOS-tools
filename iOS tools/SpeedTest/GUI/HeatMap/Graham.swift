@@ -19,6 +19,30 @@ extension CGPoint: Hashable {
       }
 }
 
+public struct DistanceCache {
+    public var width: UInt16? = nil
+    public var height: UInt16? = nil
+    public var vertices: Array<CGPoint>? = nil
+    public var distance: UnsafeMutablePointer<UInt16>? = nil
+    
+    public func setDistance(x: UInt16, y: UInt16, d: UInt16) {
+        if let distance, let width {
+            let p = distance + 2 * (Int(x) + Int(width) * Int(y))
+            p.pointee = d
+        }
+    }
+
+    public func getDistance(x: UInt16, y: UInt16) -> UInt16? {
+        if let distance, let width {
+            let p = distance + 2 * (Int(x) + Int(width) * Int(y))
+            return p.pointee
+        }
+        return nil
+    }
+}
+
+public var distance_cache = DistanceCache()
+
 struct Polygon {
     public var vertices: Array<CGPoint>
 

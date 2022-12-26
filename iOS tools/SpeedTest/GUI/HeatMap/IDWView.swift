@@ -62,6 +62,10 @@ public struct IDWImage {
     public let nbytes_per_line: Int
     public let nbytes_per_pixel: Int
     
+    public func getValues() -> Set<IDWValue<UInt16>> {
+        return values
+    }
+
     // yellow_size indique l'importance du jaune dans les couleurs utilisées
     public static let yellow_size: Float = 1.5
     
@@ -120,7 +124,12 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
     
-    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil) async -> CGImage? {
+    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache, need_update_cache: Bool) async -> CGImage? {
+
+        if need_update_cache {
+            print("UPDATING CACHE")
+        }
+        
         let now = Date()
         
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
@@ -155,9 +164,14 @@ public struct IDWImage {
                                     denom += 1 / d
                                 }
                             }
-                            
-                            if  power_scale_radius > 0 {
+
+                            if need_update_cache {
                                 let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
+                                distance_cache.setDistance(x: x, y: y, d: UInt16(dist_to_poly))
+                            }
+                            
+                            if power_scale_radius > 0 {
+                                let dist_to_poly = Float(distance_cache.getDistance(x: x, y: y)!)
                                 if dist_to_poly != 0 {
                                     // on est en dehors du polygone
                                     if dist_to_poly < power_scale_radius {

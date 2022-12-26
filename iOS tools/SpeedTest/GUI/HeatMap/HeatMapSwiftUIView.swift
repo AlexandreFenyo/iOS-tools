@@ -93,8 +93,22 @@ struct HeatMapSwiftUIView: View {
             }
         }
         Task {
+            let new_vertices = idw_image.getValues().filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) }
+            
+            var need_update_cache = false
+            if distance_cache.vertices == nil || Set(new_vertices) != Set(distance_cache.vertices!) {
+                distance_cache.vertices = new_vertices
+                distance_cache.width = width
+                distance_cache.height = height
+                need_update_cache = true
+                distance_cache.distance?.deallocate()
+                distance_cache.distance = UnsafeMutablePointer<UInt16>.allocate(capacity: Int(width) * Int(height) * 2)
+                distance_cache.distance!.initialize(repeating: 0, count: Int(width) * Int(height) * 2)
+
+            }
+            
             cg_image_prev = cg_image_next
-            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y)
+            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: distance_cache, need_update_cache: need_update_cache)
             image_last_update = Date()
             image_update_ratio = 0
         }
