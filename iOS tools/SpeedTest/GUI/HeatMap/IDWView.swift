@@ -125,42 +125,6 @@ public struct IDWImage {
         
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         _poly.computeConvexHull()
-  
-        
-        var test_now = Date()
-        Polygon.test_date = Date()
-        Polygon.test_duration = TimeInterval()
-
-        print(_poly.distanceToPolygon(CGPoint(x:900.0, y: 256.0)))
-        print("durée distanceToPolygon: \(Date().timeIntervalSince(test_now)) s")
-        print("durée distance: \(Polygon.test_duration) s")
-
-        
-        test_now = Date()
-        Polygon.test_date = Date()
-        Polygon.test_duration = TimeInterval()
-        print(_poly.fastDistanceToPolygon(FastCGPoint(x:900, y: 256)))
-        print("durée fastDistanceToPolygon: \(Date().timeIntervalSince(test_now)) s")
-        print("durée distanceToPolygon: \(Date().timeIntervalSince(test_now)) s")
-        print("durée distance: \(Polygon.test_duration) s")
-        test_now = Date()
-        print(_poly.distanceToPolygon(CGPoint(x:900.0, y: 256.0)))
-        print("durée distanceToPolygon: \(Date().timeIntervalSince(test_now)) s")
-        test_now = Date()
-        print(_poly.fastDistanceToPolygon(FastCGPoint(x:900, y: 256)))
-        print("durée fastDistanceToPolygon: \(Date().timeIntervalSince(test_now)) s")
-        fatalError()
-
-        
-        
-        
-        
-        if let debug_x, let debug_y {
-            print("distance from (\(debug_x), \(debug_y)) to polygon: \(_poly.distanceToPolygon(CGPoint(x: Double(debug_x), y: Double(debug_y))))")
-            print("fastdistance from (\(debug_x), \(debug_y)) to polygon: \(_poly.fastDistanceToPolygon(FastCGPoint(x: Int64(debug_x), y: Int64(debug_y))))")
-        }
-//        return nil
-
         let poly = _poly
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)
@@ -195,10 +159,7 @@ public struct IDWImage {
                             }
                             
                             if true /* power_scale_radius > 0 */ {
-//                              let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
-                                let dist_to_poly = Float(poly.fastDistanceToPolygon(FastCGPoint(x: Int64(x), y: Int64(y))))
-
-                                
+                              let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
                                 
                                 if dist_to_poly > 0 {
                                     setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(dist_to_poly / 400.0 * 60000.0)))
