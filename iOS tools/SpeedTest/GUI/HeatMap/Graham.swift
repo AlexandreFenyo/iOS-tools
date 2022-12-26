@@ -10,6 +10,7 @@
 // https://miashs-www.u-ga.fr/prevert/Prog/Complexite/graham.html
 
 import CoreGraphics
+import Foundation
 
 extension CGPoint: Hashable {
     public func hash(into hasher: inout Hasher) {
@@ -30,13 +31,21 @@ struct Polygon {
     public var vertices: Array<CGPoint>
     public var fast_vertices: Array<FastCGPoint>
     
+    public static var test_date: Date?
+    public static var test_duration: TimeInterval?
+
     public init(vertices: Array<CGPoint>) {
         self.vertices = vertices
         fast_vertices = self.vertices.map { FastCGPoint(x: Int64($0.x), y: Int64($0.y)) }
     }
 
     private static func distance(_ p0: CGPoint, _ p1: CGPoint) -> Double {
-        return squareDistance(p0, p1).squareRoot()
+        let debut = Date()
+        let retval = squareDistance(p0, p1).squareRoot()
+        if Self.test_duration != nil {
+            Self.test_duration! += Date().timeIntervalSince(debut)
+        }
+        return retval
     }
 
     private static func fastDistance(_ p0: FastCGPoint, _ p1: FastCGPoint) -> Int64 {
