@@ -150,37 +150,39 @@ public struct IDWImage {
                             for idw in values {
                                 if idw.type == .probe {
                                     var d = distanceFloat(x, y, idw.x, idw.y)
-                                    // prend du temps
                                     d = pow(d, power_scale)
-                                    
                                     val += Float(idw.v) / d
                                     denom += 1 / d
                                 }
                             }
                             
-                            if true /* power_scale_radius > 0 */ {
-                              let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
-                                
-                                if dist_to_poly > 0 {
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(dist_to_poly / 400.0 * 60000.0)))
-                                } else {
-                                    // vert
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: 65000))
-                                }
-                                
+                            if  power_scale_radius > 0 {
+                                let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
                                 if dist_to_poly != 0 {
-                                    val += Float(4000) / dist_to_poly
-                                    denom += 1 / dist_to_poly
-                                }/* else {
-                                    val = 0
-                                    denom = 1
-                                }*/
+                                    // on est en dehors du polygone
+                                    if dist_to_poly < power_scale_radius {
+                                        // on est dans la zone des 200 à l'extérieur du polygone
+                                        var d = power_scale_radius - dist_to_poly
+                                        d = pow(d, power_scale)
+                                        denom += 1 / d
+                                    } else {
+                                        // on est au delà de la zone des 200 à l'extérieur du polygone
+                                        val = 0
+                                        denom = 1
+                                    }
+                                }
                             }
                             
-                            if false {
+                            if true {
                                 if denom.isNormal && !denom.isZero && val.isNormal {
                                     val = val / denom
-                                    setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
+                                    if val > Float(UInt16.max) || val < Float(UInt16.min) {
+                                        //                                        print("error val=\(val)")
+                                    } else {
+                                        setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
+                                    }
+                                    
+                                    
                                 } else {
                                     setPixel(pixels, IDWValue(x: x, y: y, v: 0))
                                 }
@@ -201,7 +203,7 @@ public struct IDWImage {
         
         print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
         
-//        fatalError()
+        //        fatalError()
         return cg_image
     }
 }
