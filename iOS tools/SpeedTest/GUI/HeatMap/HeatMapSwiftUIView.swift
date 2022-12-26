@@ -60,7 +60,7 @@ struct HeatMapSwiftUIView: View {
 
     @State private var power_scale: Float = 1
     @State private var power_scale_radius: Float = 1
-    @State private var toggle_radius = false
+    @State private var toggle_radius = true
 
     @State private var distance_cache: DistanceCache? = nil
 
@@ -178,6 +178,7 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
+                            model.step = 0
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.up").resizable().frame(width: 30, height: 30)
@@ -211,6 +212,21 @@ struct HeatMapSwiftUIView: View {
                             // Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(1.0 - Double(image_update_ratio))
                             // à 0,7, je suis plus clair, à 0,5 je suis encore plus clair - la couleur normale est celle affichée pendant seulement 0,2s
                             Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)//.opacity(image_update_ratio < 0.8 ? 1.0 : 1.0)
+                                .overlay {
+                                    GeometryReader { geom in
+                                        let probes = model.idw_values.union(idw_values).filter { $0.type == .probe }
+                                            .sorted { $0.x == $1.x ? $0.y < $1.y : $0.x < $0.y }
+                                        // 256 probes displayed at max
+                                        ForEach(0..<256) { index in
+                                            if index < probes.count {
+                                                let idw_value: IDWValue = probes[index]
+                                                Image(systemName: "antenna.radiowaves.left.and.right")
+                                                    .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                            }
+                                        }
+                                        // Text("\(geom.size.width)").position(x: 10, y: 10)
+                                    }
+                                }
                         }
 
                         if cg_image_next != nil {
@@ -220,6 +236,9 @@ struct HeatMapSwiftUIView: View {
 
                         Image(uiImage: model.input_map_image!)
                             .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
+                        
+//                        Image(systemName: "antenna.radiowaves.left.and.right").position(x: 25, y: 25)
+                        
                     }
                     .overlay {
                         GeometryReader { geom in
@@ -237,6 +256,8 @@ struct HeatMapSwiftUIView: View {
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
+
+                                            print("click on: (\(last_loc_x!), \(last_loc_y!))")
                                             
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: 200, type: .ap))
                                             idw_values.insert(IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: .probe))
