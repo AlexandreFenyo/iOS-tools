@@ -61,6 +61,8 @@ struct HeatMapSwiftUIView: View {
     @State private var power_scale_radius: Float = 1
     @State private var toggle_radius = false
 
+    @State private var distance_cache: DistanceCache? = nil
+
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -94,21 +96,14 @@ struct HeatMapSwiftUIView: View {
         }
         Task {
             let new_vertices = idw_image.getValues().filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) }
-            
-            var need_update_cache = false
-            if distance_cache.vertices == nil || Set(new_vertices) != Set(distance_cache.vertices!) {
-                distance_cache.vertices = new_vertices
-                distance_cache.width = width
-                distance_cache.height = height
-                need_update_cache = true
-                distance_cache.distance?.deallocate()
-                distance_cache.distance = UnsafeMutablePointer<UInt16>.allocate(capacity: Int(width) * Int(height) * 2)
-                distance_cache.distance!.initialize(repeating: 0, count: Int(width) * Int(height) * 2)
 
-            }
-            
+            let need_update_cache = distance_cache == nil || Set(new_vertices) != Set(distance_cache!.vertices)
             cg_image_prev = cg_image_next
-            cg_image_next = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: distance_cache, need_update_cache: need_update_cache)
+            var new_distance_cache: DistanceCache?
+            (cg_image_next, new_distance_cache) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: need_update_cache ? nil : distance_cache)
+            if let new_distance_cache {
+                distance_cache = new_distance_cache
+            }
             image_last_update = Date()
             image_update_ratio = 0
         }

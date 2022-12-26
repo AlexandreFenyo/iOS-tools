@@ -124,12 +124,7 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
     
-    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache, need_update_cache: Bool) async -> CGImage? {
-
-        if need_update_cache {
-            print("UPDATING CACHE")
-        }
-        
+    public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache?) async -> (CGImage?, DistanceCache?) {
         let now = Date()
         
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
@@ -142,6 +137,9 @@ public struct IDWImage {
         for idw in values {
             setBoldPixel(pixels, idw)
         }
+        
+        let storage = UnsafeMutablePointer<UInt16>.allocate(capacity: distance_cache != nil ? 1 : Int(width) * Int(height))
+        storage.initialize(repeating: 0, count: distance_cache != nil ? 1 : Int(width) * Int(height))
         
         await withTaskGroup(of: Void.self, body: { group in
             let remainder = height % UInt16(NTHREADS)
@@ -165,13 +163,16 @@ public struct IDWImage {
                                 }
                             }
 
-                            if need_update_cache {
-                                let dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
-                                distance_cache.setDistance(x: x, y: y, d: UInt16(dist_to_poly))
+                            let dist_to_poly: Float
+                            if let distance_cache {
+                                dist_to_poly = Float(distance_cache.getDistance(x: x, y: y))
+                            } else {
+                                dist_to_poly = Float(poly.distanceToPolygon(CGPoint(x: Double(x), y: Double(y))))
+                                let p: UnsafeMutablePointer<UInt16> = storage + (Int(x) + Int(width) * Int(y))
+                                p.pointee = UInt16(dist_to_poly)
                             }
                             
                             if power_scale_radius > 0 {
-                                let dist_to_poly = Float(distance_cache.getDistance(x: x, y: y)!)
                                 if dist_to_poly != 0 {
                                     // on est en dehors du polygone
                                     if dist_to_poly < power_scale_radius {
@@ -191,12 +192,9 @@ public struct IDWImage {
                                 if denom.isNormal && !denom.isZero && val.isNormal {
                                     val = val / denom
                                     if val > Float(UInt16.max) || val < Float(UInt16.min) {
-                                        //                                        print("error val=\(val)")
                                     } else {
                                         setPixel(pixels, IDWValue(x: x, y: y, v: UInt16(val)))
                                     }
-                                    
-                                    
                                 } else {
                                     setPixel(pixels, IDWValue(x: x, y: y, v: 0))
                                 }
@@ -211,13 +209,28 @@ public struct IDWImage {
         let data = CFDataCreate(nil, pixels, npixels * 3)
         pixels.deallocate()
         
-        guard let provider = CGDataProvider(data: data!) else { return nil }
+        guard let provider = CGDataProvider(data: data!) else {
+            storage.deallocate()
+            return (nil, nil)
+        }
         
         let cg_image = CGImage(width: Int(width), height: Int(height), bitsPerComponent: bits_per_component, bitsPerPixel: ncomponents * bits_per_component, bytesPerRow: (ncomponents * bits_per_component / 8) * Int(width), space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
         
-        print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+        if distance_cache == nil {
+            var distance = [UInt16]()
+            for i in 0..<Int(width) * Int(height) {
+                distance.append((storage + Int(i)).pointee)
+            }
+            storage.deallocate()
+            
+            let distance_cache = DistanceCache(width: width, height: height, vertices: Set(values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) }), distance: distance)
+
+            print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+            return (cg_image, distance_cache)
+        }
         
         //        fatalError()
-        return cg_image
+        print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+        return (cg_image, nil)
     }
 }
