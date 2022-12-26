@@ -241,15 +241,11 @@ struct HeatMapSwiftUIView: View {
                         }
 
                         if cg_image_next != nil {
-                            // Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                             Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                         }
 
                         Image(uiImage: model.input_map_image!)
                             .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
-                        
-//                        Image(systemName: "antenna.radiowaves.left.and.right").position(x: 25, y: 25)
-                        
                     }
                     .overlay {
                         GeometryReader { geom in
@@ -328,16 +324,6 @@ struct HeatMapSwiftUIView: View {
                                 if let probe = (idw_values.first { $0.type == .probe }) {
                                     // pour tester des variations importantes de speed
                                     var _v = speed
-                                    /*
-                                     let r = arc4random()
-                                     if r < UInt32.max / 5 {
-                                     _v = 1000000.0
-                                     }
-                                     if r >= UInt32.max / 5 && r <= UInt32.max / 3 {
-                                     _v = 20000000.0
-                                     }
-                                     */
-
                                     let replace_probe = IDWValue(x: probe.x, y: probe.y, v: _v, type: probe.type)
                                     idw_values = idw_values.filter { $0.type == .ap }
                                     idw_values.insert(replace_probe)
