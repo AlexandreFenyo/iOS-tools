@@ -28,7 +28,7 @@ struct ImagePicker: UIViewControllerRepresentable {
         
 //        static let MAX_SIZE = 1024 // remettre 1024, on met 10240 pour trouver ce qui accroit la mémoire indéfiniement
 // impact sur les performances
-        static let MAX_SIZE = 800
+        static let MAX_SIZE = 600
         
         static func resizeIfNeeded(_ img: UIImage) -> UIImage {
             if img.cgImage!.width > MAX_SIZE || img.cgImage!.height > MAX_SIZE {
@@ -83,6 +83,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                             self.parent.idw_values.insert(IDWValue<Float>(x: 350, y: 250, v: 10000000.0, type: .probe))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 250, v: 600.0, type: .ap))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 450, y: 250, v: 10000000.0, type: .probe))
+
+                            return
+                            
                             self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 250, v: 600.0, type: .ap))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 550, y: 250, v: 10000000.0, type: .probe))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 650, y: 250, v: 600.0, type: .ap))
