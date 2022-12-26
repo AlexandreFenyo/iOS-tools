@@ -55,7 +55,11 @@ struct HeatMapSwiftUIView: View {
     @State private var last_loc_x: UInt16?
     @State private var last_loc_y: UInt16?
 
-    @State private var idw_values = Set<IDWValue<Float>>()
+    @State private var idw_values: Set<IDWValue<Float>> = [
+        IDWValue<Float>(x: 20, y: 20, v: 600.0, type: .ap),
+        IDWValue<Float>(x: 20, y: 20, v: 10000000.0, type: .probe)
+    ]
+
     @State private var display_steps = false
 
     @State private var power_scale: Float = 1
@@ -141,6 +145,10 @@ struct HeatMapSwiftUIView: View {
                         
                         Button {
                             model.idw_values = model.idw_values.union(idw_values)
+                            idw_values = [
+                                IDWValue<Float>(x: 20, y: 20, v: 600.0, type: .ap),
+                                IDWValue<Float>(x: 20, y: 20, v: 10000000.0, type: .probe)
+                            ]
                         } label: {
                             VStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
@@ -165,7 +173,10 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
-//                            idw_values = Set<IDWValue<Float>>()
+                            idw_values = [
+                                IDWValue<Float>(x: 20, y: 20, v: 600.0, type: .ap),
+                                IDWValue<Float>(x: 20, y: 20, v: 10000000.0, type: .probe)
+                            ]
                             updateSteps()
                         } label: {
                             VStack {
