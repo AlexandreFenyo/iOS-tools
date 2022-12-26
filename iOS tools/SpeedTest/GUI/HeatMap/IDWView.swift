@@ -128,7 +128,7 @@ public struct IDWImage {
         let now = Date()
         
         var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
-        _poly.computeConvexHull()
+        if _poly.vertices.count >= 3 { _poly.computeConvexHull() }
         let poly = _poly
         
         let pixels = PixelBytes.allocate(capacity: npixels * 3)

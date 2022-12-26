@@ -18,8 +18,9 @@ import PhotosUI
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
     //    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", ".eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
+//    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
     static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
-    
+
     @Published var input_map_image: UIImage?
     @Published var idw_values = Set<IDWValue<Float>>()
     @Published var step = 0
@@ -99,6 +100,7 @@ struct HeatMapSwiftUIView: View {
 
             let need_update_cache = distance_cache == nil || Set(new_vertices) != Set(distance_cache!.vertices)
             cg_image_prev = cg_image_next
+            
             var new_distance_cache: DistanceCache?
             (cg_image_next, new_distance_cache) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: need_update_cache ? nil : distance_cache)
             if let new_distance_cache {

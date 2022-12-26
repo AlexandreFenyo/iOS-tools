@@ -63,6 +63,7 @@ struct Polygon {
 
     // algo qui ne fonctionne que si le polygone est convexe
     public func isInside(_ p: CGPoint) -> Bool {
+        if vertices.count < 3 { return true }
         let sign = Self.vectorProduct(Self.vector(p, vertices[vertices.count - 1]), Self.vector(p, vertices[0])) < 0
         for idx in 1..<vertices.count {
             if (Self.vectorProduct(Self.vector(p, vertices[idx - 1]), Self.vector(p, vertices[idx])) < 0) != sign { return false }
