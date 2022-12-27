@@ -26,7 +26,7 @@ public struct DistanceCache {
     public let distance: [UInt16]
     
     public func getDistance(x: UInt16, y: UInt16) -> UInt16 {
-        // arrive de temps en temps quand le cache ne correspond pas à l'image
+        // ne doit plus arriver, était lié à une persistance du cache en cas de changement d'image de fond
         if Int(x) + Int(y) * Int(width) >= Int(width) * Int(height) {
             return 0
         }

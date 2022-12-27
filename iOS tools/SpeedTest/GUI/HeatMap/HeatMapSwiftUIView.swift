@@ -26,8 +26,9 @@ public class MapViewModel : ObservableObject {
     @Published var step = 0
 }
 
-private let NEW_PROBE_X: UInt16 = 40
-private let NEW_PROBE_Y: UInt16 = 40
+private let NEW_PROBE_X: UInt16 = 50
+private let NEW_PROBE_Y: UInt16 = 50
+private let NEW_PROBE_VALUE: Float = 10000000.0
 
 @MainActor
 struct HeatMapSwiftUIView: View {
@@ -58,7 +59,7 @@ struct HeatMapSwiftUIView: View {
     @State private var last_loc_x: UInt16?
     @State private var last_loc_y: UInt16?
     
-    @State private var idw_transient_value: IDWValue<Float> = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: 10000000.0, type: .ap)
+    @State private var idw_transient_value: IDWValue<Float> = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
     
     @State private var display_steps = false
     
@@ -140,11 +141,11 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
-                            if idw_transient_value.x == 20 && idw_transient_value.y == 20 {
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_X, v: 10000000.0, type: idw_transient_value.type == .ap ? .probe : .ap)
+                            if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_X, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
                             } else {
                                 model.idw_values.append(idw_transient_value)
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: 10000000.0, type: .ap)
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             }
                         } label: {
                             VStack {
@@ -160,7 +161,7 @@ struct HeatMapSwiftUIView: View {
                             if let last = model.idw_values.popLast() {
                                 idw_transient_value = last
                             } else {
-                                idw_transient_value = IDWValue(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: 10000000.0, type: idw_transient_value.type)
+                                idw_transient_value = IDWValue(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type)
                             }
                         } label: {
                             VStack {
@@ -175,8 +176,9 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Array<IDWValue>()
+                            distance_cache = nil
                             // CONTINUER ICI : factoriser le code suivant
-                            idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: 10000000.0, type: .ap)
+                            idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
                         } label: {
                             VStack {
