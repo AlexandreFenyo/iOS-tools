@@ -11,7 +11,6 @@ import SwiftUI
 // private var debugcnt = 0
 
 private let NTHREADS = 10
-private let AP_RADIUS: Float = 100
 
 public enum ProbeType {
     case probe
@@ -22,7 +21,7 @@ public struct IDWValue<V: Hashable>: Hashable {
     public var type: ProbeType = .probe
     public let x: UInt16
     public let y: UInt16
-    // si type == probe, alors v est une valeur de débit, sinon c'est le rayon en pixels d'un cercle centré en (x, y) et valant 0 sur toute sa circonférence et en dehors du cercle
+    // v: débit dans la plupart des cas
     public let v: V
     
     init(x: UInt16, y: UInt16, v: V, type: ProbeType = .probe) {
@@ -50,8 +49,6 @@ private func distanceFloat(_ x0: any FloatOrUInt16, _ y0: any FloatOrUInt16, _ x
 }
 
 public struct IDWImage {
-    //    private var my_memory_tracker = MyMemoryTracker("IDWImage")
-    
     public typealias PixelBytes = UnsafeMutablePointer<UInt8>
     private let bits_per_component = 8
     private let ncomponents = 3
@@ -127,7 +124,7 @@ public struct IDWImage {
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache?) async -> (CGImage?, DistanceCache?) {
         let now = Date()
         
-        var _poly = Polygon(vertices: values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
+        var _poly = Polygon(vertices: values.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         if _poly.vertices.count >= 3 { _poly.computeConvexHull() }
         let poly = _poly
         
@@ -155,12 +152,10 @@ public struct IDWImage {
                             var val: Float = 0
                             var denom: Float = 0
                             for idw in values {
-                                if idw.type == .probe {
-                                    var d = distanceFloat(x, y, idw.x, idw.y)
-                                    d = pow(d, power_scale)
-                                    val += Float(idw.v) / d
-                                    denom += 1 / d
-                                }
+                                var d = distanceFloat(x, y, idw.x, idw.y)
+                                d = pow(d, power_scale)
+                                val += Float(idw.v) / d
+                                denom += 1 / d
                             }
 
                             let dist_to_poly: Float
@@ -223,7 +218,7 @@ public struct IDWImage {
             }
             storage.deallocate()
             
-            let distance_cache = DistanceCache(width: width, height: height, vertices: Set(values.filter { $0.type == .ap }.map { CGPoint(x: Double($0.x), y: Double($0.y)) }), distance: distance)
+            let distance_cache = DistanceCache(width: width, height: height, vertices: Set(values.map { CGPoint(x: Double($0.x), y: Double($0.y)) }), distance: distance)
 
             print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
             return (cg_image, distance_cache)
