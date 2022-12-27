@@ -201,10 +201,12 @@ struct HeatMapSwiftUIView: View {
                 
                 HStack {
                     Spacer()
+/* A REMETTRE
                     Text(MapViewModel.step2String[model.step])
                         .font(Font.system(size: 14).bold())
                         .foregroundColor(.white)
                         .padding(5.0)
+*/
                     Spacer()
                 }
                 .background(.gray)
@@ -214,64 +216,73 @@ struct HeatMapSwiftUIView: View {
                     updateSteps()
                 })
                 
-                if model.input_map_image != nil {
-                    ZStack {
-                        if cg_image_prev != nil {
-                            // Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(1.0 - Double(image_update_ratio))
-                            // à 0,7, je suis plus clair, à 0,5 je suis encore plus clair - la couleur normale est celle affichée pendant seulement 0,2s
-                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)//.opacity(image_update_ratio < 0.8 ? 1.0 : 1.0)
-                                .overlay {
-                                    GeometryReader { geom in
-                                        Image(systemName: idw_transient_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
-                                            .colorInvert()
-                                            .position(x: CGFloat(idw_transient_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_transient_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
-
-                                        // 256 probes displayed at max
-                                        let values = model.idw_values.sorted { $0.x == $1.x ? $0.y < $1.y : $0.x < $0.y }
-                                        ForEach(0..<256) { index in
-                                            if index < values.count {
-                                                let idw_value: IDWValue = values[index]
-                                                Image(systemName: idw_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
-                                                    .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+//              Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 40)!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)
+              
+                HStack {
+                    if model.input_map_image != nil {
+                        ZStack {
+                            if cg_image_prev != nil {
+                                // Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(1.0 - Double(image_update_ratio))
+                                // à 0,7, je suis plus clair, à 0,5 je suis encore plus clair - la couleur normale est celle affichée pendant seulement 0,2s
+                                Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)//.opacity(image_update_ratio < 0.8 ? 1.0 : 1.0)
+                                    .overlay {
+                                        GeometryReader { geom in
+                                            Image(systemName: idw_transient_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
+                                                .colorInvert()
+                                                .position(x: CGFloat(idw_transient_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_transient_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                            
+                                            // 256 probes displayed at max
+                                            let values = model.idw_values.sorted { $0.x == $1.x ? $0.y < $1.y : $0.x < $0.y }
+                                            ForEach(0..<256) { index in
+                                                if index < values.count {
+                                                    let idw_value: IDWValue = values[index]
+                                                    Image(systemName: idw_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
+                                                        .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                                }
                                             }
                                         }
-                                        // Text("\(geom.size.width)").position(x: 10, y: 10)
                                     }
-                                }
+                            }
+                            
+                            if cg_image_next != nil {
+                                Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                            }
+                            
+                            Image(uiImage: model.input_map_image!)
+                                .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
                         }
-
-                        if cg_image_next != nil {
-                            Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                        .overlay {
+                            GeometryReader { geom in
+                              Rectangle().foregroundColor(.gray).opacity(0.01)
+                                    .gesture(
+                                        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                            .onEnded { position in
+                                                let loc_screen = position.location
+                                                var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
+                                                var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
+                                                if xx < 0 { xx = 0 }
+                                                if yy < 0 { yy = 0 }
+                                                if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
+                                                if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
+                                                last_loc_x = UInt16(xx)
+                                                last_loc_y = UInt16(yy)
+                                                
+                                                print("click on: (\(last_loc_x!), \(last_loc_y!))")
+                                                
+                                                idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
+                                                updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
+                                            }
+                                    )
+                            }
                         }
-
-                        Image(uiImage: model.input_map_image!)
-                            .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
                     }
-                    .overlay {
-                        GeometryReader { geom in
-                            Rectangle().foregroundColor(.gray).opacity(0.01)
-                                .gesture(
-                                    DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                        .onEnded { position in
-                                            let loc_screen = position.location
-                                            var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
-                                            var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
-                                            if xx < 0 { xx = 0 }
-                                            if yy < 0 { yy = 0 }
-                                            if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
-                                            if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
-                                            last_loc_x = UInt16(xx)
-                                            last_loc_y = UInt16(yy)
+                    
+//                    Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0)//.resizable().aspectRatio(contentMode: .fit)
 
-                                            print("click on: (\(last_loc_x!), \(last_loc_y!))")
-                                            
-                                            idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
-                                            updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
-                                        }
-                                )
-                        }
-                    }
+                    Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)
+
                 }
+                
                 
                 Slider(value: $power_scale, in: 0...5)
                 HStack {

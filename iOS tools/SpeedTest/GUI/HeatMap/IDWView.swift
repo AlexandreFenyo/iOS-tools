@@ -82,7 +82,7 @@ public struct IDWImage {
         return tab
     }()
     
-    private func getRGB(_ val: UInt16) -> (r: UInt8, g: UInt8, b: UInt8) {
+    private static func getRGB(_ val: UInt16) -> (r: UInt8, g: UInt8, b: UInt8) {
         return Self.rgb_from_value[Int(val)]
     }
     
@@ -106,7 +106,7 @@ public struct IDWImage {
     
     private func setPixel(_ pixels: PixelBytes, _ idwval: IDWValue<UInt16>) {
         let p = (pixels + ((Int(height) - Int(idwval.y) - 1) * nbytes_per_line)) + Int(idwval.x) * nbytes_per_pixel
-        let rgb = getRGB(idwval.v)
+        let rgb = Self.getRGB(idwval.v)
         p.pointee = rgb.r
         (p + 1).pointee = rgb.g
         (p + 2).pointee = rgb.b
@@ -119,6 +119,27 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x, y: idwval.y + 1, v: idwval.v))
         setPixel(pixels, IDWValue(x: idwval.x - 1, y: idwval.y, v: idwval.v))
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
+    }
+
+    public static func getScaleImage(power_scale: Float, height: UInt16) -> CGImage? {
+        let pixels = PixelBytes.allocate(capacity: 3 * Int(height))
+        pixels.initialize(repeating: 0, count: 3 * Int(height))
+        for i in 0..<height {
+            let p = pixels + Int(i) * 3
+            let rgb = getRGB(UInt16(Float(i) / Float(height) * Float(UInt16.max)))
+            p.pointee = rgb.r
+            (p + 1).pointee = rgb.g
+            (p + 2).pointee = rgb.b
+        }
+        let data = CFDataCreate(nil, pixels, 3 * Int(height))
+        pixels.deallocate()
+        guard let provider = CGDataProvider(data: data!) else {
+            return nil
+        }
+
+        let img = CGImage(width: 1, height: Int(height), bitsPerComponent: 8, bitsPerPixel: 24, bytesPerRow: 3, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: .byteOrderDefault, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+
+        return img
     }
     
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache?) async -> (CGImage?, DistanceCache?) {
