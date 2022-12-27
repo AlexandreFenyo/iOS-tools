@@ -17,14 +17,20 @@ import PhotosUI
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
-    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
+    static let step2String = [
+        "step 1/5: select your floor plan (click on the Select your floor plan green button)",
+        "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.",
+        "step 2/5:\n- at the bottom left of the map, you can see a white access point blinking;\n- go near an access point;\n- click on its location on the map to move the white access point to your location on the map;\n- on the vertical left scale, you can see the real time network speed;\n- when the speed is stable, associate this value to your access point by clicking on Add an access point or probe.",
+        "step 3/5:\n- your first access point color has changed to black, this means it has been registered with the speed value at its location;\n- a new white access point is ready for a new value, at the bottom left of the map;\n- you may optionally want to take a measure far from an access point. In that case, click again on Add an access point or probe to change the image of the white access point to a probe one;\n- move to a new location to take a new measure;\n- click on the location on the map to move the white access point or probe to your location on the map;\n- when the speed on the vertical left scale is stable, associate this value to your location by clicking on Add an access point or probe.",
+        "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by clicking Share your map. This will also let you save the heat map."
+    ]
     
     @Published var input_map_image: UIImage?
     @Published var idw_values = Array<IDWValue<Float>>()
     @Published var step = 0
 }
 
-private let NEW_PROBE_X: UInt16 = 50
+private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000.0
 private let SCALE_WIDTH: CGFloat = 30
@@ -66,13 +72,13 @@ struct HeatMapSwiftUIView: View {
     @State private var toggle_radius = true
     
     @State private var distance_cache: DistanceCache? = nil
-
+    
     // à chaque mesure de débit, l'acteur TimeSeries calcule average qui est une moyenne temporelle pondérée par une exponentielle
     // toutes les secondes, average_prev et average_next sont mis à jour à partir des valeurs de average
     // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
     @State private var speed: Float = 0
     @State private var max_scale: Float = LOWEST_MAX_SCALE
-
+    
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -83,7 +89,15 @@ struct HeatMapSwiftUIView: View {
             if average_next == 0 {
                 model.step = 1
             } else {
-                model.step = 2
+                if model.idw_values.count == 0 {
+                    model.step = 2
+                } else {
+                    if model.idw_values.count == 1 {
+                        model.step = 3
+                    } else {
+                        model.step = 4
+                    }
+                }
             }
         }
     }
@@ -146,7 +160,7 @@ struct HeatMapSwiftUIView: View {
                         
                         Button {
                             if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_X, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
                             } else {
                                 model.idw_values.append(idw_transient_value)
                                 idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
@@ -210,10 +224,10 @@ struct HeatMapSwiftUIView: View {
                 
                 HStack {
                     Spacer()
-                     Text(MapViewModel.step2String[model.step])
-                     .font(Font.system(size: 14).bold())
-                     .foregroundColor(.white)
-                     .padding(5.0)
+                    Text(MapViewModel.step2String[model.step])
+                        .font(Font.system(size: 7).bold())
+                        .foregroundColor(.white)
+                        .padding(5.0)
                     Spacer()
                 }
                 .background(.gray)
@@ -227,8 +241,7 @@ struct HeatMapSwiftUIView: View {
                     ZStack {
                         if cg_image_prev != nil {
                             Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)
-
-
+                            
                                 .overlay {
                                     GeometryReader { geom in
                                         Image(systemName: idw_transient_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
@@ -247,33 +260,33 @@ struct HeatMapSwiftUIView: View {
                                     }
                                 }
                         }
-
+                        
                         if cg_image_next != nil {
                             Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                                 .overlay {
                                     GeometryReader { geom in
                                         Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
-
-                                         
+                                        
+                                        
                                         if max_scale != 0 {
                                             let foo: Float = speed / max_scale * (Float(cg_image_next!.height) - 1.0)
                                             let bar = CGFloat(foo)
                                             
                                             Image(systemName: "restart")
                                                 .position(x: SCALE_WIDTH, y: speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
-                                             
-                                             let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
-                                             
-                                             Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
-                                             //.frame(maxWidth: .infinity, alignment: .trailing)
-                                             .position(x: SCALE_WIDTH + 50, y: foo2)
-                                             
-                                             if foo2 >= 20 {
-                                             Image(systemName: "restart")
-                                             .position(x: SCALE_WIDTH, y: 0)
-                                             Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
-                                             .position(x: SCALE_WIDTH + 50, y: 0)
-                                             }
+                                            
+                                            let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
+                                            
+                                            Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
+                                            //.frame(maxWidth: .infinity, alignment: .trailing)
+                                                .position(x: SCALE_WIDTH + 50, y: foo2)
+                                            
+                                            if foo2 >= 20 {
+                                                Image(systemName: "restart")
+                                                    .position(x: SCALE_WIDTH, y: 0)
+                                                Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
+                                                    .position(x: SCALE_WIDTH + 50, y: 0)
+                                            }
                                         }
                                     }
                                 }
@@ -303,7 +316,7 @@ struct HeatMapSwiftUIView: View {
                                                 updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                             } else {
                                                 if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
-                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_X, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
                                                 } else {
                                                     let foo = max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
                                                     let val = IDWValue<Float>(x: idw_transient_value.x, y: idw_transient_value.y, v: foo, type: idw_transient_value.type)
@@ -325,52 +338,47 @@ struct HeatMapSwiftUIView: View {
                 
                 Spacer()
                 HStack {
-                    // pour débugger opacity
-                    Text("average throughput: \(UInt64(speed)) bit/s - opacity: \(image_update_ratio)")
-                    //                    Text("average throughput: \(UInt64(speed)) bit/s")
-                        .font(.system(size: 16).monospacedDigit())
-                        .onReceive(timer_set_speed) { _ in // 100 Hz
-                            // Manage speed
-                            let interval_speed = Float(Date().timeIntervalSince(self.average_last_update))
-                            let UPDATE_SPEED_DELAY: Float = 1.0
-                            if interval_speed < UPDATE_SPEED_DELAY {
-                                speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
-                                if speed > max_scale { max_scale = speed }
-                            } else {
-                                speed = average_next
-                                if speed > max_scale { max_scale = speed }
-                            }
-                            
-                            // Manage heat maps
-                            let interval_image = Float(Date().timeIntervalSince(self.image_last_update))
-                            let UPDATE_IMAGE_DELAY: Float = 1.0
-                            if interval_image < UPDATE_IMAGE_DELAY {
-                                image_update_ratio = interval_image
-                            } else {
-                                image_update_ratio = 1
-                            }
+                    EmptyView().onReceive(timer_set_speed) { _ in // 100 Hz
+                        // Manage speed
+                        let interval_speed = Float(Date().timeIntervalSince(self.average_last_update))
+                        let UPDATE_SPEED_DELAY: Float = 1.0
+                        if interval_speed < UPDATE_SPEED_DELAY {
+                            speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
+                            if speed > max_scale { max_scale = speed }
+                        } else {
+                            speed = average_next
+                            if speed > max_scale { max_scale = speed }
                         }
-                        .onReceive(timer_get_average) { _ in // 1 Hz
-                            display_steps.toggle()
-                            Task {
-                                if let heatmap_view_controller {
-                                    average_last_update = Date()
+                        
+                        // Manage heat maps
+                        let interval_image = Float(Date().timeIntervalSince(self.image_last_update))
+                        let UPDATE_IMAGE_DELAY: Float = 1.0
+                        if interval_image < UPDATE_IMAGE_DELAY {
+                            image_update_ratio = interval_image
+                        } else {
+                            image_update_ratio = 1
+                        }
+                    }
+                    .onReceive(timer_get_average) { _ in // 1 Hz
+                        display_steps.toggle()
+                        Task {
+                            if let heatmap_view_controller {
+                                average_last_update = Date()
+                                average_prev = average_next
+                                average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                if average_prev == 0.0 {
                                     average_prev = average_next
-                                    average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
-                                    if average_prev == 0.0 {
-                                        average_prev = average_next
-                                    }
                                 }
                             }
                         }
-                        .onReceive(timer_create_map) { _ in // 1 Hz
-                            if model.input_map_image != nil {
-                                idw_transient_value = IDWValue(x: idw_transient_value.x, y: idw_transient_value.y, v: speed, type: idw_transient_value.type)
-                                updateMap()
-                            }
+                    }
+                    .onReceive(timer_create_map) { _ in // 1 Hz
+                        if model.input_map_image != nil {
+                            idw_transient_value = IDWValue(x: idw_transient_value.x, y: idw_transient_value.y, v: speed, type: idw_transient_value.type)
+                            updateMap()
                         }
-                        .padding()
-                    Spacer()
+                    }
+//                    .padding()
                 }
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
