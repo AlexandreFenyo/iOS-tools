@@ -29,6 +29,7 @@ public class MapViewModel : ObservableObject {
 private let NEW_PROBE_X: UInt16 = 50
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000.0
+private let SCALE_WIDTH: CGFloat = 30
 
 @MainActor
 struct HeatMapSwiftUIView: View {
@@ -68,7 +69,8 @@ struct HeatMapSwiftUIView: View {
     @State private var toggle_radius = true
     
     @State private var distance_cache: DistanceCache? = nil
-    
+    @State private var max_scale: Float = 0
+
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -95,6 +97,7 @@ struct HeatMapSwiftUIView: View {
                 }
                 let _ = values.map { idw_image.addValue($0) }
             }
+            max_scale = max
         }
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
@@ -177,7 +180,7 @@ struct HeatMapSwiftUIView: View {
                             model.input_map_image = nil
                             model.idw_values = Array<IDWValue>()
                             distance_cache = nil
-                            // CONTINUER ICI : factoriser le code suivant
+                            max_scale = 0
                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
                         } label: {
@@ -249,7 +252,27 @@ struct HeatMapSwiftUIView: View {
                             
                                 .overlay {
                                     GeometryReader { geom in
-                                        Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().frame(width: 20)
+                                        Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
+
+                                        let foo: Float = speed / max_scale * (Float(cg_image_next!.height) - 1.0)
+                                        let bar = CGFloat(foo)
+                                        
+                                        Image(systemName: "restart")
+                                            .position(x: SCALE_WIDTH, y: speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
+                                        
+                                        let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
+                                        
+                                        Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
+                                            //.frame(maxWidth: .infinity, alignment: .trailing)
+                                            .position(x: SCALE_WIDTH + 50, y: foo2)
+                                        
+                                        if foo2 >= 20 {
+                                            Image(systemName: "restart")
+                                                .position(x: SCALE_WIDTH, y: 0)
+                                            Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
+                                                .position(x: SCALE_WIDTH + 50, y: 0)
+                                        }
+                                        
                                     }
                                 }
                         }
@@ -273,11 +296,21 @@ struct HeatMapSwiftUIView: View {
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
-                                            
-                                            print("click on: (\(last_loc_x!), \(last_loc_y!))")
-                                            
-                                            idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
-                                            updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
+//                                            print("click on: (\(last_loc_x!), \(last_loc_y!))")
+                                            let foo = CGFloat(last_loc_x!)
+                                            if foo >= SCALE_WIDTH {
+                                                idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
+                                                updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
+                                            } else {
+                                                if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
+                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_X, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                                                } else {
+                                                    let foo = max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
+                                                    let val = IDWValue<Float>(x: idw_transient_value.x, y: idw_transient_value.y, v: foo, type: idw_transient_value.type)
+                                                    model.idw_values.append(val)
+                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                                                }
+                                            }
                                         }
                                 )
                         }
