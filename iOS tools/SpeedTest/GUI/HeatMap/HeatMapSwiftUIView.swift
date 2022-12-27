@@ -46,8 +46,6 @@ struct HeatMapSwiftUIView: View {
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
     
-    @State private var speed: Float = 0
-    
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
@@ -69,6 +67,11 @@ struct HeatMapSwiftUIView: View {
     @State private var toggle_radius = true
     
     @State private var distance_cache: DistanceCache? = nil
+
+    // à chaque mesure de débit, l'acteur TimeSeries calcule average qui est une moyenne temporelle pondérée par une exponentielle
+    // toutes les secondes, average_prev et average_next sont mis à jour à partir des valeurs de average
+    // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
+    @State private var speed: Float = 0
     @State private var max_scale: Float = 0
 
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
@@ -97,7 +100,7 @@ struct HeatMapSwiftUIView: View {
                 }
                 let _ = values.map { idw_image.addValue($0) }
             }
-            max_scale = max
+//            max_scale = max
         }
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
@@ -330,14 +333,16 @@ struct HeatMapSwiftUIView: View {
                     Text("average throughput: \(UInt64(speed)) bit/s - opacity: \(image_update_ratio)")
                     //                    Text("average throughput: \(UInt64(speed)) bit/s")
                         .font(.system(size: 16).monospacedDigit())
-                        .onReceive(timer_set_speed) { _ in
+                        .onReceive(timer_set_speed) { _ in // 100 Hz
                             // Manage speed
                             let interval_speed = Float(Date().timeIntervalSince(self.average_last_update))
                             let UPDATE_SPEED_DELAY: Float = 1.0
                             if interval_speed < UPDATE_SPEED_DELAY {
                                 speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
+                                if speed > max_scale { max_scale = speed }
                             } else {
                                 speed = average_next
+                                if speed > max_scale { max_scale = speed }
                             }
                             
                             // Manage heat maps
@@ -349,7 +354,7 @@ struct HeatMapSwiftUIView: View {
                                 image_update_ratio = 1
                             }
                         }
-                        .onReceive(timer_get_average) { _ in
+                        .onReceive(timer_get_average) { _ in // 1 Hz
                             display_steps.toggle()
                             Task {
                                 if let heatmap_view_controller {
@@ -362,7 +367,7 @@ struct HeatMapSwiftUIView: View {
                                 }
                             }
                         }
-                        .onReceive(timer_create_map) { _ in
+                        .onReceive(timer_create_map) { _ in // 1 Hz
                             if model.input_map_image != nil {
                                 idw_transient_value = IDWValue(x: idw_transient_value.x, y: idw_transient_value.y, v: speed, type: idw_transient_value.type)
                                 updateMap()
