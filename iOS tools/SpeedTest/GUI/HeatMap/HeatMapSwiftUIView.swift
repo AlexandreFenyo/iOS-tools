@@ -156,6 +156,8 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             if let last = model.idw_values.popLast() {
                                 idw_transient_value = last
+                            } else {
+                                idw_transient_value = IDWValue(x: 20, y: 20, v: 10000000.0, type: idw_transient_value.type)
                             }
                         } label: {
                             VStack {
@@ -263,7 +265,7 @@ struct HeatMapSwiftUIView: View {
 
                                             print("click on: (\(last_loc_x!), \(last_loc_y!))")
                                             
-                                            idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: .ap)
+                                            idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
                                             updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                         }
                                 )
