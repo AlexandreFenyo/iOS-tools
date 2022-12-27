@@ -126,7 +126,7 @@ public struct IDWImage {
         pixels.initialize(repeating: 0, count: 3 * Int(height))
         for i in 0..<height {
             let p = pixels + Int(i) * 3
-            let rgb = getRGB(UInt16(Float(i) / Float(height) * Float(UInt16.max)))
+            let rgb = getRGB(UInt16(Float(height - i - 1) / Float(height) * Float(UInt16.max)))
             p.pointee = rgb.r
             (p + 1).pointee = rgb.g
             (p + 2).pointee = rgb.b
