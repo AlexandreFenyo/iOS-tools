@@ -29,6 +29,19 @@ struct ImagePicker: UIViewControllerRepresentable {
 //        static let MAX_SIZE = 1024 // remettre 1024, on met 10240 pour trouver ce qui accroit la mémoire indéfiniement
 // impact sur les performances
         static let MAX_SIZE = 600
+
+        static func rotateIfNeeded(_ img: UIImage) -> UIImage {
+            if img.cgImage!.width < img.cgImage!.height {
+                let renderer = UIGraphicsImageRenderer(size: CGSize(width: img.cgImage!.height, height: img.cgImage!.width))
+                let image = renderer.image { _ in
+                    let context = UIGraphicsGetCurrentContext()
+                    context?.rotate(by: Double.pi / 2)
+                    context?.draw(img.cgImage!, in: CGRect(origin: CGPoint(x: 0, y: -img.cgImage!.height), size: CGSize(width: img.cgImage!.width, height: img.cgImage!.height)))
+                }
+                return image.withHorizontallyFlippedOrientation()
+            }
+            return img
+        }
         
         static func resizeIfNeeded(_ img: UIImage) -> UIImage {
             if img.cgImage!.width > MAX_SIZE || img.cgImage!.height > MAX_SIZE {
@@ -62,7 +75,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
-                            let resized_image = Coordinator.resizeIfNeeded(image)
+                            let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image))
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
                         }
@@ -72,7 +85,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
-                            let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
+//                            let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
+                            let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
+
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
 
