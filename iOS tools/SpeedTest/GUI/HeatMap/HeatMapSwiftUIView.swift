@@ -17,8 +17,6 @@ import PhotosUI
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
-    //    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", ".eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
-    //    static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
     static let step2String = [ "step 1/5: select your floor plan (click on the Select your floor plan green button)", "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", "step 2/5: go near an access point or repeater and click on its location on the map.\n[ This will take a speed measure, wait for the throughput to become steady before clicking on the map. ]" ]
     
     @Published var input_map_image: UIImage?
@@ -30,6 +28,7 @@ private let NEW_PROBE_X: UInt16 = 50
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000.0
 private let SCALE_WIDTH: CGFloat = 30
+private let LOWEST_MAX_SCALE: Float = 1000
 
 @MainActor
 struct HeatMapSwiftUIView: View {
@@ -72,7 +71,7 @@ struct HeatMapSwiftUIView: View {
     // toutes les secondes, average_prev et average_next sont mis à jour à partir des valeurs de average
     // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
     @State private var speed: Float = 0
-    @State private var max_scale: Float = 0
+    @State private var max_scale: Float = LOWEST_MAX_SCALE
 
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
@@ -100,7 +99,6 @@ struct HeatMapSwiftUIView: View {
                 }
                 let _ = values.map { idw_image.addValue($0) }
             }
-//            max_scale = max
         }
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
@@ -183,7 +181,7 @@ struct HeatMapSwiftUIView: View {
                             model.input_map_image = nil
                             model.idw_values = Array<IDWValue>()
                             distance_cache = nil
-                            max_scale = 0
+                            max_scale = LOWEST_MAX_SCALE
                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
                         } label: {
@@ -228,9 +226,9 @@ struct HeatMapSwiftUIView: View {
                 if model.input_map_image != nil {
                     ZStack {
                         if cg_image_prev != nil {
-                            // Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(1.0 - Double(image_update_ratio))
-                            // à 0,7, je suis plus clair, à 0,5 je suis encore plus clair - la couleur normale est celle affichée pendant seulement 0,2s
-                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)//.opacity(image_update_ratio < 0.8 ? 1.0 : 1.0)
+                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)
+
+
                                 .overlay {
                                     GeometryReader { geom in
                                         Image(systemName: idw_transient_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
@@ -252,37 +250,37 @@ struct HeatMapSwiftUIView: View {
 
                         if cg_image_next != nil {
                             Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
-                            
                                 .overlay {
                                     GeometryReader { geom in
                                         Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
 
-                                        let foo: Float = speed / max_scale * (Float(cg_image_next!.height) - 1.0)
-                                        let bar = CGFloat(foo)
-                                        
-                                        Image(systemName: "restart")
-                                            .position(x: SCALE_WIDTH, y: speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
-                                        
-                                        let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
-                                        
-                                        Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
-                                            //.frame(maxWidth: .infinity, alignment: .trailing)
-                                            .position(x: SCALE_WIDTH + 50, y: foo2)
-                                        
-                                        if foo2 >= 20 {
+                                         
+                                        if max_scale != 0 {
+                                            let foo: Float = speed / max_scale * (Float(cg_image_next!.height) - 1.0)
+                                            let bar = CGFloat(foo)
+                                            
                                             Image(systemName: "restart")
-                                                .position(x: SCALE_WIDTH, y: 0)
-                                            Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
-                                                .position(x: SCALE_WIDTH + 50, y: 0)
+                                                .position(x: SCALE_WIDTH, y: speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
+                                             
+                                             let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
+                                             
+                                             Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
+                                             //.frame(maxWidth: .infinity, alignment: .trailing)
+                                             .position(x: SCALE_WIDTH + 50, y: foo2)
+                                             
+                                             if foo2 >= 20 {
+                                             Image(systemName: "restart")
+                                             .position(x: SCALE_WIDTH, y: 0)
+                                             Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
+                                             .position(x: SCALE_WIDTH + 50, y: 0)
+                                             }
                                         }
-                                        
                                     }
                                 }
                         }
                         
                         Image(uiImage: model.input_map_image!)
                             .resizable().aspectRatio(contentMode: .fit).grayscale(1.0).opacity(0.2)
-                        
                     }
                     .overlay {
                         GeometryReader { geom in
@@ -299,7 +297,6 @@ struct HeatMapSwiftUIView: View {
                                             if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                             last_loc_x = UInt16(xx)
                                             last_loc_y = UInt16(yy)
-//                                            print("click on: (\(last_loc_x!), \(last_loc_y!))")
                                             let foo = CGFloat(last_loc_x!)
                                             if foo >= SCALE_WIDTH {
                                                 idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
@@ -319,7 +316,6 @@ struct HeatMapSwiftUIView: View {
                         }
                     }
                 }
-                
                 
                 Slider(value: $power_scale, in: 0...5)
                 HStack {

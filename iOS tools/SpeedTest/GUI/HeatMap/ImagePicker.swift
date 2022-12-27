@@ -90,17 +90,19 @@ struct ImagePicker: UIViewControllerRepresentable {
 
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
+                            return
 
+                            /*
                             // pour tester avec une mesure déjà réalisée
                             self.parent.idw_values.append(IDWValue<Float>(x: 100, y: 100, v: 5000.0, type: .ap))
                             self.parent.idw_values.append(IDWValue<Float>(x: 150, y: 100, v: 10000000.0, type: .probe))
                             self.parent.idw_values.append(IDWValue<Float>(x: 150, y: 150, v: 10000000.0, type: .probe))
-/*
+*/
+                            /*
                             
                             self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 250, v: 600.0, type: .ap))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 250, v: 10000000.0, type: .probe))
 */
-                            return
 /*
                             self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 150, v: 600.0, type: .ap))
                             self.parent.idw_values.insert(IDWValue<Float>(x: 250, y: 150, v: 10000000.0, type: .probe))
