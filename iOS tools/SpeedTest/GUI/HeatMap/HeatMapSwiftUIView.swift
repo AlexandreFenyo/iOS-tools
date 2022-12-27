@@ -173,7 +173,7 @@ struct HeatMapSwiftUIView: View {
                         Button {
                             model.input_map_image = nil
                             model.idw_values = Set<IDWValue>()
-                            // CONTINNUER ICI : factoriser le code suivant
+                            // CONTINUER ICI : factoriser le code suivant
                             idw_values = [
                                 IDWValue<Float>(x: 20, y: 20, v: 600.0, type: .ap),
                                 IDWValue<Float>(x: 20, y: 20, v: 10000000.0, type: .probe)
@@ -232,8 +232,14 @@ struct HeatMapSwiftUIView: View {
                                         ForEach(0..<256) { index in
                                             if index < probes.count {
                                                 let idw_value: IDWValue = probes[index]
-                                                Image(systemName: "antenna.radiowaves.left.and.right")
-                                                    .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                                if idw_values.contains(idw_value) {
+                                                    Image(systemName: "antenna.radiowaves.left.and.right")
+                                                        .colorInvert()
+                                                        .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                                } else {
+                                                    Image(systemName: "antenna.radiowaves.left.and.right")
+                                                        .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                                }
                                             }
                                         }
                                         // Text("\(geom.size.width)").position(x: 10, y: 10)
