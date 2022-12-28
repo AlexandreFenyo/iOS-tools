@@ -241,7 +241,6 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
-                            model.step = 0
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.up").resizable().frame(width: 30, height: 30)
