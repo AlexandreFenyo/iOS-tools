@@ -28,6 +28,7 @@ public class MapViewModel : ObservableObject {
     @Published var input_map_image: UIImage?
     @Published var idw_values = Array<IDWValue<Float>>()
     @Published var step = 0
+    @Published var max_scale: Float = LOWEST_MAX_SCALE
 }
 
 private let NEW_PROBE_X: UInt16 = 100
@@ -75,7 +76,7 @@ struct HeatMapSwiftUIView: View {
     // pourrait être associé à un toggle, mais la valeur par défaut de POWER_SCALE_RADIUS_MAX correspond au même aux performances près puisqu'avec toggle_radius à true, il faut calculer un cache des distances au polygone
     @State private var toggle_radius = true
 
-    @State private var toggle_disable_help = false
+    @State private var toggle_help = true
     @State private var toggle_preview = false
 
     @State private var distance_cache: DistanceCache? = nil
@@ -84,7 +85,6 @@ struct HeatMapSwiftUIView: View {
     // toutes les secondes, average_prev et average_next sont mis à jour à partir des valeurs de average
     // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
     @State private var speed: Float = 0
-    @State private var max_scale: Float = LOWEST_MAX_SCALE
     
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
@@ -114,14 +114,17 @@ struct HeatMapSwiftUIView: View {
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
         let transient_set: Set<IDWValue<Float>> = !toggle_preview ? Set([idw_transient_value]) : Set()
-        if let max = (Set(model.idw_values).union(transient_set).max { $0.v < $1.v }?.v) {
+
+        // on prend toute la plage disponible pour les valeurs des mesures qu'on prend en compte
+        let max = model.max_scale
+            
             if max != 0 {
                 let values = Set(model.idw_values).union(transient_set).map {
                     IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
                 }
                 let _ = values.map { idw_image.addValue($0) }
             }
-        }
+
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
             
@@ -176,13 +179,30 @@ struct HeatMapSwiftUIView: View {
                         } label: {
                             VStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
-                                Text("Add an access point or probe").font(.footnote)
+                                Text("Save measure / Add new AP").font(.footnote)
                             }
                         }
                         .disabled(model.input_map_image == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-                        
+
+                        Button {
+                            if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                            } else {
+                                model.idw_values.append(idw_transient_value)
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .probe)
+                            }
+                        } label: {
+                            VStack {
+                                Image(systemName: "dot.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
+                                Text("Save measure / Add new probe").font(.footnote)
+                            }
+                        }
+                        .disabled(model.input_map_image == nil)
+                        .accentColor(Color(COLORS.standard_background))
+                        .frame(maxWidth: 200)
+
                         Button {
                             if let last = model.idw_values.popLast() {
                                 idw_transient_value = last
@@ -203,10 +223,10 @@ struct HeatMapSwiftUIView: View {
                             model.input_map_image = nil
                             model.idw_values = Array<IDWValue>()
                             distance_cache = nil
-                            max_scale = LOWEST_MAX_SCALE
+                            model.max_scale = LOWEST_MAX_SCALE
                             power_scale = 1
                             power_scale_radius = POWER_SCALE_RADIUS_DEFAULT
-                            toggle_disable_help = false
+                            toggle_help = false
                             toggle_preview = false
                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
@@ -234,7 +254,7 @@ struct HeatMapSwiftUIView: View {
                     }.padding(.top)
                 }
 
-                if !toggle_disable_help {
+                if toggle_help {
                     HStack {
                         Spacer()
                         Text(MapViewModel.step2String[model.step])
@@ -279,17 +299,17 @@ struct HeatMapSwiftUIView: View {
                             Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                                 .overlay {
                                     GeometryReader { geom in
-                                        Image(decorative: IDWImage.getScaleImage(power_scale: 1, height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
+                                        Image(decorative: IDWImage.getScaleImage(height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
                                         
                                         
-                                        if max_scale != 0 {
-                                            let foo: Float = speed / max_scale * (Float(cg_image_next!.height) - 1.0)
+                                        if model.max_scale != 0 {
+                                            let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)
                                             let bar = CGFloat(foo)
                                             
                                             Image(systemName: "restart")
-                                                .position(x: SCALE_WIDTH, y: speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
+                                                .position(x: SCALE_WIDTH, y: speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
                                             
-                                            let foo2 = speed <= max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
+                                            let foo2 = speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
                                             
                                             Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
                                             //.frame(maxWidth: .infinity, alignment: .trailing)
@@ -298,7 +318,7 @@ struct HeatMapSwiftUIView: View {
                                             if foo2 >= 20 {
                                                 Image(systemName: "restart")
                                                     .position(x: SCALE_WIDTH, y: 0)
-                                                Text("\(UInt64(max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
+                                                Text("\(UInt64(model.max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
                                                     .position(x: SCALE_WIDTH + 50, y: 0)
                                             }
                                         }
@@ -332,7 +352,7 @@ struct HeatMapSwiftUIView: View {
                                                 if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
                                                     idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
                                                 } else {
-                                                    let foo = max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
+                                                    let foo = model.max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
                                                     let val = IDWValue<Float>(x: idw_transient_value.x, y: idw_transient_value.y, v: foo, type: idw_transient_value.type)
                                                     model.idw_values.append(val)
                                                     idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
@@ -346,11 +366,11 @@ struct HeatMapSwiftUIView: View {
 
                 HStack {
                     VStack {
-                        Toggle(isOn: $toggle_disable_help) {
-                            Text("disable step-by-step help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                        Toggle(isOn: $toggle_help) {
+                            Text("help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
                         }
                         Toggle(isOn: $toggle_preview) {
-                            Text("preview").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                            Text("ignore white AP").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
                         }
                     }.fixedSize()
                     Spacer(minLength: 30)
@@ -374,10 +394,10 @@ struct HeatMapSwiftUIView: View {
                         let UPDATE_SPEED_DELAY: Float = 1.0
                         if interval_speed < UPDATE_SPEED_DELAY {
                             speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
-                            if speed > max_scale { max_scale = speed }
+                            if speed > model.max_scale { model.max_scale = speed }
                         } else {
                             speed = average_next
-                            if speed > max_scale { max_scale = speed }
+                            if speed > model.max_scale { model.max_scale = speed }
                         }
                         
                         // Manage heat maps

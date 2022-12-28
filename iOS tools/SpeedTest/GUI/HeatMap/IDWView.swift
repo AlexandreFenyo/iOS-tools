@@ -121,7 +121,7 @@ public struct IDWImage {
         setPixel(pixels, IDWValue(x: idwval.x + 1, y: idwval.y, v: idwval.v))
     }
 
-    public static func getScaleImage(power_scale: Float, height: UInt16) -> CGImage? {
+    public static func getScaleImage(height: UInt16) -> CGImage? {
         let pixels = PixelBytes.allocate(capacity: 3 * Int(height))
         pixels.initialize(repeating: 0, count: 3 * Int(height))
         for i in 0..<height {
