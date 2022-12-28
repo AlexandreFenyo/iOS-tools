@@ -153,12 +153,12 @@ struct HeatMapSwiftUIView: View {
         // on prend toute la plage disponible pour les valeurs des mesures qu'on prend en compte
         let max = model.max_scale
             
-            if max != 0 {
-                let values = Set(model.idw_values).union(transient_set).map {
-                    IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
-                }
-                let _ = values.map { idw_image.addValue($0) }
+        if max != 0 {
+            let values = Set(model.idw_values).union(transient_set).map {
+                IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
             }
+            _ = values.map { idw_image.addValue($0) }
+        }
 
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
@@ -276,21 +276,29 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
-                            if model.original_map_image == nil { return }
+                            if model.original_map_image == nil || model.max_scale == 0 { return }
                             let image = model.original_map_image!
+                            let width = image.cgImage!.width
+                            let height = image.cgImage!.height
+                            let screen_width = model.input_map_image?.cgImage!.width
+                            let screen_height = model.input_map_image?.cgImage!.height
+                            let factor_x = Float(width) / Float(screen_width!)
+                            let factor_y = Float(height) / Float(screen_height!)
+                            var idw_image = IDWImage(width: UInt16(width), height: UInt16(height))
+                            let max = model.max_scale
+                            let values = Set(model.idw_values).map {
+                                IDWValue<UInt16>(x: UInt16(Float($0.x) * factor_x), y: UInt16(Float($0.y) * factor_y), v: UInt16($0.v / max * Float(UInt16.max - 1)))
+                            }
+                            _ = values.map { idw_image.addValue($0) }
 
-                            let width = image.size.width
-                            
-                            
-                            photoController.saveImage(image: image)
-                            // CONTINUER ICI
-                            
-                            
-                            
-                            
-                            
-                            
-                            
+                            photoController.popUp("Saving map", "The heat map will be computed in the background, a pop-up will appear when it is done. It may take up to one minute approximatively.", "OK")
+
+                            Task {
+                                let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
+                                
+                                let ui_image = UIImage(cgImage: cg_image!)
+                                photoController.saveImage(image: ui_image)
+                            }
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.up").resizable().frame(width: 30, height: 30)

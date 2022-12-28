@@ -105,7 +105,7 @@ struct Polygon {
         
         // on cherche le sommet le plus en bas à gauche
         var lowest_vertex = vertices[0]
-        let _ = vertices.map {
+        _ = vertices.map {
             if $0.y < lowest_vertex.y || ($0.y == lowest_vertex.y && $0.x < lowest_vertex.x) { lowest_vertex = $0 }}
         
         // les autres sommets sont mis de côté
