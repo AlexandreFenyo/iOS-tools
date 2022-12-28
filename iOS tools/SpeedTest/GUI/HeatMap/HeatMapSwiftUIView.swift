@@ -365,13 +365,6 @@ struct HeatMapSwiftUIView: View {
                         }
                     }
                 }.padding()
-
-                /*
-                Slider(value: $power_scale, in: 0...5)
-                HStack {
-                    Toggle("xxx", isOn: $toggle_radius)
-                    Slider(value: $power_scale_radius, in: 1...600)
-                }*/
                 
                 Spacer()
                 HStack {
