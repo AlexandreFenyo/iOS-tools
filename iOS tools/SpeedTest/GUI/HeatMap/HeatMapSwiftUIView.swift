@@ -26,6 +26,7 @@ public class MapViewModel : ObservableObject {
     ]
     
     @Published var input_map_image: UIImage?
+    @Published var original_map_image: UIImage?
     @Published var idw_values = Array<IDWValue<Float>>()
     @Published var step = 0
     @Published var max_scale: Float = LOWEST_MAX_SCALE
@@ -39,16 +40,48 @@ private let LOWEST_MAX_SCALE: Float = 1000
 private let POWER_SCALE_RADIUS_MAX: Float = 600
 private let POWER_SCALE_RADIUS_DEFAULT: Float = 50
 
+class PhotoController: NSObject {
+    let heatmap_view_controller: HeatMapViewController
+
+    public init(heatmap_view_controller: HeatMapViewController) {
+        self.heatmap_view_controller = heatmap_view_controller
+    }
+
+    @objc private func image(_ image: UIImage,
+                             didFinishPhotoLibrarySavingWithError error: Error?,
+                             contextInfo: UnsafeRawPointer) {
+        print("Image successfully written to camera roll")
+        if error != nil {
+            popUp("Error saving map", "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)", "OK")
+        } else {
+            popUp("Map saved", "You can find the heatmap in you photo roll", "OK")
+        }
+    }
+
+    public func popUp(_ title: String, _ message: String, _ ok: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let action = UIAlertAction(title: ok, style: .default)
+            alert.addAction(action)
+            self.heatmap_view_controller.present(alert, animated: true)
+        }
+    }
+
+    public func saveImage(image: UIImage) {
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishPhotoLibrarySavingWithError:contextInfo:)), nil)
+    }
+}
+
 @MainActor
 struct HeatMapSwiftUIView: View {
     //    private var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
     
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
+        self.photoController = PhotoController(heatmap_view_controller: heatmap_view_controller)
     }
     
-    public func cleanUp() { }
-    
+    let photoController: PhotoController
     weak var heatmap_view_controller: HeatMapViewController?
     
     @ObservedObject var model = MapViewModel.shared
@@ -90,6 +123,8 @@ struct HeatMapSwiftUIView: View {
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
+    public func cleanUp() { }
+
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }
         else {
@@ -149,7 +184,7 @@ struct HeatMapSwiftUIView: View {
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                     .sheet(isPresented: $showing_map_picker) {
-                        ImagePicker(image: $model.input_map_image, idw_values: $model.idw_values)
+                        ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, idw_values: $model.idw_values)
                     }
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
@@ -241,6 +276,21 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
+                            if model.original_map_image == nil { return }
+                            let image = model.original_map_image!
+
+                            let width = image.size.width
+                            
+                            
+                            photoController.saveImage(image: image)
+                            // CONTINUER ICI
+                            
+                            
+                            
+                            
+                            
+                            
+                            
                         } label: {
                             VStack {
                                 Image(systemName: "square.and.arrow.up").resizable().frame(width: 30, height: 30)

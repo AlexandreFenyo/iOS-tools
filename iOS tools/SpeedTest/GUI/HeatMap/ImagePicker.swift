@@ -6,6 +6,7 @@ import SwiftUI
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var image: UIImage?
+    @Binding var original_map_image: UIImage?
     @Binding var idw_values: Array<IDWValue<Float>>
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
@@ -76,6 +77,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
                             let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image))
+                            self.parent.original_map_image = Coordinator.rotateIfNeeded(image)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
                         }
@@ -85,9 +87,8 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
-//                            let resized_image = Coordinator.resizeIfNeeded(image as! UIImage)
                             let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
-
+                            self.parent.original_map_image = Coordinator.rotateIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
                             return
