@@ -22,7 +22,7 @@ public class MapViewModel : ObservableObject {
         "Come back here after having started a TCP Flood Discard action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.",
         "step 2/5:\n- at the bottom left of the map, you can see a white access point blinking;\n- go near an access point;\n- click on its location on the map to move the white access point to your location on the map;\n- on the vertical left scale, you can see the real time network speed;\n- when the speed is stable, associate this value to your access point by clicking on Add an access point or probe.",
         "step 3/5:\n- your first access point color has changed to black, this means it has been registered with the speed value at its location;\n- a new white access point is ready for a new value, at the bottom left of the map;\n- you may optionally want to take a measure far from an access point. In that case, click again on Add an access point or probe to change the image of the white access point to a probe one;\n- move to a new location to take a new measure;\n- click on the location on the map to move the white access point or probe to your location on the map;\n- when the speed on the vertical left scale is stable, associate this value to your location by clicking on Add an access point or probe.",
-        "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by clicking Share your map. This will also let you save the heat map."
+        "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by enabling the preview switch."
     ]
     
     @Published var input_map_image: UIImage?
@@ -32,9 +32,11 @@ public class MapViewModel : ObservableObject {
 
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
-private let NEW_PROBE_VALUE: Float = 10000000.0
+private let NEW_PROBE_VALUE: Float = 10000000
 private let SCALE_WIDTH: CGFloat = 30
 private let LOWEST_MAX_SCALE: Float = 1000
+private let POWER_SCALE_RADIUS_MAX: Float = 600
+private let POWER_SCALE_RADIUS_DEFAULT: Float = 50
 
 @MainActor
 struct HeatMapSwiftUIView: View {
@@ -68,9 +70,14 @@ struct HeatMapSwiftUIView: View {
     @State private var display_steps = false
     
     @State private var power_scale: Float = 1
-    @State private var power_scale_radius: Float = 1
+    @State private var power_scale_radius: Float = POWER_SCALE_RADIUS_DEFAULT
+
+    // pourrait être associé à un toggle, mais la valeur par défaut de POWER_SCALE_RADIUS_MAX correspond au même aux performances près puisqu'avec toggle_radius à true, il faut calculer un cache des distances au polygone
     @State private var toggle_radius = true
-    
+
+    @State private var toggle_disable_help = false
+    @State private var toggle_preview = false
+
     @State private var distance_cache: DistanceCache? = nil
     
     // à chaque mesure de débit, l'acteur TimeSeries calcule average qui est une moyenne temporelle pondérée par une exponentielle
@@ -106,9 +113,10 @@ struct HeatMapSwiftUIView: View {
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
-        if let max = (Set(model.idw_values).union(Set([idw_transient_value])).max { $0.v < $1.v }?.v) {
+        let transient_set: Set<IDWValue<Float>> = !toggle_preview ? Set([idw_transient_value]) : Set()
+        if let max = (Set(model.idw_values).union(transient_set).max { $0.v < $1.v }?.v) {
             if max != 0 {
-                let values = Set(model.idw_values).union(Set([idw_transient_value])).map {
+                let values = Set(model.idw_values).union(transient_set).map {
                     IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
                 }
                 let _ = values.map { idw_image.addValue($0) }
@@ -196,6 +204,10 @@ struct HeatMapSwiftUIView: View {
                             model.idw_values = Array<IDWValue>()
                             distance_cache = nil
                             max_scale = LOWEST_MAX_SCALE
+                            power_scale = 1
+                            power_scale_radius = POWER_SCALE_RADIUS_DEFAULT
+                            toggle_disable_help = false
+                            toggle_preview = false
                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
                         } label: {
@@ -221,21 +233,23 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                     }.padding(.top)
                 }
-                
-                HStack {
-                    Spacer()
-                    Text(MapViewModel.step2String[model.step])
-                        .font(Font.system(size: 7).bold())
-                        .foregroundColor(.white)
-                        .padding(5.0)
-                    Spacer()
+
+                if !toggle_disable_help {
+                    HStack {
+                        Spacer()
+                        Text(MapViewModel.step2String[model.step])
+                            .font(Font.system(size: 7).bold())
+                            .foregroundColor(.white)
+                            .padding(5.0)
+                        Spacer()
+                    }
+                    .background(.gray)
+                    .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
+                    .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
+                    .onChange(of: cg_image_next, perform: { _ in
+                        updateSteps()
+                    })
                 }
-                .background(.gray)
-                .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
-                .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
-                .onChange(of: cg_image_next, perform: { _ in
-                    updateSteps()
-                })
                 
                 if model.input_map_image != nil {
                     ZStack {
@@ -329,12 +343,35 @@ struct HeatMapSwiftUIView: View {
                         }
                     }
                 }
-                
+
+                HStack {
+                    VStack {
+                        Toggle(isOn: $toggle_disable_help) {
+                            Text("disable step-by-step help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                        }
+                        Toggle(isOn: $toggle_preview) {
+                            Text("preview").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                        }
+                    }.fixedSize()
+                    Spacer(minLength: 30)
+                    VStack {
+                        HStack {
+                            Image(systemName: "checkerboard.rectangle").foregroundColor(Color(COLORS.standard_background))
+                            Slider(value: $power_scale, in: 0...5)
+                        }
+                        HStack {
+                            Image(systemName: "slowmo").foregroundColor(Color(COLORS.standard_background))
+                            Slider(value: $power_scale_radius, in: 1...600)
+                        }
+                    }
+                }.padding()
+
+                /*
                 Slider(value: $power_scale, in: 0...5)
                 HStack {
                     Toggle("xxx", isOn: $toggle_radius)
-                    Slider(value: $power_scale_radius, in: 0...600).disabled(!toggle_radius)
-                }
+                    Slider(value: $power_scale_radius, in: 1...600)
+                }*/
                 
                 Spacer()
                 HStack {
