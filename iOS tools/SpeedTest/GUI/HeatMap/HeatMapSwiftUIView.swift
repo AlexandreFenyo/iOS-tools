@@ -32,7 +32,9 @@ public class MapViewModel : ObservableObject {
     @Published var max_scale: Float = LOWEST_MAX_SCALE
 }
 
+// sliders et toggles de réglage fin des paramètres
 private let ENABLE_DEBUG_INTERFACE = false
+
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000
