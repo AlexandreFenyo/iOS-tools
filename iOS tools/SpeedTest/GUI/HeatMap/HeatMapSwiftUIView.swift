@@ -32,21 +32,24 @@ public class MapViewModel : ObservableObject {
     @Published var max_scale: Float = LOWEST_MAX_SCALE
 }
 
+private let ENABLE_DEBUG_INTERFACE = false
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000
 private let SCALE_WIDTH: CGFloat = 30
 private let LOWEST_MAX_SCALE: Float = 1000
+private let POWER_SCALE_DEFAULT: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
-private let POWER_SCALE_RADIUS_DEFAULT: Float = 50
+private let POWER_SCALE_RADIUS_DEFAULT: Float = 120
+private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
 
 class PhotoController: NSObject {
     let heatmap_view_controller: HeatMapViewController
-
+    
     public init(heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
     }
-
+    
     @objc private func image(_ image: UIImage,
                              didFinishPhotoLibrarySavingWithError error: Error?,
                              contextInfo: UnsafeRawPointer) {
@@ -57,7 +60,7 @@ class PhotoController: NSObject {
             popUp("Map saved", "You can find the heatmap in you photo roll", "OK")
         }
     }
-
+    
     public func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -66,7 +69,7 @@ class PhotoController: NSObject {
             self.heatmap_view_controller.present(alert, animated: true)
         }
     }
-
+    
     public func saveImage(image: UIImage) {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishPhotoLibrarySavingWithError:contextInfo:)), nil)
     }
@@ -99,19 +102,20 @@ struct HeatMapSwiftUIView: View {
     @State private var last_loc_x: UInt16?
     @State private var last_loc_y: UInt16?
     
-    @State private var idw_transient_value: IDWValue<Float> = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+    @State private var idw_transient_value: IDWValue<Float>? // = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
     
     @State private var display_steps = false
     
-    @State private var power_scale: Float = 1
+    @State private var power_scale: Float = POWER_SCALE_DEFAULT
     @State private var power_scale_radius: Float = POWER_SCALE_RADIUS_DEFAULT
-
+    @State private var power_blur_radius: CGFloat = POWER_BLUR_RADIUS_DEFAULT
+    
     // pourrait être associé à un toggle, mais la valeur par défaut de POWER_SCALE_RADIUS_MAX correspond au même aux performances près puisqu'avec toggle_radius à true, il faut calculer un cache des distances au polygone
     @State private var toggle_radius = true
-
+    
     @State private var toggle_help = true
     @State private var toggle_preview = false
-
+    
     @State private var distance_cache: DistanceCache? = nil
     
     // à chaque mesure de débit, l'acteur TimeSeries calcule average qui est une moyenne temporelle pondérée par une exponentielle
@@ -124,7 +128,7 @@ struct HeatMapSwiftUIView: View {
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
     public func cleanUp() { }
-
+    
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }
         else {
@@ -148,18 +152,18 @@ struct HeatMapSwiftUIView: View {
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
-        let transient_set: Set<IDWValue<Float>> = !toggle_preview ? Set([idw_transient_value]) : Set()
-
+        let transient_set: Set<IDWValue<Float>> = (!toggle_preview && idw_transient_value != nil) ? Set([idw_transient_value!]) : Set()
+        
         // on prend toute la plage disponible pour les valeurs des mesures qu'on prend en compte
         let max = model.max_scale
-            
+        
         if max != 0 {
             let values = Set(model.idw_values).union(transient_set).map {
                 IDWValue<UInt16>(x: $0.x, y: $0.y, v: UInt16($0.v / max * Float(UInt16.max - 1)))
             }
             _ = values.map { idw_image.addValue($0) }
         }
-
+        
         Task {
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
             
@@ -205,52 +209,67 @@ struct HeatMapSwiftUIView: View {
                         .frame(maxWidth: 200)
                         
                         Button {
-                            if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
-                            } else {
-                                model.idw_values.append(idw_transient_value)
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
-                            }
+                            /*
+                             if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
+                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                             } else {
+                             model.idw_values.append(idw_transient_value)
+                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                             }
+                             */
+                            idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                            
                         } label: {
                             VStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
-                                Text("Save measure / Add new AP").font(.footnote)
+                                Text("Add new probe").font(.footnote)
                             }
                         }
-                        .disabled(model.input_map_image == nil)
+                        .disabled(model.input_map_image == nil || idw_transient_value != nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-
+                        
                         Button {
-                            if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
-                            } else {
-                                model.idw_values.append(idw_transient_value)
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .probe)
-                            }
+                            /*
+                             if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
+                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                             } else {
+                             model.idw_values.append(idw_transient_value)
+                             idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .probe)
+                             }
+                             */
+                            model.idw_values.append(idw_transient_value!)
+                            idw_transient_value = nil
                         } label: {
                             VStack {
                                 Image(systemName: "dot.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
-                                Text("Save measure / Add new probe").font(.footnote)
+                                Text("Save measure").font(.footnote)
                             }
                         }
-                        .disabled(model.input_map_image == nil)
+                        .disabled(model.input_map_image == nil || idw_transient_value == nil)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
-
+                        
                         Button {
-                            if let last = model.idw_values.popLast() {
-                                idw_transient_value = last
+                            /*
+                             if let last = model.idw_values.popLast() {
+                             idw_transient_value = last
+                             } else {
+                             idw_transient_value = IDWValue(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type)
+                             }
+                             */
+                            if idw_transient_value != nil {
+                                idw_transient_value = nil
                             } else {
-                                idw_transient_value = IDWValue(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type)
+                                _ = model.idw_values.popLast()
                             }
                         } label: {
                             VStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right.slash").resizable().frame(width: 30, height: 30)
-                                Text("Remove access point or probe").font(.footnote)
+                                Text("Undo").font(.footnote)
                             }
                         }
-                        .disabled(model.input_map_image == nil)
+                        .disabled(model.input_map_image == nil || model.idw_values.count == 0)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
                         
@@ -263,7 +282,7 @@ struct HeatMapSwiftUIView: View {
                             power_scale_radius = POWER_SCALE_RADIUS_DEFAULT
                             toggle_help = false
                             toggle_preview = false
-                            idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                            idw_transient_value = nil // IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
                             updateSteps()
                         } label: {
                             VStack {
@@ -290,9 +309,9 @@ struct HeatMapSwiftUIView: View {
                                 IDWValue<UInt16>(x: UInt16(Float($0.x) * factor_x), y: UInt16(Float($0.y) * factor_y), v: UInt16($0.v / max * Float(UInt16.max - 1)))
                             }
                             _ = values.map { idw_image.addValue($0) }
-
+                            
                             photoController.popUp("Saving map", "The heat map will be computed in the background, a pop-up will appear when it is done. It may take up to one minute approximatively.", "OK")
-
+                            
                             Task {
                                 let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
                                 
@@ -305,40 +324,61 @@ struct HeatMapSwiftUIView: View {
                                 Text("Share your map").font(.footnote)
                             }
                         }
-                        .disabled(model.input_map_image == nil)
+                        .disabled(model.input_map_image == nil || idw_transient_value != nil || model.idw_values.count < 3)
                         .accentColor(Color(COLORS.standard_background))
                         .frame(maxWidth: 200)
                     }.padding(.top)
                 }
 
-                if toggle_help {
-                    HStack {
-                        Spacer()
-                        Text(MapViewModel.step2String[model.step])
-                            .font(Font.system(size: 7).bold())
-                            .foregroundColor(.white)
-                            .padding(5.0)
-                        Spacer()
+                if ENABLE_DEBUG_INTERFACE {
+                    if toggle_help {
+                        HStack {
+                            Spacer()
+                            Text(MapViewModel.step2String[model.step])
+                                .font(Font.system(size: 7).bold())
+                                .foregroundColor(.white)
+                                .padding(5.0)
+                            Spacer()
+                        }
+                        .background(.gray)
+                        .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
+                        .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
+                        .onChange(of: cg_image_next, perform: { _ in
+                            updateSteps()
+                        })
                     }
-                    .background(.gray)
-                    .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
-                    .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
-                    .onChange(of: cg_image_next, perform: { _ in
-                        updateSteps()
-                    })
+                } else {
+                        HStack {
+                            if model.input_map_image != nil && average_next == 0 {
+                                Spacer()
+                                Text(MapViewModel.step2String[1])
+                                    .font(Font.system(size: 12).bold())
+                                    .foregroundColor(.white)
+                                    .padding(5.0)
+                                Spacer()
+                            }
+                        }
+                        .background(.gray)
+                        .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
+                        .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
                 }
                 
                 if model.input_map_image != nil {
                     ZStack {
                         if cg_image_prev != nil {
-                            Image(decorative: cg_image_prev!, scale: 1.0).resizable().aspectRatio(contentMode: .fit)
-                            
+                            Image(decorative: cg_image_prev!, scale: 1.0)
+                                .resizable()
+                                .blur(radius: power_blur_radius, opaque: true)
+                                .clipped()
+                                .aspectRatio(contentMode: .fit)
                                 .overlay {
                                     GeometryReader { geom in
-                                        Image(systemName: idw_transient_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right")
-                                            .colorInvert()
-                                            .position(x: CGFloat(idw_transient_value.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_transient_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
-                                        
+                                        if idw_transient_value != nil {
+                                            Image(systemName: "dot.radiowaves.left.and.right")
+                                                .resizable().frame(width: 40, height: 30)
+                                                .colorInvert()
+                                                .position(x: CGFloat(idw_transient_value!.x) * geom.size.width / CGFloat(cg_image_prev!.width), y: geom.size.height - CGFloat(idw_transient_value!.y) * geom.size.width / CGFloat(cg_image_prev!.width))
+                                        }
                                         // 256 probes displayed at max
                                         let values = model.idw_values.sorted { $0.x == $1.x ? $0.y < $1.y : $0.x < $0.y }
                                         ForEach(0..<256) { index in
@@ -353,7 +393,11 @@ struct HeatMapSwiftUIView: View {
                         }
                         
                         if cg_image_next != nil {
-                            Image(decorative: cg_image_next!, scale: 1.0).resizable().aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                            Image(decorative: cg_image_next!, scale: 1.0)
+                                .resizable()
+                                .blur(radius: power_blur_radius, opaque: true)
+                                .clipped()
+                                .aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                                 .overlay {
                                     GeometryReader { geom in
                                         Image(decorative: IDWImage.getScaleImage(height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
@@ -392,27 +436,29 @@ struct HeatMapSwiftUIView: View {
                                 .gesture(
                                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                         .onEnded { position in
-                                            let loc_screen = position.location
-                                            var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
-                                            var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
-                                            if xx < 0 { xx = 0 }
-                                            if yy < 0 { yy = 0 }
-                                            if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
-                                            if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
-                                            last_loc_x = UInt16(xx)
-                                            last_loc_y = UInt16(yy)
-                                            let foo = CGFloat(last_loc_x!)
-                                            if foo >= SCALE_WIDTH {
-                                                idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value.type)
-                                                updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
-                                            } else {
-                                                if idw_transient_value.x == NEW_PROBE_X && idw_transient_value.y == NEW_PROBE_Y {
-                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: idw_transient_value.type == .ap ? .probe : .ap)
+                                            if idw_transient_value != nil {
+                                                let loc_screen = position.location
+                                                var xx = Int(loc_screen.x / geom.size.width * Double(model.input_map_image!.cgImage!.width))
+                                                var yy = Int((geom.size.height - loc_screen.y) / geom.size.height * Double(model.input_map_image!.cgImage!.height))
+                                                if xx < 0 { xx = 0 }
+                                                if yy < 0 { yy = 0 }
+                                                if xx >= model.input_map_image!.cgImage!.width { xx = model.input_map_image!.cgImage!.width - 1 }
+                                                if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
+                                                last_loc_x = UInt16(xx)
+                                                last_loc_y = UInt16(yy)
+                                                let foo = CGFloat(last_loc_x!)
+                                                if foo >= SCALE_WIDTH {
+                                                    idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value!.type)
+                                                    updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                                 } else {
-                                                    let foo = model.max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
-                                                    let val = IDWValue<Float>(x: idw_transient_value.x, y: idw_transient_value.y, v: foo, type: idw_transient_value.type)
-                                                    model.idw_values.append(val)
-                                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                                                    if idw_transient_value!.x == NEW_PROBE_X && idw_transient_value!.y == NEW_PROBE_Y {
+                                                        idw_transient_value = nil
+                                                    } else {
+                                                        let foo = model.max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
+                                                        let val = IDWValue<Float>(x: idw_transient_value!.x, y: idw_transient_value!.y, v: foo, type: idw_transient_value!.type)
+                                                        model.idw_values.append(val)
+                                                        idw_transient_value = nil
+                                                    }
                                                 }
                                             }
                                         }
@@ -420,28 +466,32 @@ struct HeatMapSwiftUIView: View {
                         }
                     }
                 }
-
-                HStack {
-                    VStack {
-                        Toggle(isOn: $toggle_help) {
-                            Text("help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                
+                if ENABLE_DEBUG_INTERFACE {
+                    HStack {
+                        VStack {
+                            Toggle(isOn: $toggle_help) {
+                                Text("help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            Toggle(isOn: $toggle_preview) {
+                                Text("ignore white AP").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                        }.fixedSize()
+                        Spacer(minLength: 30)
+                        VStack {
+                            HStack {
+                                Image(systemName: "checkerboard.rectangle").foregroundColor(Color(COLORS.standard_background))
+                                Slider(value: $power_scale, in: 0...5)
+                            }
+                            HStack {
+                                Image(systemName: "slowmo").foregroundColor(Color(COLORS.standard_background))
+                                Slider(value: $power_scale_radius, in: 1...600)
+                            }
                         }
-                        Toggle(isOn: $toggle_preview) {
-                            Text("ignore white AP").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                    }.fixedSize()
-                    Spacer(minLength: 30)
-                    VStack {
-                        HStack {
-                            Image(systemName: "checkerboard.rectangle").foregroundColor(Color(COLORS.standard_background))
-                            Slider(value: $power_scale, in: 0...5)
-                        }
-                        HStack {
-                            Image(systemName: "slowmo").foregroundColor(Color(COLORS.standard_background))
-                            Slider(value: $power_scale_radius, in: 1...600)
-                        }
-                    }
-                }.padding()
+                    }.padding()
+                    
+                    Slider(value: $power_blur_radius, in: 1...20)
+                }
                 
                 Spacer()
                 HStack {
@@ -481,11 +531,13 @@ struct HeatMapSwiftUIView: View {
                     }
                     .onReceive(timer_create_map) { _ in // 1 Hz
                         if model.input_map_image != nil {
-                            idw_transient_value = IDWValue(x: idw_transient_value.x, y: idw_transient_value.y, v: speed, type: idw_transient_value.type)
+                            if idw_transient_value != nil {
+                                idw_transient_value = IDWValue(x: idw_transient_value!.x, y: idw_transient_value!.y, v: speed, type: idw_transient_value!.type)
+                            }
                             updateMap()
                         }
                     }
-//                    .padding()
+                    //                    .padding()
                 }
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
