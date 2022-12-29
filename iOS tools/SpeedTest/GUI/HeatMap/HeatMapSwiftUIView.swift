@@ -41,9 +41,11 @@ private let NEW_PROBE_VALUE: Float = 10000000
 private let SCALE_WIDTH: CGFloat = 30
 private let LOWEST_MAX_SCALE: Float = 1000
 private let POWER_SCALE_DEFAULT: Float = 5
+private let POWER_SCALE_MAX: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
 private let POWER_SCALE_RADIUS_DEFAULT: Float = 120
 private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
+private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
 class PhotoController: NSObject {
     weak var heatmap_view_controller: HeatMapViewController?
@@ -256,7 +258,7 @@ struct HeatMapSwiftUIView: View {
                             model.idw_values = Array<IDWValue>()
                             distance_cache = nil
                             model.max_scale = LOWEST_MAX_SCALE
-                            power_scale = 1
+                            power_scale = POWER_SCALE_DEFAULT
                             power_scale_radius = POWER_SCALE_RADIUS_DEFAULT
                             toggle_help = false
                             toggle_preview = false
@@ -455,16 +457,16 @@ struct HeatMapSwiftUIView: View {
                         VStack {
                             HStack {
                                 Image(systemName: "checkerboard.rectangle").foregroundColor(Color(COLORS.standard_background))
-                                Slider(value: $power_scale, in: 0...5)
+                                Slider(value: $power_scale, in: 0...POWER_SCALE_MAX)
                             }
                             HStack {
                                 Image(systemName: "slowmo").foregroundColor(Color(COLORS.standard_background))
-                                Slider(value: $power_scale_radius, in: 1...600)
+                                Slider(value: $power_scale_radius, in: 1...POWER_SCALE_RADIUS_MAX)
                             }
                         }
                     }.padding()
                     
-                    Slider(value: $power_blur_radius, in: 1...20)
+                    Slider(value: $power_blur_radius, in: 1...POWER_BLUR_RADIUS_MAX)
                 }
                 
                 Spacer()
