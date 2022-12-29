@@ -19,7 +19,7 @@ public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
     static let step2String = [
         "step 1/5: select your floor plan (click on the Select your floor plan green button)",
-        "Come back here after having started a TCP Flood Chargen action on a target.\nThe target must be the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.",
+        "Come back here after having started a TCP Flood Chargen action on a target.\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a target that is as near as possible as an access point;\n- to estimate the Internet throughput with each location on the local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.",
         "step 2/5:\n- at the bottom left of the map, you can see a white access point blinking;\n- go near an access point;\n- click on its location on the map to move the white access point to your location on the map;\n- on the vertical left scale, you can see the real time network speed;\n- when the speed is stable, associate this value to your access point by clicking on Add an access point or probe.",
         "step 3/5:\n- your first access point color has changed to black, this means it has been registered with the speed value at its location;\n- a new white access point is ready for a new value, at the bottom left of the map;\n- you may optionally want to take a measure far from an access point. In that case, click again on Add an access point or probe to change the image of the white access point to a probe one;\n- move to a new location to take a new measure;\n- click on the location on the map to move the white access point or probe to your location on the map;\n- when the speed on the vertical left scale is stable, associate this value to your location by clicking on Add an access point or probe.",
         "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by enabling the preview switch."
@@ -33,7 +33,7 @@ public class MapViewModel : ObservableObject {
 }
 
 // sliders et toggles de réglage fin des paramètres
-private let ENABLE_DEBUG_INTERFACE = false
+private let ENABLE_DEBUG_INTERFACE = true
 
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
@@ -43,7 +43,7 @@ private let LOWEST_MAX_SCALE: Float = 1000
 private let POWER_SCALE_DEFAULT: Float = 5
 private let POWER_SCALE_MAX: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
-private let POWER_SCALE_RADIUS_DEFAULT: Float = 120
+private let POWER_SCALE_RADIUS_DEFAULT: Float = 120 /* 180 */
 private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
 private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
@@ -295,8 +295,35 @@ struct HeatMapSwiftUIView: View {
                             Task {
                                 let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
                                 
-                                let ui_image = UIImage(cgImage: cg_image!)
-                                photoController.saveImage(image: ui_image)
+                                let ci_image_map = CIImage(cgImage: cg_image!)
+                                let ci_image_map_ext = ci_image_map.extent
+                                let ci_image_clamped = ci_image_map.clampedToExtent()
+                                let ci_context_blur = CIContext()
+                                let blur = CIFilter(name: "CIGaussianBlur")!
+                                blur.setValue(ci_image_clamped, forKey: kCIInputImageKey)
+                                blur.setValue(power_blur_radius * CGFloat(factor_x), forKey: kCIInputRadiusKey)
+                                let blurred_image = blur.outputImage
+                                let new_blur_cg_image = ci_context_blur.createCGImage(blurred_image!, from: ci_image_map_ext)
+                                let blur_image = UIImage(cgImage: new_blur_cg_image!)
+
+                                let ci_image_original = CIImage(cgImage: image.withHorizontallyFlippedOrientation().cgImage!)
+                                let ci_image_original_ext = ci_image_original.extent
+                                let ci_context_grayscale = CIContext()
+                                let grayscale = CIFilter(name: "CIPhotoEffectNoir")!
+                                grayscale.setValue(ci_image_original, forKey: kCIInputImageKey)
+                                let gray_image = grayscale.outputImage
+                                let new_grayscale_cg_image = ci_context_grayscale.createCGImage(gray_image!, from: ci_image_original_ext)
+                                let grayscale_image = UIImage(cgImage: new_grayscale_cg_image!)
+
+                                let size = CGSize(width: cg_image!.width, height: cg_image!.height)
+                                UIGraphicsBeginImageContext(size)
+                                let area_size = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+                                blur_image.draw(in: area_size,blendMode: .normal, alpha: 1.0)
+                                grayscale_image.draw(in: area_size, blendMode: .normal, alpha: 0.2)
+                                let merged_image = UIGraphicsGetImageFromCurrentImageContext()!
+                                UIGraphicsEndImageContext()
+
+                                photoController.saveImage(image: merged_image)
                             }
                         } label: {
                             VStack {
