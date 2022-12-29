@@ -33,7 +33,7 @@ public class MapViewModel : ObservableObject {
 }
 
 // sliders et toggles de réglage fin des paramètres
-private let ENABLE_DEBUG_INTERFACE = true
+private let ENABLE_DEBUG_INTERFACE = false
 
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50

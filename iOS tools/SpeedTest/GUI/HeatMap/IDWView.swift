@@ -105,7 +105,10 @@ public struct IDWImage {
     }
     
     private func setPixel(_ pixels: PixelBytes, _ idwval: IDWValue<UInt16>) {
-        let p = (pixels + ((Int(height) - Int(idwval.y) - 1) * nbytes_per_line)) + Int(idwval.x) * nbytes_per_pixel
+        let pos_vertical = Int(height) - Int(idwval.y) - 1
+        let pos_horizontal = Int(idwval.x)
+        if pos_vertical < 0 || pos_vertical >= height || pos_horizontal < 0 || pos_horizontal >= width { return }
+        let p = pixels + (pos_vertical * nbytes_per_line + pos_horizontal * nbytes_per_pixel)
         let rgb = Self.getRGB(idwval.v)
         p.pointee = rgb.r
         (p + 1).pointee = rgb.g
