@@ -46,7 +46,7 @@ private let POWER_SCALE_RADIUS_DEFAULT: Float = 120
 private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
 
 class PhotoController: NSObject {
-    let heatmap_view_controller: HeatMapViewController
+    weak var heatmap_view_controller: HeatMapViewController?
     
     public init(heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
@@ -68,7 +68,7 @@ class PhotoController: NSObject {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)
             alert.addAction(action)
-            self.heatmap_view_controller.present(alert, animated: true)
+            self.heatmap_view_controller?.present(alert, animated: true)
         }
     }
     
