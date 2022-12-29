@@ -33,7 +33,7 @@ public class MapViewModel : ObservableObject {
 }
 
 // sliders et toggles de réglage fin des paramètres
-private let ENABLE_DEBUG_INTERFACE = false
+private var ENABLE_DEBUG_INTERFACE = false
 
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
@@ -453,6 +453,12 @@ struct HeatMapSwiftUIView: View {
                                                 if yy >= model.input_map_image!.cgImage!.height { yy = model.input_map_image!.cgImage!.height - 1 }
                                                 last_loc_x = UInt16(xx)
                                                 last_loc_y = UInt16(yy)
+                                                
+                                                // Easter egg: drag gesture to top right to enable/disable debug interface
+                                                if xx == model.input_map_image!.cgImage!.width - 1 && yy == model.input_map_image!.cgImage!.height - 1 {
+                                                    ENABLE_DEBUG_INTERFACE.toggle()
+                                                }
+                                                
                                                 let foo = CGFloat(last_loc_x!)
                                                 if foo >= SCALE_WIDTH {
                                                     idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value!.type)
