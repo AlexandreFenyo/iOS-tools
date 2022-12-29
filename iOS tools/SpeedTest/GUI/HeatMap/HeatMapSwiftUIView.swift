@@ -451,14 +451,15 @@ struct HeatMapSwiftUIView: View {
                                                     idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value!.type)
                                                     updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                                 } else {
+                                                    /*
                                                     if idw_transient_value!.x == NEW_PROBE_X && idw_transient_value!.y == NEW_PROBE_Y {
                                                         idw_transient_value = nil
-                                                    } else {
+                                                    } else { */
                                                         let foo = model.max_scale * Float(last_loc_y!) / Float(model.input_map_image!.cgImage!.height)
                                                         let val = IDWValue<Float>(x: idw_transient_value!.x, y: idw_transient_value!.y, v: foo, type: idw_transient_value!.type)
                                                         model.idw_values.append(val)
                                                         idw_transient_value = nil
-                                                    }
+                                                   /* } */
                                                 }
                                             }
                                         }
