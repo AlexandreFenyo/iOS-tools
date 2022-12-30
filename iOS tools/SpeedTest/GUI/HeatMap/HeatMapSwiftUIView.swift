@@ -118,7 +118,7 @@ struct HeatMapSwiftUIView: View {
     
     let photoController: PhotoController
     weak var heatmap_view_controller: HeatMapViewController?
-    
+
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
     @State private var showing_progress = false
@@ -160,7 +160,8 @@ struct HeatMapSwiftUIView: View {
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     
-    public func cleanUp() { }
+    public func cleanUp() {
+    }
     
     private func updateSteps() {
         if model.input_map_image == nil { model.step = 0 }

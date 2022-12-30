@@ -27,8 +27,15 @@ class HeatMapViewController: UIViewController {
         return hosting_view_controller
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         hosting_view_controller.rootView.cleanUp()
+        if exporting_map == true {
+            exporting_map = false
+            let dialogMessage = UIAlertController(title: "Warning", message: "You have dismissed the heat map high resolution computation, it will continue in the background, check your photo roll in about one minute to find the exported map.", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default)
+            dialogMessage.addAction(action)
+            master_view_controller!.parent!.present(dialogMessage, animated: true, completion: nil)
+        }
     }
     
     override func viewDidLoad() {
