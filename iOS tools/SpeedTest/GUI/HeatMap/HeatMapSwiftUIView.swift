@@ -593,5 +593,4 @@ struct HeatMapSwiftUIView: View {
             }.background(Color(COLORS.right_pannel_bg))
         }
     }
-        
 }
