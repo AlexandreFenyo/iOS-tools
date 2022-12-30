@@ -244,12 +244,11 @@ public struct IDWImage {
             
             let distance_cache = DistanceCache(width: width, height: height, vertices: Set(values.map { CGPoint(x: Double($0.x), y: Double($0.y)) }), distance: distance)
 
-            print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+//            print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
             return (cg_image, distance_cache)
         }
         
-        //        fatalError()
-        print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
+//        print("durée computeCGImageAsync: \(Date().timeIntervalSince(now)) s")
         return (cg_image, nil)
     }
 }
