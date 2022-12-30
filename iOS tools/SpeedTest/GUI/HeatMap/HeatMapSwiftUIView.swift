@@ -15,7 +15,22 @@ import PhotosUI
 // ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
 // https://www.hackingwithswift.com/books/ios-swiftui/integrating-core-image-with-swiftui
 
-var exporting_map = false
+public var exporting_map = false
+
+// sliders et toggles de réglage fin des paramètres
+private var ENABLE_DEBUG_INTERFACE = false
+
+private let NEW_PROBE_X: UInt16 = 100
+private let NEW_PROBE_Y: UInt16 = 50
+private let NEW_PROBE_VALUE: Float = 10000000
+private let SCALE_WIDTH: CGFloat = 30
+private let LOWEST_MAX_SCALE: Float = 1000
+private let POWER_SCALE_DEFAULT: Float = 5
+private let POWER_SCALE_MAX: Float = 5
+private let POWER_SCALE_RADIUS_MAX: Float = 600
+private let POWER_SCALE_RADIUS_DEFAULT: Float = 120 /* 180 */
+private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
+private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
@@ -33,21 +48,6 @@ public class MapViewModel : ObservableObject {
     @Published var step = 0
     @Published var max_scale: Float = LOWEST_MAX_SCALE
 }
-
-// sliders et toggles de réglage fin des paramètres
-private var ENABLE_DEBUG_INTERFACE = false
-
-private let NEW_PROBE_X: UInt16 = 100
-private let NEW_PROBE_Y: UInt16 = 50
-private let NEW_PROBE_VALUE: Float = 10000000
-private let SCALE_WIDTH: CGFloat = 30
-private let LOWEST_MAX_SCALE: Float = 1000
-private let POWER_SCALE_DEFAULT: Float = 5
-private let POWER_SCALE_MAX: Float = 5
-private let POWER_SCALE_RADIUS_MAX: Float = 600
-private let POWER_SCALE_RADIUS_DEFAULT: Float = 120 /* 180 */
-private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
-private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
 // LoadingView derived from https://roddy.io/2020/07/27/create-progressview-modal-in-swiftui/
 struct LoadingView<Content>: View where Content: View {
