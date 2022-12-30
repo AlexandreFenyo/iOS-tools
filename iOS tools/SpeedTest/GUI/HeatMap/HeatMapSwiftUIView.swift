@@ -15,6 +15,8 @@ import PhotosUI
 // ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
 // https://www.hackingwithswift.com/books/ios-swiftui/integrating-core-image-with-swiftui
 
+var exporting_map = false
+
 public class MapViewModel : ObservableObject {
     static let shared = MapViewModel()
     static let step2String = [
@@ -49,22 +51,22 @@ private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
 // LoadingView derived from https://roddy.io/2020/07/27/create-progressview-modal-in-swiftui/
 struct LoadingView<Content>: View where Content: View {
-    @Binding var isShowing: Bool
+    @Binding var showing_progress: Bool
     var content: () -> Content
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .center) {
                 content()
-                    .disabled(isShowing)
-                if isShowing {
+                    .disabled(showing_progress)
+                if showing_progress {
                     Rectangle()
-                        .fill(Color.black).opacity(isShowing ? 0.6 : 0)
+                        .fill(Color.black).opacity(showing_progress ? 0.6 : 0)
                         .edgesIgnoringSafeArea(.all)
                     VStack(spacing: 48) {
-                        ProgressView().scaleEffect(2.0, anchor: .center)
-                        Text("Wait while saving heat map...\nThis may take up to a minute.\nThe map will be saved into your photo roll.").font(.headline).fontWeight(.semibold)
+                        ProgressView().scaleEffect(2.0, anchor: .center).padding()
+                        Text("Wait while saving heat map...").font(.headline).fontWeight(.semibold).padding()
+                        Text("This may take up to a minute to produce a high resolution map.\nThe map will be saved into your photo roll.").font(.caption).padding()
                     }
-                    .frame(width: 250, height: 200)
                     .background(Color(COLORS.chart_bg))
                     .foregroundColor(Color(COLORS.standard_background))
                     .cornerRadius(16)
@@ -85,11 +87,7 @@ class PhotoController: NSObject {
                              didFinishPhotoLibrarySavingWithError error: Error?,
                              contextInfo: UnsafeRawPointer) {
         print("Image successfully written to camera roll")
-        
-        
-        
-        
-        
+        exporting_map = false
         if error != nil {
             popUp("Error saving map", "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)", "OK")
         } else {
@@ -113,8 +111,6 @@ class PhotoController: NSObject {
 
 @MainActor
 struct HeatMapSwiftUIView: View {
-    //    private var my_memory_tracker = MyMemoryTracker("HeatMapSwiftUIView")
-    
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
         self.photoController = PhotoController(heatmap_view_controller: heatmap_view_controller)
@@ -186,6 +182,8 @@ struct HeatMapSwiftUIView: View {
     }
     
     private func updateMap(debug_x: UInt16? = nil, debug_y: UInt16? = nil) {
+        if exporting_map == true { return }
+        
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
@@ -218,10 +216,7 @@ struct HeatMapSwiftUIView: View {
     }
     
     var body: some View {
-        
-        LoadingView(isShowing: $showing_progress) {
-            
-            
+        LoadingView(showing_progress: $showing_progress) {
             VStack {
                 HStack {
                     Spacer()
@@ -311,15 +306,11 @@ struct HeatMapSwiftUIView: View {
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200)
                             
-                            
-                            
-                            
-                            
-                            
                             Button {
                                 if model.original_map_image == nil || model.max_scale == 0 { return }
 
                                 showing_progress.toggle()
+                                exporting_map = true
 
                                 let image = model.original_map_image!
                                 let width = image.cgImage!.width
@@ -334,12 +325,7 @@ struct HeatMapSwiftUIView: View {
                                     IDWValue<UInt16>(x: UInt16(Float($0.x) * factor_x), y: UInt16(Float($0.y) * factor_y), v: UInt16($0.v / max * Float(UInt16.max - 1)))
                                 }
                                 _ = values.map { idw_image.addValue($0) }
-                                
-//                                photoController.popUp("Saving map", "The heat map will be computed in the background, a pop-up will appear when it is done. It may take up to one minute approximatively.", "OK")
-                                
-//                                showing_progress.toggle()
 
-                                
                                 Task {
                                     let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
                                     
@@ -574,6 +560,8 @@ struct HeatMapSwiftUIView: View {
                             }
                         }
                         .onReceive(timer_get_average) { _ in // 1 Hz
+                            if exporting_map == false { showing_progress = false }
+                            
                             display_steps.toggle()
                             Task {
                                 if let heatmap_view_controller {
@@ -594,7 +582,6 @@ struct HeatMapSwiftUIView: View {
                                 updateMap()
                             }
                         }
-                        //                    .padding()
                     }
                 }
                 .background(Color(COLORS.right_pannel_scroll_bg))
@@ -604,8 +591,6 @@ struct HeatMapSwiftUIView: View {
                     heatmap_view_controller?.dismiss(animated: true)
                 }.padding()
             }.background(Color(COLORS.right_pannel_bg))
-            
-            
         }
     }
         
