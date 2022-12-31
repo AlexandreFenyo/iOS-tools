@@ -14,8 +14,14 @@ struct TracesSwiftUIView: View {
         case DEBUG
         case ALL
     }
-    
+
     public class TracesViewModel : ObservableObject {
+        private let log_level_to_string: [LogLevel: String] = [
+            LogLevel.INFO: "INFO",
+            LogLevel.DEBUG: "DEBUG",
+            LogLevel.ALL: "ALL"
+        ]
+        
         private let df: DateFormatter = {
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -28,7 +34,7 @@ struct TracesSwiftUIView: View {
             arr.append("")
             for i in 1...200 {
 //                arr.append("Speed Test - Traces zfeiopjf oifj o jefozi jeofjioj ei jozefij ezoi jezo ijezo ijezoi ejzfo jzeo jzefi oezfj ziefo jzeo ijzef oizejfoize jfezo ijzefo ijzef ozefj zieo jezio jzeoi jzeofi jezo ijzeoi jzeoi jzeoi jezo ijzeo ijzeo ijzeio jzeio j \(i)")
-                arr.append("Speed Test - Traces \(i)")
+//                arr.append("Speed Test - Traces \(i)")
             }
             return arr
         }()
@@ -39,7 +45,8 @@ struct TracesSwiftUIView: View {
         
         public func append(_ str: String, level _level: LogLevel = .ALL) {
             if _level.rawValue <= level.rawValue {
-                traces.append(df.string(from: Date()) + ": " + str)
+                let level = log_level_to_string[_level]!
+                traces.append(df.string(from: Date()) + " [" + level + "]: " + str)
             }
         }
         

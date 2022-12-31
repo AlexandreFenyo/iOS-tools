@@ -123,6 +123,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func resetToDefaultHosts() {
+        addTrace("Remove discovered hosts", level: .INFO)
+
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
             tableView.beginUpdates()
@@ -144,7 +146,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     private func startBrowsing() {
         // Supprimer tous les noeuds
         resetToDefaultHosts()
-        
+
+        addTrace("Start browsing the network", level: .INFO)
+
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
             self.stop_button!.isEnabled = true
@@ -158,7 +162,6 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.browser_discard?.search()
             self.updateLocalNodeAndGateways()
 
-            
             // Use ICMP to find new nodes
             let tb = TCPPortBrowser(device_manager: self)
             self.browser_tcp = tb
@@ -377,6 +380,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addTrace("Application started", level: .INFO)
         
         // Couleur du Edit
         navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
