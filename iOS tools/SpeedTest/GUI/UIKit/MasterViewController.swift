@@ -123,7 +123,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func resetToDefaultHosts() {
-        addTrace("Remove discovered hosts", level: .INFO)
+        addTrace("Remove previously discovered hosts", level: .INFO)
 
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
@@ -147,10 +147,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Supprimer tous les noeuds
         resetToDefaultHosts()
 
-        addTrace("Start browsing the network", level: .INFO)
-
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
+            self.addTrace("Start browsing the network", level: .INFO)
+
             self.stop_button!.isEnabled = true
             self.detail_view_controller?.enableButtons(false)
             self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -348,7 +348,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         heatmap_view_controller.master_view_controller = self
         present(heatmap_view_controller, animated: true)
     }
-    
+
     // Refresh started with gesture
     @objc
     private func userRefresh(_ sender: Any) {
@@ -530,6 +530,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     node.v4_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
                     node.dns_names.insert(domain_name)
+                    
+                    print("XXXXX: resolve ipv4 \(name)")
+                    
                     self.addNode(node)
                 }
             }
@@ -549,6 +552,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     node.v6_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
                     node.dns_names.insert(domain_name)
+
+                    print("XXXXX: resolve ipv6 \(name)")
+
                     self.addNode(node)
                 }
             }

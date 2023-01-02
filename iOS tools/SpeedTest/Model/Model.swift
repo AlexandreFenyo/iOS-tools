@@ -459,7 +459,7 @@ class DBMaster {
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
         node.types = [ .chargen, .internet ]
         _ = addNode(node)
-
+        
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }

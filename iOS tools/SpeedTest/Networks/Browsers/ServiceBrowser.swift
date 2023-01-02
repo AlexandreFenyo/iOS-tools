@@ -54,10 +54,12 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
+        device_manager.addTrace("Start browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        device_manager.addTrace("Stop browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
     }
 
     // MARK: - NetServiceDelegate
@@ -122,8 +124,10 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 class ServiceBrowser : NetServiceBrowser {
     private let browser_delegate : BrowserDelegate
     private let type : String
+    private let device_manager : DeviceManager
 
     init(_ type: String, deviceManager: DeviceManager) {
+        device_manager = deviceManager
         browser_delegate = BrowserDelegate(type, deviceManager: deviceManager)
         self.type = type
         super.init()
@@ -131,6 +135,8 @@ class ServiceBrowser : NetServiceBrowser {
     }
 
     public func search() {
+        device_manager.addTrace("searchForServices(\(type), \(NetworkDefaults.local_domain_for_browsing))", level: .ALL)
+
         searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }
