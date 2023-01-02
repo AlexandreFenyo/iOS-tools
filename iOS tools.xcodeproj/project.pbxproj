@@ -21,6 +21,21 @@
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
+		5D65EE4A296381780099871C /* app-icon-167.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE3A296381780099871C /* app-icon-167.png */; };
+		5D65EE4B296381780099871C /* app-icon-29.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE3B296381780099871C /* app-icon-29.png */; };
+		5D65EE4D296381780099871C /* app-icon-58.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE3D296381780099871C /* app-icon-58.png */; };
+		5D65EE4E296381780099871C /* app-icon-80.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE3E296381780099871C /* app-icon-80.png */; };
+		5D65EE4F296381780099871C /* app-icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE3F296381780099871C /* app-icon-40.png */; };
+		5D65EE50296381780099871C /* app-icon-152.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE40296381780099871C /* app-icon-152.png */; };
+		5D65EE51296381780099871C /* app-icon-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE41296381780099871C /* app-icon-1024.png */; };
+		5D65EE52296381780099871C /* app-icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE42296381780099871C /* app-icon-120.png */; };
+		5D65EE53296381780099871C /* app-icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE43296381780099871C /* app-icon-60.png */; };
+		5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE44296381780099871C /* app-icon-1024x1024-1.psd */; };
+		5D65EE55296381780099871C /* app-icon-87.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE45296381780099871C /* app-icon-87.png */; };
+		5D65EE56296381780099871C /* app-icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE46296381780099871C /* app-icon-76.png */; };
+		5D65EE57296381780099871C /* app-icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE47296381780099871C /* app-icon-180.png */; };
+		5D65EE58296381780099871C /* app-icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE48296381780099871C /* app-icon-20.png */; };
+		5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE49296381780099871C /* app-icon-1024x1024-5.psd */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */; };
@@ -93,6 +108,21 @@
 		5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPortBrowser.swift; sourceTree = "<group>"; };
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		5D65EE3A296381780099871C /* app-icon-167.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-167.png"; sourceTree = "<group>"; };
+		5D65EE3B296381780099871C /* app-icon-29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-29.png"; sourceTree = "<group>"; };
+		5D65EE3D296381780099871C /* app-icon-58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-58.png"; sourceTree = "<group>"; };
+		5D65EE3E296381780099871C /* app-icon-80.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-80.png"; sourceTree = "<group>"; };
+		5D65EE3F296381780099871C /* app-icon-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-40.png"; sourceTree = "<group>"; };
+		5D65EE40296381780099871C /* app-icon-152.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-152.png"; sourceTree = "<group>"; };
+		5D65EE41296381780099871C /* app-icon-1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-1024.png"; sourceTree = "<group>"; };
+		5D65EE42296381780099871C /* app-icon-120.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-120.png"; sourceTree = "<group>"; };
+		5D65EE43296381780099871C /* app-icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-60.png"; sourceTree = "<group>"; };
+		5D65EE44296381780099871C /* app-icon-1024x1024-1.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "app-icon-1024x1024-1.psd"; sourceTree = "<group>"; };
+		5D65EE45296381780099871C /* app-icon-87.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-87.png"; sourceTree = "<group>"; };
+		5D65EE46296381780099871C /* app-icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-76.png"; sourceTree = "<group>"; };
+		5D65EE47296381780099871C /* app-icon-180.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-180.png"; sourceTree = "<group>"; };
+		5D65EE48296381780099871C /* app-icon-20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-icon-20.png"; sourceTree = "<group>"; };
+		5D65EE49296381780099871C /* app-icon-1024x1024-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "app-icon-1024x1024-5.psd"; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		5D78EF6D290FC56400842B76 /* IDWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDWView.swift; sourceTree = "<group>"; };
 		5D7C30D220EA146600BF0CF8 /* SpeedTest.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SpeedTest.storyboard; sourceTree = "<group>"; };
@@ -256,6 +286,7 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D65EE392963815D0099871C /* app-icon */,
 				5DE4ED87290586730000B30A /* docs-actions-2.png */,
 				5DE4ED90290586740000B30A /* docs-actions-2.psd */,
 				5DE4ED8F290586740000B30A /* docs-actions.png */,
@@ -278,6 +309,28 @@
 				5D63644D213EE0FD00BFEB0F /* Model.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5D65EE392963815D0099871C /* app-icon */ = {
+			isa = PBXGroup;
+			children = (
+				5D65EE48296381780099871C /* app-icon-20.png */,
+				5D65EE3B296381780099871C /* app-icon-29.png */,
+				5D65EE3F296381780099871C /* app-icon-40.png */,
+				5D65EE3D296381780099871C /* app-icon-58.png */,
+				5D65EE43296381780099871C /* app-icon-60.png */,
+				5D65EE46296381780099871C /* app-icon-76.png */,
+				5D65EE3E296381780099871C /* app-icon-80.png */,
+				5D65EE45296381780099871C /* app-icon-87.png */,
+				5D65EE42296381780099871C /* app-icon-120.png */,
+				5D65EE40296381780099871C /* app-icon-152.png */,
+				5D65EE3A296381780099871C /* app-icon-167.png */,
+				5D65EE47296381780099871C /* app-icon-180.png */,
+				5D65EE41296381780099871C /* app-icon-1024.png */,
+				5D65EE44296381780099871C /* app-icon-1024x1024-1.psd */,
+				5D65EE49296381780099871C /* app-icon-1024x1024-5.psd */,
+			);
+			path = "app-icon";
 			sourceTree = "<group>";
 		};
 		5D7C30D420EA15DD00BF0CF8 /* SpeedTest */ = {
@@ -473,24 +526,39 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D65EE57296381780099871C /* app-icon-180.png in Resources */,
+				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
+				5D65EE4F296381780099871C /* app-icon-40.png in Resources */,
 				5DE4ED98290586740000B30A /* docs-hosts.png in Resources */,
+				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
+				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
+				5D65EE56296381780099871C /* app-icon-76.png in Resources */,
+				5D65EE50296381780099871C /* app-icon-152.png in Resources */,
 				5DE4ED9A290586740000B30A /* docs-browse-stop.psd in Resources */,
 				5DE4ED99290586740000B30A /* docs-ports.psd in Resources */,
 				5DE4ED96290586740000B30A /* docs-actions.psd in Resources */,
 				5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */,
+				5D65EE58296381780099871C /* app-icon-20.png in Resources */,
 				5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */,
+				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
 				5DE4ED9D290586740000B30A /* docs-hosts.psd in Resources */,
+				5D65EE53296381780099871C /* app-icon-60.png in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
 				5DE4ED9C290586740000B30A /* docs-actions-2.psd in Resources */,
+				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
+				5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
+				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
 				5DE4ED97290586740000B30A /* docs-ports.png in Resources */,
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5D7C30D320EA146600BF0CF8 /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
+				5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */,
 				5DE4ED95290586740000B30A /* docs-chart.psd in Resources */,
+				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,7 +726,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -713,7 +781,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -730,14 +798,18 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
@@ -755,14 +827,18 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.iOS-tools";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "iOS tools/Tools/iOS tools-Bridging-Header.h";
