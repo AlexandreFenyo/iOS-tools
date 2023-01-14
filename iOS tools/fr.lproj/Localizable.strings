@@ -5,6 +5,9 @@
   Created by Alexandre Fenyo on 14/01/2023.
   Copyright © 2023 Alexandre Fenyo. All rights reserved.
 */
+
+// Ex: NSLocalizedString(description, comment: "description")
+
 "mDNS and DNS host names" = "noms mDNS et DNS";
 "IPv4 and IPv6 addresses" = "adresses IPv4 et IPv6";
 "scan TCP ports" = "rechercher les ports TCP";
@@ -13,7 +16,7 @@
 "UDP flood" = "inonder en UDP";
 "ICMP ping" = "ping ICMP";
 "TCP ports and associated service names" = "ports TCP and services associés";
-"iOS device" = "périphérique iOS";
+"iOS device" = "Périphérique iOS";
 "Chargen Discard" = "Chargen ou Discard";
 "Add permanently" = "Ajouter et conserver";
 "Target name" = "Nom de la cible";
@@ -22,4 +25,28 @@
 "Resolve target IPv6 from target name" = "Résoudre l'adresse IPv6 à partir du nom de cible";
 "Add this new target" = "Ajouter cette nouvelle cible";
 "Dismiss" = "Annuler";
-"Other host" = "Autre hôte";
+"Localhost" = "Périphérique local";
+"this host" = "cet hôte";
+"iOS devices" = "Périphériques iOS";
+"other devices running this app" = "autres hôtes avec cette app active";
+"Chargen Discard services" = "Services Chargen/Discard";
+"other devices running these services" = "autres hôtes avec ces services";
+"Local gateway" = "Passerelle locale";
+"Other host" = "Hôte local";
+"local router" = "routeur local";
+"remote hosts on the Internet" = "autres hôtes sur Internet";
+"Other hosts" = "Autre hôtes";
+"any host" = "hôtes quelconques";
+"New node properties" = "Caractéristiques de la nouvelle cible";
+"Add new target or new IP to existing target" = "Ajouter une nouvelle cible ou une nouvelle IP pour cette cible";
+"Heat Map Builder" = "Création d'une heatmap";
+"Select your floor plan" = "Choisissez votre plan";
+"Add new probe" = "Ajouter une sonde";
+"Save measure" = "Sauvegarder la mesure";
+"Undo" = "Annuler";
+"Reset all"= "Tout effacer";
+"Share your map" = "Partagez votre carte";
+"Hide map" = "Réduire la carte";
+"Level 1" = "Niveau 1";
+"Level 2" = "Niveau 2";
+"Level 3" = "Niveau 3";

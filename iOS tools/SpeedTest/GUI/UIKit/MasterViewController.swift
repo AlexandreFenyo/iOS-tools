@@ -428,7 +428,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             header.titleLabel.textColor = COLORS.leftpannel_section_title
             header.subTitleLabel.text = section.detailed_description
             header.subTitleLabel.textColor = COLORS.leftpannel_section_subtitle
-            header.imageView.image = UIImage(named: section.description.replacingOccurrences(of: "/", with: ""))
+            header.imageView.image = UIImage(named: section.icon_description.replacingOccurrences(of: "/", with: ""))
             header.mainView.backgroundColor = COLORS.leftpannel_section_bg
         }
         

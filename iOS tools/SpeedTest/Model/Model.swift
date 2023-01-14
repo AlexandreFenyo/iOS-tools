@@ -206,13 +206,15 @@ class Node : Hashable {
 }
 
 class ModelSection {
+    public var icon_description: String
     public var description: String
     public var detailed_description: String
     public var nodes = [Node]()
     
-    public init(_ description: String, _ detailed_description: String) {
-        self.description = description
-        self.detailed_description = detailed_description
+    public init(_ icon_description: String, _ description: String, _ detailed_description: String) {
+        self.icon_description = icon_description
+        self.description = NSLocalizedString(description, comment: "description")
+        self.detailed_description = NSLocalizedString(detailed_description, comment: "detailled description")
     }
 }
 
@@ -503,12 +505,12 @@ class DBMaster {
 
         nodes = Set<Node>()
         sections = [
-            .localhost: ModelSection("Localhost", "this host"),
-            .ios: ModelSection("iOS devices", "other devices running this app"),
-            .chargen_discard: ModelSection("Chargen Discard services", "other devices running these services"),
-            .gateway: ModelSection("Local gateway", "local router"),
-            .internet: ModelSection("Internet", "remote host on the Internet"),
-            .other: ModelSection("Other hosts", "any host")
+            .localhost: ModelSection("Localhost", "Localhost", "this host"),
+            .ios: ModelSection("iOS devices", "iOS devices", "other devices running this app"),
+            .chargen_discard: ModelSection("Chargen Discard services", "Chargen Discard services", "other devices running these services"),
+            .gateway: ModelSection("Local gateway", "Local gateway", "local router"),
+            .internet: ModelSection("Internet", "Internet", "remote hosts on the Internet"),
+            .other: ModelSection("Other hosts", "Other hosts", "any host")
         ]
 
         addDefaultNodes()
