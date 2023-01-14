@@ -1,0 +1,66 @@
+
+/* Class = "UILabel"; text = "7 ports"; ObjectID = "3Fh-QV-NZs"; */
+"3Fh-QV-NZs.text" = "7 ports";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "7F6-g0-bjU"; */
+"7F6-g0-bjU.title" = "Add";
+
+/* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "9XB-83-j13"; */
+"9XB-83-j13.title" = "Stop";
+
+/* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "AG8-ji-YkN"; */
+"AG8-ji-YkN.title" = "Stop";
+
+/* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "BfU-ZZ-5VE"; */
+"BfU-ZZ-5VE.title" = "Stop";
+
+/* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "GvR-Yn-FTs"; */
+"GvR-Yn-FTs.title" = "Stop";
+
+/* Class = "UIBarButtonItem"; title = "Update"; ObjectID = "Hoh-gZ-vw9"; */
+"Hoh-gZ-vw9.title" = "Update";
+
+/* Class = "UIBarButtonItem"; title = "Debug"; ObjectID = "IUH-ID-65D"; */
+"IUH-ID-65D.title" = "Debug";
+
+/* Class = "UITabBarItem"; title = "Discover"; ObjectID = "Jgi-Wj-wsx"; */
+"Jgi-Wj-wsx.title" = "Exploration";
+
+/* Class = "UILabel"; text = "iPad de Alexandre.local"; ObjectID = "KBz-al-Df2"; */
+"KBz-al-Df2.text" = "iPad de Alexandre.local";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "MOv-aN-EaL"; */
+"MOv-aN-EaL.title" = "Add";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "Mvn-mF-1uc"; */
+"Mvn-mF-1uc.title" = "Item";
+
+/* Class = "UILabel"; text = "192.168.1.12"; ObjectID = "QP4-NA-1wu"; */
+"QP4-NA-1wu.text" = "192.168.1.12";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "Rc2-K5-rQo"; */
+"Rc2-K5-rQo.text" = "Title";
+
+/* Class = "UITabBarItem"; title = "CLI"; ObjectID = "W16-9t-txw"; */
+"W16-9t-txw.title" = "CLI";
+
+/* Class = "UIBarButtonItem"; title = "Debug"; ObjectID = "WCR-6O-86k"; */
+"WCR-6O-86k.title" = "Debug";
+
+/* Class = "UINavigationItem"; title = "Target List"; ObjectID = "bwG-g9-tTY"; */
+"bwG-g9-tTY.title" = "Liste des cibles";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "gZ9-Eb-5vN"; */
+"gZ9-Eb-5vN.title" = "Add";
+
+/* Class = "UILabel"; text = "fe80:f0::ab:cd:e5:02"; ObjectID = "raG-Xw-KuJ"; */
+"raG-Xw-KuJ.text" = "fe80:f0::ab:cd:e5:02";
+
+/* Class = "UILabel"; text = "2 IPs"; ObjectID = "sld-lA-kLh"; */
+"sld-lA-kLh.text" = "2 IPs";
+
+/* Class = "UITabBarItem"; title = "Traces"; ObjectID = "tYh-kU-aKM"; */
+"tYh-kU-aKM.title" = "Traces";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "w26-jr-JrH"; */
+"w26-jr-JrH.title" = "Add";
