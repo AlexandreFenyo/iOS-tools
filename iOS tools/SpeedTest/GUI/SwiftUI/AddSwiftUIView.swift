@@ -67,7 +67,7 @@ struct AddSwiftUIView: View {
                 Form {
                     Section(header: Text("New node properties")) {
                         Picker("Section", selection: $scope) {
-                            Text("IOS device").tag(NodeType.ios).disabled(false)
+                            Text("iOS device").tag(NodeType.ios).disabled(false)
                             Text("Chargen Discard").tag(NodeType.chargen)
                             Text("Local gateway").tag(NodeType.gateway)
                             Text("Internet").tag(NodeType.internet)
@@ -115,7 +115,7 @@ struct AddSwiftUIView: View {
                         }
                     }
 
-                    Button("Add this new node") {
+                    Button("Add this new target") {
                         DispatchQueue.main.async {
                             let node = Node()
                             node.dns_names.insert(DomainName(target_name)!)

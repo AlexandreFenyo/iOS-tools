@@ -1,0 +1,25 @@
+/* 
+  Localizable.strings
+  iOS tools
+
+  Created by Alexandre Fenyo on 14/01/2023.
+  Copyright © 2023 Alexandre Fenyo. All rights reserved.
+*/
+"mDNS and DNS host names" = "noms mDNS et DNS";
+"IPv4 and IPv6 addresses" = "adresses IPv4 et IPv6";
+"scan TCP ports" = "rechercher les ports TCP";
+"TCP flood discard" = "inonder le port TCP discard";
+"TCP flood chargen" = "inonder le port TCP chargen";
+"UDP flood" = "inonder en UDP";
+"ICMP ping" = "ping ICMP";
+"TCP ports and associated service names" = "ports TCP and services associés";
+"iOS device" = "périphérique iOS";
+"Chargen Discard" = "Chargen ou Discard";
+"Add permanently" = "Ajouter et conserver";
+"Target name" = "Nom de la cible";
+"Target IP" = "IP de la cible";
+"Resolve target IPv4 from target name" = "Résoudre l'adresse IPv4 à partir du nom de cible";
+"Resolve target IPv6 from target name" = "Résoudre l'adresse IPv6 à partir du nom de cible";
+"Add this new target" = "Ajouter cette nouvelle cible";
+"Dismiss" = "Annuler";
+"Other host" = "Autre hôte";
