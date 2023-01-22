@@ -10,12 +10,12 @@
 
 "mDNS and DNS host names" = "noms mDNS et DNS";
 "IPv4 and IPv6 addresses" = "adresses IPv4 et IPv6";
-"scan TCP ports" = "rechercher les ports TCP";
+"scan TCP ports" = "scanner les ports TCP";
 "TCP flood discard" = "inonder le port TCP discard";
 "TCP flood chargen" = "inonder le port TCP chargen";
 "UDP flood" = "inonder en UDP";
 "ICMP ping" = "ping ICMP";
-"TCP ports and associated service names" = "ports TCP and services associés";
+"TCP ports and associated service names" = "ports TCP et services associés";
 "iOS device" = "Périphérique iOS";
 "Chargen Discard" = "Chargen ou Discard";
 "Add permanently" = "Ajouter et conserver";
