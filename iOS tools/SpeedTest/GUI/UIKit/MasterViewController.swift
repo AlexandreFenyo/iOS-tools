@@ -264,30 +264,30 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
-        ctHelp.new(CTHelpItem(title:"Actions 1/2",
+        ctHelp.new(CTHelpItem(title: "Actions 1/2",
                                  helpText: "",
-                                 imageName:"docs-actions"))
-        ctHelp.new(CTHelpItem(title:"Actions 2/2",
+                                 imageName: "docs-actions"))
+        ctHelp.new(CTHelpItem(title: "Actions 2/2",
                                  helpText: "",
-                                 imageName:"docs-actions-2"))
-        ctHelp.new(CTHelpItem(title:"Scan local network",
+                                 imageName: "docs-actions-2"))
+        ctHelp.new(CTHelpItem(title: "Scan local network",
                                  helpText: "",
-                                 imageName:"docs-browse-stop"))
-        ctHelp.new(CTHelpItem(title:"Chart usage",
+                                 imageName: "docs-browse-stop"))
+        ctHelp.new(CTHelpItem(title: "Chart usage",
                                  helpText: "",
-                                 imageName:"docs-chart"))
-        ctHelp.new(CTHelpItem(title:"Internet speed test",
+                                 imageName: "docs-chart"))
+        ctHelp.new(CTHelpItem(title: "Internet speed test",
                                  helpText: "",
-                                 imageName:"docs-hosts"))
-        ctHelp.new(CTHelpItem(title:"Open ports explorer",
+                                 imageName: "docs-hosts"))
+        ctHelp.new(CTHelpItem(title: "Open ports explorer",
                                  helpText: "",
-                                 imageName:"docs-ports"))
+                                 imageName: "docs-ports"))
         ctHelp.new(CTHelpItem(title: "App settings",
                                          helpText: "You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list.",
-                                         imageName:""))
+                                         imageName: ""))
         ctHelp.new(CTHelpItem(title: "Licensing",
                                          helpText: "This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody.",
-                                         imageName:""))
+                                         imageName: ""))
         ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "appstore@fenyo.net", data: nil, webSite: "https://www.fenyo.net", companyImageName: "")
         ctHelp.presentHelp(from: self)
         /*
