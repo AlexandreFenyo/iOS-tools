@@ -258,15 +258,17 @@ struct HeatMapSwiftUIView: View {
                             .frame(maxWidth: 200)
                             
                             Button {
-                                model.idw_values.append(idw_transient_value!)
-                                idw_transient_value = nil
+                                if model.idw_values.contains(idw_transient_value!) == false {
+                                    model.idw_values.append(idw_transient_value!)
+                                    idw_transient_value = nil
+                                }
                             } label: {
                                 VStack {
                                     Image(systemName: "dot.radiowaves.left.and.right").resizable().frame(width: 35, height: 30)
                                     Text("Save measure").font(.footnote)
                                 }
                             }
-                            .disabled(model.input_map_image == nil || idw_transient_value == nil)
+                            .disabled(model.input_map_image == nil || idw_transient_value == nil || (idw_transient_value?.x == NEW_PROBE_X && idw_transient_value?.y == NEW_PROBE_Y))
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200)
                             
