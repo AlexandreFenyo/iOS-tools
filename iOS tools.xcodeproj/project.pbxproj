@@ -52,6 +52,18 @@
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
 		5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */; };
 		5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */; };
+		5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD0297D46B00021E492 /* docs-actions-2-fr.png */; };
+		5D82ACD3297D46B00021E492 /* docs-actions-2-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */; };
+		5D82ACD6297D46C20021E492 /* docs-actions-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */; };
+		5D82ACD7297D46C20021E492 /* docs-actions-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD5297D46C20021E492 /* docs-actions-fr.png */; };
+		5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD8297D46CF0021E492 /* docs-browse-stop-fr.png */; };
+		5D82ACDB297D46CF0021E492 /* docs-browse-stop-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */; };
+		5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACDC297D46D50021E492 /* docs-chart-fr.png */; };
+		5D82ACDF297D46D50021E492 /* docs-chart-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */; };
+		5D82ACE2297D46DB0021E492 /* docs-hosts-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */; };
+		5D82ACE3297D46DB0021E492 /* docs-hosts-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACE1297D46DB0021E492 /* docs-hosts-fr.png */; };
+		5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACE4297D46E30021E492 /* docs-ports-fr.png */; };
+		5D82ACE7297D46E30021E492 /* docs-ports-fr.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */; };
 		5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */; };
 		5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5D86321028E9D7D4000B7E2D /* tcpports.txt */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
@@ -150,6 +162,18 @@
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		5D7C6CA4210A1B9C0095FAD0 /* MasterIPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterIPViewController.swift; sourceTree = "<group>"; };
 		5D7C6CE321120DC60095FAD0 /* LocalChargenClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenClient.swift; sourceTree = "<group>"; };
+		5D82ACD0297D46B00021E492 /* docs-actions-2-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-actions-2-fr.png"; sourceTree = "<group>"; };
+		5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-actions-2-fr.psd"; sourceTree = "<group>"; };
+		5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-actions-fr.psd"; sourceTree = "<group>"; };
+		5D82ACD5297D46C20021E492 /* docs-actions-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-actions-fr.png"; sourceTree = "<group>"; };
+		5D82ACD8297D46CF0021E492 /* docs-browse-stop-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-browse-stop-fr.png"; sourceTree = "<group>"; };
+		5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-browse-stop-fr.psd"; sourceTree = "<group>"; };
+		5D82ACDC297D46D50021E492 /* docs-chart-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-chart-fr.png"; sourceTree = "<group>"; };
+		5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-chart-fr.psd"; sourceTree = "<group>"; };
+		5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-hosts-fr.psd"; sourceTree = "<group>"; };
+		5D82ACE1297D46DB0021E492 /* docs-hosts-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-hosts-fr.png"; sourceTree = "<group>"; };
+		5D82ACE4297D46E30021E492 /* docs-ports-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-ports-fr.png"; sourceTree = "<group>"; };
+		5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-ports-fr.psd"; sourceTree = "<group>"; };
 		5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPorts2Services.swift; sourceTree = "<group>"; };
 		5D86321028E9D7D4000B7E2D /* tcpports.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tcpports.txt; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
@@ -310,6 +334,18 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D82ACE4297D46E30021E492 /* docs-ports-fr.png */,
+				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
+				5D82ACE1297D46DB0021E492 /* docs-hosts-fr.png */,
+				5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */,
+				5D82ACDC297D46D50021E492 /* docs-chart-fr.png */,
+				5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */,
+				5D82ACD8297D46CF0021E492 /* docs-browse-stop-fr.png */,
+				5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */,
+				5D82ACD5297D46C20021E492 /* docs-actions-fr.png */,
+				5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */,
+				5D82ACD0297D46B00021E492 /* docs-actions-2-fr.png */,
+				5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */,
 				5D65EE5A296491760099871C /* screen captures */,
 				5D65EE392963815D0099871C /* app-icon */,
 				5DE4ED87290586730000B30A /* docs-actions-2.png */,
@@ -572,17 +608,23 @@
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D65EE6A296491DF0099871C /* IMG_2517.PNG in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
+				5D82ACE3297D46DB0021E492 /* docs-hosts-fr.png in Resources */,
 				5D65EE4F296381780099871C /* app-icon-40.png in Resources */,
 				5DE4ED98290586740000B30A /* docs-hosts.png in Resources */,
+				5D82ACDB297D46CF0021E492 /* docs-browse-stop-fr.psd in Resources */,
+				5D82ACD7297D46C20021E492 /* docs-actions-fr.png in Resources */,
 				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
 				5D65EE6C296491DF0099871C /* IMG_0071.PNG in Resources */,
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
 				5D65EE67296491DF0099871C /* IMG_2515.PNG in Resources */,
+				5D82ACD3297D46B00021E492 /* docs-actions-2-fr.psd in Resources */,
+				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5D65EE56296381780099871C /* app-icon-76.png in Resources */,
 				5D65EE50296381780099871C /* app-icon-152.png in Resources */,
 				5D65EE6B296491DF0099871C /* IMG_0069.PNG in Resources */,
+				5D82ACDF297D46D50021E492 /* docs-chart-fr.psd in Resources */,
 				5D65EE66296491DF0099871C /* IMG_0074.PNG in Resources */,
 				5DE4ED9A290586740000B30A /* docs-browse-stop.psd in Resources */,
 				5DE4ED99290586740000B30A /* docs-ports.psd in Resources */,
@@ -592,14 +634,18 @@
 				5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */,
 				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
 				5DE4ED9D290586740000B30A /* docs-hosts.psd in Resources */,
+				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
 				5D65EE65296491DF0099871C /* IMG_0070.PNG in Resources */,
 				5D65EE53296381780099871C /* app-icon-60.png in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
+				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5DE4ED9C290586740000B30A /* docs-actions-2.psd in Resources */,
+				5D82ACE2297D46DB0021E492 /* docs-hosts-fr.psd in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
 				5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
 				5D65EE69296491DF0099871C /* IMG_2516.PNG in Resources */,
+				5D82ACD6297D46C20021E492 /* docs-actions-fr.psd in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
 				5D65EE64296491DF0099871C /* IMG_0072.PNG in Resources */,
@@ -607,10 +653,12 @@
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
+				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
 				5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */,
 				5DE4ED95290586740000B30A /* docs-chart.psd in Resources */,
 				5D65EE68296491DF0099871C /* IMG_2520.PNG in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
+				5D82ACE7297D46E30021E492 /* docs-ports-fr.psd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
