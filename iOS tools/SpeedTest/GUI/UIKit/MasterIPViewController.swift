@@ -152,7 +152,7 @@ class MasterIPViewController: UITableViewController {
     }
     
     @IBAction func help_pressed(_ sender: Any) {
-        master_view_controller?.popUp("IP List", "You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping).", "OK")
+        master_view_controller?.popUp(NSLocalizedString("IP List", comment: "IP List"), NSLocalizedString("You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping).", comment: "You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping)."), "OK")
     }
     
     @IBAction func stop_pressed(_ sender: Any) {
