@@ -50,3 +50,11 @@
 "Level 1" = "Niveau 1";
 "Level 2" = "Niveau 2";
 "Level 3" = "Niveau 3";
+"Scan local network" = "Parcourir le réseau local";
+"Chart usage" = "Utilisation du graphe";
+"Internet speed test" = "Débit Internet";
+"Open ports explorer" = "Explorateur de ports";
+"App settings" = "Paramétres de l'app";
+"You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list." = "Vous pouvez réinitialiser cette app, par exemple pour afficher à nouveau tous les pop-up d'aide. Pour réinitialiser cette app ou mettre à jour ses paramètres, vous devez ouvrir la section de configuration des app dans iOS et sélectionner le nom de cette app dans la liste.";
+"Licensing" = "Licence";
+"This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody." = "Cet outil utilise CTHelp de Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nMême si je publie souvent du code open-source (voir https://github.com/AlexandreFenyo), ce logiciel ne l'est pas, aucune licence source ne sera distribuée.";

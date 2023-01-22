@@ -270,25 +270,25 @@ class MasterViewController: UITableViewController, DeviceManager {
         ctHelp.new(CTHelpItem(title: "Actions 2/2",
                                  helpText: "",
                                  imageName: "docs-actions-2"))
-        ctHelp.new(CTHelpItem(title: "Scan local network",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Scan local network", comment: "Scan local network"),
                                  helpText: "",
                                  imageName: "docs-browse-stop"))
-        ctHelp.new(CTHelpItem(title: "Chart usage",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Chart usage", comment: "Chart usage"),
                                  helpText: "",
                                  imageName: "docs-chart"))
-        ctHelp.new(CTHelpItem(title: "Internet speed test",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Internet speed test", comment: "Internet speed test"),
                                  helpText: "",
                                  imageName: "docs-hosts"))
-        ctHelp.new(CTHelpItem(title: "Open ports explorer",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Open ports explorer", comment: "Open ports explorer"),
                                  helpText: "",
                                  imageName: "docs-ports"))
-        ctHelp.new(CTHelpItem(title: "App settings",
-                                         helpText: "You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list.",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("App settings", comment: "App settings"),
+                              helpText: NSLocalizedString("You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list.", comment: "You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update parameters, you need to open the iOS Configuration app and select the name of this app in the app list."),
                                          imageName: ""))
-        ctHelp.new(CTHelpItem(title: "Licensing",
-                                         helpText: "This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody.",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Licensing", comment: "Licensing"),
+                              helpText: NSLocalizedString("This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody.", comment: "This tools makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish open-source code (see https://github.com/AlexandreFenyo), this specific software is closed-source, no source license would be provided to anybody."),
                                          imageName: ""))
-        ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "appstore@fenyo.net", data: nil, webSite: "https://www.fenyo.net", companyImageName: "")
+        ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "appstore@fenyo.net", data: nil, webSite: "http://www.fenyo.net/wifi-map-explorer/", companyImageName: "")
         ctHelp.presentHelp(from: self)
         /*
         if let link = URL(string: "https://x.org") {
