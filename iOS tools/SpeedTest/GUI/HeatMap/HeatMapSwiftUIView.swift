@@ -89,9 +89,9 @@ class PhotoController: NSObject {
         print("Image successfully written to camera roll")
         exporting_map = false
         if error != nil {
-            popUp("Error saving map", "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)", "OK")
+            popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)"), "OK")
         } else {
-            popUp("Map saved", "You can find the heatmap in you photo roll", "OK")
+            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heatmap in you photo roll", comment: "You can find the heatmap in you photo roll"), "OK")
         }
     }
     

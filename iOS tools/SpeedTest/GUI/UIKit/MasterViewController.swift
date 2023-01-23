@@ -840,12 +840,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
-            let alert = UIAlertController(title: "Help: " + title.rawValue, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Don't show this message again", style: .default, handler: { _ in
+            let alert = UIAlertController(title: NSLocalizedString("Help: ", comment: "Help: ") + NSLocalizedString(title.rawValue, comment: "titre"), message: NSLocalizedString(message, comment: "message"), preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Don't show this message again", comment: "Don't show this message again"), style: .default, handler: { _ in
                 defaults.set(true, forKey: key)
                 completion?()
             }))
-            alert.addAction(UIAlertAction(title: "Dismiss further help messages", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss further help messages", comment: "Dismiss further help messages"), style: .default, handler: { _ in
                 for msg in (PopUpMessages.allCases.map { $0 }) {
                     defaults.set(true, forKey: "help." + msg.rawValue)
                 }
