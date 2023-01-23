@@ -73,4 +73,3 @@ requête d'un iOS en IPv4 et IPv6 :
 
         return DispatchQueue.main.sync { }
         
-
