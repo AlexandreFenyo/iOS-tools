@@ -95,11 +95,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 switch sock_addr.getFamily() {
                 case AF_INET:
                     node.v4_addresses.insert(sock_addr.getIPAddress() as! IPv4Address)
-                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation("found " + info) }
+                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
 
                 case AF_INET6:
                     node.v6_addresses.insert(sock_addr.getIPAddress() as! IPv6Address)
-                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation("found " + info) }
+                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
 
                 default:
                     fatalError("can not be here")
@@ -110,11 +110,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         // sender.domain not used ("local.")
         if !sender.name.isEmpty {
             node.names.insert(sender.name)
-            device_manager.setInformation("found " + sender.name)
+            device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
         if let domain = DomainName(sender.hostName!) {
             node.dns_names.insert(domain)
-            device_manager.setInformation("found " + sender.name)
+            device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
 
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)

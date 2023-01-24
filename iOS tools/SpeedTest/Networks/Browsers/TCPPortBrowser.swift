@@ -77,7 +77,7 @@ class TCPPortBrowser {
         }
         
         let dispatchGroup = DispatchGroup()
-        DispatchQueue.main.sync { device_manager.setInformation("browsing TCP ports") }
+        DispatchQueue.main.sync { device_manager.setInformation(NSLocalizedString("browsing TCP ports", comment: "browsing TCP ports")) }
 
         for addr in self.ip_to_tcp_port.keys {
             if debug { print(addr.toNumericString()!, "tcp - starting address") }
