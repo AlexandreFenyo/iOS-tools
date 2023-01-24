@@ -39,7 +39,7 @@ class SpeedTestDiscardClient : SpeedTestClient {
             
         case .endEncountered:
             end(stream)
-            
+
         default:
             ()
         }

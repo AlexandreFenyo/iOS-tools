@@ -9,6 +9,7 @@
 import UIKit
 import SwiftUI
 import ModelIO
+import Network
 
 // extension UIApplication {}
 
@@ -91,6 +92,46 @@ import ModelIO
         masterViewController.browser_chargen = browser_chargen
         masterViewController.browser_discard = browser_discard
         masterViewController.browser_app = browser_app
+
+        // idem avec API Network Bonjour de Network car ancienne est déprecative - à conserver pour le moment où elle ne fonctionnera plus
+        // mais pas utile, il suffisait de rajouter dans Info.plist :
+        // <key>NSLocalNetworkUsageDescription</key>
+        //   <string>Network usage is required for macOS/iOS communication</string>
+        //   <key>NSBonjourServices</key>
+        //   <array>
+        //     <string>_ssh._tcp</string>
+        //     <string>_speedtestchargen._tcp</string>
+        //     <string>_speedtestdiscard._tcp</string>
+        //   </array>
+        // https://developer.apple.com/forums/thread/129465
+        // https://developer.apple.com/forums/thread/662869
+         /*
+        let params = NWParameters()
+        let browser = NWBrowser(for: .bonjour(type: "_speedtestchargen._tcp" /*"_ssh._tcp"*/, domain: "local"), using: params)
+        browser.stateUpdateHandler = { newState in
+            switch newState {
+            case .failed(let error):
+                browser.cancel()
+                // Handle restarting browser
+                print("XXXXX: Browser - failed with %{public}@, restarting", error.localizedDescription)
+            case .ready:
+                print("XXXXX: Browser - ready")
+            case .setup:
+                print("XXXXX: Browser - setup")
+            default:
+                break
+            }
+        }
+        browser.browseResultsChangedHandler = { results, changes in
+            for result in results {
+                print("XXXXX: Browser - found matching endpoint with %{public}@", result.endpoint.debugDescription)
+                // Send endPoint back on a delegate to set up a NWConnection for sending/receiving data
+                break
+            }
+        }
+        // Start browsing and ask for updates on the main queue.
+        browser.start(queue: .main)
+       */
         
         return true
     }

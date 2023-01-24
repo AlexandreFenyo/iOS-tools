@@ -62,5 +62,14 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSLocalNetworkUsageDescription</key>
+      <string>Network usage is required for macOS/iOS communication</string>
+      <key>NSBonjourServices</key>
+      <array>
+        <string>_ssh._tcp</string>
+        <string>_speedtestchargen._tcp</string>
+        <string>_speedtestdiscard._tcp</string>
+        <string>_speedtestapp._tcp</string>
+      </array>
 </dict>
 </plist>
