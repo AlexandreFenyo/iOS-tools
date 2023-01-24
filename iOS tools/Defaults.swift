@@ -105,7 +105,7 @@ public enum COLORS {
     static let rightpannel_topbar_bg = global_background
     // Chart
     // Fond du chart
-    static let chart_bg: UIColor = UIC_RGB(220,220,200)
+    static let chart_bg: UIColor = UIC_RGB(220, 220, 200)
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = chart_bg
     // Couleur du texte des échelles

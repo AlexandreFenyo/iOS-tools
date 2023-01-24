@@ -78,6 +78,7 @@ import Network
         local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false)
         local_discard_service!.delegate = local_discard_service_delegate
         local_discard_service!.publish(options: .listenForConnections)
+        // pour tester la publication : dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
 
         local_app_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_app_service_type, name: "", port: Int32(NetworkDefaults.speed_test_app_port))
         local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false)

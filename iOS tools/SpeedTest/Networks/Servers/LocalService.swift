@@ -176,6 +176,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
+        sender.publish()
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
@@ -185,6 +186,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netServiceDidStop(_ sender: NetService) {
+        print("bug: ne devrait pas se produire - certainement refaire un sender.publish(options: .listenForConnections) dans un tel cas")
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
