@@ -186,6 +186,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     public func netServiceDidStop(_ sender: NetService) {
+        // CONTINUER ICI : trouver pourquoi au bout d'un moment ça n'écoute plus sur le port, simuler en mettant l'appareil en veille
         print("bug: ne devrait pas se produire - certainement refaire un sender.publish(options: .listenForConnections) dans un tel cas")
     }
     
