@@ -175,30 +175,45 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         }
     }
     
+    // pour reproduire pb : simplement passer en bg et revenir en fg et faire ça entre 3 et 15 fois
+    
     public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
-        sender.publish()
+        print("XXXXX: \(#function)")
+        print(errorDict)
+        sender.stop()
+//        sender.publish()
+//        sender.publish(options: .listenForConnections)
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
+        print("XXXXX: \(#function)")
     }
     
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
+        print("XXXXX: \(#function)")
     }
     
     public func netServiceDidStop(_ sender: NetService) {
+        print("XXXXX: \(#function)")
         // CONTINUER ICI : trouver pourquoi au bout d'un moment ça n'écoute plus sur le port, simuler en mettant l'appareil en veille
-        print("bug: ne devrait pas se produire - certainement refaire un sender.publish(options: .listenForConnections) dans un tel cas")
+        print("XXXXX: bug: ne devrait pas se produire - certainement refaire un sender.publish(options: .listenForConnections) dans un tel cas")
+        sender.publish(options: .listenForConnections)
+
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
+        print("XXXXX: \(#function)")
     }
     
     public func netServiceWillResolve(_ sender: NetService) {
+        print("XXXXX: \(#function)")
     }
     
     public func netServiceDidResolveAddress(_ sender: NetService) {
+        print("XXXXX: \(#function)")
     }
     
     public func netService(_ sender: NetService, didUpdateTXTRecord data: Data) {
+        print("XXXXX: \(#function)")
     }
 }

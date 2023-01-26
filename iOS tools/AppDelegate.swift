@@ -26,7 +26,10 @@ import Network
     private var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
     private var local_app_service: NetService?
     private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
-    private var browser_chargen: ServiceBrowser?
+
+     private var local_chargen_listener: NetworkServiceListener?
+
+     private var browser_chargen: ServiceBrowser?
     private var browser_discard: ServiceBrowser?
     private var browser_app: ServiceBrowser?
     private var masterViewController : MasterViewController?
@@ -68,12 +71,13 @@ import Network
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
 
-        // Start local services
+        // Start local services - utilise une API obsolete
+        /*
         local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: Int32(NetworkDefaults.speed_test_chargen_port))
         local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true)
         local_chargen_service!.delegate = local_chargen_service_delegate
         local_chargen_service!.publish(options: .listenForConnections)
-
+        
         local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: Int32(NetworkDefaults.speed_test_discard_port))
         local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false)
         local_discard_service!.delegate = local_discard_service_delegate
@@ -84,7 +88,10 @@ import Network
         local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false)
         local_app_service!.delegate = local_app_service_delegate
         local_app_service!.publish(options: .listenForConnections)
-
+*/
+        local_chargen_listener = NetworkServiceListener(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: NetworkDefaults.speed_test_chargen_port)
+        local_chargen_listener!.start()
+        
         // Start browsing for remote services
         // We can test easily to browse using _ssh._tcp.
         browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)

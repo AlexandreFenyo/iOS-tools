@@ -118,6 +118,7 @@
 		5DF2151D212DAF2B002B7603 /* LocalHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2151C212DAF2B002B7603 /* LocalHttpClient.swift */; };
 		5DF215222133D7DA002B7603 /* NetworkBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF215212133D7DA002B7603 /* NetworkBrowser.swift */; };
 		5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2F9E229700F7A00EEDDCE /* SpeedTest.storyboard */; };
+		5DF73B4529812C6100438F65 /* NetworkServiceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF73B4429812C6100438F65 /* NetworkServiceListener.swift */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
 /* End PBXBuildFile section */
 
@@ -249,6 +250,7 @@
 		5DF2151C212DAF2B002B7603 /* LocalHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHttpClient.swift; sourceTree = "<group>"; };
 		5DF215212133D7DA002B7603 /* NetworkBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkBrowser.swift; sourceTree = "<group>"; };
 		5DF2F9E129700F7A00EEDDCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/SpeedTest.storyboard; sourceTree = "<group>"; };
+		5DF73B4429812C6100438F65 /* NetworkServiceListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceListener.swift; sourceTree = "<group>"; };
 		5DFF67E920B61E8C003605BF /* TimeSeries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSeries.swift; sourceTree = "<group>"; };
 		6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iOS tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F56DDF129AA99A901A294BE2 /* Pods-iOS tools.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.debug.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.debug.xcconfig"; sourceTree = "<group>"; };
@@ -554,6 +556,7 @@
 				5DF21508211C9455002B7603 /* LocalDiscardService.swift */,
 				5DC7307B28D90CD0004094BB /* LocalAppService.swift */,
 				5DF21506211C6F8E002B7603 /* LocalService.swift */,
+				5DF73B4429812C6100438F65 /* NetworkServiceListener.swift */,
 			);
 			path = Servers;
 			sourceTree = "<group>";
@@ -772,6 +775,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DF73B4529812C6100438F65 /* NetworkServiceListener.swift in Sources */,
 				5DF2151B212D8B62002B7603 /* localFloodClient.c in Sources */,
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
