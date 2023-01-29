@@ -1,5 +1,6 @@
 
 import Foundation
+import UIKit
 
 // (while sleep .1; do echo salut ; done) | nc 192.168.1.212 1919 > /tmp/bigfile
 // simuler one-way: CTRL-D avec nc sur MacOS
@@ -123,6 +124,9 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Strong refs
     public var clients : [SpeedTestClient] = [ ]
 
+    public var restartService = {}
+    public var timer: Timer? = nil
+
     // Définie pour pouvoir être surchargée
     public func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) { }
 
@@ -131,7 +135,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         super.init()
         
         // Add a background job that sweeps terminated connections
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) { _ in
             var nothing_removed : Bool
 
             repeat {
@@ -175,45 +179,64 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         }
     }
     
-    // pour reproduire pb : simplement passer en bg et revenir en fg et faire ça entre 3 et 15 fois
-    
+    // parfois on récupère une erreur de reuseaddr, pour reproduire ce pb : simplement passer en bg et revenir en fg et faire ça entre 3 et 15 fois (telnet 192.168.0.163 9)
+    // on le contourne en recréant un nouveau service
+    // les appels par la machine à état d'iOS se font dans l'ordre suivant :
+    // publish(.listenForConnections)
+    // netServiceWillPublish(_:)
+    // netServiceDidPublish(_:)
+    // on passe en bg et revient en fg
+    // netService(_:didNotPublish:)
+    //   renvoie erreur particulière si pb de resuseaddr, sinon renvoie erreur classique
+    //   publish(.listenForConnections)
+    // netServiceDidStop(_:)
+    //   publish(.listenForConnections)
+    // netServiceWillPublish(_:)
+    // netServiceDidPublish(_:)
     public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
-        print("XXXXX: \(#function)")
-        print(errorDict)
-        sender.stop()
-//        sender.publish()
-//        sender.publish(options: .listenForConnections)
+//        print("XXXXX: \(#function)")
+//        print(errorDict)
+        if errorDict["NSNetServicesErrorDomain"] == 1 && errorDict["NSNetServicesErrorCode"] == 48 {
+//                print("PB REUSEADDR")
+            // quand ça vient ici, il y a quand même un netServiceWillPublish et un netServiceDidPublish qui sont appelés apprès, même si on ne fait rien ici !
+            
+            DispatchQueue.main.async { self.restartService() }
+            
+        } else if errorDict["NSNetServicesErrorDomain"] == 10 && errorDict["NSNetServicesErrorCode"] == -72000 {
+//            print("PB -72000 - PARFOIS rien à faire pour que ça fonctionne à nouveau")
+            // parfois rien à faire pour que ça continue à marcher, mais je force à chaque fois un stop() pour que ça aille en stop() pour refaire un publish() et ça résoud donc certains cas, et les seuls cas qui restent vont en stop() mais le publish() n'y marche pas et ça revient ici en didNotPublish() avec un code spécifique pour EADDRINUSE : 48
+            sender.stop()
+        } else {
+//            print("AUTRE PB app en bg puis fg")
+        }
     }
     
     public func netServiceDidPublish(_ sender: NetService) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
     
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
     
     public func netServiceDidStop(_ sender: NetService) {
-        print("XXXXX: \(#function)")
-        // CONTINUER ICI : trouver pourquoi au bout d'un moment ça n'écoute plus sur le port, simuler en mettant l'appareil en veille
-        print("XXXXX: bug: ne devrait pas se produire - certainement refaire un sender.publish(options: .listenForConnections) dans un tel cas")
+//        print("XXXXX: \(#function)")
         sender.publish(options: .listenForConnections)
-
     }
     
     public func netServiceWillPublish(_ sender: NetService) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
     
     public func netServiceWillResolve(_ sender: NetService) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
     
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
     
     public func netService(_ sender: NetService, didUpdateTXTRecord data: Data) {
-        print("XXXXX: \(#function)")
+//        print("XXXXX: \(#function)")
     }
 }
