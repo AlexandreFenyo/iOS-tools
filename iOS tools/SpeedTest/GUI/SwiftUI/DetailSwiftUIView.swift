@@ -214,7 +214,6 @@ struct DetailSwiftUIView: View {
                         HStack(alignment: .top) {
                             Button {
                                 if model.address != nil {
-                                    // CONTINUER ICI
                                     master_view_controller.popUpHelp(.scan_TCP_ports, NSLocalizedString("Parallel TCP connections will be established to ", comment: "Parallel TCP connections will be established to ") + (model.address_str ?? "") + NSLocalizedString(" on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.", comment: " on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.")) {
                                         master_view_controller.scanTCP(model.address!)
                                     }

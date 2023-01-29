@@ -613,7 +613,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // DispatchQueue.global(qos: .userInitiated).async {
         Task.detached(priority: .userInitiated) {
-            await self.browser_tcp?.browse(address: address)  {
+            await self.browser_tcp?.browse(address: address) {
                 DispatchQueue.main.sync {
                     self.stopBrowsing(.OTHER_ACTION)
                 }
