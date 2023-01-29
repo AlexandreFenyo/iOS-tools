@@ -158,8 +158,10 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.remove_button!.isEnabled = false
             self.update_button!.isEnabled = false
 
-            self.browser_chargen?.search()
-            self.browser_discard?.search()
+            // forcer une nouvelle recherche multicast
+            self.browser_app!.stop()
+            self.browser_app!.search()
+
             self.updateLocalNodeAndGateways()
 
             // Use ICMP to find new nodes
@@ -191,8 +193,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         remove_button!.isEnabled = true
         update_button!.isEnabled = true
 
-        browser_discard?.stop()
-        browser_chargen?.stop()
+        // browser_discard?.stop()
+        // browser_chargen?.stop()
+        // browser_app?.stop()
+        
         browser_network?.stop()
         browser_tcp?.stop()
         browser_network = nil
@@ -419,6 +423,12 @@ class MasterViewController: UITableViewController, DeviceManager {
                 self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
             }
         }
+
+//self.browser_chargen?.search()
+//self.browser_discard?.search()
+// doit-on le mettre ?
+ self.browser_app?.search()
+
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

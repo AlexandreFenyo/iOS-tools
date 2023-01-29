@@ -28,10 +28,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
     
     private var local_chargen_listener: NetworkServiceListener?
-    
-    private var browser_chargen: ServiceBrowser?
-    private var browser_discard: ServiceBrowser?
+
+    // private var browser_chargen: ServiceBrowser?
+    // private var browser_discard: ServiceBrowser?
     private var browser_app: ServiceBrowser?
+    
     private var masterViewController : MasterViewController?
     private var tracesViewController : TracesViewController?
     
@@ -115,11 +116,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Start browsing for remote services
         // We can test easily to browse using _ssh._tcp.
-        browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
-        browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
+        // browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
+        // browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
         browser_app = ServiceBrowser(NetworkDefaults.speed_test_app_service_type, deviceManager: masterViewController)
-        masterViewController.browser_chargen = browser_chargen
-        masterViewController.browser_discard = browser_discard
+        // masterViewController.browser_chargen = browser_chargen
+        // masterViewController.browser_discard = browser_discard
         masterViewController.browser_app = browser_app
         
         // idem avec API Network Bonjour de Network car ancienne est déprecative - à conserver pour le moment où elle ne fonctionnera plus - mais cette API pose aussi des pbs même en mettant le soreuseaddr: il ne marche pas à tous les coups, et c'est plus embêtant car il faut attendre plus longtemps pour refaire un listener qui fonctionne, plusieurs secondes, voire de 10 à 20 secondes

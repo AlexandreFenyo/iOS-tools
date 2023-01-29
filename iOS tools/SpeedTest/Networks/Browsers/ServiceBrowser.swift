@@ -23,6 +23,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
+        print(#function)
         // Only add remote services
         if (service.name != UIDevice.current.name) {
             services.append(service)
@@ -33,6 +34,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
+        print(#function)
         if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
         else {
             print("warning: service app closed but not previously discovered")
@@ -41,6 +43,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
+        print(#function)
 //        print("didNotSearch")
 //        for err in errorDict {
 //            print("didNotSearch:", err.key, ":", err.value)
@@ -54,11 +57,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
+        print(#function)
         device_manager.addTrace("Start browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        print(#function)
         device_manager.addTrace("Stop browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
     }
 
@@ -67,6 +72,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Service that the browser had found but has not been resolved
     // Simulate by setting a TimeInterval of 0.1 when resolving the service
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
+        print(#function)
         for err in errorDict { print("didNotResolve:", err.key, ":", err.value) }
         if let idx = services.firstIndex(of: sender) { services.remove(at: idx) }
         else { print("warning: service browsed but not resolved") }
@@ -74,11 +80,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // NetService resolved with address(es) and timeout reached
     public func netServiceDidStop(_ sender: NetService) {
+        print(#function)
         print("netServiceDidStop: NetService resolved with address(es) and timeout reached")
     }
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
+        print(#function)
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
