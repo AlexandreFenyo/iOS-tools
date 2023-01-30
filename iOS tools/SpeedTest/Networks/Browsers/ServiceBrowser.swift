@@ -9,8 +9,60 @@
 import Foundation
 import UIKit
 
+/*
+ voici la commande adéquate :
+ # dig -b '0.0.0.0#5352' @224.0.0.251 -p 5353  _services._dns-sd._udp.local. any +notcp +short
+les réponses sont récupérées via un wireshark, ou il faut lancer cette commande sur MacOS
+
+ les IP multicast :
+ 224.0.0.251
+ ff02::fb
+
+ liste des services Bonjour :
+ _airplay._tcp.local
+ _mediaremotetv._tcp.local
+ _companion-link._tcp.local
+ _raop._tcp.local
+ _sleep-proxy._udp.local
+ _homekit._tcp.local
+ _touch-able._tcp.local
+ _ipps._tcp.local
+ _ipp._tcp.local
+ _http._tcp.local
+ _printer._sub._http._tcp.local
+ _hue._tcp.local
+ _spotify-connect._tcp.local
+ _googlecast._tcp.local
+ _googlezone._tcp.local
+ Android-2.local
+ Android.local
+ _sftp-ssh._tcp.local
+ _ssh._tcp.local
+ _rfb._tcp.local
+ _smb._tcp.local
+ _airplay._tcp.local
+ _atc._tcp.local
+ _hue._tcp.local
+ _rdlink._tcp.local
+ _adisk._tcp.local
+ _airport._tcp.local
+ _ewelink._tcp.local
+ _hap._tcp.local
+ _meshcop._udp.local
+ _pgpkey-hkp._tcp.local
+ _sane-port._tcp.local
+ _scanner._tcp.local
+ _sengled._udp.local
+ _viziocast._tcp.local
+ lb._dns_sd._udp.local
+ _services._dns-sd._udp.local
+ _dhnap._tcp.local
+ _pdl-datastream._tcp.local
+ _workstation._tcp.local
+ */
+
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
-    private var services : [NetService] = []
+    private var services : [ NetService ] = []
     private let type : String
     private let device_manager : DeviceManager
 
@@ -81,7 +133,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // NetService resolved with address(es) and timeout reached
     public func netServiceDidStop(_ sender: NetService) {
         print(#function)
-        print("netServiceDidStop: NetService resolved with address(es) and timeout reached")
     }
 
     // May have found some addresses for the service
@@ -90,6 +141,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
+        print("TYPE = \(type)")
+        if type != NetworkDefaults.speed_test_app_service_type { return }
+        
         let node = Node()
 
         node.types = [ .chargen, .discard, .ios ]

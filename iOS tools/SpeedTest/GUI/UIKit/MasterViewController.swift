@@ -97,10 +97,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var traces_view_controller: TracesViewController?
     public var master_ip_view_controller: MasterIPViewController?
 
-    public weak var browser_chargen : ServiceBrowser?
-    public weak var browser_discard : ServiceBrowser?
-    public weak var browser_app : ServiceBrowser?
-
+    // public weak var browser_chargen : ServiceBrowser?
+    // public weak var browser_discard : ServiceBrowser?
+    public var browser_app : ServiceBrowser?
+    public var browsers = [ ServiceBrowser ]()
+    
     private var browser_network : NetworkBrowser?
     private var browser_tcp : TCPPortBrowser?
 
@@ -161,6 +162,10 @@ class MasterViewController: UITableViewController, DeviceManager {
             // forcer une nouvelle recherche multicast
             self.browser_app!.stop()
             self.browser_app!.search()
+            for browser in self.browsers {
+                browser.stop()
+                browser.search()
+            }
 
             self.updateLocalNodeAndGateways()
 
@@ -424,11 +429,10 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
         }
 
-//self.browser_chargen?.search()
-//self.browser_discard?.search()
-// doit-on le mettre ?
- self.browser_app?.search()
-
+        //self.browser_chargen?.search()
+        //self.browser_discard?.search()
+         self.browser_app?.search()
+        for browser in self.browsers { browser.search() }
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
