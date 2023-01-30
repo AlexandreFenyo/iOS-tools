@@ -54,7 +54,7 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  _scanner._tcp.local
  _sengled._udp.local
  _viziocast._tcp.local
- lb._dns_sd._udp.local
+ lb._dns-sd._udp.local
  _services._dns-sd._udp.local
  _dhnap._tcp.local
  _pdl-datastream._tcp.local
@@ -76,6 +76,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         print(#function)
+        print("service.name = \(service.name)")
         // Only add remote services
         if (service.name != UIDevice.current.name) {
             services.append(service)
@@ -141,8 +142,20 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
-        print("TYPE = \(type)")
-        if type != NetworkDefaults.speed_test_app_service_type { return }
+        if type != NetworkDefaults.speed_test_app_service_type {
+            print("TYPE = type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain) txt:\(sender.txtRecordData())")
+            if let txt = sender.txtRecordData() {
+                var s = ""
+                for b in txt {
+                    s = s + String(UnicodeScalar(b))
+                }
+                print("<<<< " + s + " >>>>")
+            }
+            for data in sender.addresses! {
+                print(data.description)
+            }
+            return
+        }
         
         let node = Node()
 

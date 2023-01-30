@@ -123,8 +123,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         masterViewController.browser_app = ServiceBrowser(NetworkDefaults.speed_test_app_service_type, deviceManager: masterViewController)
 
-        masterViewController.browsers.append(ServiceBrowser("_ssh._tcp.", deviceManager: masterViewController))
-        
+        let svcname = "_airplay._tcp.";
+        masterViewController.browsers.append(ServiceBrowser(svcname, deviceManager: masterViewController))
+//        masterViewController.browsers.append(ServiceBrowser("_ssh._tcp.", deviceManager: masterViewController))
+//        masterViewController.browsers.append(ServiceBrowser("_dns-sd._udp.", deviceManager: masterViewController))
+
         
         // idem avec API Network Bonjour de Network car ancienne est déprecative - à conserver pour le moment où elle ne fonctionnera plus - mais cette API pose aussi des pbs même en mettant le soreuseaddr: il ne marche pas à tous les coups, et c'est plus embêtant car il faut attendre plus longtemps pour refaire un listener qui fonctionne, plusieurs secondes, voire de 10 à 20 secondes
         // mais pas utile, il suffisait de rajouter dans Info.plist :
