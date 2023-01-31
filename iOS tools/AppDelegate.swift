@@ -123,8 +123,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         masterViewController.browser_app = ServiceBrowser(NetworkDefaults.speed_test_app_service_type, deviceManager: masterViewController)
 
-        let svcname = "_airplay._tcp.";
-        masterViewController.browsers.append(ServiceBrowser(svcname, deviceManager: masterViewController))
+//        for svcname in [ "_airplay._tcp.", "_airport._tcp." ] {
+        for svcname in service_names {
+            masterViewController.browsers.append(ServiceBrowser(svcname, deviceManager: masterViewController))
+        }
+        
+//        let svcname = "_airplay._tcp.";
+//        masterViewController.browsers.append(ServiceBrowser(svcname, deviceManager: masterViewController))
 //        masterViewController.browsers.append(ServiceBrowser("_ssh._tcp.", deviceManager: masterViewController))
 //        masterViewController.browsers.append(ServiceBrowser("_dns-sd._udp.", deviceManager: masterViewController))
 

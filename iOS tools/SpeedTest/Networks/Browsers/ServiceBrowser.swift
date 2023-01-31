@@ -75,7 +75,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 let val_str = Self.bytesToString(val)
 
                 var dict = size + 1 < data.count ? decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1))) : [:]
-                print("\(#function): adding \(key_str) = \(val_str)")
+//                print("\(#function): adding \(key_str) = \(val_str)")
                 dict[key_str] = val_str
                 return dict
             } else {
@@ -158,27 +158,26 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
-        if type != NetworkDefaults.speed_test_app_service_type {
-            var text_attr = [String: String]()
-            if let data = sender.txtRecordData() {
-                text_attr = decodeTxt(data)
-            }
-            print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
-            print("DYNAMIC ATTRIBUTES: \(text_attr)")
-
-            for data in sender.addresses! {
-                print("ADDRESSES: \(data.description)")
-            }
-            return
+        var text_attr = [String: String]()
+        if let data = sender.txtRecordData() {
+            text_attr = decodeTxt(data)
         }
-        
+        print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
+        print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
+
+        for data in sender.addresses! {
+            print("ADDRESSES: \(data.description)")
+        }
+
         let node = Node()
 
-        node.types = [ .chargen, .discard, .ios ]
-        node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
-        node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
-        node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
-
+        if type == NetworkDefaults.speed_test_app_service_type {
+            node.types = [ .chargen, .discard, .ios ]
+            node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
+            node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
+            node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
+        }
+        
         if sender.addresses != nil {
             for data in sender.addresses! {
                 let sock_addr = SockAddr.getSockAddr(data)
