@@ -66,12 +66,9 @@
       <string>Network usage is required for macOS/iOS communication</string>
       <key>NSBonjourServices</key>
       <array>
-        <string>_ssh._tcp</string>
         <string>_speedtestchargen._tcp</string>
         <string>_speedtestdiscard._tcp</string>
         <string>_speedtestapp._tcp</string>
-
-        <string>_services._dns-sd._udp</string>
 
         <string>_adisk._tcp</string>
         <string>_airplay._tcp</string>
@@ -162,7 +159,6 @@
         <string>_sleep-proxy._udp</string>
         <string>_smb._tcp</string>
         <string>_spotify-connect._tcp</string>
-        <string>_ssh._tcp</string>
         <string>_teamviewer._tcp</string>
         <string>_telnet._tcp</string>
         <string>_touch-able._tcp</string>
@@ -171,7 +167,6 @@
         <string>_webdav._tcp</string>
         <string>_workstation._tcp</string>
         <string>_xserveraid._tcp</string>
-
       </array>
 </dict>
 </plist>
