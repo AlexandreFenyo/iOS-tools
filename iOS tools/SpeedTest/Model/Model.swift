@@ -102,6 +102,25 @@ class FQDN : DomainName {
     }
 }
 
+class BonjourServiceInfo : Hashable {
+    public let name: String
+    public let attr: [String: String]
+    
+    public init(_ name: String, _ attr: [String: String]) {
+        self.name = name
+        self.attr = attr
+    }
+    
+    static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
+        return lhs.name == rhs.name && lhs.attr == rhs.attr
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(attr)
+    }
+}
+
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
@@ -115,6 +134,7 @@ class Node : Hashable {
         hasher.combine(tcp_ports)
         hasher.combine(udp_ports)
         hasher.combine(types)
+        hasher.combine(services)
     }
     
     public var mcast_dns_names = Set<FQDN>()
@@ -125,6 +145,7 @@ class Node : Hashable {
     public var tcp_ports = Set<UInt16>()
     public var udp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
+    public var services = Set<BonjourServiceInfo>()
     
     public init() { }
     
@@ -172,6 +193,14 @@ class Node : Hashable {
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
         udp_ports.formUnion(node.udp_ports)
+
+        // merge services
+        var name_to_service_info = [String: BonjourServiceInfo]()
+        _ = services.map({ name_to_service_info[$0.name] = $0 })
+        var node_name_to_service_info = [String: BonjourServiceInfo]()
+        _ = node.services.map({ node_name_to_service_info[$0.name] = $0 })
+        name_to_service_info.merge(node_name_to_service_info) { (_, new) in new }
+        services = Set(name_to_service_info.map { $0.value })
     }
     
     public func isSimilar(with: Node) -> Bool {
@@ -187,7 +216,7 @@ class Node : Hashable {
     }
     
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
     }
 
     public func dump() -> String {
