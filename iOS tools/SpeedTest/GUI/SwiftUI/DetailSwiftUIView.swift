@@ -415,7 +415,61 @@ struct DetailSwiftUIView: View {
                                     }
                                 }
                             }
+                            
+                            
+                            
+                         // https://developer.apple.com/tutorials/swiftui/building-lists-and-navigation
+/*
+              Text("SALUT")
+                            Text("SALUT2")
+                            List {
+                                Text("Example Row")
+                                Text("Example Row")
+                                Text("Example Row")
+                                
+                            }*/
+/*
+                            
+//                                        HStack {
+                                            List {
+                                                Section(header: Text("Column A")) {
+                                                    Text("Example Row")
+                                                    Text("Example Row")
+                                                    Text("Example Row")
+                                                    
+                                                }
+                                            }//.listStyle(GroupedListStyle())
+//                                                .disabled(true)
+
+                                            List {
+                                                Section(header: Text("Column B")) {
+                                                    Text("Example Row")
+                                                    Text("Example Row")
+                                                    Text("Example Row")
+                                                }
+                                            }//.listStyle(GroupedListStyle())
+  //                                              .disabled(true)
+  //                                      }
+
+           */
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
                         }
+
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                     }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
                 }//.id(topID)
