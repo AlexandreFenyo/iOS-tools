@@ -973,7 +973,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         else { cell.detail2.text = "no IPv6 address" }
 
         cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
-        cell.nPorts.text = String(node.tcp_ports.count) + " port" + (node.tcp_ports.count > 1 ? "s" : "")
+        cell.nPorts.text = String(node.tcp_ports.count + node.udp_ports.count) + " port" + (node.tcp_ports.count + node.udp_ports.count > 1 ? "s" : "")
 
        return cell
     }

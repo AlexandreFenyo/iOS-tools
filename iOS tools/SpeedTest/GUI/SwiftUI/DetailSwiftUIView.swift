@@ -97,8 +97,9 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var stop_button_enabled = false
     @Published private(set) var text_addresses: [String] = [String]()
     @Published private(set) var text_names: [String] = [String]()
-    @Published private(set) var text_ports: [String] = [String]()
-    
+    @Published private(set) var text_tcp_ports: [String] = [String]()
+    @Published private(set) var text_udp_ports: [String] = [String]()
+
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
     
@@ -142,7 +143,8 @@ public class DetailViewModel : ObservableObject {
     internal func clearDetails() {
         text_addresses.removeAll()
         text_names.removeAll()
-        text_ports.removeAll()
+        text_tcp_ports.removeAll()
+        text_udp_ports.removeAll()
         family = nil
         address = nil
         v4address = nil
@@ -160,8 +162,9 @@ public class DetailViewModel : ObservableObject {
             }
         }
 
-        text_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
-        
+        text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+        text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+
         var interfaces = [""]
         for addr in node.v6_addresses {
             if let substrings = addr.toNumericString()?.split(separator: "%") {
@@ -322,14 +325,15 @@ struct DetailSwiftUIView: View {
                                 }
                                 UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)
                             }
-                            if !model.text_ports.isEmpty {
+
+                            if !model.text_tcp_ports.isEmpty {
                                 HStack {
                                     VStack { Divider() }
                                     Text("TCP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                                 }
                             }
                             
-                            TagCloudView(tags: model.text_ports, master_view_controller: master_view_controller, font: .body) { tag in
+                            TagCloudView(tags: model.text_tcp_ports, master_view_controller: master_view_controller, font: .body) { tag in
                                 let _first = tag.firstIndex(of: "(")
                                 let _last = tag.firstIndex(of: ")")
                                 var port_str = ""
@@ -368,6 +372,27 @@ struct DetailSwiftUIView: View {
                                  }
                                  }
                                  */
+                            }
+                            
+                            if !model.text_udp_ports.isEmpty {
+                                HStack {
+                                    VStack { Divider() }
+                                    Text("UDP ports and associated service names").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                }
+                            }
+                            
+                            TagCloudView(tags: model.text_udp_ports, master_view_controller: master_view_controller, font: .body) { tag in
+                                let _first = tag.firstIndex(of: "(")
+                                let _last = tag.firstIndex(of: ")")
+                                var port_str = ""
+                                if let _first, let _last {
+                                    let first = tag.index(_first, offsetBy: 1)
+                                    let last = tag.index(_last, offsetBy: -1)
+                                    port_str = String(tag[first...last])
+                                } else {
+                                    port_str = tag
+                                }
+                                UIApplication.shared.open(URL(string: "https://www.speedguide.net/port.php?port=\(port_str)")!)
                             }
                             
                             if !model.text_addresses.isEmpty {

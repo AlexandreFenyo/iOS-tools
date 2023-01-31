@@ -177,7 +177,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
             node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
         }
-        
+
+        if type.hasSuffix("._tcp.") {
+            node.tcp_ports.insert(UInt16(sender.port))
+        } else {
+            node.udp_ports.insert(UInt16(sender.port))
+        }
+
         if sender.addresses != nil {
             for data in sender.addresses! {
                 let sock_addr = SockAddr.getSockAddr(data)

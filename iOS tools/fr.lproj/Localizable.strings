@@ -16,6 +16,7 @@
 "UDP flood" = "inonder en UDP";
 "ICMP ping" = "ping ICMP";
 "TCP ports and associated service names" = "ports TCP et services associés";
+"UDP ports and associated service names" = "ports UDP et services associés";
 "iOS device" = "Périphérique iOS";
 "Chargen Discard" = "Chargen ou Discard";
 "Add permanently" = "Ajouter et conserver";

@@ -11,6 +11,7 @@ import UIKit
 import SwiftUI
 import SpriteKit
 
+// Cette liste doit être synchronisée avec les services déclarés dans Info.plist
 let service_names = [
     "_adisk._tcp.",
     "_airplay._tcp.",

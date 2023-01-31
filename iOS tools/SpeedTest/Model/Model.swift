@@ -113,6 +113,7 @@ class Node : Hashable {
         hasher.combine(v4_addresses)
         hasher.combine(v6_addresses)
         hasher.combine(tcp_ports)
+        hasher.combine(udp_ports)
         hasher.combine(types)
     }
     
@@ -122,6 +123,7 @@ class Node : Hashable {
     public var v4_addresses = Set<IPv4Address>()
     public var v6_addresses = Set<IPv6Address>()
     public var tcp_ports = Set<UInt16>()
+    public var udp_ports = Set<UInt16>()
     public var types = Set<NodeType>()
     
     public init() { }
@@ -169,6 +171,7 @@ class Node : Hashable {
         v6_addresses.formUnion(node.v6_addresses)
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
+        udp_ports.formUnion(node.udp_ports)
     }
     
     public func isSimilar(with: Node) -> Bool {
@@ -184,7 +187,7 @@ class Node : Hashable {
     }
     
     public static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.types == rhs.types
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types
     }
 
     public func dump() -> String {
