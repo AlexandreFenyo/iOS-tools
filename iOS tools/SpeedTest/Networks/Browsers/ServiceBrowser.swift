@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 /*
- voici la commande adéquate :
+ voici la commande adéquate sur macOS :
  # dig -b '0.0.0.0#5352' @224.0.0.251 -p 5353  _services._dns-sd._udp.local. any +notcp +short
 les réponses sont récupérées via un wireshark, ou il faut lancer cette commande sur MacOS
 
@@ -18,57 +18,185 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  224.0.0.251
  ff02::fb
 
- liste des services Bonjour :
- _airplay._tcp.local
- _mediaremotetv._tcp.local
- _companion-link._tcp.local
- _raop._tcp.local
- _sleep-proxy._udp.local
- _homekit._tcp.local
- _touch-able._tcp.local
- _ipps._tcp.local
- _ipp._tcp.local
- _http._tcp.local
- _printer._sub._http._tcp.local
- _hue._tcp.local
- _spotify-connect._tcp.local
- _googlecast._tcp.local
- _googlezone._tcp.local
- Android-2.local
- Android.local
- _sftp-ssh._tcp.local
- _ssh._tcp.local
- _rfb._tcp.local
- _smb._tcp.local
- _airplay._tcp.local
- _atc._tcp.local
- _hue._tcp.local
- _rdlink._tcp.local
- _adisk._tcp.local
- _airport._tcp.local
- _ewelink._tcp.local
- _hap._tcp.local
- _meshcop._udp.local
- _pgpkey-hkp._tcp.local
- _sane-port._tcp.local
- _scanner._tcp.local
- _sengled._udp.local
- _viziocast._tcp.local
- lb._dns-sd._udp.local
- _services._dns-sd._udp.local
- _dhnap._tcp.local
- _pdl-datastream._tcp.local
- _workstation._tcp.local
- */
+ liste des services Bonjour : https://jonathanmumm.com/tech-it/mdns-bonjour-bible-common-service-strings-for-various-vendors/
+ <string>_services._dns-sd._udp</string>
+
+ <string>_invoke._sub._bp2p._tcp</string>
+ <string>_webdav._sub._bp2p._tcp</string>
+ <string>_print._sub._ipp._tcp</string>
+ <string>_cups._sub._ipps._tcp</string>
+ <string>_print._sub._ipps._tcp</string>
+ <string>_printer._sub._http._tcp</string>
+ <string>_Friendly._sub._bp2p._tcp</string>
+
+ <string>_adisk._tcp</string>
+ <string>_airplay._tcp</string>
+ <string>_airport._tcp</string>
+ <string>_atc._tcp</string>
+ <string>_companion-link._tcp</string>
+ <string>_dhnap._tcp</string>
+ <string>_ewelink._tcp</string>
+ <string>_googlecast._tcp</string>
+ <string>_googlezone._tcp</string>
+ <string>_hap._tcp</string>
+ <string>_homekit._tcp</string>
+ <string>_http._tcp</string>
+ <string>_hue._tcp</string>
+ <string>_ipp._tcp</string>
+ <string>_ipps._tcp</string>
+ <string>_mediaremotetv._tcp</string>
+ <string>_meshcop._udp</string>
+ <string>_pdl-datastream._tcp</string>
+ <string>_pgpkey-hkp._tcp</string>
+ <string>_raop._tcp</string>
+ <string>_rdlink._tcp</string>
+ <string>_rfb._tcp</string>
+ <string>_sane-port._tcp</string>
+ <string>_scanner._tcp</string>
+ <string>_sengled._udp</string>
+ <string>_sftp-ssh._tcp</string>
+ <string>_sleep-proxy._udp</string>
+ <string>_smb._tcp</string>
+ <string>_spotify-connect._tcp</string>
+ <string>_ssh._tcp</string>
+ <string>_touch-able._tcp</string>
+ <string>_viziocast._tcp</string>
+ <string>_workstation._tcp</string>
+ <string>_adisk._tcp</string>
+ <string>_afpovertcp._tcp</string>
+ <string>_airdroid._tcp</string>
+ <string>_airdrop._tcp</string>
+ <string>_airplay._tcp</string>
+ <string>_airport._tcp</string>
+ <string>_amzn-wplay._tcp</string>
+ <string>_apple-mobdev2._tcp</string>
+ <string>_apple-sasl._tcp</string>
+ <string>_appletv-v2._tcp</string>
+ <string>_atc._tcp</string>
+ <string>_sketchmirror._tcp</string>
+ <string>_bcbonjour._tcp</string>
+ <string>_bp2p._tcp</string>
+ <string>_companion-link._tcp</string>
+ <string>_cloud._tcp</string>
+ <string>_daap._tcp</string>
+ <string>_device-info._tcp</string>
+ <string>_distcc._tcp</string>
+ <string>_dpap._tcp</string>
+ <string>_eppc._tcp</string>
+ <string>_esdevice._tcp</string>
+ <string>_esfileshare._tcp</string>
+ <string>_ftp._tcp</string>
+ <string>_googlecast._tcp</string>
+ <string>_googlezone._tcp</string>
+ <string>_hap._tcp</string>
+ <string>_homekit._tcp</string>
+ <string>_home-sharing._tcp</string>
+ <string>_http._tcp</string>
+ <string>_hudson._tcp</string>
+ <string>_ica-networking._tcp</string>
+ <string>_ichat._tcp</string>
+ <string>_jenkins._tcp</string>
+ <string>_KeynoteControl._tcp</string>
+ <string>_keynotepair._tcp</string>
+ <string>_mediaremotetv._tcp</string>
+ <string>_nfs._tcp</string>
+ <string>_nvstream._tcp</string>
+ <string>_androidtvremote._tcp</string>
+ <string>_omnistate._tcp</string>
+ <string>_pdl-datastream._tcp</string>
+ <string>_photoshopserver._tcp</string>
+ <string>_printer._tcp</string>
+ <string>_raop._tcp</string>
+ <string>_readynas._tcp</string>
+ <string>_rfb._tcp</string>
+ <string>_physicalweb._tcp</string>
+ <string>_riousbprint._tcp</string>
+ <string>_rsp._tcp</string>
+ <string>_scanner._tcp</string>
+ <string>_servermgr._tcp</string>
+ <string>_sftp-ssh._tcp</string>
+ <string>_sleep-proxy._udp</string>
+ <string>_smb._tcp</string>
+ <string>_spotify-connect._tcp</string>
+ <string>_ssh._tcp</string>
+ <string>_teamviewer._tcp</string>
+ <string>_telnet._tcp</string>
+ <string>_touch-able._tcp</string>
+ <string>_tunnel._tcp</string>
+ <string>_udisks-ssh._tcp</string>
+ <string>_webdav._tcp</string>
+ <string>_workstation._tcp</string>
+ <string>_xserveraid._tcp</string>
+ */
 
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
-    private var services : [ NetService ] = []
-    private let type : String
+    private var services: [ NetService ] = []
+    private let type: String
     private let device_manager : DeviceManager
 
     init(_ type: String, deviceManager: DeviceManager) {
         self.type = type
         device_manager = deviceManager
+    }
+
+    private static func bytesToString(_ data: Data) -> String {
+        var retval = ""
+        for val in data { retval += String(UnicodeScalar(val)) }
+        return retval
+    }
+
+    private func decodeTxt(_ data: Data) -> [ String: String ] {
+        print("")
+        print("DECODETXT size=\(data.count) content=\(Self.bytesToString(data))")
+        print("FIRST BYTE OF DATA: \(data.first)")
+        
+        if let _size = data.first {
+            let size = Int(_size)
+            print("première taille: \(size)")
+            if size == 0 {
+                print("\(#function) error: invalid null size")
+                return [:]
+            }
+            // from here, data.indices.first is not nil
+            
+            if data.count <= size {
+                print("\(#function) error: not enough data")
+                return [:]
+            }
+            
+            let key_val = data.subdata(in: data.indices.first!.advanced(by: 1)..<data.indices.first!.advanced(by: size + 1))
+            print("key_val.count=\(key_val.count)")
+            
+            if let marker = key_val.firstIndex(of: ("=" as Character).asciiValue!) {
+                // from here, key_val.indices.first is not nil
+                
+                print("key_val.ind.first=\(key_val.indices.first!) key_val[0]=\(key_val.first!)")
+                
+                if marker == key_val.indices.first! {
+                    print("\(#function) error: empty key")
+                    return decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1)))
+                }
+                let key = key_val.subdata(in: key_val.indices.first!..<marker)
+                let key_str = Self.bytesToString(key)
+                print("key=\(key_str)")
+                
+                print("marker=\(marker)")
+                let val = key_val.suffix(from: marker.advanced(by: 1))
+                print("val.count=\(val.count)")
+                let val_str = Self.bytesToString(val)
+                print("val=\(val_str)")
+
+                var dict = size + 1 < data.count ? decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1))) : [:]
+                print("\(#function): adding \(key_str) = \(val_str)")
+                dict[key_str] = val_str
+                return dict
+            } else {
+                print("\(#function) error: bad format (no =)")
+                return decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1)))
+            }
+        }
+        print("\(#function)error: empty data")
+        return [:]
     }
 
     // MARK: - NetServiceBrowserDelegate
@@ -143,7 +271,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
         if type != NetworkDefaults.speed_test_app_service_type {
+            if let data = sender.txtRecordData() {
+                decodeTxt(data)
+            }
             print("TYPE = type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain) txt:\(sender.txtRecordData())")
+
+            
+            
             if let txt = sender.txtRecordData() {
                 var s = ""
                 for b in txt {
