@@ -165,10 +165,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         if let data = sender.txtRecordData() {
             text_attr = decodeTxt(data)
         }
+        node.services.insert(BonjourServiceInfo(type, text_attr))
         print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
         print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
-
-        node.services.insert(BonjourServiceInfo(type, text_attr))
         
         if type == NetworkDefaults.speed_test_app_service_type {
             node.types = [ .chargen, .discard, .ios ]

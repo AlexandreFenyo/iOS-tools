@@ -100,6 +100,7 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_tcp_ports = [String]()
     @Published private(set) var text_udp_ports = [String]()
     @Published private(set) var text_services = [String]()
+    @Published private(set) var text_services_attr = [String : [String]]()
 
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
@@ -147,6 +148,7 @@ public class DetailViewModel : ObservableObject {
         text_tcp_ports.removeAll()
         text_udp_ports.removeAll()
         text_services.removeAll()
+        text_services_attr.removeAll()
         family = nil
         address = nil
         v4address = nil
@@ -167,8 +169,11 @@ public class DetailViewModel : ObservableObject {
         text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_services = node.services.map({ $0.name })
-        print("XXXX: text_services: \(text_services)")
-//        text_services = [ "XXX", node.services.first!.name ]
+        _ = node.services.map({ $0 }).map { svc in
+            text_services_attr[svc.name] = svc.attr.map({ (key: String, value: String) in
+                "\(key): \(value)"
+            })
+        }
 
         var interfaces = [""]
         for addr in node.v6_addresses {
@@ -430,42 +435,45 @@ struct DetailSwiftUIView: View {
                                 Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                             }
 
-                            
-                                HStack {
 
+                            ForEach(model.text_services, id: \.self) { service_name in
+                                HStack {
+                                    
                                     VStack(alignment: .leading) {
                                         Spacer()
-
-                                        ForEach(model.text_services, id: \.self) { service_name in
-                                            Text(service_name)
-                                            Text("salut")
-                                                .padding(.leading, 5)
-                                                .padding(.trailing, 5)
-                                        }
-
                                         
-                                        Text("companion-link (TCP)")
+                                        Text(service_name)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
 
+                                        Text("companion-link (TCP)")
+                                        
                                         Text("contact and calendar synchronization")
                                             .font(.footnote)
-                                              .padding(.leading, 5)
-                                              .padding(.trailing, 5)
-
+                                            .padding(.leading, 5)
+                                            .padding(.trailing, 5)
+                                        
                                         Spacer()
                                     }.background(Color(COLORS.toolbar_background))
-
+                                    
                                     VStack {
                                         Spacer()
-
-                                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
+                                        
+                                        TagCloudView(tags:
+                                                        
+                                                        model.text_services_attr[service_name]!,
+                                                     
+                                                     
+                                                     master_view_controller: master_view_controller, font: .body) { tag in
                                             
                                         }
                                         Spacer()
                                     }.background(Color(COLORS.toolbar_background))
                                 }
-
+                                
+                                Text("séparation")
+                                
+                            }
 
                             
                             
