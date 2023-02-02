@@ -149,12 +149,15 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // NetService resolved with address(es) and timeout reached
     public func netServiceDidStop(_ sender: NetService) {
-        print(#function)
+//        print(#function)
     }
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
         print(#function)
+        
+        let node = Node()
+
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
 
@@ -165,12 +168,8 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
         print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
 
-        for data in sender.addresses! {
-            print("ADDRESSES: \(data.description)")
-        }
-
-        let node = Node()
-
+        node.services.insert(BonjourServiceInfo(type, text_attr))
+        
         if type == NetworkDefaults.speed_test_app_service_type {
             node.types = [ .chargen, .discard, .ios ]
             node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)

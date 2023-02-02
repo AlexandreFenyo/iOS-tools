@@ -95,10 +95,11 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var address_str: String? = nil
     @Published private(set) var buttons_enabled = false
     @Published private(set) var stop_button_enabled = false
-    @Published private(set) var text_addresses: [String] = [String]()
-    @Published private(set) var text_names: [String] = [String]()
-    @Published private(set) var text_tcp_ports: [String] = [String]()
-    @Published private(set) var text_udp_ports: [String] = [String]()
+    @Published private(set) var text_addresses = [String]()
+    @Published private(set) var text_names = [String]()
+    @Published private(set) var text_tcp_ports = [String]()
+    @Published private(set) var text_udp_ports = [String]()
+    @Published private(set) var text_services = [String]()
 
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
@@ -145,6 +146,7 @@ public class DetailViewModel : ObservableObject {
         text_names.removeAll()
         text_tcp_ports.removeAll()
         text_udp_ports.removeAll()
+        text_services.removeAll()
         family = nil
         address = nil
         v4address = nil
@@ -164,6 +166,9 @@ public class DetailViewModel : ObservableObject {
 
         text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+        text_services = node.services.map({ $0.name })
+        print("XXXX: text_services: \(text_services)")
+//        text_services = [ "XXX", node.services.first!.name ]
 
         var interfaces = [""]
         for addr in node.v6_addresses {
@@ -401,7 +406,7 @@ struct DetailSwiftUIView: View {
                                     Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                                 }
                             }
-                            
+
                             TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
                                 DispatchQueue.main.async {
                                     Task {
@@ -416,59 +421,56 @@ struct DetailSwiftUIView: View {
                                 }
                             }
                             
-                            
-                            
-                         // https://developer.apple.com/tutorials/swiftui/building-lists-and-navigation
-/*
-              Text("SALUT")
-                            Text("SALUT2")
-                            List {
-                                Text("Example Row")
-                                Text("Example Row")
-                                Text("Example Row")
-                                
-                            }*/
-/*
-                            
-//                                        HStack {
-                                            List {
-                                                Section(header: Text("Column A")) {
-                                                    Text("Example Row")
-                                                    Text("Example Row")
-                                                    Text("Example Row")
-                                                    
-                                                }
-                                            }//.listStyle(GroupedListStyle())
-//                                                .disabled(true)
 
-                                            List {
-                                                Section(header: Text("Column B")) {
-                                                    Text("Example Row")
-                                                    Text("Example Row")
-                                                    Text("Example Row")
-                                                }
-                                            }//.listStyle(GroupedListStyle())
-  //                                              .disabled(true)
-  //                                      }
+                            
+                            
+                            
+                            HStack {
+                                VStack { Divider() }
+                                Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                            }
 
-           */
                             
-                            
-                            
-                            
-                            
+                                HStack {
+
+                                    VStack(alignment: .leading) {
+                                        Spacer()
+
+                                        ForEach(model.text_services, id: \.self) { service_name in
+                                            Text(service_name)
+                                            Text("salut")
+                                                .padding(.leading, 5)
+                                                .padding(.trailing, 5)
+                                        }
+
+                                        
+                                        Text("companion-link (TCP)")
+                                            .padding(.leading, 5)
+                                            .padding(.trailing, 5)
+
+                                        Text("contact and calendar synchronization")
+                                            .font(.footnote)
+                                              .padding(.leading, 5)
+                                              .padding(.trailing, 5)
+
+                                        Spacer()
+                                    }.background(Color(COLORS.toolbar_background))
+
+                                    VStack {
+                                        Spacer()
+
+                                        TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
+                                            
+                                        }
+                                        Spacer()
+                                    }.background(Color(COLORS.toolbar_background))
+                                }
+
+
                             
                             
                             
                         }
-
-                        
-                        
-                        
-                        
-                        
-                        
-                        
                         
                         
                     }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
