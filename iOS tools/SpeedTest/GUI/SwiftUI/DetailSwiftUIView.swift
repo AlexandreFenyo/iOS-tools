@@ -100,6 +100,7 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_tcp_ports = [String]()
     @Published private(set) var text_udp_ports = [String]()
     @Published private(set) var text_services = [String]()
+    @Published private(set) var text_services_port = [String : String]()
     @Published private(set) var text_services_attr = [String : [String]]()
 
     @Published private(set) var stop_button_master_view_hidden = true
@@ -148,6 +149,7 @@ public class DetailViewModel : ObservableObject {
         text_tcp_ports.removeAll()
         text_udp_ports.removeAll()
         text_services.removeAll()
+        text_services_port.removeAll()
         text_services_attr.removeAll()
         family = nil
         address = nil
@@ -169,7 +171,9 @@ public class DetailViewModel : ObservableObject {
         text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_services = node.services.map({ $0.name })
+        
         _ = node.services.map({ $0 }).map { svc in
+            text_services_port[svc.name] = svc.port
             text_services_attr[svc.name] = svc.attr.map({ (key: String, value: String) in
                 "\(key): \(value)"
             })
@@ -425,9 +429,7 @@ struct DetailSwiftUIView: View {
                                     }
                                 }
                             }
-                            
 
-                            
                             
                             
                             HStack {
@@ -442,7 +444,7 @@ struct DetailSwiftUIView: View {
                                     VStack(alignment: .leading) {
                                         Spacer()
                                         
-                                        Text(service_name)
+                                        Text(service_name + " on port " + model.text_services_port[service_name]!)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
 
@@ -459,13 +461,11 @@ struct DetailSwiftUIView: View {
                                     VStack {
                                         Spacer()
                                         
-                                        TagCloudView(tags:
-                                                        
-                                                        model.text_services_attr[service_name]!,
-                                                     
-                                                     
+                                        /// https://developer.apple.com/bonjour/
+                                        // https://developer.apple.com/bonjour/printing-specification/bonjourprinting-1.2.1.pdf
+                                        TagCloudView(tags: model.text_services_attr[service_name]!,
                                                      master_view_controller: master_view_controller, font: .body) { tag in
-                                            
+                                            master_view_controller.popUp("Service key content", tag, "OK")
                                         }
                                         Spacer()
                                     }.background(Color(COLORS.toolbar_background))

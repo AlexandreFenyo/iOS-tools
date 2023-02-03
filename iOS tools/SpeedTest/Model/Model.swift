@@ -104,19 +104,22 @@ class FQDN : DomainName {
 
 class BonjourServiceInfo : Hashable {
     public let name: String
+    public let port: String
     public let attr: [String: String]
     
-    public init(_ name: String, _ attr: [String: String]) {
+    public init(_ name: String, _ port: String, _ attr: [String: String]) {
         self.name = name
+        self.port = port
         self.attr = attr
     }
     
     static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
-        return lhs.name == rhs.name && lhs.attr == rhs.attr
+        return lhs.name == rhs.name && lhs.port == rhs.port && lhs.attr == rhs.attr
     }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(name)
+        hasher.combine(port)
         hasher.combine(attr)
     }
 }
