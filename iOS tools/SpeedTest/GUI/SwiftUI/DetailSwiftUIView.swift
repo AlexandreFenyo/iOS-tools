@@ -11,7 +11,7 @@ import SpriteKit
 
 // struct TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
 struct TagCloudView: View {
-    var tags: [ String ]
+    var tags: [String]
     let master_view_controller: MasterViewController
     
     let font: Font
@@ -63,8 +63,10 @@ struct TagCloudView: View {
         }.background(viewHeightReader($totalHeight))
     }
     
+    // MAX_LEN doit permettre d'afficher en entier une adresse IPv6 link-local
+    private static let MAX_LEN = 40
     private func item(for text: String) -> some View {
-        Text(text)
+            Text(text.prefix(Self.MAX_LEN) + (text.count > Self.MAX_LEN ? "..." : ""))
             .padding(.all, 5)
             .font(font)
             .background(Color(COLORS.standard_background))
@@ -334,9 +336,11 @@ struct DetailSwiftUIView: View {
                             TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
                                 if !tag.contains(".") || tag.contains("(") || tag.contains(")") || tag.contains(" ") || tag.contains(".local") || tag == "localhost" {
                                     master_view_controller.popUpHelp(.no_dns, "This hostname has not any public DNS record. Select a host name with public DNS records to get those records.") {
+                                        master_view_controller.popUp("Hostname", tag, "OK")
                                     }
                                     return
                                 }
+                                master_view_controller.popUp("Hostname", tag, "OK")
                                 UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)
                             }
 
@@ -431,25 +435,29 @@ struct DetailSwiftUIView: View {
                             }
 
                             
-                            
-                            HStack {
-                                VStack { Divider() }
-                                Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+
+                            VStack {
+                                HStack {
+                                    VStack { Divider() }
+                                    Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                }
+
+                                Spacer().frame(height: 14)
+
                             }
 
 
                             ForEach(model.text_services, id: \.self) { service_name in
-                                HStack {
+                                HStack(spacing: 2)  {
                                     
                                     VStack(alignment: .leading) {
                                         Spacer()
                                         
                                         Text(service_name + " on port " + model.text_services_port[service_name]!)
+                                            .font(.body)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
 
-                                        Text("companion-link (TCP)")
-                                        
                                         Text("contact and calendar synchronization")
                                             .font(.footnote)
                                             .padding(.leading, 5)
@@ -464,15 +472,14 @@ struct DetailSwiftUIView: View {
                                         /// https://developer.apple.com/bonjour/
                                         // https://developer.apple.com/bonjour/printing-specification/bonjourprinting-1.2.1.pdf
                                         TagCloudView(tags: model.text_services_attr[service_name]!,
-                                                     master_view_controller: master_view_controller, font: .body) { tag in
+                                                     master_view_controller: master_view_controller, font: .caption) { tag in
                                             master_view_controller.popUp("Service key content", tag, "OK")
                                         }
                                         Spacer()
-                                    }.background(Color(COLORS.toolbar_background))
+                                    }.background(Color(COLORS.toolbar_background).lighter())
                                 }
-                                
-                                Text("séparation")
-                                
+
+                                Spacer().frame(height: 2)
                             }
 
                             
