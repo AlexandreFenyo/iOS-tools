@@ -546,9 +546,6 @@ class MasterViewController: UITableViewController, DeviceManager {
                     node.v4_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
                     node.dns_names.insert(domain_name)
-                    
-                    print("XXXXX: resolve ipv4 \(name)")
-                    
                     self.addNode(node)
                 }
             }
@@ -568,9 +565,6 @@ class MasterViewController: UITableViewController, DeviceManager {
                     node.v6_addresses.insert(address)
                     guard let domain_name = DomainName(name) else { return }
                     node.dns_names.insert(domain_name)
-
-                    print("XXXXX: resolve ipv6 \(name)")
-
                     self.addNode(node)
                 }
             }

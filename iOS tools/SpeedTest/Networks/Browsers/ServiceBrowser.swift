@@ -51,7 +51,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         if let _size = data.first {
             let size = Int(_size)
             if size == 0 {
-                print("\(#function) error: invalid null size")
+                // print("\(#function) error: invalid null size")
                 return [:]
             }
             // from here, data.indices.first is not nil
@@ -94,8 +94,8 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        print(#function)
-        print("service.name = \(service.name)")
+        // print(#function)
+        // print("service.name = \(service.name)")
         // Only add remote services
         if (service.name != UIDevice.current.name) {
             services.append(service)
@@ -129,7 +129,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
-        print(#function)
+//        print(#function)
         device_manager.addTrace("Start browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
     }
 
@@ -157,12 +157,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print(#function)
-        
-        let node = Node()
-
+//        print(#function)
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
+
+        let node = Node()
 
         var text_attr = [String: String]()
         if let data = sender.txtRecordData() {
