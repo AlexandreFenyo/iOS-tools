@@ -13,39 +13,9 @@ import SpriteKit
 
 // Cette liste doit être synchronisée avec les services déclarés dans Info.plist
 let service_names = [
-    "_adisk._tcp.",
-    "_airplay._tcp.",
-    "_airport._tcp.",
-    "_atc._tcp.",
-    "_companion-link._tcp.",
-    "_dhnap._tcp.",
-    "_ewelink._tcp.",
-    "_googlecast._tcp.",
-    "_googlezone._tcp.",
-    "_hap._tcp.",
-    "_homekit._tcp.",
-    "_http._tcp.",
-    "_hue._tcp.",
-    "_ipp._tcp.",
-    "_ipps._tcp.",
-    "_mediaremotetv._tcp.",
-    "_meshcop._udp.",
-    "_pdl-datastream._tcp.",
-    "_pgpkey-hkp._tcp.",
-    "_raop._tcp.",
-    "_rdlink._tcp.",
-    "_rfb._tcp.",
-    "_sane-port._tcp.",
-    "_scanner._tcp.",
-    "_sengled._udp.",
-    "_sftp-ssh._tcp.",
-    "_sleep-proxy._udp.",
-    "_smb._tcp.",
-    "_spotify-connect._tcp.",
-    "_ssh._tcp.",
-    "_touch-able._tcp.",
-    "_viziocast._tcp.",
-    "_workstation._tcp.",
+    "_1password4._tcp.",
+    "_KeynoteControl._tcp.",
+    "_acp-sync._tcp.",
     "_adisk._tcp.",
     "_afpovertcp._tcp.",
     "_airdroid._tcp.",
@@ -53,182 +23,221 @@ let service_names = [
     "_airplay._tcp.",
     "_airport._tcp.",
     "_amzn-wplay._tcp.",
+    "_androidtvremote._tcp.",
+    "_apple-mobdev._tcp.",
     "_apple-mobdev2._tcp.",
     "_apple-sasl._tcp.",
     "_appletv-v2._tcp.",
+    "_arduino._tcp.",
     "_atc._tcp.",
-    "_sketchmirror._tcp.",
     "_bcbonjour._tcp.",
+    "_bowtie._tcp.",
+    "_bttouch._tcp.",
+    "_bttremote._tcp.",
     "_bp2p._tcp.",
-    "_companion-link._tcp.",
     "_cloud._tcp.",
+    "_companion-link._tcp.",
+    "_coremediamgr._tcp.",
+    "_csco-sb._tcp.",
     "_daap._tcp.",
     "_device-info._tcp.",
+    "_dhnap._tcp.",
     "_distcc._tcp.",
+    "_dns-sd._tcp.",
     "_dpap._tcp.",
+    "_duet_air._tcp.",
     "_eppc._tcp.",
     "_esdevice._tcp.",
     "_esfileshare._tcp.",
+    "_fax-ipp._tcp.",
+    "_ewelink._tcp.",
     "_ftp._tcp.",
+    "_gamecenter._tcp.",
     "_googlecast._tcp.",
     "_googlezone._tcp.",
     "_hap._tcp.",
-    "_homekit._tcp.",
     "_home-sharing._tcp.",
+    "_homekit._tcp.",
     "_http._tcp.",
+    "_https._tcp.",
+    "_http-alt._tcp.",
     "_hudson._tcp.",
+    "_hue._tcp.",
     "_ica-networking._tcp.",
     "_ichat._tcp.",
+    "_ipp._tcp.",
+    "_ipps._tcp.",
+    "_ippusb._tcp.",
     "_jenkins._tcp.",
-    "_KeynoteControl._tcp.",
     "_keynotepair._tcp.",
+    "_mamp._tcp.",
     "_mediaremotetv._tcp.",
+    "_ndi._tcp.",
+    "_meshcop._udp.",
+    "_net-assistant._tcp.",
     "_nfs._tcp.",
+    "_nmea-0183._tcp.",
     "_nvstream._tcp.",
-    "_androidtvremote._tcp.",
+    "_od-master._tcp.",
+    "_odisk._tcp.",
     "_omnistate._tcp.",
     "_pdl-datastream._tcp.",
+    "_pgpkey-hkp._tcp.",
     "_photoshopserver._tcp.",
+    "_physicalweb._tcp.",
+    "_presence._tcp.",
     "_printer._tcp.",
+    "_privet._tcp.",
+    "_psia._tcp.",
+    "_ptp._tcp.",
+    "_pulse-server._tcp.",
+    "_pulse-sink._tcp.",
+    "_pulse-source._tcp.",
     "_raop._tcp.",
+    "_rdlink._tcp.",
     "_readynas._tcp.",
     "_rfb._tcp.",
-    "_physicalweb._tcp.",
     "_riousbprint._tcp.",
     "_rsp._tcp.",
+    "_sane-port._tcp.",
+    "_scan-target._tcp.",
     "_scanner._tcp.",
+    "_sengled._udp.",
     "_servermgr._tcp.",
     "_sftp-ssh._tcp.",
+    "_sketchmirror._tcp.",
     "_sleep-proxy._udp.",
     "_smb._tcp.",
     "_spotify-connect._tcp.",
+    "_ssh._tcp.",
     "_teamviewer._tcp.",
     "_telnet._tcp.",
+    "_tftp._tcp.",
+    "_tivo-videos._tcp.",
     "_touch-able._tcp.",
     "_tunnel._tcp.",
     "_udisks-ssh._tcp.",
+    "_uscan._tcp.",
+    "_uscans._tcp.",
+    "_viziocast._tcp.",
     "_webdav._tcp.",
+    "_webdavs._tcp.",
+    "_wirecastgodirect._tcp.",
+    "_withings-aura-bridge._tcp.",
     "_workstation._tcp.",
     "_xserveraid._tcp."
 ]
 
+//RAJOUTER LES SERVICES NOUVEAUX AUX AUTRES TABLEAUX !
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
+    service_names_descr["_1password4._tcp."] = "1Password Wi-Fi Sync"
+    service_names_descr["_KeynoteControl._tcp."] = "OSX Keynote"
+    service_names_descr["_acp-sync._tcp."] = "Airport Base Station Sync"
     service_names_descr["_adisk._tcp."] = "Automatic Disk Discovery / Time Capsule Backups"
     service_names_descr["_afpovertcp._tcp."] = "AppleTalk Filing Protocol (AFP)"
     service_names_descr["_airdroid._tcp."] = "AirDroid App"
     service_names_descr["_airdrop._tcp."] = "Apple AirDrop"
     service_names_descr["_airplay._tcp."] = "Apple TV"
-    service_names_descr["_acp-sync._tcp."] = "Airport Base Station Sync"
     service_names_descr["_airport._tcp."] = "AirPort Base Station"
     service_names_descr["_amzn-wplay._tcp."] = "Amazon Devices"
+    service_names_descr["_androidtvremote._tcp."] = "Nvidia Shield / Android TV"
     service_names_descr["_apple-mobdev._tcp."] = "OSX Wi-Fi Sync"
     service_names_descr["_apple-mobdev2._tcp."] = "OSX Wi-Fi Sync"
     service_names_descr["_apple-sasl._tcp."] = "Apple Password Server"
     service_names_descr["_appletv-v2._tcp."] = "Apple TV Home Sharing"
+    service_names_descr["_arduino._tcp."] = "Arduino"
     service_names_descr["_atc._tcp."] = "Apple Shared iTunes Library"
-    service_names_descr["_sketchmirror._tcp."] = "Sketch App"
     service_names_descr["_bcbonjour._tcp."] = "Sketch App"
-    service_names_descr["_companion-link._tcp."] = "Airplay 2"
+    service_names_descr["_bowtie._tcp."] = "Bowtie Remote"
+    service_names_descr["_bttouch._tcp."] = "Bowtie Remote"
+    service_names_descr["_bttremote._tcp."] = "Bowtie Remote"
     service_names_descr["_cloud._tcp."] = "Cloud by Daplie"
+    service_names_descr["_companion-link._tcp."] = "Airplay 2"
+    service_names_descr["_coremediamgr._tcp."] = "Air Video HD"
+    service_names_descr["_csco-sb._tcp."] = "Cisco SB (small business), router/switches"
     service_names_descr["_daap._tcp."] = "Digital Audio Access Protocol (DAAP)"
     service_names_descr["_device-info._tcp."] = "OSX Device Info"
     service_names_descr["_distcc._tcp."] = "Distributed Compiler"
+    service_names_descr["_dns-sd._udp."] = "DNS Service Discovery"
     service_names_descr["_dpap._tcp."] = "Digital Photo Access Protocol (DPAP)"
+    service_names_descr["_duet_air._tcp."] = "Duet Screen Sharing"
     service_names_descr["_eppc._tcp."] = "Remote Apple Events"
     service_names_descr["_esdevice._tcp."] = "ES File Share App"
     service_names_descr["_esfileshare._tcp."] = "ES File Share App"
+    service_names_descr["_fax-ipp._tcp."] = "FAX Printing"
     service_names_descr["_ftp._tcp."] = "File Transfer Protocol (FTP)"
+    service_names_descr["_gamecenter._tcp."] = "Apple Game Center"
     service_names_descr["_googlecast._tcp."] = "Google Cast (Chromecast)"
     service_names_descr["_googlezone._tcp."] = "Google Zone (Chromecast)"
     service_names_descr["_hap._tcp."] = "Apple HomeKit – HomeKit Accessory Protocol"
-    service_names_descr["_homekit._tcp."] = "Apple HomeKit"
     service_names_descr["_home-sharing._tcp."] = "iTunes Home Sharing"
+    service_names_descr["_homekit._tcp."] = "Apple HomeKit"
+    service_names_descr["_http-alt._tcp."] = "HTTP server on alternative port"
     service_names_descr["_http._tcp."] = "Hypertext Transfer Protocol (HTTP)"
     service_names_descr["_https._tcp."] = "Hypertext Transfer Protocol (HTTP)"
     service_names_descr["_hudson._tcp."] = "Jenkins App"
+    service_names_descr["_hue._tcp."] = "Philips Hue"
     service_names_descr["_ica-networking._tcp."] = "Image Capture Sharing"
     service_names_descr["_ichat._tcp."] = "iChat Instant Messaging Protocol"
     service_names_descr["_ipp._tcp."] = "IPP Printers"
-    service_names_descr["_ippusb._tcp."] = "IPP Printers"
     service_names_descr["_ipps._tcp."] = "IPP Printers"
+    service_names_descr["_ippusb._tcp."] = "IPP Printers"
     service_names_descr["_jenkins._tcp."] = "Jenkins App"
-    service_names_descr["_hudson._tcp."] = "Jenkins App"
-    service_names_descr["_KeynoteControl._tcp."] = "OSX Keynote"
     service_names_descr["_keynotepair._tcp."] = "OSX Keynote"
+    service_names_descr["_mamp._tcp."] = "MAMP Development Server"
     service_names_descr["_mediaremotetv._tcp."] = "Apple TV Media Remote"
+    service_names_descr["_ndi._tcp."] = "Siena TV"
+    service_names_descr["_net-assistant._tcp."] = "Apple Remote Desktop"
     service_names_descr["_nfs._tcp."] = "Network File System (NFS)"
+    service_names_descr["_nmea-0183._tcp."] = "Navico Multifunctional Displays"
     service_names_descr["_nvstream._tcp."] = "NVIDIA Shield Game Streaming"
-    service_names_descr["_androidtvremote._tcp."] = "Nvidia Shield / Android TV"
+    service_names_descr["_od-master._tcp."] = "OpenDirectory Master"
+    service_names_descr["_odisk._tcp."] = "Apple Optical Disk Sharing"
     service_names_descr["_omnistate._tcp."] = "OmniGroup (OmniGraffle and other apps)"
-    service_names_descr["_presence._tcp."] = "iChat Buddies, Apple"
-    service_names_descr["_ichat._tcp."] = "iChat Instant Messaging Protocol, Apple"
     service_names_descr["_pdl-datastream._tcp."] = "PDL Data Stream (Port 9100)"
     service_names_descr["_photoshopserver._tcp."] = "Adobe Photoshop Nav"
+    service_names_descr["_physicalweb._tcp."] = "Physical Web, Google"
+    service_names_descr["_presence._tcp."] = "iChat Buddies, Apple"
     service_names_descr["_printer._tcp."] = "Printers - Line Printer Daemon (LPD/LPR)"
+    service_names_descr["_privet._tcp."] = "Cloud Device Local Discovery API used by cloud services"
+    service_names_descr["_psia._tcp."] = "Stretch PSIA IP Camera"
+    service_names_descr["_ptp._tcp."] = "Picture Transfer Protocol"
+    service_names_descr["_pulse-server._tcp."] = "Pulse Audio Server"
+    service_names_descr["_pulse-sink._tcp."] = "Pulse Audio"
+    service_names_descr["_pulse-source._tcp."] = "Pulse Audio"
     service_names_descr["_raop._tcp."] = "AirPlay – Remote Audio Output Protocol"
-    service_names_descr["_readynas._tcp."] = "Netgear ReadyNAS"
+    service_names_descr["_rdlink._tcp."] = "Apple"
+    service_names_descr["_readynas._tcp."] = "Netgear Ready NAS"
     service_names_descr["_rfb._tcp."] = "Remote Frame Buffer / Screen Sharing"
-    service_names_descr["_physicalweb._tcp."] = "Physical Web (Google)"
-    service_names_descr["_riousbprint._tcp."] = "Remote I/O USB Printer Protocol"
+    service_names_descr["_riousbprint._tcp."] = "Remote USB port emulation, Printing, Apple"
     service_names_descr["_rsp._tcp."] = "Roku Server Protocol"
+    service_names_descr["_samsungmsf._tcp."] = "Samsung"
+    service_names_descr["_sane-port._tcp."] = "SANE (Scanner Access Now Easy) Network Daemon"
+    service_names_descr["_scan-target._tcp."] = "Scanner, Printing"
     service_names_descr["_scanner._tcp."] = "Scanners"
     service_names_descr["_servermgr._tcp."] = "Server Admin, Apple"
     service_names_descr["_sftp-ssh._tcp."] = "SFTP File Protocol"
+    service_names_descr["_sketchmirror._tcp."] = "Sketch App"
     service_names_descr["_sleep-proxy._udp."] = "Wake-on-Network / Bonjour Sleep Proxy"
     service_names_descr["_smb._tcp."] = "SMB File Protocol"
     service_names_descr["_spotify-connect._tcp."] = "Spotify Connect"
     service_names_descr["_ssh._tcp."] = "SSH"
     service_names_descr["_teamviewer._tcp."] = "TeamViewer"
     service_names_descr["_telnet._tcp."] = "Remote Login (TELNET)"
+    service_names_descr["_tftp._tcp."] = "Trivial File Transfer Protocol"
+    service_names_descr["_tivo-videos._tcp."] = "Tivo Service Advertising"
     service_names_descr["_touch-able._tcp."] = "Apple TV Remote App (iOS devices)"
     service_names_descr["_tunnel._tcp."] = "Tunnel File Protocol"
     service_names_descr["_udisks-ssh._tcp."] = "Ubuntu / Raspberry Pi Advertisement / disk management tool"
-    service_names_descr["_webdav._tcp."] = "WebDAV File System (WEBDAV)"
-    service_names_descr["_webdavs._tcp."] = "WebDAV File System (WEBDAV)"
-    service_names_descr["_workstation._tcp."] = "Workgroup Manager"
-    service_names_descr["_xserveraid._tcp."] = "Xserve RAID, Apple"
-    service_names_descr["_hue._tcp."] = "Philips Hue"
-    service_names_descr["_rdlink._tcp."] = "Apple"
-    service_names_descr["_net-assistant._tcp."] = "Apple Remote Desktop"
-    service_names_descr["_od-master._tcp."] = "OpenDirectory Master"
-    service_names_descr["_tftp._tcp."] = "Trivial File Transfer Protocol"
-    service_names_descr["._tcp."] = "OSX Device Info"
-    service_names_descr["_dns-sd._udp."] = "DNS Service Discovery"
-    service_names_descr["_privet._tcp."] = "Cloud Device Local Discovery API used by cloud services"
     service_names_descr["_uscan._tcp."] = "HP Printer"
     service_names_descr["_uscans._tcp."] = "HP Printer"
-    service_names_descr["_ptp._tcp."] = "Picture Transfer Protocol"
-    service_names_descr["_withings-aura-bridge._tcp."] = "Sleep tracker Aura Withings"
-    service_names_descr["_coremediamgr._tcp."] = "Air Video HD"
-    service_names_descr["_mamp._tcp."] = "MAMP Development Server"
-    service_names_descr["_1password4._tcp."] = "1Password Wi-Fi Sync"
-    service_names_descr["_sane-port._tcp."] = "SANE (Scanner Access Now Easy) Network Daemon"
-    service_names_descr["_nmea-0183._tcp."] = "Navico Multifunctional Displays"
-    service_names_descr["_riousbprint._tcp."] = "Remote USB port emulation, Printing, Apple"
-    service_names_descr["_ndi._tcp."] = "Siena TV"
+    service_names_descr["_webdav._tcp."] = "WebDAV File System (WEBDAV)"
+    service_names_descr["_webdavs._tcp."] = "WebDAV File System (WEBDAV)"
     service_names_descr["_wirecastgodirect._tcp."] = "Wirecast Go Streaming by TeleStream"
-    service_names_descr["_scan-target._tcp."] = "Scanner, Printing"
-    service_names_descr["_tivo-videos._tcp."] = "Tivo Service Advertising"
-    service_names_descr["_readynas._tcp."] = "Netgear Ready NAS"
-    service_names_descr["_csco-sb.._tcp."] = "Cisco SB (small business), router/switches"
-    service_names_descr["_pulse-server._tcp."] = "Pulse Audio Server"
-    service_names_descr["_pulse-sink._tcp."] = "Pulse Audio"
-    service_names_descr["_pulse-source._tcp."] = "Pulse Audio"
-    service_names_descr["_duet_air._tcp."] = "Duet Screen Sharing"
-    service_names_descr["_samsungmsf._tcp."] = "Samsung"
-    service_names_descr["_odisk._tcp."] = "Apple Optical Disk Sharing"
-    service_names_descr["_psia._tcp."] = "Stretch PSIA IP Camera"
-    service_names_descr["_arduino._tcp."] = "Arduino"
-    service_names_descr["_gamecenter._tcp."] = "Apple Game Center"
-    service_names_descr["_sketchmirror._tcp."] = "Sketch App"
-    service_names_descr["_bcbonjour._tcp."] = "Sketch App"
-    service_names_descr["_physicalweb._tcp."] = "Physical Web, Google"
-    service_names_descr["_bowtie._tcp."] = "Bowtie Remote"
-    service_names_descr["_bttremote._tcp."] = "Bowtie Remote"
-    service_names_descr["_bttouch._tcp."] = "Bowtie Remote"
-    service_names_descr["_http-alt._tcp."] = "HTTP server on alternative port"
-    service_names_descr["_fax-ipp._tcp."] = "FAX Printing"
+    service_names_descr["_withings-aura-bridge._tcp."] = "Sleep tracker Aura Withings"
+    service_names_descr["_workstation._tcp."] = "Workgroup Manager"
+    service_names_descr["_xserveraid._tcp."] = "Xserve RAID, Apple"
     return service_names_descr
 }()
 
