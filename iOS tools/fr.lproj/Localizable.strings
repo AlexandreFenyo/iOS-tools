@@ -100,3 +100,6 @@
 "found " = "trouvé ";
 "trying " = "teste ";
 "browsing TCP ports" = "parcours des ports TCP";
+"Hostname" = "Nom d'hôte";
+"mDNS/Bonjour services" = "Services mDNS/Bonjour";
+"Service key content" = "Contenu de la clé du service";

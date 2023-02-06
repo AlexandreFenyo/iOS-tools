@@ -336,11 +336,11 @@ struct DetailSwiftUIView: View {
                             TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
                                 if !tag.contains(".") || tag.contains("(") || tag.contains(")") || tag.contains(" ") || tag.contains(".local") || tag == "localhost" {
                                     master_view_controller.popUpHelp(.no_dns, "This hostname has not any public DNS record. Select a host name with public DNS records to get those records.") {
-                                        master_view_controller.popUp("Hostname", tag, "OK")
+                                        master_view_controller.popUp(NSLocalizedString("Hostname", comment: "Hostname"), tag, "OK")
                                     }
                                     return
                                 }
-                                master_view_controller.popUp("Hostname", tag, "OK")
+                                master_view_controller.popUp(NSLocalizedString("Hostname", comment: "Hostname"), tag, "OK")
                                 UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)
                             }
 
@@ -434,18 +434,17 @@ struct DetailSwiftUIView: View {
                                 }
                             }
 
-                            
-
-                            VStack {
-                                HStack {
-                                    VStack { Divider() }
-                                    Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                            if !model.text_services.isEmpty {
+                                VStack {
+                                    HStack {
+                                        VStack { Divider() }
+                                        Text("mDNS/Bonjour services").foregroundColor(.gray.lighter().lighter()).font(.footnote)
+                                    }
+                                    
+                                    Spacer().frame(height: 14)
+                                    
                                 }
-
-                                Spacer().frame(height: 14)
-
                             }
-
 
                             ForEach(model.text_services, id: \.self) { service_name in
                                 HStack(spacing: 2)  {
@@ -473,7 +472,7 @@ struct DetailSwiftUIView: View {
                                         // https://developer.apple.com/bonjour/printing-specification/bonjourprinting-1.2.1.pdf
                                         TagCloudView(tags: model.text_services_attr[service_name]!,
                                                      master_view_controller: master_view_controller, font: .caption) { tag in
-                                            master_view_controller.popUp("Service key content", tag, "OK")
+                                            master_view_controller.popUp(NSLocalizedString("Service key content", comment: "Service key content"), tag, "OK")
                                         }
                                         Spacer()
                                     }.background(Color(COLORS.toolbar_background).lighter())
@@ -481,22 +480,14 @@ struct DetailSwiftUIView: View {
 
                                 Spacer().frame(height: 2)
                             }
-
-                            
-                            
                             
                         }
-                        
                         
                     }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
                 }//.id(topID)
                 .cornerRadius(15).padding(7) // VStack
             }.background(Color(COLORS.right_pannel_bg)) // ScrollView
             //            .popover(isPresented: $showing_popover) { Text("SALUT")}
-            
         }
-        
-        
-        
     }
 }
