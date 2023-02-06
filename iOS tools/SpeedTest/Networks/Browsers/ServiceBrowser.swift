@@ -79,8 +79,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 dict[key_str] = val_str
                 return dict
             } else {
-                print("\(#function) error: bad format (no =)")
-                return decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1)))
+                // on va créer une entrée sans valeur, de type "clé=THIS_IS_NOT_A_VALUE_AFAFAF", mais en réalité c'est une entrée sans "=", c'est permis par le protocole (https://grouper.ieee.org/groups/1722/contributions/2009/Bonjour%20Device%20Discovery.pdf), on remet en forme correctement au moment de l'afficher, dans DetailViewModel.updateDetails()
+                var dict = size + 1 < data.count ? decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1))) : [:]
+                dict[Self.bytesToString(key_val)] = "THIS_IS_NOT_A_VALUE_AFAFAF"
+                return dict
+//                return decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1)))
             }
         }
         print("\(#function) error: empty data")

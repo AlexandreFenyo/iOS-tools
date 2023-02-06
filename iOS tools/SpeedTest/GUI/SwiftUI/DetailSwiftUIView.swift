@@ -177,7 +177,7 @@ public class DetailViewModel : ObservableObject {
         _ = node.services.map({ $0 }).map { svc in
             text_services_port[svc.name] = svc.port
             text_services_attr[svc.name] = svc.attr.map({ (key: String, value: String) in
-                "\(key): \(value)"
+                value == "THIS_IS_NOT_A_VALUE_AFAFAF" ? "\(key)" : "\(key): \(value)"
             })
         }
 
@@ -458,7 +458,7 @@ struct DetailSwiftUIView: View {
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
 
-                                        Text("contact and calendar synchronization")
+                                        Text(service_names_descr[service_name] ?? "")
                                             .font(.footnote)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
