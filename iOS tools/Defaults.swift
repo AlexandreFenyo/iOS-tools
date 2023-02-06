@@ -13,6 +13,9 @@ import SpriteKit
 
 // Cette liste doit être synchronisée avec les services déclarés dans Info.plist
 let service_names = [
+    "_speedtestapp._tcp.",
+    "_speedtestchargen._tcp.",
+    "_speedtestdiscard._tcp.",
     "_1password4._tcp.",
     "_KeynoteControl._tcp.",
     "_acp-sync._tcp.",
@@ -131,6 +134,9 @@ let service_names = [
 //RAJOUTER LES SERVICES NOUVEAUX AUX AUTRES TABLEAUX !
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
+    service_names_descr["_speedtestapp._tcp."] = "WiFiMapExplorer discovering service"
+    service_names_descr["_speedtestchargen._tcp."] = "WiFiMapExplorer chargen service"
+    service_names_descr["_speedtestdiscard._tcp."] = "WiFiMapExplorer discard service"
     service_names_descr["_1password4._tcp."] = "1Password Wi-Fi Sync"
     service_names_descr["_KeynoteControl._tcp."] = "OSX Keynote"
     service_names_descr["_acp-sync._tcp."] = "Airport Base Station Sync"

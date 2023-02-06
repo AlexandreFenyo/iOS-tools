@@ -31,7 +31,7 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  */
 
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
-    private var services: [ NetService ] = []
+    private var services: [NetService] = []
     private let type: String
     private let device_manager : DeviceManager
 
@@ -46,7 +46,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         return retval
     }
 
-    private func decodeTxt(_ data: Data) -> [ String: String ] {
+    private func decodeTxt(_ data: Data) -> [String : String] {
         if let _size = data.first {
             let size = Int(_size)
             if size == 0 {
@@ -74,7 +74,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 let val_str = Self.bytesToString(val)
 
                 var dict = size + 1 < data.count ? decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1))) : [:]
-//                print("\(#function): adding \(key_str) = \(val_str)")
                 dict[key_str] = val_str
                 return dict
             } else {
@@ -82,7 +81,6 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 var dict = size + 1 < data.count ? decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1))) : [:]
                 dict[Self.bytesToString(key_val)] = "THIS_IS_NOT_A_VALUE_AFAFAF"
                 return dict
-//                return decodeTxt(data.suffix(from: data.indices.first!.advanced(by: size + 1)))
             }
         }
         print("\(#function) error: empty data")
@@ -94,13 +92,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Remote service app discovered
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         // print(#function)
-        // print("service.name = \(service.name)")
-        // Only add remote services
-        if (service.name != UIDevice.current.name) {
+//        if (service.name != UIDevice.current.name) {
             services.append(service)
             service.delegate = self
             service.resolve(withTimeout: TimeInterval(10))
-        }
+//        }
     }
 
     // Remote service app closed
@@ -162,7 +158,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
         let node = Node()
 
-        var text_attr = [String: String]()
+        var text_attr = [String : String]()
         if let data = sender.txtRecordData() {
             text_attr = decodeTxt(data)
         }
