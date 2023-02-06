@@ -28,7 +28,6 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  <string>_print._sub._ipps._tcp</string>
  <string>_printer._sub._http._tcp</string>
  <string>_Friendly._sub._bp2p._tcp</string>
-
  */
 
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
