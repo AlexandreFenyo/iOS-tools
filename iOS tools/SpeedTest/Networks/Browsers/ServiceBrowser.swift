@@ -21,6 +21,7 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  liste des services Bonjour : https://jonathanmumm.com/tech-it/mdns-bonjour-bible-common-service-strings-for-various-vendors/
  <string>_services._dns-sd._udp</string>
 
+ il faudrait identifier comment fonctionnent les sub pour les intégrer éventuellement
  <string>_invoke._sub._bp2p._tcp</string>
  <string>_webdav._sub._bp2p._tcp</string>
  <string>_print._sub._ipp._tcp</string>

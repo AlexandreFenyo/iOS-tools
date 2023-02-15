@@ -13,18 +13,18 @@ let debug = true
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     // liste des ports à scanner lors d'un browse du réseau complet
-    private static let ports_set : Set<UInt16> = Set(1...65535)
+    private static let ports_set: Set<UInt16> = Set(1...65535)
 //    private static let ports_set : Set<UInt16> = Set(8020...8022)
 
     // liste des ports à scanner lors d'un browse d'une IP spécifique
-    private static let ports_set_one_host : Set<UInt16> = Set(1...65535)
+    private static let ports_set_one_host: Set<UInt16> = Set(1...65535)
 //    private static let ports_set_one_host : Set<UInt16> = Set(8020...8022)
 
     //    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 30, 80]))
-    private let device_manager : DeviceManager
-    private var finished : Bool = false // Set by Main thread
-    private var ip_to_tcp_port : [IPAddress: Set<UInt16>] = [:] // Browse thread
-    private var ip_to_tcp_port_open : [IPAddress: Set<UInt16>] = [:] // Browse thread
+    private let device_manager: DeviceManager
+    private var finished: Bool = false // Set by Main thread
+    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
+    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
 
     // Main thread
     public func stop() {
@@ -142,9 +142,9 @@ class TCPPortBrowser {
                                 repeat {
                                     let t1 = NSDate().timeIntervalSince1970
                                     // https://cr.yp.to/docs/connect.html
-                                    var read_fds : fd_set = getfds(s)
-                                    var write_fds : fd_set = getfds(s)
-                                    var except_fds : fd_set = getfds(s)
+                                    var read_fds: fd_set = getfds(s)
+                                    var write_fds: fd_set = getfds(s)
+                                    var except_fds: fd_set = getfds(s)
                                     var tv = timeval(tv_sec: 0, tv_usec: delay)
                                     
                                     ret = select(s + 1, &read_fds, &write_fds, &except_fds, &tv)
@@ -154,8 +154,8 @@ class TCPPortBrowser {
                                     }
                                     if ret > 0 {
                                         // socket is in FDS
-                                        var so_error : Int32 = 0
-                                        var len : socklen_t = 4
+                                        var so_error: Int32 = 0
+                                        var len: socklen_t = 4
                                         ret = getsockopt(s, SOL_SOCKET, SO_ERROR, &so_error, &len)
                                         if ret < 0 {
                                             // can not get socket status
