@@ -4,7 +4,6 @@
 "Name" = "Name";
 "none given" = "none given";
 "Enabled" = "Enabled";
-"Choose the properties to reset" = "Choix des paramètres à réinitialiser";
-"Reset application state" = "Réinitialiser toutes les valeurs par défaut";
+"Reset application state" = "Réinitialiser aux valeurs par défaut";
 "Enable every help popups" = "Réactiver tous les popups d'aide";
 "Remove manually added nodes" = "Supprimer les nœuds ajoutés manuellement";
