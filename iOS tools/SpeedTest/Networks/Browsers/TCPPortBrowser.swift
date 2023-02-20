@@ -156,9 +156,6 @@ class TCPPortBrowser {
                                 ports.remove(port)
                             } else {
                                 // EINPROGRESS
-                                
-                                if self.isFinished() { break }
-                                
                                 var need_retry = false
                                 repeat {
                                     if self.isFinished() { break }
