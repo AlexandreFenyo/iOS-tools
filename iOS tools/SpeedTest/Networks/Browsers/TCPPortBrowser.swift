@@ -8,7 +8,8 @@
 
 import Foundation
 
-let debug = true
+// en mode debug, le grand nombre de logs fait qu'on croit que ça ne s'arrête pas quand on fait stop, c'est simplement le buffer de logs qui est devenu énorme et qui ne se vide pas assez vite, on a donc des logs anciens qui continuent à défiler
+let debug = false
 
 class TCPPortBrowser {
 //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
@@ -28,9 +29,15 @@ class TCPPortBrowser {
 
     // Main thread
     public func stop() {
+        NSLog("STOPPED")
         finished = true
     }
     
+    // Any thread
+    private func isFinished() -> Bool {
+        return DispatchQueue.main.sync { return finished }
+    }
+
     private func addPort(addr: IPAddress, port: UInt16) {
         DispatchQueue.main.async {
             let node = Node()
@@ -89,17 +96,31 @@ class TCPPortBrowser {
             DispatchQueue.global(qos: .userInitiated).async {
                 let _ports = self.ip_to_tcp_port[addr]!
 
-                for delay : Int32 in [ 100000, 1000, 5000, 20000, 800000 ] {
-                    if self.finished { break }
+                // delay: microseconds
+                for delay : Int32 in [ 100000, 20000,  10000 /*, 40000*/ ] {
+                    if self.isFinished() { break }
 
                     var ports = _ports
                     
-                    // à partir du 2ième essai, on ne teste plus que les ports inférieurs à 1024
-                    if delay > 1000 { ports.formIntersection(Set(1...1023)) }
-                    if delay == 100000 { ports.formIntersection(Set(1...23)) }
+                    // Internet, limited port range
+                    // delay == 100000 => 3 sec (0.1 * 30)
+                    if delay == 100000 { ports.formIntersection(ReducedStandardTCPPorts) }
+
+                    // local network, standard port range
+                    // delay == 20000 => 104 sec (0.02 * 5200)
+                    if delay == 20000 { ports.formIntersection(StandardTCPPorts) }
+
+                    // local network, standard port range 2nd try
+                    // delay == 10000 => 52 sec (0.01 * 5200)
+                    if delay == 10000 { ports.formIntersection(StandardTCPPorts) }
+                    
+                    // WiFi donc latence élevée donc impossible de parcourir tous les ports sans paralléliser le traitement, même pour une IP => à reprogrammer dans le futur
+                    // Internet, full port range
+                    // delay == 40000 => 52 sec (0.04 * 65535)
+                    // if delay == 40000 { ports.formIntersection(StandardTCPPorts) }
 
                     for port in self.ip_to_tcp_port[addr]!.sorted() {
-                        if self.finished { break }
+                        if self.isFinished() { break }
                         if ports.contains(port) == false { continue }
                         
                         let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
@@ -136,10 +157,12 @@ class TCPPortBrowser {
                             } else {
                                 // EINPROGRESS
                                 
-                                if self.finished { break }
+                                if self.isFinished() { break }
                                 
                                 var need_retry = false
                                 repeat {
+                                    if self.isFinished() { break }
+
                                     let t1 = NSDate().timeIntervalSince1970
                                     // https://cr.yp.to/docs/connect.html
                                     var read_fds: fd_set = getfds(s)

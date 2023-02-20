@@ -34,10 +34,10 @@
 "Chargen Discard services" = "Services Chargen/Discard";
 "other devices running these services" = "autres hôtes avec ces services";
 "Local gateway" = "Passerelle locale";
-"Other host" = "Hôte local";
+"Other host" = "Autre hôte";
 "local router" = "routeur local";
 "remote hosts on the Internet" = "autres hôtes sur Internet";
-"Other hosts" = "Autre hôtes";
+"Other hosts" = "Autres hôtes";
 "any host" = "hôtes quelconques";
 "New node properties" = "Caractéristiques de la nouvelle cible";
 "Add new target or new IP to existing target" = "Ajouter une nouvelle cible ou une nouvelle IP pour cette cible";

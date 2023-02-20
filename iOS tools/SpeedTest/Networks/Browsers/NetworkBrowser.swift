@@ -111,6 +111,7 @@ class NetworkBrowser {
     
     // Main thread
     public func stop() {
+        browser_tcp?.stop()
         finished = true
     }
 
