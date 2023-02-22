@@ -44,6 +44,7 @@ public class MapViewModel : ObservableObject {
     
     @Published var input_map_image: UIImage?
     @Published var original_map_image: UIImage?
+    @Published var original_map_image_rotation: Bool?
     @Published var idw_values = Array<IDWValue<Float>>()
     @Published var step = 0
     @Published var max_scale: Float = LOWEST_MAX_SCALE
@@ -225,7 +226,7 @@ struct HeatMapSwiftUIView: View {
                         .foregroundColor(Color(COLORS.leftpannel_ip_text))
                         .padding()
                         .sheet(isPresented: $showing_map_picker) {
-                            ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, idw_values: $model.idw_values)
+                            ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values)
                         }
                     Spacer()
                 }.background(Color(COLORS.toolbar_background))
@@ -316,6 +317,7 @@ struct HeatMapSwiftUIView: View {
                                 exporting_map = true
 
                                 let image = model.original_map_image!
+                                let image_rotation = model.original_map_image_rotation!
                                 let width = image.cgImage!.width
                                 let height = image.cgImage!.height
                                 let screen_width = model.input_map_image?.cgImage!.width
@@ -342,13 +344,17 @@ struct HeatMapSwiftUIView: View {
                                     let blurred_image = blur.outputImage
                                     let new_blur_cg_image = ci_context_blur.createCGImage(blurred_image!, from: ci_image_map_ext)
                                     let blur_image = UIImage(cgImage: new_blur_cg_image!)
-                                    
-                                    let ci_image_original = CIImage(cgImage: image.withHorizontallyFlippedOrientation().cgImage!)
+                                    let ci_image_original = CIImage(cgImage: image.cgImage!)
                                     let ci_image_original_ext = ci_image_original.extent
                                     let ci_context_grayscale = CIContext()
                                     let grayscale = CIFilter(name: "CIPhotoEffectNoir")!
                                     grayscale.setValue(ci_image_original, forKey: kCIInputImageKey)
-                                    let gray_image = grayscale.outputImage
+                                    var gray_image = grayscale.outputImage
+
+                                    if image_rotation {
+                                        gray_image = gray_image?.oriented(CGImagePropertyOrientation.upMirrored)
+                                    }
+                                    
                                     let new_grayscale_cg_image = ci_context_grayscale.createCGImage(gray_image!, from: ci_image_original_ext)
                                     let grayscale_image = UIImage(cgImage: new_grayscale_cg_image!)
                                     
