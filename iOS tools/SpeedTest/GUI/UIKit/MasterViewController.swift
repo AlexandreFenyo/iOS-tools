@@ -124,7 +124,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func resetToDefaultHosts() {
-        addTrace("Remove previously discovered hosts", level: .INFO)
+        addTrace("main: remove previously discovered hosts", level: .INFO)
 
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
@@ -150,7 +150,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
-            self.addTrace("Start browsing the network", level: .INFO)
+            self.addTrace("network browsing: start browsing the network", level: .INFO)
 
             self.stop_button!.isEnabled = true
             self.detail_view_controller?.enableButtons(false)
@@ -188,6 +188,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Stop looking for new nodes
     // Main thread ?
     public func stopBrowsing(_ action: NewRunAction) {
+        self.addTrace("network browsing: stop browsing the network", level: .INFO)
+
         Task { await detail_view_controller?.ts.clearAverage() }
 
         refreshControl!.endRefreshing()
@@ -391,7 +393,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addTrace("Application started", level: .INFO)
+        addTrace("main: application started", level: .INFO)
         
         // Couleur du Edit
         navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons

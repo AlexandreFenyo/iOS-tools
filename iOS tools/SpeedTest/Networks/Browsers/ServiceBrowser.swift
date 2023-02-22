@@ -126,13 +126,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
 //        print(#function)
-        device_manager.addTrace("Start browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
+        device_manager.addTrace("Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
         print(#function)
-        device_manager.addTrace("Stop browsing multicast DNS / Bonjour services of type \(type)", level: .INFO)
+        device_manager.addTrace("Bonjour/mDNS: stop browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
     }
 
     // MARK: - NetServiceDelegate
@@ -210,6 +210,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
 
+        device_manager.addTrace("Bonjour/mDNS: service found: type:\(type); name:\(sender.name); hostname:\(String(describing: sender.hostName)); sender.type:\(sender.type); port:\(sender.port); descr:\(sender.description); debug:\(sender.debugDescription); domain:\(sender.domain); attributes:\(text_attr)", level: .DEBUG)
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
 }
@@ -228,8 +229,6 @@ class ServiceBrowser : NetServiceBrowser {
     }
 
     public func search() {
-        device_manager.addTrace("searchForServices(\(type), \(NetworkDefaults.local_domain_for_browsing))", level: .ALL)
-
         searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
     }
 }

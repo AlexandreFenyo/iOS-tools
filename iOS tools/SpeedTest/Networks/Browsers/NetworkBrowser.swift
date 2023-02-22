@@ -29,11 +29,11 @@ class NetworkBrowser {
         for network in networks {
             // IPv6 networks
             if let network_addr = network.ip_address as? IPv6Address {
-                
                 // question : comment ::1 peut arriver dans networks ? (c'est bien le cas)
                 if network_addr == IPv6Address("::1") { continue }
                 if network_addr.isLLA() {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
+                    device_manager.addTrace("network browsing: will send multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
                     multicast_ipv6.insert(multicast)
                 }
             }
