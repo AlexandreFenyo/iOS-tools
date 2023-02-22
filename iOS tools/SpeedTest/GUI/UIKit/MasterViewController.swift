@@ -188,7 +188,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Stop looking for new nodes
     // Main thread ?
     public func stopBrowsing(_ action: NewRunAction) {
-        self.addTrace("network browsing: stop browsing the network", level: .INFO)
+        if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
         Task { await detail_view_controller?.ts.clearAverage() }
 

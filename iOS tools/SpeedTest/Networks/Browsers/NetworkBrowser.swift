@@ -33,7 +33,7 @@ class NetworkBrowser {
                 if network_addr == IPv6Address("::1") { continue }
                 if network_addr.isLLA() {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
-                    device_manager.addTrace("network browsing: will send multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
+                    device_manager.addTrace("network browsing: will send IPV6 multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
                     multicast_ipv6.insert(multicast)
                 }
             }
@@ -44,14 +44,16 @@ class NetworkBrowser {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
                 if network.mask_len < 22 {
+                    device_manager.addTrace("network browsing: will send IPv4 broadcast packet to \(broadcast.toNumericString() ?? "")", level: .DEBUG)
                     broadcast_ipv4.insert(broadcast)
                 } else {
                     if network.mask_len != 32 {
                         var current = network_addr.and(netmask).next() as! IPv4Address
                         repeat {
                             if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
-//                                device_manager.addTrace("Adding \(current.toNumericString()!)", level: .ALL)
-                                reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil) }
+                                device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
+                                reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
+                            }
                             current = current.next() as! IPv4Address
                         } while current != broadcast
                     }
@@ -80,8 +82,6 @@ class NetworkBrowser {
     // Any thread
     private func manageAnswer(from: IPAddress) {
         DispatchQueue.main.sync {
-//            device_manager.addTrace("ON VA FAIRE UNE TRACE", level: .ALL)
-            
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
@@ -89,6 +89,7 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
+                    device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
                 // Do not try to reach this address with unicast anymore
@@ -99,13 +100,13 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
+                    device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
 
             default:
                 print("manageAnswer(): invalid family", from.getFamily())
             }
-
         }
     }
     
@@ -167,12 +168,15 @@ class NetworkBrowser {
             let dispatchGroup = DispatchGroup()
             
             // Send unicast ICMPv4
+            self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
+                        self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
                         hdr.icmp_code = 0
@@ -202,16 +206,20 @@ class NetworkBrowser {
                 // Wait .5 sec between the last unicast packet sent and toggling the finished flag
                 usleep(500000)
                 DispatchQueue.main.sync { self.unicast_ipv4_finished = true }
-                
+
                 dispatchGroup.leave()
+                self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
             }
 
             // Send broadcast ICMPv4
+            self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
+                        self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
+
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
                         hdr.icmp_code = 0
@@ -244,14 +252,18 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.broadcast_ipv4_finished = true }
 
                 dispatchGroup.leave()
+                self.device_manager.addTrace("network browsing: finished sending ICMPv4 broadcast packets", level: .INFO)
             }
 
             // Send multicast ICMPv6
+            self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
+                        self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+
                         var saddr = address.toSockAddress()!.getData()
                         var msg_hdr = msghdr()
                         var hdr = icmp6_hdr()
@@ -289,9 +301,11 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
 
                 dispatchGroup.leave()
+                self.device_manager.addTrace("network browsing: finished sending ICMPv6 multicast packets", level: .INFO)
             }
 
             // Catch IPv4 replies
+            self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {
@@ -311,13 +325,13 @@ class NetworkBrowser {
                     }
 
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    // print("reply from IPv4", SockAddr.getSockAddr(from).toNumericString()!)
-                    
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
+                self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
             }
 
             // Catch IPv6 replies
+            self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {
@@ -337,10 +351,9 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-                    // print("reply from IPv6", SockAddr.getSockAddr(from).toNumericString()!)
-                    
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
+                self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
             }
             
             dispatchGroup.wait()
