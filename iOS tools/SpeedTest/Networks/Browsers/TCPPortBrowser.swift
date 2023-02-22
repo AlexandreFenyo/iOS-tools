@@ -84,10 +84,16 @@ class TCPPortBrowser {
         }
         
         let dispatchGroup = DispatchGroup()
-        DispatchQueue.main.sync { device_manager.setInformation(NSLocalizedString("browsing TCP ports", comment: "browsing TCP ports")) }
+        DispatchQueue.main.sync {
+            device_manager.setInformation(NSLocalizedString("browsing TCP ports", comment: "browsing TCP ports"))
+        }
 
         for addr in self.ip_to_tcp_port.keys {
             if debug { print(addr.toNumericString()!, "tcp - starting address") }
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
+            }
+
             dispatchGroup.enter()
             
             self.ip_to_tcp_port_open[addr] = Set<UInt16>()
@@ -113,7 +119,11 @@ class TCPPortBrowser {
                     // local network, standard port range 2nd try
                     // delay == 10000 => 52 sec (0.01 * 5200)
                     if delay == 10000 { ports.formIntersection(StandardTCPPorts) }
-                    
+
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports.count) ports waiting \(delay)ms for each", level: .INFO)
+                    }
+
                     // WiFi donc latence élevée donc impossible de parcourir tous les ports sans paralléliser le traitement, même pour une IP => à reprogrammer dans le futur
                     // Internet, full port range
                     // delay == 40000 => 52 sec (0.04 * 65535)
@@ -138,7 +148,12 @@ class TCPPortBrowser {
                             close(s)
                             fatalError("browse: fcntl")
                         }
-                        
+
+                        /* TROP consommateur de CPU, ça ralentit tout le processus
+                        DispatchQueue.main.async {
+                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): trying port \(port) for \(delay)ms", level: .ALL)
+                        }*/
+
                         if debug { print(addr.toNumericString()!, ": trying port", port, "for", delay, "microseconds") }
                         let t0 = NSDate().timeIntervalSince1970
                         
@@ -204,6 +219,9 @@ class TCPPortBrowser {
                                                 } else {
                                                     // we got a peer name
                                                     print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay)
+                                                    DispatchQueue.main.async {
+                                                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
+                                                    }
                                                     // do not retry this port
                                                     ports.remove(port)
                                                     self.addPort(addr: addr, port: port)
@@ -212,6 +230,10 @@ class TCPPortBrowser {
                                             case ECONNREFUSED:
                                                 // do not retry this port
                                                 ports.remove(port)
+                                                /* TROP consommateur de CPU, ça ralentit tout le processus
+                                                DispatchQueue.main.async {
+                                                    self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  connection refused on port \(port)", level: .ALL)
+                                                }*/
                                                 if debug { print(addr.toNumericString()!, "getsockopt connection refused port", port) }
                                                 
                                             default:
@@ -244,6 +266,10 @@ class TCPPortBrowser {
                     }
                 }
                 dispatchGroup.leave()
+                
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
+                }
             }
         }
 
@@ -252,6 +278,7 @@ class TCPPortBrowser {
 
         // peut etre mettre ceci dans le doAtEnd au moment où il est construit
         DispatchQueue.main.sync {
+            device_manager.addTrace("TCP ports browsing: finished", level: .INFO)
             device_manager.setInformation("")
         }
  

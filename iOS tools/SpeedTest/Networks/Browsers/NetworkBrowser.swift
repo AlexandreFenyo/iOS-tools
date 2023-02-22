@@ -89,7 +89,9 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
-                    device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
+                    }
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
                 // Do not try to reach this address with unicast anymore
@@ -100,7 +102,9 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
-                    device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
+                    }
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
 
@@ -175,7 +179,9 @@ class NetworkBrowser {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
-                        self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        DispatchQueue.main.async {
+                            self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        }
 
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
@@ -218,7 +224,9 @@ class NetworkBrowser {
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
-                        self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        DispatchQueue.main.async {
+                            self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        }
 
                         var hdr = icmp()
                         hdr.icmp_type = UInt8(ICMP_ECHO)
@@ -262,7 +270,9 @@ class NetworkBrowser {
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
-                        self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        DispatchQueue.main.async {
+                            self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                        }
 
                         var saddr = address.toSockAddress()!.getData()
                         var msg_hdr = msghdr()
