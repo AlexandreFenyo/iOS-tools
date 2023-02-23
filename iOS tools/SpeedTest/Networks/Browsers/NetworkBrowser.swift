@@ -222,7 +222,9 @@ class NetworkBrowser {
             }
 
             // Send broadcast ICMPv4
-            self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
+            }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
@@ -270,7 +272,9 @@ class NetworkBrowser {
             }
 
             // Send multicast ICMPv6
-            self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
+            }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
@@ -351,7 +355,9 @@ class NetworkBrowser {
             }
 
             // Catch IPv6 replies
-            self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
+            }
             dispatchGroup.enter()
             DispatchQueue.global(qos: .userInitiated).async {
                 repeat {

@@ -649,6 +649,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_ping_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            DispatchQueue.main.async {
+                self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+            }
+
             var has_answered = false
             var nloop = 0
             await self.detail_view_controller?.ts.setUnits(units: .RTT)
@@ -657,6 +661,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 if let rtt = await self.local_ping_client?.getRTT() {
                     if rtt > 0 {
                         has_answered = true
+                        DispatchQueue.main.async {
+                            self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
+                        }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
                     }
                 } else { break }
@@ -669,6 +676,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 }
             }
             // objectif : arrivé ici, la boucle de ping est terminée
+            DispatchQueue.main.async {
+                self.addTrace("ICMP loop: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+            }
         }
     }
 
@@ -686,6 +696,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_flood_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            DispatchQueue.main.async {
+                self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
+            }
+
             await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network stages. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network stages. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
@@ -696,6 +710,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                         if first_skipped == false {
                             first_skipped = true
                         } else {
+                            DispatchQueue.main.async {
+                                self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(Int(throughput))", level: .INFO)
+                            }
                             await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                         }
                     }
@@ -703,6 +720,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC)
             }
             // objectif : arrivé ici, la boucle de flood est terminée
+            DispatchQueue.main.async {
+                self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+            }
         }
     }
     
@@ -721,6 +741,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_discard_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            DispatchQueue.main.async {
+                self.addTrace("flood TCP discard port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+            }
+
             var is_connected = false
             var nsec = 0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
@@ -729,6 +753,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 if let throughput = await self.local_discard_client?.getThroughput() {
                     if throughput > 0 {
                         is_connected = true
+                        DispatchQueue.main.async {
+                            self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
+                        }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
@@ -777,6 +804,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
+            DispatchQueue.main.async {
+                self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+            }
         }
     }
 
@@ -794,6 +824,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         local_chargen_client!.start()
 
         Task.detached(priority: .userInitiated) {
+            DispatchQueue.main.async {
+                self.addTrace("flood TCP chargen port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+            }
+
             var is_connected = false
             var nsec = 0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
@@ -802,6 +836,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 if let throughput = await self.local_chargen_client?.getThroughput() {
                     if throughput > 0 {
                         is_connected = true
+                        DispatchQueue.main.async {
+                            self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
+                        }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
                     if throughput < 0 {
@@ -848,6 +885,9 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
+            DispatchQueue.main.async {
+                self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+            }
         }
     }
 
