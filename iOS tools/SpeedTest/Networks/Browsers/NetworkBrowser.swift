@@ -172,7 +172,9 @@ class NetworkBrowser {
             let dispatchGroup = DispatchGroup()
             
             // Send unicast ICMPv4
-            self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
+            }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
             DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
