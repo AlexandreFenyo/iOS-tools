@@ -121,8 +121,11 @@ final class GenericTools : AutoTrace {
     // print("here:", s, "instance:", o)
     // ...
 
+    static let development = false
     public static func perror(_ str : String = "error") {
-        print("\(str): \(String(cString: strerror(errno))) (\(errno))")
+        if development {
+            print("\(str): \(String(cString: strerror(errno))) (\(errno))")
+        }
     }
 
     // Placeholder for tests

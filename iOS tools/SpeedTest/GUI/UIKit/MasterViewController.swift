@@ -787,7 +787,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                         }
                     }
                 } else {
-                    print("break (0)")
+                    print("\(#function) error: break")
                     break
                 }
 

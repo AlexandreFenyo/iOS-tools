@@ -102,7 +102,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
-        print(#function)
+        // print(#function)
         if let idx = services.firstIndex(of: service) {
             DispatchQueue.main.async {
                 self.device_manager.addTrace("Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)", level: .DEBUG)
@@ -116,7 +116,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // Simulate by switching Wi-Fi off and returning to the app
     public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
-        print(#function)
+        // print(#function)
 //        print("didNotSearch")
 //        for err in errorDict {
 //            print("didNotSearch:", err.key, ":", err.value)
@@ -136,7 +136,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
-        print(#function)
+        // print(#function)
         device_manager.addTrace("Bonjour/mDNS: stop browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
     }
 
@@ -145,8 +145,13 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Service that the browser had found but has not been resolved
     // Simulate by setting a TimeInterval of 0.1 when resolving the service
     public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
-        print(#function)
-        for err in errorDict { print("didNotResolve:", err.key, ":", err.value) }
+        // print(#function)
+        /*
+        for err in errorDict {
+            print("didNotResolve:", err.key, ":", err.value)
+        }
+         */
+
         if let idx = services.firstIndex(of: sender) { services.remove(at: idx) }
         else { print("warning: service browsed but not resolved") }
     }

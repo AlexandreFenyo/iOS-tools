@@ -29,7 +29,7 @@ class TCPPortBrowser {
 
     // Main thread
     public func stop() {
-        NSLog("STOPPED")
+//        NSLog("STOPPED")
         finished = true
     }
     
@@ -218,7 +218,7 @@ class TCPPortBrowser {
                                                     }
                                                 } else {
                                                     // we got a peer name
-                                                    print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay)
+                                                    if debug { print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay) }
                                                     DispatchQueue.main.async {
                                                         self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
                                                     }
@@ -274,7 +274,7 @@ class TCPPortBrowser {
         }
 
         dispatchGroup.wait()
-        print("TCP browse ADDRESSE: FIN")
+        // print("TCP browse ADDRESSE: FIN")
 
         // peut etre mettre ceci dans le doAtEnd au moment où il est construit
         DispatchQueue.main.sync {

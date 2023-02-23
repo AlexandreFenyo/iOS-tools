@@ -87,7 +87,7 @@ class PhotoController: NSObject {
     @objc private func image(_ image: UIImage,
                              didFinishPhotoLibrarySavingWithError error: Error?,
                              contextInfo: UnsafeRawPointer) {
-        print("Image successfully written to camera roll")
+//        print("Image successfully written to camera roll")
         exporting_map = false
         if error != nil {
             popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)"), "OK")

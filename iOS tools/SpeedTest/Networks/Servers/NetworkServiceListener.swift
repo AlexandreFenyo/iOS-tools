@@ -33,34 +33,32 @@ class NetworkServiceListener {
     }
     
     private func stateUpdateHandler(_ newState: NWListener.State) -> Void {
-        print("XXXXX: \(#function) ")
+//        print("XXXXX: \(#function) ")
         dump(newState)
 
         switch newState {
         case .setup:
-            print(".setup")
+//            print(".setup")
             break
             
-        case .waiting(let error):
-            print(".waiting")
-            print("XXXXX: waiting " + error.debugDescription)
+//        case .waiting(let error):
+        case .waiting(_):
+            break
+//            print(".waiting")
+//            print("XXXXX: waiting " + error.debugDescription)
 
         case .ready:
-            print(".ready")
+//            print(".ready")
             break
 
         case .cancelled:
-            print(".cancelled")
+//            print(".cancelled")
             stop()
             start()
-//            listener.start(queue: .main)
             break
 
         case .failed(let error):
-            print(".failed")
-            print("XXXXX: failed " + error.debugDescription)
-
-//            listener!.start(queue: .main)
+            print("\(#function): failed: " + error.debugDescription)
             listener!.cancel()
 
         default:
@@ -70,20 +68,28 @@ class NetworkServiceListener {
     }
     
     private func connectionStateUpdateHandler(_ state: NWConnection.State) -> Void {
-        print(#function)
+//        print(#function)
         switch state {
-        case .waiting(let error):
-            print("cx.waiting")
+//        case .waiting(let error):
+        case .waiting(_):
+//            print("cx.waiting")
+            break
         case .setup:
-            print("cx.setup")
+//            print("cx.setup")
+            break
         case .cancelled:
-            print("cx.cancelled")
-        case .failed(let error):
-            print("cx.failed")
+//            print("cx.cancelled")
+            break
+//        case .failed(let error):
+        case .failed(_):
+//            print("cx.failed")
+            break
         case .preparing:
-            print("cx.preparing")
+//            print("cx.preparing")
+            break
         case .ready:
-            print("cx.ready")
+//            print("cx.ready")
+            break
         default:
             break
         }
@@ -95,19 +101,27 @@ class NetworkServiceListener {
         // connection.stateUpdateHandler = connectionStateUpdateHandler
         connection.stateUpdateHandler = { [weak connection] state in
             switch state {
-            case .waiting(let error):
-                print("cx.waiting")
+//            case .waiting(let error):
+            case .waiting(_):
+//                print("cx.waiting")
+                break
             case .setup:
-                print("cx.setup")
+//                print("cx.setup")
+                break
             case .cancelled:
-                print("cx.cancelled")
-            case .failed(let error):
-                print("cx.failed")
+//                print("cx.cancelled")
+                break
+//            case .failed(let error):
+            case .failed(_):
+//                print("cx.failed")
+                break
             case .preparing:
-                print("cx.preparing")
+//                print("cx.preparing")
+                break
             case .ready:
-                print("cx.ready")
+//                print("cx.ready")
                 connection!.cancel()
+                break
             default:
                 break
             }
@@ -120,7 +134,7 @@ class NetworkServiceListener {
 
     public func stop() {
         for conn in connections {
-            print("CANCELLING")
+//            print("CANCELLING")
 //            conn.cancel()
             conn.stateUpdateHandler = nil
 //            conn.forceCancel()

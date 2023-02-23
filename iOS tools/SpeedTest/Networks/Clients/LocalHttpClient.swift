@@ -17,7 +17,7 @@ class LocalHttpClient : NSObject, URLSessionDataDelegate {
     private var last_date : Date?
     
     public init(url: String) {
-        print("URL:", url)
+//        print("URL:", url)
         super.init()
         let configuration = URLSessionConfiguration.default
         configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
@@ -28,7 +28,7 @@ class LocalHttpClient : NSObject, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        print("web downloaded bytes:", data.count)
+//        print("web downloaded bytes:", data.count)
     }
     
     
