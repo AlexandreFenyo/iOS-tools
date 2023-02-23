@@ -121,7 +121,7 @@ class TCPPortBrowser {
                     if delay == 10000 { ports.formIntersection(StandardTCPPorts) }
 
                     DispatchQueue.main.async {
-                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports.count) ports waiting \(delay)ms for each", level: .INFO)
+                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports.count) ports waiting \(delay) µs for each", level: .INFO)
                     }
 
                     // WiFi donc latence élevée donc impossible de parcourir tous les ports sans paralléliser le traitement, même pour une IP => à reprogrammer dans le futur

@@ -89,9 +89,9 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
                 if let info = from.toNumericString() {
-                    DispatchQueue.main.async {
+//                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
-                    }
+//                    }
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
                 // Do not try to reach this address with unicast anymore
@@ -102,9 +102,9 @@ class NetworkBrowser {
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
                 device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
                 if let info = from.toNumericString() {
-                    DispatchQueue.main.async {
+//                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
-                    }
+//                    }
                     device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
                 }
 
@@ -214,7 +214,9 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.unicast_ipv4_finished = true }
 
                 dispatchGroup.leave()
-                self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
+                }
             }
 
             // Send broadcast ICMPv4
@@ -260,7 +262,9 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.broadcast_ipv4_finished = true }
 
                 dispatchGroup.leave()
-                self.device_manager.addTrace("network browsing: finished sending ICMPv4 broadcast packets", level: .INFO)
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: finished sending ICMPv4 broadcast packets", level: .INFO)
+                }
             }
 
             // Send multicast ICMPv6
@@ -311,7 +315,9 @@ class NetworkBrowser {
                 DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
 
                 dispatchGroup.leave()
-                self.device_manager.addTrace("network browsing: finished sending ICMPv6 multicast packets", level: .INFO)
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: finished sending ICMPv6 multicast packets", level: .INFO)
+                }
             }
 
             // Catch IPv4 replies
@@ -337,7 +343,9 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
-                self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
+                }
             }
 
             // Catch IPv6 replies
@@ -363,7 +371,9 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
-                self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
+                }
             }
             
             dispatchGroup.wait()
