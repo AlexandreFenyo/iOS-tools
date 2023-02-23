@@ -103,7 +103,12 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         print(#function)
-        if let idx = services.firstIndex(of: service) { services.remove(at: idx) }
+        if let idx = services.firstIndex(of: service) {
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)", level: .DEBUG)
+            }
+            services.remove(at: idx)
+        }
         else {
             print("warning: service app closed but not previously discovered")
         }
