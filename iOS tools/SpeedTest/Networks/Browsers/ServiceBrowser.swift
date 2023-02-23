@@ -210,7 +210,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
 
-        device_manager.addTrace("Bonjour/mDNS: service found: type:\(type); name:\(sender.name); hostname:\(sender.hostName ?? ""); sender.type:\(sender.type); port:\(sender.port); descr:\(sender.description); debug:\(sender.debugDescription); domain:\(sender.domain); attributes:\(text_attr)", level: .DEBUG)
+        device_manager.addTrace("Bonjour/mDNS: service found: type:\(type); name:\(sender.name); hostname:\(sender.hostName ?? ""); sender.type:\(sender.type); port:\(sender.port); descr:\(sender.description); domain:\(sender.domain); attributes:\(text_attr)", level: .DEBUG)
         device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
     }
 }

@@ -28,8 +28,8 @@ protocol RefClosed : AnyObject {
 
 // Start a run loop to manage a stream
 class StreamNetworkThread : Thread {
-    private let stream : Stream
-    public var run_loop : RunLoop?
+    private let stream: Stream
+    public var run_loop: RunLoop?
     
     deinit {
     }
@@ -54,7 +54,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
     public let input_stream, output_stream : Stream?
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
-    private weak var from : LocalDelegate?
+    private weak var from: LocalDelegate?
     
     deinit {
     }
@@ -104,13 +104,18 @@ class SpeedTestClient : NSObject, StreamDelegate {
 class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
     private let manage_input: Bool, manage_output: Bool
 
-    public init(manage_input: Bool, manage_output: Bool) {
-       self.manage_input = manage_input
+    public init(manage_input: Bool, manage_output: Bool, master_view_controller: MasterViewController?) {
+        self.manage_input = manage_input
         self.manage_output = manage_output
+        super.init(master_view_controller: master_view_controller)
     }
     
     // Manage new connections from clients
     public override func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
+        DispatchQueue.main.async {
+            self.ref_master_view_controller?.addTrace("\(sender.port == 9 ? "chargen" : "discard") service: new client connection", level: .INFO)
+        }
+
         if manage_input == false { inputStream.close() }
         if manage_output == false { outputStream.close() }
         let _input_stream = manage_input ? inputStream : nil
@@ -122,7 +127,9 @@ class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
 // Manage callbacks for the speed test service
 class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Strong refs
-    public var clients : [SpeedTestClient] = [ ]
+    public var clients: [SpeedTestClient] = [ ]
+
+    fileprivate weak var ref_master_view_controller: MasterViewController?
 
     public var restartService = {}
     public var timer: Timer? = nil
@@ -130,13 +137,13 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Définie pour pouvoir être surchargée
     public func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) { }
 
-    // Initialize instance
-    public override init() {
+    public init(master_view_controller: MasterViewController?) {
         super.init()
+        self.ref_master_view_controller = master_view_controller
         
         // Add a background job that sweeps terminated connections
         timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) { _ in
-            var nothing_removed : Bool
+            var nothing_removed: Bool
 
             repeat {
                 nothing_removed = true
@@ -162,11 +169,24 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
                     }
                 }
             } while nothing_removed == false
+
+            if self.clients.count != 0 {
+                self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.barTintColor = .red
+                self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.backgroundColor = .red
+                
+                Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {_ in
+                    self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
+                    self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.backgroundColor = COLORS.tabbar_bg
+                }
+            }
         }
     }
     
     // If one client stream is closed, close the other to end communications with this client
     public func refClosed(_ client: SpeedTestClient) {
+        DispatchQueue.main.async {
+            self.ref_master_view_controller?.addTrace("chargen/discard service: client connection closed", level: .INFO)
+        }
         client.exitThreads()
     }
     

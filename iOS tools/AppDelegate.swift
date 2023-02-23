@@ -33,8 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // private var browser_discard: ServiceBrowser?
     // private var browser_app: ServiceBrowser?
     
-    private var masterViewController : MasterViewController?
-    private var tracesViewController : TracesViewController?
+    private var masterViewController: MasterViewController?
+    private var tracesViewController: TracesViewController?
     
     // pour tester la publication : dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
     public func startChargenService() {
@@ -43,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: Int32(NetworkDefaults.speed_test_chargen_port))
-        local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true)
+        local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true, master_view_controller: masterViewController)
         local_chargen_service_delegate!.restartService = startChargenService
         local_chargen_service!.delegate = local_chargen_service_delegate
         local_chargen_service!.publish(options: .listenForConnections)
@@ -55,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: Int32(NetworkDefaults.speed_test_discard_port))
-        local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false)
+        local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false, master_view_controller: masterViewController)
         local_discard_service_delegate!.restartService = startDiscardService
         local_discard_service!.delegate = local_discard_service_delegate
         local_discard_service!.publish(options: .listenForConnections)
@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         local_app_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_app_service_type, name: "", port: Int32(NetworkDefaults.speed_test_app_port))
-        local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false)
+        local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false, master_view_controller: masterViewController)
         local_app_service_delegate!.restartService = startAppService
         local_app_service!.delegate = local_app_service_delegate
         local_app_service!.publish(options: .listenForConnections)
@@ -196,7 +196,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        
+
+     masterViewController?.navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
+     masterViewController?.navigationController!.tabBarController?.tabBar.backgroundColor = COLORS.tabbar_bg
+
         if UserDefaults.standard.bool(forKey: "reset_help_popups_key") {
             UserDefaults.standard.set(false, forKey: "reset_help_popups_key")
             let settings = UserDefaults.standard.dictionaryRepresentation()

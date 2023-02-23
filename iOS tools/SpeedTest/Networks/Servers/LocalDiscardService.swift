@@ -11,7 +11,7 @@ import Foundation
 // Manage a remote client with two threads, one for each stream
 class SpeedTestDiscardClient : SpeedTestClient {
     // Data buffer
-    private let bufMutablePointer : UnsafeMutablePointer<UInt8>
+    private let bufMutablePointer: UnsafeMutablePointer<UInt8>
     
     // Prepare threads and data buffers to handle a remote client
     public required init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
