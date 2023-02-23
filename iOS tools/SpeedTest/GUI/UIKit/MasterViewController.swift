@@ -284,6 +284,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         ctHelp.new(CTHelpItem(title: NSLocalizedString("Scan local network", comment: "Scan local network"),
                                  helpText: "",
                                  imageName: "docs-browse-stop"))
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Advanced actions", comment: "Advanced actions"),
+                                 helpText: "",
+                                 imageName: "docs-action-bar"))
         ctHelp.new(CTHelpItem(title: NSLocalizedString("Chart usage", comment: "Chart usage"),
                                  helpText: "",
                                  imageName: "docs-chart"))
