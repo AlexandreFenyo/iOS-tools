@@ -986,7 +986,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
@@ -1018,7 +1018,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
