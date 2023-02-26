@@ -57,7 +57,9 @@ class LocalChargenClient : Thread {
     public func close() {
         let ret = localChargenClientClose()
         if ret != 0 {
-            fatalError()
+            // Ca arrive quand j'utiliser simulateur iPadPro 12.9Po et que je fais une heat map
+            print("fatalError 1")
+//            fatalError()
         }
     }
 
@@ -65,7 +67,8 @@ class LocalChargenClient : Thread {
     public func stop() {
         let ret = localChargenClientStop()
         if ret != 0 {
-            fatalError()
+            print("fatalError 2")
+//            fatalError()
         }
     }
 
