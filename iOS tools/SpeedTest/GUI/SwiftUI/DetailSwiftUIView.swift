@@ -214,7 +214,9 @@ struct DetailSwiftUIView: View {
     @ObservedObject var model = DetailViewModel.shared
     @State var animated_width: CGFloat = 0
     //    @State private var showing_popover = true
-    
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     var body: some View {
         HStack {
             // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
@@ -321,6 +323,67 @@ struct DetailSwiftUIView: View {
                                 .accentColor(Color(COLORS.standard_background))
                                 .frame(maxWidth: animated_width).disabled(model.buttons_enabled || model.address_str == nil)
                                 .animation(.easeOut(duration: 0.5), value: animated_width)
+                            }
+                            
+                            if horizontalSizeClass != .compact {
+                                Button {
+                                    if let url = URL(string: model.family == AF_INET ? "http://\(model.address_str!)" : "http://[\(model.address_str!)]") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                } label: {
+                                    VStack {
+                                        Image(systemName: "globe").resizable().frame(width: 30, height: 30)
+                                        Text("web access").font(.footnote)
+                                    }
+                                }
+                                .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTP (80)") == false)
+                                .frame(maxWidth: 200)
+                                
+                                Button {
+                                    if let url = URL(string: model.family == AF_INET ? "https://\(model.address_str!)" : "https://[\(model.address_str!)]") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                } label: {
+                                    VStack {
+                                        Image(systemName: "key.icloud").resizable().frame(width: 40, height: 30)
+                                        Text("SSL/TLS").font(.footnote)
+                                    }
+                                }
+                                .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false)
+                                .frame(maxWidth: 200)
+                                }
+                            }
+                        
+                        VStack {
+                            if horizontalSizeClass == .compact && (((model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTP (80)") == false)) == false || (model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false) == false) {
+                                
+                                HStack {
+                                    Button {
+                                        if let url = URL(string: model.family == AF_INET ? "http://\(model.address_str!)" : "http://[\(model.address_str!)]") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "globe").resizable().frame(width: 30, height: 30)
+                                            Text("web access").font(.footnote)
+                                        }
+                                    }
+                                    .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTP (80)") == false)
+                                    .frame(maxWidth: 200)
+                                    
+                                    Button {
+                                        if let url = URL(string: model.family == AF_INET ? "https://\(model.address_str!)" : "https://[\(model.address_str!)]") {
+                                            UIApplication.shared.open(url)
+                                        }
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "key.icloud").resizable().frame(width: 40, height: 30)
+                                            Text("SSL/TLS").font(.footnote)
+                                        }
+                                    }
+                                    .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false)
+                                    .frame(maxWidth: 200)
+                                }
                             }
                         }
                         
@@ -490,3 +553,4 @@ struct DetailSwiftUIView: View {
         }
     }
 }
+

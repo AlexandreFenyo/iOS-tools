@@ -8,6 +8,7 @@
 
 // Ex: NSLocalizedString(description, comment: "description")
 
+"web access" = "accès web";
 "parameter-lang" = "fr";
 "mDNS and DNS host names" = "noms mDNS et DNS";
 "IPv4 and IPv6 addresses" = "adresses IPv4 et IPv6";

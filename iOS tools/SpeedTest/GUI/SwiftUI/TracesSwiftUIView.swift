@@ -10,7 +10,7 @@ import SwiftUI
 
 // https://useyourloaf.com/blog/adapting-swiftui-label-style/
 struct AdaptiveLabelStyle: LabelStyle {
-  @Environment(\.horizontalSizeClass) var horizontalSizeClass
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   func makeBody(configuration: Configuration) -> some View {
     if horizontalSizeClass == .compact {
