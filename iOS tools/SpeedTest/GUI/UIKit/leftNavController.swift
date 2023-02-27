@@ -68,6 +68,9 @@ class LeftNavController : UINavigationController {
         // Remove the top border of the toolbar
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
 
+        
+//        toolbar.barStyle = .
+        
         ////////////////////////////////////////////////////////////
         // Manage the top left rounded corner
 

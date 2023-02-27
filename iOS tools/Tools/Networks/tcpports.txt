@@ -364,7 +364,7 @@
 462;datasurfsrvsec
 463;alpes
 464;kpasswd
-465;urd
+465;smtps
 466;digital-vrc
 467;mylex-mapd
 468;photuris

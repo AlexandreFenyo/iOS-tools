@@ -377,6 +377,18 @@ struct HeatMapSwiftUIView: View {
                             .disabled(model.input_map_image == nil || idw_transient_value != nil || model.idw_values.count < 3)
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200)
+                            
+                            Button {
+                                UIApplication.shared.open(URL(string: "http://fenyo.net/wifi-map-explorer/heatmap/\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))/")!)
+                            } label: {
+                                VStack {
+                                    Image(systemName: "questionmark").resizable().frame(width: 20, height: 30)
+                                    Text("Help").font(.footnote)
+                                }
+                            }
+                            .accentColor(Color(COLORS.standard_background))
+                            .frame(maxWidth: 200)
+
                         }.padding(.top)
                     }
                     

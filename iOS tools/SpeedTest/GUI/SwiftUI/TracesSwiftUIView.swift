@@ -8,6 +8,22 @@
 
 import SwiftUI
 
+// https://useyourloaf.com/blog/adapting-swiftui-label-style/
+struct AdaptiveLabelStyle: LabelStyle {
+  @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
+  func makeBody(configuration: Configuration) -> some View {
+    if horizontalSizeClass == .compact {
+      VStack {
+        configuration.icon
+        configuration.title
+      }
+    } else {
+      Label(configuration)
+    }
+  }
+}
+
 struct TracesSwiftUIView: View {
     public enum LogLevel : Int {
         case INFO = 0
@@ -117,7 +133,8 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.INFO)
                                 model.append("set trace level to INFO", level: .INFO)
                             } label: {
-                                Label("Level 1", systemImage: "rectangle.split.2x2")
+                                Label("INFO", systemImage: "rectangle.split.2x2")
+                                    .labelStyle(AdaptiveLabelStyle())
                                     .foregroundColor(model.level != .INFO ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .INFO).padding(12)
                                     .font(.footnote)
@@ -130,7 +147,8 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
                             } label: {
-                                Label("Level 2", systemImage: "tablecells")
+                                Label("DEBUG", systemImage: "tablecells")
+                                    .labelStyle(AdaptiveLabelStyle())
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .DEBUG).padding(12)
                                     .font(.footnote)
@@ -143,7 +161,8 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.ALL)
                                 model.append("set trace level to ALL", level: .INFO)
                             } label: {
-                                Label("Level 3", systemImage: "rectangle.split.3x3")
+                                Label("ALL", systemImage: "rectangle.split.3x3")
+                                    .labelStyle(AdaptiveLabelStyle())
                                     .foregroundColor(model.level != .ALL ? Color.gray : Color.white.lighter())
                                     .disabled(model.level != .ALL).padding(12)
                                     .font(.footnote)

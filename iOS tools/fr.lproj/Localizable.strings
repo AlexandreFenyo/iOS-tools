@@ -8,6 +8,7 @@
 
 // Ex: NSLocalizedString(description, comment: "description")
 
+"parameter-lang" = "fr";
 "mDNS and DNS host names" = "noms mDNS et DNS";
 "IPv4 and IPv6 addresses" = "adresses IPv4 et IPv6";
 "scan TCP ports" = "scanner les ports TCP";
@@ -49,9 +50,7 @@
 "Reset all"= "Tout effacer";
 "Share your map" = "Partagez votre carte";
 "Hide map" = "Réduire la carte";
-"Level 1" = "Niveau 1";
-"Level 2" = "Niveau 2";
-"Level 3" = "Niveau 3";
+"ALL" = "TOUS";
 "Scan local network" = "Parcourir le réseau local";
 "Advanced actions" = "Actions avancées";
 "Chart usage" = "Utilisation du graphe";
@@ -70,6 +69,7 @@
 "Access to photos is forbidden. You need to change the access rights in the app configuration pane (click on the wheel button in the toolbar to access the configuration pane)" = "L'accès aux photos est interdit. Vous devez modifier les droits d'accès dans le panneau de configuration iOS de l'app (cliquez sur la roue dentée dans la barre d'outils, pour accéder à cette configuration).";
 "You can find the heatmap in you photo roll" = "vous trouverez la Heat Map dans l'application Photos.";
 "Help: " = "Aide : ";
+"Help" = "Aide";
 "Don't show this message again" = "Ne pas réafficher ce message";
 "Dismiss further help messages" = "Ne plus réafficher d'aide";
 "public host" = "hôte public";

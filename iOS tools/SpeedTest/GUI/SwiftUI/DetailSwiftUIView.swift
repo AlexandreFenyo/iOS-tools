@@ -34,7 +34,7 @@ struct TagCloudView: View {
         
         return ZStack(alignment: .topLeading) {
             ForEach(self.tags, id: \.self) { tag in
-                self.item(for: tag)
+                self.item(for: tag, width: g.size.width)
                     .padding([.horizontal, .vertical], 4)
                     .alignmentGuide(.leading, computeValue: { d in
                         if (abs(width - d.width) > g.size.width) {
@@ -64,16 +64,15 @@ struct TagCloudView: View {
     }
     
     // MAX_LEN doit permettre d'afficher en entier une adresse IPv6 link-local
-    private static let MAX_LEN = 40
-    private func item(for text: String) -> some View {
-            Text(text.prefix(Self.MAX_LEN) + (text.count > Self.MAX_LEN ? "..." : ""))
-            .padding(.all, 5)
-            .font(font)
-            .background(Color(COLORS.standard_background))
-            .foregroundColor(Color.white)
-        //            .background(Color.blue)
-        //            .foregroundColor(Color.white)
-            .cornerRadius(5)
+    private func item(for text: String, width: CGFloat) -> some View {
+        Text(text.prefix(width < 400 ? 20 : 40) + (text.count > (width < 400 ? 20 : 40) ? "..." : ""))
+        .padding(.all, 5)
+        .font(font)
+        .background(Color(COLORS.standard_background))
+        .foregroundColor(Color.white)
+    //            .background(Color.blue)
+    //            .foregroundColor(Color.white)
+        .cornerRadius(5)
     }
     
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
