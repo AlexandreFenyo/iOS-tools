@@ -379,7 +379,7 @@ struct HeatMapSwiftUIView: View {
                             .frame(maxWidth: 200)
                             
                             Button {
-                                UIApplication.shared.open(URL(string: "http://fenyo.net/wifi-map-explorer/heatmap/\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))/")!)
+                                UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/doc.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                             } label: {
                                 VStack {
                                     Image(systemName: "questionmark").resizable().frame(width: 20, height: 30)
