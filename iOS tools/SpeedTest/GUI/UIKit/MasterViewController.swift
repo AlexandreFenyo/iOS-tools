@@ -302,7 +302,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         ctHelp.new(CTHelpItem(title: NSLocalizedString("Licensing", comment: "Licensing"),
                               helpText: NSLocalizedString("This tool makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish free software open-source code (see https://github.com/AlexandreFenyo), this specific software is not free, however it is open-source, but you must not redistribute the sources.", comment: "This tool makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n\nEven if I often publish free software open-source code (see https://github.com/AlexandreFenyo), this specific software is not free, however it is open-source, but you must not redistribute the sources."),
                                          imageName: ""))
-        ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "wifimapexplorer@fenyo.net", data: nil, webSite: "http://wifimapexplorer.com/home.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))", companyImageName: "")
+        ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "support@wifimapexplorer.com", data: nil, webSite: "http://wifimapexplorer.com/home.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))", companyImageName: "")
         ctHelp.presentHelp(from: self)
 
         UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/doc.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
