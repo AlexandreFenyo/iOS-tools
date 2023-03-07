@@ -148,7 +148,11 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
     struct icmp icmp_hdr;
     struct icmp6_hdr icmp6_hdr;
     struct timeval tv_now;
+
+    // strange behaviour: for an IPv4 packet, when seq is incremente and reach 80 (50h), setting htons(seq) in icmp_hdr.icmp_hun.ih_idseq.icd_seq will not give any reply!
+    // solution: I do not use htons for IPv4 packets
     unsigned short seq = 0x10;
+
     int is_v4;
     int ret;
     
@@ -186,8 +190,12 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             icmp_hdr.icmp_type = ICMP_ECHO;
             icmp_hdr.icmp_code = 0;
             icmp_hdr.icmp_hun.ih_idseq.icd_id = htons(ICMP_ID);
-            icmp_hdr.icmp_hun.ih_idseq.icd_seq = htons(seq);
-            
+            // strange behaviour: for an IPv4 packet, when seq is incremente and reach 80 (50h), setting htons(seq) in icmp_hdr.icmp_hun.ih_idseq.icd_seq will not give any reply!
+            // solution: I do not use htons for IPv4 packets
+            // icmp_hdr.icmp_hun.ih_idseq.icd_seq = htons(seq);
+            icmp_hdr.icmp_hun.ih_idseq.icd_seq = seq;
+            // printf("envoi seq %d %d\n", seq, htons(seq));
+
             unsigned short ck = 0;
             for (int i = 0; i < sizeof icmp_hdr / 2; i++) ck += ((unsigned short *) &icmp_hdr)[i];
             icmp_hdr.icmp_cksum = 0b1111111111111111 ^ ck;
@@ -241,8 +249,12 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
                     printf("unattended ICMP id received: %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_id));
                     redo_loop = 1;
                 }
-                if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq) != seq) {
-                    printf("unattended ICMP seq received: %d instead of %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq), seq);
+                // strange behaviour: for an IPv4 packet, when seq is incremente and reach 80 (50h), setting htons(seq) in icmp_hdr.icmp_hun.ih_idseq.icd_seq will not give any reply!
+                // solution: I do not use htons for IPv4 packets
+                // if (ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq) != seq) {
+                if (icmp_p->icmp_hun.ih_idseq.icd_seq != seq) {
+                    // printf("unattended ICMP seq received: %d instead of %d\n", ntohs(icmp_p->icmp_hun.ih_idseq.icd_seq), seq);
+                    printf("unattended ICMP seq received: %d instead of %d\n", icmp_p->icmp_hun.ih_idseq.icd_seq, seq);
                     redo_loop = 1;
                 }
             } else {

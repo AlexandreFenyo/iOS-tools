@@ -641,6 +641,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
+        // WARNING: we should implement an infinite loop (not 0 to 10000), in a further release
         local_ping_client = LocalPingClient(address: address, count: 10000)
         local_ping_sync = LocalPingSync(local_ping_client!)
         local_ping_client!.start()
