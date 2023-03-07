@@ -45,6 +45,7 @@ struct TracesSwiftUIView: View {
         }()
         
         // Contrainte à respecter : il faut toujours au moins 1 chaîne dans traces
+        // le 7 mars 2023 : Publishing changes from background threads is not allowed; make sure to publish values from the main thread (via operators like receive(on:)) on model updates. => identifier pourquoi et corriger
         @Published private(set) var traces: [String] = {
             var arr = [String]()
             arr.append("")
