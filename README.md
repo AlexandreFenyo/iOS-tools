@@ -1,3 +1,3 @@
 # WiFi Map Explorer
 
-See http://wifimapexplore.com
+See http://wifimapexplorer.com to download binaries, get the user's manual, understand how it works behind the scenes, ...
