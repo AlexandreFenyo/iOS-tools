@@ -397,7 +397,7 @@ struct DetailSwiftUIView: View {
                             
                             TagCloudView(tags: model.text_names, master_view_controller: master_view_controller, font: .body) { tag in
                                 if !tag.contains(".") || tag.contains("(") || tag.contains(")") || tag.contains(" ") || tag.contains(".local") || tag == "localhost" {
-                                    master_view_controller.popUpHelp(.no_dns, "This hostname has not any public DNS record. Select a host name with public DNS records to get those records.") {
+                                    master_view_controller.popUpHelp(.no_dns, "This hostname does not have a public DNS record. Select a host name with public DNS records to get their values.") {
                                         master_view_controller.popUp(NSLocalizedString("Hostname", comment: "Hostname"), tag, "OK")
                                     }
                                     return

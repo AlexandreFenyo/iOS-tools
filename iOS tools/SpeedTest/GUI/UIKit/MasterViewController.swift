@@ -260,7 +260,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     @IBAction func remove_pressed(_ sender: Any) {
-        popUpHelp(.remove_nodes, "This button will remove every nodes automatically discovered during this session. It will not affect the local host, the local gateway, the static default nodes nor the nodes you added manually. To remove nodes you added manually, swipe left on the node.") {
+        popUpHelp(.remove_nodes, "This button will remove every node automatically discovered during the current session. It will not affect local host, local gateway, static default nodes nor nodes you added manually. To remove a node you added manually, swipe left on this node.") {
             self.resetToDefaultHosts()
             DBMaster.shared.addDefaultNodes()
             self.updateLocalNodeAndGateways()
@@ -319,7 +319,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func update_pressed(_ sender: Any) {
-        popUpHelp(.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. Press the stop button to cancel this task later. Look at the Traces pane to get progress informations.")
+        popUpHelp(.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. When needed, press the stop button to cancel this task. Traces panel will provide you with progress information if needed.")
         
         refreshControl!.beginRefreshing()
 //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
@@ -698,7 +698,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                 self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
             }
 
-            await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network stages. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network stages. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
+            await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             var first_skipped = false
@@ -1025,11 +1025,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         let node3 = Node()
         node3.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
-            popUpHelp(.node_info_public_host, "This type of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
+            popUpHelp(.node_info_public_host, "This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
         } else if node.types.contains(.localhost) {
-            popUpHelp(.localhost, "This node corresponds to this Apple device. You can see its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
+            popUpHelp(.localhost, "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
         } else if node.isSimilar(with: node3) {
-            popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node is dedicated to this app and is deployed in a cloud on the Internet, to let you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will evaluate your incoming/download bandwidth.")
+            popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.")
 
         }
         
