@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */; };
+		5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 5D039EC329B8A2E100A33898 /* iPhone.jpeg */; };
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
 		5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D16E60529A77124000A46E4 /* docs-action-bar.png */; };
@@ -126,6 +127,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D039EC329B8A2E100A33898 /* iPhone.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = iPhone.jpeg; sourceTree = "<group>"; };
 		5D0B4F7829ABB5DD00F65C68 /* iOS tools.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "iOS tools.entitlements"; sourceTree = "<group>"; };
 		5D1351EB208538DB00E4A76D /* iOS tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D1351EE208538DB00E4A76D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -369,6 +371,7 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D039EC329B8A2E100A33898 /* iPhone.jpeg */,
 				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
 				5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */,
 				5D16E60529A77124000A46E4 /* docs-action-bar.png */,
@@ -690,6 +693,7 @@
 				5D65EE58296381780099871C /* app-icon-20.png in Resources */,
 				5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */,
 				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
+				5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */,
 				5DE4ED9D290586740000B30A /* docs-hosts.psd in Resources */,
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
 				5D65EE65296491DF0099871C /* IMG_0070.PNG in Resources */,
