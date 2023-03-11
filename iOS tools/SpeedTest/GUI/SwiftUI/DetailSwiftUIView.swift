@@ -336,12 +336,13 @@ struct DetailSwiftUIView: View {
 
                                 } label: {
                                     VStack {
-                                        Image(systemName: "map").resizable().frame(width: 30 * model.animated_width_map / 200, height: 30)
+                                        Image(systemName: "map")
+                                            .resizable(resizingMode: .stretch).frame(width: 30 * model.animated_width_map / 200, height: 30)
                                         Text("heatmap").font(.footnote)
                                     }
                                 }
                                 .accentColor(Color(COLORS.standard_background))
-                                .frame(maxWidth: model.animated_width_map)
+                                .frame(maxWidth: model.animated_width_map, maxHeight: model.animated_width_map == 0 ? 0 : 200, alignment: .topLeading)
                             }
                             
                             if horizontalSizeClass != .compact {
@@ -372,7 +373,8 @@ struct DetailSwiftUIView: View {
                                 .frame(maxWidth: 200)
                             }
                         }
-                        .animation(.easeOut(duration: 1.0), value: model.animated_width_map)
+//                        .animation(.easeOut(duration: 1.0), value: model.animated_width_map)
+//                        .background(.red)
                         
                         VStack {
                             if horizontalSizeClass == .compact && (((model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTP (80)") == false)) == false || (model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false) == false) {
@@ -566,6 +568,8 @@ struct DetailSwiftUIView: View {
                         }
                         
                     }.padding(10).background(Color(COLORS.right_pannel_scroll_bg)) // VStack
+                        .animation(.easeOut(duration: 1.0), value: model.animated_width_map)
+
                 }//.id(topID)
                 .cornerRadius(15).padding(7) // VStack
             }.background(Color(COLORS.right_pannel_bg)) // ScrollView
