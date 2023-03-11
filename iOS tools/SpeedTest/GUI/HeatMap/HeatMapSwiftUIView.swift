@@ -9,6 +9,7 @@
 import SwiftUI
 import SpriteKit
 import PhotosUI
+import StoreKit
 
 // app équivalente : WiFi All In One Network Survey (18,99€)
 
@@ -99,7 +100,9 @@ class PhotoController: NSObject {
     public func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let action = UIAlertAction(title: ok, style: .default)
+            let action = UIAlertAction(title: ok, style: .default) {_ in
+                SKStoreReviewController.requestReview()
+            }
             alert.addAction(action)
             self.heatmap_view_controller?.present(alert, animated: true)
         }
