@@ -66,13 +66,13 @@ struct TagCloudView: View {
     // MAX_LEN doit permettre d'afficher en entier une adresse IPv6 link-local
     private func item(for text: String, width: CGFloat) -> some View {
         Text(text.prefix(width < 400 ? 20 : 40) + (text.count > (width < 400 ? 20 : 40) ? "..." : ""))
-        .padding(.all, 5)
-        .font(font)
-        .background(Color(COLORS.standard_background))
-        .foregroundColor(Color.white)
-    //            .background(Color.blue)
-    //            .foregroundColor(Color.white)
-        .cornerRadius(5)
+            .padding(.all, 5)
+            .font(font)
+            .background(Color(COLORS.standard_background))
+            .foregroundColor(Color.white)
+        //            .background(Color.blue)
+        //            .foregroundColor(Color.white)
+            .cornerRadius(5)
     }
     
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
@@ -103,11 +103,14 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var text_services = [String]()
     @Published private(set) var text_services_port = [String : String]()
     @Published private(set) var text_services_attr = [String : [String]]()
-
     @Published private(set) var stop_button_master_view_hidden = true
     @Published private(set) var stop_button_master_ip_view_hidden = true
-    
     @Published private(set) var scroll_to_top = false
+    @Published private(set) var animated_width_map: CGFloat = 0
+
+    public func setButtonMapHiddenState(_ state: Bool) {
+        animated_width_map = state ? 0 : 200
+    }
     
     public func setButtonMasterHiddenState(_ state: Bool) {
         stop_button_master_view_hidden = state
@@ -139,7 +142,7 @@ public class DetailViewModel : ObservableObject {
             }
         }
     }
-
+    
     public func toggleScrollToTop() {
         scroll_to_top.toggle()
     }
@@ -161,14 +164,14 @@ public class DetailViewModel : ObservableObject {
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
         text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
-
+        
         let _text_names = node.names.map { $0 } + node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }
         for name in _text_names {
             if !text_names.contains(name) {
                 text_names.insert(name, at: text_names.endIndex)
             }
         }
-
+        
         text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
         text_services = node.services.map({ $0.name })
@@ -179,7 +182,7 @@ public class DetailViewModel : ObservableObject {
                 value == "THIS_IS_NOT_A_VALUE_AFAFAF" ? "\(key)" : "\(key): \(value)"
             })
         }
-
+        
         var interfaces = [""]
         for addr in node.v6_addresses {
             if let substrings = addr.toNumericString()?.split(separator: "%") {
@@ -212,11 +215,10 @@ struct DetailSwiftUIView: View {
     @Namespace var topID
     
     @ObservedObject var model = DetailViewModel.shared
-    @State var animated_width: CGFloat = 0
-    //    @State private var showing_popover = true
-
+    @State var animated_width_stop: CGFloat = 0
+    
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
+    
     var body: some View {
         HStack {
             // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
@@ -250,6 +252,7 @@ struct DetailSwiftUIView: View {
                             Button {
                                 if model.address != nil {
                                     master_view_controller.popUpHelp(.TCP_flood_discard, NSLocalizedString("A TCP connection to the Discard port (9/TCP) of ", comment: "A TCP connection to the Discard port (9/TCP) of ") + (model.address_str ?? "") + NSLocalizedString(" will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.", comment: " will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.")) {
+                                        model.setButtonMapHiddenState(false)
                                         master_view_controller.floodTCP(model.address!)
                                     }
                                 }
@@ -266,6 +269,7 @@ struct DetailSwiftUIView: View {
                                 if model.address != nil {
                                     master_view_controller.popUpHelp(.TCP_flood_chargen, NSLocalizedString("A TCP connection to the Chargen port (19/TCP) of ", comment: "A TCP connection to the Chargen port (19/TCP) of ") + (model.address_str ?? "") + NSLocalizedString(" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button.", comment: " will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button.")) {
                                         master_view_controller.chargenTCP(model.address!)
+                                        model.setButtonMapHiddenState(false)
                                     }
                                 }
                             } label: {
@@ -315,14 +319,29 @@ struct DetailSwiftUIView: View {
                                     }
                                 }
                                 .onAppear {
-                                    animated_width = 200
+                                    animated_width_stop = 200
                                 }
                                 .onDisappear {
-                                    animated_width = 0
+                                    animated_width_stop = 0
                                 }
                                 .accentColor(Color(COLORS.standard_background))
-                                .frame(maxWidth: animated_width).disabled(model.buttons_enabled || model.address_str == nil)
-                                .animation(.easeOut(duration: 0.5), value: animated_width)
+                                .frame(maxWidth: animated_width_stop).disabled(model.buttons_enabled || model.address_str == nil)
+                                .animation(.easeOut(duration: 1.0), value: animated_width_stop)
+                            }
+
+                            if horizontalSizeClass == .compact {
+                                Button {
+
+                                    master_view_controller.launch_heatmap()
+
+                                } label: {
+                                    VStack {
+                                        Image(systemName: "map").resizable().frame(width: 30 * model.animated_width_map / 200, height: 30)
+                                        Text("heatmap").font(.footnote)
+                                    }
+                                }
+                                .accentColor(Color(COLORS.standard_background))
+                                .frame(maxWidth: model.animated_width_map)
                             }
                             
                             if horizontalSizeClass != .compact {
@@ -351,8 +370,9 @@ struct DetailSwiftUIView: View {
                                 }
                                 .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false)
                                 .frame(maxWidth: 200)
-                                }
                             }
+                        }
+                        .animation(.easeOut(duration: 1.0), value: model.animated_width_map)
                         
                         VStack {
                             if horizontalSizeClass == .compact && (((model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTP (80)") == false)) == false || (model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false) == false) {
@@ -405,7 +425,7 @@ struct DetailSwiftUIView: View {
                                 master_view_controller.popUp(NSLocalizedString("Hostname", comment: "Hostname"), tag, "OK")
                                 UIApplication.shared.open(URL(string: "https://dns.google/query?name=\(tag)&type=ALL&do=true")!)
                             }
-
+                            
                             if !model.text_tcp_ports.isEmpty {
                                 HStack {
                                     VStack { Divider() }
@@ -481,7 +501,7 @@ struct DetailSwiftUIView: View {
                                     Text("IPv4 and IPv6 addresses").foregroundColor(.gray.lighter().lighter()).font(.footnote)
                                 }
                             }
-
+                            
                             TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
                                 DispatchQueue.main.async {
                                     Task {
@@ -495,7 +515,7 @@ struct DetailSwiftUIView: View {
                                     }
                                 }
                             }
-
+                            
                             if !model.text_services.isEmpty {
                                 VStack {
                                     HStack {
@@ -507,7 +527,7 @@ struct DetailSwiftUIView: View {
                                     
                                 }
                             }
-
+                            
                             ForEach(model.text_services, id: \.self) { service_name in
                                 HStack(spacing: 2)  {
                                     
@@ -518,7 +538,7 @@ struct DetailSwiftUIView: View {
                                             .font(.body)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
-
+                                        
                                         Text(service_names_descr[service_name] ?? "")
                                             .font(.footnote)
                                             .padding(.leading, 5)
@@ -539,7 +559,7 @@ struct DetailSwiftUIView: View {
                                         Spacer()
                                     }.background(Color(COLORS.toolbar_background).lighter())
                                 }
-
+                                
                                 Spacer().frame(height: 2)
                             }
                             

@@ -89,6 +89,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
+                            // image est nil uniquement dans le simulateur, pour certaines images préinstallées (bug du simulateur de mon point de vue)
                             let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
                             self.parent.original_map_image_rotation = (image as! UIImage).cgImage!.width < (image as! UIImage).cgImage!.height
                             self.parent.original_map_image = Coordinator.rotateIfNeeded(image as! UIImage)

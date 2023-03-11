@@ -357,6 +357,10 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     @IBAction func launch_heatmap(_ sender: Any) {
+        launch_heatmap()
+    }
+
+    public func launch_heatmap() {
         let heatmap_view_controller = HeatMapViewController()
         heatmap_view_controller.master_view_controller = self
         present(heatmap_view_controller, animated: true)
@@ -375,7 +379,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func applicationWillResignActive() {
-        stopBrowsing(.OTHER_ACTION)
+        // on ne stoppe plus l'action en cours quand on revient d'un changement d'appli ou d'une fermeture de l'iPad
+        // ce stop permettait : de ne pas avoir une courbe qui n'est pas une fonction pour une action sur le chart, de ne pas avoir un blocage de la roue qui tourne pour une action de recherche de nœuds ou de ports.
+        
+        // le problème avec ce stop: ça complique la production de la heat map pour l'utilisateur
+        // stopBrowsing(.OTHER_ACTION)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -802,6 +810,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
+            await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
                 self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }
@@ -883,6 +892,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
+            await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
                 self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }

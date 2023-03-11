@@ -197,6 +197,12 @@ class DetailViewController: UIViewController {
         }
     }
     
+    public func removeMapButton() {
+        DispatchQueue.main.async {
+            self.hostingViewController.rootView.model.setButtonMapHiddenState(true)
+        }
+    }
+    
     public func enableButtons(_ state: Bool) {
         // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
         // il est async pour éviter une exception
