@@ -572,6 +572,18 @@ struct DetailSwiftUIView: View {
 
                 }//.id(topID)
                 .cornerRadius(15).padding(7) // VStack
+
+                    /* pour tester Interman dans la vue principale
+                     Text("salut")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.red)
+                
+                     IntermanSwiftUIView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(height: 500)
+                    .background(.blue)
+                     */
+                
             }.background(Color(COLORS.right_pannel_bg)) // ScrollView
             //            .popover(isPresented: $showing_popover) { Text("SALUT")}
         }

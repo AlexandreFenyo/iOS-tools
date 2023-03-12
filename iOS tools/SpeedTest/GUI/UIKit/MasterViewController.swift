@@ -96,6 +96,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var split_view_controller: SplitViewController?
     public var traces_view_controller: TracesViewController?
     public var master_ip_view_controller: MasterIPViewController?
+    public var interman_view_controller: IntermanViewController?
 
     // public weak var browser_chargen : ServiceBrowser?
     // public weak var browser_discard : ServiceBrowser?

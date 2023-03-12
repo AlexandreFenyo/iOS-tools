@@ -370,17 +370,17 @@
             </objects>
             <point key="canvasLocation" x="-798" y="547"/>
         </scene>
-        <!--CLI-->
+        <!--Interman-->
         <scene sceneID="Vt6-RQ-TVN">
             <objects>
-                <viewController id="d60-mu-Od5" sceneMemberID="viewController">
+                <viewController id="d60-mu-Od5" customClass="IntermanViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0O5-Tp-Ub9">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="1366"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="yMl-Hs-n6r"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="CLI" image="terminal" catalog="system" id="W16-9t-txw"/>
+                    <tabBarItem key="tabBarItem" title="Network" image="circle.hexagonpath" catalog="system" id="W16-9t-txw"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nJh-PO-hVU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -396,8 +396,8 @@
                     </tabBar>
                     <connections>
                         <segue destination="X4Q-a0-4Mv" kind="relationship" relationship="viewControllers" id="WRV-SP-FjR"/>
-                        <segue destination="ffj-xs-eeE" kind="relationship" relationship="viewControllers" id="kPi-0O-Wij"/>
                         <segue destination="d60-mu-Od5" kind="relationship" relationship="viewControllers" id="8MY-ko-fct"/>
+                        <segue destination="ffj-xs-eeE" kind="relationship" relationship="viewControllers" id="kPi-0O-Wij"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cJ9-qV-n7M" userLabel="First Responder" sceneMemberID="firstResponder"/>

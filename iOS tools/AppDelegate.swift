@@ -85,8 +85,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController /* ,
-                                                                                                      let consoleViewController = tabBarController.viewControllers?[2] */
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
+            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
                 //            let devices = masterViewController.devices[.localGateway]
         else { fatalError() }
         
@@ -94,7 +94,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //        detailViewController.device = devices.first
         
         // suppression du 3ième view controller (console) pour le MVP
-        tabBarController.viewControllers?.remove(at: 2)
+        // tabBarController.viewControllers?.remove(at: 2)
         
         self.masterViewController = masterViewController
         
@@ -102,7 +102,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         masterViewController.detail_navigation_controller = rightNavController
         masterViewController.split_view_controller = splitViewController
         masterViewController.traces_view_controller = tracesViewController
-        
+        masterViewController.interman_view_controller = intermanViewController
+
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController
         
