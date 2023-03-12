@@ -13,7 +13,7 @@ class IntermanScene: SKScene {
     override func didMove(to view: SKView) {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
     }
-
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
@@ -21,5 +21,14 @@ class IntermanScene: SKScene {
         box.position = location
         box.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 50, height: 50))
         addChild(box)
+    }
+
+
+    public override init(size: CGSize) {
+        super.init(size: size)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

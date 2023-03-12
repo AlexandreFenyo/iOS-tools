@@ -370,7 +370,7 @@
             </objects>
             <point key="canvasLocation" x="-798" y="547"/>
         </scene>
-        <!--Interman-->
+        <!--Network-->
         <scene sceneID="Vt6-RQ-TVN">
             <objects>
                 <viewController id="d60-mu-Od5" customClass="IntermanViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
@@ -424,6 +424,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="circle.hexagonpath" catalog="system" width="128" height="115"/>
         <image name="gearshape" catalog="system" width="128" height="123"/>
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="map" catalog="system" width="128" height="112"/>
@@ -433,7 +434,6 @@
         <image name="rectangle.badge.plus" catalog="system" width="128" height="96"/>
         <image name="repeat" catalog="system" width="128" height="98"/>
         <image name="stop.circle" catalog="system" width="128" height="123"/>
-        <image name="terminal" catalog="system" width="128" height="93"/>
         <image name="text.justify" catalog="system" width="128" height="99"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -95,6 +95,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // suppression du 3ième view controller (console) pour le MVP
         // tabBarController.viewControllers?.remove(at: 2)
+
+        // A supprimer en production: sélection par défaut du tab Interman nommé Network, pour débugger rapidement
+        tabBarController.selectedIndex = 1
         
         self.masterViewController = masterViewController
         
