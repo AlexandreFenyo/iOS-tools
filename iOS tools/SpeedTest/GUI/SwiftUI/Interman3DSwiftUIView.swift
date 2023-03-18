@@ -22,6 +22,8 @@ struct Interman3DSwiftUIView: View {
     
     var scene = get3DScene()
     
+    
+    
     var body: some View {
         ZStack {
           SceneView(
