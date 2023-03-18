@@ -17,7 +17,6 @@ class HeatMapViewController: UIViewController {
 //    private var my_memory_tracker = MyMemoryTracker("HeatMapViewController")
 
     public var master_view_controller: MasterViewController?
-
     private lazy var hosting_view_controller = makeHostingController()
     
     private func makeHostingController() -> UIHostingController<HeatMapSwiftUIView> {
@@ -40,7 +39,6 @@ class HeatMapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
 
         // dès cette ligne on n'a plus de deinit de ce view controller
         addChild(hosting_view_controller)

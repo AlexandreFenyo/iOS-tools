@@ -80,7 +80,7 @@ struct LoadingView<Content>: View where Content: View {
 
 class PhotoController: NSObject {
     weak var heatmap_view_controller: HeatMapViewController?
-
+    
     public init(heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
     }
@@ -88,7 +88,7 @@ class PhotoController: NSObject {
     @objc private func image(_ image: UIImage,
                              didFinishPhotoLibrarySavingWithError error: Error?,
                              contextInfo: UnsafeRawPointer) {
-//        print("Image successfully written to camera roll")
+        //        print("Image successfully written to camera roll")
         exporting_map = false
         if error != nil {
             popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration pane)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration pane)"), "OK")
@@ -122,11 +122,12 @@ struct HeatMapSwiftUIView: View {
     
     let photoController: PhotoController
     weak var heatmap_view_controller: HeatMapViewController?
-
+    
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
+    @State private var showing_alert = false
     @State private var showing_progress = false
-
+    
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
@@ -228,12 +229,29 @@ struct HeatMapSwiftUIView: View {
                     Text("Heat Map Builder")
                         .foregroundColor(Color(COLORS.leftpannel_ip_text))
                         .padding()
-                        .sheet(isPresented: $showing_map_picker) {
+                        .sheet(isPresented: $showing_map_picker, onDismiss: {() -> Void in
+                            if model.original_map_image_rotation == true {
+                                showing_alert = true
+                            }
+                        }) {
                             ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values)
                         }
                     Spacer()
                 }.background(Color(COLORS.toolbar_background))
-                
+                    .sheet(isPresented: $showing_alert) {
+                        VStack {
+                            Text("Image rotation applied")
+                                .font(.title)
+                                .padding(20)
+                                .lineLimit(2)
+                            Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
+                            Image(uiImage: model.input_map_image!)
+                            .padding(30)
+                            Button("Continue",
+                                   action: { showing_alert.toggle() })
+                        }
+                    }
+
                 VStack {
                     HStack() {
                         HStack(alignment: .top) {
@@ -315,10 +333,10 @@ struct HeatMapSwiftUIView: View {
                             
                             Button {
                                 if model.original_map_image == nil || model.max_scale == 0 { return }
-
+                                
                                 showing_progress.toggle()
                                 exporting_map = true
-
+                                
                                 let image = model.original_map_image!
                                 let image_rotation = model.original_map_image_rotation!
                                 let width = image.cgImage!.width
@@ -333,7 +351,7 @@ struct HeatMapSwiftUIView: View {
                                     IDWValue<UInt16>(x: UInt16(Float($0.x) * factor_x), y: UInt16(Float($0.y) * factor_y), v: UInt16($0.v / max * Float(UInt16.max - 1)))
                                 }
                                 _ = values.map { idw_image.addValue($0) }
-
+                                
                                 Task {
                                     let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
                                     
@@ -353,7 +371,7 @@ struct HeatMapSwiftUIView: View {
                                     let grayscale = CIFilter(name: "CIPhotoEffectNoir")!
                                     grayscale.setValue(ci_image_original, forKey: kCIInputImageKey)
                                     var gray_image = grayscale.outputImage
-
+                                    
                                     if image_rotation {
                                         gray_image = gray_image?.oriented(CGImagePropertyOrientation.upMirrored)
                                     }
@@ -391,7 +409,7 @@ struct HeatMapSwiftUIView: View {
                             }
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200)
-
+                            
                         }.padding(.top)
                     }
                     
