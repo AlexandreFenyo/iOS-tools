@@ -9,10 +9,16 @@
 import SwiftUI
 
 class IntermanViewController : UIViewController {
-    private lazy var hostingViewController = makeHostingController()
+    private lazy var hostingViewController = make3DHostingController()
 
-    private func makeHostingController() -> UIHostingController<IntermanSwiftUIView> {
-        let hostingController = UIHostingController(rootView: IntermanSwiftUIView())
+    private func make2DHostingController() -> UIHostingController<Interman2DSwiftUIView> {
+        let hostingController = UIHostingController(rootView: Interman2DSwiftUIView())
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        return hostingController
+    }
+
+    private func make3DHostingController() -> UIHostingController<Interman3DSwiftUIView> {
+        let hostingController = UIHostingController(rootView: Interman3DSwiftUIView())
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }

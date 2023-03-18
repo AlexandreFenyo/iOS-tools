@@ -13,9 +13,9 @@ import SpriteKit
 // structure de données
 // 
 
-struct IntermanSwiftUIView: View {
-    private func getScene(size: CGSize) -> SKScene {
-        let scene = IntermanScene(size: size)
+struct Interman2DSwiftUIView: View {
+    private func get2DScene(size: CGSize) -> SKScene {
+        let scene = Interman2DScene(size: size)
         scene.scaleMode = .fill
         let circle = SKShapeNode(circleOfRadius: 10)
         circle.position = CGPointMake(size.width / 2, size.height / 2)
@@ -30,7 +30,7 @@ struct IntermanSwiftUIView: View {
         VStack {
             Text("Interman").background(.blue)
             GeometryReader { geometry in
-                SpriteView(scene: getScene(size: geometry.size))
+                SpriteView(scene: get2DScene(size: geometry.size))
                     .frame(width: geometry.size.width, height: geometry.size.height)
             }
         }

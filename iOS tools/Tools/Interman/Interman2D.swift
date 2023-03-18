@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class IntermanScene: SKScene {
+class Interman2DScene: SKScene {
     override func didMove(to view: SKView) {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
     }
@@ -22,7 +22,6 @@ class IntermanScene: SKScene {
         box.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 50, height: 50))
         addChild(box)
     }
-
 
     public override init(size: CGSize) {
         super.init(size: size)

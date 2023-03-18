@@ -92,9 +92,11 @@
 		5DC7307C28D90CD0004094BB /* LocalAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7307B28D90CD0004094BB /* LocalAppService.swift */; };
 		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
-		5DE22F7729BDC1A0002D9BEE /* IntermanSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7629BDC1A0002D9BEE /* IntermanSwiftUIView.swift */; };
-		5DE22F7A29BDC24F002D9BEE /* Interman.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7929BDC24F002D9BEE /* Interman.swift */; };
+		5DE22F7729BDC1A0002D9BEE /* Interman2DSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7629BDC1A0002D9BEE /* Interman2DSwiftUIView.swift */; };
+		5DE22F7A29BDC24F002D9BEE /* Interman2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7929BDC24F002D9BEE /* Interman2D.swift */; };
 		5DE22F7C29BDF2CA002D9BEE /* IntermanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */; };
+		5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */; };
+		5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */; };
 		5DE4ED92290586740000B30A /* docs-chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED86290586730000B30A /* docs-chart.png */; };
 		5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED87290586730000B30A /* docs-actions-2.png */; };
 		5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED88290586730000B30A /* docs-browse-stop.png */; };
@@ -229,9 +231,11 @@
 		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
 		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
-		5DE22F7629BDC1A0002D9BEE /* IntermanSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermanSwiftUIView.swift; sourceTree = "<group>"; };
-		5DE22F7929BDC24F002D9BEE /* Interman.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman.swift; sourceTree = "<group>"; };
+		5DE22F7629BDC1A0002D9BEE /* Interman2DSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman2DSwiftUIView.swift; sourceTree = "<group>"; };
+		5DE22F7929BDC24F002D9BEE /* Interman2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman2D.swift; sourceTree = "<group>"; };
 		5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermanViewController.swift; sourceTree = "<group>"; };
+		5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
+		5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman3DSwiftUIView.swift; sourceTree = "<group>"; };
 		5DE4ED86290586730000B30A /* docs-chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-chart.png"; sourceTree = "<group>"; };
 		5DE4ED87290586730000B30A /* docs-actions-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-actions-2.png"; sourceTree = "<group>"; };
 		5DE4ED88290586730000B30A /* docs-browse-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-browse-stop.png"; sourceTree = "<group>"; };
@@ -373,7 +377,8 @@
 				5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */,
 				5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */,
 				5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */,
-				5DE22F7629BDC1A0002D9BEE /* IntermanSwiftUIView.swift */,
+				5DE22F7629BDC1A0002D9BEE /* Interman2DSwiftUIView.swift */,
+				5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */,
 				5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */,
 			);
 			path = SwiftUI;
@@ -518,7 +523,8 @@
 		5DE22F7829BDC20C002D9BEE /* Interman */ = {
 			isa = PBXGroup;
 			children = (
-				5DE22F7929BDC24F002D9BEE /* Interman.swift */,
+				5DE22F7929BDC24F002D9BEE /* Interman2D.swift */,
+				5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */,
 			);
 			path = Interman;
 			sourceTree = "<group>";
@@ -733,6 +739,7 @@
 				5D65EE69296491DF0099871C /* IMG_2516.PNG in Resources */,
 				5D82ACD6297D46C20021E492 /* docs-actions-fr.psd in Resources */,
 				5D16E60829A77124000A46E4 /* docs-action-bar.psd in Resources */,
+				5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene.scn in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
 				5D82ACE9297F2A4D0021E492 /* E321B005-ACA4-42F0-AB7D-C49DCC930F4F_1_102_o.jpeg in Resources */,
@@ -821,6 +828,7 @@
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
 				5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */,
+				5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
 				5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */,
 				5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */,
@@ -853,7 +861,7 @@
 				5DF2151D212DAF2B002B7603 /* LocalHttpClient.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
 				5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */,
-				5DE22F7729BDC1A0002D9BEE /* IntermanSwiftUIView.swift in Sources */,
+				5DE22F7729BDC1A0002D9BEE /* Interman2DSwiftUIView.swift in Sources */,
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
@@ -862,7 +870,7 @@
 				5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */,
 				5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */,
 				5DF215112121E16C002B7603 /* localPingClient.c in Sources */,
-				5DE22F7A29BDC24F002D9BEE /* Interman.swift in Sources */,
+				5DE22F7A29BDC24F002D9BEE /* Interman2D.swift in Sources */,
 				5DF21507211C6F8E002B7603 /* LocalService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
