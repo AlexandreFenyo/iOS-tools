@@ -56,7 +56,7 @@ struct Interman3DSwiftUIView: View {
                   Button {
                       model.addComponent()
                   } label: {
-                      Text("TEST")
+                      Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }
               }
@@ -65,9 +65,10 @@ struct Interman3DSwiftUIView: View {
               Text("salut").foregroundColor(.white)
               Spacer()
                 Button {
-                    
+                    model.testComponent()
                 } label: {
-                  Image(systemName: "xmark.circle.fill").imageScale(.large)
+                    Text("update")
+                    Image(systemName: "xmark.circle.fill").imageScale(.large)
                 }
             }
             .padding(8)

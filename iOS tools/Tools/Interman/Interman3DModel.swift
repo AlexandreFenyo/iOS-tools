@@ -10,12 +10,14 @@ import Foundation
 import SwiftUI
 import SceneKit
 
-// C3D: 3D Component in this app
+// B3D: basic 3D node in this app
 
-class C3D : SCNNode {
+class B3D : SCNNode {
     public init(_ scn_node: SCNNode) {
         super.init()
         addChildNode(scn_node.clone())
+        simdPosition.x = 1
+        simdRotation.z = 0.2
     }
 
     required init?(coder: NSCoder) {
@@ -23,7 +25,7 @@ class C3D : SCNNode {
     }
 }
 
-class C3DNode : C3D {
+class B3DNode : B3D {
     private weak var node: Node?
     
     public init(_ scn_node: SCNNode, _ node: Node) {
@@ -43,18 +45,30 @@ struct ComponentTemplates {
 public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
     public var scene: SCNScene?
+
+    private var b3d_test: B3D?
     
     public init() {
         print("MANAGER INIT")
     }
     
     internal func addComponent(_ node: Node) {
-        scene?.rootNode.addChildNode(C3DNode(ComponentTemplates.standard, node))
-        print("done")
+        let b3d_node = B3DNode(ComponentTemplates.standard, node)
+        b3d_test = b3d_node
+        scene?.rootNode.addChildNode(b3d_node)
+        print("addComponent(node) done")
     }
-
+    
     internal func addComponent() {
-        scene?.rootNode.addChildNode(C3D(ComponentTemplates.standard))
-        print("done")
+        let b3d = B3D(ComponentTemplates.standard)
+        b3d_test = b3d
+        scene?.rootNode.addChildNode(b3d)
+        print("addComponent() done")
+    }
+    
+    internal func testComponent() {
+        b3d_test?.simdRotation.z += 1
+//        b3d_test?.simdPosition.x += 0.1
+        print("testComponent() done")
     }
 }
