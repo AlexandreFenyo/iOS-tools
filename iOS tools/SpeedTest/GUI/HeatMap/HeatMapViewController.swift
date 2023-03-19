@@ -41,7 +41,6 @@ class HeatMapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
         // dès cette ligne on n'a plus de deinit de ce view controller
         addChild(hosting_view_controller)
         view.addSubview(hosting_view_controller.view)

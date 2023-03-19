@@ -14,21 +14,18 @@ import SceneKit
 //
 
 struct Interman3DSwiftUIView: View {
+    public weak var master_view_controller: MasterViewController?
+
+    @ObservedObject var model = Interman3DModel.shared
+
     static func get3DScene() -> SCNScene? {
       let scene = SCNScene(named: "Interman 3D Scene.scn")
+        Interman3DModel.shared.scene = scene
 //      applyTextures(to: scene)
       return scene
     }
     
     var scene = get3DScene()
-    
-    private func addNode() {
-        guard let _scene = SCNScene(named: "Interman 3D Standard Node.scn") else {
-            fatalError("can not load Node scene")
-        }
-        scene?.rootNode.addChildNode(_scene.rootNode.clone())
-        print("done")
-    }
     
     var body: some View {
         ZStack {
@@ -57,7 +54,7 @@ struct Interman3DSwiftUIView: View {
             HStack {
               HStack {
                   Button {
-                      addNode()
+                      model.addNode()
                   } label: {
                       Text("TEST")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)

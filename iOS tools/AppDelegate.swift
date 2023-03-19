@@ -109,7 +109,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController
-        
+
+        intermanViewController.master_view_controller = masterViewController
+
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
         

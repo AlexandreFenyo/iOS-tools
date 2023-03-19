@@ -584,6 +584,16 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Main thread
     func addNode(_ node: Node) {
+        
+  
+        // TEST
+        // tentative de connexion avec le modèle 3D
+//        interman_view_controller.
+//        interman_view_controller
+        Interman3DModel.shared.tst()
+        
+        
+        
 //        tableView.beginUpdates()
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
 //        tableView.deleteRows(at: index_paths_removed, with: .automatic)

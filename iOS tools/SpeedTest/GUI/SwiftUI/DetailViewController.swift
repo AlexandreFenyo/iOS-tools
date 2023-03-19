@@ -22,7 +22,7 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
 
 @MainActor
 class DetailViewController: UIViewController {
-    public var master_view_controller: MasterViewController?
+    public weak var master_view_controller: MasterViewController?
     
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
