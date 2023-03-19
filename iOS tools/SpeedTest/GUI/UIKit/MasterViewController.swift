@@ -590,7 +590,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // tentative de connexion avec le modèle 3D
 //        interman_view_controller.
 //        interman_view_controller
-        Interman3DModel.shared.tst()
+        Interman3DModel.shared.addComponent(node)
         
         
         

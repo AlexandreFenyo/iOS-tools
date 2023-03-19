@@ -127,7 +127,7 @@ class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-class Node : Hashable {
+internal class Node : Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)

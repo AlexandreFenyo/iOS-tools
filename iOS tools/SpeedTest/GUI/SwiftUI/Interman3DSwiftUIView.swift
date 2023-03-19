@@ -54,7 +54,7 @@ struct Interman3DSwiftUIView: View {
             HStack {
               HStack {
                   Button {
-                      model.addNode()
+                      model.addComponent()
                   } label: {
                       Text("TEST")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
