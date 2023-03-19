@@ -22,21 +22,22 @@ struct Interman3DSwiftUIView: View {
     
     var scene = get3DScene()
     
-    
+    private func addNode() {
+        guard let _scene = SCNScene(named: "Interman 3D Standard Node.scn") else {
+            fatalError("can not load Node scene")
+        }
+        scene?.rootNode.addChildNode(_scene.rootNode.clone())
+        print("done")
+    }
     
     var body: some View {
         ZStack {
-          SceneView(
-            // 1
+            SceneView(
             scene: scene,
-            // 2
 //            pointOfView: setUpCamera(planet: viewModel.selectedPlanet),
-            // 3
-            options: .allowsCameraControl)
-            // 4
+            options: [.allowsCameraControl])
 //            .background(ColorPalette.secondary)
             .edgesIgnoringSafeArea(.all)
-
           VStack {
 /*
               if let planet = viewModel.selectedPlanet {
@@ -56,14 +57,11 @@ struct Interman3DSwiftUIView: View {
             HStack {
               HStack {
                   Button {
+                      addNode()
                   } label: {
-                  Image(systemName: "arrow.backward.circle.fill")
-                }
-                  
-                  Button {
-                  } label: {
-                      Image(systemName: "arrow.forward.circle.fill")
-                }
+                      Text("TEST")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
               }
 
               Spacer()
@@ -72,7 +70,7 @@ struct Interman3DSwiftUIView: View {
                 Button {
                     
                 } label: {
-                  Image(systemName: "xmark.circle.fill")
+                  Image(systemName: "xmark.circle.fill").imageScale(.large)
                 }
             }
             .padding(8)
