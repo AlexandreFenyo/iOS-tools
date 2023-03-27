@@ -67,7 +67,7 @@
 "You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping)." = "Vous pouvez sélectionner une autre IP ou lancer une tâche sur l'IP sélectionnée (scanner les ports TCP, inonder le port TCP discard, inonder le port TCP chargen, inonder en UDP or émettre des ping ICMP).";
 "Error saving map" = "Erreur de sauvegarde de la HeatMap";
 "Map saved" = "Heat Map sauvegardée";
-"Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration pane)" = "L'accès aux photos est interdit. Vous devez modifier les droits d'accès dans le panneau de configuration iOS de l'app (cliquez sur la roue dentée dans la barre d'outils, pour accéder à cette configuration).";
+"Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)" = "L'accès aux photos est interdit. Vous devez modifier les droits d'accès dans le panneau de configuration iOS de l'app (cliquez sur la roue dentée dans la barre d'outils, pour accéder à cette configuration).";
 "You can find the heatmap in you photo roll" = "vous trouverez la Heat Map dans l'application Photos.";
 "Help: " = "Aide : ";
 "Help" = "Aide";
@@ -75,8 +75,8 @@
 "Dismiss further help messages" = "Ne plus réafficher d'aide";
 "public host" = "hôte public";
 "local host" = "hôte local";
-"TCP flood discard: outgoing throuhgput" = "inonder le port discard (débit sortant)";
-"TCP flood chargen: incoming throuhgput" = "inonder le port chargen (débit entrant)";
+"TCP flood discard: outgoing throughput" = "inonder le port discard (débit sortant)";
+"TCP flood chargen: incoming throughput" = "inonder le port chargen (débit entrant)";
 "ICMP (ping)" = "ping (ICMP)";
 "update nodes" = "explorer le réseau local";
 "remove nodes" = "supprimer les nœuds";
