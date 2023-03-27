@@ -15,9 +15,8 @@ import SceneKit
 class B3D : SCNNode {
     public init(_ scn_node: SCNNode) {
         super.init()
-        addChildNode(scn_node.clone())
-        simdPosition.x = 1
-        simdRotation.z = 0.2
+        let _node = scn_node.clone()
+        addChildNode(_node.clone())
     }
 
     required init?(coder: NSCoder) {
@@ -53,21 +52,38 @@ public class Interman3DModel : ObservableObject {
     }
     
     internal func addComponent(_ node: Node) {
+        print(#function)
         let b3d_node = B3DNode(ComponentTemplates.standard, node)
+        print("b3d_node=\(b3d_node)")
+        
         b3d_test = b3d_node
         scene?.rootNode.addChildNode(b3d_node)
         print("addComponent(node) done")
     }
     
     internal func addComponent() {
+        print(#function)
         let b3d = B3D(ComponentTemplates.standard)
+        print("b3d=\(b3d)")
+
         b3d_test = b3d
         scene?.rootNode.addChildNode(b3d)
         print("addComponent() done")
     }
     
     internal func testComponent() {
-        b3d_test?.simdRotation.z += 1
+        print(#function)
+        print(b3d_test?.pivot)
+        b3d_test?.simdPosition.x = 1
+//        b3d_test?.simdPivot.
+
+        
+        
+        //      b3d_test?.simdRotation.x += 1
+//        b3d_test?.simdRotation.y += 1
+  //      b3d_test?.simdRotation.z += 1
+//        b3d_test?.simdRotation.w += 0.1
+        print(b3d_test?.pivot)
 //        b3d_test?.simdPosition.x += 0.1
         print("testComponent() done")
     }
