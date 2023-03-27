@@ -1,0 +1,22 @@
+
+
+POST https://translation.googleapis.com/v3/projects/project-number-1/locations/us-central1:translateText
+{
+  "model":"projects/project-number-2/locations/us-central1/models/model",
+  "sourceLanguageCode": "en",
+  "targetLanguageCode": "ru",
+  "contents": ["Dr. Watson, please discard your trash."]
+}
+
+curl -X POST \
+    -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
+    -H "Content-Type: application/json; charset=utf-8" \
+    -d @request.json \
+    "https://translation.googleapis.com/language/translate/v2"
+
+fenyo@mac scripts % cat ../iOS\ tools/fr.lproj/Localizable.strings | sed 's/^"//' | sed 's/" = "/\t/' | sed 's/";$//' > model.tsv
+
+L'entraînement ne peut pas continuer en raison de l'erreur suivante : L'ensemble de données n'inclut pas suffisamment de paires de phrases. Pour la répartition des données par défaut (automatique), l'ensemble de données doit comporter au moins 1 000 paires de phrases. Pour les répartitions de données manuelles, l'ensemble d'entraînement doit comporter au moins trois paires de phrases. Les ensembles de test et de validation doivent comporter au moins 100 paires de phrases. Spécifiez manuellement les répartitions des données et importez-les dans votre ensemble de données à l'aide d'un fichier CSV.
+
+
+

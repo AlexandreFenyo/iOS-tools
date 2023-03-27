@@ -1,0 +1,121 @@
+web access	accès web
+parameter-lang	fr
+mDNS and DNS host names	noms mDNS et DNS
+IPv4 and IPv6 addresses	adresses IPv4 et IPv6
+scan TCP ports	scanner les ports TCP
+TCP flood discard	inonder le port TCP discard
+TCP flood chargen	inonder le port TCP chargen
+UDP flood	inonder en UDP
+ICMP ping	ping ICMP
+TCP ports and associated service names	ports TCP et services associés
+UDP ports and associated service names	ports UDP et services associés
+iOS device	Périphérique iOS
+Chargen Discard	Chargen ou Discard
+Add permanently	Ajouter et conserver
+Target name	Nom de la cible
+Target IP	IP de la cible
+Target List	Liste des cibles
+Resolve target IPv4 from target name	Résoudre l'adresse IPv4 à partir du nom de cible
+Resolve target IPv6 from target name	Résoudre l'adresse IPv6 à partir du nom de cible
+Add this new target	Ajouter cette nouvelle cible
+Dismiss	Annuler
+Localhost	Périphérique local
+this host	cet hôte
+iOS devices	Périphériques iOS
+other devices running this app	autres hôtes avec cette app active
+Chargen Discard services	Services Chargen/Discard
+other devices running these services	autres hôtes avec ces services
+Local gateway	Passerelle locale
+Other host	Autre hôte
+local router	routeur local
+remote hosts on the Internet	hôtes distants sur Internet
+Other hosts	Autres hôtes
+any host	hôtes quelconques
+New node properties	Caractéristiques de la nouvelle cible
+Add new target or new IP to existing target	Ajouter une nouvelle cible ou une nouvelle IP pour cette cible
+Heat Map Builder	Création d'une heatmap
+Select your floor plan	Choisissez votre plan
+Add new probe	Ajouter une sonde
+Save measure	Sauvegarder la mesure
+Undo	Annuler
+Reset all"= "Tout effacer
+Share your map	Partagez votre carte
+Hide map	Masquer la carte
+ALL	TOUS
+Scan local network	Parcourir le réseau local
+Advanced actions	Actions avancées
+Chart usage	Utilisation du graphe
+Internet speed test	Débit Internet
+Open ports explorer	Explorateur de ports
+App settings	Paramètres de l'app
+You can reset this app, for instance to display again each help pop-up you have previously dismissed.	Vous pouvez réinitialiser cette app, par exemple pour afficher à nouveau tous les pop-up d'aide.
+To reset this app or update its parameters, you need to open the iOS Configuration app and select the name of this app in the app list.	Pour réinitialiser cette app ou mettre à jour ses paramètres, vous devez ouvrir la section de configuration des app dans iOS et sélectionner le nom de cette app dans la liste.
+Licensing	Licence
+This tool makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE	Cet outil utilise CTHelp de Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE
+Even if I often publish free software open-source code (see https://github.com/AlexandreFenyo), this specific software is not free, however it is open-source, but you must not redistribute the sources.	Même si je publie souvent du logiciel libre et open-source (voir https://github.com/AlexandreFenyo), ce logiciel n'est pas libre, les sources sont accessibles mais il est interdit de les redistribuer.
+Come back here after having started a TCP Flood Chargen action on a target (download speed testing).	Revenez ici après avoir lancé une action d'inondation Chargen sur une cible (test de débit descendant).
+The target must remain the same until the heat map is built.	La cible doit rester identique jusqu'à ce que la heatmap soit terminée.
+- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;	- pour évaluer le débit interne Wi-Fi entre les périphériques locaux, sélectionnez une cible sur le réseau local filaire, ou sélectionnez une cible aussi proche que possible d'un point d'accès, par ex. un appareil iOS sur lequel cette app est démarrée;
+- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.	- pour évaluer le débit Internet dans les pièces où vous disposez d'une couverture Wi-Fi, sélectionnez une cible sur Internet, par exemple flood.eowyn.eu.org.
+Welcome on the main page of this app.	Bienvenue sur la page d'accueil de cette app.
+Either pull down the node list or click on the reload button, to scan the local network for new nodes.	Tirez sur la liste des cibles ou cliquez sur le bouton de rechargement pour découvrir de nouveaux nœuds sur le réseau local.
+You can also select a node to display its IP addresses, then launch actions on the selected target.	Vous pouvez aussi sélectionner un nœud pour afficher ses adresses IP, puis lancer des tâches sur cette cible.
+For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services.	Par exemple, pour estimer le débit moyen entrant ou sortant de votre connexion Internet, sélectionnez la cible flood.eowyn.eu.org, qui est constituée d'un nœud Internet qui offre les services TCP Chargen et Discard.
+Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.	Vous pouvez alors lancer l'une ou l'autre de ces tâches : inondation TCP discard pour évaluer le débit sortant moyen vers Internet, or inondation TCP chargen pour estimer le débit entrant depuis Internet.
+IP List	Liste d'IP
+You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping).	Vous pouvez sélectionner une autre IP ou lancer une tâche sur l'IP sélectionnée (scanner les ports TCP, inonder le port TCP discard, inonder le port TCP chargen, inonder en UDP or émettre des ping ICMP).
+Error saving map	Erreur de sauvegarde de la HeatMap
+Map saved	Heat Map sauvegardée
+Access to photos is forbidden.	L'accès aux photos est interdit.
+You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration pane)	Vous devez modifier les droits d'accès dans le panneau de configuration iOS de l'app (cliquez sur la roue dentée dans la barre d'outils, pour accéder à cette configuration).
+You can find the heatmap in you photo roll	vous trouverez la Heat Map dans l'application Photos.
+Help: 	Aide : 
+Help	Aide
+Don't show this message again	Ne pas réafficher ce message
+Dismiss further help messages	Ne plus réafficher d'aide
+public host	hôte public
+local host	hôte local
+TCP flood discard: outgoing throuhgput	inonder le port discard (débit sortant)
+TCP flood chargen: incoming throuhgput	inonder le port chargen (débit entrant)
+ICMP (ping)	ping (ICMP)
+update nodes	explorer le réseau local
+remove nodes	supprimer les nœuds
+Internet speed	débit Internet
+no public DNS record	pas de valeur DNS publique
+This button will remove every node automatically discovered during the current session.	Ce bouton supprimera tous les nœuds découverts automatiquement durant cette session.
+Then it scans each node to find open TCP ports.	Il explore alors chaque nœud découvert pour identifier des ports TCP ouverts.
+It will not affect local host, local gateway, static default nodes nor nodes you added manually.	Il n'affectera ni l'hôte local, ni la passerelle locale, ni les nœuds statiques par défaut, ni les nœuds que vous auriez ajoutés manuellement.
+To remove a node you added manually, swipe left on this node.	Pour supprimer les nœuds que vous auriez ajoutés manuellement, balayez à gauche sur le nœuds.
+This button starts browsing the network for nodes on connected LANs.	Ce bouton démarre la recherche de nœuds sur le réseau local.
+Then it scans each node to find open TCP ports.	Il explore alors chaque nœud découvert pour identifier des ports TCP ouverts.
+When needed, press the stop button to cancel this task	Appuyez sur le bouton stop pour arrêter cette tâche.
+Traces panel will provide you with progress information if needed.	Jetez un œil sur le panneau de traces pour suivre l'avancement de ces opérations.
+This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT).	Ce type de nœud public sur Internet ne devrait être utilisé que pour lancer des ping (ICMP), afin d'évaluer la latence réseau.
+Other services are not supported by those remote hosts.	Ces nœuds ne supportent pas d'autres services.
+This node corresponds to your Apple device.	Ce nœud correspond à ce périphérique Apple.
+You can see displayed its many IPv4 and IPv6 addresses.	Vous pouvez découvrir ses différentes adresses IPv4 et IPv6.
+Select one of these IPs and start a local loop action.	Sélectionnez une de ces IPs et démarrez une tâche, il s'agit alors d'une tâche dite de boucle locale.
+On this node, the TCP Chargen and Discard services are activated.	Ce nœud offre les services Chargen et Discard.
+This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput.	Il est dédié à cette app et est déployé dans un cloud Internet, pour vous permettre d'évaluer vos débits descendant et montant avec Internet.
+Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth.	Démarrez une tâche de type inondation du port discard pour vous connecter sur le service discard de ce nœud et y envoyer du trafic sortant, cela permettra d'évaluer votre débit montant.
+Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.	Démarrez une tâche de type inondation du port chargen pour vous connecter sur le service chargen de ce nœud et recevoir du trafic entrant, cela permettra d'évaluer votre débit descendant.
+This hostname does not have a public DNS record. Select a host name with public DNS records to get their values.	Ce nom d'hôte n'est associé à aucun enregistrement DNS public. Saisissez un nom d'hôte disposant d'enregistrements DNS publics pour récupérer les valeurs de ces enregistrements.
+Parallel TCP connections will be established to 	Des connexions TCP vont être établies simultanément vers 
+ on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.	 sur les ports TCP de 1 à 65535, pour découvrir des services. Les nouveaux services découverts seront affichés en bas de cette vue. Vous pourrez interrompre cette tâche en pressant le bouton STOP.
+A TCP connection to the Discard port (9/TCP) of 	Une connexion vers le port Discard (9/TCP) de 
+ will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.	 sera établie. Des données seront alors envoyées sur cette connexion à la vitesse maximale possible, par ce périphérique vers cette cible, afin d'estimer le débit maximum qui peut être atteint dans la direction sortante. Vous pourrez interrompre cette tâche en pressant le bouton STOP.
+A TCP connection to the Chargen port (19/TCP) of 	Une connexion TCP vers le port Chargen (19/TCP) de 
+ will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." =  " sera établie. Des données seront reçues sur cette connexion à la vitesse maximale possible, par ce périphérique depuis cette cible, afin d'estimer le débit maximum qui peut être atteint dans la direction entrante. Vous pourrez interrompre cette tâche en pressant le bouton STOP.
+ICMP packets of type ECHO_REQUEST will be sent to 	Des paquets ICMP de type ECHO_REQUEST seront envoyés vers 
+ at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button.	 à une fréquence d'un paquet par seconde. La cible doit répondre avec des paquets ICMP de type ECHO_REPLY. La latence sera calculée et affichée sur le graphe. Vous pourrez interrompre cette tâche en pressant le bouton STOP.
+I understand	J'ai compris
+UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.	L'inondation UDP envoie des paquets vers le port UDP 8888 de la cible, à la vitesse maximale possible, mais de nombreux paquets peuvent être perdus au niveau logiciel, matériel ou dans la chaîne de liaison réseau. Notez que le débit affiché sur le graphe est celui atteint au niveau de la couche logicielle de votre périphérique. Ainsi, il est certainement surévalué vis à vis du débit réellement envoyé sur le réseau : vous devez donc mettre en place un moyen spécifique pour estimer le débit réseau réellement atteint. Vous pouvez pour cela observer le réseau ou décompter les paquets reçus par la cible, par exemple.
+none	non disponible
+found 	trouvé 
+trying 	teste 
+browsing TCP ports	parcours des ports TCP
+Hostname	Nom d'hôte
+mDNS/Bonjour services	Services mDNS/Bonjour
+Service key content	Contenu de la clé du service
+Image rotation applied	Rotation de l'image
+The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.	Le plan que vous avez choisi est au format vertical. Une rotation dans le sens des aiguilles d'une montre a donc été appliquée afin qu'il se retrouve en mode portrait. A la fin du processus de génération de la heat map, lorsque vous appuirez sur Partagez votre carte, l'image finale sera enregistrée dans l'application Photos avec l'orientation verticale originale.
