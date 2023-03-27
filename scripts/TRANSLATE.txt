@@ -8,15 +8,30 @@ POST https://translation.googleapis.com/v3/projects/project-number-1/locations/u
   "contents": ["Dr. Watson, please discard your trash."]
 }
 
-curl -X POST \
-    -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
-    -H "Content-Type: application/json; charset=utf-8" \
-    -d @request.json \
-    "https://translation.googleapis.com/language/translate/v2"
-
 fenyo@mac scripts % cat ../iOS\ tools/fr.lproj/Localizable.strings | sed 's/^"//' | sed 's/" = "/\t/' | sed 's/";$//' > model.tsv
 
 L'entraînement ne peut pas continuer en raison de l'erreur suivante : L'ensemble de données n'inclut pas suffisamment de paires de phrases. Pour la répartition des données par défaut (automatique), l'ensemble de données doit comporter au moins 1 000 paires de phrases. Pour les répartitions de données manuelles, l'ensemble d'entraînement doit comporter au moins trois paires de phrases. Les ensembles de test et de validation doivent comporter au moins 100 paires de phrases. Spécifiez manuellement les répartitions des données et importez-les dans votre ensemble de données à l'aide d'un fichier CSV.
 
+fenyo@mac ~ % cat request.json
+{
+  "q": "The Great Pyramid of Giza (also known as the Pyramid of Khufu or the Pyramid of Cheops) is the oldest and largest of the three pyramids in the Giza pyramid complex.",
+  "source": "en",
+  "target": "es",
+  "format": "text"
+}
 
+curl -X POST \
+    -H "Authorization: Bearer $(gcloud auth application-default print-access-token)" \
+    -H "Content-Type: application/json; charset=utf-8" \
+    -d @request.json \
+    "https://translation.googleapis.com/language/translate/v2?key=$APIKEY"
+
+avec ChatGPT :
+Traduis en espagnol le texte du domaine des réseaux informatiques suivant : "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."
+
+El envío masivo de UDP (User Datagram Protocol) envía paquetes de forma asíncrona al puerto UDP 8888 del objetivo a una tasa máxima, pero muchos paquetes pueden perderse en las capas de software, hardware o red. Tenga en cuenta que el rendimiento que se muestra en este gráfico es el que se logra en la capa de software de su dispositivo. Por lo tanto, sin duda está por encima del que se envía a través de la red: debe utilizar una herramienta para estimar el ancho de banda alcanzado. Por ejemplo, puede examinar la red o contar los paquetes en el objetivo.
+
+Translate in spanish the following text that is a technical manual for network computing : "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."
+
+Traduis en espagnol le texte anglais du domaine des réseaux informatiques suivant : "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."
 

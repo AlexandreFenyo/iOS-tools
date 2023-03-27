@@ -1,0 +1,15 @@
+/* A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences. */
+
+"Group" = "Group";
+"Name" = "Name";
+"none given" = "none given";
+"Enabled" = "Enabled";
+/*
+"Group" = "Groupo";
+"Name" = "Nombre";
+"none given" = "ninguno dado";
+"Enabled" = "Activado";
+*/
+"Reset application state" = "Restablecer el estado de la aplicación";
+"Enable every help popups" = "Activar todas las ventanas emergentes de ayuda";
+"Remove manually added nodes" = "Eliminar nodos agregados manualmente";

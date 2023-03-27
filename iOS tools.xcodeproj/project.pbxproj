@@ -228,6 +228,8 @@
 		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
 		5DCD71F529D1F4CC00F0DC53 /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = scripts; sourceTree = "<group>"; };
+		5DCD71F729D2373400F0DC53 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DCD71F829D2373400F0DC53 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5DE4ED86290586730000B30A /* docs-chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-chart.png"; sourceTree = "<group>"; };
 		5DE4ED87290586730000B30A /* docs-actions-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-actions-2.png"; sourceTree = "<group>"; };
 		5DE4ED88290586730000B30A /* docs-browse-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-browse-stop.png"; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				en,
 				Base,
 				fr,
+				es,
 			);
 			mainGroup = 5D1351E2208538DB00E4A76D;
 			productRefGroup = 5D1351EC208538DB00E4A76D /* Products */;
@@ -859,6 +862,7 @@
 			children = (
 				5D37D20A29734FB700578E59 /* en */,
 				5D37D20C29734FC300578E59 /* fr */,
+				5DCD71F829D2373400F0DC53 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -869,6 +873,7 @@
 				5DF2F9E129700F7A00EEDDCE /* Base */,
 				5D8B7A102970107800F89A32 /* en */,
 				5D8B7A122970107900F89A32 /* fr */,
+				5DCD71F729D2373400F0DC53 /* es */,
 			);
 			name = SpeedTest.storyboard;
 			sourceTree = "<group>";
