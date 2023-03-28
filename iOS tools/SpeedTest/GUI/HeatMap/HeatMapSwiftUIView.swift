@@ -242,33 +242,21 @@ struct HeatMapSwiftUIView: View {
                 }.background(Color(COLORS.toolbar_background))
                     .sheet(isPresented: $showing_alert) {
                         VStack {
-                            if horizontalSizeClass != .compact {
-                                Text("Image rotation applied")
-                                    .font(.title)
-                                    .lineLimit(2)
-                                    .padding(20)
-                                Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
-                                Image(uiImage: model.input_map_image!)
-                                    .padding(30)
-                                Button("Continue",
-                                       action: { showing_alert.toggle() })
-                            } else {
-                                Text("Image rotation applied")
-                                    .font(.title)
-                                    .padding(20)
-                                Spacer()
-                                Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
-                                    .font(.caption)
-                                Image(uiImage: model.input_map_image!)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxHeight: 200)
-                                    .padding(5)
-                                Spacer()
-                                Button("Continue",
-                                       action: { showing_alert.toggle() })
+                            Text("Image rotation applied")
+                                .font(.title)
                                 .padding(20)
-                            }
+                            Spacer()
+                            Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
+                                .font(.caption)
+                            Image(uiImage: model.input_map_image!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxHeight: horizontalSizeClass != .compact ? 400 : 200)
+                                .padding(5)
+                            Spacer()
+                            Button("Continue",
+                                   action: { showing_alert.toggle() })
+                            .padding(20)
                         }
                     }
 
