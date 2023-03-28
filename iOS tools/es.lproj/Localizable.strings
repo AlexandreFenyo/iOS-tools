@@ -34,13 +34,13 @@
 "Resolve target IPv6 from target name" = "Resolver la dirección IPv6 del objetivo a partir de su nombre";
 "Add this new target" = "Agregar este nuevo objetivo";
 "Dismiss" = "Ignorar";
-"Localhost" = "Equipo local";
-"this host" = "este equipo";
+"Localhost" = "Localhost";
+"this host" = "este nodo";
 "iOS devices" = "Dispositivos iOS";
 "other devices running this app" = "otros dispositivos que ejecutan esta aplicación";
 "Chargen Discard services" = "Servicios Chargen/Discard";
 "other devices running these services" = "otros dispositivos que ejecutan estos servicios";
-"Local gateway" = "enrutador local";
+"Local gateway" = "Enrutador local";
 "Other host" = "Otro nodo";
 "local router" = "enrutador local";
 "remote hosts on the Internet" = "hosts remotos en Internet";
