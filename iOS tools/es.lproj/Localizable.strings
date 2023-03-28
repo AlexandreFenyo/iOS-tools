@@ -8,6 +8,7 @@
 
 // Ex: NSLocalizedString(description, comment: "description")
 
+"DEBUG" = "DEPURAR";
 "web access" = "acceso web";
 "parameter-lang" = "es";
 "mDNS and DNS host names" = "mDNS y nombres de host DNS";
@@ -90,23 +91,20 @@
 "This hostname does not have a public DNS record. Select a host name with public DNS records to get their values." = "Este nombre de host no tiene un registro DNS público. Seleccione un nombre de host con registros DNS públicos para obtener sus valores.";
 "Parallel TCP connections will be established to " = "Se establecerán conexiones TCP paralelas para ";
 " on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = " en puertos TCP del 1 al 65535, para encontrar servicios abiertos. Los nuevos servicios descubiertos se mostrarán en la vista inferior. Puede interrumpir esta tarea presionando el botón DETENER.";
-
-"A TCP connection to the Discard port (9/TCP) of " = "Une connexion vers le port Discard (9/TCP) de ";
-
+"A TCP connection to the Discard port (9/TCP) of " = "Una conexión TCP al puerto Discard (9/TCP) de ";
 " will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = " se establecerá. Los datos serán enviados por esta conexión a la máxima velocidad disponible, por este dispositivo hacia este host de destino, para evaluar la máxima velocidad que se puede alcanzar en la dirección de salida. Puede interrumpir esta tarea presionando el botón de DETENER.";
-
-"A TCP connection to the Chargen port (19/TCP) of " = "Une connexion TCP vers le port Chargen (19/TCP) de ";
-" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." =  " sera établie. Des données seront reçues sur cette connexion à la vitesse maximale possible, par ce périphérique depuis cette cible, afin d'estimer le débit maximum qui peut être atteint dans la direction entrante. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
-"ICMP packets of type ECHO_REQUEST will be sent to " = "Des paquets ICMP de type ECHO_REQUEST seront envoyés vers ";
-" at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = " à une fréquence d'un paquet par seconde. La cible doit répondre avec des paquets ICMP de type ECHO_REPLY. La latence sera calculée et affichée sur le graphe. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
-"I understand" = "J'ai compris";
-"UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance." = "L'inondation UDP envoie des paquets vers le port UDP 8888 de la cible, à la vitesse maximale possible, mais de nombreux paquets peuvent être perdus au niveau logiciel, matériel ou dans la chaîne de liaison réseau. Notez que le débit affiché sur le graphe est celui atteint au niveau de la couche logicielle de votre périphérique. Ainsi, il est certainement surévalué vis à vis du débit réellement envoyé sur le réseau : vous devez donc mettre en place un moyen spécifique pour estimer le débit réseau réellement atteint. Vous pouvez pour cela observer le réseau ou décompter les paquets reçus par la cible, par exemple.";
-"none" = "non disponible";
-"found " = "trouvé ";
-"trying " = "teste ";
-"browsing TCP ports" = "parcours des ports TCP";
-"Hostname" = "Nom d'hôte";
-"mDNS/Bonjour services" = "Services mDNS/Bonjour";
-"Service key content" = "Contenu de la clé du service";
-"Image rotation applied" = "Rotation de l'image";
-"The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll." = "Le plan que vous avez choisi est au format vertical. Une rotation dans le sens des aiguilles d'une montre a donc été appliquée afin qu'il se retrouve en mode portrait. A la fin du processus de génération de la heat map, lorsque vous appuirez sur Partagez votre carte, l'image finale sera enregistrée dans l'application Photos avec l'orientation verticale originale.";
+"A TCP connection to the Chargen port (19/TCP) of " = "Una conexión TCP al puerto Chargen (19/TCP) de ";
+" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." =  " se establecerá. Los datos serán recibidos en esta conexión a la velocidad máxima disponible, por este dispositivo desde este host objetivo, para evaluar la velocidad máxima que se puede alcanzar en la dirección de entrada. Puedes interrumpir esta tarea presionando el botón de DETENER.";
+"ICMP packets of type ECHO_REQUEST will be sent to " = "Los paquetes ICMP de tipo ECHO_REQUEST serán enviados a ";
+" at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = " a una velocidad de un paquete por segundo. El objetivo debería responder con un paquete ICMP de tipo ECHO_REPLY. El tiempo de ida y vuelta se calcula y se muestra en el gráfico. Puedes interrumpir esta tarea presionando el botón STOP.";
+"I understand" = "Entiendo";
+"UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance." = "El UDP flooding envía paquetes de manera asíncrona al puerto UDP 8888 del objetivo a una tasa máxima, pero muchos paquetes pueden perderse en las capas de software, hardware o red. Tenga en cuenta que el rendimiento que se muestra en este gráfico es el logrado en la capa de software de su dispositivo. Por lo tanto, ciertamente está por encima de la tasa a la que se envían los datos por la red: debe usar una herramienta para estimar el ancho de banda alcanzado. Por ejemplo, es posible sniffear la red o contar los paquetes en el objetivo.";
+"none" = "no disponible";
+"found " = "encontrado ";
+"trying " = "intentando ";
+"browsing TCP ports" = "navegar por los puertos TCP";
+"Hostname" = "Nombre de host";
+"mDNS/Bonjour services" = "Servicios mDNS/Bonjour";
+"Service key content" = "Contenido clave del servicio";
+"Image rotation applied" = "Rotación de imagen aplicada";
+"The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll." = "El plano de planta que seleccionaste no está en modo retrato. Por lo tanto, se ha aplicado una rotación a la imagen. Al final del proceso de creación del mapa de calor, cuando toques en Compartir tu mapa, el mapa de calor se guardará en el modo vertical original en tu galería de fotos.";

@@ -35,3 +35,12 @@ Translate in spanish the following text that is a technical manual for network c
 
 Traduis en espagnol le texte anglais du domaine des réseaux informatiques suivant : "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."
 
+fenyo@mac UIKit % diff en.lproj/SpeedTest.strings fr.lproj/SpeedTest.strings
+27c27
+< "Jgi-Wj-wsx.title" = "Discover";
+---
+> "Jgi-Wj-wsx.title" = "Exploration";
+51c51
+< "bwG-g9-tTY.title" = "Target List";
+---
+> "bwG-g9-tTY.title" = "Liste des cibles";
