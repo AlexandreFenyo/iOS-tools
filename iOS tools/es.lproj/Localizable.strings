@@ -7,6 +7,10 @@
 */
 
 // Ex: NSLocalizedString(description, comment: "description")
+// addresse IP
+// noeud réseau
+// port TCP
+// réseau local
 
 "DEBUG" = "DEPURAR";
 "web access" = "acceso web";
