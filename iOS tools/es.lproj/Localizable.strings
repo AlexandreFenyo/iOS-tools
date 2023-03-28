@@ -12,6 +12,7 @@
 // port TCP
 // réseau local
 
+"port" = "puerto";
 "DEBUG" = "DEPURAR";
 "web access" = "acceso web";
 "parameter-lang" = "es";
