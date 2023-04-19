@@ -108,6 +108,25 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var scroll_to_top = false
     @Published private(set) var animated_width_map: CGFloat = 0
 
+    @Published private(set) var text_current_measurement_unit: String = ""
+    @Published private(set) var measurement_value_prev: Double = 0
+    @Published private(set) var measurement_value_next: Double = 0
+    @Published private(set) var average_last_update = Date()
+
+    public func setCurrentMeasurementUnit(_ str: String) {
+        text_current_measurement_unit = str
+        if (str.isEmpty) {
+            measurement_value_prev = 0
+            measurement_value_next = 0
+        }
+    }
+
+    public func setMeasurementValue(_ val: Double) {
+        measurement_value_prev = measurement_value_next
+        measurement_value_next = val
+        average_last_update = Date()
+    }
+
     public func setButtonMapHiddenState(_ state: Bool) {
         animated_width_map = state ? 0 : 200
     }
@@ -216,13 +235,46 @@ struct DetailSwiftUIView: View {
     
     @ObservedObject var model = DetailViewModel.shared
     @State var animated_width_stop: CGFloat = 0
-    
+
+    let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+    @State private var speed: Double = 0
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     var body: some View {
         HStack {
-            // Text("next target:").foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
-            Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+            EmptyView().padding(0).onReceive(timer_set_speed) { _ in // 100 Hz
+                // Manage measurements
+                let interval_speed = Double(Date().timeIntervalSince(model.average_last_update))
+                let UPDATE_SPEED_DELAY: Double = 1.0
+                if interval_speed < UPDATE_SPEED_DELAY {
+                    speed = model.measurement_value_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + model.measurement_value_next * interval_speed / UPDATE_SPEED_DELAY
+                } else {
+                    speed = model.measurement_value_next
+                }
+            }
+
+            if horizontalSizeClass != .compact {
+                ZStack(alignment: .top) {
+                    Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+
+                    HStack {
+                        Spacer()
+                        if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
+                            Text("\(Int(speed)) \(model.text_current_measurement_unit)").font(.system(size: 12).monospacedDigit()).foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                        }
+                    }
+                }
+            } else {
+                VStack {
+                    Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+
+                    if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
+                        Text("\(Int(speed)) \(model.text_current_measurement_unit)").font(.system(size: 12).monospacedDigit()).foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                    }
+
+                }
+            }
         }
         
         ScrollViewReader { scrollViewProxy in

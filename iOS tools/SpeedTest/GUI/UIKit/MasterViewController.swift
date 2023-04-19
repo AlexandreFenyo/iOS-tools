@@ -668,6 +668,8 @@ class MasterViewController: UITableViewController, DeviceManager {
                     if rtt > 0 {
                         has_answered = true
                         DispatchQueue.main.async {
+                            DetailViewModel.shared.setCurrentMeasurementUnit("µs")
+                            DetailViewModel.shared.setMeasurementValue(Double(rtt))
                             self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
@@ -683,6 +685,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             // objectif : arrivé ici, la boucle de ping est terminée
             DispatchQueue.main.async {
+                DetailViewModel.shared.setCurrentMeasurementUnit("")
+                DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("ICMP loop: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }
         }
@@ -717,6 +721,8 @@ class MasterViewController: UITableViewController, DeviceManager {
                             first_skipped = true
                         } else {
                             DispatchQueue.main.async {
+                                DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
+                                DetailViewModel.shared.setMeasurementValue(throughput)
                                 self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(Int(throughput))", level: .INFO)
                             }
                             await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
@@ -727,6 +733,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             }
             // objectif : arrivé ici, la boucle de flood est terminée
             DispatchQueue.main.async {
+                DetailViewModel.shared.setCurrentMeasurementUnit("")
+                DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }
         }
@@ -760,6 +768,8 @@ class MasterViewController: UITableViewController, DeviceManager {
                     if throughput > 0 {
                         is_connected = true
                         DispatchQueue.main.async {
+                            DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
+                            DetailViewModel.shared.setMeasurementValue(throughput)
                             self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
@@ -812,6 +822,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             // objectif : arrivé ici, la boucle de chargen est terminée
             await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
+                DetailViewModel.shared.setCurrentMeasurementUnit("")
+                DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }
         }
@@ -844,6 +856,8 @@ class MasterViewController: UITableViewController, DeviceManager {
                     if throughput > 0 {
                         is_connected = true
                         DispatchQueue.main.async {
+                            DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
+                            DetailViewModel.shared.setMeasurementValue(throughput)
                             self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
@@ -894,6 +908,8 @@ class MasterViewController: UITableViewController, DeviceManager {
             // objectif : arrivé ici, la boucle de chargen est terminée
             await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
+                DetailViewModel.shared.setCurrentMeasurementUnit("")
+                DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
             }
         }
