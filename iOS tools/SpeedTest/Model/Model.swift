@@ -139,7 +139,10 @@ internal class Node : Hashable {
         hasher.combine(types)
         hasher.combine(services)
     }
+
+    private var is_in_model = false
     
+    // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
     public var mcast_dns_names = Set<FQDN>()
     public var dns_names = Set<DomainName>()
     public var names = Set<String>()
@@ -255,9 +258,9 @@ class ModelSection {
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    public var sections : [SectionType: ModelSection]
-    public var nodes : Set<Node>
-    public var networks : Set<IPNetwork>
+    public var sections: [SectionType: ModelSection]
+    public var nodes: Set<Node>
+    public var networks: Set<IPNetwork>
     
     static public let shared = DBMaster()
 

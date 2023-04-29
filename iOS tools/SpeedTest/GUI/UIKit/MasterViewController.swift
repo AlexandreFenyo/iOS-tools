@@ -545,7 +545,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
+    internal func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -564,7 +564,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
+    internal func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
         for address in resolve_ipv6_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -583,7 +583,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node) {
+    internal func addNode(_ node: Node) {
         
   
         // TEST
@@ -628,7 +628,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // MARK: - Calls from DetailSwiftUIView
-    func scanTCP(_ address: IPAddress) {
+    internal func scanTCP(_ address: IPAddress) {
         stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -651,7 +651,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    func loopICMP(_ address: IPAddress) {
+    internal func loopICMP(_ address: IPAddress) {
         stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -699,7 +699,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    func floodUDP(_ address: IPAddress) {
+    internal func floodUDP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_UDP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -744,7 +744,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     // connect to discard service
-    func floodTCP(_ address: IPAddress) {
+    internal func floodTCP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -828,7 +828,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    func chargenTCP(_ address: IPAddress) {
+    internal func chargenTCP(_ address: IPAddress) {
         stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -910,7 +910,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    public func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
+    internal func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
         let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
@@ -934,7 +934,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
-    public func popUp(_ title: String, _ message: String, _ ok: String) {
+    internal func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)

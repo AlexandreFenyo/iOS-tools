@@ -45,7 +45,7 @@ class B3D : SCNNode {
 }
 
 class B3DNode : B3D {
-    private weak var node: Node?
+    private /* weak */ var node: Node?
     
     public init(_ scn_node: SCNNode, _ node: Node) {
         super.init(scn_node)
