@@ -65,10 +65,13 @@ public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
     public var scene: SCNScene?
 
+    private var b3d_nodes: [B3DNode]
+    
     private var b3d_test: B3D?
     
     public init() {
         print("MANAGER INIT")
+        b3d_nodes = [B3DNode]()
     }
     
     internal func addComponent(_ node: Node) {
@@ -77,7 +80,24 @@ public class Interman3DModel : ObservableObject {
         print("b3d_node=\(b3d_node)")
         
         b3d_test = b3d_node
+
+        let node_count = b3d_nodes.count
+
+        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
+        
+        let factor: Float = 10
+        
+        var trans = matrix_identity_float4x4
+        trans[3, 0] = -factor
+        trans[3, 2] = -factor
+        let foo = trans * rot
+
+        b3d_node.simdPivot = foo
+        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+        
         scene?.rootNode.addChildNode(b3d_node)
+        b3d_nodes.append(b3d_node)
+
         print("addComponent(node) done")
     }
     
