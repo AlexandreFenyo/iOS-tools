@@ -99,6 +99,7 @@ public class Interman3DModel : ObservableObject {
         let text = SCNText(string: "salut", extrusionDepth: 0)
         text.flatness = 0.01
         text.firstMaterial!.diffuse.contents = UIColor.yellow
+
         let text_node = SCNNode(geometry: text)
         text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
         text_node.simdRotation = SIMD4(1, 0, 0, GLKMathDegreesToRadians(-90))
