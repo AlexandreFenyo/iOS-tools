@@ -14,12 +14,16 @@ import SceneKit
 
 // rotations :
 // avec quaternions : https://stackoverflow.com/questions/49601997/is-there-a-metal-library-function-to-create-a-simd-rotation-matrix
+//   var piv0 = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(10), axis: SIMD3(0, 1, 0)))
+//   b3d_test?.simdPivot = piv0
 // avec GL : https://developer.apple.com/documentation/glkit/1488683-glkmatrix4makezrotation
-// var piv0 = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(10), axis: SIMD3(0, 1, 0)))
-// b3d_test?.simdPivot = piv0
-// rad, x, y, z
-// var piv1 = simd_float4x4(matrix: GLKMatrix4MakeRotation(GLKMathDegreesToRadians(10), 0, 1, 0))
-// b3d_test?.simdPivot = piv1
+//   rad, x, y, z
+//   var piv1 = simd_float4x4(matrix: GLKMatrix4MakeRotation(GLKMathDegreesToRadians(10), 0, 1, 0))
+//   b3d_test?.simdPivot = piv1
+// translations :
+//   var x: simd_float4x4 = matrix_identity_float4x4
+//   x[3, 0] = -1
+//   x[3, 2] = -1
 
 extension simd_float4x4 {
     public init(matrix: GLKMatrix4) {
@@ -29,8 +33,6 @@ extension simd_float4x4 {
                             SIMD4<Float>(x: matrix.m30, y: matrix.m31, z: matrix.m32, w: matrix.m33)))
     }
 }
-
-// B3D: basic 3D node in this app
 
 class B3D : SCNNode {
     public init(_ scn_node: SCNNode) {
@@ -90,10 +92,17 @@ public class Interman3DModel : ObservableObject {
         var trans = matrix_identity_float4x4
         trans[3, 0] = -factor
         trans[3, 2] = -factor
-        let foo = trans * rot
 
-        b3d_node.simdPivot = foo
+        b3d_node.simdPivot = trans * rot
         b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+
+        let text = SCNText(string: "salut", extrusionDepth: 0)
+        text.flatness = 0.01
+        text.firstMaterial!.diffuse.contents = UIColor.yellow
+        let text_node = SCNNode(geometry: text)
+        text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
+        text_node.simdRotation = SIMD4(1, 0, 0, GLKMathDegreesToRadians(-90))
+        b3d_node.addChildNode(text_node)
         
         scene?.rootNode.addChildNode(b3d_node)
         b3d_nodes.append(b3d_node)
@@ -114,13 +123,8 @@ public class Interman3DModel : ObservableObject {
     // internal
     public func testComponent() {
         print(#function)
-//        print(b3d_test?.pivot)
-   //     b3d_test?.simdPosition.x = 1
 
-//        print(b3d_test?.simdPivot)
-        
-        //        b3d_test?.simdPivot.
-
+        // translation
 //        var x: simd_float4x4 = matrix_identity_float4x4
 //        x[3, 0] = -1
 //        x[3, 2] = -1
@@ -128,21 +132,11 @@ public class Interman3DModel : ObservableObject {
         // rotations :
         // avec quaternions : https://stackoverflow.com/questions/49601997/is-there-a-metal-library-function-to-create-a-simd-rotation-matrix
         // avec GL : https://developer.apple.com/documentation/glkit/1488683-glkmatrix4makezrotation
-        var piv0 = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(10), axis: SIMD3(0, 1, 0)))
+        let piv0 = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(10), axis: SIMD3(0, 1, 0)))
         // rad, x, y, z
-        var piv1 = simd_float4x4(matrix: GLKMatrix4MakeRotation(GLKMathDegreesToRadians(10), 0, 1, 0))
+        let piv1 = simd_float4x4(matrix: GLKMatrix4MakeRotation(GLKMathDegreesToRadians(10), 0, 1, 0))
         b3d_test?.simdPivot = piv1
 
-//        print("4x4: \(foo)")
-        
-//        b3d_test?.simdPivot = x
-        
-        //      b3d_test?.simdRotation.x += 1
-//        b3d_test?.simdRotation.y += 1
-  //      b3d_test?.simdRotation.z += 1
-//        b3d_test?.simdRotation.w += 0.1
-//        print(b3d_test?.pivot)
-//        b3d_test?.simdPosition.x += 0.1
         print("testComponent() done")
     }
 }

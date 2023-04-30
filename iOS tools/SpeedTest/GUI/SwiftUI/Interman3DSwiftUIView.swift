@@ -21,8 +21,11 @@ struct Interman3DSwiftUIView: View {
     static func get3DScene() -> SCNScene? {
       let scene = SCNScene(named: "Interman 3D Scene.scn")
         Interman3DModel.shared.scene = scene
-//      applyTextures(to: scene)
-      return scene
+        
+        let camera = scene!.rootNode.childNode(withName: "camera", recursively: true)
+        camera!.camera!.usesOrthographicProjection = true
+        
+        return scene
     }
     
     var scene = get3DScene()
@@ -31,24 +34,9 @@ struct Interman3DSwiftUIView: View {
         ZStack {
             SceneView(
             scene: scene,
-//            pointOfView: setUpCamera(planet: viewModel.selectedPlanet),
-            options: [.allowsCameraControl])
-//            .background(ColorPalette.secondary)
+            options: [ .allowsCameraControl ])
             .edgesIgnoringSafeArea(.all)
           VStack {
-/*
-              if let planet = viewModel.selectedPlanet {
-              VStack {
-                PlanetInfoRow(title: "Length of year", value: planet.yearLength)
-                PlanetInfoRow(title: "Number of moons", value: "\(planet.moonCount)")
-                PlanetInfoRow(title: "Namesake", value: planet.namesake)
-              }
-              .padding(8)
-              .background(ColorPalette.primary)
-              .cornerRadius(14)
-              .padding(12)
-            }
-*/
             Spacer()
 
             HStack {
@@ -72,7 +60,6 @@ struct Interman3DSwiftUIView: View {
                 }
             }
             .padding(8)
-//            .background(ColorPalette.primary)
             .cornerRadius(14)
             .padding(12)
           }
