@@ -115,6 +115,7 @@ public class Interman3DModel : ObservableObject {
         b3d_nodes.append(b3d_node)
 
         print("addComponent(node) done")
+
     }
     
     internal func addComponent() {
