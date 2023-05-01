@@ -24,6 +24,9 @@ import SceneKit
 //   var x: simd_float4x4 = matrix_identity_float4x4
 //   x[3, 0] = -1
 //   x[3, 2] = -1
+// simdPivot to pivot: SCNMatrix4(simdPivot)
+// degress to radians: GLKMathDegreesToRadians(-90)
+// PI : M_2_PI, Float.pi
 
 extension simd_float4x4 {
     public init(matrix: GLKMatrix4) {
@@ -70,41 +73,44 @@ public class Interman3DModel : ObservableObject {
     private var b3d_nodes: [B3DNode]
     
     private var b3d_test: B3D?
-    
+
     public init() {
         print("MANAGER INIT")
         b3d_nodes = [B3DNode]()
     }
     
     internal func addComponent(_ node: Node) {
+        let factor: Float = 10
+
         print(#function)
         let b3d_node = B3DNode(ComponentTemplates.standard, node)
-        print("b3d_node=\(b3d_node)")
-        
-        b3d_test = b3d_node
 
         let node_count = b3d_nodes.count
-
         let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
         
-        let factor: Float = 10
-        
-        var trans = matrix_identity_float4x4
-        trans[3, 0] = -factor
-        trans[3, 2] = -factor
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -factor
+        transl[3, 2] = -factor
 
-        b3d_node.simdPivot = trans * rot
         b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
 
-        let text = SCNText(string: "salut", extrusionDepth: 0)
+        let animation = CABasicAnimation(keyPath: "pivot")
+        animation.fromValue = SCNMatrix4(transl)
+        animation.toValue = SCNMatrix4(transl * rot)
+        animation.duration = 10.0
+        animation.autoreverses = true
+        animation.repeatCount = .infinity
+        b3d_node.addAnimation(animation, forKey: nil)
+
+        let text = SCNText(string: node.dns_names.first?.toString(), extrusionDepth: 0)
         text.flatness = 0.01
         text.firstMaterial!.diffuse.contents = UIColor.yellow
 
         let text_node = SCNNode(geometry: text)
         text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
-        text_node.simdRotation = SIMD4(1, 0, 0, GLKMathDegreesToRadians(-90))
+        text_node.simdRotation = SIMD4(1, 0, 0, -Float(M_2_PI))
         b3d_node.addChildNode(text_node)
-        
+
         scene?.rootNode.addChildNode(b3d_node)
         b3d_nodes.append(b3d_node)
 
