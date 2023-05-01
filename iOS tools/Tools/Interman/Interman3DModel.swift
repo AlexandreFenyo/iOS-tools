@@ -116,6 +116,7 @@ public class Interman3DModel : ObservableObject {
 
         print("addComponent(node) done")
 
+        
     }
     
     internal func addComponent() {
