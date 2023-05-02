@@ -377,7 +377,7 @@ class IPv4Address : IPAddress, Comparable {
 
 class IPv6Address : IPAddress, Comparable {
     // scope zone index
-    private let scope : UInt32
+    private let scope: UInt32
 
     public func getScope() -> UInt32 {
         return scope

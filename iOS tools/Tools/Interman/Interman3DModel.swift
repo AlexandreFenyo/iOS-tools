@@ -82,7 +82,7 @@ public class Interman3DModel : ObservableObject {
     internal func addComponent(_ node: Node) {
         let factor: Float = 10
 
-        print(#function)
+//        print(#function)
         let b3d_node = B3DNode(ComponentTemplates.standard, node)
 
         let node_count = b3d_nodes.count
@@ -114,8 +114,7 @@ public class Interman3DModel : ObservableObject {
         scene?.rootNode.addChildNode(b3d_node)
         b3d_nodes.append(b3d_node)
 
-        print("addComponent(node) done")
-
+//        print("addComponent(node) done")
     }
     
     internal func addComponent() {

@@ -385,10 +385,34 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
+        // TEST - A SUPPRIMER
+print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
+        print("XXXXX \(#function) 2/4: ipv6 numeric string: \(String(describing: new_node.v6_addresses.first?.toNumericString()))")
+
+        print("XXXXX \(#function) 3/4: ipv4 count: \(new_node.v4_addresses.count)")
+
+        // TEST - A SUPPRIMER
+        if new_node.v6_addresses.contains(IPv6Address("fe80::1206:edff:fe84:14c3%en0")!) {
+            print("XXXXX \(#function) 4/4: contains static IPv6")
+        }
+        
+        if new_node.v6_addresses.first == IPv6Address("fe80::1206:edff:fe84:14c3%en0") {
+            print("XXXXX \(#function) 5/6: ipv6 equals")
+        }
+
+        let foo = new_node.v6_addresses.first!
+        let bar = IPv6Address("fe80::1206:edff:fe84:14c3%en0")!
+        print(foo.getRawBytes())
+        print(bar.getRawBytes())
+
+        print("XXXXX \(#function) 6/6")
+
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
 
+        // This algorithm does not make the assumption that being similar is having a common property value: it works even if merging two similar nodes into one of them results in a node that may be similar to nodes that where not similar to the two inital nodes. This is a lazier definition of similarity than having a common property value.
+        
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
 
@@ -397,14 +421,17 @@ class DBMaster {
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
         
-        // Track deduplicated nodes
-        var dedup = [Node]()
+        // Track deduplicated nodes: nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process)
+//        var dedup = [Node]()
+        var dedup = Set<Node>()
 
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 1, start_time: start_time)
 
+        // Merge into one node the new node and every nodes which are similar to it
         if add {
             var merged_index: Int = -1
+            // Find one node similar to the new one and merge the new one in it, then set merged_index to its index
             for i in 0..<arr_nodes.count {
                 if arr_nodes[i].isSimilar(with: new_node) {
                     arr_nodes[i].merge(new_node)
@@ -412,7 +439,10 @@ class DBMaster {
                     break
                 }
             }
+
+            // If no similar node was found, add the new node
             if merged_index == -1 { arr_nodes.append(new_node) }
+            // If one similar node has been merged into one existing node, merge every similar nodes into the existing node
             else {
                 repeat {
                     var merged = false
@@ -420,7 +450,9 @@ class DBMaster {
                         if i == merged_index { continue }
                         if arr_nodes[i].isSimilar(with: arr_nodes[merged_index]) {
                             arr_nodes[i].merge(arr_nodes[merged_index])
-                            dedup.append(arr_nodes[i])
+                            if dedup.contains(arr_nodes[i]) { print("XXXXXXXXXXXXXXXXXXX dedup")}
+                            dedup.insert((arr_nodes[i]))
+//                            dedup.append(arr_nodes[i])
                             arr_nodes.remove(at: merged_index)
                             if i < merged_index { merged_index = i } else { merged_index = i - 1 }
                             merged = true
@@ -431,6 +463,7 @@ class DBMaster {
                 } while merged_index != -1
             }
         } else { arr_nodes.removeAll { $0 == new_node } }
+        // Starting at this line, arr_nodes contains every distinct nodes (i.e. not similar) and dedup contains nodes that ?
 
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 2, start_time: start_time)
@@ -498,21 +531,41 @@ class DBMaster {
         node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
         node.types = [ .chargen, .internet ]
+// TEST A REMETTRE
+//        _ = addNode(node)
+
+
+
+        // TEST A SUPPRIMER
+        node = Node()
+//        node.mcast_dns_names.insert(FQDN("ezf", "erg"))
+//        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
+        let foo = IPv6Address("fe80::1206:edff:fe84:14c3%en0")!
+//        print("XXXXX: scope=\(foo.getScope())")
+        node.v6_addresses.insert(foo)
+        node.types = [ .gateway ]
+//        node.types = [ .gateway, .chargen, .internet ]
         _ = addNode(node)
+
+        
+        
+        
         
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        _ = addNode(node)
+        // TEST A REMETTRE
+//        _ = addNode(node)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
         for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        _ = addNode(node)
+        // TEST A REMETTRE
+//        _ = addNode(node)
 
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
@@ -529,7 +582,8 @@ class DBMaster {
             if Int(scope_str) != NodeType.localhost.rawValue {
                 node.types = [ scope ]
             }
-            _ = addNode(node)
+            // TEST A REMETTRE
+//            _ = addNode(node)
         }
     }
 
