@@ -385,28 +385,6 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
-        // TEST A SUPPRIMER
-print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
-        print("XXXXX \(#function) 2/4: ipv6 numeric string: \(String(describing: new_node.v6_addresses.first?.toNumericString()))")
-
-        print("XXXXX \(#function) 3/4: ipv4 count: \(new_node.v4_addresses.count)")
-
-        // TEST - A SUPPRIMER
-        if new_node.v6_addresses.contains(IPv6Address("fe80::1206:edff:fe84:14c2%en0")!) {
-            print("XXXXX \(#function) 4/4: contains static IPv6")
-        }
-        
-        if new_node.v6_addresses.first == IPv6Address("fe80::1206:edff:fe84:14c2%en0") {
-            print("XXXXX \(#function) 5/6: ipv6 equals")
-        }
-
-        let foo = new_node.v6_addresses.first!
-        let bar = IPv6Address("fe80::1206:edff:fe84:14c2%en0")!
-        print(foo.getRawBytes())
-        print(bar.getRawBytes())
-
-        print("XXXXX \(#function) 6/6")
-
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
@@ -531,41 +509,21 @@ print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
         node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
         node.types = [ .chargen, .internet ]
-// TEST A REMETTRE
-//        _ = addNode(node)
-
-
-
-        // TEST A SUPPRIMER
-        node = Node()
-//        node.mcast_dns_names.insert(FQDN("ezf", "erg"))
-//        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
-        let foo = IPv6Address("fe80::1206:edff:fe84:14c2%en0")!
-//        print("XXXXX: scope=\(foo.getScope())")
-        node.v6_addresses.insert(foo)
-        node.types = [ .gateway ]
-//        node.types = [ .gateway, .chargen, .internet ]
         _ = addNode(node)
 
-        
-        
-        
-        
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        // TEST A REMETTRE
-//        _ = addNode(node)
+        _ = addNode(node)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
         for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        // TEST A REMETTRE
-//        _ = addNode(node)
+        _ = addNode(node)
 
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
@@ -582,8 +540,7 @@ print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
             if Int(node_type_str) != NodeType.localhost.rawValue {
                 node.types = [ node_type ]
             }
-            // TEST A REMETTRE
-//            _ = addNode(node)
+            _ = addNode(node)
         }
     }
 

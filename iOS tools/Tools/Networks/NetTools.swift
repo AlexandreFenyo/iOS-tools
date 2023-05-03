@@ -136,7 +136,6 @@ class SockAddr6 : SockAddr {
     public override func getIPAddress() -> IPAddress {
         return saddrdata.withUnsafeBytes {
             var in6_addr = $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_addr
-            // TEST bug : supprimer scope
             return IPv6Address(NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data, scope: $0.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_scope_id)
         }
     }
@@ -429,17 +428,8 @@ class IPv6Address : IPAddress, Comparable {
     public init(_ inaddr: Data, scope: UInt32) {
         var in6_addr = IPv6Address.filterScope(inaddr).addr
         let _inaddr = NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data
-
         self.scope = scope
-//        super.init(inaddr)
         super.init(_inaddr)
-
-        /*
-        if ret.scope != 0 {
-            print(getRawBytes())
-            fatalError("invalid scope in data")
-        }
-      */
     }
 
     public init(mask_len: UInt8) {

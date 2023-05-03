@@ -165,7 +165,7 @@ class TCPPortBrowser {
                         if (ret < 0) {
                             // connect(): error
                             if errno != EINPROGRESS {
-                                perror(addr.toNumericString()! + "connect")
+                                perror(addr.toNumericString()! + " connect")
                                 if debug { print(addr.toNumericString()!, "ERREUR connect port", port) }
                                 // do not retry this port
                                 ports.remove(port)

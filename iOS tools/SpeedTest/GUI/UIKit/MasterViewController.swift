@@ -463,15 +463,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     public func updateLocalNodeAndGateways() {
-        // TEST A REMETTRE
-//        return
-        
         // Update local node
         let node = DBMaster.shared.getLocalNode()
-//        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
         
         // Update local gateways
-        // TEST A REMETTRE - c'est celle qui a IPv4 et IPv6
         for gw in DBMaster.shared.getLocalGateways() {
             addNode(gw, resolve_ipv4_addresses: gw.v4_addresses)
         }
