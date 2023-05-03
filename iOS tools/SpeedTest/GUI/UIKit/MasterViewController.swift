@@ -586,16 +586,6 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Main thread
     internal func addNode(_ node: Node) {
-        
-  
-        // TEST
-        // tentative de connexion avec le modèle 3D
-//        interman_view_controller.
-//        interman_view_controller
-        Interman3DModel.shared.addComponent(node)
-        
-        
-        
 //        tableView.beginUpdates()
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
 //        tableView.deleteRows(at: index_paths_removed, with: .automatic)
@@ -604,7 +594,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // comme on a supprimé le bloc suivant, on n'a plus besoin de récupérer les valeurs renvoyées
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        _ = DBMaster.shared.addNode(node)
+        let (removed_paths, inserted_paths, is_new_node, updated_nodes, removed_nodes) = DBMaster.shared.addNode(node)
+
+        
+        
+        // TEST
+        // tentative de connexion avec le modèle 3D
+//        interman_view_controller.
+//        interman_view_controller
+        Interman3DModel.shared.addComponent(node)
+        
+
 
         // Si on faire un refresh et qu'on bascule tout de suite sur onglet Traces, puis qu'on revient un peu après, on a une erreur fatale du type :
         // Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid update: invalid number of rows in section 5. The number of rows contained in an existing section after the update (38) must be equal to the number of rows contained in that section before the update (19), plus or minus the number of rows inserted or deleted from that section (1 inserted, 0 deleted) and plus or minus the number of rows moved into or out of that section (0 moved in, 0 moved out). Table view: <UITableView: 0x10104b800; frame = (0 0; 359 834); clipsToBounds = YES; autoresize = W+H; gestureRecognizers = <NSArray: 0x283241980>; layer = <CALayer: 0x283c975a0>; contentOffset: {0, -50}; contentSize: {359, 2113.5}; adjustedContentInset: {110, 0, 115, 0}; dataSource: <iOS_tools.MasterViewController: 0x101022c00>>'

@@ -264,13 +264,12 @@ class DBMaster {
     
     static public let shared = DBMaster()
 
-    public func addNode(_ new_node: Node) -> ([IndexPath], [IndexPath]) {
+    public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         return addOrRemoveNode(new_node, add: true)
     }
     
     public func removeNode(_ node: Node) -> [IndexPath] {
-        let (index_paths_removed, _) = addOrRemoveNode(node, add: false)
-        return index_paths_removed
+        return addOrRemoveNode(node, add: false).removed_paths
     }
 
     /* 1 gateway per IP */
@@ -384,25 +383,28 @@ class DBMaster {
         return node
     }
 
-    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
+    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
 
         // This algorithm does not make the assumption that being similar is having a common property value: it works even if merging two similar nodes into one of them results in a node that may be similar to nodes that where not similar to the two inital nodes. This is a lazier definition of similarity than having a common property value.
-        
+
         var index_paths_removed = [IndexPath]()
         var index_paths_inserted = [IndexPath]()
 
-        if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted) }
+        var is_new_node = false
+        // keys: removed nodes; values: nodes in which removed nodes have been merged into
+        var removed_nodes = [Node : Node]()
+        
+        // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, dedup nodes are the nodes that have been updated.
+        var dedup = Set<Node>()
+
+        if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes) }
         
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
         
-        // Track deduplicated nodes: nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process)
-//        var dedup = [Node]()
-        var dedup = Set<Node>()
-
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 1, start_time: start_time)
 
@@ -419,7 +421,10 @@ class DBMaster {
             }
 
             // If no similar node was found, add the new node
-            if merged_index == -1 { arr_nodes.append(new_node) }
+            if merged_index == -1 {
+                is_new_node = true
+                arr_nodes.append(new_node)
+            }
             // If one similar node has been merged into one existing node, merge every similar nodes into the existing node
             else {
                 repeat {
@@ -428,9 +433,8 @@ class DBMaster {
                         if i == merged_index { continue }
                         if arr_nodes[i].isSimilar(with: arr_nodes[merged_index]) {
                             arr_nodes[i].merge(arr_nodes[merged_index])
-                            if dedup.contains(arr_nodes[i]) { print("XXXXXXXXXXXXXXXXXXX dedup")}
-                            dedup.insert((arr_nodes[i]))
-//                            dedup.append(arr_nodes[i])
+                            dedup.insert(arr_nodes[i])
+                            removed_nodes[arr_nodes[merged_index]] = arr_nodes[i]
                             arr_nodes.remove(at: merged_index)
                             if i < merged_index { merged_index = i } else { merged_index = i - 1 }
                             merged = true
@@ -441,12 +445,12 @@ class DBMaster {
                 } while merged_index != -1
             }
         } else { arr_nodes.removeAll { $0 == new_node } }
-        // Starting at this line, arr_nodes contains every distinct nodes (i.e. not similar) and dedup contains nodes that ?
+        // Starting at this line, arr_nodes contains every distinct nodes (i.e. not similar) and dedup contains the subset of arr_nodes that have been merged
 
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 2, start_time: start_time)
 
-        // In each section, locate and let only one node for those that have been deduplicated
+        // In each section, locate and let only one node for those that have been deduplicated (for the others, it is already done)
         for n in dedup {
             SectionType.allCases.forEach {
                 var cnt = 0
@@ -492,10 +496,18 @@ class DBMaster {
 
         nodes = Set(arr_nodes)
 
+        // Flatten removed_nodes
+        removed_nodes.keys.forEach { node in
+            func getLastInChain(_ node: Node) -> Node {
+                return removed_nodes.keys.contains(node) ? getLastInChain(node) : node
+            }
+            removed_nodes[node] = getLastInChain(node)
+        }
+        
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 4, start_time: start_time)
 
-        return (index_paths_removed, index_paths_inserted)
+        return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes)
     }
 
     private let ips_v4_google = [ "8.8.4.4", "8.8.8.8" ]
