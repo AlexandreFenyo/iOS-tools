@@ -385,23 +385,23 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> ([IndexPath], [IndexPath]) {
-        // TEST - A SUPPRIMER
+        // TEST A SUPPRIMER
 print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
         print("XXXXX \(#function) 2/4: ipv6 numeric string: \(String(describing: new_node.v6_addresses.first?.toNumericString()))")
 
         print("XXXXX \(#function) 3/4: ipv4 count: \(new_node.v4_addresses.count)")
 
         // TEST - A SUPPRIMER
-        if new_node.v6_addresses.contains(IPv6Address("fe80::1206:edff:fe84:14c3%en0")!) {
+        if new_node.v6_addresses.contains(IPv6Address("fe80::1206:edff:fe84:14c2%en0")!) {
             print("XXXXX \(#function) 4/4: contains static IPv6")
         }
         
-        if new_node.v6_addresses.first == IPv6Address("fe80::1206:edff:fe84:14c3%en0") {
+        if new_node.v6_addresses.first == IPv6Address("fe80::1206:edff:fe84:14c2%en0") {
             print("XXXXX \(#function) 5/6: ipv6 equals")
         }
 
         let foo = new_node.v6_addresses.first!
-        let bar = IPv6Address("fe80::1206:edff:fe84:14c3%en0")!
+        let bar = IPv6Address("fe80::1206:edff:fe84:14c2%en0")!
         print(foo.getRawBytes())
         print(bar.getRawBytes())
 
@@ -540,7 +540,7 @@ print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
         node = Node()
 //        node.mcast_dns_names.insert(FQDN("ezf", "erg"))
 //        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
-        let foo = IPv6Address("fe80::1206:edff:fe84:14c3%en0")!
+        let foo = IPv6Address("fe80::1206:edff:fe84:14c2%en0")!
 //        print("XXXXX: scope=\(foo.getScope())")
         node.v6_addresses.insert(foo)
         node.types = [ .gateway ]
@@ -570,8 +570,8 @@ print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
             let str_fields = str.split(separator: ";", maxSplits: 2)
-            let (target_name, target_ip, scope_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
-            let scope: NodeType = NodeType(rawValue: Int(scope_str)!)!
+            let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
+            let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
             let node = Node()
             node.dns_names.insert(DomainName(target_name)!)
             if isIPv4(target_ip) {
@@ -579,8 +579,8 @@ print("XXXXX \(#function) 1/4: ipv6 count: \(new_node.v6_addresses.count)")
             } else if isIPv6(target_ip) {
                 node.v6_addresses.insert(IPv6Address(target_ip)!)
             }
-            if Int(scope_str) != NodeType.localhost.rawValue {
-                node.types = [ scope ]
+            if Int(node_type_str) != NodeType.localhost.rawValue {
+                node.types = [ node_type ]
             }
             // TEST A REMETTRE
 //            _ = addNode(node)
