@@ -78,8 +78,31 @@ public class Interman3DModel : ObservableObject {
         print("MANAGER INIT")
         b3d_nodes = [B3DNode]()
     }
-    
-    internal func addComponent(_ node: Node) {
+
+    // Sync with the main model
+    public func notifyNodeAdded(_ node: Node) {
+        print("\(#function): \(node.fullDump())")
+    }
+
+    // Sync with the main model
+    public func notifyNodeRemoved(_ node: Node) {
+        print("\(#function)")
+
+    }
+
+    // Sync with the main model
+    public func notifyNodeMerged(_ node: Node, _ into: Node) {
+        print("\(#function)")
+
+    }
+
+    // Sync with the main model
+    public func notifyNodeUpdated(_ node: Node) {
+        print("\(#function)")
+
+    }
+
+    public func addComponent(_ node: Node) {
         let factor: Float = 10
 
 //        print(#function)

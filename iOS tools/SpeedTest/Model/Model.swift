@@ -316,18 +316,35 @@ public class Node : Hashable {
 
     public func dump() -> String {
         var ret = "DUMP NODE: "
-/*        ret = ret + "mcast_dns_names: "
-        for foo in mcast_dns_names {
-            ret = ret + foo.toString() + "; "
-        } */
         ret = ret + "dns_names: "
         for foo in dns_names {
             ret = ret + foo.toString() + "; "
-        }/*
+        }
+        return ret
+    }
+
+    public func fullDump() -> String {
+        var ret = "FULL DUMP NODE: "
+        ret = ret + "mcast_dns_names: "
+        for foo in mcast_dns_names {
+            ret = ret + foo.toString() + "; "
+        }
+        ret = ret + "dns_names: "
+        for foo in dns_names {
+            ret = ret + foo.toString() + "; "
+        }
         ret = ret + "names: "
         for foo in names {
             ret = ret + foo + "; "
-        }*/
+        }
+        ret = ret + "IPv4: "
+        for foo in v4_addresses {
+            ret = ret + (foo.toNumericString() ?? "no_string_for_this_IPv4") + "; "
+        }
+        ret = ret + "IPv6: "
+        for foo in v6_addresses {
+            ret = ret + (foo.toNumericString() ?? "no_string_for_this_IPv6") + "; "
+        }
         return ret
     }
 }
@@ -353,7 +370,7 @@ class DBMaster {
     
     static public let shared = DBMaster()
 
-    public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
+    public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         return addOrRemoveNode(new_node, add: true)
     }
     
@@ -472,7 +489,7 @@ class DBMaster {
         return node
     }
 
-    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
+    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
@@ -484,7 +501,7 @@ class DBMaster {
 
         var is_new_node = false
         // keys: removed nodes; values: nodes in which removed nodes have been merged into
-        var removed_nodes = [Node : Node]()
+        var removed_nodes = [Node : Node?]()
         
         // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, dedup nodes are the nodes that have been updated.
         var dedup = Set<Node>()
