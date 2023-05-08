@@ -118,18 +118,18 @@ struct AddSwiftUIView: View {
                     Button("Add this new target") {
                         DispatchQueue.main.async {
                             let node = Node()
-                            node.dns_names.insert(DomainName(target_name)!)
+                            node.addDnsName(DomainName(target_name)!)
                             if isIPv4(target_ip) {
-                                if !node.v4_addresses.contains(IPv4Address(target_ip)!) {
-                                    node.v4_addresses.insert(IPv4Address(target_ip)!)
+                                if !node.getV4Addresses().contains(IPv4Address(target_ip)!) {
+                                    node.addV4Address(IPv4Address(target_ip)!)
                                 }
                             } else if isIPv6(target_ip) {
-                                if !node.v6_addresses.contains(IPv6Address(target_ip)!) {
-                                    node.v6_addresses.insert(IPv6Address(target_ip)!)
+                                if !node.getV6Addresses().contains(IPv6Address(target_ip)!) {
+                                    node.addV6Address(IPv6Address(target_ip)!)
                                 }
                             }
                             if scope != .localhost {
-                                node.types = [ scope ]
+                                node.setTypes([ scope ])
                             }
                             add_view_controller?.master_view_controller!.addNode(node)
                         }

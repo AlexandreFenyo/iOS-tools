@@ -465,11 +465,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     public func updateLocalNodeAndGateways() {
         // Update local node
         let node = DBMaster.shared.getLocalNode()
-        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
         
         // Update local gateways
         for gw in DBMaster.shared.getLocalGateways() {
-            addNode(gw, resolve_ipv4_addresses: gw.v4_addresses)
+            addNode(gw, resolve_ipv4_addresses: gw.getV4Addresses())
         }
     }
     
@@ -556,9 +556,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
-                    node.v4_addresses.insert(address)
+                    node.addV4Address(address)
                     guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
+                    node.addDnsName(domain_name)
                     self.addNode(node)
                 }
             }
@@ -575,9 +575,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     // Reverse IPv6 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
-                    node.v6_addresses.insert(address)
+                    node.addV6Address(address)
                     guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
+                    node.addDnsName(domain_name)
                     self.addNode(node)
                 }
             }
@@ -1006,34 +1006,34 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
+        cell.name.text = (node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }).first ?? "no name"
         
-        if let best = (Array(node.v4_addresses.filter { (address) -> Bool in
+        if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
             // 1st choice: public (not autoconfig) && unicast
             !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
             // 2nd choice: private && not autoconfig
             address.isPrivate() && !address.isAutoConfig()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
             // 3rd choice: autoconfig
             address.isAutoConfig()
         })).first { cell.detail1.text = best.toNumericString() }
         else { cell.detail1.text = "no IPv4 address" }
 
-        if let best = (Array(node.v6_addresses.filter { (address) -> Bool in
+        if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
             // 1st choice: unicast public
             address.isUnicastPublic()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
             // 2nd choice: ULA
             address.isULA()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
             // 3rd choice: LLA
             address.isLLA()
         })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
         else { cell.detail2.text = "no IPv6 address" }
 
-        cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
-        cell.nPorts.text = String(node.tcp_ports.count + node.udp_ports.count) + " port" + (node.tcp_ports.count + node.udp_ports.count > 1 ? "s" : "")
+        cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
+        cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")
 
        return cell
     }
@@ -1042,14 +1042,14 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let node = getNode(indexPath: indexPath)
         let node1 = Node()
-        node1.mcast_dns_names.insert(FQDN("dns", "google"))
+        node1.addMcastFQDN(FQDN("dns", "google"))
         let node2 = Node()
-        node2.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
+        node2.addMcastFQDN(FQDN("dns9", "quad9.net"))
         let node3 = Node()
-        node3.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
+        node3.addMcastFQDN(FQDN("flood", "eowyn.eu.org"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
             popUpHelp(.node_info_public_host, "This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
-        } else if node.types.contains(.localhost) {
+        } else if node.isLocalHost() {
             popUpHelp(.localhost, "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
         } else if node.isSimilar(with: node3) {
             popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.")
@@ -1061,7 +1061,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !getNode(indexPath: indexPath).types.contains(.localhost)
+        return !getNode(indexPath: indexPath).isLocalHost()
     }
 
     // Delete every rows corresponding to a node
@@ -1074,7 +1074,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         for str in config {
             let str_fields = str.split(separator: ";", maxSplits: 2)
             let target_name = String(str_fields[0])
-            if !node.dns_names.map({ $0.toString() }).contains(target_name) {
+            if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
                 new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
             }
         }

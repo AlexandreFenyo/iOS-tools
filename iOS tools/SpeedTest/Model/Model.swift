@@ -9,20 +9,20 @@
 import Foundation
 import UIKit
 
-enum SectionType: Int, CaseIterable {
+public enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
 }
 
-enum NodeType: Int, CaseIterable {
+public enum NodeType: Int, CaseIterable {
     case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-class DomainPart : Hashable {
-    internal let name: String
+public class DomainPart : Hashable {
+    public let name: String
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
     }
 
@@ -42,7 +42,7 @@ class DomainPart : Hashable {
 
 // A host part must not contain a dot
 // ex: www, localhost
-class HostPart : DomainPart {
+public class HostPart : DomainPart {
     public override init(_ name : String) {
         if name.contains(".") { fatalError("HostPart") }
         super.init(name)
@@ -51,14 +51,14 @@ class HostPart : DomainPart {
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-class DomainName : Hashable {
-    func hash(into hasher: inout Hasher) {
+public class DomainName : Hashable {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
     }
 
-    internal let host_part: HostPart
-    internal let domain_part: DomainPart?
+    public let host_part: HostPart
+    public let domain_part: DomainPart?
 
     public init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
@@ -96,16 +96,16 @@ class DomainName : Hashable {
 
 // A FQDN is a domain name that both contains a host part and a domain part
 // ex: {www, fenyo.net}, {localhost, localdomain}
-class FQDN : DomainName {
+public class FQDN : DomainName {
     public init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
 }
 
-class BonjourServiceInfo : Hashable {
+public class BonjourServiceInfo : Hashable {
     public let name: String
     public let port: String
-    public let attr: [String: String]
+    public let attr: [String : String]
     
     public init(_ name: String, _ port: String, _ attr: [String: String]) {
         self.name = name
@@ -113,11 +113,11 @@ class BonjourServiceInfo : Hashable {
         self.attr = attr
     }
     
-    static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
+    public static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
         return lhs.name == rhs.name && lhs.port == rhs.port && lhs.attr == rhs.attr
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(port)
         hasher.combine(attr)
@@ -127,8 +127,8 @@ class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-internal class Node : Hashable {
-    func hash(into hasher: inout Hasher) {
+public class Node : Hashable {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
         hasher.combine(names)
@@ -143,16 +143,105 @@ internal class Node : Hashable {
     private var is_in_model = false
     
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
-    public var mcast_dns_names = Set<FQDN>()
-    public var dns_names = Set<DomainName>()
-    public var names = Set<String>()
-    public var v4_addresses = Set<IPv4Address>()
-    public var v6_addresses = Set<IPv6Address>()
-    public var tcp_ports = Set<UInt16>()
-    public var udp_ports = Set<UInt16>()
-    public var types = Set<NodeType>()
-    public var services = Set<BonjourServiceInfo>()
-    
+    fileprivate var mcast_dns_names = Set<FQDN>()
+    fileprivate var dns_names = Set<DomainName>()
+    fileprivate var names = Set<String>()
+    fileprivate var v4_addresses = Set<IPv4Address>()
+    fileprivate var v6_addresses = Set<IPv6Address>()
+    fileprivate var tcp_ports = Set<UInt16>()
+    fileprivate var udp_ports = Set<UInt16>()
+    fileprivate var types = Set<NodeType>()
+    fileprivate var services = Set<BonjourServiceInfo>()
+
+    public func isLocalHost() -> Bool {
+        return types.contains(.localhost)
+    }
+
+    // NodeType is an enum, therefore no need to copy the Set elements to be sure they are not updated
+    private func getTypes() -> Set<NodeType> {
+        return types
+    }
+
+    // BonjourServiceInfo is a class with constant attributes (each declared as a let String), therefore no need to copy the Set elements to be sure they are not updated
+    public func getServices() -> Set<BonjourServiceInfo> {
+        return services
+    }
+
+    // FQDN is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
+    public func getMcastDnsNames() -> Set<FQDN> {
+        return mcast_dns_names
+    }
+
+    // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
+    public func getDnsNames() -> Set<DomainName> {
+        return dns_names
+    }
+
+    // No need to copy the set elements to be sure they are not updated
+    public func getNames() -> Set<String> {
+        return names
+    }
+
+    // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
+    public func getV4Addresses() -> Set<IPv4Address> {
+        return v4_addresses
+    }
+
+    // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
+    public func getV6Addresses() -> Set<IPv6Address> {
+        return v6_addresses
+    }
+
+    // No need to copy the set elements to be sure they are not updated
+    public func getTcpPorts() -> Set<UInt16> {
+        return tcp_ports
+    }
+
+    // No need to copy the set elements to be sure they are not updated
+    public func getUdpPorts() -> Set<UInt16> {
+        return udp_ports
+    }
+
+    public func setTypes(_ types: Set<NodeType>) {
+        self.types = types
+    }
+
+    public func addType(_ type: NodeType) {
+        types.insert(type)
+    }
+
+    public func addService(_ service: BonjourServiceInfo) {
+        services.insert(service)
+    }
+
+    public func addV4Address(_ address: IPv4Address) {
+        v4_addresses.insert(address)
+    }
+
+    public func addV6Address(_ address: IPv6Address) {
+        v6_addresses.insert(address)
+    }
+
+    public func addName(_ name: String) {
+        names.insert(name)
+    }
+
+    public func addDnsName(_ domain_name: DomainName) {
+        dns_names.insert(domain_name)
+    }
+
+    public func addMcastFQDN(_ domain_name: FQDN) {
+        mcast_dns_names.insert(domain_name)
+    }
+
+    public func addTcpPort(_ port: UInt16) {
+        tcp_ports.insert(port)
+    }
+
+    public func addUdpPort(_ port: UInt16) {
+        udp_ports.insert(port)
+    }
+
     public init() { }
     
     private var adresses: Set<IPAddress> {
@@ -424,6 +513,7 @@ class DBMaster {
             if merged_index == -1 {
                 is_new_node = true
                 arr_nodes.append(new_node)
+                // since this is a new node, dedup and removed_nodes will be empty
             }
             // If one similar node has been merged into one existing node, merge every similar nodes into the existing node
             else {

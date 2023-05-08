@@ -102,7 +102,7 @@ public class Interman3DModel : ObservableObject {
         animation.repeatCount = .infinity
         b3d_node.addAnimation(animation, forKey: nil)
 
-        let text = SCNText(string: node.dns_names.first?.toString(), extrusionDepth: 0)
+        let text = SCNText(string: node.getDnsNames().first?.toString(), extrusionDepth: 0)
         text.flatness = 0.01
         text.firstMaterial!.diffuse.contents = UIColor.yellow
 
@@ -117,7 +117,7 @@ public class Interman3DModel : ObservableObject {
 //        print("addComponent(node) done")
     }
     
-    internal func addComponent() {
+    public func addComponent() {
         print(#function)
         let b3d = B3D(ComponentTemplates.standard)
         print("b3d=\(b3d)")
@@ -127,7 +127,6 @@ public class Interman3DModel : ObservableObject {
         print("addComponent() done")
     }
     
-    // internal
     public func testComponent() {
         print(#function)
 

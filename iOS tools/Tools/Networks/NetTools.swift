@@ -126,7 +126,7 @@ class SockAddr4 : SockAddr {
     }
 }
 
-class SockAddr6 : SockAddr {
+public class SockAddr6 : SockAddr {
     public override init?(_ sockaddr: Data) {
         let family = sockaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> UInt8 in bytes.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_family }
         if family != AF_INET6 { return nil }
@@ -280,7 +280,7 @@ public class IPAddress : Hashable {
     }
 }
 
-class IPv4Address : IPAddress, Comparable {
+public class IPv4Address : IPAddress, Comparable {
     public override func hash(into hasher: inout Hasher) {
         hasher.combine(inaddr)
     }
@@ -370,12 +370,12 @@ class IPv4Address : IPAddress, Comparable {
         return IPv4Address(inaddr)
     }
 
-    static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
+    public static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
         return isLowerThan(lhs: lhs, rhs: rhs)
     }
 }
 
-class IPv6Address : IPAddress, Comparable {
+public class IPv6Address : IPAddress, Comparable {
     // scope zone index
     private let scope: UInt32
 
@@ -529,7 +529,7 @@ class IPv6Address : IPAddress, Comparable {
         return IPv6Address(inaddr, scope: scope)
     }
 
-    static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
+    public static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
         if lhs.scope != rhs.scope { return lhs.scope < rhs.scope }
         return isLowerThan(lhs: lhs, rhs: rhs)
     }

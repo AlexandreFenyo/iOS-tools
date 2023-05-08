@@ -175,14 +175,14 @@ class DetailViewController: UIViewController {
         if address.getFamily() == AF_INET {
             let v4addr = address as! IPv4Address
             for n in DBMaster.shared.nodes {
-                if n.v4_addresses.contains(v4addr) {
+                if n.getV4Addresses().contains(v4addr) {
                     node = n
                 }
             }
         } else {
             let v6addr = address as! IPv6Address
             for n in DBMaster.shared.nodes {
-                if n.v6_addresses.contains(v6addr) {
+                if n.getV6Addresses().contains(v6addr) {
                     node = n
                 }
             }
@@ -213,7 +213,7 @@ class DetailViewController: UIViewController {
 
     public func updateDetailsIfNodeDisplayed(_ node: Node, _ buttons_enabled: Bool) {
         if let v4 = hostingViewController.rootView.model.v4address {
-            if node.v4_addresses.contains(v4) {
+            if node.getV4Addresses().contains(v4) {
                 if let node = findNodeFromAddress(v4) {
                     hostingViewController.rootView.model.updateDetails(node, v4, buttons_enabled)
                     clearChart(new_address: v4)
@@ -221,7 +221,7 @@ class DetailViewController: UIViewController {
             }
         }
         if let v6 = hostingViewController.rootView.model.v6address {
-            if node.v6_addresses.contains(v6) {
+            if node.getV6Addresses().contains(v6) {
                 if let node = findNodeFromAddress(v6) {
                     hostingViewController.rootView.model.updateDetails(node, v6, buttons_enabled)
                     clearChart(new_address: v6)
@@ -234,14 +234,14 @@ class DetailViewController: UIViewController {
         if address.getFamily() == AF_INET {
             let v4addr = address as! IPv4Address
             for n in DBMaster.shared.nodes {
-                if n.v4_addresses.contains(v4addr) {
+                if n.getV4Addresses().contains(v4addr) {
                     return n
                 }
             }
         } else {
             let v6addr = address as! IPv6Address
             for n in DBMaster.shared.nodes {
-                if n.v6_addresses.contains(v6addr) {
+                if n.getV6Addresses().contains(v6addr) {
                     return n
                 }
             }

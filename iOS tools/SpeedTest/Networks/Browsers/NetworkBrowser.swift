@@ -50,7 +50,7 @@ class NetworkBrowser {
                     if network.mask_len != 32 {
                         var current = network_addr.and(netmask).next() as! IPv4Address
                         repeat {
-                            if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+                            if (DBMaster.shared.nodes.filter { $0.getV4Addresses().contains(current) }).isEmpty {
                                 device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
                                 reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
                             }
@@ -85,9 +85,9 @@ class NetworkBrowser {
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
-                node.v4_addresses.insert(from as! IPv4Address)
+                node.addV4Address(from as! IPv4Address)
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+                device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
                 if let info = from.toNumericString() {
 //                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
@@ -98,9 +98,9 @@ class NetworkBrowser {
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
 
             case AF_INET6:
-                node.v6_addresses.insert(from as! IPv6Address)
+                node.addV6Address(from as! IPv6Address)
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
+                device_manager.addNode(node, resolve_ipv6_addresses: node.getV6Addresses())
                 if let info = from.toNumericString() {
 //                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)

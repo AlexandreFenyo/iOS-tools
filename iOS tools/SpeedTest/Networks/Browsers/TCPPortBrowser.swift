@@ -41,17 +41,17 @@ class TCPPortBrowser {
     private func addPort(addr: IPAddress, port: UInt16) {
         DispatchQueue.main.async {
             let node = Node()
-            if addr.getFamily() == AF_INET { node.v4_addresses.insert(addr as! IPv4Address) }
-            else { node.v6_addresses.insert(addr as! IPv6Address) }
-            node.tcp_ports.insert(port)
+            if addr.getFamily() == AF_INET { node.addV4Address(addr as! IPv4Address) }
+            else { node.addV6Address(addr as! IPv6Address) }
+            node.addTcpPort(port)
             self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
             switch port {
             case 9:
-                node.types.insert(.discard)
+                node.addType(.discard)
             case 19:
-                node.types.insert(.chargen)
+                node.addType(.chargen)
             case 4:
-                node.types.insert(.ios)
+                node.addType(.ios)
             default:
                 ()
             }
@@ -74,10 +74,10 @@ class TCPPortBrowser {
             // ne pas rescanner les ports déjà identifiés
             DispatchQueue.main.sync {
                 for node in DBMaster.shared.nodes {
-                    if let addr = node.v4_addresses.first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-                    } else if let addr = node.v6_addresses.first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+                    if let addr = node.getV4Addresses().first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
+                    } else if let addr = node.getV6Addresses().first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
                     }
                 }
             }

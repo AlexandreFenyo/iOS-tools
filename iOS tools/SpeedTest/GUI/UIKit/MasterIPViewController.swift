@@ -62,7 +62,7 @@ class MasterIPViewController: UITableViewController {
 
             var found = false
             var cnt = 0
-            for n in self.node!.v4_addresses.sorted() {
+            for n in self.node!.getV4Addresses().sorted() {
                 if n.toNumericString() == self.auto_select! {
                     found = true
                     break
@@ -70,7 +70,7 @@ class MasterIPViewController: UITableViewController {
                 cnt += 1
             }
             if found == false {
-                for n in self.node!.v6_addresses.sorted() {
+                for n in self.node!.getV6Addresses().sorted() {
                     if n.toNumericString() == self.auto_select! {
                         found = true
                         break
@@ -88,10 +88,10 @@ class MasterIPViewController: UITableViewController {
         } else {
             info_button.isEnabled = true
 
-            if self.node!.v4_addresses.count + self.node!.v6_addresses.count > 0 && self.tableView.indexPathForSelectedRow == nil {
+            if self.node!.getV4Addresses().count + self.node!.getV6Addresses().count > 0 && self.tableView.indexPathForSelectedRow == nil {
                 let indexPath = IndexPath(row: 0, section: 0)
                 self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
-                let ips = Array(self.node!.v4_addresses.sorted()) + Array(self.node!.v6_addresses.sorted())
+                let ips = Array(self.node!.getV4Addresses().sorted()) + Array(self.node!.getV6Addresses().sorted())
                 if !ips.isEmpty {
                     self.master_view_controller!.addressSelected(address: ips.first!)
                 }
@@ -167,12 +167,12 @@ class MasterIPViewController: UITableViewController {
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return node!.v4_addresses.count + node!.v6_addresses.count
+        return node!.getV4Addresses().count + node!.getV6Addresses().count
     }
     
     // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
+        let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
         cell.textLabel!.text = address.toNumericString()
         
@@ -191,7 +191,7 @@ class MasterIPViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let address = (Array(node!.v4_addresses.sorted()) + Array(node!.v6_addresses.sorted()))[indexPath.item]
+        let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
         master_view_controller!.addressSelected(address: address)
     }
     
