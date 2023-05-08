@@ -103,9 +103,10 @@ public class Interman3DModel : ObservableObject {
     }
 
     public func addComponent(_ node: Node) {
+        print(#function)
+
         let factor: Float = 10
 
-//        print(#function)
         let b3d_node = B3DNode(ComponentTemplates.standard, node)
 
         let node_count = b3d_nodes.count

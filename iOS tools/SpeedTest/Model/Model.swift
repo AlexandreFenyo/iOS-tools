@@ -364,16 +364,20 @@ class ModelSection {
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    public var sections: [SectionType: ModelSection]
-    public var nodes: Set<Node>
-    public var networks: Set<IPNetwork>
+    public var sections: [SectionType : ModelSection]
+    private(set) var nodes: Set<Node>
+    private(set) var networks: Set<IPNetwork>
     
     static public let shared = DBMaster()
+
+    public func resetNetworks() {
+        networks = Set<IPNetwork>()
+    }
 
     public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         return addOrRemoveNode(new_node, add: true)
     }
-    
+
     public func removeNode(_ node: Node) -> [IndexPath] {
         return addOrRemoveNode(node, add: false).removed_paths
     }
@@ -506,7 +510,9 @@ class DBMaster {
         // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, dedup nodes are the nodes that have been updated.
         var dedup = Set<Node>()
 
-        if new_node == Node() || (add && nodes.contains(new_node)) { return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes) }
+        if new_node == Node() || (add && nodes.contains(new_node)) {
+            return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes)
+        }
         
         // Create the new node list including the new node
         var arr_nodes = Array(nodes)
@@ -528,6 +534,7 @@ class DBMaster {
 
             // If no similar node was found, add the new node
             if merged_index == -1 {
+                print("XXXXX: is new node")
                 is_new_node = true
                 arr_nodes.append(new_node)
                 // since this is a new node, dedup and removed_nodes will be empty
@@ -614,6 +621,8 @@ class DBMaster {
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        GenericTools.printDuration(idx: 4, start_time: start_time)
 
+        print("XXXXX: addOrRemoveNode is new node: \(is_new_node)")
+        
         return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes)
     }
 
