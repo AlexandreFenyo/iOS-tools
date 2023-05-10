@@ -493,7 +493,11 @@ class DBMaster {
         return node
     }
 
-    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
+    private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
+        
+        // le pb : removed_nodes : values doit pas être nil - créer in noeud dont l'IP est 0.0.0.0 ?
+        
+        print(#function)
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
@@ -505,7 +509,7 @@ class DBMaster {
 
         var is_new_node = false
         // keys: removed nodes; values: nodes in which removed nodes have been merged into
-        var removed_nodes = [Node : Node?]()
+        var removed_nodes = [Node : Node]()
         
         // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, dedup nodes are the nodes that have been updated.
         var dedup = Set<Node>()
@@ -534,7 +538,6 @@ class DBMaster {
 
             // If no similar node was found, add the new node
             if merged_index == -1 {
-                print("XXXXX: is new node")
                 is_new_node = true
                 arr_nodes.append(new_node)
                 // since this is a new node, dedup and removed_nodes will be empty
@@ -558,7 +561,10 @@ class DBMaster {
                     if !merged { merged_index = -1 }
                 } while merged_index != -1
             }
-        } else { arr_nodes.removeAll { $0 == new_node } }
+        } else {
+            arr_nodes.removeAll { $0 == new_node }
+            removed_nodes[new_node] = Node()
+        }
         // Starting at this line, arr_nodes contains every distinct nodes (i.e. not similar) and dedup contains the subset of arr_nodes that have been merged
 
         // pour débugguer la complexité de l'algo de création d'un noeud
@@ -613,15 +619,34 @@ class DBMaster {
         // Flatten removed_nodes
         removed_nodes.keys.forEach { node in
             func getLastInChain(_ node: Node) -> Node {
-                return removed_nodes.keys.contains(node) ? getLastInChain(node) : node
+                return removed_nodes.keys.contains(node) ? getLastInChain(removed_nodes[node]!) : node
             }
             removed_nodes[node] = getLastInChain(node)
         }
         
         // pour débugguer la complexité de l'algo de création d'un noeud
-//        GenericTools.printDuration(idx: 4, start_time: start_time)
+        // GenericTools.printDuration(idx: 4, start_time: start_time)
 
-        print("XXXXX: addOrRemoveNode is new node: \(is_new_node)")
+        // Sync this model with the 3D model
+
+        // Deal with removed or merged nodes
+        removed_nodes.forEach { (key: Node, value: Node) in
+            if value != Node() {
+                Interman3DModel.shared.notifyNodeMerged(key, value)
+            } else {
+                Interman3DModel.shared.notifyNodeRemoved(key)
+            }
+        }
+
+        // New node (therefore there is not any removed, merged nor updated nodes)
+        if is_new_node {
+            Interman3DModel.shared.notifyNodeAdded(new_node)
+        }
+
+        // Deal with updated nodes
+        dedup.forEach { node in
+            Interman3DModel.shared.notifyNodeUpdated(node)
+        }
         
         return (index_paths_removed, index_paths_inserted, is_new_node, dedup, removed_nodes)
     }

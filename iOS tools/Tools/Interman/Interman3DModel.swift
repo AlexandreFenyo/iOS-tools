@@ -82,6 +82,7 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     public func notifyNodeAdded(_ node: Node) {
         print("\(#function): \(node.fullDump())")
+        addComponent(node)
     }
 
     // Sync with the main model

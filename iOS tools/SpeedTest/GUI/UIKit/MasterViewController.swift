@@ -592,32 +592,10 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        tableView.insertRows(at: index_paths_inserted, with: .automatic)
 //        tableView.endUpdates()
 
-        // comme on a supprimé le bloc suivant, on n'a plus besoin de récupérer les valeurs renvoyées
+        // comme on a supprimé le bloc plus bas (à partir de `if tableView.window...'), on n'a plus besoin de récupérer les valeurs renvoyées
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
-        let (_, _, is_new_node, updated_nodes, removed_nodes) = DBMaster.shared.addNode(node)
-        print("XXXXX: dans MasterViewController.addNode(): is_new_node == \(is_new_node)")
-
-        print(">>>>>>>>>>>>>>>")
-        // Synchronize with the 3D model
-        Interman3DModel.shared.addComponent(node)
-
-        removed_nodes.forEach { (key: Node, value: Node?) in
-            if let value {
-                Interman3DModel.shared.notifyNodeMerged(node, value)
-            } else {
-                Interman3DModel.shared.notifyNodeRemoved(node)
-            }
-        }
-
-        if is_new_node {
-            Interman3DModel.shared.notifyNodeAdded(node)
-        }
-
-        updated_nodes.forEach { node in
-            Interman3DModel.shared.notifyNodeUpdated(node)
-        }
-        print("<<<<<<<<<<<<<")
-
+        let _ = DBMaster.shared.addNode(node)
+        
         // Si on faire un refresh et qu'on bascule tout de suite sur onglet Traces, puis qu'on revient un peu après, on a une erreur fatale du type :
         // Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid update: invalid number of rows in section 5. The number of rows contained in an existing section after the update (38) must be equal to the number of rows contained in that section before the update (19), plus or minus the number of rows inserted or deleted from that section (1 inserted, 0 deleted) and plus or minus the number of rows moved into or out of that section (0 moved in, 0 moved out). Table view: <UITableView: 0x10104b800; frame = (0 0; 359 834); clipsToBounds = YES; autoresize = W+H; gestureRecognizers = <NSArray: 0x283241980>; layer = <CALayer: 0x283c975a0>; contentOffset: {0, -50}; contentSize: {359, 2113.5}; adjustedContentInset: {110, 0, 115, 0}; dataSource: <iOS_tools.MasterViewController: 0x101022c00>>'
         // solution semble-t-il : on remplace le bloc suivant par un simple tableView.reloadData()
