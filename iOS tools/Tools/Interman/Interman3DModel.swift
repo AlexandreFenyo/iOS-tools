@@ -127,7 +127,20 @@ public class Interman3DModel : ObservableObject {
         animation.repeatCount = .infinity
         b3d_node.addAnimation(animation, forKey: nil)
 
-        let text = SCNText(string: node.getDnsNames().first?.toString(), extrusionDepth: 0)
+        var display_text = "no name"
+        if let foo = node.getDnsNames().first {
+            display_text = foo.toString()
+        } else if let foo = node.getNames().first {
+            display_text = foo
+        } else if let foo = node.getMcastDnsNames().first {
+            display_text = foo.toString()
+        } else if let foo = node.getV4Addresses().first, let bar = foo.toNumericString() {
+            display_text = bar
+        } else if let foo = node.getV6Addresses().first, let bar = foo.toNumericString() {
+            display_text = bar
+        }
+
+        let text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0.01
         text.firstMaterial!.diffuse.contents = UIColor.yellow
 
