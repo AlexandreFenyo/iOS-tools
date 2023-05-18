@@ -28,6 +28,10 @@ import SceneKit
 // degress to radians: GLKMathDegreesToRadians(-90)
 // PI : M_2_PI, Float.pi
 
+// matrices de translation et rotation :
+// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreAnimation_guide/CoreAnimationBasics/CoreAnimationBasics.html#//apple_ref/doc/uid/TP40004514-CH2-SW3
+
+
 extension simd_float4x4 {
     public init(matrix: GLKMatrix4) {
         self.init(columns: (SIMD4<Float>(x: matrix.m00, y: matrix.m01, z: matrix.m02, w: matrix.m03),

@@ -497,7 +497,7 @@ class DBMaster {
         
         // le pb : removed_nodes : values doit pas être nil - créer in noeud dont l'IP est 0.0.0.0 ?
         
-        print(#function)
+//        print(#function)
         // pour débugguer la complexité de l'algo de création d'un noeud
 //        let start_time = Date()
 //        GenericTools.printDuration(idx: 0, start_time: start_time)
