@@ -421,6 +421,14 @@ class DBMaster {
     }
  */
 
+    public static func getNode(name: String) -> Node? {
+        shared.nodes.filter { $0.names.contains(name) }.first
+    }
+
+    public static func getNode(mcast_fqdn: FQDN) -> Node? {
+        shared.nodes.filter { $0.mcast_dns_names.contains(mcast_fqdn) }.first
+    }
+
     /* A unique gateway */
     public func getLocalGateways() -> [Node] {
         var gateways = [Node]()

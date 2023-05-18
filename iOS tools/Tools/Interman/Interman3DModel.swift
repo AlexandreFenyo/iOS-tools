@@ -54,11 +54,11 @@ class B3D : SCNNode {
 }
 
 class B3DNode : B3D {
-    private /* weak */ var node: Node?
+    fileprivate /* weak */ var node: Node
     
     public init(_ scn_node: SCNNode, _ node: Node) {
-        super.init(scn_node)
         self.node = node
+        super.init(scn_node)
     }
 
     required init?(coder: NSCoder) {
@@ -83,6 +83,14 @@ public class Interman3DModel : ObservableObject {
         b3d_nodes = [B3DNode]()
     }
 
+    private func getDB3Node(_ node: Node) -> B3DNode? {
+        // Should be faster with an associative map
+        guard let b3d_node = (b3d_nodes.filter { $0.node.isSimilar(with: node) }).first else {
+            return nil
+        }
+        return b3d_node
+    }
+    
     // Sync with the main model
     public func notifyNodeAdded(_ node: Node) {
         print("\(#function): \(node.fullDump())")
@@ -92,6 +100,20 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     public func notifyNodeRemoved(_ node: Node) {
         print("\(#function)")
+        // tester bloquer anim
+
+        guard let b3d_node = getDB3Node(node) else { return }
+        b3d_node.simdPivot = b3d_node.presentation.simdPivot
+        b3d_node.removeAnimation(forKey: "circle")
+        
+//        b3d_node.simdPivot = matrix_identity_float4x4
+
+        return
+        let animation = CABasicAnimation(keyPath: "pivot")
+//        animation.fromValue = SCNMatrix4(transl)
+        animation.toValue = SCNMatrix4(matrix_identity_float4x4)
+        animation.duration = 15.0
+        b3d_node.addAnimation(animation, forKey: "center")
 
     }
 
@@ -122,14 +144,14 @@ public class Interman3DModel : ObservableObject {
         transl[3, 2] = -factor
 
         b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+        // Set final state
+        b3d_node.simdPivot = transl * rot
 
         let animation = CABasicAnimation(keyPath: "pivot")
         animation.fromValue = SCNMatrix4(transl)
         animation.toValue = SCNMatrix4(transl * rot)
-        animation.duration = 10.0
-        animation.autoreverses = true
-        animation.repeatCount = .infinity
-        b3d_node.addAnimation(animation, forKey: nil)
+        animation.duration = 15.0
+        b3d_node.addAnimation(animation, forKey: "circle")
 
         var display_text = "no name"
         if let foo = node.getDnsNames().first {
@@ -172,6 +194,11 @@ public class Interman3DModel : ObservableObject {
     public func testComponent() {
         print(#function)
 
+        if let foo = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
+            notifyNodeRemoved(foo)
+        }
+        
+        /*
         // translation
 //        var x: simd_float4x4 = matrix_identity_float4x4
 //        x[3, 0] = -1
@@ -184,7 +211,8 @@ public class Interman3DModel : ObservableObject {
         // rad, x, y, z
         let piv1 = simd_float4x4(matrix: GLKMatrix4MakeRotation(GLKMathDegreesToRadians(10), 0, 1, 0))
         b3d_test?.simdPivot = piv1
-
+*/
+        
         print("testComponent() done")
     }
 }
