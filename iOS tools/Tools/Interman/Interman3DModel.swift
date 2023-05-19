@@ -26,11 +26,22 @@ import SceneKit
 //   x[3, 2] = -1
 // simdPivot to pivot: SCNMatrix4(simdPivot)
 // degress to radians: GLKMathDegreesToRadians(-90)
-// PI : M_2_PI, Float.pi
+// PI : M_2_PI, M_PI_2, Float.pi, .pi
+
+// simdPivot = matrix_identity_float4x4
+
+// SIMDx et SCNVectorx :
+// text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
+// text_node.scale = SCNVector3(0.1, 0.1, 0.1)
 
 // matrices de translation et rotation :
 // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreAnimation_guide/CoreAnimationBasics/CoreAnimationBasics.html#//apple_ref/doc/uid/TP40004514-CH2-SW3
 
+ // créer des matrices : doc de SCNMatrix4
+
+struct ComponentTemplates {
+    public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+}
 
 extension simd_float4x4 {
     public init(matrix: GLKMatrix4) {
@@ -42,50 +53,99 @@ extension simd_float4x4 {
 }
 
 class B3D : SCNNode {
-    public init(_ scn_node: SCNNode) {
-        super.init()
-        let _node = scn_node.clone()
-        addChildNode(_node.clone())
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class B3DNode : B3D {
-    fileprivate /* weak */ var node: Node
+    private let sub_node: SCNNode
     
-    public init(_ scn_node: SCNNode, _ node: Node) {
-        self.node = node
+    public init(_ scn_node: SCNNode) {
+        sub_node = scn_node.clone()
+        sub_node.simdScale = simd_float3(0.1, 0.1, 0.1)
+        super.init()
+        addChildNode(sub_node)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    fileprivate func firstAnim(_ angle: Float) {
+        let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -1
+        simdPivot = transl * rot
+        let animation = CABasicAnimation(keyPath: "pivot")
+        animation.fromValue = SCNMatrix4(rot)
+        animation.toValue = SCNMatrix4(transl * rot)
+        animation.duration = 5.0
+        addAnimation(animation, forKey: "circle")
+    }
+    
+    fileprivate func newAngle(_ angle: Float) {
+        let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -1
+//        simdPivot = transl * rot
+        
+        removeAnimation(forKey: "circle")
+        return
+        
+        let animation = CABasicAnimation(keyPath: "pivot")
+        animation.fromValue = SCNMatrix4(rot)
+        animation.toValue = SCNMatrix4(transl * rot)
+        animation.duration = 5.0
+        addAnimation(animation, forKey: "circle")
+    }
+}
+
+class B3DHost : B3D {
+    private var host: Node
+
+    fileprivate func getHost() -> Node {
+        return host
+    }
+    
+    public init(_ scn_node: SCNNode, _ host: Node) {
+        self.host = host
         super.init(scn_node)
+
+        var display_text = "no name"
+        if let foo = host.getDnsNames().first {
+            display_text = foo.toString()
+        } else if let foo = host.getNames().first {
+            display_text = foo
+        } else if let foo = host.getMcastDnsNames().first {
+            display_text = foo.toString()
+        } else if let foo = host.getV4Addresses().first, let bar = foo.toNumericString() {
+            display_text = bar
+        } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
+            display_text = bar
+        }
+        let text = SCNText(string: display_text, extrusionDepth: 0)
+        text.flatness = 0.001
+        text.firstMaterial!.diffuse.contents = UIColor.yellow
+        let text_node = SCNNode(geometry: text)
+        text.font = UIFont(name: "Helvetica", size: 1)
+        text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
+        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        addChildNode(text_node)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-struct ComponentTemplates {
-    public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
 }
 
 public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
     public var scene: SCNScene?
-
-    private var b3d_nodes: [B3DNode]
+    private var b3d_hosts: [B3DHost]
     
-    private var b3d_test: B3D?
-
     public init() {
         print("MANAGER INIT")
-        b3d_nodes = [B3DNode]()
+        b3d_hosts = [B3DHost]()
     }
 
-    private func getDB3Node(_ node: Node) -> B3DNode? {
+    private func getB3DHost(_ node: Node) -> B3DHost? {
         // Should be faster with an associative map
-        guard let b3d_node = (b3d_nodes.filter { $0.node.isSimilar(with: node) }).first else {
+        guard let b3d_node = (b3d_hosts.filter { $0.getHost().isSimilar(with: node) }).first else {
             return nil
         }
         return b3d_node
@@ -94,15 +154,17 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     public func notifyNodeAdded(_ node: Node) {
         print("\(#function): \(node.fullDump())")
-        addComponent(node)
+//        if b3d_hosts.count > 0 { return }
+        addHost(node)
     }
 
     // Sync with the main model
     public func notifyNodeRemoved(_ node: Node) {
+        return
         print("\(#function)")
         // tester bloquer anim
 
-        guard let b3d_node = getDB3Node(node) else { return }
+        guard let b3d_node = getB3DHost(node) else { return }
         b3d_node.simdPivot = b3d_node.presentation.simdPivot
         b3d_node.removeAnimation(forKey: "circle")
         
@@ -121,9 +183,6 @@ public class Interman3DModel : ObservableObject {
         animation.toValue = SCNMatrix4(transl/* * rot*/)
         animation.duration = 15.0
         b3d_node.addAnimation(animation, forKey: "circle")
-
-
-
 
 /*
         let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
@@ -147,12 +206,6 @@ public class Interman3DModel : ObservableObject {
         animation.duration = 15.0
         b3d_node.addAnimation(animation, forKey: "circle")
 */
-        
-        
-        
-        
-        
-        
 
         return
         /*
@@ -176,68 +229,15 @@ public class Interman3DModel : ObservableObject {
 
     }
 
-    public func addComponent(_ node: Node) {
+    public func addHost(_ host: Node) {
         print(#function)
-        if b3d_nodes.count > 0 { return }
 
-        let b3d_node = B3DNode(ComponentTemplates.standard, node)
-
-        let node_count = b3d_nodes.count
-//        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
-        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5), axis: SIMD3(0, 1, 0)))
-
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = -1
-        transl[3, 2] = 0
-//        let foo: Float = 10
-//        b3d_node.simdScale = simd_float3(1/foo, 1/foo, 1/foo)
-        // Set final state
-        b3d_node.simdPivot = transl * rot
-
-        /*
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = -factor
-        transl[3, 2] = -factor
-        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
-        // Set final state
-        b3d_node.simdPivot = transl * rot
-*/
-        
-        /*
-        let animation = CABasicAnimation(keyPath: "pivot")
-        animation.fromValue = SCNMatrix4(transl)
-        animation.toValue = SCNMatrix4(transl * rot)
-        animation.duration = 15.0
-        b3d_node.addAnimation(animation, forKey: "circle")
-*/
-        
-        var display_text = "no name"
-        if let foo = node.getDnsNames().first {
-            display_text = foo.toString()
-        } else if let foo = node.getNames().first {
-            display_text = foo
-        } else if let foo = node.getMcastDnsNames().first {
-            display_text = foo.toString()
-        } else if let foo = node.getV4Addresses().first, let bar = foo.toNumericString() {
-            display_text = bar
-        } else if let foo = node.getV6Addresses().first, let bar = foo.toNumericString() {
-            display_text = bar
-        }
-
-        let text = SCNText(string: display_text, extrusionDepth: 0)
-        text.flatness = 0.01
-        text.firstMaterial!.diffuse.contents = UIColor.yellow
-
-        let text_node = SCNNode(geometry: text)
-        text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
-//        text_node.simdRotation = SIMD4(1, -Float(M_2_PI), 0, 0)
-        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-        b3d_node.addChildNode(text_node)
-
-        scene?.rootNode.addChildNode(b3d_node)
-        b3d_nodes.append(b3d_node)
-
-//        print("addComponent(node) done")
+        let b3d_host = B3DHost(ComponentTemplates.standard, host)
+        b3d_hosts.append(b3d_host)
+        let node_count = b3d_hosts.count
+        let angle: Float = -2 * .pi / Float(node_count)
+        b3d_host.firstAnim(angle)
+        scene?.rootNode.addChildNode(b3d_host)
     }
     
     public func addComponent() {
@@ -261,8 +261,14 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
 
-        if let foo = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
-            notifyNodeRemoved(foo)
+        if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
+            print("XXXXX: host dns.google found")
+            if let b3d_host = getB3DHost(host) {
+                print("XXXXX: B3DHost dns.google found")
+                b3d_host.newAngle(.pi / 2)
+            }
+//            notifyNodeRemoved(foo)
+            
         }
         
         /*
