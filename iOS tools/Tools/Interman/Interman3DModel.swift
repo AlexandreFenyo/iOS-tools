@@ -83,10 +83,10 @@ class B3D : SCNNode {
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
 //        simdPivot = transl * rot
-        
+
         removeAnimation(forKey: "circle")
         return
-        
+
         let animation = CABasicAnimation(keyPath: "pivot")
         animation.fromValue = SCNMatrix4(rot)
         animation.toValue = SCNMatrix4(transl * rot)
