@@ -109,7 +109,7 @@ public class Interman3DModel : ObservableObject {
 //        b3d_node.simdPivot = matrix_identity_float4x4
 
 //        return
-        let factor: Float = 10
+//        let factor: Float = 10
 
 //        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
@@ -178,28 +178,39 @@ public class Interman3DModel : ObservableObject {
 
     public func addComponent(_ node: Node) {
         print(#function)
-
-        let factor: Float = 10
+        if b3d_nodes.count > 0 { return }
 
         let b3d_node = B3DNode(ComponentTemplates.standard, node)
 
         let node_count = b3d_nodes.count
-        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
-        
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = -factor
-        transl[3, 2] = -factor
+//        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
+        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5), axis: SIMD3(0, 1, 0)))
 
-        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -1
+        transl[3, 2] = 0
+        let foo: Float = 10
+//        b3d_node.simdScale = simd_float3(1/foo, 1/foo, 1/foo)
         // Set final state
         b3d_node.simdPivot = transl * rot
 
+        /*
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -factor
+        transl[3, 2] = -factor
+        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+        // Set final state
+        b3d_node.simdPivot = transl * rot
+*/
+        
+        /*
         let animation = CABasicAnimation(keyPath: "pivot")
         animation.fromValue = SCNMatrix4(transl)
         animation.toValue = SCNMatrix4(transl * rot)
         animation.duration = 15.0
         b3d_node.addAnimation(animation, forKey: "circle")
-
+*/
+        
         var display_text = "no name"
         if let foo = node.getDnsNames().first {
             display_text = foo.toString()
@@ -219,7 +230,8 @@ public class Interman3DModel : ObservableObject {
 
         let text_node = SCNNode(geometry: text)
         text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
-        text_node.simdRotation = SIMD4(1, 0, 0, -Float(M_2_PI))
+//        text_node.simdRotation = SIMD4(1, -Float(M_2_PI), 0, 0)
+        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
         b3d_node.addChildNode(text_node)
 
         scene?.rootNode.addChildNode(b3d_node)
@@ -229,16 +241,24 @@ public class Interman3DModel : ObservableObject {
     }
     
     public func addComponent() {
+        // IHM "create"
         print(#function)
+
+        let node = Node()
+        node.addName("testing.com")
+        DBMaster.shared.addNode(node)
+
+/*
         let b3d = B3D(ComponentTemplates.standard)
         print("b3d=\(b3d)")
-
         b3d_test = b3d
         scene?.rootNode.addChildNode(b3d)
         print("addComponent() done")
+ */
     }
     
     public func testComponent() {
+        // IHM "update"
         print(#function)
 
         if let foo = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
