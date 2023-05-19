@@ -189,7 +189,7 @@ public class Interman3DModel : ObservableObject {
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
         transl[3, 2] = 0
-        let foo: Float = 10
+//        let foo: Float = 10
 //        b3d_node.simdScale = simd_float3(1/foo, 1/foo, 1/foo)
         // Set final state
         b3d_node.simdPivot = transl * rot
