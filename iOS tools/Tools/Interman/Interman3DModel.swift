@@ -79,18 +79,17 @@ class B3D : SCNNode {
     }
     
     fileprivate func newAngle(_ angle: Float) {
+        pivot = presentation.pivot
+        removeAnimation(forKey: "circle")
+
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
-//        simdPivot = transl * rot
-
-        removeAnimation(forKey: "circle")
-        return
-
         let animation = CABasicAnimation(keyPath: "pivot")
-        animation.fromValue = SCNMatrix4(rot)
         animation.toValue = SCNMatrix4(transl * rot)
         animation.duration = 5.0
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
     }
 }
@@ -265,7 +264,7 @@ public class Interman3DModel : ObservableObject {
             print("XXXXX: host dns.google found")
             if let b3d_host = getB3DHost(host) {
                 print("XXXXX: B3DHost dns.google found")
-                b3d_host.newAngle(.pi / 2)
+                b3d_host.newAngle(.pi / 4)
             }
 //            notifyNodeRemoved(foo)
             
