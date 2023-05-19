@@ -108,13 +108,60 @@ public class Interman3DModel : ObservableObject {
         
 //        b3d_node.simdPivot = matrix_identity_float4x4
 
+//        return
+        let factor: Float = 10
+
+//        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = 0
+        transl[3, 2] = 0
+
+        let animation = CABasicAnimation(keyPath: "pivot")
+//        animation.fromValue = SCNMatrix4(transl)
+        animation.toValue = SCNMatrix4(transl/* * rot*/)
+        animation.duration = 15.0
+        b3d_node.addAnimation(animation, forKey: "circle")
+
+
+
+
+/*
+        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -factor / 5
+        transl[3, 2] = -factor / 5
+        b3d_node.simdPivot = transl * rot
+  */
+
+        /*
+        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
+        var transl = matrix_identity_float4x4
+        transl[3, 0] = -factor
+        transl[3, 2] = -factor
+        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
+        // Set final state
+        b3d_node.simdPivot = transl * rot
+        let animation = CABasicAnimation(keyPath: "pivot")
+        animation.fromValue = SCNMatrix4(transl)
+        animation.toValue = SCNMatrix4(transl * rot)
+        animation.duration = 15.0
+        b3d_node.addAnimation(animation, forKey: "circle")
+*/
+        
+        
+        
+        
+        
+        
+
         return
+        /*
         let animation = CABasicAnimation(keyPath: "pivot")
 //        animation.fromValue = SCNMatrix4(transl)
         animation.toValue = SCNMatrix4(matrix_identity_float4x4)
         animation.duration = 15.0
         b3d_node.addAnimation(animation, forKey: "center")
-
+*/
     }
 
     // Sync with the main model
