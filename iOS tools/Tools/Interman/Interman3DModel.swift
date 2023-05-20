@@ -41,6 +41,11 @@ import SceneKit
 
  // créer des matrices : doc de SCNMatrix4
 
+// gestures:
+// https://stackoverflow.com/questions/28006040/tap-select-node-in-scenekit-swift
+// https://www.appcoda.com/learnswiftui/swiftui-gestures.html
+// Chart.swift
+
 struct ComponentTemplates {
     public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
 }

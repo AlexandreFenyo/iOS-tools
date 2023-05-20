@@ -24,7 +24,7 @@ struct Interman3DSwiftUIView: View {
         
         let camera = scene!.rootNode.childNode(withName: "camera", recursively: true)
         camera!.camera!.usesOrthographicProjection = true
-        
+
         return scene
     }
     
@@ -34,7 +34,10 @@ struct Interman3DSwiftUIView: View {
         ZStack {
             SceneView(
             scene: scene,
-            options: [ .allowsCameraControl ])
+            options: [
+                // If allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
+                // .allowsCameraControl
+            ])
             .edgesIgnoringSafeArea(.all)
           VStack {
             Spacer()
