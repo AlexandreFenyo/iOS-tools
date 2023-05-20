@@ -34,6 +34,8 @@ import SceneKit
 // text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
 // text_node.scale = SCNVector3(0.1, 0.1, 0.1)
 
+// actions vs animations
+
 // matrices de translation et rotation :
 // https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CoreAnimation_guide/CoreAnimationBasics/CoreAnimationBasics.html#//apple_ref/doc/uid/TP40004514-CH2-SW3
 
@@ -89,7 +91,7 @@ class B3D : SCNNode {
         let animation = CABasicAnimation(keyPath: "pivot")
         animation.fromValue = SCNMatrix4(rot)
         animation.toValue = SCNMatrix4(transl * rot)
-        animation.duration = 5.0
+        animation.duration = 1
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
@@ -98,18 +100,31 @@ class B3D : SCNNode {
     fileprivate func newAngle(_ angle: Float) {
         self.angle = angle
 
-        pivot = presentation.pivot
+        // Stop any current movement
+        simdPivot = presentation.simdPivot
         removeAnimation(forKey: "circle")
 
+        // Animate to new position
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
         let animation = CABasicAnimation(keyPath: "pivot")
         animation.toValue = SCNMatrix4(transl * rot)
-        animation.duration = 5.0
+        animation.duration = 1
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
+    }
+    
+    fileprivate func remove() {
+        // Stop any current movement
+        simdPivot = presentation.simdPivot
+        removeAnimation(forKey: "circle")
+
+        // Disappear
+        let duration = 1.0
+        getSubNode().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
+        runAction(SCNAction.sequence([SCNAction.wait(duration: duration), SCNAction.removeFromParentNode()]))
     }
 }
 
@@ -196,62 +211,7 @@ public class Interman3DModel : ObservableObject {
         
         guard let b3d_host = detachB3DHost(host) else { return }
         updateAngles()
-        
-        b3d_host.simdPivot = b3d_host.presentation.simdPivot
-        b3d_host.removeAnimation(forKey: "circle")
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.toValue = SCNVector3(1, 0, 0)
-        animation.duration = 5.0
-        animation.fillMode = .forwards
-        animation.isRemovedOnCompletion = false
-        b3d_host.getSubNode().addAnimation(animation, forKey: "remove")
-        
-        return
-
-        /*
-        let rot = simd_float4x4(simd_quatf(angle: b3d_host.getAngle(), axis: SIMD3(0, 1, 0)))
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = 0
-        transl[3, 2] = 0
-
-        let animation = CABasicAnimation(keyPath: "pivot")
-//        animation.fromValue = SCNMatrix4(transl)
-        animation.toValue = SCNMatrix4(rot)
-        animation.duration = 15.0
-        b3d_host.addAnimation(animation, forKey: "circle")
-*/
-        
-/*
-        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = -factor / 5
-        transl[3, 2] = -factor / 5
-        b3d_node.simdPivot = transl * rot
-  */
-
-        /*
-        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(9.5) * Float(node_count), axis: SIMD3(0, 1, 0)))
-        var transl = matrix_identity_float4x4
-        transl[3, 0] = -factor
-        transl[3, 2] = -factor
-        b3d_node.simdScale = simd_float3(1/factor, 1/factor, 1/factor)
-        // Set final state
-        b3d_node.simdPivot = transl * rot
-        let animation = CABasicAnimation(keyPath: "pivot")
-        animation.fromValue = SCNMatrix4(transl)
-        animation.toValue = SCNMatrix4(transl * rot)
-        animation.duration = 15.0
-        b3d_node.addAnimation(animation, forKey: "circle")
-*/
-
-        return
-        /*
-        let animation = CABasicAnimation(keyPath: "pivot")
-//        animation.fromValue = SCNMatrix4(transl)
-        animation.toValue = SCNMatrix4(matrix_identity_float4x4)
-        animation.duration = 15.0
-        b3d_node.addAnimation(animation, forKey: "center")
-*/
+        b3d_host.remove()
     }
 
     // Sync with the main model
