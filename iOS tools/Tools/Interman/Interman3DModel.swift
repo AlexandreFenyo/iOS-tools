@@ -179,7 +179,7 @@ public class Interman3DModel : ObservableObject {
         print("MANAGER INIT")
         b3d_hosts = [B3DHost]()
     }
-
+    
     private func updateAngles() {
         let node_count = b3d_hosts.count
         for i in 0..<node_count {

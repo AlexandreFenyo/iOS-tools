@@ -57,11 +57,17 @@ class IntermanViewController : UIViewController {
     func handlePan(_ gesture: UIPanGestureRecognizer) {
         print("\(#function)")
 
+        // gesture est passé par adresse, or on va y accéder dans une Task alors que sa valeur aura donc pu être modifiée, donc on copie sa valeur pour l'utiliser plus tard
+        let gesture_state = gesture.state
+        let point = gesture_state == .changed ? gesture.translation(in: gesture.view!) : nil
+
+
+        hostingViewController.rootView.rotateCamera()
+
     }
     
     @objc
     func handlePinch(_ gesture: UIPinchGestureRecognizer) {
         print("\(#function)")
-
     }
 }

@@ -17,19 +17,20 @@ struct Interman3DSwiftUIView: View {
     public weak var master_view_controller: MasterViewController?
 
     @ObservedObject var model = Interman3DModel.shared
+    private let camera: SCNNode
+    let scene: SCNScene
 
-    static func get3DScene() -> SCNScene? {
-      let scene = SCNScene(named: "Interman 3D Scene.scn")
+    public init() {
+        scene = SCNScene(named: "Interman 3D Scene.scn")!
         Interman3DModel.shared.scene = scene
-        
-        let camera = scene!.rootNode.childNode(withName: "camera", recursively: true)
-        camera!.camera!.usesOrthographicProjection = true
-
-        return scene
+        camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
+        camera.camera!.usesOrthographicProjection = true
     }
     
-    var scene = get3DScene()
-    
+    public func rotateCamera() {
+        camera.eulerAngles.y = .pi / 2
+    }
+
     var body: some View {
         ZStack {
             SceneView(
