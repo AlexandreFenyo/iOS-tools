@@ -59,6 +59,18 @@ class IntermanViewController : UIViewController {
 
         // gesture est passé par adresse, or on va y accéder dans une Task alors que sa valeur aura donc pu être modifiée, donc on copie sa valeur pour l'utiliser plus tard
         let gesture_state = gesture.state
+
+        print("point: \(gesture.translation(in: gesture.view!))")
+        print("\(gesture.location(in: gesture.view!))")
+        print("view: \(view.frame)")
+
+        /*
+        let foo = hostingViewController.rootView
+        print("point: \(gesture.translation(in: foo))")
+        print("\(gesture.location(in: foo))")
+        print("view: \(foo.frame)")
+         */
+
         let point = gesture_state == .changed ? gesture.translation(in: gesture.view!) : nil
 
 
