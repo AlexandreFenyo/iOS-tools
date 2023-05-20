@@ -64,6 +64,7 @@ class IntermanViewController : UIViewController {
         print("\(gesture.location(in: gesture.view!))")
         print("view: \(view.frame)")
 
+        print(view.safeAreaInsets)
         /*
         let foo = hostingViewController.rootView
         print("point: \(gesture.translation(in: foo))")
