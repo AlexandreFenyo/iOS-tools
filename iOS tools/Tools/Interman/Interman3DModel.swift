@@ -54,6 +54,7 @@ extension simd_float4x4 {
 
 class B3D : SCNNode {
     private let sub_node: SCNNode
+    private var angle: Float = 0
     
     public init(_ scn_node: SCNNode) {
         sub_node = scn_node.clone()
@@ -61,12 +62,26 @@ class B3D : SCNNode {
         super.init()
         addChildNode(sub_node)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    fileprivate func addSubChildNode(_ child: SCNNode) {
+        sub_node.addChildNode(child)
+    }
+    
+    fileprivate func getSubNode() -> SCNNode {
+        return sub_node
+    }
+
+    fileprivate func getAngle() -> Float {
+        return angle
+    }
     
     fileprivate func firstAnim(_ angle: Float) {
+        self.angle = angle
+
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
@@ -75,10 +90,14 @@ class B3D : SCNNode {
         animation.fromValue = SCNMatrix4(rot)
         animation.toValue = SCNMatrix4(transl * rot)
         animation.duration = 5.0
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
     }
     
     fileprivate func newAngle(_ angle: Float) {
+        self.angle = angle
+
         pivot = presentation.pivot
         removeAnimation(forKey: "circle")
 
@@ -122,9 +141,8 @@ class B3DHost : B3D {
         text.firstMaterial!.diffuse.contents = UIColor.yellow
         let text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
-        text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-        addChildNode(text_node)
+        addSubChildNode(text_node)
     }
 
     required init?(coder: NSCoder) {
@@ -142,47 +160,67 @@ public class Interman3DModel : ObservableObject {
         b3d_hosts = [B3DHost]()
     }
 
-    private func getB3DHost(_ node: Node) -> B3DHost? {
-        // Should be faster with an associative map
-        guard let b3d_node = (b3d_hosts.filter { $0.getHost().isSimilar(with: node) }).first else {
-            return nil
+    private func updateAngles() {
+        let node_count = b3d_hosts.count
+        for i in 0..<node_count {
+            let angle = Float(i) * 2 * .pi / Float(node_count)
+            b3d_hosts[i].newAngle(angle)
         }
-        return b3d_node
     }
     
+    private func getB3DHost(_ host: Node) -> B3DHost? {
+        // Should be faster with an associative map
+        guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
+            return nil
+        }
+        return b3d_host
+    }
+
+    private func detachB3DHost(_ host: Node) -> B3DHost? {
+        guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
+            return nil
+        }
+        b3d_hosts.removeAll { $0 == b3d_host }
+        return b3d_host
+    }
+
     // Sync with the main model
     public func notifyNodeAdded(_ node: Node) {
         print("\(#function): \(node.fullDump())")
-//        if b3d_hosts.count > 0 { return }
         addHost(node)
     }
 
     // Sync with the main model
-    public func notifyNodeRemoved(_ node: Node) {
-        return
+    public func notifyNodeRemoved(_ host: Node) {
         print("\(#function)")
-        // tester bloquer anim
-
-        guard let b3d_node = getB3DHost(node) else { return }
-        b3d_node.simdPivot = b3d_node.presentation.simdPivot
-        b3d_node.removeAnimation(forKey: "circle")
         
-//        b3d_node.simdPivot = matrix_identity_float4x4
+        guard let b3d_host = detachB3DHost(host) else { return }
+        updateAngles()
+        
+        b3d_host.simdPivot = b3d_host.presentation.simdPivot
+        b3d_host.removeAnimation(forKey: "circle")
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.toValue = SCNVector3(1, 0, 0)
+        animation.duration = 5.0
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        b3d_host.getSubNode().addAnimation(animation, forKey: "remove")
+        
+        return
 
-//        return
-//        let factor: Float = 10
-
-//        let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
+        /*
+        let rot = simd_float4x4(simd_quatf(angle: b3d_host.getAngle(), axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = 0
         transl[3, 2] = 0
 
         let animation = CABasicAnimation(keyPath: "pivot")
 //        animation.fromValue = SCNMatrix4(transl)
-        animation.toValue = SCNMatrix4(transl/* * rot*/)
+        animation.toValue = SCNMatrix4(rot)
         animation.duration = 15.0
-        b3d_node.addAnimation(animation, forKey: "circle")
-
+        b3d_host.addAnimation(animation, forKey: "circle")
+*/
+        
 /*
         let rot = simd_float4x4(simd_quatf(angle: GLKMathDegreesToRadians(45), axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
@@ -234,9 +272,11 @@ public class Interman3DModel : ObservableObject {
         let b3d_host = B3DHost(ComponentTemplates.standard, host)
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
-        let angle: Float = -2 * .pi / Float(node_count)
+        let angle = -2 * .pi / Float(node_count)
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
+
+        updateAngles()
     }
     
     public func addComponent() {
@@ -260,14 +300,18 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
 
+        // repositionner tous les noeuds
+//        updateAngles()
+//        return
+        
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")
             if let b3d_host = getB3DHost(host) {
                 print("XXXXX: B3DHost dns.google found")
-                b3d_host.newAngle(.pi / 4)
+//                b3d_host.newAngle(.pi / 4)
+                notifyNodeRemoved(host)
+//                updateAngles()
             }
-//            notifyNodeRemoved(foo)
-            
         }
         
         /*
