@@ -27,8 +27,34 @@ struct Interman3DSwiftUIView: View {
         camera.camera!.usesOrthographicProjection = true
     }
     
-    public func rotateCamera() {
-        camera.eulerAngles.y = .pi / 2
+    public func getCameraAngle() -> Float {
+        return camera.eulerAngles.y
+    }
+
+    // Set angle absolute value
+    public func rotateCamera(_ angle: Float) {
+        var new_angle = angle.truncatingRemainder(dividingBy: 2 * .pi)
+        if new_angle < 0 { new_angle += 2 * .pi }
+        camera.eulerAngles.y = new_angle
+    }
+
+    public func getCameraScaleFactor() -> Float {
+        return camera.simdScale.x
+    }
+
+    // Set scale factor absolute value
+    public func scaleCamera(_ factor: Float) {
+        camera.simdScale = SIMD3<Float>(factor, factor, factor)
+    }
+
+    public func resetCamera() {
+        var duration = camera.eulerAngles.y
+        if duration > .pi { duration = 2 * .pi - duration }
+        if duration != 0 {
+            camera.runAction(SCNAction.rotateTo(x: -.pi / 2, y: 0, z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true))
+        }
+
+        camera.runAction(SCNAction.scale(to: 2, duration: 0.5))
     }
 
     var body: some View {
