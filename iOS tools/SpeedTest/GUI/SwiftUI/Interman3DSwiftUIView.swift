@@ -6,12 +6,20 @@
 //  Copyright © 2023 Alexandre Fenyo. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import SceneKit
 
-// structure de données
-//
+class RenderDelegate: NSObject, SCNSceneRendererDelegate {
+    private var renderer: SCNSceneRenderer!
+    
+    public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        self.renderer = renderer
+    }
+
+    public func getRenderer() -> SCNSceneRenderer {
+        return renderer
+    }
+}
 
 struct Interman3DSwiftUIView: View {
     public weak var master_view_controller: MasterViewController?
@@ -20,11 +28,19 @@ struct Interman3DSwiftUIView: View {
     private let camera: SCNNode
     let scene: SCNScene
 
-    public init() {
+    private var render_delegate = RenderDelegate()
+    
+    private weak var renderer_delegate: SCNSceneRendererDelegate?
+    
+    init() {
         scene = SCNScene(named: "Interman 3D Scene.scn")!
         Interman3DModel.shared.scene = scene
         camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
         camera.camera!.usesOrthographicProjection = true
+    }
+
+    public func getTappedHost(_ point: CGPoint) -> B3DHost? {
+        return render_delegate.getRenderer().hitTest(point, options: [.ignoreHiddenNodes : true, .searchMode : SCNHitTestSearchMode.all.rawValue]).compactMap { B3DHost.getFromNode($0.node) }.first
     }
     
     public func getCameraAngle() -> Float {
@@ -60,11 +76,13 @@ struct Interman3DSwiftUIView: View {
     var body: some View {
         ZStack {
             SceneView(
-            scene: scene,
-            options: [
+                scene: scene,
+                options: [
                 // If allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
                 // .allowsCameraControl
-            ])
+                ],
+                delegate: render_delegate
+            )
             .edgesIgnoringSafeArea(.all)
           VStack {
             Spacer()

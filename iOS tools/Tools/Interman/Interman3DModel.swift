@@ -139,8 +139,13 @@ class B3DHost : B3D {
     fileprivate func getHost() -> Node {
         return host
     }
+
+    static func getFromNode(_ node: SCNNode) -> B3DHost? {
+        if node.isKind(of: B3DHost.self) { return node as? B3DHost }
+        return node.parent != nil ? getFromNode(node.parent!) : nil
+    }
     
-    public init(_ scn_node: SCNNode, _ host: Node) {
+    init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
         super.init(scn_node)
 

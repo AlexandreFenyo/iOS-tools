@@ -12,7 +12,7 @@ import SwiftUI
 
 @MainActor
 class IntermanViewController : UIViewController {
-    public weak var master_view_controller: MasterViewController?
+    weak var master_view_controller: MasterViewController?
     
     private var camera_start_angle: Float = 0
     private var start_scale: Float = 0
@@ -58,7 +58,7 @@ class IntermanViewController : UIViewController {
     
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
-        print("\(#function)")
+        let host = hostingViewController.rootView.getTappedHost(gesture.location(in: gesture.view!))
         
     }
 
