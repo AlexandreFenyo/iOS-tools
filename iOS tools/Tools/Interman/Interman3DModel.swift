@@ -136,7 +136,7 @@ class B3D : SCNNode {
 class B3DHost : B3D {
     private var host: Node
 
-    fileprivate func getHost() -> Node {
+    func getHost() -> Node {
         return host
     }
 
@@ -211,7 +211,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     public func notifyNodeAdded(_ node: Node) {
-        print("\(#function): \(node.fullDump())")
+//        print("\(#function): \(node.fullDump())")
         addHost(node)
     }
 
@@ -237,8 +237,6 @@ public class Interman3DModel : ObservableObject {
     }
 
     public func addHost(_ host: Node) {
-        print(#function)
-
         let b3d_host = B3DHost(ComponentTemplates.standard, host)
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
@@ -251,28 +249,14 @@ public class Interman3DModel : ObservableObject {
     
     public func addComponent() {
         // IHM "create"
-        print(#function)
-
         let node = Node()
         node.addName("testing.com")
-        DBMaster.shared.addNode(node)
-
-/*
-        let b3d = B3D(ComponentTemplates.standard)
-        print("b3d=\(b3d)")
-        b3d_test = b3d
-        scene?.rootNode.addChildNode(b3d)
-        print("addComponent() done")
- */
+        _ = DBMaster.shared.addNode(node)
     }
     
     public func testComponent() {
         // IHM "update"
         print(#function)
-
-        // repositionner tous les noeuds
-//        updateAngles()
-//        return
         
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")

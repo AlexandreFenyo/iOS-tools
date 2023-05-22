@@ -118,6 +118,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var local_discard_client : LocalDiscardClient?
     private var local_discard_sync : LocalDiscardSync?
 
+    // Get the first indexPath corresponding to a node
+    func getIndexPath(_ node: Node) -> IndexPath? {
+        return DBMaster.shared.getIndexPath(node)
+    }
+    
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }

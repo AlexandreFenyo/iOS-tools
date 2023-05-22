@@ -58,8 +58,27 @@ class IntermanViewController : UIViewController {
     
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
-        let host = hostingViewController.rootView.getTappedHost(gesture.location(in: gesture.view!))
+        guard let host = hostingViewController.rootView.getTappedHost(gesture.location(in: gesture.view!)) else { return }
+        guard let master_view_controller = master_view_controller else {
+            print("\(#function): should not happen")
+            return
+        }
         
+        guard let index_path = master_view_controller.getIndexPath(host.getHost()) else { return }
+
+        print(index_path)
+        
+        // Simulate a tap on a TableView: https://stackoverflow.com/questions/24787098/programmatically-emulate-the-selection-in-uitableviewcontroller-in-swift
+        
+        // Display the Discover tab bar panel
+        master_view_controller.tabBarController!.selectedIndex = 0
+
+        // Simulate a tap on the node
+        master_view_controller.tableView.selectRow(at: index_path, animated: true, scrollPosition: .top)
+        // Useful to avoid stacking view controllers and to clear the data displayed on the right (host names, IP addresses, ...)
+        master_view_controller.navigationController!.popToRootViewController(animated: false)
+        // Push the MasterIPViewController
+        master_view_controller.performSegue(withIdentifier: "segue to IP list", sender: nil)
     }
 
     @objc

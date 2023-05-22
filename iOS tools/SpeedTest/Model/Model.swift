@@ -374,6 +374,20 @@ class DBMaster {
         networks = Set<IPNetwork>()
     }
 
+    // Get the first indexPath corresponding to a node
+    func getIndexPath(_ node: Node) -> IndexPath? {
+        for section_type in SectionType.allCases {
+            let section = sections[section_type]!
+            for node_index in 0..<section.nodes.count {
+                print("testing section: \(section_type.rawValue) index: \(node_index)")
+                if section.nodes[node_index].isSimilar(with: node) {
+                    return IndexPath(row: node_index, section: section_type.rawValue)
+                }
+            }
+        }
+        return nil
+    }
+
     public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         return addOrRemoveNode(new_node, add: true)
     }
