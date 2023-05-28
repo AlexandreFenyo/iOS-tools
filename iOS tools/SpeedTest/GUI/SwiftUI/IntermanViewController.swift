@@ -73,12 +73,13 @@ class IntermanViewController : UIViewController {
         // Display the Discover tab bar panel
         master_view_controller.tabBarController!.selectedIndex = 0
 
+        // pb : le scroll ne marche pas tout le temps // attention aux anim - pourquoi la couleur de sélection disparait ???
         // Simulate a tap on the node
-        master_view_controller.tableView.selectRow(at: index_path, animated: true, scrollPosition: .top)
+        master_view_controller.tableView.selectRow(at: index_path, animated: false, scrollPosition: .top)
         // Useful to avoid stacking view controllers and to clear the data displayed on the right (host names, IP addresses, ...)
         master_view_controller.navigationController!.popToRootViewController(animated: false)
         // Push the MasterIPViewController
-        master_view_controller.performSegue(withIdentifier: "segue to IP list", sender: nil)
+//        master_view_controller.performSegue(withIdentifier: "segue to IP list", sender: nil)
     }
 
     @objc

@@ -414,9 +414,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Couleur des boutons en bas (reload par ex.)
         navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
 
-        // view.backgroundColor = .red
+        // TESTING c'était commenté
+view.backgroundColor = .red
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+// TESTING
+        self.clearsSelectionOnViewWillAppear = false
 
         // Display an Edit button in the navigation bar for this view controller.
         navigationItem.rightBarButtonItem = editButtonItem
@@ -996,7 +998,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         cell.backgroundColor = COLORS.leftpannel_node_edit_bg
 
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
-        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
+// TESTING
+        //        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
