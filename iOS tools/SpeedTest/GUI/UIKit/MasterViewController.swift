@@ -480,9 +480,16 @@ view.backgroundColor = .red
         }
     }
     
+    // Reload data without deselecting the selected cell
+    private func reloadData() {
+        let foo = tableView.indexPathForSelectedRow
+        tableView.reloadData()
+        tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        tableView.reloadData()
+        reloadData()
         
         updateLocalNodeAndGateways()
 
@@ -617,10 +624,10 @@ view.backgroundColor = .red
             // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
             tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
 
-            tableView.reloadData()
+            reloadData()
         }
         */
-        tableView.reloadData()
+        reloadData()
 
         // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
         detail_view_controller!.updateDetailsIfNodeDisplayed(node, !stop_button!.isEnabled)
