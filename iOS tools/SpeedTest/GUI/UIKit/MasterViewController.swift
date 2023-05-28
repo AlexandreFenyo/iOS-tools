@@ -481,10 +481,15 @@ view.backgroundColor = .red
     }
     
     override func viewDidAppear(_ animated: Bool) {
+
         super.viewDidAppear(animated)
+            // pb : les deux
+
+        let foo = tableView.indexPathForSelectedRow
         tableView.reloadData()
-        
+        tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
         updateLocalNodeAndGateways()
+        
 
         navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
         navigationController!.tabBarController?.tabBar.backgroundColor = COLORS.tabbar_bg
@@ -500,8 +505,7 @@ view.backgroundColor = .red
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        detail_view_controller?.setButtonMasterHiddenState(true)
+
     }
 
     // Disable other actions while editing
@@ -547,6 +551,7 @@ view.backgroundColor = .red
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
     public func addressDeselected() {
+        print("XXXXX deselected")
     }
 
     override func didReceiveMemoryWarning() {
@@ -620,7 +625,9 @@ view.backgroundColor = .red
             tableView.reloadData()
         }
         */
+        let foo = tableView.indexPathForSelectedRow
         tableView.reloadData()
+        tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
 
         // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
         detail_view_controller!.updateDetailsIfNodeDisplayed(node, !stop_button!.isEnabled)
@@ -628,309 +635,26 @@ view.backgroundColor = .red
 
     // MARK: - Calls from DetailSwiftUIView
     internal func scanTCP(_ address: IPAddress) {
-        stopBrowsing(.SCAN_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-
-        let tb = TCPPortBrowser(device_manager: self)
-        self.browser_tcp = tb
-
-        // DispatchQueue.global(qos: .userInitiated).async {
-        Task.detached(priority: .userInitiated) {
-            await self.browser_tcp?.browse(address: address) {
-                DispatchQueue.main.sync {
-                    self.stopBrowsing(.OTHER_ACTION)
-                }
-            }
-            // arrivé ici, le browse est terminé
-        }
     }
 
     internal func loopICMP(_ address: IPAddress) {
-        stopBrowsing(.LOOP_ICMP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
-
-        // WARNING: we should implement an infinite loop (not 0 to 10000), in a further release
-        local_ping_client = LocalPingClient(address: address, count: 10000)
-        local_ping_sync = LocalPingSync(local_ping_client!)
-        local_ping_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
-                self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-
-            var has_answered = false
-            var nloop = 0
-            await self.detail_view_controller?.ts.setUnits(units: .RTT)
-            await self.detail_view_controller?.ts.removeAll()
-            while true {
-                if let rtt = await self.local_ping_client?.getRTT() {
-                    if rtt > 0 {
-                        has_answered = true
-                        DispatchQueue.main.async {
-                            self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
-                        }
-                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
-                    }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
-                nloop += 1
-                if has_answered == false && nloop > 50 {
-                    await self.stopBrowsing(.OTHER_ACTION)
-                    await self.popUp("ICMP", "timeout occurred, no answer from target", "continue")
-                    break
-                }
-            }
-            // objectif : arrivé ici, la boucle de ping est terminée
-            DispatchQueue.main.async {
-                self.addTrace("ICMP loop: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-        }
     }
 
     internal func floodUDP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_UDP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
 
-        local_flood_client = LocalFloodClient(address: address)
-        local_flood_sync = LocalFloodSync(local_flood_client!)
-        local_flood_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
-                self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-
-            await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            var first_skipped = false
-            while true {
-                if let throughput = await self.local_flood_client?.getThroughput() {
-                    if throughput > 0 {
-                        if first_skipped == false {
-                            first_skipped = true
-                        } else {
-                            DispatchQueue.main.async {
-                                self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(Int(throughput))", level: .INFO)
-                            }
-                            await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                        }
-                    }
-                } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-            }
-            // objectif : arrivé ici, la boucle de flood est terminée
-            DispatchQueue.main.async {
-                self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-        }
     }
     
     // connect to discard service
     internal func floodTCP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
 
-        local_discard_client = LocalDiscardClient(address: address)
-        local_discard_sync = LocalDiscardSync(local_discard_client!)
-        local_discard_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
-                self.addTrace("flood TCP discard port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-
-            var is_connected = false
-            var nsec = 0
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            while true {
-                if let throughput = await self.local_discard_client?.getThroughput() {
-                    if throughput > 0 {
-                        is_connected = true
-                        DispatchQueue.main.async {
-                            self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
-                        }
-                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                    }
-                    if throughput < 0 {
-                        let errno = await self.local_discard_client?.getLastErrno()
-                        if errno != 0 {
-                            if errno == ECONNREFUSED || errno == ECONNABORTED {
-                                let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
-                                var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                    message = "connection \(str) - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
-                                }
-                                await self.popUp("TCP discard", message, "continue")
-                            } else {
-                                if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
-                                    await self.popUp("TCP discard", "network unreachable - check your Internet connection", "continue")
-                                } else {
-                                    if errno == ECONNRESET {
-                                        await self.popUp("TCP discard", "Connection reset by peer", "continue")
-                                    } else {
-                                        if errno == nil || errno == EBADF {
-                                            await self.popUp("TCP discard", "Connection closed", "continue")
-                                        } else {
-                                            await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
-                                        }
-                                    }
-                                }
-                            }
-                            break
-                        }
-                    }
-                } else {
-                    print("\(#function) error: break")
-                    break
-                }
-
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-                nsec += 1
-                if is_connected == false && nsec > 5 {
-                    var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occurred - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
-                    }
-                    await self.popUp("TCP discard", message, "continue")
-                    break
-                }
-            }
-            await self.stopBrowsing(.OTHER_ACTION)
-            // objectif : arrivé ici, la boucle de chargen est terminée
-            await self.detail_view_controller?.removeMapButton()
-            DispatchQueue.main.async {
-                self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-        }
     }
 
     internal func chargenTCP(_ address: IPAddress) {
-        stopBrowsing(.CHARGEN_TCP)
-        self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
 
-        local_chargen_client = LocalChargenClient(address: address)
-        local_chargen_sync = LocalChargenSync(local_chargen_client!)
-        local_chargen_client!.start()
-
-        Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
-                self.addTrace("flood TCP chargen port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-
-            var is_connected = false
-            var nsec = 0
-            await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
-            await self.detail_view_controller?.ts.removeAll()
-            while true {
-                if let throughput = await self.local_chargen_client?.getThroughput() {
-                    if throughput > 0 {
-                        is_connected = true
-                        DispatchQueue.main.async {
-                            self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
-                        }
-                        await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
-                    }
-                    if throughput < 0 {
-                        let errno = await self.local_chargen_client?.getLastErrno()
-                        if errno != 0 {
-                            if errno == ECONNREFUSED || errno == ECONNABORTED {
-                                let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
-                                var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                                    message = "connection \(str) - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
-                                }
-                                await self.popUp("TCP chargen", message, "continue")
-                            } else {
-                                if errno == ENETUNREACH || errno == EHOSTUNREACH || errno == EIO {
-                                    await self.popUp("TCP chargen", "network unreachable - check your Internet connection", "continue")
-                                } else {
-                                    if errno == ECONNRESET {
-                                        await self.popUp("TCP chargen", "Connection reset by peer", "continue")
-                                    } else {
-                                        if errno == nil || errno == EBADF {
-                                            await self.popUp("TCP chargen", "Connection closed", "continue")
-                                        } else {
-                                            await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        break
-                    }
-                } else {
-                    break
-                }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-                nsec += 1
-                if is_connected == false && nsec > 5 {
-                    var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
-                        message = "timeout occurred - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
-                    }
-                    await self.popUp("TCP chargen", message, "continue")
-                    break
-                }
-            }
-            await self.stopBrowsing(.OTHER_ACTION)
-            // objectif : arrivé ici, la boucle de chargen est terminée
-            await self.detail_view_controller?.removeMapButton()
-            DispatchQueue.main.async {
-                self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
-            }
-        }
     }
 
     internal func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
-        let key = "help." + title.rawValue
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: key) == false {
-            let alert = UIAlertController(title: NSLocalizedString("Help: ", comment: "Help: ") + NSLocalizedString(title.rawValue, comment: "titre"), message: NSLocalizedString(message, comment: "message"), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Don't show this message again", comment: "Don't show this message again"), style: .default, handler: { _ in
-                defaults.set(true, forKey: key)
-                completion?()
-            }))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Dismiss further help messages", comment: "Dismiss further help messages"), style: .default, handler: { _ in
-                for msg in (PopUpMessages.allCases.map { $0 }) {
-                    defaults.set(true, forKey: "help." + msg.rawValue)
-                }
-                completion?()
-            }))
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction!) in
-                completion?()
-            }))
-            parent!.present(alert, animated: true, completion: nil)
-        } else {
-            completion?()
-        }
+
     }
     
     internal func popUp(_ title: String, _ message: String, _ ok: String) {
@@ -986,6 +710,7 @@ view.backgroundColor = .red
         let node = getNode(indexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceCell", for: indexPath) as! DeviceCell
 
+        
         // apparemment aucun effet de ce positionnement de couleur
 //        cell.layer.shadowColor = UIColor.clear.cgColor
 //        cell.layer.shadowColor = UIColor.red.cgColor
@@ -1033,28 +758,18 @@ view.backgroundColor = .red
         cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
         cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")
 
+        // je force rouge pour le fopd
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = .red
+        cell.selectedBackgroundView = bgColorView
+        
+        
+
        return cell
     }
 
     // didSelectRowAt
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let node = getNode(indexPath: indexPath)
-        let node1 = Node()
-        node1.addMcastFQDN(FQDN("dns", "google"))
-        let node2 = Node()
-        node2.addMcastFQDN(FQDN("dns9", "quad9.net"))
-        let node3 = Node()
-        node3.addMcastFQDN(FQDN("flood", "eowyn.eu.org"))
-        if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
-            popUpHelp(.node_info_public_host, "This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
-        } else if node.isLocalHost() {
-            popUpHelp(.localhost, "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
-        } else if node.isSimilar(with: node3) {
-            popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.")
-
-        }
-        
-        stopBrowsing(.OTHER_ACTION)
     }
 
     // Local gateway and Internet rows can not be removed
@@ -1064,46 +779,11 @@ view.backgroundColor = .red
 
     // Delete every rows corresponding to a node
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle != .delete { fatalError("editingStyle invalid") }
-        let node = getNode(indexPath: indexPath)
-
-        var new_persistent_node_list = [String]()
-        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 2)
-            let target_name = String(str_fields[0])
-            if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
-                new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
-            }
-        }
-        UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
-            
-        tableView.beginUpdates()
-        let index_paths_removed = DBMaster.shared.removeNode(node)
-        tableView.deleteRows(at: index_paths_removed, with: .automatic)
-        tableView.endUpdates()
     }
 
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        master_ip_view_controller = segue.destination as? MasterIPViewController
-        let index_path = tableView.indexPathForSelectedRow!
-        let type = SectionType(rawValue: index_path.section)
-        let section = DBMaster.shared.sections[type!]
-        let node = section!.nodes[index_path.item]
-        master_ip_view_controller!.node = node
-        master_ip_view_controller!.master_view_controller = self
-
-        /* si on voulait sélectionner une adresse, on pourrait le faire comme ceci mais pas ici car la première fois où prepare est appelé, on n'a pas le droit d'appeler selectRow ou cellForRow : on a alors un warning pour signaler que ça peut conduire à des bugs
-        if node.v4_addresses.count > 0 || node.v6_addresses.count > 0 {
-            let indexPath = IndexPath(row: 0, section: 0), table_view = master_ip_view_controller.tableView!
-            table_view.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
-            table_view.cellForRow(at: indexPath)!.setHighlighted(true, animated: true)
-            print("prepare()")
-            addressSelected(address: node.v4_addresses.count > 0 ? node.v4_addresses.first! : node.v6_addresses.first!)
-        }
-       */
-    }
+   }
 }

@@ -183,7 +183,7 @@ class MasterIPViewController: UITableViewController {
         cell.backgroundColor = COLORS.standard_background
         
         let bgColorView = UIView()
-        bgColorView.backgroundColor = COLORS.chart_bg
+        bgColorView.backgroundColor = .red
         cell.selectedBackgroundView = bgColorView
         
         return cell
