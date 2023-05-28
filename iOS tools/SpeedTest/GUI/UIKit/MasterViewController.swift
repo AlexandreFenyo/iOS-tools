@@ -1004,9 +1004,14 @@ view.backgroundColor = .red
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
         cell.backgroundColor = COLORS.leftpannel_node_edit_bg
 
-        // Host cell Background color
+        // Specific background color for the dedicated flooding node on the Interner
+        if node.getMcastDnsNames().contains(FQDN("flood", "eowyn.eu.org")) {
+            cell.backgroundColor =  COLORS.leftpannel_bg.lighter().lighter().lighter()
+        }
+        
+        // Host cell Background color when selected
         let bgColorView = UIView()
-        bgColorView.backgroundColor = COLORS.chart_bg
+        bgColorView.backgroundColor = COLORS.leftpannel_bg.darker().darker().darker()
         cell.selectedBackgroundView = bgColorView
 
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
