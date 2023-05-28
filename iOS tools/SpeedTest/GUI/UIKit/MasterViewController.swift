@@ -1004,6 +1004,11 @@ view.backgroundColor = .red
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
         cell.backgroundColor = COLORS.leftpannel_node_edit_bg
 
+        // Host cell Background color
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = COLORS.chart_bg
+        cell.selectedBackgroundView = bgColorView
+
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
 // TESTING
         //        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
