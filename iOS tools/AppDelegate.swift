@@ -88,10 +88,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
-            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController//,
+//            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
                 //            let devices = masterViewController.devices[.localGateway]
         else { fatalError() }
+
+        guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
+        else { fatalError() }
+
         
         // Set the first device displayed in the detail view controller
         //        detailViewController.device = devices.first
@@ -104,11 +108,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.masterViewController = masterViewController
         
-        masterViewController.detail_view_controller = detailViewController
-        masterViewController.detail_navigation_controller = rightNavController
-        masterViewController.split_view_controller = splitViewController
-        masterViewController.traces_view_controller = tracesViewController
-        masterViewController.interman_view_controller = intermanViewController
+        self.masterViewController!.detail_view_controller = detailViewController
+        self.masterViewController!.detail_navigation_controller = rightNavController
+        self.masterViewController!.split_view_controller = splitViewController
+        self.masterViewController!.traces_view_controller = tracesViewController
+        self.masterViewController!.interman_view_controller = intermanViewController
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController

@@ -1068,8 +1068,9 @@ view.backgroundColor = .red
             popUpHelp(.localhost, "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
         } else if node.isSimilar(with: node3) {
             popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.")
-
         }
+
+        interman_view_controller!.setSelectedNode(node)
         
         stopBrowsing(.OTHER_ACTION)
     }

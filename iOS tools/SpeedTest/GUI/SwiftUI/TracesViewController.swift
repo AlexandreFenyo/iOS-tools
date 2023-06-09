@@ -23,7 +23,7 @@ class TracesViewController : UIViewController {
     public func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
         hostingViewController.rootView.model.append(content, level: level)
     }
-
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
 

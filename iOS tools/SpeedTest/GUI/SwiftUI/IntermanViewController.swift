@@ -51,9 +51,15 @@ class IntermanViewController : UIViewController {
         double_tap.numberOfTapsRequired = 2
         view.addGestureRecognizer(double_tap)
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(IntermanViewController.handlePan(_:))))
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(IntermanViewController.handlePan(_:)))
+        pan.maximumNumberOfTouches = 1
+        view.addGestureRecognizer(pan)
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(IntermanViewController.handlePinch(_:))))
+    }
+    
+    func setSelectedNode(_ node: Node) {
+        hostingViewController.rootView.setSelectedHost(node)
     }
     
     @objc
@@ -106,10 +112,15 @@ class IntermanViewController : UIViewController {
         default:
             angle = Float(atan(point.y / point.x))
         }
-
         if gesture.state == .began {
-            camera_start_angle = hostingViewController.rootView.getCameraAngle() + angle
+
+            camera_start_angle = Interman3DModel.normalizeAngle(hostingViewController.rootView.getCameraAngle() + angle)
+
         } else {
+            var new_angle = angle
+//            if camera_start_angle > .pi/2 && camera_start_angle < 3 * .pi/2 {
+  //              new_angle -= angle
+    //        }
             hostingViewController.rootView.rotateCamera(camera_start_angle - angle)
         }
     }

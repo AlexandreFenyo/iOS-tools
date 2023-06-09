@@ -82,12 +82,12 @@ class B3D : SCNNode {
         return sub_node
     }
 
-    fileprivate func getAngle() -> Float {
+    func getAngle() -> Float {
         return angle
     }
-    
+
     fileprivate func firstAnim(_ angle: Float) {
-        self.angle = angle
+        self.angle = Interman3DModel.normalizeAngle(angle)
 
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
@@ -103,7 +103,7 @@ class B3D : SCNNode {
     }
     
     fileprivate func newAngle(_ angle: Float) {
-        self.angle = angle
+        self.angle = Interman3DModel.normalizeAngle(angle)
 
         // Stop any current movement
         simdPivot = presentation.simdPivot
@@ -177,6 +177,7 @@ class B3DHost : B3D {
 
 public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
+
     public var scene: SCNScene?
     private var b3d_hosts: [B3DHost]
     
@@ -184,16 +185,22 @@ public class Interman3DModel : ObservableObject {
         print("MANAGER INIT")
         b3d_hosts = [B3DHost]()
     }
+
+    static func normalizeAngle(_ angle: Float) -> Float {
+        var new_angle = angle.truncatingRemainder(dividingBy: 2 * .pi)
+        if new_angle < 0 { new_angle += 2 * .pi }
+        return new_angle
+    }
     
     private func updateAngles() {
         let node_count = b3d_hosts.count
         for i in 0..<node_count {
-            let angle = Float(i) * 2 * .pi / Float(node_count)
+            let angle = Interman3DModel.normalizeAngle(Float(i) * 2 * .pi / Float(node_count))
             b3d_hosts[i].newAngle(angle)
         }
     }
     
-    private func getB3DHost(_ host: Node) -> B3DHost? {
+    func getB3DHost(_ host: Node) -> B3DHost? {
         // Should be faster with an associative map
         guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
             return nil
@@ -240,7 +247,7 @@ public class Interman3DModel : ObservableObject {
         let b3d_host = B3DHost(ComponentTemplates.standard, host)
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
-        let angle = -2 * .pi / Float(node_count)
+        let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
 
@@ -257,6 +264,8 @@ public class Interman3DModel : ObservableObject {
     public func testComponent() {
         // IHM "update"
         print(#function)
+        
+        return
         
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")
