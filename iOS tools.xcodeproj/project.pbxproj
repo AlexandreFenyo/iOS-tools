@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -660,8 +660,9 @@
 		5D1351E3208538DB00E4A76D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Alexandre Fenyo";
 				TargetAttributes = {
 					5D1351EA208538DB00E4A76D = {
@@ -799,6 +800,7 @@
 		};
 		5D38680E209623E1009FE239 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -808,7 +810,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/zsh;
-			shellScript = "echo the output is written in the build report of the report navigator\necho iOS TOOLS ---------- run script started before compiling sources";
+			shellScript = "echo the output is written in the build report of the report navigator\necho iOS TOOLS ---------- run script started before compiling sources\n";
 		};
 		6D9DB42FE8C2A5FFFE7FBDFB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

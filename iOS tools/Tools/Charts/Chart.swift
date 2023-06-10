@@ -879,8 +879,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 // ajustement manuel car la position est relative à la vue UIKit de l'hosting controller de DetailViewController
 //                finger.position.y += delta!
                 
-                finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger])
-                }
+                // Broken into two lines to remove the following warning: Consider using asynchronous alternative function
+                // finger.run(SKAction.fadeOut(withDuration: 0.5)) { self.root_node!.removeChildren(in: [finger]) }
+                await finger.run(SKAction.fadeOut(withDuration: 0.5))
+                root_node!.removeChildren(in: [finger])
             }
         }
     }

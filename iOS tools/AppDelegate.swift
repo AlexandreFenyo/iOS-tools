@@ -225,7 +225,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
             UserDefaults.standard.set(false, forKey: "remove_nodes_key")
-            UserDefaults.standard.set([], forKey: "nodes")
+            UserDefaults.standard.set([String](), forKey: "nodes")
             masterViewController?.resetToDefaultHosts()
             masterViewController?.updateLocalNodeAndGateways()
         }

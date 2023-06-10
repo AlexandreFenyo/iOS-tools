@@ -117,7 +117,7 @@ struct Interman3DSwiftUIView: View {
         
 
         camera.position = SCNVector3(0, 1, 0)
-        camera.eulerAngles.x = Float(-M_PI_4)
+        camera.eulerAngles.x = -(Float.pi / 4)
         camera.scale = SCNVector3(2, 2, 2)
         
         

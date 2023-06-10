@@ -265,8 +265,7 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
         
-        return
-        
+/*
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")
             if let b3d_host = getB3DHost(host) {
@@ -276,7 +275,8 @@ public class Interman3DModel : ObservableObject {
 //                updateAngles()
             }
         }
-        
+ */
+
         /*
         // translation
 //        var x: simd_float4x4 = matrix_identity_float4x4

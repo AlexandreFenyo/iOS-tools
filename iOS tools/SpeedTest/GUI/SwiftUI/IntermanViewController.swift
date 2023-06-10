@@ -117,8 +117,9 @@ class IntermanViewController : UIViewController {
             camera_start_angle = Interman3DModel.normalizeAngle(hostingViewController.rootView.getCameraAngle() + angle)
 
         } else {
-            var new_angle = angle
-//            if camera_start_angle > .pi/2 && camera_start_angle < 3 * .pi/2 {
+            //var new_angle = angle
+
+            //            if camera_start_angle > .pi/2 && camera_start_angle < 3 * .pi/2 {
   //              new_angle -= angle
     //        }
             hostingViewController.rootView.rotateCamera(camera_start_angle - angle)
