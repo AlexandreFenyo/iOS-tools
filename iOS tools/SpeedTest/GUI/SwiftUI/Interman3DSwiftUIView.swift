@@ -38,6 +38,10 @@ struct Interman3DSwiftUIView: View {
         Interman3DModel.shared.scene = scene
         camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
         camera.camera!.usesOrthographicProjection = true
+        camera.camera!.automaticallyAdjustsZRange = true
+        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+        camera.position = SCNVector3(0, 5, 0)
+        camera.scale = SCNVector3(2, 2, 2)
     }
 
     func getTappedHost(_ point: CGPoint) -> B3DHost? {
@@ -116,10 +120,18 @@ struct Interman3DSwiftUIView: View {
 
         
 
-        camera.position = SCNVector3(0, 1, 0)
-        camera.eulerAngles.x = -(Float.pi / 4)
-        camera.scale = SCNVector3(2, 2, 2)
-        
+//        camera.position = SCNVector3(0, 5, 0)
+//        camera.eulerAngles.x = -(Float.pi / 2)
+  //      camera.scale = SCNVector3(2, 2, 2)
+        // fonctionne aussi :
+        // camera.runAction(SCNAction.rotateTo(x: -.pi / 2, y: 0, z: 0, duration: 5, usesShortestUnitArc: true))
+        print(camera.position)
+        print(camera.rotation)
+        print(camera.orientation)
+        print(camera.eulerAngles)
+
+        camera.eulerAngles.y = Float.pi / 4
+
         
 //        print("testQuat(): camera.rotation=\(camera.rotation)")
 //        print("testQuat(): camera.orientation=\(camera.orientation)")
