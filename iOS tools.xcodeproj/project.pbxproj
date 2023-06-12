@@ -404,7 +404,6 @@
 				5D82ACD8297D46CF0021E492 /* docs-browse-stop-fr.png */,
 				5D82ACD5297D46C20021E492 /* docs-actions-fr.png */,
 				5D82ACD0297D46B00021E492 /* docs-actions-2-fr.png */,
-				5D65EE5A296491760099871C /* screen captures */,
 				5D65EE392963815D0099871C /* app-icon */,
 				5DE4ED87290586730000B30A /* docs-actions-2.png */,
 				5DE4ED8F290586740000B30A /* docs-actions.png */,
@@ -419,6 +418,7 @@
 		5D463FBA2A3722A500DA77C4 /* Artwork */ = {
 			isa = PBXGroup;
 			children = (
+				5D65EE5A296491760099871C /* screen captures */,
 				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
 				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
 				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
