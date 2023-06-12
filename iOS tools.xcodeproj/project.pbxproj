@@ -308,6 +308,7 @@
 		5D1351E2208538DB00E4A76D = {
 			isa = PBXGroup;
 			children = (
+				5D463FBA2A3722A500DA77C4 /* Artwork */,
 				5D1351ED208538DB00E4A76D /* iOS tools */,
 				5D135204208538E300E4A76D /* iOS toolsTests */,
 				5D13520F208538E300E4A76D /* iOS toolsUITests */,
@@ -395,38 +396,45 @@
 			children = (
 				5D039EC529B8A4CC00A33898 /* Appareils.png */,
 				5D039EC329B8A2E100A33898 /* iPhone.jpeg */,
-				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
 				5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */,
 				5D16E60529A77124000A46E4 /* docs-action-bar.png */,
-				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
 				5D82ACE4297D46E30021E492 /* docs-ports-fr.png */,
-				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
 				5D82ACE1297D46DB0021E492 /* docs-hosts-fr.png */,
-				5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */,
 				5D82ACDC297D46D50021E492 /* docs-chart-fr.png */,
-				5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */,
 				5D82ACD8297D46CF0021E492 /* docs-browse-stop-fr.png */,
-				5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */,
 				5D82ACD5297D46C20021E492 /* docs-actions-fr.png */,
-				5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */,
 				5D82ACD0297D46B00021E492 /* docs-actions-2-fr.png */,
-				5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */,
 				5D65EE5A296491760099871C /* screen captures */,
 				5D65EE392963815D0099871C /* app-icon */,
 				5DE4ED87290586730000B30A /* docs-actions-2.png */,
-				5DE4ED90290586740000B30A /* docs-actions-2.psd */,
 				5DE4ED8F290586740000B30A /* docs-actions.png */,
-				5DE4ED8A290586740000B30A /* docs-actions.psd */,
 				5DE4ED88290586730000B30A /* docs-browse-stop.png */,
-				5DE4ED8E290586740000B30A /* docs-browse-stop.psd */,
 				5DE4ED86290586730000B30A /* docs-chart.png */,
-				5DE4ED89290586740000B30A /* docs-chart.psd */,
 				5DE4ED8C290586740000B30A /* docs-hosts.png */,
-				5DE4ED91290586740000B30A /* docs-hosts.psd */,
 				5DE4ED8B290586740000B30A /* docs-ports.png */,
-				5DE4ED8D290586740000B30A /* docs-ports.psd */,
 			);
 			path = Assets;
+			sourceTree = "<group>";
+		};
+		5D463FBA2A3722A500DA77C4 /* Artwork */ = {
+			isa = PBXGroup;
+			children = (
+				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
+				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
+				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
+				5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */,
+				5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */,
+				5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */,
+				5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */,
+				5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */,
+				5DE4ED90290586740000B30A /* docs-actions-2.psd */,
+				5DE4ED8A290586740000B30A /* docs-actions.psd */,
+				5DE4ED8E290586740000B30A /* docs-browse-stop.psd */,
+				5DE4ED89290586740000B30A /* docs-chart.psd */,
+				5DE4ED91290586740000B30A /* docs-hosts.psd */,
+				5DE4ED8D290586740000B30A /* docs-ports.psd */,
+			);
+			path = Artwork;
 			sourceTree = "<group>";
 		};
 		5D63644C213EE0DF00BFEB0F /* Model */ = {
