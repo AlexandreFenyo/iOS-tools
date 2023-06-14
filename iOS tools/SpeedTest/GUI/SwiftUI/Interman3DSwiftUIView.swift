@@ -56,10 +56,8 @@ struct Interman3DSwiftUIView: View {
             // duration is between 0 (no movement) and 1 sec (half turn)
             camera.removeAction(forKey: "rotation")
             camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
-
-        } else {
+       } else {
             camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
-
         }
     }
 
