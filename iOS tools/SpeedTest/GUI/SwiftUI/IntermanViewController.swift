@@ -103,30 +103,14 @@ class IntermanViewController : UIViewController {
         let frame = gesture.view!.frame
         // Convert coordinate space (origin at the center of the screen, Ox horizontal, Oy vertical)
         let point = CGPoint(x: _point.x - frame.width / 2, y: frame.height / 2 - _point.y)
-
-        let angle = Interman3DModel.normalizeAngle(atan2f(Float(point.y), Float(point.x)))
-        
-        print("handlePan(): angle: \(angle) = \(angle * 360 / (.pi * 2)) degrés")
+        // Get the angle of the current pan touch point
+        let pan_current_angle = Interman3DModel.normalizeAngle(atan2f(Float(point.y), Float(point.x)))
         
         if gesture.state == .began {
-
-//            camera_start_angle = Interman3DModel.normalizeAngle(hostingViewController.rootView.getCameraAngle() + angle)
-//            print("handlePan(): camera start angle = \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
             camera_start_angle = hostingViewController.rootView.getCameraAngle()
-
-            print("handlePan(): camera start angle = \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
-
-            pan_start_angle = angle
-
+            pan_start_angle = pan_current_angle
         } else {
-           // //            hostingViewController.rootView.rotateCamera(camera_start_angle - angle)
-
-//            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - angle)
-            print("handlePan(): get camera angle : \(hostingViewController.rootView.getCameraAngle()) = \(hostingViewController.rootView.getCameraAngle() * 360 / (.pi * 2)) degrés")
-            print("handlePan(): set camera angle : \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
-
-            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - angle)
-
+            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - pan_current_angle)
         }
     }
     
