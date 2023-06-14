@@ -640,9 +640,17 @@ class DBMaster {
 
         // Flatten removed_nodes
         removed_nodes.keys.forEach { node in
+            func containsIdentical(keys: Dictionary<Node, Node>.Keys, search: Node) -> Bool {
+                for key in keys {
+                    if key === search {
+                        return true
+                    }
+                }
+                return false
+            }
             func getLastInChain(_ node: Node) -> Node {
-                // 20 mai 2023 : boucle sans fin après ajout d'un noeud découvert automatiquement, il doit y avoir un bug à identifier ou contourner
-                return removed_nodes.keys.contains(node) ? getLastInChain(removed_nodes[node]!) : node
+                // Do not use removed_nodes.keys.contains(node) but containsIdentical(keys: removed_nodes.keys, search: node) because contains() makes use of == and not ===. Using == leads to an infinite loop.
+                return containsIdentical(keys: removed_nodes.keys, search: node) ? getLastInChain(removed_nodes[node]!) : node
             }
             removed_nodes[node] = getLastInChain(node)
         }

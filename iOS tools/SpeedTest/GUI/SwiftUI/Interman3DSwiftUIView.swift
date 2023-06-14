@@ -45,25 +45,22 @@ struct Interman3DSwiftUIView: View {
     
     func getCameraAngle() -> Float {
         // Note that Euler angles (0, u, 0) and Euler angles (π, π-u, π) correspond to the same orientation
-        var angle = camera.eulerAngles.y
-//        let angle = camera.eulerAngles.x == 0 ? camera.eulerAngles.y : -camera.eulerAngles.y
-        print("camera angle: \(angle)")
-        angle = camera.eulerAngles.x == 0 ? camera.eulerAngles.y : (-camera.eulerAngles.y + .pi)
-        print("camera angle revu: \(angle)")
-        return Interman3DModel.normalizeAngle(angle)
+        return Interman3DModel.normalizeAngle(camera.eulerAngles.x == 0 ? camera.eulerAngles.y : (-camera.eulerAngles.y + .pi))
     }
 
-    // Set angle absolute value
-    func rotateCamera(_ angle: Float) {
-//        print("-----------------")
-        let angle = Interman3DModel.normalizeAngle(angle)
-        print("rotate camera to: \(angle) = \(angle * 360 / (.pi * 2)) degrés")
-//        print("rotate to angle: \(angle) = \(angle * 360 / (.pi * 2)) degrés")
-//        print("rotateCamera(): camera.rotation=\(camera.rotation)")
-//        print("rotateCamera(): camera.orientation=\(camera.orientation)")
+    // Set camera absolute orientation value
+    func rotateCamera(_ angle: Float, smooth: Bool) {
+        if smooth {
+            var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
+            if duration > .pi { duration = 2 * .pi - duration }
+            // duration is between 0 (no movement) and 1 sec (half turn)
+            camera.removeAction(forKey: "rotation")
+            camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
 
-        // Similar to: camera.eulerAngles.y = angle
-        camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+        } else {
+            camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+
+        }
     }
 
     // Get scale factor
@@ -77,25 +74,17 @@ struct Interman3DSwiftUIView: View {
     }
 
     func resetCamera() {
-        var duration = Interman3DModel.normalizeAngle(camera.eulerAngles.y)
-        if duration > .pi { duration = 2 * .pi - duration }
-        camera.runAction(SCNAction.rotateTo(x: 0, y: 0, z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true))
+        rotateCamera(0, smooth: true)
         camera.runAction(SCNAction.scale(to: 2, duration: 0.5))
     }
 
     func testQuat() {
-        print("camera angle: \(getCameraAngle()) = \(getCameraAngle() * 360 / (.pi * 2)) degrés")
-        print("camera all: \(camera.eulerAngles)")
     }
     
     func setSelectedHost(_ host: Node) {
         guard let node = model.getB3DHost(host) else { return }
-        
-        let angle = node.getAngle()
-        print("setSelectedHost: to node angle: \(angle) = \(angle * 360 / (.pi * 2)) degrés")
-        var duration = angle
-        if duration > .pi { duration = 2 * .pi - duration }
-        camera.runAction(SCNAction.rotateTo(x: 0, y: -CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true))
+        let new_camera_angle = -node.getAngle()
+        rotateCamera(new_camera_angle, smooth: true)
     }
     
     var body: some View {

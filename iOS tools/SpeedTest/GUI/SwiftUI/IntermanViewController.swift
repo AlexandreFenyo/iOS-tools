@@ -110,7 +110,7 @@ class IntermanViewController : UIViewController {
             camera_start_angle = hostingViewController.rootView.getCameraAngle()
             pan_start_angle = pan_current_angle
         } else {
-            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - pan_current_angle)
+            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - pan_current_angle, smooth: false)
         }
     }
     
