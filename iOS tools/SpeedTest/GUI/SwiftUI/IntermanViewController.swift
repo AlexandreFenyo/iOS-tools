@@ -104,20 +104,7 @@ class IntermanViewController : UIViewController {
         // Convert coordinate space (origin at the center of the screen, Ox horizontal, Oy vertical)
         let point = CGPoint(x: _point.x - frame.width / 2, y: frame.height / 2 - _point.y)
 
-        let angle: Float
-        
-        // angle is in [0,2π[
-        if point.x == 0 {
-            angle = 0
-        } else if point.x < 0 {
-            angle = Float(atan(-point.y / -point.x) + .pi)
-        } else {
-            if point.y >= 0 {
-                angle = Float(atan(point.y / point.x))
-            } else {
-                angle = Float(atan(point.y / point.x) + 2 * .pi)
-            }
-        }
+        let angle = Interman3DModel.normalizeAngle(atan2f(Float(point.y), Float(point.x)))
         
         print("handlePan(): angle: \(angle) = \(angle * 360 / (.pi * 2)) degrés")
         
@@ -125,7 +112,6 @@ class IntermanViewController : UIViewController {
 
 //            camera_start_angle = Interman3DModel.normalizeAngle(hostingViewController.rootView.getCameraAngle() + angle)
 //            print("handlePan(): camera start angle = \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
-
             camera_start_angle = hostingViewController.rootView.getCameraAngle()
 
             print("handlePan(): camera start angle = \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
@@ -133,12 +119,14 @@ class IntermanViewController : UIViewController {
             pan_start_angle = angle
 
         } else {
-            // //            hostingViewController.rootView.rotateCamera(camera_start_angle - angle)
+           // //            hostingViewController.rootView.rotateCamera(camera_start_angle - angle)
 
 //            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - angle)
             print("handlePan(): get camera angle : \(hostingViewController.rootView.getCameraAngle()) = \(hostingViewController.rootView.getCameraAngle() * 360 / (.pi * 2)) degrés")
             print("handlePan(): set camera angle : \(camera_start_angle) = \(camera_start_angle * 360 / (.pi * 2)) degrés")
-            hostingViewController.rootView.rotateCamera(camera_start_angle)
+
+            hostingViewController.rootView.rotateCamera(camera_start_angle + pan_start_angle - angle)
+
         }
     }
     
