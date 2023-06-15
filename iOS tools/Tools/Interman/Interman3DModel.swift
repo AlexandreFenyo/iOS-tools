@@ -69,11 +69,11 @@ class B3D : SCNNode {
         super.init()
         addChildNode(sub_node)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     fileprivate func addSubChildNode(_ child: SCNNode) {
         sub_node.addChildNode(child)
     }
@@ -81,14 +81,14 @@ class B3D : SCNNode {
     fileprivate func getSubNode() -> SCNNode {
         return sub_node
     }
-
+    
     func getAngle() -> Float {
         return angle
     }
-
+    
     fileprivate func firstAnim(_ angle: Float) {
         self.angle = Interman3DModel.normalizeAngle(angle)
-
+        
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
@@ -104,11 +104,11 @@ class B3D : SCNNode {
     
     fileprivate func newAngle(_ angle: Float) {
         self.angle = Interman3DModel.normalizeAngle(angle)
-
+        
         // Stop any current movement
         simdPivot = presentation.simdPivot
         removeAnimation(forKey: "circle")
-
+        
         // Animate to new position
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
@@ -125,11 +125,17 @@ class B3D : SCNNode {
         // Stop any current movement
         simdPivot = presentation.simdPivot
         removeAnimation(forKey: "circle")
-
+        
         // Disappear
         let duration = 1.0
         getSubNode().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
         runAction(SCNAction.sequence([SCNAction.wait(duration: duration), SCNAction.removeFromParentNode()]))
+    }
+
+    fileprivate func addLink(_ to_node: B3D) {
+        let link_node = SCNNode()
+        link_node.geometry = SCNCylinder(radius: 1, height: 1)
+        addSubChildNode(link_node)
     }
 }
 
@@ -264,7 +270,28 @@ public class Interman3DModel : ObservableObject {
     public func testComponent() {
         // IHM "update"
         print(#function)
+
+        guard let first_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
+            print("\(#function): warning, localhost not found")
+            return
+        }
+
+        guard let second_host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) else {
+            print("\(#function): warning, dns.google not found")
+            return
+        }
+
+        guard let b3d_first_host = getB3DHost(first_host) else {
+            print("\(#function): warning, localhost is not backed by a 3D node")
+            return
+        }
         
+        guard let b3d_second_host = getB3DHost(first_host) else {
+            print("\(#function): warning, dns.google is not backed by a 3D node")
+            return
+        }
+
+        b3d_first_host.addLink(b3d_second_host)
 /*
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")

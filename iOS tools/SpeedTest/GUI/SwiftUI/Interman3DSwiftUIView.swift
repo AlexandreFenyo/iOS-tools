@@ -9,20 +9,23 @@
 import SwiftUI
 import SceneKit
 
+// pour débugger
+private let free_flight = true
+
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     private var renderer: SCNSceneRenderer!
     
-    public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         self.renderer = renderer
     }
 
-    public func getRenderer() -> SCNSceneRenderer {
+    func getRenderer() -> SCNSceneRenderer {
         return renderer
     }
 }
 
 struct Interman3DSwiftUIView: View {
-    public weak var master_view_controller: MasterViewController?
+    weak var master_view_controller: MasterViewController?
     @ObservedObject var model = Interman3DModel.shared
     private let camera: SCNNode
     let scene: SCNScene
@@ -34,8 +37,15 @@ struct Interman3DSwiftUIView: View {
         camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
         camera.camera!.usesOrthographicProjection = true
         camera.camera!.automaticallyAdjustsZRange = true
-        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+
+        if free_flight {
+            camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
+        } else {
+            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+        }
+
         camera.position = SCNVector3(0, 5, 0)
+
         camera.scale = SCNVector3(2, 2, 2)
     }
 
@@ -50,6 +60,7 @@ struct Interman3DSwiftUIView: View {
 
     // Set camera absolute orientation value
     func rotateCamera(_ angle: Float, smooth: Bool) {
+        if free_flight { return }
         if smooth {
             var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
             if duration > .pi { duration = 2 * .pi - duration }
@@ -85,14 +96,14 @@ struct Interman3DSwiftUIView: View {
         rotateCamera(new_camera_angle, smooth: true)
     }
     
+    // .allowsCameraControl: if allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
+    let scene_view_options = free_flight ? [ .allowsCameraControl ] : SceneView.Options()
+    
     var body: some View {
         ZStack {
             SceneView(
                 scene: scene,
-                options: [
-                // If allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
-                // .allowsCameraControl
-                ],
+                options: scene_view_options,
                 delegate: render_delegate
             )
             .edgesIgnoringSafeArea(.all)
