@@ -134,7 +134,17 @@ class B3D : SCNNode {
 
     fileprivate func addLink(_ to_node: B3D) {
         let link_node = SCNNode()
-        link_node.geometry = SCNCylinder(radius: 1, height: 1)
+        link_node.geometry = SCNBox(width: 1, height: 5, length: 2, chamferRadius: 0)
+        //SCNCylinder(radius: 1, height: 5)
+        link_node.geometry?.firstMaterial?.fillMode = .lines
+        
+//        let camera = Interman3DModel.shared.scene?.rootNode.childNode(withName: "camera", recursively: true)!
+//        let lookAtConstraint = SCNLookAtConstraint(target: camera)
+        let lookAtConstraint = SCNLookAtConstraint(target: to_node.sub_node)
+        lookAtConstraint.influenceFactor = 1
+        lookAtConstraint.isGimbalLockEnabled = false
+        link_node.constraints = [lookAtConstraint]
+        
         addSubChildNode(link_node)
     }
 }
@@ -286,7 +296,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
         
-        guard let b3d_second_host = getB3DHost(first_host) else {
+        guard let b3d_second_host = getB3DHost(second_host) else {
             print("\(#function): warning, dns.google is not backed by a 3D node")
             return
         }
