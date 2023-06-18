@@ -40,6 +40,7 @@ struct Interman3DSwiftUIView: View {
 
         if free_flight {
             camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
+            scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
         } else {
             camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
         }

@@ -48,6 +48,13 @@ import SceneKit
 
 struct ComponentTemplates {
     public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+    public static let axes = SCNScene(named: "Repère.scn")!.rootNode
+    
+    public static func createAxes(_ scale: Float) -> SCNNode {
+        let new_axes = axes.clone()
+        new_axes.scale = SCNVector3(scale, scale, scale)
+        return new_axes
+    }
 }
 
 extension simd_float4x4 {
@@ -60,12 +67,13 @@ extension simd_float4x4 {
 }
 
 class B3D : SCNNode {
+    static let default_scale: Float = 0.1
     private let sub_node: SCNNode
     private var angle: Float = 0
     
     public init(_ scn_node: SCNNode) {
         sub_node = scn_node.clone()
-        sub_node.simdScale = simd_float3(0.1, 0.1, 0.1)
+        sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
         super.init()
         addChildNode(sub_node)
     }
@@ -134,11 +142,13 @@ class B3D : SCNNode {
 
     fileprivate func addLink(_ to_node: B3D) {
         let link_node = SCNNode()
-
         let link_node_draw = SCNNode()
 
+        addChildNode(ComponentTemplates.createAxes(0.2))
+
+        
         link_node.addChildNode(link_node_draw)
-        link_node_draw.geometry = SCNBox(width: 1, height: 5, length: 2, chamferRadius: 0)
+        link_node_draw.geometry = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)
         //SCNCylinder(radius: 1, height: 5)
         link_node_draw.geometry?.firstMaterial?.fillMode = .lines
         
@@ -149,24 +159,65 @@ class B3D : SCNNode {
         look_at_contraint.isGimbalLockEnabled = false
         link_node.constraints = [look_at_contraint]
 
+//        addSubChildNode(link_node)
+  
         // effet supprimé par la contrainte size
 //        link_node_draw.eulerAngles.x = .pi / 2
 
 //        link_node_draw.position.z = -2.5
         let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
 // https://developer.apple.com/documentation/scenekit/scnnode/1407990-convertposition
-            print(simd_distance(simd_float3(node.worldPosition), simd_float3(to_node.worldPosition)))
+//            print(simd_distance(simd_float3(node.worldPosition), simd_float3(to_node.worldPosition)))
 //            print("\(node.worldPosition) - \(to_node.worldPosition)")
 //            print(self.convertPosition(SCNVector3(0, 0, 0), from: to_node))
-            print(simd_distance(simd_float3(0, 0, 0), simd_float3(self.convertPosition(SCNVector3(0, 0, 0), from: to_node))))
-            let foo = simd_distance(simd_float3(0, 0, 0), simd_float3(self.convertPosition(SCNVector3(0, 0, 0), from: to_node)))
+//            print(simd_distance(simd_float3(0, 0, 0), simd_float3(self.convertPosition(SCNVector3(0, 0, 0), from: to_node))))
 
-//            return SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -foo / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, foo, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-            return SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, 5, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+            let foo = simd_distance(simd_float3(node.worldPosition), simd_float3(to_node.worldPosition))
+            let foo2 = simd_distance(simd_float3(B3DHost.getFromNode(node)!.sub_node.worldPosition), simd_float3(to_node.worldPosition))
+            print("distance: \(foo) - \(foo2)")
+//            simd_norm_one(
+//            print(self.worldPosition)
+//            print(node.worldPosition)
+//            print(node.parent!.parent!.worldPosition)
+//            print(node.parent!.parent!.parent!.parent!.worldPosition)
+//            print(to_node.worldPosition)
+            let bar = B3DHost.getFromNode(node)!
+            print(bar.sub_node.position)
+//            print(bar.angle)
+//            print(bar.pivot)
+//            print(B3DHost.getFromNode(node)?.worldPosition)
+            print(bar.transform)
+            print(bar.pivot)
+
+            // DEBUG : questions : est ce que le pivot modifie le worldPosition ?
+            //                     faire un arbre des objets 3D avec les sub_node
+            
+            
+// //            return SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -foo / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, foo, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+
+            // bug : devraient avoir le même effet, mais ce n'est pas le cas
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, 5, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+//            let transf = SCNMatrix4MakeTranslation(0, -5 / 2, 0)
+//            let transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0), SCNMatrix4MakeTranslation(0, -5 / 2, 0))
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+
+            
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * (simd_float4x4(SCNMatrix4MakeScale(1, 5, 1)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0))) // * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
+//let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+            //let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+            
+            let transf = SCNMatrix4MakeTranslation(0, 0, -foo / B3D.default_scale)
+//            let transf = SCNMatrix4Identity
+            
+            return transf
         }
         size_constraint.influenceFactor = 1
         link_node_draw.constraints = [size_constraint]
-
+        link_node_draw.addChildNode(ComponentTemplates.createAxes(5))
         
         addSubChildNode(link_node)
     }
@@ -309,7 +360,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        guard let second_host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) else {
+        guard let second_host = DBMaster.getNode(mcast_fqdn: FQDN("flood", "eowyn.eu.org")) else {
             print("\(#function): warning, dns.google not found")
             return
         }
