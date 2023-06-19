@@ -29,6 +29,7 @@ import SceneKit
 // PI : M_2_PI, M_PI_2, Float.pi, .pi
 
 // simdPivot = matrix_identity_float4x4
+// let transf = SCNMatrix4Identity
 
 // SIMDx et SCNVectorx :
 // text_node.simdScale = SIMD3(0.1, 0.1, 0.1)
@@ -45,6 +46,40 @@ import SceneKit
 // https://stackoverflow.com/questions/28006040/tap-select-node-in-scenekit-swift
 // https://www.appcoda.com/learnswiftui/swiftui-gestures.html
 // Chart.swift
+
+// multiplications de matrices :
+// //            return SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -foo / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, foo, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+
+            // bug : devraient avoir le même effet, mais ce n'est pas le cas
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, 5, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+//            let transf = SCNMatrix4MakeTranslation(0, -5 / 2, 0)
+//            let transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0), SCNMatrix4MakeTranslation(0, -5 / 2, 0))
+//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+//
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * (simd_float4x4(SCNMatrix4MakeScale(1, 5, 1)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0))) // * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
+//let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+            //let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
+
+// https://developer.apple.com/documentation/scenekit/scnnode/1407990-convertposition
+
+/*
+guard let bar_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
+    print("\(#function): warning, localhost not found")
+    return
+}
+guard let bar_node = getB3DHost(bar_host) else {
+    print("\(#function): warning, localhost is not backed by a 3D node")
+    return
+}
+print("IHM create localhost:")
+print("world: \(bar_node.worldPosition)")
+print("pivot: \(bar_node.pivot)")
+print("transf: \(bar_node.transform)")
+*/
 
 struct ComponentTemplates {
     public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
@@ -144,74 +179,26 @@ class B3D : SCNNode {
         let link_node = SCNNode()
         let link_node_draw = SCNNode()
 
-        addChildNode(ComponentTemplates.createAxes(0.2))
-
+//        addChildNode(ComponentTemplates.createAxes(0.2))
         
         link_node.addChildNode(link_node_draw)
-        link_node_draw.geometry = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)
-        //SCNCylinder(radius: 1, height: 5)
+link_node_draw.geometry = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)
+//link_node_draw.geometry = SCNCylinder(radius: 1, height: 1)
+
         link_node_draw.geometry?.firstMaterial?.fillMode = .lines
         
-//        let camera = Interman3DModel.shared.scene?.rootNode.childNode(withName: "camera", recursively: true)!
-//        let lookAtConstraint = SCNLookAtConstraint(target: camera)
         let look_at_contraint = SCNLookAtConstraint(target: to_node.sub_node)
         look_at_contraint.influenceFactor = 1
         look_at_contraint.isGimbalLockEnabled = false
         link_node.constraints = [look_at_contraint]
 
-//        addSubChildNode(link_node)
-  
-        // effet supprimé par la contrainte size
-//        link_node_draw.eulerAngles.x = .pi / 2
-
-//        link_node_draw.position.z = -2.5
         let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
-// https://developer.apple.com/documentation/scenekit/scnnode/1407990-convertposition
-//            print(simd_distance(simd_float3(node.worldPosition), simd_float3(to_node.worldPosition)))
-//            print("\(node.worldPosition) - \(to_node.worldPosition)")
-//            print(self.convertPosition(SCNVector3(0, 0, 0), from: to_node))
-//            print(simd_distance(simd_float3(0, 0, 0), simd_float3(self.convertPosition(SCNVector3(0, 0, 0), from: to_node))))
-
-            let foo = simd_distance(simd_float3(node.worldPosition), simd_float3(to_node.worldPosition))
-            let foo2 = simd_distance(simd_float3(B3DHost.getFromNode(node)!.sub_node.worldPosition), simd_float3(to_node.worldPosition))
-            print("distance: \(foo) - \(foo2)")
-//            simd_norm_one(
-//            print(self.worldPosition)
-//            print(node.worldPosition)
-//            print(node.parent!.parent!.worldPosition)
-//            print(node.parent!.parent!.parent!.parent!.worldPosition)
-//            print(to_node.worldPosition)
-            let bar = B3DHost.getFromNode(node)!
-            print(bar.sub_node.position)
-//            print(bar.angle)
-//            print(bar.pivot)
-//            print(B3DHost.getFromNode(node)?.worldPosition)
-            print(bar.transform)
-            print(bar.pivot)
-
-            // DEBUG : questions : est ce que le pivot modifie le worldPosition ?
-            //                     faire un arbre des objets 3D avec les sub_node
+            let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_node.presentation.worldPosition))
+            print("distance: \(distance)")
             
-            
-// //            return SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -foo / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, foo, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-
-            // bug : devraient avoir le même effet, mais ce n'est pas le cas
-//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4Mult(SCNMatrix4MakeScale(1, 5, 1), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-//            let transf = SCNMatrix4MakeTranslation(0, -5 / 2, 0)
-//            let transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
-//            let transf = SCNMatrix4Mult(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0), SCNMatrix4MakeTranslation(0, -5 / 2, 0))
-//            let transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -5 / 2, 0), SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
-
-            
-//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * (simd_float4x4(SCNMatrix4MakeScale(1, 5, 1)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
-//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0))) // * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))))
-//let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-            //let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-//            let transf = SCNMatrix4(simd_float4x4(SCNMatrix4MakeTranslation(0, -5 / 2, 0)) * simd_float4x4(SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)))
-            
-            let transf = SCNMatrix4MakeTranslation(0, 0, -foo / B3D.default_scale)
-//            let transf = SCNMatrix4Identity
+            var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+            transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
+            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -distance / 2, 0), transf)
             
             return transf
         }
@@ -347,64 +334,6 @@ updateAngles()
     
     func testIHMCreate() {
         // IHM "create"
-        /*
-        guard let foo_host = DBMaster.getNode(mcast_fqdn: FQDN("flood", "eowyn.eu.org")) else {
-            print("can not find node")
-            return
-        }
-        guard let foo_node = getB3DHost(foo_host) else {
-            print("can not find node B3DHost")
-            return
-        }
-        print("IHM create flood.eowyn.eu.org:")
-        print("world: \(foo_node.worldPosition)")
-        print("pivot: \(foo_node.pivot)")
-        print("transf: \(foo_node.transform)")
-*/
-        guard let foo2_host = DBMaster.getNode(mcast_fqdn: FQDN("dns9", "quad9.net")) else {
-            print("can not find node")
-            return
-        }
-        guard let foo2_node = getB3DHost(foo2_host) else {
-            print("can not find node B3DHost")
-            return
-        }
-        print("IHM create dns9.quad9.net:")
-        
-        
-        foo2_node.addChildNode(ComponentTemplates.createAxes(0.2))
-        print("pos: \(foo2_node.position)")
-        print("world: \(foo2_node.worldPosition)")
-        print("pivot: \(foo2_node.pivot)")
-        print("transf: \(foo2_node.transform)")
-        print("orientation: \(foo2_node.orientation)")
-
-        print("Xpos: \(foo2_node.presentation.position)")
-        print("Xworld: \(foo2_node.presentation.worldPosition)")
-        print("Xpivot: \(foo2_node.presentation.pivot)")
-        print("Xtransf: \(foo2_node.presentation.transform)")
-        print("Xorientation: \(foo2_node.presentation.orientation)")
-
-        
-        /*
-        guard let bar_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
-            print("\(#function): warning, localhost not found")
-            return
-        }
-        guard let bar_node = getB3DHost(bar_host) else {
-            print("\(#function): warning, localhost is not backed by a 3D node")
-            return
-        }
-        print("IHM create localhost:")
-        print("world: \(bar_node.worldPosition)")
-        print("pivot: \(bar_node.pivot)")
-        print("transf: \(bar_node.transform)")
-*/
-        
-        
-        print("OK")
-        return
-        
         let node = Node()
         node.addName("testing.com")
         _ = DBMaster.shared.addNode(node)
