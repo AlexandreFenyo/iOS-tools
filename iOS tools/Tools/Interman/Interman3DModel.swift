@@ -205,7 +205,6 @@ class B3D : SCNNode {
         }
         size_constraint.influenceFactor = 1
         link_node_draw.constraints = [size_constraint]
-//        link_node_draw.addChildNode(ComponentTemplates.createAxes(5))
         
         addSubChildNode(link_node)
     }
