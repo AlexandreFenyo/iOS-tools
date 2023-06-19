@@ -307,13 +307,14 @@ public class Interman3DModel : ObservableObject {
     }
 
     // Sync with the main model
-    public func notifyNodeAdded(_ node: Node) {
+    func notifyNodeAdded(_ node: Node) {
 //        print("\(#function): \(node.fullDump())")
+        print("notifyNodeAdded(\(node.getMcastDnsNames().first?.host_part.toString()))")
         addHost(node)
     }
 
     // Sync with the main model
-    public func notifyNodeRemoved(_ host: Node) {
+    func notifyNodeRemoved(_ host: Node) {
         print("\(#function)")
         
         guard let b3d_host = detachB3DHost(host) else { return }
@@ -322,36 +323,94 @@ public class Interman3DModel : ObservableObject {
     }
 
     // Sync with the main model
-    public func notifyNodeMerged(_ node: Node, _ into: Node) {
+    func notifyNodeMerged(_ node: Node, _ into: Node) {
         print("\(#function)")
 
     }
 
     // Sync with the main model
-    public func notifyNodeUpdated(_ node: Node) {
+    func notifyNodeUpdated(_ node: Node) {
         print("\(#function)")
 
     }
 
-    public func addHost(_ host: Node) {
+    private func addHost(_ host: Node) {
         let b3d_host = B3DHost(ComponentTemplates.standard, host)
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
-
-        updateAngles()
+        // DEBUG - A REMETTRE
+updateAngles()
     }
     
-    public func addComponent() {
+    func testIHMCreate() {
         // IHM "create"
+        /*
+        guard let foo_host = DBMaster.getNode(mcast_fqdn: FQDN("flood", "eowyn.eu.org")) else {
+            print("can not find node")
+            return
+        }
+        guard let foo_node = getB3DHost(foo_host) else {
+            print("can not find node B3DHost")
+            return
+        }
+        print("IHM create flood.eowyn.eu.org:")
+        print("world: \(foo_node.worldPosition)")
+        print("pivot: \(foo_node.pivot)")
+        print("transf: \(foo_node.transform)")
+*/
+        guard let foo2_host = DBMaster.getNode(mcast_fqdn: FQDN("dns9", "quad9.net")) else {
+            print("can not find node")
+            return
+        }
+        guard let foo2_node = getB3DHost(foo2_host) else {
+            print("can not find node B3DHost")
+            return
+        }
+        print("IHM create dns9.quad9.net:")
+        
+        
+        foo2_node.addChildNode(ComponentTemplates.createAxes(0.2))
+        print("pos: \(foo2_node.position)")
+        print("world: \(foo2_node.worldPosition)")
+        print("pivot: \(foo2_node.pivot)")
+        print("transf: \(foo2_node.transform)")
+        print("orientation: \(foo2_node.orientation)")
+
+        print("Xpos: \(foo2_node.presentation.position)")
+        print("Xworld: \(foo2_node.presentation.worldPosition)")
+        print("Xpivot: \(foo2_node.presentation.pivot)")
+        print("Xtransf: \(foo2_node.presentation.transform)")
+        print("Xorientation: \(foo2_node.presentation.orientation)")
+
+        
+        /*
+        guard let bar_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
+            print("\(#function): warning, localhost not found")
+            return
+        }
+        guard let bar_node = getB3DHost(bar_host) else {
+            print("\(#function): warning, localhost is not backed by a 3D node")
+            return
+        }
+        print("IHM create localhost:")
+        print("world: \(bar_node.worldPosition)")
+        print("pivot: \(bar_node.pivot)")
+        print("transf: \(bar_node.transform)")
+*/
+        
+        
+        print("OK")
+        return
+        
         let node = Node()
         node.addName("testing.com")
         _ = DBMaster.shared.addNode(node)
     }
     
-    public func testComponent() {
+    func testIHMUpdate() {
         // IHM "update"
         print(#function)
 

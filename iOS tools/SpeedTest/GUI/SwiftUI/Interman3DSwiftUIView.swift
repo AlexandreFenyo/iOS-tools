@@ -114,7 +114,7 @@ struct Interman3DSwiftUIView: View {
             HStack {
               HStack {
                   Button {
-                      model.addComponent()
+                      model.testIHMCreate()
                   } label: {
                       Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
@@ -125,7 +125,7 @@ struct Interman3DSwiftUIView: View {
               Text("salut").foregroundColor(.white)
               Spacer()
                 Button {
-                    model.testComponent()
+                    model.testIHMUpdate()
                     testQuat()
                 } label: {
                     Text("update")
