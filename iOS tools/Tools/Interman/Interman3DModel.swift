@@ -178,12 +178,8 @@ class B3D : SCNNode {
     fileprivate func addLink(_ to_node: B3D) {
         let link_node = SCNNode()
         let link_node_draw = SCNNode()
-
-//        addChildNode(ComponentTemplates.createAxes(0.2))
-        
         link_node.addChildNode(link_node_draw)
-link_node_draw.geometry = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)
-//link_node_draw.geometry = SCNCylinder(radius: 1, height: 1)
+        link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
 
         link_node_draw.geometry?.firstMaterial?.fillMode = .lines
         
@@ -198,13 +194,12 @@ link_node_draw.geometry = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 
             
             var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
-            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -distance / 2, 0), transf)
-            
+            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, 0), transf)
+
             return transf
         }
         size_constraint.influenceFactor = 1
         link_node_draw.constraints = [size_constraint]
-        link_node_draw.addChildNode(ComponentTemplates.createAxes(5))
         
         addSubChildNode(link_node)
     }
@@ -343,23 +338,29 @@ updateAngles()
         // IHM "update"
         print(#function)
 
+        /*
         guard let first_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
             print("\(#function): warning, localhost not found")
+            return
+        }*/
+
+        guard let first_host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) else {
+            print("\(#function): warning, dns not found")
             return
         }
 
         guard let second_host = DBMaster.getNode(mcast_fqdn: FQDN("flood", "eowyn.eu.org")) else {
-            print("\(#function): warning, dns.google not found")
+            print("\(#function): warning, flood not found")
             return
         }
 
         guard let b3d_first_host = getB3DHost(first_host) else {
-            print("\(#function): warning, localhost is not backed by a 3D node")
+            print("\(#function): warning, dns is not backed by a 3D node")
             return
         }
         
         guard let b3d_second_host = getB3DHost(second_host) else {
-            print("\(#function): warning, dns.google is not backed by a 3D node")
+            print("\(#function): warning, flood is not backed by a 3D node")
             return
         }
 
