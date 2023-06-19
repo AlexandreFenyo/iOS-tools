@@ -81,6 +81,12 @@ print("pivot: \(bar_node.pivot)")
 print("transf: \(bar_node.transform)")
 */
 
+// rajouter un repère :
+// link_node_draw.addChildNode(ComponentTemplates.createAxes(5))
+
+// avoir un rendu filaire :
+// link_node_draw.geometry?.firstMaterial?.fillMode = .lines
+
 struct ComponentTemplates {
     public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
@@ -180,9 +186,8 @@ class B3D : SCNNode {
         let link_node_draw = SCNNode()
         link_node.addChildNode(link_node_draw)
         link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
+        link_node_draw.geometry!.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
 
-        link_node_draw.geometry?.firstMaterial?.fillMode = .lines
-        
         let look_at_contraint = SCNLookAtConstraint(target: to_node.sub_node)
         look_at_contraint.influenceFactor = 1
         look_at_contraint.isGimbalLockEnabled = false
@@ -200,6 +205,7 @@ class B3D : SCNNode {
         }
         size_constraint.influenceFactor = 1
         link_node_draw.constraints = [size_constraint]
+//        link_node_draw.addChildNode(ComponentTemplates.createAxes(5))
         
         addSubChildNode(link_node)
     }
