@@ -110,11 +110,12 @@ extension simd_float4x4 {
     }
 }
 
+// Base class for 3D objects in a circle
 class B3D : SCNNode {
     static let default_scale: Float = 0.1
     private let sub_node: SCNNode
     private var angle: Float = 0
-    
+
     public init(_ scn_node: SCNNode) {
         sub_node = scn_node.clone()
         sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
@@ -183,31 +184,6 @@ class B3D : SCNNode {
         getSubNode().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
         runAction(SCNAction.sequence([SCNAction.wait(duration: duration), SCNAction.removeFromParentNode()]))
     }
-
-    fileprivate func addLink(_ to_node: B3D) {
-        let link_node = SCNNode()
-        let link_node_draw = SCNNode()
-        link_node.addChildNode(link_node_draw)
-        link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
-        link_node_draw.geometry!.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
-
-        let look_at_contraint = SCNLookAtConstraint(target: to_node.sub_node)
-        look_at_contraint.influenceFactor = 1
-        look_at_contraint.isGimbalLockEnabled = false
-        link_node.constraints = [look_at_contraint]
-
-        let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
-            let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_node.presentation.worldPosition))
-            var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-            transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
-            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, 0), transf)
-            return transf
-        }
-        size_constraint.influenceFactor = 1
-        link_node_draw.constraints = [size_constraint]
-        
-        addSubChildNode(link_node)
-    }
 }
 
 class B3DHost : B3D {
@@ -249,6 +225,38 @@ class B3DHost : B3D {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class Link3D : SCNNode {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init()
+        
+        let link_node_draw = SCNNode()
+        addChildNode(link_node_draw)
+        link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
+        link_node_draw.geometry!.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
+
+        let look_at_contraint = SCNLookAtConstraint(target: to_b3d.getSubNode())
+        look_at_contraint.influenceFactor = 1
+        look_at_contraint.isGimbalLockEnabled = false
+        constraints = [look_at_contraint]
+
+        let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
+            let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_b3d.presentation.worldPosition))
+            var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+            transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
+            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, 0), transf)
+            return transf
+        }
+        size_constraint.influenceFactor = 1
+        link_node_draw.constraints = [size_constraint]
+        
+        from_b3d.addSubChildNode(self)
     }
 }
 
@@ -336,8 +344,7 @@ public class Interman3DModel : ObservableObject {
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
-        // DEBUG - A REMETTRE
-updateAngles()
+        updateAngles()
     }
     
     private static var debug_cnt = 0
@@ -388,8 +395,11 @@ updateAngles()
             return
         }
 
-        b3d_first_host.addLink(b3d_second_host)
-/*
+//        b3d_first_host.addLink(b3d_second_host)
+//        b3d_second_host.addLink(b3d_first_host)
+        let foo = Link3D(b3d_second_host, b3d_first_host)
+
+        /*
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")
             if let b3d_host = getB3DHost(host) {
