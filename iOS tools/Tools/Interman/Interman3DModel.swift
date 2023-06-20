@@ -10,6 +10,9 @@ import Foundation
 import SwiftUI
 import SceneKit
 
+// Blender
+// https://emily-45402.medium.com/building-3d-assets-in-blender-for-ios-developers-c47535755f18
+
 // Attention : les initialiseurs de tableaux sont consommateurs de CPU, il faut plutôt passer les 4 colonnes plutôt qu'un tableau de colonnes à une fonction qui propose les deux
 
 // rotations :
@@ -195,12 +198,9 @@ class B3D : SCNNode {
 
         let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
             let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_node.presentation.worldPosition))
-            print("distance: \(distance)")
-            
             var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
             transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, 0), transf)
-
             return transf
         }
         size_constraint.influenceFactor = 1
@@ -285,8 +285,16 @@ public class Interman3DModel : ObservableObject {
         return b3d_host
     }
 
-    private func detachB3DHost(_ host: Node) -> B3DHost? {
+    private func detachB3DSimilarHost(_ host: Node) -> B3DHost? {
         guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
+            return nil
+        }
+        b3d_hosts.removeAll { $0 == b3d_host }
+        return b3d_host
+    }
+
+    private func detachB3DHostInstance(_ host: Node) -> B3DHost? {
+        guard let b3d_host = (b3d_hosts.filter { $0.getHost() === host }).first else {
             return nil
         }
         b3d_hosts.removeAll { $0 == b3d_host }
@@ -295,8 +303,6 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeAdded(_ node: Node) {
-//        print("\(#function): \(node.fullDump())")
-        print("notifyNodeAdded(\(node.getMcastDnsNames().first?.host_part.toString()))")
         addHost(node)
     }
 
@@ -304,7 +310,7 @@ public class Interman3DModel : ObservableObject {
     func notifyNodeRemoved(_ host: Node) {
         print("\(#function)")
         
-        guard let b3d_host = detachB3DHost(host) else { return }
+        guard let b3d_host = detachB3DSimilarHost(host) else { return }
         updateAngles()
         b3d_host.remove()
     }
@@ -312,7 +318,9 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     func notifyNodeMerged(_ node: Node, _ into: Node) {
         print("\(#function)")
-
+        guard let b3d_host = detachB3DHostInstance(into) else { return }
+        updateAngles()
+        b3d_host.remove()
     }
 
     // Sync with the main model
@@ -332,11 +340,22 @@ public class Interman3DModel : ObservableObject {
 updateAngles()
     }
     
+    private static var debug_cnt = 0
     func testIHMCreate() {
         // IHM "create"
-        let node = Node()
-        node.addName("testing.com")
-        _ = DBMaster.shared.addNode(node)
+
+        if Interman3DModel.debug_cnt == 0 {
+            let node = Node()
+            node.addMcastFQDN(FQDN("dns8", "quad8.net"))
+            _ = DBMaster.shared.addNode(node)
+            Interman3DModel.debug_cnt += 1
+        } else {
+            let node = Node()
+            node.addMcastFQDN(FQDN("dns8", "quad8.net"))
+            node.addMcastFQDN(FQDN("dns9", "quad9.net"))
+            _ = DBMaster.shared.addNode(node)
+            print("OK")
+        }
     }
     
     func testIHMUpdate() {
