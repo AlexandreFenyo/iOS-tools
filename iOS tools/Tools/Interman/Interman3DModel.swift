@@ -368,8 +368,8 @@ updateAngles()
             return
         }*/
 
-        guard let first_host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) else {
-            print("\(#function): warning, dns not found")
+        guard let first_host = DBMaster.getNode(mcast_fqdn: FQDN("dns8", "quad8.net")) else {
+            print("\(#function): warning, dns8 not found")
             return
         }
 
@@ -379,7 +379,7 @@ updateAngles()
         }
 
         guard let b3d_first_host = getB3DHost(first_host) else {
-            print("\(#function): warning, dns is not backed by a 3D node")
+            print("\(#function): warning, dns8 is not backed by a 3D node")
             return
         }
         
