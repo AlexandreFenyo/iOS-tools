@@ -247,13 +247,6 @@ class Link3D : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
-    func detach() {
-        if let from_b3d { from_b3d.removeLinkRef(self) }
-        if let to_b3d { to_b3d.removeLinkRef(self) }
-        removeFromParentNode()
-    }
-    
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init()
 
@@ -283,7 +276,13 @@ class Link3D : SCNNode {
         link_node_draw.constraints = [size_constraint]
         
         from_b3d.addSubChildNode(self)
+    }
 
+    // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
+    fileprivate func detach() {
+        if let from_b3d { from_b3d.removeLinkRef(self) }
+        if let to_b3d { to_b3d.removeLinkRef(self) }
+        removeFromParentNode()
     }
 }
 
