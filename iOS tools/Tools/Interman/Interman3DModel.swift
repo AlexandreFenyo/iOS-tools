@@ -115,6 +115,7 @@ class B3D : SCNNode {
     static let default_scale: Float = 0.1
     private let sub_node: SCNNode
     private var angle: Float = 0
+    private var link_refs = [Link3D]()
 
     public init(_ scn_node: SCNNode) {
         sub_node = scn_node.clone()
@@ -126,7 +127,15 @@ class B3D : SCNNode {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    public func addLinkRef(_ link: Link3D) {
+        link_refs.append(link)
+    }
+
+    public func removeLinkRef(_ link: Link3D) {
+        link_refs.removeAll { $0 == link }
+    }
+
     fileprivate func addSubChildNode(_ child: SCNNode) {
         sub_node.addChildNode(child)
     }
@@ -175,6 +184,9 @@ class B3D : SCNNode {
     }
     
     fileprivate func remove() {
+        // Remove any link connected to this node
+        link_refs.forEach { $0.detach() }
+        
         // Stop any current movement
         simdPivot = presentation.simdPivot
         removeAnimation(forKey: "circle")
@@ -229,13 +241,27 @@ class B3DHost : B3D {
 }
 
 class Link3D : SCNNode {
+    private weak var from_b3d: B3D?, to_b3d: B3D?
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
+    func detach() {
+        if let from_b3d { from_b3d.removeLinkRef(self) }
+        if let to_b3d { to_b3d.removeLinkRef(self) }
+        removeFromParentNode()
+    }
+    
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init()
-        
+
+        self.from_b3d = from_b3d
+        self.to_b3d = to_b3d
+        from_b3d.addLinkRef(self)
+        to_b3d.addLinkRef(self)
+
         let link_node_draw = SCNNode()
         addChildNode(link_node_draw)
         link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
@@ -257,6 +283,7 @@ class Link3D : SCNNode {
         link_node_draw.constraints = [size_constraint]
         
         from_b3d.addSubChildNode(self)
+
     }
 }
 
