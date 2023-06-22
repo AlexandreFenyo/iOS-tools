@@ -253,6 +253,7 @@ class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
     
     fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
+    fileprivate var height: Float { 0 } // CONTINUER ICI : implémenter height
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -264,7 +265,7 @@ class Link3D : SCNNode {
         if to_b3d != nil { ends.insert(to_b3d!) }
         return ends
     }
-    
+
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init()
 
@@ -318,6 +319,7 @@ class Link3DPortDiscovered : Link3D {
     private let port: UInt16
 
     override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
+    override fileprivate var height: Float { 1 }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -464,7 +466,6 @@ public class Interman3DModel : ObservableObject {
         }
 
         if local_node != target {
-            print("XXX")
             _ = Link3DPortDiscovered(local_node, target, port)
         }
     }
