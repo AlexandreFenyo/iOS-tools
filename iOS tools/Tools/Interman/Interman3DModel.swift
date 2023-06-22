@@ -409,7 +409,9 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        _ = Link3D(local_node, target)
+        if local_node != target {
+            _ = Link3D(local_node, target)
+        }
     }
 
     func notifyScanNodeFinished(_ node: Node) {

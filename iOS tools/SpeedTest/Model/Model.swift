@@ -538,7 +538,8 @@ class DBMaster {
             print("can not find node with address \(address)")
             return
         }
-        print("NOTIFYSCANPORTSFINISHED") EMPECHER LES liens d'un neeud vers lui-même
+        if node.isLocalHost() { return }
+        print("NOTIFYSCANPORTSFINISHED") //EMPECHER LES liens d'un neeud vers lui-même
         Interman3DModel.shared.notifyScanNodeFinished(node)
     }
 
