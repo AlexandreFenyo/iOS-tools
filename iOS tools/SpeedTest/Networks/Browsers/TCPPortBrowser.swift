@@ -92,6 +92,8 @@ class TCPPortBrowser {
             if debug { print(addr.toNumericString()!, "tcp - starting address") }
             DispatchQueue.main.async {
                 self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
+                // Add link
+                DBMaster.shared.notifyScanPorts(address: addr)
             }
 
             dispatchGroup.enter()
@@ -269,6 +271,7 @@ class TCPPortBrowser {
                 
                 DispatchQueue.main.async {
                     self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
+                    DBMaster.shared.notifyScanPortsFinished(address: addr)
                 }
             }
         }

@@ -115,7 +115,7 @@ class B3D : SCNNode {
     static let default_scale: Float = 0.1
     private let sub_node: SCNNode
     private var angle: Float = 0
-    private var link_refs = [Link3D]()
+    private var link_refs = Set<Link3D>()
 
     public init(_ scn_node: SCNNode) {
         sub_node = scn_node.clone()
@@ -128,14 +128,21 @@ class B3D : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func addLinkRef(_ link: Link3D) {
-        link_refs.append(link)
+    func addLinkRef(_ link: Link3D) {
+        link_refs.insert(link)
     }
 
-    public func removeLinkRef(_ link: Link3D) {
-        link_refs.removeAll { $0 == link }
+    func removeLinkRef(_ link: Link3D) {
+        link_refs.remove(link)
     }
 
+    func getLinks(with: B3D) -> Set<Link3D> {
+        link_refs.filter { link in
+            print("ABC")
+            return link.getEnds().contains(with)
+        } // $0.getEnds().remove(self)?.contains(with) }
+    }
+    
     fileprivate func addSubChildNode(_ child: SCNNode) {
         sub_node.addChildNode(child)
     }
@@ -240,13 +247,26 @@ class B3DHost : B3D {
     }
 }
 
+// 3D link types:
+// - scan TCP ports
+// - port discovered
+// - multicast Bonjour service discovered
+
+
 class Link3D : SCNNode {
-    private weak var from_b3d: B3D?, to_b3d: B3D?
+    fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func getEnds() -> Set<B3D> {
+        var ends = Set<B3D>()
+        if from_b3d != nil { ends.insert(from_b3d!) }
+        if to_b3d != nil { ends.insert(to_b3d!) }
+        return ends
+    }
+    
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init()
 
@@ -318,6 +338,21 @@ public class Interman3DModel : ObservableObject {
         }
         return b3d_host
     }
+    
+    // We could implement a cache, but it is not sure it may really improve global performances
+    private func getB3DLocalHost() -> B3DHost? {
+        guard let local_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
+            print("\(#function): warning, localhost not found")
+            return nil
+        }
+
+        guard let local_node = getB3DHost(local_host) else {
+            print("\(#function): warning, localhost is not backed by a 3D node")
+            return nil
+        }
+
+        return local_node
+    }
 
     private func detachB3DSimilarHost(_ host: Node) -> B3DHost? {
         guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
@@ -360,7 +395,38 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     func notifyNodeUpdated(_ node: Node) {
         print("\(#function)")
+        // modifier l'affichage des valeurs du noeud
+    }
 
+    func notifyScanNode(_ node: Node) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        _ = Link3D(local_node, target)
+    }
+
+    func notifyScanNodeFinished(_ node: Node) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        target.getLinks(with: local_node).forEach {
+            print("detach")
+            $0.detach()
+        }
     }
 
     private func addHost(_ host: Node) {

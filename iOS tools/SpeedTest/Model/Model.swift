@@ -435,16 +435,26 @@ class DBMaster {
     }
  */
 
-    public static func getNode(name: String) -> Node? {
+    static func getNode(name: String) -> Node? {
         shared.nodes.filter { $0.names.contains(name) }.first
     }
 
-    public static func getNode(mcast_fqdn: FQDN) -> Node? {
+    static func getNode(mcast_fqdn: FQDN) -> Node? {
         shared.nodes.filter { $0.mcast_dns_names.contains(mcast_fqdn) }.first
     }
 
+    static func getNode(address: IPAddress) -> Node? {
+        if address.getFamily() == AF_INET {
+            let addr = address as! IPv4Address
+            return shared.nodes.filter { $0.v4_addresses.contains(addr) }.first
+        } else {
+            let addr = address as! IPv6Address
+            return shared.nodes.filter { $0.v6_addresses.contains(addr) }.first
+        }
+    }
+
     /* A unique gateway */
-    public func getLocalGateways() -> [Node] {
+    func getLocalGateways() -> [Node] {
         var gateways = [Node]()
         let gw = Node()
         gw.types.insert(.gateway)
@@ -483,7 +493,7 @@ class DBMaster {
         return gateways
     }
     
-    public func getLocalNode() -> Node {
+    func getLocalNode() -> Node {
         let node = Node()
         node.types = [ .localhost ]
         var idx : Int32 = 0, mask_len : Int32
@@ -513,6 +523,23 @@ class DBMaster {
         node.names.insert(UIDevice.current.name)
         node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node
+    }
+    
+    func notifyScanPorts(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyScanNode(node)
+    }
+
+    func notifyScanPortsFinished(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        print("NOTIFYSCANPORTSFINISHED") EMPECHER LES liens d'un neeud vers lui-même
+        Interman3DModel.shared.notifyScanNodeFinished(node)
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
@@ -687,7 +714,7 @@ class DBMaster {
     private let ips_v4_quad9 = [ "9.9.9.9", "149.112.112.9" ]
     private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
 
-    public func addDefaultNodes() {
+    func addDefaultNodes() {
         var node = Node()
         node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
         node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
@@ -728,12 +755,12 @@ class DBMaster {
         }
     }
 
-    public func isPublicDefaultService(_ ip: String) -> Bool {
+    func isPublicDefaultService(_ ip: String) -> Bool {
         if ips_v4_google.contains(ip) || ips_v6_google.contains(ip) || ips_v4_quad9.contains(ip) || ips_v6_quad9.contains(ip) { return true }
         return false
     }
     
-    public init() {
+    init() {
         networks = Set<IPNetwork>()
 
         nodes = Set<Node>()
