@@ -137,10 +137,7 @@ class B3D : SCNNode {
     }
 
     func getLinks(with: B3D) -> Set<Link3D> {
-        link_refs.filter { link in
-            print("ABC")
-            return link.getEnds().contains(with)
-        } // $0.getEnds().remove(self)?.contains(with) }
+        link_refs.filter { $0.getEnds().contains(with) }
     }
     
     fileprivate func addSubChildNode(_ child: SCNNode) {
@@ -252,9 +249,10 @@ class B3DHost : B3D {
 // - port discovered
 // - multicast Bonjour service discovered
 
-
 class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
+    
+    fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -278,7 +276,7 @@ class Link3D : SCNNode {
         let link_node_draw = SCNNode()
         addChildNode(link_node_draw)
         link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
-        link_node_draw.geometry!.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
+        link_node_draw.geometry!.firstMaterial!.diffuse.contents = color
 
         let look_at_contraint = SCNLookAtConstraint(target: to_b3d.getSubNode())
         look_at_contraint.influenceFactor = 1
@@ -303,6 +301,31 @@ class Link3D : SCNNode {
         if let from_b3d { from_b3d.removeLinkRef(self) }
         if let to_b3d { to_b3d.removeLinkRef(self) }
         removeFromParentNode()
+    }
+}
+
+class Link3DScanNode : Link3D {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+    }
+}
+
+class Link3DPortDiscovered : Link3D {
+    private let port: UInt16
+
+    override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    init(_ from_b3d: B3D, _ to_b3d: B3D, _ port: UInt16) {
+        self.port = port
+        super.init(from_b3d, to_b3d)
     }
 }
 
@@ -377,7 +400,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeRemoved(_ host: Node) {
-        print("\(#function)")
+//      print("\(#function)")
         
         guard let b3d_host = detachB3DSimilarHost(host) else { return }
         updateAngles()
@@ -387,6 +410,7 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     func notifyNodeMerged(_ node: Node, _ into: Node) {
         print("\(#function)")
+
         guard let b3d_host = detachB3DHostInstance(into) else { return }
         updateAngles()
         b3d_host.remove()
@@ -410,7 +434,7 @@ public class Interman3DModel : ObservableObject {
         }
 
         if local_node != target {
-            _ = Link3D(local_node, target)
+            _ = Link3DScanNode(local_node, target)
         }
     }
 
@@ -425,9 +449,23 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        target.getLinks(with: local_node).forEach {
-            print("detach")
-            $0.detach()
+        target.getLinks(with: local_node).forEach { $0.detach() }
+    }
+
+    func notifyPortDiscovered(_ node: Node, _ port: UInt16) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            print("XXX")
+            _ = Link3DPortDiscovered(local_node, target, port)
         }
     }
 
@@ -491,7 +529,7 @@ public class Interman3DModel : ObservableObject {
 
 //        b3d_first_host.addLink(b3d_second_host)
 //        b3d_second_host.addLink(b3d_first_host)
-        let foo = Link3D(b3d_second_host, b3d_first_host)
+        let foo = Link3DScanNode(b3d_second_host, b3d_first_host)
 
         /*
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {

@@ -223,6 +223,7 @@ class TCPPortBrowser {
                                                     if debug { print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay) }
                                                     DispatchQueue.main.async {
                                                         self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
+                                                        DBMaster.shared.notifyPortDiscovered(address: addr, port: port)
                                                     }
                                                     // do not retry this port
                                                     ports.remove(port)

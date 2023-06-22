@@ -539,8 +539,16 @@ class DBMaster {
             return
         }
         if node.isLocalHost() { return }
-        print("NOTIFYSCANPORTSFINISHED") //EMPECHER LES liens d'un neeud vers lui-même
         Interman3DModel.shared.notifyScanNodeFinished(node)
+    }
+
+    func notifyPortDiscovered(address: IPAddress, port: UInt16) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        if node.isLocalHost() { return }
+        Interman3DModel.shared.notifyPortDiscovered(node, port)
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {

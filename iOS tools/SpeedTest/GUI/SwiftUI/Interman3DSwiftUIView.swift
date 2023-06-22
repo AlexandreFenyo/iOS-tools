@@ -10,7 +10,7 @@ import SwiftUI
 import SceneKit
 
 // true pour débugger
-private let free_flight = false
+private let free_flight = true
 
 class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     private var renderer: SCNSceneRenderer!
