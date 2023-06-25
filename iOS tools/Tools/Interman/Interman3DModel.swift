@@ -129,15 +129,25 @@ class B3D : SCNNode {
     }
 
     func addLinkRef(_ link: Link3D) {
+        print(#function)
         link_refs.insert(link)
     }
 
     func removeLinkRef(_ link: Link3D) {
+        print(#function)
         link_refs.remove(link)
     }
 
+    func getLinks() -> Set<Link3D> {
+        link_refs
+    }
+    
     func getLinks(with: B3D) -> Set<Link3D> {
         link_refs.filter { $0.getEnds().contains(with) }
+    }
+
+    func getLink3DScanNodes() -> Set<Link3DScanNode> {
+        link_refs.filter { $0 is Link3DScanNode } as! Set<Link3DScanNode>
     }
     
     fileprivate func addSubChildNode(_ child: SCNNode) {
@@ -145,11 +155,11 @@ class B3D : SCNNode {
     }
     
     fileprivate func getSubNode() -> SCNNode {
-        return sub_node
+        sub_node
     }
     
     func getAngle() -> Float {
-        return angle
+        angle
     }
     
     fileprivate func firstAnim(_ angle: Float) {
@@ -253,7 +263,7 @@ class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
     
     fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
-    fileprivate var height: Float { 0 } // CONTINUER ICI : implémenter height
+    fileprivate var height: Float { 0 }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -288,7 +298,7 @@ class Link3D : SCNNode {
             let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_b3d.presentation.worldPosition))
             var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
-            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, 0), transf)
+            transf = SCNMatrix4Mult(SCNMatrix4MakeTranslation(0, -0.5, -self.height), transf)
             return transf
         }
         size_constraint.influenceFactor = 1
@@ -319,7 +329,7 @@ class Link3DPortDiscovered : Link3D {
     private let port: UInt16
 
     override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
-    override fileprivate var height: Float { 1 }
+    override fileprivate var height: Float { 2 * B3D.default_scale }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -328,6 +338,9 @@ class Link3DPortDiscovered : Link3D {
     init(_ from_b3d: B3D, _ to_b3d: B3D, _ port: UInt16) {
         self.port = port
         super.init(from_b3d, to_b3d)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.detach()
+        }
     }
 }
 
@@ -336,12 +349,58 @@ public class Interman3DModel : ObservableObject {
 
     public var scene: SCNScene?
     private var b3d_hosts: [B3DHost]
-    
+
+    // Does not contain localhost IPs
+    private var scanned_IPs = Set<IPAddress>()
+
     public init() {
         print("MANAGER INIT")
         b3d_hosts = [B3DHost]()
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: true) { _ in
+            self.scheduledOperations()
+        }
     }
 
+    // reproduction du pb : démarrer l'app, onglet exploitation, recharger, stop, cliquer sur le routeur, scan ports, onglet network => on ne voit pas le lien de scan port entre le routeur et l'iPad local
+    private func scheduledOperations() {
+// DEBUG
+        print("XXXXXXXXXXXXXXXXXXXXXX SCHEDULED")
+        b3d_hosts.forEach { b3d_host in
+            if b3d_host.getLink3DScanNodes().isEmpty == false {
+                print("B3DHost with existing scan node links: host: \(b3d_host.getHost().dump())")
+                print("nlinks: \(b3d_host.getLink3DScanNodes().count)")
+            }
+        }
+        return;
+        
+        scanned_IPs.forEach { address in
+            if address.toNumericString()! == "192.168.1.254" {
+                print("MATCH 192.168.1.254")
+            } else {
+                return
+            }
+
+            guard let host = DBMaster.getNode(address: address) else { return }
+            guard let target = getB3DHost(host) else { return }
+            guard let local_node = getB3DLocalHost() else { return }
+            let links = target.getLinks(with: local_node)
+            links.forEach { link in
+                if let link = link as? Link3DScanNode {
+                    print("SCHEDULED: \(target) - nlinks: \(links.count) - link: \(link)")
+                    print("SCHEDULED2: \(String(describing: link.to_b3d))")
+                    
+                }
+            }
+            
+//            target.addChildNode(ComponentTemplates.createAxes(0.1))
+            /*
+            if local_node.getLinks(with: target).isEmpty {
+                _ = Link3DScanNode(local_node, target)
+            }
+             */
+        }
+    }
+    
     static func normalizeAngle(_ angle: Float) -> Float {
         var new_angle = angle.truncatingRemainder(dividingBy: 2 * .pi)
         if new_angle < 0 { new_angle += 2 * .pi }
@@ -424,7 +483,7 @@ public class Interman3DModel : ObservableObject {
         // modifier l'affichage des valeurs du noeud
     }
 
-    func notifyScanNode(_ node: Node) {
+    func notifyScanNode(_ node: Node, _ address: IPAddress) {
         guard let local_node = getB3DLocalHost() else {
             print("\(#function): Warning: localhost is not backed by a 3D node")
             return
@@ -436,11 +495,13 @@ public class Interman3DModel : ObservableObject {
         }
 
         if local_node != target {
+            scanned_IPs.insert(address)
+            print("add new scanned IP: \(scanned_IPs)")
             _ = Link3DScanNode(local_node, target)
         }
     }
 
-    func notifyScanNodeFinished(_ node: Node) {
+    func notifyScanNodeFinished(_ node: Node, _ address: IPAddress) {
         guard let local_node = getB3DLocalHost() else {
             print("\(#function): Warning: localhost is not backed by a 3D node")
             return
@@ -451,6 +512,8 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
+        scanned_IPs.remove(address)
+        print("remove scanned IP: \(scanned_IPs)")
         target.getLinks(with: local_node).forEach { $0.detach() }
     }
 

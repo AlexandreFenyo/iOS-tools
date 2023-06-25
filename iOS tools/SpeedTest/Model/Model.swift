@@ -140,7 +140,7 @@ public class Node : Hashable {
         hasher.combine(services)
     }
 
-    private var is_in_model = false
+//    private var is_in_model = false
     
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
     fileprivate var mcast_dns_names = Set<FQDN>()
@@ -530,7 +530,7 @@ class DBMaster {
             print("can not find node with address \(address)")
             return
         }
-        Interman3DModel.shared.notifyScanNode(node)
+        Interman3DModel.shared.notifyScanNode(node, address)
     }
 
     func notifyScanPortsFinished(address: IPAddress) {
@@ -539,7 +539,7 @@ class DBMaster {
             return
         }
         if node.isLocalHost() { return }
-        Interman3DModel.shared.notifyScanNodeFinished(node)
+        Interman3DModel.shared.notifyScanNodeFinished(node, address)
     }
 
     func notifyPortDiscovered(address: IPAddress, port: UInt16) {
