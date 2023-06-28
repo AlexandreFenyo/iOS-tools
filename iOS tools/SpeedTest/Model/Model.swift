@@ -446,9 +446,17 @@ class DBMaster {
     static func getNode(address: IPAddress) -> Node? {
         if address.getFamily() == AF_INET {
             let addr = address as! IPv4Address
+            let foo = shared.nodes.filter { $0.v4_addresses.contains(addr) }.count
+            if foo > 1 || foo == 0 {
+                print("XXXXX: \(foo) noeuds v4")
+            }
             return shared.nodes.filter { $0.v4_addresses.contains(addr) }.first
         } else {
             let addr = address as! IPv6Address
+            let bar = shared.nodes.filter { $0.v6_addresses.contains(addr) }.count
+            if bar > 1 || bar == 0 {
+                print("XXXXX: \(bar) noeuds v6")
+            }
             return shared.nodes.filter { $0.v6_addresses.contains(addr) }.first
         }
     }

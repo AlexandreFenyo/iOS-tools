@@ -276,6 +276,7 @@ class Link3D : SCNNode {
         return ends
     }
 
+    
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init()
 
@@ -305,10 +306,14 @@ class Link3D : SCNNode {
         link_node_draw.constraints = [size_constraint]
         
         from_b3d.addSubChildNode(self)
+
+        print("CREATE link3D address: \(Unmanaged.passUnretained(self).toOpaque())")
     }
 
     // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
     fileprivate func detach() {
+        print("link3D address: \(Unmanaged.passUnretained(self).toOpaque())")
+        
         if let from_b3d { from_b3d.removeLinkRef(self) }
         if let to_b3d { to_b3d.removeLinkRef(self) }
         removeFromParentNode()
@@ -361,14 +366,29 @@ public class Interman3DModel : ObservableObject {
         }
     }
 
-    // reproduction du pb : démarrer l'app, onglet exploitation, recharger, stop, cliquer sur le routeur, scan ports, onglet network => on ne voit pas le lien de scan port entre le routeur et l'iPad local
+    private static func renewLink3DScanNode(link: Link3DScanNode) {
+        guard let from_b3d = link.from_b3d, let to_b3d = link.to_b3d else { return }
+        link.detach()
+        _ = Link3DScanNode(from_b3d, to_b3d)
+    }
+    
+    // reproduction du pb : démarrer l'app, onglet exploration, recharger, stop, cliquer sur le routeur, scan ports, onglet network => on ne voit pas le lien de scan port entre le routeur et l'iPad local
     private func scheduledOperations() {
 // DEBUG
-        print("XXXXXXXXXXXXXXXXXXXXXX SCHEDULED")
+        print("SCHEDULED")
+  
+        // ne pas les refaire deux fois car les liens vont être trouvés deux fois !!!!!
+        // CONTINUER ICI !!!!
+        //                Self.renewLink3DScanNode(link)
+
+        
         b3d_hosts.forEach { b3d_host in
             if b3d_host.getLink3DScanNodes().isEmpty == false {
                 print("B3DHost with existing scan node links: host: \(b3d_host.getHost().dump())")
                 print("nlinks: \(b3d_host.getLink3DScanNodes().count)")
+                
+                
+                
             }
         }
         return;
@@ -565,6 +585,36 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
 
+        guard let _first_host = DBMaster.getNode(address: IPv4Address("192.168.1.254")!) else {
+            print("\(#function): warning, router not found")
+            return
+        }
+        guard let _b3d_first_host = getB3DHost(_first_host) else {
+            print("\(#function): warning, router is not backed by a 3D node")
+            return
+        }
+
+        guard let link3d_scan_node = _b3d_first_host.getLinks().first as? Link3DScanNode else {
+            print("bad link")
+            return
+        }
+        
+        print("link3D address: \(Unmanaged.passUnretained(link3d_scan_node).toOpaque())")
+        print(link3d_scan_node.presentation.worldPosition)
+        
+        
+        
+        
+        guard let from_b3d = link3d_scan_node.from_b3d, let to_b3d = link3d_scan_node.to_b3d else {
+            return
+        }
+        link3d_scan_node.detach()
+        let bar = Link3DScanNode(from_b3d, to_b3d)
+        print(bar.presentation.worldPosition)
+        
+        
+        return
+        
         /*
         guard let first_host = DBMaster.shared.sections[.localhost]?.nodes.first else {
             print("\(#function): warning, localhost not found")

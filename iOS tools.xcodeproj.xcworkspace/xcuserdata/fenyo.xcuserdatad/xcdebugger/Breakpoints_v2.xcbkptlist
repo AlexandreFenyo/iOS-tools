@@ -3,4 +3,159 @@
    uuid = "0813803C-8EED-439C-A5B8-A16B58444937"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "038B8F62-47D1-45CF-9896-344008555832"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "iOS tools/Tools/Interman/Interman3DModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "605"
+            endingLineNumber = "605"
+            landmarkName = "testIHMUpdate()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1428">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1476">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1556">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1648">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1696">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1776">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1708">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1756">
+               </Location>
+               <Location
+                  uuid = "038B8F62-47D1-45CF-9896-344008555832 - a2922729f43f4be6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "iOS_tools.Interman3DModel.testIHMUpdate() -&gt; ()"
+                  moduleName = "iOS tools"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fenyo/git2/iOS-tools/iOS%20tools/Tools/Interman/Interman3DModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "593"
+                  endingLineNumber = "593"
+                  offsetFromSymbolStart = "1836">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
