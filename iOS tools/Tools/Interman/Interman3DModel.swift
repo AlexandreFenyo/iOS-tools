@@ -465,6 +465,7 @@ public class Interman3DModel : ObservableObject {
 
         if local_node != target {
             scanned_IPs.insert(address)
+            // print("add new scanned IP: \(scanned_IPs)")
             _ = Link3DScanNode(local_node, target)
         }
     }
@@ -481,6 +482,7 @@ public class Interman3DModel : ObservableObject {
         }
 
         scanned_IPs.remove(address)
+        // print("remove scanned IP: \(scanned_IPs)")
         target.getLinks(with: local_node).forEach { $0.detach() }
     }
 
