@@ -129,12 +129,10 @@ class B3D : SCNNode {
     }
 
     func addLinkRef(_ link: Link3D) {
-        print(#function)
         link_refs.insert(link)
     }
 
     func removeLinkRef(_ link: Link3D) {
-        print(#function)
         link_refs.remove(link)
     }
 
@@ -258,7 +256,6 @@ class B3DHost : B3D {
 // - scan TCP ports
 // - port discovered
 // - multicast Bonjour service discovered
-
 class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
     
@@ -306,14 +303,10 @@ class Link3D : SCNNode {
         link_node_draw.constraints = [size_constraint]
         
         from_b3d.addSubChildNode(self)
-
-        print("CREATE link3D address: \(Unmanaged.passUnretained(self).toOpaque())")
     }
 
     // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
     fileprivate func detach() {
-        print("link3D address: \(Unmanaged.passUnretained(self).toOpaque())")
-        
         if let from_b3d { from_b3d.removeLinkRef(self) }
         if let to_b3d { to_b3d.removeLinkRef(self) }
         removeFromParentNode()
@@ -359,7 +352,6 @@ public class Interman3DModel : ObservableObject {
     private var scanned_IPs = Set<IPAddress>()
 
     public init() {
-        print("MANAGER INIT")
         b3d_hosts = [B3DHost]()
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: true) { _ in
             self.scheduledOperations()
@@ -371,56 +363,15 @@ public class Interman3DModel : ObservableObject {
         link.detach()
         _ = Link3DScanNode(from_b3d, to_b3d)
     }
-    
-    // reproduction du pb : démarrer l'app, onglet exploration, recharger, stop, cliquer sur le routeur, scan ports, onglet network => on ne voit pas le lien de scan port entre le routeur et l'iPad local
+
+    // Needed due to a bug in SCeneKit: when things happen on the 3D model, while the 3D view is not displayed, you some time encounter bad things. Here, we recreate some nodes since they do not appear in certain circonstances. Here is a way to reproduce the bug :
+    // start app, got to Exploration tab, click reload, click stop, select a node that is not localhost, click to scan TCP ports on the node, go to the 3D tab. The 3D link scan node does not appear.
     private func scheduledOperations() {
-// DEBUG
-        print("SCHEDULED")
-  
-        // ne pas les refaire deux fois car les liens vont être trouvés deux fois !!!!!
-        // CONTINUER ICI !!!!
-        //                Self.renewLink3DScanNode(link)
-
-        
-        b3d_hosts.forEach { b3d_host in
-            if b3d_host.getLink3DScanNodes().isEmpty == false {
-                print("B3DHost with existing scan node links: host: \(b3d_host.getHost().dump())")
-                print("nlinks: \(b3d_host.getLink3DScanNodes().count)")
-                
-                
-                
-            }
-        }
-        return;
-        
-        scanned_IPs.forEach { address in
-            if address.toNumericString()! == "192.168.1.254" {
-                print("MATCH 192.168.1.254")
-            } else {
-                return
-            }
-
-            guard let host = DBMaster.getNode(address: address) else { return }
-            guard let target = getB3DHost(host) else { return }
-            guard let local_node = getB3DLocalHost() else { return }
-            let links = target.getLinks(with: local_node)
-            links.forEach { link in
-                if let link = link as? Link3DScanNode {
-                    print("SCHEDULED: \(target) - nlinks: \(links.count) - link: \(link)")
-                    print("SCHEDULED2: \(String(describing: link.to_b3d))")
-                    
-                }
-            }
-            
-//            target.addChildNode(ComponentTemplates.createAxes(0.1))
-            /*
-            if local_node.getLinks(with: target).isEmpty {
-                _ = Link3DScanNode(local_node, target)
-            }
-             */
-        }
+        var links = Set<Link3DScanNode>()
+        b3d_hosts.forEach { links.formUnion($0.getLink3DScanNodes()) }
+        links.forEach { Self.renewLink3DScanNode(link: $0) }
     }
-    
+
     static func normalizeAngle(_ angle: Float) -> Float {
         var new_angle = angle.truncatingRemainder(dividingBy: 2 * .pi)
         if new_angle < 0 { new_angle += 2 * .pi }
@@ -481,8 +432,6 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeRemoved(_ host: Node) {
-//      print("\(#function)")
-        
         guard let b3d_host = detachB3DSimilarHost(host) else { return }
         updateAngles()
         b3d_host.remove()
@@ -516,7 +465,6 @@ public class Interman3DModel : ObservableObject {
 
         if local_node != target {
             scanned_IPs.insert(address)
-            print("add new scanned IP: \(scanned_IPs)")
             _ = Link3DScanNode(local_node, target)
         }
     }
@@ -533,7 +481,6 @@ public class Interman3DModel : ObservableObject {
         }
 
         scanned_IPs.remove(address)
-        print("remove scanned IP: \(scanned_IPs)")
         target.getLinks(with: local_node).forEach { $0.detach() }
     }
 
