@@ -252,6 +252,40 @@ class B3DHost : B3D {
     }
 }
 
+class Broadcast3D : SCNNode {
+    private var broadcast_node_draw: SCNNode
+    private var torus: SCNTorus
+
+    override init() {
+        broadcast_node_draw = SCNNode()
+        torus = SCNTorus(ringRadius: 0.1, pipeRadius: 0.01)
+        torus.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
+        broadcast_node_draw.geometry = torus
+        super.init()
+        addChildNode(broadcast_node_draw)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    fileprivate func firstAnim() {
+        torus.ringRadius = 0.1
+        let animation = CABasicAnimation(keyPath: "geometry.ringRadius")
+        animation.repeatCount = .infinity
+        animation.fromValue = 0.1
+        animation.toValue = 1
+        animation.duration = 0.5
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        broadcast_node_draw.addAnimation(animation, forKey: "broadcast")
+    }
+    
+    fileprivate func removeAnim() {
+        broadcast_node_draw.removeAllAnimations()
+    }
+}
+
 // 3D link types:
 // - scan TCP ports
 // - port discovered
@@ -347,6 +381,7 @@ public class Interman3DModel : ObservableObject {
 
     public var scene: SCNScene?
     private var b3d_hosts: [B3DHost]
+    private var broadcasts = Set<Broadcast3D>()
 
     // Does not contain localhost IPs
     private var scanned_IPs = Set<IPAddress>()
@@ -439,8 +474,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeMerged(_ node: Node, _ into: Node) {
-        print("\(#function)")
-
+        // print("\(#function)")
         guard let b3d_host = detachB3DHostInstance(into) else { return }
         updateAngles()
         b3d_host.remove()
@@ -448,7 +482,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeUpdated(_ node: Node) {
-        print("\(#function)")
+        // print("\(#function)")
         // modifier l'affichage des valeurs du noeud
     }
 
@@ -501,7 +535,26 @@ public class Interman3DModel : ObservableObject {
             _ = Link3DPortDiscovered(local_node, target, port)
         }
     }
+    
+    func notifyBroadcast() {
+        addBroadcast()
+    }
 
+    func notifyBroadcastFinished() {
+        broadcasts.forEach {
+            $0.removeAnim()
+            $0.removeFromParentNode()
+        }
+        broadcasts.removeAll()
+    }
+
+    private func addBroadcast() {
+        let broadcast = Broadcast3D()
+        broadcasts.insert(broadcast)
+        broadcast.firstAnim()
+        scene?.rootNode.addChildNode(broadcast)
+    }
+    
     private func addHost(_ host: Node) {
         let b3d_host = B3DHost(ComponentTemplates.standard, host)
         b3d_hosts.append(b3d_host)
@@ -534,6 +587,10 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
 
+        addBroadcast()
+        
+        return
+        
         guard let _first_host = DBMaster.getNode(address: IPv4Address("192.168.1.254")!) else {
             print("\(#function): warning, router not found")
             return

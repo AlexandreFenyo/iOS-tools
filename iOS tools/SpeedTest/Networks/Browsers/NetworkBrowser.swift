@@ -10,9 +10,9 @@ import Foundation
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
-    private let device_manager : DeviceManager
-    private let browser_tcp : TCPPortBrowser?
-    private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
+    private let device_manager: DeviceManager
+    private let browser_tcp: TCPPortBrowser?
+    private var reply_ipv4: [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
     private var unicast_ipv4_finished = false // Main thread
@@ -174,6 +174,8 @@ class NetworkBrowser {
             // Send unicast ICMPv4
             DispatchQueue.main.async {
                 self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
+                // Add torus
+                DBMaster.shared.notifyBroadcast()
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
@@ -388,6 +390,11 @@ class NetworkBrowser {
   
             close(s)
             close(s6)
+
+            DispatchQueue.main.sync {
+                self.device_manager.addTrace("network browsing: finished", level: .INFO)
+                DBMaster.shared.notifyBroadcastFinished()
+            }
 
             if let browser_tcp = self.browser_tcp {
                 browser_tcp.browse(doAtEnd: doAtEnd)

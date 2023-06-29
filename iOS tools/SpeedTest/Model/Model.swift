@@ -533,6 +533,14 @@ class DBMaster {
         return node
     }
     
+    func notifyBroadcast() {
+        Interman3DModel.shared.notifyBroadcast()
+    }
+
+    func notifyBroadcastFinished() {
+        Interman3DModel.shared.notifyBroadcastFinished()
+    }
+    
     func notifyScanPorts(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
