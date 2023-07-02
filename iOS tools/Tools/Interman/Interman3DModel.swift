@@ -292,6 +292,7 @@ class Broadcast3D : SCNNode {
 // - multicast Bonjour service discovered
 class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
+    private let link_node_draw: SCNNode
     
     fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
     fileprivate var height: Float { 0 }
@@ -309,6 +310,7 @@ class Link3D : SCNNode {
 
     
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        link_node_draw = SCNNode()
         super.init()
 
         self.from_b3d = from_b3d
@@ -316,7 +318,6 @@ class Link3D : SCNNode {
         from_b3d.addLinkRef(self)
         to_b3d.addLinkRef(self)
 
-        let link_node_draw = SCNNode()
         addChildNode(link_node_draw)
         link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
         link_node_draw.geometry!.firstMaterial!.diffuse.contents = color
@@ -336,9 +337,24 @@ class Link3D : SCNNode {
         size_constraint.influenceFactor = 1
         link_node_draw.constraints = [size_constraint]
         
+        startBlinking()
+        
         from_b3d.addSubChildNode(self)
     }
 
+    private func startBlinking() {
+        
+        let foo = link_node_draw.geometry!.firstMaterial!
+        let animation = CABasicAnimation(keyPath: "transparency")
+        animation.fromValue = 0.0
+        animation.toValue = 1.0
+        animation.duration = 0.5
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        foo.addAnimation(animation, forKey: "blink")
+
+    }
+    
     // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
     fileprivate func detach() {
         if let from_b3d { from_b3d.removeLinkRef(self) }
@@ -370,7 +386,7 @@ class Link3DPortDiscovered : Link3D {
     init(_ from_b3d: B3D, _ to_b3d: B3D, _ port: UInt16) {
         self.port = port
         super.init(from_b3d, to_b3d)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.detach()
         }
     }
