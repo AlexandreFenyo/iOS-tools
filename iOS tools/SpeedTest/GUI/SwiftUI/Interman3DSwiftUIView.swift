@@ -102,13 +102,8 @@ struct Interman3DSwiftUIView: View {
     
     // .allowsCameraControl: if allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
     let scene_view_options = free_flight ? [ .allowsCameraControl ] : SceneView.Options()
-    
-//    @ObservedObject var model = TracesViewModel()
-    
-    
-    
 
-    // TESTS
+    // Needed by traces
     @Namespace var topID
     @Namespace var bottomID
     private struct ScrollViewOffsetPreferenceKey: PreferenceKey {
@@ -119,7 +114,6 @@ struct Interman3DSwiftUIView: View {
     }
     @State private var timer: Timer?
 
-    
     var body: some View {
 
         ZStack {

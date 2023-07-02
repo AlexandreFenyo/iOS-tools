@@ -24,13 +24,6 @@ class IntermanViewController : UIViewController {
         return hostingController
     }()
     
-    // Not used - in case we use Interman2DSwiftUIView
-    private func make2DHostingController() -> UIHostingController<Interman2DSwiftUIView> {
-        let hostingController = UIHostingController(rootView: Interman2DSwiftUIView())
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        return hostingController
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
