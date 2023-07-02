@@ -26,7 +26,10 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
-    @ObservedObject var model = Interman3DModel.shared
+
+    @ObservedObject var interman3d_model = Interman3DModel.shared
+    @ObservedObject var model = TracesViewModel.shared
+
     private let camera: SCNNode
     let scene: SCNScene
     private var render_delegate = RenderDelegate()
@@ -92,7 +95,7 @@ struct Interman3DSwiftUIView: View {
     }
     
     func setSelectedHost(_ host: Node) {
-        guard let node = model.getB3DHost(host) else { return }
+        guard let node = interman3d_model.getB3DHost(host) else { return }
         let new_camera_angle = -node.getAngle()
         rotateCamera(new_camera_angle, smooth: true)
     }
@@ -100,21 +103,85 @@ struct Interman3DSwiftUIView: View {
     // .allowsCameraControl: if allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
     let scene_view_options = free_flight ? [ .allowsCameraControl ] : SceneView.Options()
     
+//    @ObservedObject var model = TracesViewModel()
+    
+    
+    
+
+    // TESTS
+    @Namespace var topID
+    @Namespace var bottomID
+    private struct ScrollViewOffsetPreferenceKey: PreferenceKey {
+        static var defaultValue: CGFloat = .zero
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value += nextValue()
+        }
+    }
+    @State private var timer: Timer?
+
+    
     var body: some View {
+
         ZStack {
+            // 3D view
             SceneView(
                 scene: scene,
                 options: scene_view_options,
                 delegate: render_delegate
             )
             .edgesIgnoringSafeArea(.all)
-          VStack {
+
+            // Traces
+            GeometryReader { traceGeom in
+                 ScrollViewReader { scrollViewProxy in
+                     ZStack {
+                         ScrollView {
+                             ZStack {
+                                 LazyVStack(alignment: .leading, spacing: 0) {
+                                     Spacer().id(topID)
+                                     ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
+                                         Text(model.traces[i]).font(.footnote)
+                                             .lineLimit(nil)
+                                             .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                     }
+                                     Text(model.traces.last!)
+                                         .font(.footnote)
+                                         .id(bottomID)
+                                         .lineLimit(nil)
+                                         .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                 }.padding()
+                                 GeometryReader { scrollViewContentGeom in
+                                     Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                                 }
+                             }
+                         }
+                         .onAppear() {
+                             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                             }
+                         }
+                         .onDisappear() {
+                             timer?.invalidate()
+                         }
+                         VStack {
+                             HStack {
+                             }.background(Color.clear).lineLimit(1)
+                             Spacer()
+                         }
+                         .padding()
+                     }
+                     .frame(height: traceGeom.size.height / 6)
+                 }
+            }.opacity(0.4)
+
+            // Controls
+            VStack {
             Spacer()
 
             HStack {
               HStack {
                   Button {
-                      model.testIHMCreate()
+                      interman3d_model.testIHMCreate()
                   } label: {
                       Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
@@ -125,7 +192,7 @@ struct Interman3DSwiftUIView: View {
               Text("salut").foregroundColor(.white)
               Spacer()
                 Button {
-                    model.testIHMUpdate()
+                    interman3d_model.testIHMUpdate()
                     testQuat()
                 } label: {
                     Text("update")

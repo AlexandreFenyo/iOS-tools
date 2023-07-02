@@ -20,7 +20,7 @@ class TracesViewController : UIViewController {
         return hostingController
     }
 
-    public func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+    public func addTrace(_ content: String, level: LogLevel = .ALL) {
         hostingViewController.rootView.model.append(content, level: level)
     }
  

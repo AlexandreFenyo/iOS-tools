@@ -34,7 +34,7 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     private var services: [NetService] = []
     private let type: String
-    private let device_manager : DeviceManager
+    private let device_manager: DeviceManager
 
     init(_ type: String, deviceManager: DeviceManager) {
         self.type = type

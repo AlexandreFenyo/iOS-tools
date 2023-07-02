@@ -61,7 +61,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel)
+    func addTrace(_ content: String, level: LogLevel)
 }
 
 // foncé: 70 80 91
@@ -79,7 +79,7 @@ class DeviceCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the main UITableView
 class MasterViewController: UITableViewController, DeviceManager {
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+    func addTrace(_ content: String, level: LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
     }
 
@@ -130,7 +130,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func resetToDefaultHosts() {
-        addTrace("main: remove previously discovered hosts", level: .INFO)
+        addTrace("main: remove previously discovered hosts", level: LogLevel.INFO)
 
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
