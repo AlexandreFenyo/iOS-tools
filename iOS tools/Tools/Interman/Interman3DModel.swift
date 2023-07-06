@@ -241,9 +241,12 @@ class B3DHost : B3D {
         let text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0.001
         text.firstMaterial!.diffuse.contents = UIColor.yellow
+        text.firstMaterial!.isDoubleSided = true
         let text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        text_node.position.x = 1
+        text_node.position.z = 1.5
         addSubChildNode(text_node)
     }
 
