@@ -90,6 +90,15 @@ print("transf: \(bar_node.transform)")
 // avoir un rendu filaire :
 // link_node_draw.geometry?.firstMaterial?.fillMode = .lines
 
+// Add a box around the text node:
+// let (min, max) = text_node.boundingBox
+// let geoBox = SCNBox(width: CGFloat(max.x - min.x), height: CGFloat(max.y - min.y), length: CGFloat(max.z - min.z), chamferRadius: 0)
+// geoBox.firstMaterial!.diffuse.contents = UIColor.green.withAlphaComponent(0.5)
+// let boxNode = SCNNode(geometry: geoBox)
+// boxNode.position = SCNVector3Make((max.x - min.x) / 2 + min.x, (max.y - min.y) / 2 + min.y, 0);
+// text_node.addChildNode(boxNode)
+
+
 struct ComponentTemplates {
     public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
@@ -239,14 +248,15 @@ class B3DHost : B3D {
             display_text = bar
         }
         let text = SCNText(string: display_text, extrusionDepth: 0)
-        text.flatness = 0.001
+        text.flatness = 0
         text.firstMaterial!.diffuse.contents = UIColor.yellow
         text.firstMaterial!.isDoubleSided = true
         let text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
+
+        let (min, max) = text_node.boundingBox
+        text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-        text_node.position.x = 1
-        text_node.position.z = 1.5
         addSubChildNode(text_node)
     }
 
@@ -581,6 +591,8 @@ public class Interman3DModel : ObservableObject {
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
+        // Debug
+        // b3d_host.addChildNode(ComponentTemplates.createAxes(0.2))
         updateAngles()
     }
     
