@@ -130,6 +130,7 @@ struct ComponentTemplates {
     }
 }
 
+/*
 extension simd_float4x4 {
     public init(matrix: GLKMatrix4) {
         self.init(columns: (SIMD4<Float>(x: matrix.m00, y: matrix.m01, z: matrix.m02, w: matrix.m03),
@@ -138,6 +139,7 @@ extension simd_float4x4 {
                             SIMD4<Float>(x: matrix.m30, y: matrix.m31, z: matrix.m32, w: matrix.m33)))
     }
 }
+*/
 
 // Base class for 3D objects in a circle
 class B3D : SCNNode {
