@@ -21,6 +21,7 @@
 		5D37D20929734FB700578E59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5D37D20B29734FB700578E59 /* Localizable.strings */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
+		5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA64F2A5C06FF005D11E0 /* test.scn */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D463FBB2A3C4F3100DA77C4 /* Repère.scn */; };
@@ -125,6 +126,7 @@
 		5D37D20C29734FC300578E59 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		5D3BA64F2A5C06FF005D11E0 /* test.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = test.scn; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D463FBB2A3C4F3100DA77C4 /* Repère.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Repère.scn"; sourceTree = "<group>"; };
@@ -380,9 +382,17 @@
 			path = Assets;
 			sourceTree = "<group>";
 		};
+		5D3BA6512A5C30E6005D11E0 /* 3D models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "3D models";
+			sourceTree = "<group>";
+		};
 		5D463FBA2A3722A500DA77C4 /* Artwork */ = {
 			isa = PBXGroup;
 			children = (
+				5D3BA6512A5C30E6005D11E0 /* 3D models */,
 				5D65EE5A296491760099871C /* screen captures */,
 				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
 				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
@@ -508,6 +518,7 @@
 				5DEDFB6B29C7195600052FB7 /* Interman3DModel.swift */,
 				5D85623D29C8317E009050AA /* Sandbox.scn */,
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
+				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
 			);
 			path = Interman;
 			sourceTree = "<group>";
@@ -690,6 +701,7 @@
 				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
 				5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */,
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
+				5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */,
 				5D65EE53296381780099871C /* app-icon-60.png in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,

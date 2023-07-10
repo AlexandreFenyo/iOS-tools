@@ -98,11 +98,30 @@ print("transf: \(bar_node.transform)")
 // boxNode.position = SCNVector3Make((max.x - min.x) / 2 + min.x, (max.y - min.y) / 2 + min.y, 0);
 // text_node.addChildNode(boxNode)
 
+// liste des modèles 3D nécessaires :
+// - Apple TV
+// - serveur DNS
+// - iPad
+// - iPhone
+// - Mac : ssh + _airplay._tcp.
+// - serveur de stockage : _smb._tcp. ou TCP/445, _adisk._tcp. ou _smb._tcp. ou TCP/445
+// - imprimante-scanner : _pdl-datastream._tcp., _scanner._tcp., TCP/9100 (printer), TCP/9500 (scan)
+// - imprimante sans scanner
+// - serveur web : TCP/80
+// kerberos ?
+// - Hue (domotique)
+// - IoT avec audio
+// - audio (mais pas IoT, ex: Marantz)
+// - routeur
+// - PC
 
 struct ComponentTemplates {
-    public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
-    public static let axes = SCNScene(named: "Repère.scn")!.rootNode
+    // Pour tester des modèles 3D
+    // public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+    public static let standard = SCNScene(named: "test.scn")!.rootNode
     
+    public static let axes = SCNScene(named: "Repère.scn")!.rootNode
+
     public static func createAxes(_ scale: Float) -> SCNNode {
         let new_axes = axes.clone()
         new_axes.scale = SCNVector3(scale, scale, scale)
