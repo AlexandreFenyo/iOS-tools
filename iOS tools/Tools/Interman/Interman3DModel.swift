@@ -106,20 +106,30 @@ print("transf: \(bar_node.transform)")
 // - Mac : ssh + _airplay._tcp.
 // - serveur de stockage : _smb._tcp. ou TCP/445, _adisk._tcp. ou _smb._tcp. ou TCP/445
 // - imprimante-scanner : _pdl-datastream._tcp., _scanner._tcp., TCP/9100 (printer), TCP/9500 (scan)
-// - imprimante sans scanner
+// X- imprimante sans scanner
 // - serveur web : TCP/80
 // kerberos ?
 // - Hue (domotique)
 // - IoT avec audio
 // - audio (mais pas IoT, ex: Marantz)
 // - routeur
-// - PC
+// X- PC
 
 struct ComponentTemplates {
     // Pour tester des modèles 3D
     // public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
 //    public static let standard = SCNScene(named: "test.scn")!.rootNode
-    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
+
+    // https://sketchfab.com/3d-models/mini-macbook-pro-2b054523279747c8b5b2e5ed9ea7b311
+    // https://sketchfab.com/3d-models/08-printer-householdpropschallenge-a11b8e0bfc8741f08472c09b10202c75
+    // https://sketchfab.com/3d-models/printer-household-props-8-39c75da7fbd34187acd1750d7ac41142
+    // https://sketchfab.com/3d-models/old-printer-low-poly-d4a6b284b2984c59ae2a3a1bdeb059cf
+    
+    public static let standard = SCNScene(named: "printer2.scn")!.rootNode
+
+    public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
+    public static let printer = SCNScene(named: "printer.scn")!.rootNode
+    public static let printer2 = SCNScene(named: "printer2.scn")!.rootNode
 
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
 

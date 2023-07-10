@@ -23,6 +23,9 @@
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
 		5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA64F2A5C06FF005D11E0 /* test.scn */; };
 		5D3BA6532A5C37A5005D11E0 /* laptop.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6522A5C37A5005D11E0 /* laptop.scn */; };
+		5D3BA6552A5C3E15005D11E0 /* printer.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6542A5C3E15005D11E0 /* printer.scn */; };
+		5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6562A5C3EAA005D11E0 /* printer2.scn */; };
+		5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6582A5C4028005D11E0 /* printer3.scn */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D463FBB2A3C4F3100DA77C4 /* Repère.scn */; };
@@ -129,6 +132,9 @@
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		5D3BA64F2A5C06FF005D11E0 /* test.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = test.scn; sourceTree = "<group>"; };
 		5D3BA6522A5C37A5005D11E0 /* laptop.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop.scn; sourceTree = "<group>"; };
+		5D3BA6542A5C3E15005D11E0 /* printer.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer.scn; sourceTree = "<group>"; };
+		5D3BA6562A5C3EAA005D11E0 /* printer2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer2.scn; sourceTree = "<group>"; };
+		5D3BA6582A5C4028005D11E0 /* printer3.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer3.scn; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D463FBB2A3C4F3100DA77C4 /* Repère.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Repère.scn"; sourceTree = "<group>"; };
@@ -522,6 +528,9 @@
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
 				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
 				5D3BA6522A5C37A5005D11E0 /* laptop.scn */,
+				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
+				5D3BA6562A5C3EAA005D11E0 /* printer2.scn */,
+				5D3BA6582A5C4028005D11E0 /* printer3.scn */,
 			);
 			path = Interman;
 			sourceTree = "<group>";
@@ -686,6 +695,7 @@
 				5D65EE57296381780099871C /* app-icon-180.png in Resources */,
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
+				5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */,
 				5D82ACE3297D46DB0021E492 /* docs-hosts-fr.png in Resources */,
 				5D65EE4F296381780099871C /* app-icon-40.png in Resources */,
 				5DE4ED98290586740000B30A /* docs-hosts.png in Resources */,
@@ -719,6 +729,7 @@
 				5D16E60B29A77FEB000A46E4 /* docs-action-bar-fr.png in Resources */,
 				5DE4ED97290586740000B30A /* docs-ports.png in Resources */,
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
+				5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
@@ -726,6 +737,7 @@
 				5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
+				5D3BA6552A5C3E15005D11E0 /* printer.scn in Resources */,
 				5DEDFB6A29C6E65F00052FB7 /* Interman 3D Standard Component.scn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
