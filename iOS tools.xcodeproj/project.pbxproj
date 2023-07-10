@@ -22,6 +22,7 @@
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
 		5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA64F2A5C06FF005D11E0 /* test.scn */; };
+		5D3BA6532A5C37A5005D11E0 /* laptop.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6522A5C37A5005D11E0 /* laptop.scn */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D463FBB2A3C4F3100DA77C4 /* Repère.scn */; };
@@ -127,6 +128,7 @@
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		5D3BA64F2A5C06FF005D11E0 /* test.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = test.scn; sourceTree = "<group>"; };
+		5D3BA6522A5C37A5005D11E0 /* laptop.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop.scn; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D463FBB2A3C4F3100DA77C4 /* Repère.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Repère.scn"; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 				5D85623D29C8317E009050AA /* Sandbox.scn */,
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
 				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
+				5D3BA6522A5C37A5005D11E0 /* laptop.scn */,
 			);
 			path = Interman;
 			sourceTree = "<group>";
@@ -700,6 +703,7 @@
 				5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */,
 				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
 				5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */,
+				5D3BA6532A5C37A5005D11E0 /* laptop.scn in Resources */,
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
 				5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */,
 				5D65EE53296381780099871C /* app-icon-60.png in Resources */,

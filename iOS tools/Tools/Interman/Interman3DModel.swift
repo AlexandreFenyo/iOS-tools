@@ -118,8 +118,9 @@ print("transf: \(bar_node.transform)")
 struct ComponentTemplates {
     // Pour tester des modèles 3D
     // public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
-    public static let standard = SCNScene(named: "test.scn")!.rootNode
-    
+//    public static let standard = SCNScene(named: "test.scn")!.rootNode
+    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
+
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
 
     public static func createAxes(_ scale: Float) -> SCNNode {
