@@ -26,6 +26,10 @@
 		5D3BA6552A5C3E15005D11E0 /* printer.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6542A5C3E15005D11E0 /* printer.scn */; };
 		5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6562A5C3EAA005D11E0 /* printer2.scn */; };
 		5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6582A5C4028005D11E0 /* printer3.scn */; };
+		5D3BA65B2A5C6CB8005D11E0 /* atv.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA65A2A5C6CB8005D11E0 /* atv.scn */; };
+		5D3BA65D2A5C6E78005D11E0 /* router.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA65C2A5C6E78005D11E0 /* router.scn */; };
+		5D3BA65F2A5C709D005D11E0 /* iPhone.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA65E2A5C709D005D11E0 /* iPhone.scn */; };
+		5D3BA6612A5C73B6005D11E0 /* speaker.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6602A5C73B6005D11E0 /* speaker.scn */; };
 		5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D42E782216DE5890062A654 /* MasterSectionHeader.xib */; };
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D463FBB2A3C4F3100DA77C4 /* Repère.scn */; };
@@ -135,6 +139,10 @@
 		5D3BA6542A5C3E15005D11E0 /* printer.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer.scn; sourceTree = "<group>"; };
 		5D3BA6562A5C3EAA005D11E0 /* printer2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer2.scn; sourceTree = "<group>"; };
 		5D3BA6582A5C4028005D11E0 /* printer3.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer3.scn; sourceTree = "<group>"; };
+		5D3BA65A2A5C6CB8005D11E0 /* atv.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = atv.scn; sourceTree = "<group>"; };
+		5D3BA65C2A5C6E78005D11E0 /* router.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = router.scn; sourceTree = "<group>"; };
+		5D3BA65E2A5C709D005D11E0 /* iPhone.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPhone.scn; sourceTree = "<group>"; };
+		5D3BA6602A5C73B6005D11E0 /* speaker.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = speaker.scn; sourceTree = "<group>"; };
 		5D42E782216DE5890062A654 /* MasterSectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MasterSectionHeader.xib; sourceTree = "<group>"; };
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D463FBB2A3C4F3100DA77C4 /* Repère.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Repère.scn"; sourceTree = "<group>"; };
@@ -531,6 +539,10 @@
 				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
 				5D3BA6562A5C3EAA005D11E0 /* printer2.scn */,
 				5D3BA6582A5C4028005D11E0 /* printer3.scn */,
+				5D3BA65A2A5C6CB8005D11E0 /* atv.scn */,
+				5D3BA65C2A5C6E78005D11E0 /* router.scn */,
+				5D3BA65E2A5C709D005D11E0 /* iPhone.scn */,
+				5D3BA6602A5C73B6005D11E0 /* speaker.scn */,
 			);
 			path = Interman;
 			sourceTree = "<group>";
@@ -717,6 +729,8 @@
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
 				5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */,
 				5D65EE53296381780099871C /* app-icon-60.png in Resources */,
+				5D3BA6612A5C73B6005D11E0 /* speaker.scn in Resources */,
+				5D3BA65F2A5C709D005D11E0 /* iPhone.scn in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
@@ -728,6 +742,8 @@
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
 				5D16E60B29A77FEB000A46E4 /* docs-action-bar-fr.png in Resources */,
 				5DE4ED97290586740000B30A /* docs-ports.png in Resources */,
+				5D3BA65D2A5C6E78005D11E0 /* router.scn in Resources */,
+				5D3BA65B2A5C6CB8005D11E0 /* atv.scn in Resources */,
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,

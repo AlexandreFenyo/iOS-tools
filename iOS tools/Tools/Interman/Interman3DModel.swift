@@ -99,21 +99,21 @@ print("transf: \(bar_node.transform)")
 // text_node.addChildNode(boxNode)
 
 // liste des modèles 3D nécessaires :
-// - Apple TV
+// X- Apple TV
 // - serveur DNS
-// - iPad
-// - iPhone
+// X- iPad
+// X- iPhone
 // - Mac : ssh + _airplay._tcp.
 // - serveur de stockage : _smb._tcp. ou TCP/445, _adisk._tcp. ou _smb._tcp. ou TCP/445
-// - imprimante-scanner : _pdl-datastream._tcp., _scanner._tcp., TCP/9100 (printer), TCP/9500 (scan)
+// X- imprimante-scanner : _pdl-datastream._tcp., _scanner._tcp., TCP/9100 (printer), TCP/9500 (scan)
 // X- imprimante sans scanner
 // - serveur web : TCP/80
 // kerberos ?
 // - Hue (domotique)
 // - IoT avec audio
-// - audio (mais pas IoT, ex: Marantz)
-// - routeur
-// X- PC
+// X- audio (mais pas IoT, ex: Marantz)
+// X- routeur
+// X- laptop
 
 struct ComponentTemplates {
     // Pour tester des modèles 3D
@@ -124,12 +124,21 @@ struct ComponentTemplates {
     // https://sketchfab.com/3d-models/08-printer-householdpropschallenge-a11b8e0bfc8741f08472c09b10202c75
     // https://sketchfab.com/3d-models/printer-household-props-8-39c75da7fbd34187acd1750d7ac41142
     // https://sketchfab.com/3d-models/old-printer-low-poly-d4a6b284b2984c59ae2a3a1bdeb059cf
+    // https://sketchfab.com/3d-models/apple-tv-4k-3rdgen-wifi-ethernet-b223af0890f4406087b070e0532f85be
+    // https://sketchfab.com/3d-models/c8300-1n1s-4t2x-64f3ae889fda4a8f80ab229baf6060b7
+    // desktop : https://sketchfab.com/3d-models/desktop-pc-7030da42a907455ea98fabedca0a5192
+    // https://sketchfab.com/3d-models/iphone-13-pro-concept-43bddf623d24406aae61c8f3ba516e3d#download
+    // https://sketchfab.com/3d-models/apple-homepod-2229c164afd84b32aa23d6319a702c1f
+    // https://sketchfab.com/3d-models/realistic-speaker-277db5efa378494882aaa820abb84437
     
-    public static let standard = SCNScene(named: "printer2.scn")!.rootNode
+    public static let standard = SCNScene(named: "speaker.scn")!.rootNode
 
+    public static let speaker = SCNScene(named: "speaker.scn")!.rootNode
+    public static let iPhone = SCNScene(named: "iPhone.scn")!.rootNode
+    public static let router = SCNScene(named: "router.scn")!.rootNode
     public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
-    public static let printer = SCNScene(named: "printer.scn")!.rootNode
-    public static let printer2 = SCNScene(named: "printer2.scn")!.rootNode
+    public static let printer = SCNScene(named: "printer2.scn")!.rootNode
+    public static let atv = SCNScene(named: "atv.scn")!.rootNode
 
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
 
