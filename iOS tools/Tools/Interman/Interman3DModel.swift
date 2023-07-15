@@ -131,7 +131,7 @@ struct ComponentTemplates {
     // https://sketchfab.com/3d-models/realistic-speaker-277db5efa378494882aaa820abb84437
     // https://sketchfab.com/3d-models/apple-ipad-pro-e5ffb3c80b2d4d6690249f8ee2bdafbe
     
-//    public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+//  public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
     public static let standard = SCNScene(named: "laptop.scn")!.rootNode
 
     public static let speaker = SCNScene(named: "speaker.scn")!.rootNode
