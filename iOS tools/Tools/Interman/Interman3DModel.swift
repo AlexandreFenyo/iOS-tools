@@ -301,6 +301,11 @@ class B3DHost : B3D {
         addSubChildNode(text_node)
     }
 
+    // The associated Node has been updated, we may need to update the displayed values and the 3D model
+    func update() {
+        // CONTINUER ICI
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -553,7 +558,9 @@ public class Interman3DModel : ObservableObject {
     // Sync with the main model
     func notifyNodeUpdated(_ node: Node) {
         // print("\(#function)")
-        // modifier l'affichage des valeurs du noeud
+        // Update the displayed values and the 3D model
+        guard let b3d_host = getB3DHost(node) else { return }
+        b3d_host.update()
     }
 
     func notifyScanNode(_ node: Node, _ address: IPAddress) {

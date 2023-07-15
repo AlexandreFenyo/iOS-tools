@@ -568,6 +568,7 @@ class DBMaster {
     }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
+        var first_merged_node: Node? = nil
         
         // le pb : removed_nodes : values doit pas être nil - créer in noeud dont l'IP est 0.0.0.0 ?
         
@@ -585,7 +586,7 @@ class DBMaster {
         // keys: removed nodes; values: nodes in which removed nodes have been merged into
         var removed_nodes = [Node : Node]()
         
-        // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, dedup nodes are the nodes that have been updated.
+        // Track deduplicated nodes: nodes in arr_nodes that were already in arr_nodes and that have been updated (merged) with other nodes already present in arr_nodes (those other nodes are removed from arr_nodes during this process). Therefore, the nodes that have been updated are dedup nodes and the node in which new_node has been merged into (if it was similar to an existing node).
         var dedup = Set<Node>()
 
         if new_node == Node() || (add && nodes.contains(new_node)) {
@@ -618,6 +619,7 @@ class DBMaster {
             }
             // If one similar node has been merged into one existing node, merge every similar nodes into the existing node
             else {
+                first_merged_node = arr_nodes[merged_index]
                 repeat {
                     var merged = false
                     for i in 0..<arr_nodes.count {
@@ -724,6 +726,12 @@ class DBMaster {
         // New node (therefore there is not any removed, merged nor updated nodes)
         if is_new_node {
             Interman3DModel.shared.notifyNodeAdded(new_node)
+        }
+
+        if let first_merged_node {
+            // Add first_merged_node to dedup to make dedup finally contain every updated nodes, since we notify about every updated nodes and return them at the end of this function
+            dedup.insert(first_merged_node)
+            // dedup is now the updated node set
         }
 
         // Deal with updated nodes
