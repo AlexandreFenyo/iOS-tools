@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// a noter : view.frame inclut la bandeau du bas, si on veut retirer le bandeau on utilise les valeurs de view.safeAreaInsets
+// a noter: view.frame inclut la bandeau du bas, si on veut retirer le bandeau on utilise les valeurs de view.safeAreaInsets
 
 @MainActor
 class IntermanViewController : UIViewController {
