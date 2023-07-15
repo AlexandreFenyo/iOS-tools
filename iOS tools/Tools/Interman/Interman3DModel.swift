@@ -117,7 +117,6 @@ print("transf: \(bar_node.transform)")
 
 struct ComponentTemplates {
     // Pour tester des modèles 3D
-    // public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
 //    public static let standard = SCNScene(named: "test.scn")!.rootNode
 
     // https://sketchfab.com/3d-models/mini-macbook-pro-2b054523279747c8b5b2e5ed9ea7b311
@@ -130,11 +129,14 @@ struct ComponentTemplates {
     // https://sketchfab.com/3d-models/iphone-13-pro-concept-43bddf623d24406aae61c8f3ba516e3d#download
     // https://sketchfab.com/3d-models/apple-homepod-2229c164afd84b32aa23d6319a702c1f
     // https://sketchfab.com/3d-models/realistic-speaker-277db5efa378494882aaa820abb84437
+    // https://sketchfab.com/3d-models/apple-ipad-pro-e5ffb3c80b2d4d6690249f8ee2bdafbe
     
-    public static let standard = SCNScene(named: "speaker.scn")!.rootNode
+//    public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
 
     public static let speaker = SCNScene(named: "speaker.scn")!.rootNode
     public static let iPhone = SCNScene(named: "iPhone.scn")!.rootNode
+    public static let iPad = SCNScene(named: "iPad.scn")!.rootNode
     public static let router = SCNScene(named: "router.scn")!.rootNode
     public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
     public static let printer = SCNScene(named: "printer2.scn")!.rootNode
@@ -163,13 +165,17 @@ extension simd_float4x4 {
 // Base class for 3D objects in a circle
 class B3D : SCNNode {
     static let default_scale: Float = 0.1
-    private let sub_node: SCNNode
+    private let sub_node = SCNNode()
+    private var object_sub_node_ref: SCNNode
+    private var object_sub_node: SCNNode
     private var angle: Float = 0
     private var link_refs = Set<Link3D>()
 
-    public init(_ scn_node: SCNNode) {
-        sub_node = scn_node.clone()
+    init(_ scn_node: SCNNode) {
         sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
+        object_sub_node_ref = scn_node
+        object_sub_node = object_sub_node_ref.clone()
+        sub_node.addChildNode(object_sub_node)
         super.init()
         addChildNode(sub_node)
     }
@@ -178,6 +184,14 @@ class B3D : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func updateObject(_ scn_node: SCNNode) {
+        if object_sub_node_ref === scn_node { return }
+        object_sub_node_ref = scn_node
+        object_sub_node.removeFromParentNode()
+        object_sub_node = object_sub_node_ref.clone()
+        sub_node.addChildNode(object_sub_node)
+    }
+    
     func addLinkRef(_ link: Link3D) {
         link_refs.insert(link)
     }
@@ -304,6 +318,19 @@ class B3DHost : B3D {
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
     func update() {
         // CONTINUER ICI
+        print("\(#function)")
+        if host.isLocalHost() {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                updateObject(ComponentTemplates.iPad)
+            } else {
+                updateObject(ComponentTemplates.iPhone)
+            }
+            return
+        }
+
+        if host.toSectionTypes().contains(.gateway) {
+            updateObject(ComponentTemplates.router)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -366,7 +393,6 @@ class Link3D : SCNNode {
         if to_b3d != nil { ends.insert(to_b3d!) }
         return ends
     }
-
     
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
         link_node_draw = SCNNode()
@@ -402,7 +428,6 @@ class Link3D : SCNNode {
     }
 
     private func startBlinking() {
-        
         let foo = link_node_draw.geometry!.firstMaterial!
         let animation = CABasicAnimation(keyPath: "transparency")
         animation.fromValue = 0.0

@@ -69,6 +69,7 @@
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
+		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
 		5DC62F7D290AD29800C4B58E /* HeatMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */; };
 		5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */; };
@@ -212,6 +213,7 @@
 		5D8B7A122970107900F89A32 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
 		5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapViewController.swift; sourceTree = "<group>"; };
 		5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -421,6 +423,7 @@
 				5D3BA6602A5C73B6005D11E0 /* speaker.scn */,
 				5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */,
 				5DEDFB6929C6E65F00052FB7 /* Interman 3D Standard Component.scn */,
+				5DC13A7C2A633A470042796F /* iPad.scn */,
 			);
 			path = "3D models";
 			sourceTree = "<group>";
@@ -752,6 +755,7 @@
 				5DE4ED97290586740000B30A /* docs-ports.png in Resources */,
 				5D3BA65D2A5C6E78005D11E0 /* router.scn in Resources */,
 				5D3BA65B2A5C6CB8005D11E0 /* atv.scn in Resources */,
+				5DC13A7D2A633A470042796F /* iPad.scn in Resources */,
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
