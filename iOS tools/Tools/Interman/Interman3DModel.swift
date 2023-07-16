@@ -396,6 +396,13 @@ class B3DHost : B3D {
             updateModel(ComponentTemplates.speaker)
             return
         }
+
+        if (host.getServices().filter { $0.name == "_pdl-datastream._tcp." || $0.name == "_scanner._tcp." }).isEmpty == false {
+            updateModel(ComponentTemplates.printer)
+            return
+        }
+
+        
     }
     
     required init?(coder: NSCoder) {
@@ -446,8 +453,9 @@ class Link3D : SCNNode {
     private let link_node_draw: SCNNode
     
     fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
-    fileprivate var height: Float { 0 }
-    
+ //   fileprivate var height: Float { 0 }
+    fileprivate var height: Float { -2 * B3D.default_scale }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -469,7 +477,7 @@ class Link3D : SCNNode {
         to_b3d.addLinkRef(self)
 
         addChildNode(link_node_draw)
-        link_node_draw.geometry = SCNCylinder(radius: 0.1, height: 1)
+        link_node_draw.geometry = SCNCylinder(radius: 0.03, height: 1)
         link_node_draw.geometry!.firstMaterial!.diffuse.contents = color
 
         let look_at_contraint = SCNLookAtConstraint(target: to_b3d.getSubNode())
@@ -526,7 +534,7 @@ class Link3DPortDiscovered : Link3D {
     private let port: UInt16
 
     override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
-    override fileprivate var height: Float { 2 * B3D.default_scale }
+    override fileprivate var height: Float { -B3D.default_scale }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
