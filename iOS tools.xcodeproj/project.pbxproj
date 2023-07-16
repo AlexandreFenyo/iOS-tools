@@ -21,6 +21,7 @@
 		5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC492A63FAF4001F3B8D /* googlehome.scn */; };
 		5D1CBC4C2A63FCE2001F3B8D /* chromecast.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4B2A63FCE2001F3B8D /* chromecast.scn */; };
 		5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */; };
+		5D1CBC502A642207001F3B8D /* everything.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4F2A642207001F3B8D /* everything.scn */; };
 		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
 		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
@@ -141,6 +142,7 @@
 		5D1CBC492A63FAF4001F3B8D /* googlehome.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = googlehome.scn; sourceTree = "<group>"; };
 		5D1CBC4B2A63FCE2001F3B8D /* chromecast.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = chromecast.scn; sourceTree = "<group>"; };
 		5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop2.scn; sourceTree = "<group>"; };
+		5D1CBC4F2A642207001F3B8D /* everything.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = everything.scn; sourceTree = "<group>"; };
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
@@ -417,6 +419,11 @@
 		5D3BA6512A5C30E6005D11E0 /* 3D models */ = {
 			isa = PBXGroup;
 			children = (
+				5D3BA6522A5C37A5005D11E0 /* laptop.scn */,
+				5D3BA6582A5C4028005D11E0 /* printer3.scn */,
+				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
+				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
+				5D1CBC4F2A642207001F3B8D /* everything.scn */,
 			);
 			path = "3D models";
 			sourceTree = "<group>";
@@ -426,11 +433,7 @@
 			children = (
 				5D85623D29C8317E009050AA /* Sandbox.scn */,
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
-				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
-				5D3BA6522A5C37A5005D11E0 /* laptop.scn */,
-				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
 				5D3BA6562A5C3EAA005D11E0 /* printer2.scn */,
-				5D3BA6582A5C4028005D11E0 /* printer3.scn */,
 				5D3BA65A2A5C6CB8005D11E0 /* atv.scn */,
 				5D3BA65C2A5C6E78005D11E0 /* router.scn */,
 				5D3BA65E2A5C709D005D11E0 /* iPhone.scn */,
@@ -741,6 +744,7 @@
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
 				5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */,
+				5D1CBC502A642207001F3B8D /* everything.scn in Resources */,
 				5D82ACE3297D46DB0021E492 /* docs-hosts-fr.png in Resources */,
 				5D65EE4F296381780099871C /* app-icon-40.png in Resources */,
 				5DE4ED98290586740000B30A /* docs-hosts.png in Resources */,

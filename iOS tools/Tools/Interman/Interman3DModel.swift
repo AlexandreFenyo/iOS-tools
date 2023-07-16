@@ -150,7 +150,7 @@ struct ComponentTemplates {
     public static let iPhone = SCNScene(named: "iPhone.scn")!.rootNode
     public static let iPad = SCNScene(named: "iPad.scn")!.rootNode
     public static let router = SCNScene(named: "router.scn")!.rootNode
-    public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
+//    public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
     public static let laptop2 = SCNScene(named: "laptop2.scn")!.rootNode
     public static let printer = SCNScene(named: "printer2.scn")!.rootNode
     public static let atv = SCNScene(named: "atv.scn")!.rootNode
