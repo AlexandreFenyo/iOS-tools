@@ -193,6 +193,9 @@ class B3D : SCNNode {
         let max_extend = max(extend.x, extend.z)
         object_sub_node.pivot = SCNMatrix4MakeTranslation(0, bb_min.y, 0)
         object_sub_node.scale = SCNVector3(space * 1 / max_extend, space * 1 / max_extend, space * 1 / max_extend)
+//        object_sub_node.eulerAngles.x = 0
+//        object_sub_node.eulerAngles.y = 0
+//        object_sub_node.eulerAngles.z = 0.9
     }
     
     func updateModel(_ scn_node: SCNNode) {
