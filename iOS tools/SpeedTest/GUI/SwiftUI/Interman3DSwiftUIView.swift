@@ -51,6 +51,17 @@ struct Interman3DSwiftUIView: View {
         camera.position = SCNVector3(0, 5, 0)
 
         camera.scale = SCNVector3(2, 2, 2)
+
+        // https://github.com/FlexMonkey/SkyCubeTextureDemo/blob/master/SkyCubeDemonstration/ViewController.swift
+        /*
+        scene.background.contents = MDLSkyCubeTexture(name: nil,
+                                                      channelEncoding: MDLTextureChannelEncoding.uInt8,
+                                                      textureDimensions: [Int32(160), Int32(160)],
+                                                      turbidity: 0.75,
+                                                      sunElevation: 7,
+                                                      upperAtmosphereScattering: 0.15,
+                                                      groundAlbedo: 0.85)
+         */
     }
 
     func getTappedHost(_ point: CGPoint) -> B3DHost? {
