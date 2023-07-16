@@ -154,7 +154,6 @@ struct ComponentTemplates {
     public static let laptop2 = SCNScene(named: "laptop2.scn")!.rootNode
     public static let printer = SCNScene(named: "printer2.scn")!.rootNode
     public static let atv = SCNScene(named: "atv.scn")!.rootNode
-
     public static let axes = SCNScene(named: "Repère.scn")!.rootNode
 
     public static func createAxes(_ scale: Float) -> SCNNode {
@@ -163,17 +162,6 @@ struct ComponentTemplates {
         return new_axes
     }
 }
-
-/*
-extension simd_float4x4 {
-    public init(matrix: GLKMatrix4) {
-        self.init(columns: (SIMD4<Float>(x: matrix.m00, y: matrix.m01, z: matrix.m02, w: matrix.m03),
-                            SIMD4<Float>(x: matrix.m10, y: matrix.m11, z: matrix.m12, w: matrix.m13),
-                            SIMD4<Float>(x: matrix.m20, y: matrix.m21, z: matrix.m22, w: matrix.m23),
-                            SIMD4<Float>(x: matrix.m30, y: matrix.m31, z: matrix.m32, w: matrix.m33)))
-    }
-}
-*/
 
 // Base class for 3D objects in a circle
 class B3D : SCNNode {
@@ -197,11 +185,24 @@ class B3D : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func updateObject(_ scn_node: SCNNode) {
+    func updateModelScale() {
+        let nhosts = Interman3DModel.shared.getNHosts()
+        let space = 0.8 * 2 * .pi / (Float(max(nhosts, 15)) * B3D.default_scale)
+        let (bb_min, bb_max) = object_sub_node.boundingBox
+        let extend = SCNVector3(bb_max.x - bb_min.x, bb_max.y - bb_min.y, bb_max.z - bb_min.z)
+        let max_extend = max(extend.x, extend.z)
+        object_sub_node.pivot = SCNMatrix4MakeTranslation(0, bb_min.y, 0)
+        object_sub_node.scale = SCNVector3(space * 1 / max_extend, space * 1 / max_extend, space * 1 / max_extend)
+    }
+    
+    func updateModel(_ scn_node: SCNNode) {
         if object_sub_node_ref === scn_node { return }
         object_sub_node_ref = scn_node
         object_sub_node.removeFromParentNode()
         object_sub_node = object_sub_node_ref.clone()
+
+        updateModelScale()
+        
         sub_node.addChildNode(object_sub_node)
     }
     
@@ -270,6 +271,8 @@ class B3D : SCNNode {
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
+
+        updateModelScale()
     }
     
     fileprivate func remove() {
@@ -329,30 +332,28 @@ class B3DHost : B3D {
     }
 
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
-    func update() {
-        // CONTINUER ICI
-        print("\(#function)")
+    func updateModelAndValues() {
         if host.isLocalHost() {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                updateObject(ComponentTemplates.iPad)
+                updateModel(ComponentTemplates.iPad)
             } else {
-                updateObject(ComponentTemplates.iPhone)
+                updateModel(ComponentTemplates.iPhone)
             }
             return
         }
 
         if host.getMcastDnsNames().contains(FQDN("flood", "eowyn.eu.org")) {
-            updateObject(ComponentTemplates.ovh)
+            updateModel(ComponentTemplates.ovh)
             return
         }
 
         if host.toSectionTypes().contains(.gateway) {
-            updateObject(ComponentTemplates.router)
+            updateModel(ComponentTemplates.router)
             return
         }
 
         if host.toSectionTypes().contains(.internet) {
-            updateObject(ComponentTemplates.server)
+            updateModel(ComponentTemplates.server)
             return
         }
 
@@ -360,15 +361,15 @@ class B3DHost : B3D {
         if let airplay = (host.getServices().filter { $0.name == "_airplay._tcp." }).first {
             if let model = airplay.attr["model"] {
                 if model.starts(with: "Macmini") {
-                    updateObject(ComponentTemplates.macmini)
+                    updateModel(ComponentTemplates.macmini)
                     return
                 }
                 if model.starts(with: "AppleTV") {
-                    updateObject(ComponentTemplates.atv)
+                    updateModel(ComponentTemplates.atv)
                     return
                 }
                 if model.starts(with: "AudioAccessory") {
-                    updateObject(ComponentTemplates.homepod)
+                    updateModel(ComponentTemplates.homepod)
                     return
                 }
             }
@@ -377,25 +378,21 @@ class B3DHost : B3D {
         if let googlecast = (host.getServices().filter { $0.name == "_googlecast._tcp." }).first {
             if let model = googlecast.attr["md"] {
                 if model.starts(with: "Chromecast") {
-                    updateObject(ComponentTemplates.chromecast)
+                    updateModel(ComponentTemplates.chromecast)
                     return
                 }
 
                 if model.starts(with: "Google Home") {
-                    updateObject(ComponentTemplates.googlehome)
+                    updateModel(ComponentTemplates.googlehome)
                     return
                 }
             }
         }
 
-        
         if (host.getServices().filter { $0.name == "_raop._tcp." }).isEmpty == false {
-            updateObject(ComponentTemplates.speaker)
+            updateModel(ComponentTemplates.speaker)
             return
         }
-        
-        
-        
     }
     
     required init?(coder: NSCoder) {
@@ -558,6 +555,10 @@ public class Interman3DModel : ObservableObject {
         }
     }
 
+    func getNHosts() -> Int {
+        return b3d_hosts.count
+    }
+    
     private static func renewLink3DScanNode(link: Link3DScanNode) {
         guard let from_b3d = link.from_b3d, let to_b3d = link.to_b3d else { return }
         link.detach()
@@ -650,7 +651,7 @@ public class Interman3DModel : ObservableObject {
         // print("\(#function)")
         // Update the displayed values and the 3D model
         guard let b3d_host = getB3DHost(node) else { return }
-        b3d_host.update()
+        b3d_host.updateModelAndValues()
     }
 
     func notifyScanNode(_ node: Node, _ address: IPAddress) {
@@ -724,7 +725,7 @@ public class Interman3DModel : ObservableObject {
     
     private func addHost(_ host: Node) {
         let b3d_host = B3DHost(ComponentTemplates.laptop2, host)
-        b3d_host.update()
+        b3d_host.updateModelAndValues()
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
