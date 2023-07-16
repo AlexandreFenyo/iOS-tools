@@ -14,6 +14,13 @@
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
 		5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D16E60529A77124000A46E4 /* docs-action-bar.png */; };
 		5D16E60B29A77FEB000A46E4 /* docs-action-bar-fr.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */; };
+		5D1CBC422A63EC19001F3B8D /* server.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC412A63EC19001F3B8D /* server.scn */; };
+		5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC432A63F107001F3B8D /* ovh.scn */; };
+		5D1CBC462A63F53A001F3B8D /* macmini.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC452A63F53A001F3B8D /* macmini.scn */; };
+		5D1CBC482A63F9D2001F3B8D /* homepod.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC472A63F9D2001F3B8D /* homepod.scn */; };
+		5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC492A63FAF4001F3B8D /* googlehome.scn */; };
+		5D1CBC4C2A63FCE2001F3B8D /* chromecast.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4B2A63FCE2001F3B8D /* chromecast.scn */; };
+		5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */; };
 		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
 		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
@@ -127,6 +134,13 @@
 		5D16E60629A77124000A46E4 /* docs-action-bar.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-action-bar.psd"; sourceTree = "<group>"; };
 		5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-action-bar-fr.psd"; sourceTree = "<group>"; };
 		5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-action-bar-fr.png"; sourceTree = "<group>"; };
+		5D1CBC412A63EC19001F3B8D /* server.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = server.scn; sourceTree = "<group>"; };
+		5D1CBC432A63F107001F3B8D /* ovh.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = ovh.scn; sourceTree = "<group>"; };
+		5D1CBC452A63F53A001F3B8D /* macmini.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = macmini.scn; sourceTree = "<group>"; };
+		5D1CBC472A63F9D2001F3B8D /* homepod.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = homepod.scn; sourceTree = "<group>"; };
+		5D1CBC492A63FAF4001F3B8D /* googlehome.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = googlehome.scn; sourceTree = "<group>"; };
+		5D1CBC4B2A63FCE2001F3B8D /* chromecast.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = chromecast.scn; sourceTree = "<group>"; };
+		5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop2.scn; sourceTree = "<group>"; };
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
@@ -424,6 +438,13 @@
 				5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */,
 				5DEDFB6929C6E65F00052FB7 /* Interman 3D Standard Component.scn */,
 				5DC13A7C2A633A470042796F /* iPad.scn */,
+				5D1CBC412A63EC19001F3B8D /* server.scn */,
+				5D1CBC432A63F107001F3B8D /* ovh.scn */,
+				5D1CBC452A63F53A001F3B8D /* macmini.scn */,
+				5D1CBC472A63F9D2001F3B8D /* homepod.scn */,
+				5D1CBC492A63FAF4001F3B8D /* googlehome.scn */,
+				5D1CBC4B2A63FCE2001F3B8D /* chromecast.scn */,
+				5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */,
 			);
 			path = "3D models";
 			sourceTree = "<group>";
@@ -716,6 +737,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D65EE57296381780099871C /* app-icon-180.png in Resources */,
+				5D1CBC482A63F9D2001F3B8D /* homepod.scn in Resources */,
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
 				5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */,
@@ -728,6 +750,7 @@
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
+				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5D65EE56296381780099871C /* app-icon-76.png in Resources */,
 				5D65EE50296381780099871C /* app-icon-152.png in Resources */,
@@ -735,6 +758,8 @@
 				5D65EE58296381780099871C /* app-icon-20.png in Resources */,
 				5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */,
 				5D65EE4B296381780099871C /* app-icon-29.png in Resources */,
+				5D1CBC4C2A63FCE2001F3B8D /* chromecast.scn in Resources */,
+				5D1CBC422A63EC19001F3B8D /* server.scn in Resources */,
 				5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */,
 				5D3BA6532A5C37A5005D11E0 /* laptop.scn in Resources */,
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
@@ -758,13 +783,16 @@
 				5DC13A7D2A633A470042796F /* iPad.scn in Resources */,
 				5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */,
 				5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */,
+				5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
+				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
 				5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */,
 				5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
+				5D1CBC462A63F53A001F3B8D /* macmini.scn in Resources */,
 				5D3BA6552A5C3E15005D11E0 /* printer.scn in Resources */,
 				5DEDFB6A29C6E65F00052FB7 /* Interman 3D Standard Component.scn in Resources */,
 			);

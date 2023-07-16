@@ -130,15 +130,28 @@ struct ComponentTemplates {
     // https://sketchfab.com/3d-models/apple-homepod-2229c164afd84b32aa23d6319a702c1f
     // https://sketchfab.com/3d-models/realistic-speaker-277db5efa378494882aaa820abb84437
     // https://sketchfab.com/3d-models/apple-ipad-pro-e5ffb3c80b2d4d6690249f8ee2bdafbe
-    
-//  public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
-    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
+    // https://sketchfab.com/3d-models/server-scayle-08987ebeb0b04a8ca6179344330ceec7#download
+    // https://sketchfab.com/3d-models/server-v2-console-f24594ece9634cec9c1210c041838371#download
+    // https://sketchfab.com/3d-models/apple-mac-mini-m1-79f1f864089d423fb06d220fe2085c71
+    // https://sketchfab.com/3d-models/google-home-0e9d0a055dde4d83b7fd53d8b7465916
+    // chromecast: https://www.thingiverse.com/thing:4176450
+    // https://sketchfab.com/3d-models/laptop-9a960986f0cc49f99a0afdfb486ec859#download
 
+  public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
+//    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
+
+    public static let chromecast = SCNScene(named: "chromecast.scn")!.rootNode
+    public static let googlehome = SCNScene(named: "googlehome.scn")!.rootNode
+    public static let homepod = SCNScene(named: "homepod.scn")!.rootNode
+    public static let macmini = SCNScene(named: "macmini.scn")!.rootNode
+    public static let ovh = SCNScene(named: "ovh.scn")!.rootNode
+    public static let server = SCNScene(named: "server.scn")!.rootNode
     public static let speaker = SCNScene(named: "speaker.scn")!.rootNode
     public static let iPhone = SCNScene(named: "iPhone.scn")!.rootNode
     public static let iPad = SCNScene(named: "iPad.scn")!.rootNode
     public static let router = SCNScene(named: "router.scn")!.rootNode
     public static let laptop = SCNScene(named: "laptop.scn")!.rootNode
+    public static let laptop2 = SCNScene(named: "laptop2.scn")!.rootNode
     public static let printer = SCNScene(named: "printer2.scn")!.rootNode
     public static let atv = SCNScene(named: "atv.scn")!.rootNode
 
@@ -328,9 +341,61 @@ class B3DHost : B3D {
             return
         }
 
+        if host.getMcastDnsNames().contains(FQDN("flood", "eowyn.eu.org")) {
+            updateObject(ComponentTemplates.ovh)
+            return
+        }
+
         if host.toSectionTypes().contains(.gateway) {
             updateObject(ComponentTemplates.router)
+            return
         }
+
+        if host.toSectionTypes().contains(.internet) {
+            updateObject(ComponentTemplates.server)
+            return
+        }
+
+        // https://openairplay.github.io/airplay-spec/service_discovery.html
+        if let airplay = (host.getServices().filter { $0.name == "_airplay._tcp." }).first {
+            if let model = airplay.attr["model"] {
+                if model.starts(with: "Macmini") {
+                    updateObject(ComponentTemplates.macmini)
+                    return
+                }
+                if model.starts(with: "AppleTV") {
+                    updateObject(ComponentTemplates.atv)
+                    return
+                }
+                if model.starts(with: "AudioAccessory") {
+                    updateObject(ComponentTemplates.homepod)
+                    return
+                }
+            }
+        }
+
+        if let googlecast = (host.getServices().filter { $0.name == "_googlecast._tcp." }).first {
+            if let model = googlecast.attr["md"] {
+                if model.starts(with: "Chromecast") {
+                    updateObject(ComponentTemplates.chromecast)
+                    return
+                }
+
+                if model.starts(with: "Google Home") {
+                    updateObject(ComponentTemplates.googlehome)
+                    return
+                }
+            }
+        }
+
+        
+        if (host.getServices().filter { $0.name == "_raop._tcp." }).isEmpty == false {
+            updateObject(ComponentTemplates.speaker)
+            return
+        }
+        
+        
+        
     }
     
     required init?(coder: NSCoder) {
@@ -658,7 +723,8 @@ public class Interman3DModel : ObservableObject {
     }
     
     private func addHost(_ host: Node) {
-        let b3d_host = B3DHost(ComponentTemplates.standard, host)
+        let b3d_host = B3DHost(ComponentTemplates.laptop2, host)
+        b3d_host.update()
         b3d_hosts.append(b3d_host)
         let node_count = b3d_hosts.count
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
