@@ -309,6 +309,7 @@ class B3DHost : B3D {
         self.host = host
         super.init(scn_node)
 
+        // First line of text
         var display_text = "no name"
         if let foo = host.getDnsNames().first {
             display_text = foo.toString()
@@ -323,16 +324,42 @@ class B3DHost : B3D {
         }
         let text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0
-        text.firstMaterial!.diffuse.contents = COLORS.right_pannel_scroll_bg // UIColor.yellow
-
+        text.firstMaterial!.diffuse.contents = UIColor.yellow.darker().darker() // COLORS.right_pannel_scroll_bg // UIColor.yellow
         text.firstMaterial!.isDoubleSided = true
         let text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
-
         let (min, max) = text_node.boundingBox
         text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
         addSubChildNode(text_node)
+
+        // Second line of text
+        var display_text2 = "this is the 2nd line of text with many informations"
+        let text2 = SCNText(string: display_text2, extrusionDepth: 0)
+        text2.flatness = 0
+        text2.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
+        text2.firstMaterial!.isDoubleSided = true
+        let text2_node = SCNNode(geometry: text2)
+        text2.font = UIFont(name: "Helvetica", size: 0.6)
+        let (min2, max2) = text2_node.boundingBox
+        text2_node.pivot = SCNMatrix4MakeTranslation(-1, min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
+        text2_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        addSubChildNode(text2_node)
+
+        // Third line of text
+        var display_text3 = "this is the third line of text with many informations"
+        let text3 = SCNText(string: display_text3, extrusionDepth: 0)
+        text3.flatness = 0
+        text3.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
+        text3.firstMaterial!.isDoubleSided = true
+        let text3_node = SCNNode(geometry: text3)
+        text3.font = UIFont(name: "Helvetica", size: 0.6)
+        let (min3, max3) = text3_node.boundingBox
+        text3_node.pivot = SCNMatrix4MakeTranslation(-1, max3.y - min3.y + min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
+        text3_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        addSubChildNode(text3_node)
+
+
     }
 
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
