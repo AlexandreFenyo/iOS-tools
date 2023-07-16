@@ -419,6 +419,7 @@
 		5D3BA6512A5C30E6005D11E0 /* 3D models */ = {
 			isa = PBXGroup;
 			children = (
+				5D85623D29C8317E009050AA /* Sandbox.scn */,
 				5D3BA6522A5C37A5005D11E0 /* laptop.scn */,
 				5D3BA6582A5C4028005D11E0 /* printer3.scn */,
 				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
@@ -431,7 +432,6 @@
 		5D3BA6632A5C75EA005D11E0 /* 3D models */ = {
 			isa = PBXGroup;
 			children = (
-				5D85623D29C8317E009050AA /* Sandbox.scn */,
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
 				5D3BA6562A5C3EAA005D11E0 /* printer2.scn */,
 				5D3BA65A2A5C6CB8005D11E0 /* atv.scn */,
