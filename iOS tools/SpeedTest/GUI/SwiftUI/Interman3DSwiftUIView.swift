@@ -43,7 +43,7 @@ struct Interman3DSwiftUIView: View {
 
         if free_flight {
             camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
-            scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
+            // scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
         } else {
             camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
         }
@@ -62,6 +62,9 @@ struct Interman3DSwiftUIView: View {
                                                       upperAtmosphereScattering: 0.15,
                                                       groundAlbedo: 0.85)
          */
+        
+//        let sky = scene.background.contents as! MDLSkyCubeTexture
+//        sky.groundColor = .init(red: 1, green: 1, blue: 1, alpha: 1) // COLORS.leftpannel_bg.cgColor
     }
 
     func getTappedHost(_ point: CGPoint) -> B3DHost? {
