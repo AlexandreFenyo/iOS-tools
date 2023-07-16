@@ -323,6 +323,7 @@ class B3DHost : B3D {
         }
         let text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0
+        // A MODIFIER
         text.firstMaterial!.diffuse.contents = UIColor.yellow
         text.firstMaterial!.isDoubleSided = true
         let text_node = SCNNode(geometry: text)

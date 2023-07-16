@@ -86,7 +86,7 @@
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
 		5DE22F7A29BDC24F002D9BEE /* Interman2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7929BDC24F002D9BEE /* Interman2D.swift */; };
 		5DE22F7C29BDF2CA002D9BEE /* IntermanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */; };
-		5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */; };
+		5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene bk1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene bk1.scn */; };
 		5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */; };
 		5DE4ED92290586740000B30A /* docs-chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED86290586730000B30A /* docs-chart.png */; };
 		5DE4ED93290586740000B30A /* docs-actions-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED87290586730000B30A /* docs-actions-2.png */; };
@@ -240,7 +240,7 @@
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
 		5DE22F7929BDC24F002D9BEE /* Interman2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman2D.swift; sourceTree = "<group>"; };
 		5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermanViewController.swift; sourceTree = "<group>"; };
-		5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
+		5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene bk1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene bk1.scn"; sourceTree = "<group>"; };
 		5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman3DSwiftUIView.swift; sourceTree = "<group>"; };
 		5DE4ED86290586730000B30A /* docs-chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-chart.png"; sourceTree = "<group>"; };
 		5DE4ED87290586730000B30A /* docs-actions-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "docs-actions-2.png"; sourceTree = "<group>"; };
@@ -425,6 +425,7 @@
 				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
 				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
 				5D1CBC4F2A642207001F3B8D /* everything.scn */,
+				5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene bk1.scn */,
 			);
 			path = "3D models";
 			sourceTree = "<group>";
@@ -438,7 +439,6 @@
 				5D3BA65C2A5C6E78005D11E0 /* router.scn */,
 				5D3BA65E2A5C709D005D11E0 /* iPhone.scn */,
 				5D3BA6602A5C73B6005D11E0 /* speaker.scn */,
-				5DE22F8129C5C1AE002D9BEE /* Interman 3D Scene.scn */,
 				5DEDFB6929C6E65F00052FB7 /* Interman 3D Standard Component.scn */,
 				5DC13A7C2A633A470042796F /* iPad.scn */,
 				5D1CBC412A63EC19001F3B8D /* server.scn */,
@@ -777,7 +777,7 @@
 				5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
-				5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene.scn in Resources */,
+				5DE22F8229C5C1AE002D9BEE /* Interman 3D Scene bk1.scn in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
 				5D16E60B29A77FEB000A46E4 /* docs-action-bar-fr.png in Resources */,
