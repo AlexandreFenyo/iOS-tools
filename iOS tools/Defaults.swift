@@ -278,7 +278,7 @@ public enum COLORS {
     // Utilisé pour retrouver un élément graphique rapidement
     static let test = UIColor.green // vert fluo
     static let test2 = UIColor.systemGreen // vert normal
-    static let test3 = UIColor.yellow // vert normal
+    static let test3 = UIColor.yellow // jaune normal
 
     // //////////
     // Thème

@@ -324,7 +324,7 @@ class B3DHost : B3D {
         }
         let text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0
-        text.firstMaterial!.diffuse.contents = UIColor.yellow.darker().darker() // COLORS.right_pannel_scroll_bg // UIColor.yellow
+        text.firstMaterial!.diffuse.contents = COLORS.standard_background // UIColor.yellow.darker().darker() // COLORS.right_pannel_scroll_bg // UIColor.yellow
         text.firstMaterial!.isDoubleSided = true
         let text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
@@ -430,7 +430,11 @@ class B3DHost : B3D {
             return
         }
 
-        
+        if (host.getServices().filter { $0.name == "_apple-mobdev2._tcp." }).isEmpty == false {
+            updateModel(ComponentTemplates.iPhone)
+            return
+        }
+
     }
     
     required init?(coder: NSCoder) {
