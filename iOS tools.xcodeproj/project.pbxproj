@@ -24,6 +24,7 @@
 		5D1CBC502A642207001F3B8D /* everything.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4F2A642207001F3B8D /* everything.scn */; };
 		5D1CBC522A646FAE001F3B8D /* Interman 3D Scene bk1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC512A646FAE001F3B8D /* Interman 3D Scene bk1.scn */; };
 		5D1CBC582A648207001F3B8D /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC572A648207001F3B8D /* Interman 3D Scene.scn */; };
+		5D1CBC5A2A67C117001F3B8D /* everything sandbox.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC592A67C117001F3B8D /* everything sandbox.scn */; };
 		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
 		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
@@ -146,6 +147,7 @@
 		5D1CBC4F2A642207001F3B8D /* everything.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = everything.scn; sourceTree = "<group>"; };
 		5D1CBC512A646FAE001F3B8D /* Interman 3D Scene bk1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene bk1.scn"; sourceTree = "<group>"; };
 		5D1CBC572A648207001F3B8D /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
+		5D1CBC592A67C117001F3B8D /* everything sandbox.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "everything sandbox.scn"; sourceTree = "<group>"; };
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 				5D3BA6542A5C3E15005D11E0 /* printer.scn */,
 				5D3BA64F2A5C06FF005D11E0 /* test.scn */,
 				5D1CBC4F2A642207001F3B8D /* everything.scn */,
+				5D1CBC592A67C117001F3B8D /* everything sandbox.scn */,
 				5D1CBC512A646FAE001F3B8D /* Interman 3D Scene bk1.scn */,
 			);
 			path = "3D models";
@@ -794,6 +797,7 @@
 				5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
+				5D1CBC5A2A67C117001F3B8D /* everything sandbox.scn in Resources */,
 				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
 				5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */,
