@@ -109,11 +109,6 @@ struct Interman3DSwiftUIView: View {
     
     func getCameraAngle() -> Float {
         // Note that Euler angles (0, u, 0) and Euler angles (π, π-u, π) correspond to the same orientation
-        return Interman3DModel.normalizeAngle(camera.eulerAngles.x == 0 ? camera.eulerAngles.y : (-camera.eulerAngles.y + .pi))
-    }
-
-    func getCamArmAngle() -> Float {
-        // Note that Euler angles (0, u, 0) and Euler angles (π, π-u, π) correspond to the same orientation
         return Interman3DModel.normalizeAngle(camera.parent!.eulerAngles.x == 0 ? camera.parent!.eulerAngles.y : (-camera.parent!.eulerAngles.y + .pi))
     }
 
@@ -121,30 +116,16 @@ struct Interman3DSwiftUIView: View {
     func rotateCamera(_ angle: Float, smooth: Bool) {
         if free_flight { return }
 
-        if camera_model.getCameraMode() == .topManual {
+        if camera_model.getCameraMode() == .topManual || camera_model.getCameraMode() == .sideManual {
             if smooth {
                 var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
                 if duration > .pi { duration = 2 * .pi - duration }
                 // duration is between 0 (no movement) and 1 sec (half turn)
-                camera.removeAction(forKey: "rotation")
-                camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
-            } else {
-                camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
-            }
-        } else {
-            print("DEBUG ICI")
-//            camera.parent!.eulerAngles.y = angle
-            
-            if smooth {
-                var duration = Interman3DModel.normalizeAngle(getCamArmAngle() - angle)
-                if duration > .pi { duration = 2 * .pi - duration }
-                // duration is between 0 (no movement) and 1 sec (half turn)
-                camera.parent!.removeAction(forKey: "camarmrotation")
-                camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "camarmrotation")
+                camera.parent!.removeAction(forKey: "rotation")
+                camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
             } else {
                 camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
             }
-
         }
     }
 
@@ -195,17 +176,17 @@ struct Interman3DSwiftUIView: View {
     
     // Get scale factor
     func getCameraScaleFactor() -> Float {
-        return camera.simdScale.x
+        return camera.parent!.simdScale.x
     }
 
     // Set scale factor
     func scaleCamera(_ factor: Float) {
-        camera.simdScale = SIMD3<Float>(factor, factor, factor)
+        camera.parent!.simdScale = SIMD3<Float>(factor, factor, factor)
     }
 
     func resetCamera() {
         rotateCamera(0, smooth: true)
-        camera.runAction(SCNAction.scale(to: 2, duration: 0.5))
+        camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
     }
 
     // ////////////////////////////////
