@@ -334,7 +334,7 @@ class B3DHost : B3D {
         addSubChildNode(text_node)
 
         // Second line of text
-        var display_text2 = "this is the 2nd line of text with many informations"
+        let display_text2 = "this is the 2nd line of text with many informations"
         let text2 = SCNText(string: display_text2, extrusionDepth: 0)
         text2.flatness = 0
         text2.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
@@ -347,7 +347,7 @@ class B3DHost : B3D {
         addSubChildNode(text2_node)
 
         // Third line of text
-        var display_text3 = "this is the third line of text with many informations"
+        let display_text3 = "this is the third line of text with many informations"
         let text3 = SCNText(string: display_text3, extrusionDepth: 0)
         text3.flatness = 0
         text3.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents

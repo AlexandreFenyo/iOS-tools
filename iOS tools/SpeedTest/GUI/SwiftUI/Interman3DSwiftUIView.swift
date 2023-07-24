@@ -10,9 +10,40 @@ import SwiftUI
 import SceneKit
 
 // true pour débugger
-private let free_flight = true
+private let free_flight = false
 
-class RenderDelegate: NSObject, SCNSceneRendererDelegate {
+private enum CameraMode : String {
+    case topManual, topStepper, topMotion, sideManual, sideStepper, sideMotion
+}
+
+private class CameraModel: ObservableObject {
+    static let shared = CameraModel()
+
+    @Published private(set) var camera_mode: CameraMode = CameraMode.topManual
+    
+    func nextCameraMode() {
+        switch camera_mode {
+        case .topManual:
+            camera_mode = .topStepper
+        case .topStepper:
+            camera_mode = .topMotion
+        case .topMotion:
+            camera_mode = .sideManual
+        case .sideManual:
+            camera_mode = .sideStepper
+        case .sideStepper:
+            camera_mode = .sideMotion
+        case .sideMotion:
+            camera_mode = .topManual
+        }
+    }
+    
+    func getCameraMode() -> CameraMode {
+        return camera_mode
+    }
+}
+
+private class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     private var renderer: SCNSceneRenderer!
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
@@ -27,11 +58,13 @@ class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
-    @ObservedObject var interman3d_model = Interman3DModel.shared
-    @ObservedObject var model = TracesViewModel.shared
+    @ObservedObject private var interman3d_model = Interman3DModel.shared
+    @ObservedObject private var model = TracesViewModel.shared
 
     private let camera: SCNNode
-    let scene: SCNScene
+    @ObservedObject private var camera_model = CameraModel.shared
+    
+    private let scene: SCNScene
     private var render_delegate = RenderDelegate()
     
     init() {
@@ -41,15 +74,15 @@ struct Interman3DSwiftUIView: View {
         camera.camera!.usesOrthographicProjection = true
         camera.camera!.automaticallyAdjustsZRange = true
 
+        // Debug: axes
+        scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
+        
         if free_flight {
             camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
-            // scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
         } else {
             camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
         }
-
         camera.position = SCNVector3(0, 5, 0)
-
         camera.scale = SCNVector3(2, 2, 2)
 
         // https://github.com/FlexMonkey/SkyCubeTextureDemo/blob/master/SkyCubeDemonstration/ViewController.swift
@@ -71,6 +104,9 @@ struct Interman3DSwiftUIView: View {
         return render_delegate.getRenderer().hitTest(point, options: [.ignoreHiddenNodes : true, .searchMode : SCNHitTestSearchMode.all.rawValue]).compactMap { B3DHost.getFromNode($0.node) }.first
     }
     
+    // ////////////////////////////////
+    // Manage camera
+    
     func getCameraAngle() -> Float {
         // Note that Euler angles (0, u, 0) and Euler angles (π, π-u, π) correspond to the same orientation
         return Interman3DModel.normalizeAngle(camera.eulerAngles.x == 0 ? camera.eulerAngles.y : (-camera.eulerAngles.y + .pi))
@@ -79,17 +115,69 @@ struct Interman3DSwiftUIView: View {
     // Set camera absolute orientation value
     func rotateCamera(_ angle: Float, smooth: Bool) {
         if free_flight { return }
-        if smooth {
-            var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
-            if duration > .pi { duration = 2 * .pi - duration }
-            // duration is between 0 (no movement) and 1 sec (half turn)
-            camera.removeAction(forKey: "rotation")
-            camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
-       } else {
-            camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+
+        if camera_model.getCameraMode() == .topManual {
+            if smooth {
+                var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
+                if duration > .pi { duration = 2 * .pi - duration }
+                // duration is between 0 (no movement) and 1 sec (half turn)
+                camera.removeAction(forKey: "rotation")
+                camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
+            } else {
+                camera.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+            }
+        } else {
+            print("DEBUG ICI")
+            
+//            camera.pivot = SCNMatrix4MakeRotation(.pi / 4, 0, 0, 1)
         }
     }
 
+    private func nextCameraMode() {
+        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
+
+        camera_model.nextCameraMode()
+
+        var animation = CABasicAnimation(keyPath: "pivot")
+        animation.toValue = SCNMatrix4Identity
+        animation.duration = 1
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        camera.addAnimation(animation, forKey: "campivot")
+
+        animation = CABasicAnimation(keyPath: "transform")
+        animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+        animation.duration = 1
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        camera.addAnimation(animation, forKey: "camtransform")
+
+        let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+//        lookAtConstraint.localFront = SCNVector3Make(1, 0, 0)
+//        lookAtConstraint.influenceFactor = 0.10
+        lookAtConstraint.isGimbalLockEnabled = false
+//        let accelerationConstraint = SCNAccelerationConstraint()
+//        accelerationConstraint.maximumLinearAcceleration = 1.0
+        camera.constraints = [lookAtConstraint/*, accelerationConstraint*/]
+        
+        
+        switch camera_model.camera_mode {
+        case .topManual:
+            ()
+        case .topStepper:
+            ()
+        case .topMotion:
+            ()
+        case .sideManual:
+            ()
+        case .sideStepper:
+            ()
+        case .sideMotion:
+            ()
+        }
+
+    }
+    
     // Get scale factor
     func getCameraScaleFactor() -> Float {
         return camera.simdScale.x
@@ -104,6 +192,8 @@ struct Interman3DSwiftUIView: View {
         rotateCamera(0, smooth: true)
         camera.runAction(SCNAction.scale(to: 2, duration: 0.5))
     }
+
+    // ////////////////////////////////
 
     func testQuat() {
     }
@@ -194,10 +284,18 @@ struct Interman3DSwiftUIView: View {
                       Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }
+
+                  Button {
+                      nextCameraMode()
+                  } label: {
+                      Text("mode")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
               }
 
               Spacer()
-              Text("salut").foregroundColor(.white)
+              Text("camera mode: \(camera_model.camera_mode.rawValue)").foregroundColor(.white)
+                
               Spacer()
                 Button {
                     interman3d_model.testIHMUpdate()

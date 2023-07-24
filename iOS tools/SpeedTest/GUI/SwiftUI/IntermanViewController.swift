@@ -37,7 +37,7 @@ class IntermanViewController : UIViewController {
             hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
             hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
-        
+
         // This creates a strong ref to the target
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(IntermanViewController.handleTap(_:))))
         // This creates a strong ref to the target
