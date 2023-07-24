@@ -22,6 +22,13 @@ private class CameraModel: ObservableObject {
     @Published private(set) var camera_mode: CameraMode = CameraMode.topManual
     
     func nextCameraMode() {
+        if camera_mode == .topManual {
+            camera_mode = .sideManual
+        } else {
+            camera_mode = .topManual
+        }
+return
+        
         switch camera_mode {
         case .topManual:
             camera_mode = .topStepper
@@ -134,40 +141,50 @@ struct Interman3DSwiftUIView: View {
 
         camera_model.nextCameraMode()
 
-        var animation = CABasicAnimation(keyPath: "pivot")
-        animation.toValue = SCNMatrix4Identity
-        animation.duration = 1
-        animation.fillMode = .forwards
-        animation.isRemovedOnCompletion = false
-        camera.addAnimation(animation, forKey: "campivot")
-
-        animation = CABasicAnimation(keyPath: "transform")
-        animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
-        animation.duration = 1
-        animation.fillMode = .forwards
-        animation.isRemovedOnCompletion = false
-        camera.addAnimation(animation, forKey: "camtransform")
-
-        let lookAtConstraint = SCNLookAtConstraint(target: sphere)
-//        lookAtConstraint.localFront = SCNVector3Make(1, 0, 0)
-//        lookAtConstraint.influenceFactor = 0.10
-        lookAtConstraint.isGimbalLockEnabled = false
-//        let accelerationConstraint = SCNAccelerationConstraint()
-//        accelerationConstraint.maximumLinearAcceleration = 1.0
-        camera.constraints = [lookAtConstraint/*, accelerationConstraint*/]
-        
-        
         switch camera_model.camera_mode {
         case .topManual:
-            ()
+            var animation = CABasicAnimation(keyPath: "pivot")
+            animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "campivot")
+
+            animation = CABasicAnimation(keyPath: "transform")
+            animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "camtransform")
+            
         case .topStepper:
             ()
+
         case .topMotion:
             ()
+
         case .sideManual:
-            ()
+            var animation = CABasicAnimation(keyPath: "pivot")
+            animation.toValue = SCNMatrix4Identity
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "campivot")
+
+            animation = CABasicAnimation(keyPath: "transform")
+            animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "camtransform")
+
+            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+            lookAtConstraint.isGimbalLockEnabled = false
+            camera.constraints = [lookAtConstraint]
+
         case .sideStepper:
             ()
+
         case .sideMotion:
             ()
         }
