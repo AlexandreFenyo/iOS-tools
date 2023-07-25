@@ -601,6 +601,11 @@ public class Interman3DModel : ObservableObject {
     func getNHosts() -> Int {
         return b3d_hosts.count
     }
+
+    // Return the node that is just highest than the middle right position on the screen
+    func getLowestNodeAngle(_ angle: Float) -> B3DHost {
+        return b3d_hosts.map { (Interman3DModel.normalizeAngle($0.getAngle() + angle), $0) }.sorted { $0.0 < $1.0 }.last!.1
+    }
     
     private static func renewLink3DScanNode(link: Link3DScanNode) {
         guard let from_b3d = link.from_b3d, let to_b3d = link.to_b3d else { return }

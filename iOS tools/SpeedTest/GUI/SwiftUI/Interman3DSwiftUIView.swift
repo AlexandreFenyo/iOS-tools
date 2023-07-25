@@ -22,12 +22,13 @@ private class CameraModel: ObservableObject {
     @Published private(set) var camera_mode: CameraMode = CameraMode.topManual
     
     func nextCameraMode() {
+        /*
         if camera_mode == .topManual {
             camera_mode = .sideManual
         } else {
             camera_mode = .topManual
         }
-return
+return*/
         
         switch camera_mode {
         case .topManual:
@@ -64,6 +65,8 @@ private class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
+
+    @State private var timer_camera: Timer?
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -120,29 +123,34 @@ struct Interman3DSwiftUIView: View {
     }
 
     // Set camera absolute orientation value
-    func rotateCamera(_ angle: Float, smooth: Bool) {
+    func rotateCamera(_ angle: Float, smooth: Bool, duration _duration: Float? = nil) {
         if free_flight { return }
 
-        if camera_model.getCameraMode() == .topManual || camera_model.getCameraMode() == .sideManual {
-            if smooth {
-                var duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
+        if smooth {
+            var duration: Float
+            if let _duration { duration = _duration }
+            else {
+                duration = Interman3DModel.normalizeAngle(getCameraAngle() - angle)
                 if duration > .pi { duration = 2 * .pi - duration }
-                // duration is between 0 (no movement) and 1 sec (half turn)
-                camera.parent!.removeAction(forKey: "rotation")
-                camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration) / .pi, usesShortestUnitArc: true), forKey: "rotation")
-            } else {
-                camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+                duration = duration / .pi
             }
+            // duration is between 0 (no movement) and 1 sec (half turn)
+            camera.parent!.removeAction(forKey: "rotation")
+            camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration), usesShortestUnitArc: true), forKey: "rotation")
+        } else {
+            camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
         }
     }
 
     private func nextCameraMode() {
-        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
-
         camera_model.nextCameraMode()
+
+        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
 
         switch camera_model.camera_mode {
         case .topManual:
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
             var animation = CABasicAnimation(keyPath: "pivot")
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             animation.duration = 1
@@ -164,6 +172,8 @@ struct Interman3DSwiftUIView: View {
             ()
 
         case .sideManual:
+            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
+
             var animation = CABasicAnimation(keyPath: "pivot")
             animation.toValue = SCNMatrix4Identity
             animation.duration = 1
@@ -189,6 +199,14 @@ struct Interman3DSwiftUIView: View {
             ()
         }
 
+    }
+
+    private func updateCameraIfNeeded() {
+        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper {
+            print("ICI")
+            let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
+            rotateCamera(-host.getAngle(), smooth: true, duration: 1)
+        }
     }
     
     // Get scale factor
@@ -270,9 +288,13 @@ struct Interman3DSwiftUIView: View {
                              timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                                  withAnimation { scrollViewProxy.scrollTo(bottomID) }
                              }
+                             timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
+                                 updateCameraIfNeeded()
+                             }
                          }
                          .onDisappear() {
                              timer?.invalidate()
+                             timer_camera?.invalidate()
                          }
                          VStack {
                              HStack {
