@@ -142,6 +142,14 @@ struct Interman3DSwiftUIView: View {
         }
     }
 
+    private func resetCameraTimer() {
+        updateCameraIfNeeded()
+        timer_camera?.invalidate()
+        timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
+            updateCameraIfNeeded()
+        }
+    }
+    
     private func nextCameraMode() {
         camera_model.nextCameraMode()
 
@@ -166,7 +174,7 @@ struct Interman3DSwiftUIView: View {
             camera.addAnimation(animation, forKey: "camtransform")
             
         case .topStepper:
-            ()
+            resetCameraTimer()
 
         case .topMotion:
             ()
@@ -193,7 +201,7 @@ struct Interman3DSwiftUIView: View {
             camera.constraints = [lookAtConstraint]
 
         case .sideStepper:
-            ()
+            resetCameraTimer()
 
         case .sideMotion:
             ()
@@ -204,7 +212,9 @@ struct Interman3DSwiftUIView: View {
     private func updateCameraIfNeeded() {
         if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper {
             print("ICI")
+            print("\(#function)")
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
+            print(host.getHost().fullDump())
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
         }
     }
