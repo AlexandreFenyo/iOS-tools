@@ -782,7 +782,7 @@ public class Interman3DModel : ObservableObject {
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
         scene?.rootNode.addChildNode(b3d_host)
-        // Debug
+        // Set to add axes to debug 3D orientation of the scene
         // b3d_host.addChildNode(ComponentTemplates.createAxes(0.2))
         updateAngles()
     }
