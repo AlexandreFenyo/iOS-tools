@@ -769,6 +769,35 @@ class DBMaster {
         node.types = [ .internet ]
         _ = addNode(node)
 
+        
+        
+        
+        
+        // POUR DEBUGGER CAMERA AUTO
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("1", "testcam"))
+        node.types = [ .internet ]
+        _ = addNode(node)
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("2", "testcam"))
+        node.types = [ .internet ]
+        _ = addNode(node)
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("3", "testcam"))
+        node.types = [ .internet ]
+        _ = addNode(node)
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("4", "testcam"))
+        node.types = [ .internet ]
+        _ = addNode(node)
+        node = Node()
+        node.mcast_dns_names.insert(FQDN("5", "testcam"))
+        node.types = [ .internet ]
+        _ = addNode(node)
+
+        
+        
+        
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
             let str_fields = str.split(separator: ";", maxSplits: 2)

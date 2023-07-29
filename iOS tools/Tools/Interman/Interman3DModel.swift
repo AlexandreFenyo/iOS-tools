@@ -604,6 +604,9 @@ public class Interman3DModel : ObservableObject {
 
     // Return the node that is just highest than the middle right position on the screen
     func getLowestNodeAngle(_ angle: Float) -> B3DHost {
+        let foo = b3d_hosts.map { (Interman3DModel.normalizeAngle($0.getAngle() + angle), $0) }.sorted { $0.0 < $1.0 }
+        print(foo.map { ($0, $1.getHost().getMcastDnsNames().first?.toString(), $1.getHost().getDnsNames().first?.toString()) })
+
         return b3d_hosts.map { (Interman3DModel.normalizeAngle($0.getAngle() + angle), $0) }.sorted { $0.0 < $1.0 }.last!.1
     }
     

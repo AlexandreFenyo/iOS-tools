@@ -119,11 +119,11 @@ struct Interman3DSwiftUIView: View {
     
     func getCameraAngle() -> Float {
         // Note that Euler angles (0, u, 0) and Euler angles (π, π-u, π) correspond to the same orientation
-        return Interman3DModel.normalizeAngle(camera.parent!.eulerAngles.x == 0 ? camera.parent!.eulerAngles.y : (-camera.parent!.eulerAngles.y + .pi))
+        return Interman3DModel.normalizeAngle(camera.parent!.presentation.eulerAngles.x == 0 ? camera.parent!.presentation.eulerAngles.y : (-camera.parent!.presentation.eulerAngles.y + .pi))
     }
 
     // Set camera absolute orientation value
-    func rotateCamera(_ angle: Float, smooth: Bool, duration _duration: Float? = nil) {
+    func rotateCamera(_ angle: Float, smooth: Bool, duration _duration: Float? = nil, usesShortestUnitArc: Bool = false) {
         if free_flight { return }
 
         if smooth {
@@ -135,10 +135,26 @@ struct Interman3DSwiftUIView: View {
                 duration = duration / .pi
             }
             // duration is between 0 (no movement) and 1 sec (half turn)
-            camera.parent!.removeAction(forKey: "rotation")
-            camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration), usesShortestUnitArc: true), forKey: "rotation")
+
+            camera.parent!.removeAnimation(forKey: "rotation")
+            print("current cam angles: \(camera.parent!.presentation.eulerAngles)")
+            print("set angle to: \(angle)")
+
+            // We do not use SCNAction.rotateTo since it can have side effects, because it can update not only the euler.y angle but other parameters
+            let animation = CABasicAnimation(keyPath: "euler.y")
+//            animation.toValue = 2 * .pi - CGFloat(angle)
+            animation.fromValue = CGFloat(getCameraAngle())
+            // Do not set toValue to Interman3DModel.normalizeAngle(angle) but to 2 * .pi + CGFloat(angle), since it would make a full turn when coming back to the node at 0 degrees
+            animation.toValue = 2 * .pi + CGFloat(angle)
+            animation.duration = CFTimeInterval(duration)
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.parent!.addAnimation(animation, forKey: "rotation")
+//            camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: Double(duration), usesShortestUnitArc: usesShortestUnitArc), forKey: "rotation")
+ 
         } else {
-            camera.parent!.runAction(SCNAction.rotateTo(x: 0, y: CGFloat(angle), z: 0, duration: 0))
+            camera.parent!.removeAnimation(forKey: "rotation")
+            camera.parent!.eulerAngles.y = angle
         }
     }
 
@@ -211,11 +227,12 @@ struct Interman3DSwiftUIView: View {
 
     private func updateCameraIfNeeded() {
         if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper {
-            print("ICI")
+            print("-------------------------------")
             print("\(#function)")
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
-            print(host.getHost().fullDump())
+            print("choix: \(host.getHost().fullDump())")
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
+//            setSelectedHost(interman3d_model.getLowestNodeAngle(getCameraAngle()).getHost())
         }
     }
     
