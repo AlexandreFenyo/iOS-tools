@@ -311,10 +311,8 @@ class B3DHost : B3D {
     
     
     
-    
-    func updateText(_ counter: Int) {
-        print("\(#function)")
 
+    func updateText(_ counter: Int) {
         let fade_out_action = SCNAction.fadeOut(duration: 0.5)
         let remove = SCNAction.run { $0.removeFromParentNode() }
         let sequence = SCNAction.sequence([fade_out_action, remove])
@@ -333,7 +331,9 @@ class B3DHost : B3D {
         text_node.opacity = 0
 
         let fade_in_action = SCNAction.fadeIn(duration: 0.5)
-        text_node.runAction(fade_in_action)
+        let wait_action = SCNAction.wait(duration: 0.5)
+        let sequence_2 = SCNAction.sequence([wait_action, fade_in_action])
+        text_node.runAction(sequence_2)
         
         addSubChildNode(text_node)
 

@@ -312,7 +312,7 @@ struct Interman3DSwiftUIView: View {
                              timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
                                  updateCameraIfNeeded()
                              }
-                             timer_text = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                             timer_text = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
                                  updateTextIfNeeded()
                              }
                          }
