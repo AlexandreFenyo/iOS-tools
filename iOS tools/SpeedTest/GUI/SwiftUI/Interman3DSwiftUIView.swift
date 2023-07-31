@@ -67,6 +67,7 @@ struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
     @State private var timer_camera: Timer?
+    @State private var timer_text: Timer?
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -218,6 +219,10 @@ struct Interman3DSwiftUIView: View {
 
     }
 
+    private func updateTextIfNeeded() {
+        interman3d_model.scheduledTextUpdate()
+    }
+    
     private func updateCameraIfNeeded() {
         if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper {
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
@@ -307,10 +312,14 @@ struct Interman3DSwiftUIView: View {
                              timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
                                  updateCameraIfNeeded()
                              }
+                             timer_text = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                 updateTextIfNeeded()
+                             }
                          }
                          .onDisappear() {
                              timer?.invalidate()
                              timer_camera?.invalidate()
+                             timer_text?.invalidate()
                          }
                          VStack {
                              HStack {

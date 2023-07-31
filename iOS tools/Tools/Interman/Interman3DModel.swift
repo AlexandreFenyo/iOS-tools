@@ -295,7 +295,10 @@ class B3D : SCNNode {
 
 class B3DHost : B3D {
     private var host: Node
+    private var text, text2, text3: SCNText
+    private var text_node, text2_node, text3_node: SCNNode
 
+    
     func getHost() -> Node {
         return host
     }
@@ -304,10 +307,66 @@ class B3DHost : B3D {
         if node.isKind(of: B3DHost.self) { return node as? B3DHost }
         return node.parent != nil ? getFromNode(node.parent!) : nil
     }
+
+    
+    
+    
+    
+    func updateText(_ counter: Int) {
+        print("\(#function)")
+
+        let fade_out_action = SCNAction.fadeOut(duration: 0.5)
+        let remove = SCNAction.run { $0.removeFromParentNode() }
+        let sequence = SCNAction.sequence([fade_out_action, remove])
+        text_node.runAction(sequence)
+
+        text = SCNText(string: "toto\(counter)", extrusionDepth: 0)
+        text.flatness = 0
+        text.firstMaterial!.diffuse.contents = COLORS.standard_background
+        text.firstMaterial!.isDoubleSided = true
+        text_node = SCNNode(geometry: text)
+        text.font = UIFont(name: "Helvetica", size: 1)
+        let (min, max) = text_node.boundingBox
+        text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
+        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+
+        text_node.opacity = 0
+
+        let fade_in_action = SCNAction.fadeIn(duration: 0.5)
+        text_node.runAction(fade_in_action)
+        
+        addSubChildNode(text_node)
+
+
+        
+
+    }
+
+    private func computeDisplayText() -> [String] {
+        var text_array = [String]()
+        text_array.append(contentsOf: host.getDnsNames().map { $0.toString() }.sorted())
+        text_array.append(contentsOf: host.getNames().sorted())
+        text_array.append(contentsOf: host.getMcastDnsNames().map { $0.toString() }.sorted())
+        if text_array.isEmpty {
+            if let foo = host.getV4Addresses().first?.toNumericString() {
+                text_array.append(foo)
+            } else if let foo = host.getV6Addresses().first?.toNumericString() {
+                text_array.append(foo)
+            } else {
+                text_array.append("no information")
+            }
+        }
+        return text_array
+    }
+    
+    
+    
+    
+    
+    
     
     init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
-        super.init(scn_node)
 
         // First line of text
         var display_text = "no name"
@@ -322,48 +381,56 @@ class B3DHost : B3D {
         } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
             display_text = bar
         }
-        let text = SCNText(string: display_text, extrusionDepth: 0)
+        text = SCNText(string: display_text, extrusionDepth: 0)
         text.flatness = 0
-        text.firstMaterial!.diffuse.contents = COLORS.standard_background // UIColor.yellow.darker().darker() // COLORS.right_pannel_scroll_bg // UIColor.yellow
+        text.firstMaterial!.diffuse.contents = COLORS.standard_background
         text.firstMaterial!.isDoubleSided = true
-        let text_node = SCNNode(geometry: text)
+        text_node = SCNNode(geometry: text)
         text.font = UIFont(name: "Helvetica", size: 1)
         let (min, max) = text_node.boundingBox
         text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-        addSubChildNode(text_node)
-
+        
         // Second line of text
         let display_text2 = "this is the 2nd line of text with many informations"
-        let text2 = SCNText(string: display_text2, extrusionDepth: 0)
+        text2 = SCNText(string: display_text2, extrusionDepth: 0)
         text2.flatness = 0
         text2.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
         text2.firstMaterial!.isDoubleSided = true
-        let text2_node = SCNNode(geometry: text2)
+        text2_node = SCNNode(geometry: text2)
         text2.font = UIFont(name: "Helvetica", size: 0.6)
         let (min2, max2) = text2_node.boundingBox
         text2_node.pivot = SCNMatrix4MakeTranslation(-1, min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
         text2_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-        addSubChildNode(text2_node)
 
         // Third line of text
         let display_text3 = "this is the third line of text with many informations"
-        let text3 = SCNText(string: display_text3, extrusionDepth: 0)
+        text3 = SCNText(string: display_text3, extrusionDepth: 0)
         text3.flatness = 0
         text3.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
         text3.firstMaterial!.isDoubleSided = true
-        let text3_node = SCNNode(geometry: text3)
+        text3_node = SCNNode(geometry: text3)
         text3.font = UIFont(name: "Helvetica", size: 0.6)
         let (min3, max3) = text3_node.boundingBox
         text3_node.pivot = SCNMatrix4MakeTranslation(-1, max3.y - min3.y + min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
         text3_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+
+        super.init(scn_node)
+        addSubChildNode(text_node)
+        addSubChildNode(text2_node)
         addSubChildNode(text3_node)
-
-
     }
 
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
     func updateModelAndValues() {
+        // /////////////////////////////////
+        // Update text content
+
+        
+        
+        // /////////////////////////////////
+        // Update 3D model
+        
         if host.isLocalHost() {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 updateModel(ComponentTemplates.iPad)
@@ -590,6 +657,8 @@ public class Interman3DModel : ObservableObject {
 
     // Does not contain localhost IPs
     private var scanned_IPs = Set<IPAddress>()
+    
+    private var scheduled_text_update_counter = 0
 
     public init() {
         b3d_hosts = [B3DHost]()
@@ -604,9 +673,6 @@ public class Interman3DModel : ObservableObject {
 
     // Return the node that is just highest than the middle right position on the screen
     func getLowestNodeAngle(_ angle: Float) -> B3DHost {
-        let foo = b3d_hosts.map { (Interman3DModel.normalizeAngle($0.getAngle() + angle), $0) }.sorted { $0.0 < $1.0 }
-        print(foo.map { ($0, $1.getHost().getMcastDnsNames().first?.toString(), $1.getHost().getDnsNames().first?.toString()) })
-
         return b3d_hosts.map { (Interman3DModel.normalizeAngle($0.getAngle() + angle), $0) }.sorted { $0.0 < $1.0 }.last!.1
     }
     
@@ -622,6 +688,13 @@ public class Interman3DModel : ObservableObject {
         var links = Set<Link3DScanNode>()
         b3d_hosts.forEach { links.formUnion($0.getLink3DScanNodes()) }
         links.forEach { Self.renewLink3DScanNode(link: $0) }
+    }
+
+    func scheduledTextUpdate() {
+        scheduled_text_update_counter += 1
+        b3d_hosts.forEach { b3d in
+            b3d.updateText(scheduled_text_update_counter)
+        }
     }
 
     static func normalizeAngle(_ angle: Float) -> Float {

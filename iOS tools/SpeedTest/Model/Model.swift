@@ -19,7 +19,7 @@ public enum NodeType: Int, CaseIterable {
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-public class DomainPart : Hashable {
+public class DomainPart : Hashable, Comparable {
     public let name: String
 
     public func hash(into hasher: inout Hasher) {
@@ -38,7 +38,11 @@ public class DomainPart : Hashable {
     public static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
         return lhs.name == rhs.name
     }
-}
+    
+    public static func < (lhs: DomainPart, rhs: DomainPart) -> Bool {
+        return lhs.name < rhs.name
+    }
+ }
 
 // A host part must not contain a dot
 // ex: www, localhost
@@ -51,21 +55,21 @@ public class HostPart : DomainPart {
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-public class DomainName : Hashable {
+public class DomainName : Hashable, Comparable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
     }
-
+    
     public let host_part: HostPart
     public let domain_part: DomainPart?
-
+    
     public init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
         if let domain_part = domain_part { self.domain_part = domain_part }
         else { self.domain_part = nil }
     }
-
+    
     public init?(_ name: String) {
         if let idx = name.firstIndex(of: ".") {
             if idx == name.indices.first || idx == name.indices.last { return nil }
@@ -88,9 +92,13 @@ public class DomainName : Hashable {
     public func isFQDN() -> Bool {
         return domain_part != nil
     }
-
+    
     public static func == (lhs: DomainName, rhs: DomainName) -> Bool {
         return lhs.host_part == rhs.host_part && lhs.domain_part == rhs.domain_part
+    }
+    
+    public static func < (lhs: DomainName, rhs: DomainName) -> Bool {
+        return lhs.toString() < rhs.toString()
     }
 }
 
