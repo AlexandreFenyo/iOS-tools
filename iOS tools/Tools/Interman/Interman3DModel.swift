@@ -295,9 +295,7 @@ class B3D : SCNNode {
 
 class B3DHost : B3D {
     private var host: Node
-    private var text, text2, text3: SCNText?
     private var text_node, text2_node, text3_node: SCNNode?
-
     
     func getHost() -> Node {
         return host
@@ -374,19 +372,19 @@ class B3DHost : B3D {
         }
         // First line of text
         text_node = createSCNTextNode(display_text, size: 1, shift: 0)
-        text = text_node?.geometry as? SCNText
+//        text = text_node?.geometry as? SCNText
         let (min, max) = text_node!.boundingBox
         
         // Second line of text
         let display_text2 = "this is the 2nd line of text with many informations"
         text2_node = createSCNTextNode(display_text2, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
-        text2 = text2_node?.geometry as? SCNText
+//        text2 = text2_node?.geometry as? SCNText
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = "this is the third line of text with many informations"
         text3_node = createSCNTextNode(display_text3, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
-        text3 = text3_node?.geometry as? SCNText
+//        text3 = text3_node?.geometry as? SCNText
 
         addSubChildNode(text_node!)
         addSubChildNode(text2_node!)
