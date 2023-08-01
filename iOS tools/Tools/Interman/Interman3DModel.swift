@@ -374,13 +374,6 @@ class B3DHost : B3D {
         addSubChildNode(text3_node!)
     }
 
-
-
-
-
-
-
-
     static let max_display_text_length = 40
     static let display_text_separator = " - "
     private static func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> String {
