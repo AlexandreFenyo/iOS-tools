@@ -193,9 +193,6 @@ class B3D : SCNNode {
         let max_extend = max(extend.x, extend.z)
         object_sub_node.pivot = SCNMatrix4MakeTranslation(0, bb_min.y, 0)
         object_sub_node.scale = SCNVector3(space * 1 / max_extend, space * 1 / max_extend, space * 1 / max_extend)
-//        object_sub_node.eulerAngles.x = 0
-//        object_sub_node.eulerAngles.y = 0
-//        object_sub_node.eulerAngles.z = 0.9
     }
     
     func updateModel(_ scn_node: SCNNode) {
@@ -296,6 +293,7 @@ class B3D : SCNNode {
 class B3DHost : B3D {
     private var host: Node
     private var text_node, text2_node, text3_node: SCNNode?
+    private var text_string, text2_string, text3_string: String?
     
     func getHost() -> Node {
         return host
@@ -320,23 +318,24 @@ class B3DHost : B3D {
     }
 
     func updateText(_ counter: Int) {
-        // First line fade out
-        let fade_out_action = SCNAction.fadeOut(duration: 0.5)
-        let remove = SCNAction.run { $0.removeFromParentNode() }
-        let sequence = SCNAction.sequence([fade_out_action, remove])
-        text_node!.runAction(sequence)
-
-        // First line fade in
-
-//        text_node = createSCNTextNode("toto\(counter)")
-        text_node = createSCNTextNode("toto\(counter)")
-        
-        text_node!.opacity = 0
-        let fade_in_action = SCNAction.fadeIn(duration: 0.5)
-        let wait_action = SCNAction.wait(duration: 0.5)
-        let sequence_bis = SCNAction.sequence([wait_action, fade_in_action])
-        text_node!.runAction(sequence_bis)
-        addSubChildNode(text_node!)
+        let new_text = Self.getDisplayTextFromIndex(text_array: computeDisplayText1stLine(), group_index: counter)
+        if new_text != text_string {
+            // First line fade out
+            let fade_out_action = SCNAction.fadeOut(duration: 0.5)
+            let remove = SCNAction.run { $0.removeFromParentNode() }
+            let sequence = SCNAction.sequence([fade_out_action, remove])
+            text_node!.runAction(sequence)
+            
+            // First line fade in
+            text_string = new_text
+            text_node = createSCNTextNode(text_string!)
+            text_node!.opacity = 0
+            let fade_in_action = SCNAction.fadeIn(duration: 0.5)
+            let wait_action = SCNAction.wait(duration: 0.5)
+            let sequence_bis = SCNAction.sequence([wait_action, fade_in_action])
+            text_node!.runAction(sequence_bis)
+            addSubChildNode(text_node!)
+        }
 
         // 2nd line fade out
         let fade_out_action_2 = SCNAction.fadeOut(duration: 0.5)
@@ -382,10 +381,10 @@ class B3DHost : B3D {
 
 
 
-    static let max_display_text_length = 20
+    static let max_display_text_length = 40
     static let display_text_separator = " - "
-    private func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> [String] {
-        if text_array.isEmpty { return [""] }
+    private static func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> String {
+        if text_array.isEmpty { return "" }
         // From here, all_groups can be filled and it will not be empty
         var all_groups = [[String]]()
         // Find all groups to fill all_groups
@@ -420,9 +419,15 @@ class B3DHost : B3D {
             all_groups.append(current_display_group)
         }
         // Note that all_groups.count can not be null, in such a case the function would have returned at the beginning
-        return all_groups[group_index % all_groups.count]
-
-
+        let returned_group = all_groups[group_index % all_groups.count]
+        var returned_text = ""
+        for idx in 0..<returned_group.count {
+            returned_text.append(returned_group[idx])
+            if idx != returned_group.count - 1 {
+                returned_text.append(Self.display_text_separator)
+            }
+        }
+        return returned_text
     }
 
     private func computeDisplayText1stLine() -> [String] {
@@ -468,19 +473,22 @@ class B3DHost : B3D {
         } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
             display_text = bar
         }
-        text_node = createSCNTextNode(display_text, size: 1, shift: 0)
+        text_string = display_text
+        text_node = createSCNTextNode(text_string!, size: 1, shift: 0)
         addSubChildNode(text_node!)
         let (min, max) = text_node!.boundingBox
         
         // Second line of text
         let display_text2 = "this is the 2nd line of text with many informations"
-        text2_node = createSCNTextNode(display_text2, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+        text2_string = display_text2
+        text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
         addSubChildNode(text2_node!)
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = "this is the third line of text with many informations"
-        text3_node = createSCNTextNode(display_text3, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+        text3_string = display_text3
+        text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
         addSubChildNode(text3_node!)
     }
 
