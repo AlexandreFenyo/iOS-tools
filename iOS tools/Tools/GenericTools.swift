@@ -440,7 +440,19 @@ private class ManageTapDemoShip {
 }
 */
 
-// manage a tap on a Cube scene view
+// Return a new String without an ending dot
+extension String {
+    func dropLastDot() -> String {
+        if last == "." {
+            var foo = self
+            foo.removeLast()
+            return foo
+        }
+        return self
+    }
+}
+
+// Manage a tap on a Cube scene view
 private class ManageTapCube {
     let scnView: SCNView
 

@@ -432,9 +432,9 @@ class B3DHost : B3D {
 
     private func computeDisplayText1stLine() -> [String] {
         var text_array = [String]()
-        text_array.append(contentsOf: host.getDnsNames().map { $0.toString() }.sorted())
-        text_array.append(contentsOf: host.getNames().sorted())
-        text_array.append(contentsOf: host.getMcastDnsNames().map { $0.toString() }.sorted())
+        text_array.append(contentsOf: host.getDnsNames().map { $0.toString().dropLastDot() }.sorted())
+        text_array.append(contentsOf: host.getNames().map { $0.dropLastDot() }.sorted())
+        text_array.append(contentsOf: host.getMcastDnsNames().map { $0.toString().dropLastDot() }.sorted())
         if text_array.isEmpty {
             if let foo = host.getV4Addresses().first?.toNumericString() {
                 text_array.append(foo)
@@ -446,15 +446,6 @@ class B3DHost : B3D {
         }
         return text_array
     }
-
-    
-    
-    
-    
-    
-    
-    
-    
     
     init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
@@ -473,7 +464,7 @@ class B3DHost : B3D {
         } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
             display_text = bar
         }
-        text_string = display_text
+        text_string = display_text.dropLastDot()
         text_node = createSCNTextNode(text_string!, size: 1, shift: 0)
         addSubChildNode(text_node!)
         let (min, max) = text_node!.boundingBox
