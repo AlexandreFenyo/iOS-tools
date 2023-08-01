@@ -320,20 +320,56 @@ class B3DHost : B3D {
     }
 
     func updateText(_ counter: Int) {
+        // First line fade out
         let fade_out_action = SCNAction.fadeOut(duration: 0.5)
         let remove = SCNAction.run { $0.removeFromParentNode() }
         let sequence = SCNAction.sequence([fade_out_action, remove])
         text_node!.runAction(sequence)
 
+        // First line fade in
         text_node = createSCNTextNode("toto\(counter)")
         text_node!.opacity = 0
-
         let fade_in_action = SCNAction.fadeIn(duration: 0.5)
         let wait_action = SCNAction.wait(duration: 0.5)
-        let sequence_2 = SCNAction.sequence([wait_action, fade_in_action])
-        text_node!.runAction(sequence_2)
-        
+        let sequence_bis = SCNAction.sequence([wait_action, fade_in_action])
+        text_node!.runAction(sequence_bis)
         addSubChildNode(text_node!)
+
+        // 2nd line fade out
+        let fade_out_action_2 = SCNAction.fadeOut(duration: 0.5)
+        let timeshift_action_2 = SCNAction.wait(duration: 0.5)
+        let remove_2 = SCNAction.run { $0.removeFromParentNode() }
+        let sequence_2 = SCNAction.sequence([timeshift_action_2, fade_out_action_2, remove_2])
+        text2_node!.runAction(sequence_2)
+
+        // 2nd line fade in
+        let (min, max) = text_node!.boundingBox
+        text2_node = createSCNTextNode("tata\(counter)", size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+        text2_node!.opacity = 0
+        let timeshift_action_bis_2 = SCNAction.wait(duration: 0.5)
+        let fade_in_action_2 = SCNAction.fadeIn(duration: 0.5)
+        let wait_action_2 = SCNAction.wait(duration: 0.5)
+        let sequence_bis_2 = SCNAction.sequence([timeshift_action_bis_2, wait_action_2, fade_in_action_2])
+        text2_node!.runAction(sequence_bis_2)
+        addSubChildNode(text2_node!)
+
+        // 3rd line fade out
+        let fade_out_action_3 = SCNAction.fadeOut(duration: 0.5)
+        let timeshift_action_3 = SCNAction.wait(duration: 1)
+        let remove_3 = SCNAction.run { $0.removeFromParentNode() }
+        let sequence_3 = SCNAction.sequence([timeshift_action_3, fade_out_action_3, remove_3])
+        text3_node!.runAction(sequence_3)
+
+        // 2nd line fade in
+        let (min2, max2) = text2_node!.boundingBox
+        text3_node = createSCNTextNode("titi\(counter)", size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+        text3_node!.opacity = 0
+        let timeshift_action_bis_3 = SCNAction.wait(duration: 1)
+        let fade_in_action_3 = SCNAction.fadeIn(duration: 0.5)
+        let wait_action_3 = SCNAction.wait(duration: 0.5)
+        let sequence_bis_3 = SCNAction.sequence([timeshift_action_bis_3, wait_action_3, fade_in_action_3])
+        text3_node!.runAction(sequence_bis_3)
+        addSubChildNode(text3_node!)
     }
 
     private func computeDisplayText() -> [String] {
@@ -370,24 +406,19 @@ class B3DHost : B3D {
         } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
             display_text = bar
         }
-        // First line of text
         text_node = createSCNTextNode(display_text, size: 1, shift: 0)
-//        text = text_node?.geometry as? SCNText
+        addSubChildNode(text_node!)
         let (min, max) = text_node!.boundingBox
         
         // Second line of text
         let display_text2 = "this is the 2nd line of text with many informations"
         text2_node = createSCNTextNode(display_text2, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
-//        text2 = text2_node?.geometry as? SCNText
+        addSubChildNode(text2_node!)
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = "this is the third line of text with many informations"
         text3_node = createSCNTextNode(display_text3, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
-//        text3 = text3_node?.geometry as? SCNText
-
-        addSubChildNode(text_node!)
-        addSubChildNode(text2_node!)
         addSubChildNode(text3_node!)
     }
 
