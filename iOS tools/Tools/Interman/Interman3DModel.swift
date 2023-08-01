@@ -327,7 +327,10 @@ class B3DHost : B3D {
         text_node!.runAction(sequence)
 
         // First line fade in
+
+//        text_node = createSCNTextNode("toto\(counter)")
         text_node = createSCNTextNode("toto\(counter)")
+        
         text_node!.opacity = 0
         let fade_in_action = SCNAction.fadeIn(duration: 0.5)
         let wait_action = SCNAction.wait(duration: 0.5)
@@ -372,7 +375,57 @@ class B3DHost : B3D {
         addSubChildNode(text3_node!)
     }
 
-    private func computeDisplayText() -> [String] {
+
+
+
+
+
+
+
+    static let max_display_text_length = 20
+    static let display_text_separator = " - "
+    private func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> [String] {
+        if text_array.isEmpty { return [""] }
+        // From here, all_groups can be filled and it will not be empty
+        var all_groups = [[String]]()
+        // Find all groups to fill all_groups
+        var current_input_string_index = 0
+        var current_display_group = [String]()
+        // Loop until there is no more input strings
+        while current_input_string_index < text_array.count {
+            // Consume next input string
+            current_display_group.append(text_array[current_input_string_index])
+            current_input_string_index += 1
+            // Compute current group length
+            var current_display_group_len = 0
+            current_display_group.forEach { text in
+                current_display_group_len += text.count
+            }
+            current_display_group_len += current_display_group.count > 1 ? Self.display_text_separator.count * (current_display_group.count - 1) : 0
+            // Check if the group is larger that the max authorized length
+            if current_display_group_len > Self.max_display_text_length {
+                // Truncate the group if it is possible (it must not become empty)
+                if current_display_group.count > 1 {
+                    current_display_group.removeLast()
+                    current_input_string_index -= 1
+                }
+                // From here, the current group is full, so save the new group
+                all_groups.append(current_display_group)
+                // Prepare the next loop for the next group
+                current_display_group.removeAll()
+            }
+        }
+        // If the last current group is not empty, save it as a new group
+        if current_display_group.isEmpty == false {
+            all_groups.append(current_display_group)
+        }
+        // Note that all_groups.count can not be null, in such a case the function would have returned at the beginning
+        return all_groups[group_index % all_groups.count]
+
+
+    }
+
+    private func computeDisplayText1stLine() -> [String] {
         var text_array = [String]()
         text_array.append(contentsOf: host.getDnsNames().map { $0.toString() }.sorted())
         text_array.append(contentsOf: host.getNames().sorted())
@@ -389,6 +442,15 @@ class B3DHost : B3D {
         return text_array
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
     init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
         super.init(scn_node)
