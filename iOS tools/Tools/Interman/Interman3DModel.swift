@@ -295,8 +295,8 @@ class B3D : SCNNode {
 
 class B3DHost : B3D {
     private var host: Node
-    private var text, text2, text3: SCNText
-    private var text_node, text2_node, text3_node: SCNNode
+    private var text, text2, text3: SCNText?
+    private var text_node, text2_node, text3_node: SCNNode?
 
     
     func getHost() -> Node {
@@ -308,38 +308,34 @@ class B3DHost : B3D {
         return node.parent != nil ? getFromNode(node.parent!) : nil
     }
 
-    
-    
-    
+    private func createSCNTextNode(_ text: String, size: CGFloat = 1, shift: Float = 0) -> SCNNode {
+        let text = SCNText(string: text, extrusionDepth: 0)
+        text.flatness = 0
+        text.font = UIFont(name: "Helvetica", size: size)
+        text.firstMaterial!.diffuse.contents = COLORS.standard_background
+        text.firstMaterial!.isDoubleSided = true
+        let text_node = SCNNode(geometry: text)
+        let (min, max) = text_node.boundingBox
+        text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2 + shift, 0)
+        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        return text_node
+    }
 
     func updateText(_ counter: Int) {
         let fade_out_action = SCNAction.fadeOut(duration: 0.5)
         let remove = SCNAction.run { $0.removeFromParentNode() }
         let sequence = SCNAction.sequence([fade_out_action, remove])
-        text_node.runAction(sequence)
+        text_node!.runAction(sequence)
 
-        text = SCNText(string: "toto\(counter)", extrusionDepth: 0)
-        text.flatness = 0
-        text.firstMaterial!.diffuse.contents = COLORS.standard_background
-        text.firstMaterial!.isDoubleSided = true
-        text_node = SCNNode(geometry: text)
-        text.font = UIFont(name: "Helvetica", size: 1)
-        let (min, max) = text_node.boundingBox
-        text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
-        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
-
-        text_node.opacity = 0
+        text_node = createSCNTextNode("toto\(counter)")
+        text_node!.opacity = 0
 
         let fade_in_action = SCNAction.fadeIn(duration: 0.5)
         let wait_action = SCNAction.wait(duration: 0.5)
         let sequence_2 = SCNAction.sequence([wait_action, fade_in_action])
-        text_node.runAction(sequence_2)
+        text_node!.runAction(sequence_2)
         
-        addSubChildNode(text_node)
-
-
-        
-
+        addSubChildNode(text_node!)
     }
 
     private func computeDisplayText() -> [String] {
@@ -358,15 +354,10 @@ class B3DHost : B3D {
         }
         return text_array
     }
-    
-    
-    
-    
-    
-    
-    
+
     init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
+        super.init(scn_node)
 
         // First line of text
         var display_text = "no name"
@@ -381,44 +372,25 @@ class B3DHost : B3D {
         } else if let foo = host.getV6Addresses().first, let bar = foo.toNumericString() {
             display_text = bar
         }
-        text = SCNText(string: display_text, extrusionDepth: 0)
-        text.flatness = 0
-        text.firstMaterial!.diffuse.contents = COLORS.standard_background
-        text.firstMaterial!.isDoubleSided = true
-        text_node = SCNNode(geometry: text)
-        text.font = UIFont(name: "Helvetica", size: 1)
-        let (min, max) = text_node.boundingBox
-        text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2, 0)
-        text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        // First line of text
+        text_node = createSCNTextNode(display_text, size: 1, shift: 0)
+        text = text_node?.geometry as? SCNText
+        let (min, max) = text_node!.boundingBox
         
         // Second line of text
         let display_text2 = "this is the 2nd line of text with many informations"
-        text2 = SCNText(string: display_text2, extrusionDepth: 0)
-        text2.flatness = 0
-        text2.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
-        text2.firstMaterial!.isDoubleSided = true
-        text2_node = SCNNode(geometry: text2)
-        text2.font = UIFont(name: "Helvetica", size: 0.6)
-        let (min2, max2) = text2_node.boundingBox
-        text2_node.pivot = SCNMatrix4MakeTranslation(-1, min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
-        text2_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        text2_node = createSCNTextNode(display_text2, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+        text2 = text2_node?.geometry as? SCNText
+        let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = "this is the third line of text with many informations"
-        text3 = SCNText(string: display_text3, extrusionDepth: 0)
-        text3.flatness = 0
-        text3.firstMaterial!.diffuse.contents = text.firstMaterial!.diffuse.contents
-        text3.firstMaterial!.isDoubleSided = true
-        text3_node = SCNNode(geometry: text3)
-        text3.font = UIFont(name: "Helvetica", size: 0.6)
-        let (min3, max3) = text3_node.boundingBox
-        text3_node.pivot = SCNMatrix4MakeTranslation(-1, max3.y - min3.y + min2.y + (max2.y - min2.y) / 2 + (max.y - min.y) / 2 + 0.3, 0)
-        text3_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
+        text3_node = createSCNTextNode(display_text3, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+        text3 = text3_node?.geometry as? SCNText
 
-        super.init(scn_node)
-        addSubChildNode(text_node)
-        addSubChildNode(text2_node)
-        addSubChildNode(text3_node)
+        addSubChildNode(text_node!)
+        addSubChildNode(text2_node!)
+        addSubChildNode(text3_node!)
     }
 
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
