@@ -240,7 +240,8 @@ class B3D : SCNNode {
     
     fileprivate func firstAnim(_ angle: Float) {
         self.angle = Interman3DModel.normalizeAngle(angle)
-        
+
+        // Animate from the center to the circle
         let rot = simd_float4x4(simd_quatf(angle: angle, axis: SIMD3(0, 1, 0)))
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
@@ -337,23 +338,27 @@ class B3DHost : B3D {
             addSubChildNode(text_node!)
         }
 
-        // 2nd line fade out
-        let fade_out_action_2 = SCNAction.fadeOut(duration: 0.5)
-        let timeshift_action_2 = SCNAction.wait(duration: 0.5)
-        let remove_2 = SCNAction.run { $0.removeFromParentNode() }
-        let sequence_2 = SCNAction.sequence([timeshift_action_2, fade_out_action_2, remove_2])
-        text2_node!.runAction(sequence_2)
-
-        // 2nd line fade in
         let (min, max) = text_node!.boundingBox
-        text2_node = createSCNTextNode("tata\(counter)", size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
-        text2_node!.opacity = 0
-        let timeshift_action_bis_2 = SCNAction.wait(duration: 0.5)
-        let fade_in_action_2 = SCNAction.fadeIn(duration: 0.5)
-        let wait_action_2 = SCNAction.wait(duration: 0.5)
-        let sequence_bis_2 = SCNAction.sequence([timeshift_action_bis_2, wait_action_2, fade_in_action_2])
-        text2_node!.runAction(sequence_bis_2)
-        addSubChildNode(text2_node!)
+        let new_text_2 = Self.getDisplayTextFromIndex(text_array: computeDisplayText2ndLine(), group_index: counter)
+        if new_text_2 != text2_string {
+            // 2nd line fade out
+            let fade_out_action_2 = SCNAction.fadeOut(duration: 0.5)
+            let timeshift_action_2 = SCNAction.wait(duration: 0.5)
+            let remove_2 = SCNAction.run { $0.removeFromParentNode() }
+            let sequence_2 = SCNAction.sequence([timeshift_action_2, fade_out_action_2, remove_2])
+            text2_node!.runAction(sequence_2)
+            
+            // 2nd line fade in
+            text2_string = new_text_2
+            text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+            text2_node!.opacity = 0
+            let timeshift_action_bis_2 = SCNAction.wait(duration: 0.5)
+            let fade_in_action_2 = SCNAction.fadeIn(duration: 0.5)
+            let wait_action_2 = SCNAction.wait(duration: 0.5)
+            let sequence_bis_2 = SCNAction.sequence([timeshift_action_bis_2, wait_action_2, fade_in_action_2])
+            text2_node!.runAction(sequence_bis_2)
+            addSubChildNode(text2_node!)
+        }
 
         // 3rd line fade out
         let fade_out_action_3 = SCNAction.fadeOut(duration: 0.5)
@@ -439,6 +444,20 @@ class B3DHost : B3D {
         }
         return text_array
     }
+
+    private func computeDisplayText2ndLine() -> [String] {
+        var prefix = ""
+        let nips = host.getV4Addresses().count + host.getV6Addresses().count
+        let ntcpports = host.getTcpPorts().count
+        let nudpports = host.getUdpPorts().count
+        prefix.append("\(nips) IP")
+        if nips > 1 { prefix.append("s") }
+        prefix.append(" - \(ntcpports) TCP port")
+        if ntcpports > 1 { prefix.append("s") }
+        prefix.append(" - \(nudpports) UDP port")
+        if nudpports > 1 { prefix.append("s") }
+        return [prefix]
+    }
     
     init(_ scn_node: SCNNode, _ host: Node) {
         self.host = host
@@ -463,14 +482,14 @@ class B3DHost : B3D {
         let (min, max) = text_node!.boundingBox
         
         // Second line of text
-        let display_text2 = "this is the 2nd line of text with many informations"
+        let display_text2 = ""
         text2_string = display_text2
         text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
         addSubChildNode(text2_node!)
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
-        let display_text3 = "this is the third line of text with many informations"
+        let display_text3 = ""
         text3_string = display_text3
         text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
         addSubChildNode(text3_node!)
