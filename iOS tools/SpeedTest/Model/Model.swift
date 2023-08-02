@@ -171,86 +171,86 @@ public class Node : Hashable {
     }
 
     // BonjourServiceInfo is a class with constant attributes (each declared as a let String), therefore no need to copy the Set elements to be sure they are not updated
-    public func getServices() -> Set<BonjourServiceInfo> {
+    func getServices() -> Set<BonjourServiceInfo> {
         return services
     }
 
     // FQDN is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
-    public func getMcastDnsNames() -> Set<FQDN> {
+    func getMcastDnsNames() -> Set<FQDN> {
         return mcast_dns_names
     }
 
     // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
-    public func getDnsNames() -> Set<DomainName> {
+    func getDnsNames() -> Set<DomainName> {
         return dns_names
     }
 
     // No need to copy the set elements to be sure they are not updated
-    public func getNames() -> Set<String> {
+    func getNames() -> Set<String> {
         return names
     }
 
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
-    public func getV4Addresses() -> Set<IPv4Address> {
+    func getV4Addresses() -> Set<IPv4Address> {
         return v4_addresses
     }
 
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
-    public func getV6Addresses() -> Set<IPv6Address> {
+    func getV6Addresses() -> Set<IPv6Address> {
         return v6_addresses
     }
 
     // No need to copy the set elements to be sure they are not updated
-    public func getTcpPorts() -> Set<UInt16> {
+    func getTcpPorts() -> Set<UInt16> {
         return tcp_ports
     }
 
     // No need to copy the set elements to be sure they are not updated
-    public func getUdpPorts() -> Set<UInt16> {
+    func getUdpPorts() -> Set<UInt16> {
         return udp_ports
     }
 
-    public func setTypes(_ types: Set<NodeType>) {
+    func setTypes(_ types: Set<NodeType>) {
         self.types = types
     }
 
-    public func addType(_ type: NodeType) {
+    func addType(_ type: NodeType) {
         types.insert(type)
     }
 
-    public func addService(_ service: BonjourServiceInfo) {
+    func addService(_ service: BonjourServiceInfo) {
         services.insert(service)
     }
 
-    public func addV4Address(_ address: IPv4Address) {
+    func addV4Address(_ address: IPv4Address) {
         v4_addresses.insert(address)
     }
 
-    public func addV6Address(_ address: IPv6Address) {
+    func addV6Address(_ address: IPv6Address) {
         v6_addresses.insert(address)
     }
 
-    public func addName(_ name: String) {
+    func addName(_ name: String) {
         names.insert(name)
     }
 
-    public func addDnsName(_ domain_name: DomainName) {
+    func addDnsName(_ domain_name: DomainName) {
         dns_names.insert(domain_name)
     }
 
-    public func addMcastFQDN(_ domain_name: FQDN) {
+    func addMcastFQDN(_ domain_name: FQDN) {
         mcast_dns_names.insert(domain_name)
     }
 
-    public func addTcpPort(_ port: UInt16) {
+    func addTcpPort(_ port: UInt16) {
         tcp_ports.insert(port)
     }
 
-    public func addUdpPort(_ port: UInt16) {
+    func addUdpPort(_ port: UInt16) {
         udp_ports.insert(port)
     }
 
-    public init() { }
+    init() { }
     
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
@@ -270,7 +270,7 @@ public class Node : Hashable {
         return Set(mcast_dns_names.map { $0.host_part }).union(Set(dns_names.map { $0.host_part }))
     }
     
-    public func toSectionTypes() -> Set<SectionType> {
+    func toSectionTypes() -> Set<SectionType> {
         var section_types = Set<SectionType>()
         
         if types.contains(.localhost) {
@@ -287,7 +287,7 @@ public class Node : Hashable {
         return section_types
     }
     
-    public func merge(_ node: Node) {
+    func merge(_ node: Node) {
         mcast_dns_names.formUnion(node.mcast_dns_names)
         dns_names.formUnion(node.dns_names)
         names.formUnion(node.names)
@@ -306,7 +306,7 @@ public class Node : Hashable {
         services = Set(name_to_service_info.map { $0.value })
     }
     
-    public func isSimilar(with: Node) -> Bool {
+    func isSimilar(with: Node) -> Bool {
         if !(v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }.intersection(with.v4_addresses.filter { $0.isUnicast() /* && !$0.isLocal() */ }).isEmpty) { return true }
         
         if !(v6_addresses.filter { !$0.isMulticastPublic() }.intersection(with.v6_addresses.filter { !$0.isMulticastPublic() }).isEmpty) { return true }
@@ -322,7 +322,7 @@ public class Node : Hashable {
         return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
     }
 
-    public func dump() -> String {
+    func dump() -> String {
         var ret = "DUMP NODE: "
         ret = ret + "dns_names: "
         for foo in dns_names {
@@ -331,7 +331,7 @@ public class Node : Hashable {
         return ret
     }
 
-    public func fullDump() -> String {
+    func fullDump() -> String {
         var ret = "FULL DUMP NODE: "
         ret = ret + "mcast_dns_names: "
         for foo in mcast_dns_names {
@@ -358,12 +358,12 @@ public class Node : Hashable {
 }
 
 class ModelSection {
-    public var icon_description: String
-    public var description: String
-    public var detailed_description: String
-    public var nodes = [Node]()
+    var icon_description: String
+    var description: String
+    var detailed_description: String
+    var nodes = [Node]()
     
-    public init(_ icon_description: String, _ description: String, _ detailed_description: String) {
+    init(_ icon_description: String, _ description: String, _ detailed_description: String) {
         self.icon_description = icon_description
         self.description = NSLocalizedString(description, comment: "description")
         self.detailed_description = NSLocalizedString(detailed_description, comment: "detailled description")
@@ -372,13 +372,13 @@ class ModelSection {
 
 // The DBMaster database instance is accessible with DBMaster.shared
 class DBMaster {
-    public var sections: [SectionType : ModelSection]
+    var sections: [SectionType : ModelSection]
     private(set) var nodes: Set<Node>
     private(set) var networks: Set<IPNetwork>
     
     static public let shared = DBMaster()
 
-    public func resetNetworks() {
+    func resetNetworks() {
         networks = Set<IPNetwork>()
     }
 
@@ -396,11 +396,11 @@ class DBMaster {
         return nil
     }
 
-    public func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
+    func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         return addOrRemoveNode(new_node, add: true)
     }
 
-    public func removeNode(_ node: Node) -> [IndexPath] {
+    func removeNode(_ node: Node) -> [IndexPath] {
         return addOrRemoveNode(node, add: false).removed_paths
     }
 
