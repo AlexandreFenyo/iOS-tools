@@ -319,6 +319,9 @@ class B3DHost : B3D {
     }
 
     func updateText(_ counter: Int) {
+let start_time = Date()
+GenericTools.printDuration(idx: 0, start_time: start_time)
+
         let new_text = Self.getDisplayTextFromIndex(text_array: computeDisplayText1stLine(), group_index: counter)
         if new_text != text_string {
             // First line fade out
@@ -360,57 +363,84 @@ class B3DHost : B3D {
             addSubChildNode(text2_node!)
         }
 
-        // 3rd line fade out
-        let fade_out_action_3 = SCNAction.fadeOut(duration: 0.5)
-        let timeshift_action_3 = SCNAction.wait(duration: 1)
-        let remove_3 = SCNAction.run { $0.removeFromParentNode() }
-        let sequence_3 = SCNAction.sequence([timeshift_action_3, fade_out_action_3, remove_3])
-        text3_node!.runAction(sequence_3)
+        let new_text_3 = Self.getDisplayTextFromIndex(text_array: computeDisplayText3rdLine(), group_index: counter)
+        if new_text_3 != text3_string {
+            // 3rd line fade out
+            let fade_out_action_3 = SCNAction.fadeOut(duration: 0.5)
+            let timeshift_action_3 = SCNAction.wait(duration: 1)
+            let remove_3 = SCNAction.run { $0.removeFromParentNode() }
+            let sequence_3 = SCNAction.sequence([timeshift_action_3, fade_out_action_3, remove_3])
+            text3_node!.runAction(sequence_3)
+            
+            // 3rd line fade in
+            let (min2, max2) = text2_node!.boundingBox
+            text3_string = new_text_3
+            text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+            text3_node!.opacity = 0
+            let timeshift_action_bis_3 = SCNAction.wait(duration: 1)
+            let fade_in_action_3 = SCNAction.fadeIn(duration: 0.5)
+            let wait_action_3 = SCNAction.wait(duration: 0.5)
+            let sequence_bis_3 = SCNAction.sequence([timeshift_action_bis_3, wait_action_3, fade_in_action_3])
+            text3_node!.runAction(sequence_bis_3)
+            addSubChildNode(text3_node!)
+        }
 
-        // 2nd line fade in
-        let (min2, max2) = text2_node!.boundingBox
-        text3_node = createSCNTextNode("titi\(counter)", size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
-        text3_node!.opacity = 0
-        let timeshift_action_bis_3 = SCNAction.wait(duration: 1)
-        let fade_in_action_3 = SCNAction.fadeIn(duration: 0.5)
-        let wait_action_3 = SCNAction.wait(duration: 0.5)
-        let sequence_bis_3 = SCNAction.sequence([timeshift_action_bis_3, wait_action_3, fade_in_action_3])
-        text3_node!.runAction(sequence_bis_3)
-        addSubChildNode(text3_node!)
+GenericTools.printDuration(idx: 1, start_time: start_time)
     }
 
     static let max_display_text_length = 40
     static let display_text_separator = " - "
+    // An empty string means end of line even if the max text length is not reached
     private static func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> String {
         if text_array.isEmpty { return "" }
+
+        var _text_array = [String]()
+        for text in text_array {
+            // Do not display duplicated informations
+            if text.isEmpty || !_text_array.contains(text) {
+                _text_array.insert(text, at: _text_array.endIndex)
+            }
+        }
+        
         // From here, all_groups can be filled and it will not be empty
         var all_groups = [[String]]()
         // Find all groups to fill all_groups
         var current_input_string_index = 0
         var current_display_group = [String]()
         // Loop until there is no more input strings
-        while current_input_string_index < text_array.count {
+        while current_input_string_index < _text_array.count {
             // Consume next input string
-            current_display_group.append(text_array[current_input_string_index])
-            current_input_string_index += 1
-            // Compute current group length
-            var current_display_group_len = 0
-            current_display_group.forEach { text in
-                current_display_group_len += text.count
-            }
-            current_display_group_len += current_display_group.count > 1 ? Self.display_text_separator.count * (current_display_group.count - 1) : 0
-            // Check if the group is larger that the max authorized length
-            if current_display_group_len > Self.max_display_text_length {
-                // Truncate the group if it is possible (it must not become empty)
-                if current_display_group.count > 1 {
-                    current_display_group.removeLast()
-                    current_input_string_index -= 1
+            if _text_array[current_input_string_index].isEmpty == false {
+                current_display_group.append(_text_array[current_input_string_index])
+                current_input_string_index += 1
+                // Compute current group length
+                var current_display_group_len = 0
+                current_display_group.forEach { text in
+                    current_display_group_len += text.count
                 }
-                // From here, the current group is full, so save the new group
-                all_groups.append(current_display_group)
+                current_display_group_len += current_display_group.count > 1 ? Self.display_text_separator.count * (current_display_group.count - 1) : 0
+                // Check if the group is larger that the max authorized length
+                if current_display_group_len > Self.max_display_text_length {
+                    // Truncate the group if it is possible (it must not become empty)
+                    if current_display_group.count > 1 {
+                        current_display_group.removeLast()
+                        current_input_string_index -= 1
+                    }
+                    // From here, the current group is full, so save the new group
+                    all_groups.append(current_display_group)
+                    // Prepare the next loop for the next group
+                    current_display_group.removeAll()
+                }
+            } else {
+                // Empty string means force new line, so save the new group
+                current_input_string_index += 1
+                if current_display_group.isEmpty == false {
+                    all_groups.append(current_display_group)
+                }
                 // Prepare the next loop for the next group
                 current_display_group.removeAll()
             }
+            
         }
         // If the last current group is not empty, save it as a new group
         if current_display_group.isEmpty == false {
@@ -446,6 +476,8 @@ class B3DHost : B3D {
     }
 
     private func computeDisplayText2ndLine() -> [String] {
+        var text_array = [String]()
+
         var prefix = ""
         let nips = host.getV4Addresses().count + host.getV6Addresses().count
         let ntcpports = host.getTcpPorts().count
@@ -456,7 +488,40 @@ class B3DHost : B3D {
         if ntcpports > 1 { prefix.append("s") }
         prefix.append(" - \(nudpports) UDP port")
         if nudpports > 1 { prefix.append("s") }
-        return [prefix]
+        text_array.append(prefix)
+
+        text_array.append("")
+        host.getV4Addresses().compactMap { $0.toNumericString() ?? nil }.forEach { str in
+            text_array.append(str)
+        }
+
+        text_array.append("")
+        host.getV6Addresses().compactMap { $0.toNumericString() ?? nil }.forEach { str in
+            text_array.append(str)
+        }
+
+        return text_array
+    }
+    
+    private func computeDisplayText3rdLine() -> [String] {
+        var text_array = [String]()
+
+        /*
+         text_tcp_ports.removeAll()
+         text_udp_ports.removeAll()
+         text_services.removeAll()
+         text_services_port.removeAll()
+         text_services_attr.removeAll()
+         */
+
+        let text_tcp_ports = host.getTcpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (tcp/\($0))") : "tcp/\($0)" }
+        text_array.append(contentsOf: text_tcp_ports)
+        text_array.append("")
+
+
+        
+        
+        return text_array
     }
     
     init(_ scn_node: SCNNode, _ host: Node) {

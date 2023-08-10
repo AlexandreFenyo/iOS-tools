@@ -167,6 +167,7 @@ public class DetailViewModel : ObservableObject {
         
         let _text_names = node.getNames().map { $0 } + node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }
         for name in _text_names {
+            // Do not display duplicated names
             if !text_names.contains(name) {
                 text_names.insert(name, at: text_names.endIndex)
             }
