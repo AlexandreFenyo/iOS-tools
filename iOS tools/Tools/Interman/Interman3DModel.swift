@@ -294,6 +294,8 @@ class B3D : SCNNode {
 class B3DHost : B3D {
 //    private static geometry cache
     private static var text_geometry_cache = [String: SCNText]()
+
+    private static let line_shift: Float = 0.35
     
     private var host: Node
     private var text_node, text2_node, text3_node: SCNNode?
@@ -369,7 +371,7 @@ class B3DHost : B3D {
             
             // 2nd line fade in
             text2_string = new_text_2
-            text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+            text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift)
             text2_node!.opacity = 0
             let timeshift_action_bis_2 = SCNAction.wait(duration: 0.5)
             let fade_in_action_2 = SCNAction.fadeIn(duration: 0.5)
@@ -391,7 +393,7 @@ class B3DHost : B3D {
             // 3rd line fade in
             let (min2, max2) = text2_node!.boundingBox
             text3_string = new_text_3
-            text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+            text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift + (max2.y - min2.y) / 2 + Self.line_shift)
             text3_node!.opacity = 0
             let timeshift_action_bis_3 = SCNAction.wait(duration: 1)
             let fade_in_action_3 = SCNAction.fadeIn(duration: 0.5)
@@ -548,21 +550,15 @@ class B3DHost : B3D {
     private func computeDisplayText3rdLine() -> [String] {
         var text_array = [String]()
 
-        /*
-         text_tcp_ports.removeAll()
-         text_udp_ports.removeAll()
-         text_services.removeAll()
-         text_services_port.removeAll()
-         text_services_attr.removeAll()
-         */
-
         text_array.append(contentsOf: host.getTcpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (tcp/\($0))") : "tcp/\($0)" })
         text_array.append("")
 
         text_array.append(contentsOf: host.getUdpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (udp/\($0))") : "udp/\($0)" })
         text_array.append("")
 
-        
+        text_array.append(contentsOf: host.getServices().map({ $0.name.dropLastDot() + " (" + $0.port + ")" }))
+        text_array.append("")
+
         return text_array
     }
     
@@ -591,14 +587,14 @@ class B3DHost : B3D {
         // Second line of text
         let display_text2 = ""
         text2_string = display_text2
-        text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3)
+        text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift)
         addSubChildNode(text2_node!)
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = ""
         text3_string = display_text3
-        text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + 0.3 + (max2.y - min2.y) / 2 + 0.3)
+        text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift + (max2.y - min2.y) / 2 + Self.line_shift)
         addSubChildNode(text3_node!)
     }
 
