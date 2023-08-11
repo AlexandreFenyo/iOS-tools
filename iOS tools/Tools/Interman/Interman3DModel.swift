@@ -637,27 +637,33 @@ class B3DHost : B3D {
         for name in host.getNames() {
             if name.lowercased().contains("ipad") {
                 updateModel(ComponentTemplates.iPad)
+                return
             }
             if name.lowercased().contains("iphone") {
                 updateModel(ComponentTemplates.iPhone)
+                return
             }
         }
 
         for name in host.getDnsNames() {
             if name.toString().lowercased().contains("ipad") {
                 updateModel(ComponentTemplates.iPad)
+                return
             }
             if name.toString().lowercased().contains("iphone") {
                 updateModel(ComponentTemplates.iPhone)
+                return
             }
         }
 
         for name in host.getMcastDnsNames() {
             if name.toString().lowercased().contains("ipad") {
                 updateModel(ComponentTemplates.iPad)
+                return
             }
             if name.toString().lowercased().contains("iphone") {
                 updateModel(ComponentTemplates.iPhone)
+                return
             }
         }
         
