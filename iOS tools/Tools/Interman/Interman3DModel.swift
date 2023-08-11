@@ -634,6 +634,33 @@ class B3DHost : B3D {
             return
         }
 
+        for name in host.getNames() {
+            if name.lowercased().contains("ipad") {
+                updateModel(ComponentTemplates.iPad)
+            }
+            if name.lowercased().contains("iphone") {
+                updateModel(ComponentTemplates.iPhone)
+            }
+        }
+
+        for name in host.getDnsNames() {
+            if name.toString().lowercased().contains("ipad") {
+                updateModel(ComponentTemplates.iPad)
+            }
+            if name.toString().lowercased().contains("iphone") {
+                updateModel(ComponentTemplates.iPhone)
+            }
+        }
+
+        for name in host.getMcastDnsNames() {
+            if name.toString().lowercased().contains("ipad") {
+                updateModel(ComponentTemplates.iPad)
+            }
+            if name.toString().lowercased().contains("iphone") {
+                updateModel(ComponentTemplates.iPhone)
+            }
+        }
+        
         // https://openairplay.github.io/airplay-spec/service_discovery.html
         if let airplay = (host.getServices().filter { $0.name == "_airplay._tcp." }).first {
             if let model = airplay.attr["model"] {
