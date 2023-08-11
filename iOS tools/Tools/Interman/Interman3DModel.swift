@@ -292,26 +292,45 @@ class B3D : SCNNode {
 }
 
 class B3DHost : B3D {
+//    private static geometry cache
+    private static var text_geometry_cache = [String: SCNText]()
+    
     private var host: Node
     private var text_node, text2_node, text3_node: SCNNode?
     private var text_string, text2_string, text3_string: String?
-    
+    private var (text_groups, text2_groups, text3_groups) = ([String](), [String](), [String]())
+
     func getHost() -> Node {
         return host
     }
-
+    
     static func getFromNode(_ node: SCNNode) -> B3DHost? {
         if node.isKind(of: B3DHost.self) { return node as? B3DHost }
         return node.parent != nil ? getFromNode(node.parent!) : nil
     }
 
     private func createSCNTextNode(_ text: String, size: CGFloat = 1, shift: Float = 0) -> SCNNode {
-        let text = SCNText(string: text, extrusionDepth: 0)
-        text.flatness = 0
-        text.font = UIFont(name: "Helvetica", size: size)
-        text.firstMaterial!.diffuse.contents = COLORS.standard_background
-        text.firstMaterial!.isDoubleSided = true
-        let text_node = SCNNode(geometry: text)
+        // Implement a basic cache
+        let key = "\(size);\(text)"
+        let scn_text: SCNText
+        if let cache_content = Self.text_geometry_cache[key] {
+            scn_text = cache_content
+        } else {
+            scn_text = SCNText(string: text, extrusionDepth: 0)
+
+            // Setting to the default value (0.6) means far lower segments for each character and higher performances
+            // Setting to 0 means many segments, nicer characters and lower performances
+            // Since we have implemented a cache, we can set flatness to 0
+            scn_text.flatness = 0
+
+            scn_text.font = UIFont(name: "Helvetica", size: size)
+            scn_text.firstMaterial!.diffuse.contents = COLORS.standard_background
+            scn_text.firstMaterial!.isDoubleSided = true
+
+            Self.text_geometry_cache[key] = scn_text
+        }
+
+        let text_node = SCNNode(geometry: scn_text)
         let (min, max) = text_node.boundingBox
         text_node.pivot = SCNMatrix4MakeTranslation(-1, min.y + (max.y - min.y) / 2 + shift, 0)
         text_node.simdRotation = SIMD4(1, 0, 0, -.pi / 2)
@@ -319,10 +338,7 @@ class B3DHost : B3D {
     }
 
     func updateText(_ counter: Int) {
-let start_time = Date()
-GenericTools.printDuration(idx: 0, start_time: start_time)
-
-        let new_text = Self.getDisplayTextFromIndex(text_array: computeDisplayText1stLine(), group_index: counter)
+        let new_text = Self.getDisplayTextFromIndexAndGroups(all_groups: text_groups, group_index: counter)
         if new_text != text_string {
             // First line fade out
             let fade_out_action = SCNAction.fadeOut(duration: 0.5)
@@ -342,7 +358,7 @@ GenericTools.printDuration(idx: 0, start_time: start_time)
         }
 
         let (min, max) = text_node!.boundingBox
-        let new_text_2 = Self.getDisplayTextFromIndex(text_array: computeDisplayText2ndLine(), group_index: counter)
+        let new_text_2 = Self.getDisplayTextFromIndexAndGroups(all_groups: text2_groups, group_index: counter)
         if new_text_2 != text2_string {
             // 2nd line fade out
             let fade_out_action_2 = SCNAction.fadeOut(duration: 0.5)
@@ -363,7 +379,7 @@ GenericTools.printDuration(idx: 0, start_time: start_time)
             addSubChildNode(text2_node!)
         }
 
-        let new_text_3 = Self.getDisplayTextFromIndex(text_array: computeDisplayText3rdLine(), group_index: counter)
+        let new_text_3 = Self.getDisplayTextFromIndexAndGroups(all_groups: text3_groups, group_index: counter)
         if new_text_3 != text3_string {
             // 3rd line fade out
             let fade_out_action_3 = SCNAction.fadeOut(duration: 0.5)
@@ -384,16 +400,13 @@ GenericTools.printDuration(idx: 0, start_time: start_time)
             text3_node!.runAction(sequence_bis_3)
             addSubChildNode(text3_node!)
         }
-
-GenericTools.printDuration(idx: 1, start_time: start_time)
     }
 
     static let max_display_text_length = 40
     static let display_text_separator = " - "
-    // An empty string means end of line even if the max text length is not reached
-    private static func getDisplayTextFromIndex(text_array: [String], group_index: Int) -> String {
-        if text_array.isEmpty { return "" }
 
+    // An empty string means end of line even if the max text length is not reached
+    private static func computeTextGroups(text_array: [String]) -> [[String]] {
         var _text_array = [String]()
         for text in text_array {
             // Do not display duplicated informations
@@ -446,7 +459,33 @@ GenericTools.printDuration(idx: 1, start_time: start_time)
         if current_display_group.isEmpty == false {
             all_groups.append(current_display_group)
         }
-        // Note that all_groups.count can not be null, in such a case the function would have returned at the beginning
+
+        return all_groups
+    }
+    private static func getDisplayTextGroups(all_groups: [[String]]) -> [String] {
+        var text_array = [String]()
+        
+        for group in all_groups {
+            var text = ""
+            for idx in 0..<group.count {
+                text.append(group[idx])
+                if idx != group.count - 1 {
+                    text.append(Self.display_text_separator)
+                }
+            }
+            text_array.append(text)
+        }
+
+        return text_array
+    }
+
+    private static func getDisplayTextFromIndexAndGroups(all_groups: [String], group_index: Int) -> String {
+        return all_groups.isEmpty ? "" : all_groups[group_index % all_groups.count]
+    }
+
+    private static func _getDisplayTextFromIndexAndGroups(all_groups: [[String]], group_index: Int) -> String {
+        if all_groups.isEmpty { return "" }
+        
         let returned_group = all_groups[group_index % all_groups.count]
         var returned_text = ""
         for idx in 0..<returned_group.count {
@@ -455,11 +494,13 @@ GenericTools.printDuration(idx: 1, start_time: start_time)
                 returned_text.append(Self.display_text_separator)
             }
         }
+
         return returned_text
     }
 
     private func computeDisplayText1stLine() -> [String] {
         var text_array = [String]()
+        
         text_array.append(contentsOf: host.getDnsNames().map { $0.toString().dropLastDot() }.sorted())
         text_array.append(contentsOf: host.getNames().map { $0.dropLastDot() }.sorted())
         text_array.append(contentsOf: host.getMcastDnsNames().map { $0.toString().dropLastDot() }.sorted())
@@ -472,6 +513,7 @@ GenericTools.printDuration(idx: 1, start_time: start_time)
                 text_array.append("no information")
             }
         }
+
         return text_array
     }
 
@@ -514,12 +556,12 @@ GenericTools.printDuration(idx: 1, start_time: start_time)
          text_services_attr.removeAll()
          */
 
-        let text_tcp_ports = host.getTcpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (tcp/\($0))") : "tcp/\($0)" }
-        text_array.append(contentsOf: text_tcp_ports)
+        text_array.append(contentsOf: host.getTcpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (tcp/\($0))") : "tcp/\($0)" })
         text_array.append("")
 
+        text_array.append(contentsOf: host.getUdpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.lowercased() + " (udp/\($0))") : "udp/\($0)" })
+        text_array.append("")
 
-        
         
         return text_array
     }
@@ -565,8 +607,10 @@ GenericTools.printDuration(idx: 1, start_time: start_time)
         // /////////////////////////////////
         // Update text content
 
-        
-        
+        text_groups = Self.getDisplayTextGroups(all_groups: Self.computeTextGroups(text_array: computeDisplayText1stLine()))
+        text2_groups = Self.getDisplayTextGroups(all_groups: Self.computeTextGroups(text_array: computeDisplayText2ndLine()))
+        text3_groups = Self.getDisplayTextGroups(all_groups: Self.computeTextGroups(text_array: computeDisplayText3rdLine()))
+
         // /////////////////////////////////
         // Update 3D model
         
