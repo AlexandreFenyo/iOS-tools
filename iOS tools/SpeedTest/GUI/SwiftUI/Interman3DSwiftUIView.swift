@@ -13,7 +13,7 @@ import SceneKit
 private let free_flight = false
 
 private enum CameraMode : String {
-    case topManual, topStepper, topMotion, sideManual, sideStepper, sideMotion
+    case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, sideHostManual, sideHostStepper, freeFlight
 }
 
 private class CameraModel: ObservableObject {
@@ -34,14 +34,20 @@ return*/
         case .topManual:
             camera_mode = .topStepper
         case .topStepper:
-            camera_mode = .topMotion
-        case .topMotion:
             camera_mode = .sideManual
         case .sideManual:
             camera_mode = .sideStepper
         case .sideStepper:
-            camera_mode = .sideMotion
-        case .sideMotion:
+            camera_mode = .topHostManual
+        case .topHostManual:
+            camera_mode = .topHostStepper
+        case .topHostStepper:
+            camera_mode = .sideHostManual
+        case .sideHostManual:
+            camera_mode = .sideHostStepper
+        case .sideHostStepper:
+            camera_mode = .freeFlight
+        case .freeFlight:
             camera_mode = .topManual
         }
     }
@@ -186,9 +192,6 @@ struct Interman3DSwiftUIView: View {
         case .topStepper:
             resetCameraTimer()
 
-        case .topMotion:
-            ()
-
         case .sideManual:
             camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
 
@@ -213,10 +216,55 @@ struct Interman3DSwiftUIView: View {
         case .sideStepper:
             resetCameraTimer()
 
-        case .sideMotion:
-            ()
-        }
+        case .topHostManual:
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
+            var animation = CABasicAnimation(keyPath: "pivot")
+            animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+            
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "campivot")
+
+            animation = CABasicAnimation(keyPath: "transform")
+            // Hauteur 70 et non 5 même si c'est une projection orthographique car la translation vers la droite conduit à un angle dans le sens trigo inverse, je n'ai pas identifié pourquoi mais cet angle devient invisible si on augmente en hauteur la caméra. Pas plus de 70, car par ex. à 80 ou 100 le logo Apple du dos d'un iPad scintille quand on est en mode rotation auto
+            animation.toValue = SCNMatrix4MakeTranslation(1, 70, 0)
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "camtransform")
+            
+        case .topHostStepper:
+            resetCameraTimer()
+
+        case .sideHostManual:
+            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
+
+            var animation = CABasicAnimation(keyPath: "pivot")
+            animation.toValue = SCNMatrix4Identity
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "campivot")
+
+            animation = CABasicAnimation(keyPath: "transform")
+            animation.toValue = SCNMatrix4MakeTranslation(1, 1, 2)
+            animation.duration = 1
+            animation.fillMode = .forwards
+            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "camtransform")
+
+            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+            lookAtConstraint.isGimbalLockEnabled = false
+            camera.constraints = [lookAtConstraint]
+
+        case .sideHostStepper:
+            resetCameraTimer()
+
+        case .freeFlight:
+            resetCameraTimer()
+        }
     }
 
     private func updateTextIfNeeded() {
@@ -224,7 +272,7 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func updateCameraIfNeeded() {
-        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper {
+        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper || camera_model.getCameraMode() == .topHostStepper || camera_model.getCameraMode() == .sideHostStepper {
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
         }
