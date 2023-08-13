@@ -10,10 +10,10 @@ import SwiftUI
 import SceneKit
 
 // true pour débugger
-private let free_flight = false
+private var free_flight = false
 
 private enum CameraMode : String {
-    case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, sideHostManual, sideHostStepper, freeFlight
+    case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, freeFlight
 }
 
 private class CameraModel: ObservableObject {
@@ -32,6 +32,7 @@ return*/
         
         switch camera_mode {
         case .topManual:
+//            camera_mode = .freeFlight
             camera_mode = .topStepper
         case .topStepper:
             camera_mode = .sideManual
@@ -42,11 +43,8 @@ return*/
         case .topHostManual:
             camera_mode = .topHostStepper
         case .topHostStepper:
-            camera_mode = .sideHostManual
-        case .sideHostManual:
-            camera_mode = .sideHostStepper
-        case .sideHostStepper:
-            camera_mode = .freeFlight
+            camera_mode = .topManual
+//            camera_mode = .freeFlight
         case .freeFlight:
             camera_mode = .topManual
         }
@@ -84,10 +82,38 @@ struct Interman3DSwiftUIView: View {
     private let scene: SCNScene
     private var render_delegate = RenderDelegate()
     
+
+    
+    
+    private var initval_camera_pivot, initval_camera_transform: SCNMatrix4
+    private var initval_camera_scale: SCNVector3
+    private var initval_camera_parent_pivot, initval_camera_parent_transform: SCNMatrix4
+    private var initval_camera_parent_scale: SCNVector3
+
+
+    
+    
+    
     init() {
         scene = SCNScene(named: "Interman 3D Scene.scn")!
         Interman3DModel.shared.scene = scene
+        
         camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
+
+        
+        
+        
+        initval_camera_pivot = camera.pivot
+        initval_camera_transform = camera.transform
+        initval_camera_scale = camera.scale
+        initval_camera_parent_pivot = camera.parent!.pivot
+        initval_camera_parent_transform = camera.parent!.transform
+        initval_camera_parent_scale = camera.parent!.scale
+
+
+        
+        
+        
         camera.camera!.usesOrthographicProjection = true
         camera.camera!.automaticallyAdjustsZRange = true
 
@@ -173,21 +199,46 @@ struct Interman3DSwiftUIView: View {
 
         switch camera_model.camera_mode {
         case .topManual:
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            free_flight = false
+//            scene_view_options = SceneView.Options()
+
+            /*
+            camera.pivot = initval_camera_pivot
+            camera.transform = initval_camera_transform
+            camera.scale = initval_camera_scale
+            camera.parent!.pivot = initval_camera_parent_pivot
+            camera.parent!.transform = initval_camera_parent_transform
+            camera.parent!.scale = initval_camera_parent_scale
+            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+            camera.position = SCNVector3(0, 5, 0)
+            camera.scale = SCNVector3(2, 2, 2)
+             */
+            
+            /* les pbs d'animation pas smooth quand on revient ici après un cycle, étudier ceci :
+             camera.removeAllAnimations()
+*/
+            camera.removeAllAnimations()
+
+            
+//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
+            animation.fromValue = camera.pivot
+//            animation.fromValue = camera.presentation.pivot
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             animation.duration = 1
             animation.fillMode = .forwards
             animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "campivot")
+//            camera.addAnimation(animation, forKey: "campivot")
 
             animation = CABasicAnimation(keyPath: "transform")
+//            animation.fromValue = camera.presentation.transform
+            animation.fromValue = camera.transform
             animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
             animation.duration = 1
             animation.fillMode = .forwards
             animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "camtransform")
+//            camera.addAnimation(animation, forKey: "camtransform")
             
         case .topStepper:
             resetCameraTimer()
@@ -217,19 +268,26 @@ struct Interman3DSwiftUIView: View {
             resetCameraTimer()
 
         case .topHostManual:
+            
+//            camera.removeAllAnimations()
+
+            
+            // Si on se contente de supprimer la contrainte sans conserver le pivot, alors cela implique que ce n'est plus smooth pour aller vers ce mode, mais laisser la contrainte crée une petite rotation dans le sens trigo inverse qu'on peut faire disparaître en élevant la caméra jusqu'à 70 (plus de 80 implique que le logo Apple au dos d'un iPad, en mode auto, se met à "vibrer" quand il tourne)
+            let current_pivot = camera.presentation.pivot
+            camera.constraints?.removeAll()
+            camera.pivot = current_pivot
+            
             camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-            
             animation.duration = 1
             animation.fillMode = .forwards
             animation.isRemovedOnCompletion = false
             camera.addAnimation(animation, forKey: "campivot")
 
             animation = CABasicAnimation(keyPath: "transform")
-            // Hauteur 70 et non 5 même si c'est une projection orthographique car la translation vers la droite conduit à un angle dans le sens trigo inverse, je n'ai pas identifié pourquoi mais cet angle devient invisible si on augmente en hauteur la caméra. Pas plus de 70, car par ex. à 80 ou 100 le logo Apple du dos d'un iPad scintille quand on est en mode rotation auto
-            animation.toValue = SCNMatrix4MakeTranslation(1, 70, 0)
+            animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
             animation.duration = 1
             animation.fillMode = .forwards
             animation.isRemovedOnCompletion = false
@@ -238,32 +296,23 @@ struct Interman3DSwiftUIView: View {
         case .topHostStepper:
             resetCameraTimer()
 
-        case .sideHostManual:
-            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
+camera.removeAllAnimations()
 
-            var animation = CABasicAnimation(keyPath: "pivot")
-            animation.toValue = SCNMatrix4Identity
-            animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "campivot")
-
-            animation = CABasicAnimation(keyPath: "transform")
-            animation.toValue = SCNMatrix4MakeTranslation(1, 1, 2)
-            animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "camtransform")
-
-            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
-            lookAtConstraint.isGimbalLockEnabled = false
-            camera.constraints = [lookAtConstraint]
-
-        case .sideHostStepper:
-            resetCameraTimer()
-
+            
         case .freeFlight:
-            resetCameraTimer()
+            free_flight = true
+            scene_view_options = [.allowsCameraControl]
+
+            camera.pivot = initval_camera_pivot
+            camera.transform = initval_camera_transform
+            camera.scale = initval_camera_scale
+            camera.parent!.pivot = initval_camera_parent_pivot
+            camera.parent!.transform = initval_camera_parent_transform
+            camera.parent!.scale = initval_camera_parent_scale
+
+            camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
+            camera.position = SCNVector3(0, 5, 0)
+            camera.scale = SCNVector3(2, 2, 2)
         }
     }
 
@@ -272,7 +321,7 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func updateCameraIfNeeded() {
-        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper || camera_model.getCameraMode() == .topHostStepper || camera_model.getCameraMode() == .sideHostStepper {
+        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper || camera_model.getCameraMode() == .topHostStepper {
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
         }
@@ -305,7 +354,7 @@ struct Interman3DSwiftUIView: View {
     }
     
     // .allowsCameraControl: if allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
-    let scene_view_options = free_flight ? [ .allowsCameraControl ] : SceneView.Options()
+    @State var scene_view_options = free_flight ? [.allowsCameraControl] : SceneView.Options()
 
     // Needed by traces
     @Namespace var topID
@@ -322,6 +371,9 @@ struct Interman3DSwiftUIView: View {
 
         ZStack {
             // 3D view
+            
+            // CONTINUER ICI : faire deux vues, une en free_flight, pas l'autre
+            
             SceneView(
                 scene: scene,
                 options: scene_view_options,
