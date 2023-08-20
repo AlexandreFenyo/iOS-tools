@@ -301,10 +301,8 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
             
-            if prev_mode == .topHostManual {
+            if prev_mode == .topHostManual { // OK
                 // Constraint is sphere2
-                // CONTINUER ICI : top host to side
-                // passer par : top host to top puis top to side
 
                 // Top host to top
                 camera.constraints?.removeAll()
