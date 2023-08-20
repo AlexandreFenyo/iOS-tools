@@ -9,6 +9,34 @@
 import SwiftUI
 import SceneKit
 
+/*
+Debugging camera movements:
+camera.removeAllActions()
+camera.removeAllAnimations()
+let foo = camera.presentation.pivot
+print(camera.pivot)
+print(camera.transform)
+print(camera.rotation)
+print(camera.position)
+print(camera.scale)
+print(camera.presentation.pivot)
+print(camera.presentation.transform)
+print(camera.presentation.rotation)
+print(camera.presentation.position)
+print(camera.presentation.scale)
+camera.constraints?.removeAll()
+print(camera.pivot)
+print(camera.transform)
+print(camera.rotation)
+print(camera.position)
+print(camera.scale)
+print(camera.presentation.pivot)
+print(camera.presentation.transform)
+print(camera.presentation.rotation)
+print(camera.presentation.position)
+print(camera.presentation.scale)
+*/
+
 private enum CameraMode : String {
     case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, freeFlight
 }
@@ -68,6 +96,33 @@ private class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     }
 }
 
+class SetCameraConstraint : NSObject, CAAnimationDelegate {
+    let camera: SCNNode
+    let constraint: SCNConstraint
+
+    init(camera: SCNNode, constraint: SCNConstraint) {
+        self.camera = camera
+        self.constraint = constraint
+    }
+
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        camera.constraints = [constraint]
+    }
+}
+
+class RunAfterAnimation : NSObject, CAAnimationDelegate {
+    let to_run: () -> ()
+    
+    init(_ to_run: @escaping () -> ()) {
+        self.to_run = to_run
+    }
+
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        to_run()
+    }
+}
+
+
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
@@ -81,47 +136,32 @@ struct Interman3DSwiftUIView: View {
 
     @ObservedObject private var camera_model = CameraModel.shared
     private let camera: SCNNode
+    private let sphere: SCNNode
+    private let sphere2: SCNNode // only for debugging
     private let scene: SCNScene
 
     private var render_delegate = RenderDelegate()
-    
 
-
-    
-    
-    
     init() {
         scene = Interman3DModel.shared.scene
         camera = Interman3DModel.shared.scene.rootNode.childNode(withName: "camera", recursively: true)!
-        
-        
-        
+        sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
+        sphere2 = scene.rootNode.childNode(withName: "sphere2", recursively: true)!
+
         camera.camera!.usesOrthographicProjection = true
         camera.camera!.automaticallyAdjustsZRange = true
 
         // Debug: axes
         scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
 
-        print(camera.presentation.pivot)
-        print(camera.pivot)
-        print(camera.presentation.transform)
-        print(camera.transform)
-
         // Set camera initial position
-        camera.scale = SCNVector3(2, 2, 2)
-//        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-        camera.position = SCNVector3(0, 5, 0)
-        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
+        camera.parent!.scale = SCNVector3(2, 2, 2)
+        camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
         let lookAtConstraint = SCNLookAtConstraint(target: sphere)
         lookAtConstraint.isGimbalLockEnabled = false
         camera.constraints = [lookAtConstraint]
 
-        
-        print(camera.presentation.pivot)
-        print(camera.pivot)
-        print(camera.presentation.transform)
-        print(camera.transform)
-
+        // Changer la couleur du ciel
         // https://github.com/FlexMonkey/SkyCubeTextureDemo/blob/master/SkyCubeDemonstration/ViewController.swift
         /*
         scene.background.contents = MDLSkyCubeTexture(name: nil,
@@ -132,9 +172,8 @@ struct Interman3DSwiftUIView: View {
                                                       upperAtmosphereScattering: 0.15,
                                                       groundAlbedo: 0.85)
          */
-        
-//        let sky = scene.background.contents as! MDLSkyCubeTexture
-//        sky.groundColor = .init(red: 1, green: 1, blue: 1, alpha: 1) // COLORS.leftpannel_bg.cgColor
+        // let sky = scene.background.contents as! MDLSkyCubeTexture
+        // sky.groundColor = .init(red: 1, green: 1, blue: 1, alpha: 1) // COLORS.leftpannel_bg.cgColor
     }
 
     func getTappedHost(_ point: CGPoint) -> B3DHost? {
@@ -151,8 +190,6 @@ struct Interman3DSwiftUIView: View {
 
     // Set camera absolute orientation value
     func rotateCamera(_ angle: Float, smooth: Bool, duration _duration: Float? = nil, usesShortestUnitArc: Bool = false) {
-//        if free_flight { return }
-
         if smooth {
             var duration: Float
             if let _duration { duration = _duration }
@@ -203,103 +240,164 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func setCameraMode(_ mode: CameraMode) {
-        camera_model.setCameraMode(mode)
-        
-        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
+        let prev_mode = camera_model.getCameraMode()
 
-        
-        
+        camera_model.setCameraMode(mode)
         
         switch camera_model.camera_mode {
         case .topManual:
-//            free_flight_active = false
+            // Set constraint to look at sphere
 
-            let foo = camera.presentation.pivot
-            let bar = camera.presentation.transform
-            print(foo)
-            print(bar)
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
-//            camera.removeAllAnimations()
-//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            if prev_mode == .sideManual { // OK
+                // Constraint is already sphere
 
-            var animation = CABasicAnimation(keyPath: "pivot")
-            animation.fromValue = foo
-            animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-            animation.duration = 1
-//            animation.fillMode = .removed
-//            animation.isRemovedOnCompletion = false
-//            camera.addAnimation(animation, forKey: "campivot")
-//            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-
-            animation = CABasicAnimation(keyPath: "transform")
-            animation.fromValue = camera.presentation.transform
-            animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
-            animation.duration = 1
-            camera.addAnimation(animation, forKey: "camtransform")
-            camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
             
+            if prev_mode == .topHostManual { // OK
+                // No constraint
+
+                var animation = CABasicAnimation(keyPath: "pivot")
+                animation.fromValue = camera.presentation.pivot
+                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.duration = 1
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
+                camera.addAnimation(animation, forKey: "campivot")
+//                camera.pivot = camera.presentation.pivot
+
+                animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
+
         case .topStepper:
             resetCameraTimer()
 
         case .sideManual:
-            free_flight_active = false
+            // Set constraint to look at sphere
 
-//            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
-//          var animation = CABasicAnimation(keyPath: "pivot")
-//            animation.toValue = SCNMatrix4Identity
-//            animation.duration = 1
-//            animation.fillMode = .forwards
-//            animation.isRemovedOnCompletion = false
-//            camera.addAnimation(animation, forKey: "campivot")
-
-            var animation = CABasicAnimation(keyPath: "transform")
-            animation.fromValue = camera.presentation.transform
-            animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
-            animation.duration = 1
-//            animation.fillMode = .forwards
-//            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "camtransform")
-            camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
-
-            //            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
-//            lookAtConstraint.isGimbalLockEnabled = false
-//            camera.constraints = [lookAtConstraint]
+            if prev_mode == .topManual { // OK
+                // Constraint is already sphere
+                
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+            }
             
+            if prev_mode == .topHostManual {
+                // Constraint is sphere2
+                // CONTINUER ICI : top host to side
+                // passer par : top host to top puis top to side
+
+                // Top host to top
+                camera.constraints?.removeAll()
+
+                var animation = CABasicAnimation(keyPath: "pivot")
+                animation.fromValue = camera.presentation.pivot
+                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.duration = 1
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
+                camera.addAnimation(animation, forKey: "campivot")
+
+                animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                animation.delegate = RunAfterAnimation({
+                    // Top to side
+                    let animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = camera.presentation.transform
+                    animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                    animation.duration = 1
+                    camera.addAnimation(animation, forKey: "camtransform")
+                    camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+                })
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
+
         case .sideStepper:
             resetCameraTimer()
 
         case .topHostManual:
-            free_flight_active = false
+            // Remove constraints
 
-//            camera.removeAllAnimations()
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
+            if prev_mode == .topManual { // OK
+                camera.constraints?.removeAll()
+
+                // Since we removed the contraint, we must set the pivot
+                var animation = CABasicAnimation(keyPath: "pivot")
+                animation.fromValue = camera.presentation.pivot
+                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "campivot")
+                camera.pivot = camera.presentation.pivot
+                
+                animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
+            }
             
-            // Si on se contente de supprimer la contrainte sans conserver le pivot, alors cela implique que ce n'est plus smooth pour aller vers ce mode, mais laisser la contrainte crée une petite rotation dans le sens trigo inverse qu'on peut faire disparaître en élevant la caméra jusqu'à 70 (plus de 80 implique que le logo Apple au dos d'un iPad, en mode auto, se met à "vibrer" quand il tourne)
-//            let current_pivot = camera.presentation.pivot
-            camera.constraints?.removeAll()
-//            camera.pivot = current_pivot
-            
-//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            if prev_mode == .sideManual { // OK
+                // Constraint is sphere
+                
+                // Side to top
+                var animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                animation.delegate = RunAfterAnimation({
+                    // Top to top host
+                    camera.constraints?.removeAll()
 
-            var animation = CABasicAnimation(keyPath: "pivot")
-            animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-            animation.duration = 1
-//            animation.fillMode = .forwards
-//            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "campivot")
+                    // Since we removed the contraint, we must set the pivot
+                    animation = CABasicAnimation(keyPath: "pivot")
+                    animation.fromValue = camera.presentation.pivot
+                    animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                    animation.duration = 1
+                    camera.addAnimation(animation, forKey: "campivot")
+                    camera.pivot = camera.presentation.pivot
+                    
+                    animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = camera.presentation.transform
+                    animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    animation.duration = 1
+                    camera.addAnimation(animation, forKey: "camtransform")
+                    camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
 
-            animation = CABasicAnimation(keyPath: "transform")
-            animation.fromValue = camera.presentation.transform
-            animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
-            animation.duration = 1
-//            animation.fillMode = .forwards
-//            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "camtransform")
+                })
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
             
         case .topHostStepper:
             resetCameraTimer()
 
-camera.removeAllAnimations()
+            camera.removeAllAnimations()
 
             
         case .freeFlight:
@@ -385,9 +483,6 @@ camera.removeAllAnimations()
 
         ZStack {
             // 3D view
-            
-            // CONTINUER ICI : faire deux vues, une en free_flight, pas l'autre
-
             if free_flight_active == true {
                 SceneView(
                     scene: scene,
