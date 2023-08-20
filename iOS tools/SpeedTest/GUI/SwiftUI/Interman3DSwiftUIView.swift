@@ -109,9 +109,14 @@ struct Interman3DSwiftUIView: View {
 
         // Set camera initial position
         camera.scale = SCNVector3(2, 2, 2)
-        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+//        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
         camera.position = SCNVector3(0, 5, 0)
+        let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
+        let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+        lookAtConstraint.isGimbalLockEnabled = false
+        camera.constraints = [lookAtConstraint]
 
+        
         print(camera.presentation.pivot)
         print(camera.pivot)
         print(camera.presentation.transform)
@@ -202,52 +207,34 @@ struct Interman3DSwiftUIView: View {
         
         let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
 
+        
+        
+        
         switch camera_model.camera_mode {
         case .topManual:
-            free_flight_active = false
-
-            /*
-            camera.removeAllAnimations()
-            camera.pivot = SCNMatrix4Identity
-            camera.transform = SCNMatrix4Identity
-            camera.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
-            camera.parent!.pivot = SCNMatrix4Identity
-            camera.parent!.transform = SCNMatrix4Identity
-            camera.parent!.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
-            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-            camera.position = SCNVector3(0, 5, 0)
-            camera.scale = SCNVector3(2, 2, 2)
-*/
-
-            /* les pbs d'animation pas smooth quand on revient ici après un cycle, étudier ceci :
-             camera.removeAllAnimations()
-*/
-
-//            camera.removeAllAnimations()
+//            free_flight_active = false
 
             let foo = camera.presentation.pivot
             let bar = camera.presentation.transform
             print(foo)
             print(bar)
-  //          camera.removeAllAnimations()
 
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+//            camera.removeAllAnimations()
+//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
             animation.fromValue = foo
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             animation.duration = 1
-//            animation.fillMode = .forwards
+//            animation.fillMode = .removed
 //            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "campivot")
-            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+//            camera.addAnimation(animation, forKey: "campivot")
+//            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
 
             animation = CABasicAnimation(keyPath: "transform")
-//            animation.fromValue = bar
+            animation.fromValue = camera.presentation.transform
             animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
             animation.duration = 1
-//            animation.fillMode = .forwards
-//            animation.isRemovedOnCompletion = false
             camera.addAnimation(animation, forKey: "camtransform")
             camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             
@@ -257,25 +244,27 @@ struct Interman3DSwiftUIView: View {
         case .sideManual:
             free_flight_active = false
 
-            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
+//            camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
 
-            var animation = CABasicAnimation(keyPath: "pivot")
-            animation.toValue = SCNMatrix4Identity
-            animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
-            camera.addAnimation(animation, forKey: "campivot")
+//          var animation = CABasicAnimation(keyPath: "pivot")
+//            animation.toValue = SCNMatrix4Identity
+//            animation.duration = 1
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
+//            camera.addAnimation(animation, forKey: "campivot")
 
-            animation = CABasicAnimation(keyPath: "transform")
+            var animation = CABasicAnimation(keyPath: "transform")
+            animation.fromValue = camera.presentation.transform
             animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
             animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
             camera.addAnimation(animation, forKey: "camtransform")
+            camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
 
-            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
-            lookAtConstraint.isGimbalLockEnabled = false
-            camera.constraints = [lookAtConstraint]
+            //            let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+//            lookAtConstraint.isGimbalLockEnabled = false
+//            camera.constraints = [lookAtConstraint]
             
         case .sideStepper:
             resetCameraTimer()
@@ -286,24 +275,25 @@ struct Interman3DSwiftUIView: View {
 //            camera.removeAllAnimations()
             
             // Si on se contente de supprimer la contrainte sans conserver le pivot, alors cela implique que ce n'est plus smooth pour aller vers ce mode, mais laisser la contrainte crée une petite rotation dans le sens trigo inverse qu'on peut faire disparaître en élevant la caméra jusqu'à 70 (plus de 80 implique que le logo Apple au dos d'un iPad, en mode auto, se met à "vibrer" quand il tourne)
-            let current_pivot = camera.presentation.pivot
+//            let current_pivot = camera.presentation.pivot
             camera.constraints?.removeAll()
-            camera.pivot = current_pivot
+//            camera.pivot = current_pivot
             
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
             camera.addAnimation(animation, forKey: "campivot")
 
             animation = CABasicAnimation(keyPath: "transform")
+            animation.fromValue = camera.presentation.transform
             animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
             animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
             camera.addAnimation(animation, forKey: "camtransform")
             
         case .topHostStepper:
@@ -351,6 +341,7 @@ camera.removeAllAnimations()
     }
     
     // Get scale factor
+    // The parent is scaled, not the camera itself
     func getCameraScaleFactor() -> Float {
         return camera.parent!.simdScale.x
     }
