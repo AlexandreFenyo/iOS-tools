@@ -91,6 +91,7 @@ class IntermanViewController : UIViewController {
 
     @objc
     func handlePan(_ gesture: UIPanGestureRecognizer) {
+//        print("handlePan()")
         // Note that hostingViewController.view == gesture.view!
         let _point = gesture.location(in: gesture.view!)
         let frame = gesture.view!.frame

@@ -863,7 +863,8 @@ class Link3DPortDiscovered : Link3D {
 public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
 
-    public var scene: SCNScene?
+    public var scene = SCNScene(named: "Interman 3D Scene.scn")!
+
     private var b3d_hosts: [B3DHost]
     private var broadcasts = Set<Broadcast3D>()
 
@@ -1056,7 +1057,7 @@ public class Interman3DModel : ObservableObject {
         let broadcast = Broadcast3D()
         broadcasts.insert(broadcast)
         broadcast.firstAnim()
-        scene?.rootNode.addChildNode(broadcast)
+        scene.rootNode.addChildNode(broadcast)
     }
     
     private func addHost(_ host: Node) {
@@ -1066,7 +1067,7 @@ public class Interman3DModel : ObservableObject {
         let node_count = b3d_hosts.count
         let angle = Interman3DModel.normalizeAngle(-2 * .pi / Float(node_count))
         b3d_host.firstAnim(angle)
-        scene?.rootNode.addChildNode(b3d_host)
+        scene.rootNode.addChildNode(b3d_host)
         // Set to add axes to debug 3D orientation of the scene
         // b3d_host.addChildNode(ComponentTemplates.createAxes(0.2))
         updateAngles()
@@ -1094,6 +1095,8 @@ public class Interman3DModel : ObservableObject {
         // IHM "update"
         print(#function)
 
+        return;
+        
         addBroadcast()
         
         return

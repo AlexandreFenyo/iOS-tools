@@ -9,9 +9,6 @@
 import SwiftUI
 import SceneKit
 
-// true pour débugger
-private var free_flight = false
-
 private enum CameraMode : String {
     case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, freeFlight
 }
@@ -20,6 +17,10 @@ private class CameraModel: ObservableObject {
     static let shared = CameraModel()
 
     @Published private(set) var camera_mode: CameraMode = CameraMode.topManual
+
+    func setCameraMode(_ mode: CameraMode)  {
+        camera_mode = mode
+    }
     
     func nextCameraMode() {
         /*
@@ -32,8 +33,8 @@ return*/
         
         switch camera_mode {
         case .topManual:
-//            camera_mode = .freeFlight
-            camera_mode = .topStepper
+            camera_mode = .freeFlight
+//            camera_mode = .topStepper
         case .topStepper:
             camera_mode = .sideManual
         case .sideManual:
@@ -70,47 +71,28 @@ private class RenderDelegate: NSObject, SCNSceneRendererDelegate {
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
+    @State private var free_flight_active: Bool = false
+    
     @State private var timer_camera: Timer?
     @State private var timer_text: Timer?
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
 
-    private let camera: SCNNode
     @ObservedObject private var camera_model = CameraModel.shared
-    
+    private let camera: SCNNode
     private let scene: SCNScene
+
     private var render_delegate = RenderDelegate()
     
-
-    
-    
-    private var initval_camera_pivot, initval_camera_transform: SCNMatrix4
-    private var initval_camera_scale: SCNVector3
-    private var initval_camera_parent_pivot, initval_camera_parent_transform: SCNMatrix4
-    private var initval_camera_parent_scale: SCNVector3
 
 
     
     
     
     init() {
-        scene = SCNScene(named: "Interman 3D Scene.scn")!
-        Interman3DModel.shared.scene = scene
-        
-        camera = scene.rootNode.childNode(withName: "camera", recursively: true)!
-
-        
-        
-        
-        initval_camera_pivot = camera.pivot
-        initval_camera_transform = camera.transform
-        initval_camera_scale = camera.scale
-        initval_camera_parent_pivot = camera.parent!.pivot
-        initval_camera_parent_transform = camera.parent!.transform
-        initval_camera_parent_scale = camera.parent!.scale
-
-
+        scene = Interman3DModel.shared.scene
+        camera = Interman3DModel.shared.scene.rootNode.childNode(withName: "camera", recursively: true)!
         
         
         
@@ -118,15 +100,22 @@ struct Interman3DSwiftUIView: View {
         camera.camera!.automaticallyAdjustsZRange = true
 
         // Debug: axes
-        // scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
-        
-        if free_flight {
-            camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
-        } else {
-            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
-        }
-        camera.position = SCNVector3(0, 5, 0)
+        scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
+
+        print(camera.presentation.pivot)
+        print(camera.pivot)
+        print(camera.presentation.transform)
+        print(camera.transform)
+
+        // Set camera initial position
         camera.scale = SCNVector3(2, 2, 2)
+        camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+        camera.position = SCNVector3(0, 5, 0)
+
+        print(camera.presentation.pivot)
+        print(camera.pivot)
+        print(camera.presentation.transform)
+        print(camera.transform)
 
         // https://github.com/FlexMonkey/SkyCubeTextureDemo/blob/master/SkyCubeDemonstration/ViewController.swift
         /*
@@ -157,7 +146,7 @@ struct Interman3DSwiftUIView: View {
 
     // Set camera absolute orientation value
     func rotateCamera(_ angle: Float, smooth: Bool, duration _duration: Float? = nil, usesShortestUnitArc: Bool = false) {
-        if free_flight { return }
+//        if free_flight { return }
 
         if smooth {
             var duration: Float
@@ -194,56 +183,80 @@ struct Interman3DSwiftUIView: View {
     
     private func nextCameraMode() {
         camera_model.nextCameraMode()
+        setCameraMode(camera_model.camera_mode)
+    }
 
+    public func testCamera() {
+        var foo = camera.presentation.pivot
+        print(foo)
+        foo = camera.pivot
+        print(foo)
+        var bar = camera.presentation.transform
+        print(bar)
+        bar = camera.transform
+        print(bar)
+    }
+    
+    private func setCameraMode(_ mode: CameraMode) {
+        camera_model.setCameraMode(mode)
+        
         let sphere = scene.rootNode.childNode(withName: "sphere", recursively: true)!
 
         switch camera_model.camera_mode {
         case .topManual:
-            free_flight = false
-//            scene_view_options = SceneView.Options()
+            free_flight_active = false
 
             /*
-            camera.pivot = initval_camera_pivot
-            camera.transform = initval_camera_transform
-            camera.scale = initval_camera_scale
-            camera.parent!.pivot = initval_camera_parent_pivot
-            camera.parent!.transform = initval_camera_parent_transform
-            camera.parent!.scale = initval_camera_parent_scale
+            camera.removeAllAnimations()
+            camera.pivot = SCNMatrix4Identity
+            camera.transform = SCNMatrix4Identity
+            camera.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
+            camera.parent!.pivot = SCNMatrix4Identity
+            camera.parent!.transform = SCNMatrix4Identity
+            camera.parent!.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
             camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             camera.position = SCNVector3(0, 5, 0)
             camera.scale = SCNVector3(2, 2, 2)
-             */
-            
+*/
+
             /* les pbs d'animation pas smooth quand on revient ici après un cycle, étudier ceci :
              camera.removeAllAnimations()
 */
-            camera.removeAllAnimations()
 
-            
-//            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+//            camera.removeAllAnimations()
+
+            let foo = camera.presentation.pivot
+            let bar = camera.presentation.transform
+            print(foo)
+            print(bar)
+  //          camera.removeAllAnimations()
+
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
-            animation.fromValue = camera.pivot
-//            animation.fromValue = camera.presentation.pivot
+            animation.fromValue = foo
             animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
-//            camera.addAnimation(animation, forKey: "campivot")
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "campivot")
+            camera.pivot = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
 
             animation = CABasicAnimation(keyPath: "transform")
-//            animation.fromValue = camera.presentation.transform
-            animation.fromValue = camera.transform
+//            animation.fromValue = bar
             animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
             animation.duration = 1
-            animation.fillMode = .forwards
-            animation.isRemovedOnCompletion = false
-//            camera.addAnimation(animation, forKey: "camtransform")
+//            animation.fillMode = .forwards
+//            animation.isRemovedOnCompletion = false
+            camera.addAnimation(animation, forKey: "camtransform")
+            camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             
         case .topStepper:
             resetCameraTimer()
 
         case .sideManual:
+            free_flight_active = false
+
             camera.parent!.runAction(SCNAction.scale(to: 1, duration: 0.5))
 
             var animation = CABasicAnimation(keyPath: "pivot")
@@ -263,14 +276,14 @@ struct Interman3DSwiftUIView: View {
             let lookAtConstraint = SCNLookAtConstraint(target: sphere)
             lookAtConstraint.isGimbalLockEnabled = false
             camera.constraints = [lookAtConstraint]
-
+            
         case .sideStepper:
             resetCameraTimer()
 
         case .topHostManual:
-            
-//            camera.removeAllAnimations()
+            free_flight_active = false
 
+//            camera.removeAllAnimations()
             
             // Si on se contente de supprimer la contrainte sans conserver le pivot, alors cela implique que ce n'est plus smooth pour aller vers ce mode, mais laisser la contrainte crée une petite rotation dans le sens trigo inverse qu'on peut faire disparaître en élevant la caméra jusqu'à 70 (plus de 80 implique que le logo Apple au dos d'un iPad, en mode auto, se met à "vibrer" quand il tourne)
             let current_pivot = camera.presentation.pivot
@@ -300,16 +313,26 @@ camera.removeAllAnimations()
 
             
         case .freeFlight:
-            free_flight = true
-            scene_view_options = [.allowsCameraControl]
+//            free_flight = true
+            free_flight_active = true
+//            scene_view_options = [.allowsCameraControl]
 
+            camera.pivot = SCNMatrix4Identity
+            camera.transform = SCNMatrix4Identity
+            camera.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
+            camera.parent!.pivot = SCNMatrix4Identity
+            camera.parent!.transform = SCNMatrix4Identity
+            camera.parent!.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
+
+            /*
             camera.pivot = initval_camera_pivot
             camera.transform = initval_camera_transform
             camera.scale = initval_camera_scale
             camera.parent!.pivot = initval_camera_parent_pivot
             camera.parent!.transform = initval_camera_parent_transform
             camera.parent!.scale = initval_camera_parent_scale
-
+*/
+            
             camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
             camera.position = SCNVector3(0, 5, 0)
             camera.scale = SCNVector3(2, 2, 2)
@@ -354,7 +377,7 @@ camera.removeAllAnimations()
     }
     
     // .allowsCameraControl: if allowed, the user takes control of the camera, therefore not any pan or pinch gestures will be fired
-    @State var scene_view_options = free_flight ? [.allowsCameraControl] : SceneView.Options()
+//    @State var scene_view_options = free_flight ? [.allowsCameraControl] : SceneView.Options()
 
     // Needed by traces
     @Namespace var topID
@@ -373,13 +396,22 @@ camera.removeAllAnimations()
             // 3D view
             
             // CONTINUER ICI : faire deux vues, une en free_flight, pas l'autre
-            
-            SceneView(
-                scene: scene,
-                options: scene_view_options,
-                delegate: render_delegate
-            )
-            .edgesIgnoringSafeArea(.all)
+
+            if free_flight_active == true {
+                SceneView(
+                    scene: scene,
+                    options: [.allowsCameraControl],
+                    delegate: render_delegate
+                )
+                .edgesIgnoringSafeArea(.all)
+            } else {
+                SceneView(
+                    scene: scene,
+                    options: SceneView.Options(),
+                    delegate: render_delegate
+                )
+                .edgesIgnoringSafeArea(.all)
+            }
 
             // Traces
             GeometryReader { traceGeom in
@@ -451,13 +483,43 @@ camera.removeAllAnimations()
                       Text("mode")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }
+
+                  Button {
+                      setCameraMode(.freeFlight)
+                  } label: {
+                      Text("free flight")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
+
+                  Button {
+                      setCameraMode(.topManual)
+                  } label: {
+                      Text("top manual")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
+
+                  Button {
+                      setCameraMode(.sideManual)
+                  } label: {
+                      Text("side manual")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
+
+                  Button {
+                      setCameraMode(.topHostManual)
+                  } label: {
+                      Text("top host manual")
+                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                  }
+
               }
 
               Spacer()
-              Text("camera mode: \(camera_model.camera_mode.rawValue)").foregroundColor(.white)
+              Text("current: \(camera_model.camera_mode.rawValue)").foregroundColor(.white)
                 
               Spacer()
                 Button {
+                    testCamera()
                     interman3d_model.testIHMUpdate()
                     testQuat()
                 } label: {
