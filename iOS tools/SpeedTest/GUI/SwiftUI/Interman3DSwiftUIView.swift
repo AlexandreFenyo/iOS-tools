@@ -248,10 +248,22 @@ struct Interman3DSwiftUIView: View {
         case .topManual:
             // Set constraint to look at sphere
 
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            if prev_mode == .freeFlight { // OK
+                free_flight_active = false
+
+                camera.parent!.scale = SCNVector3(2, 2, 2)
+
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                camera.constraints = [lookAtConstraint]
+
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
 
             if prev_mode == .sideManual { // OK
                 // Constraint is already sphere
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
@@ -263,6 +275,8 @@ struct Interman3DSwiftUIView: View {
             
             if prev_mode == .topHostManual { // OK
                 // No constraint
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
                 var animation = CABasicAnimation(keyPath: "pivot")
                 animation.fromValue = camera.presentation.pivot
@@ -287,6 +301,18 @@ struct Interman3DSwiftUIView: View {
 
         case .sideManual:
             // Set constraint to look at sphere
+
+            if prev_mode == .freeFlight { // OK
+                free_flight_active = false
+
+                camera.parent!.scale = SCNVector3(2, 2, 2)
+
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                camera.constraints = [lookAtConstraint]
+
+                camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+            }
 
             camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
@@ -339,9 +365,40 @@ struct Interman3DSwiftUIView: View {
         case .topHostManual:
             // Remove constraints
 
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            if prev_mode == .freeFlight { // OK
+                free_flight_active = false
+
+                camera.parent!.scale = SCNVector3(2, 2, 2)
+
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                camera.constraints = [lookAtConstraint]
+
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+
+                DispatchQueue.global(qos: .userInteractive).asyncAfter(deadline: .now() + 0.1) {
+                    camera.constraints?.removeAll()
+                    
+                    // Since we removed the contraint, we must set the pivot
+                    var animation = CABasicAnimation(keyPath: "pivot")
+                    animation.fromValue = camera.presentation.pivot
+                    animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                    animation.duration = 1
+                    camera.addAnimation(animation, forKey: "campivot")
+                    camera.pivot = camera.presentation.pivot
+                    
+                    animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = camera.presentation.transform
+                    animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    animation.duration = 1
+                    camera.addAnimation(animation, forKey: "camtransform")
+                    camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                }
+            }
 
             if prev_mode == .topManual { // OK
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
                 camera.constraints?.removeAll()
 
                 // Since we removed the contraint, we must set the pivot
@@ -362,7 +419,9 @@ struct Interman3DSwiftUIView: View {
             
             if prev_mode == .sideManual { // OK
                 // Constraint is sphere
-                
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
                 // Side to top
                 var animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
@@ -399,29 +458,17 @@ struct Interman3DSwiftUIView: View {
 
             
         case .freeFlight:
-//            free_flight = true
             free_flight_active = true
-//            scene_view_options = [.allowsCameraControl]
-
-            camera.pivot = SCNMatrix4Identity
-            camera.transform = SCNMatrix4Identity
-            camera.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
-            camera.parent!.pivot = SCNMatrix4Identity
-            camera.parent!.transform = SCNMatrix4Identity
-            camera.parent!.scale = SCNVector3(x: 1.0, y: 1.0, z: 1.0)
+            camera.constraints?.removeAll()
 
             /*
-            camera.pivot = initval_camera_pivot
-            camera.transform = initval_camera_transform
-            camera.scale = initval_camera_scale
-            camera.parent!.pivot = initval_camera_parent_pivot
-            camera.parent!.transform = initval_camera_parent_transform
-            camera.parent!.scale = initval_camera_parent_scale
-*/
-            
+            camera.parent!.pivot = SCNMatrix4Identity
+            camera.parent!.transform = SCNMatrix4Identity
+            camera.parent!.scale = SCNVector3(x: 2.0, y: 2.0, z: 2.0)
+            camera.pivot = SCNMatrix4Identity
             camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
             camera.position = SCNVector3(0, 5, 0)
-            camera.scale = SCNVector3(2, 2, 2)
+             */
         }
     }
 
@@ -488,6 +535,7 @@ struct Interman3DSwiftUIView: View {
                     delegate: render_delegate
                 )
                 .edgesIgnoringSafeArea(.all)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1)))
             } else {
                 SceneView(
                     scene: scene,
@@ -495,6 +543,7 @@ struct Interman3DSwiftUIView: View {
                     delegate: render_delegate
                 )
                 .edgesIgnoringSafeArea(.all)
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 1)))
             }
 
             // Traces
