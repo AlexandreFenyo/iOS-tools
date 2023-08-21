@@ -251,12 +251,19 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .freeFlight { // OK
                 free_flight_active = false
 
-                camera.parent!.scale = SCNVector3(2, 2, 2)
-
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
                 camera.constraints = [lookAtConstraint]
 
+                camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
@@ -314,11 +321,11 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
 
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
-
             if prev_mode == .topManual { // OK
                 // Constraint is already sphere
-                
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
                 animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
@@ -328,10 +335,9 @@ struct Interman3DSwiftUIView: View {
             }
             
             if prev_mode == .topHostManual { // OK
-                // Constraint is sphere2
+                // No constraint
 
-                // Top host to top
-                camera.constraints?.removeAll()
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
                 var animation = CABasicAnimation(keyPath: "pivot")
                 animation.fromValue = camera.presentation.pivot
@@ -458,17 +464,65 @@ struct Interman3DSwiftUIView: View {
 
             
         case .freeFlight:
-            free_flight_active = true
-            camera.constraints?.removeAll()
+            if prev_mode == .sideManual {
+                free_flight_active = true
+                camera.constraints?.removeAll()
+            }
 
-            /*
-            camera.parent!.pivot = SCNMatrix4Identity
-            camera.parent!.transform = SCNMatrix4Identity
-            camera.parent!.scale = SCNVector3(x: 2.0, y: 2.0, z: 2.0)
-            camera.pivot = SCNMatrix4Identity
-            camera.transform = SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0)
-            camera.position = SCNVector3(0, 5, 0)
-             */
+            if prev_mode == .topManual {
+                // Constraint is already sphere
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                animation.duration = 1
+                animation.delegate = RunAfterAnimation({
+                    free_flight_active = true
+                    camera.constraints?.removeAll()
+                })
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+            }
+            
+            if prev_mode == .topHostManual {
+                // No constraint
+
+                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+
+                var animation = CABasicAnimation(keyPath: "pivot")
+                animation.fromValue = camera.presentation.pivot
+                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.duration = 1
+                let lookAtConstraint = SCNLookAtConstraint(target: sphere)
+                lookAtConstraint.isGimbalLockEnabled = false
+                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
+                camera.addAnimation(animation, forKey: "campivot")
+
+                animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = camera.presentation.transform
+                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.duration = 1
+                animation.delegate = RunAfterAnimation({
+                    // Top to side
+                    let animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = camera.presentation.transform
+                    animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                    animation.duration = 1
+                    animation.delegate = RunAfterAnimation({
+                        free_flight_active = true
+                        camera.constraints?.removeAll()
+                    })
+                    camera.addAnimation(animation, forKey: "camtransform")
+                    camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
+                })
+                camera.addAnimation(animation, forKey: "camtransform")
+                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+            }
+            
+            
+            
         }
     }
 
