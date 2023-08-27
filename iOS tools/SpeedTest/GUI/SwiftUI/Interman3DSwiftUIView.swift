@@ -150,7 +150,7 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func dropAxes() {
-        scene.rootNode.childNode(withName: "axes", recursively: true)!.removeFromParentNode()
+        scene.rootNode.childNode(withName: "axes", recursively: true)?.removeFromParentNode()
     }
 
     init() {
