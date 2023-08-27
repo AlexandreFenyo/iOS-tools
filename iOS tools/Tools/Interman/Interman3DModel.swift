@@ -860,6 +860,36 @@ class Link3DPortDiscovered : Link3D {
     }
 }
 
+class Link3DFloodUDP : Link3D {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+    }
+}
+
+class Link3DFloodTCP : Link3D {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+    }
+}
+
+class Link3DChargenTCP : Link3D {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+    }
+}
+
 class Link3DICMPRequest : Link3D {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -1033,7 +1063,6 @@ public class Interman3DModel : ObservableObject {
 
         if local_node != target {
             scanned_IPs.insert(address)
-            // print("add new scanned IP: \(scanned_IPs)")
             _ = Link3DScanNode(local_node, target)
         }
     }
@@ -1050,7 +1079,6 @@ public class Interman3DModel : ObservableObject {
         }
 
         scanned_IPs.remove(address)
-        // print("remove scanned IP: \(scanned_IPs)")
         target.getLinks(with: local_node).forEach { $0.detach() }
     }
 
@@ -1102,6 +1130,96 @@ public class Interman3DModel : ObservableObject {
         }
     }
 
+    func notifyFloodUDP(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            _ = Link3DFloodUDP(local_node, target)
+        }
+    }
+
+    func notifyFloodUDPFinished(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        target.getLinks(with: local_node).forEach { $0.detach() }
+    }
+
+    func notifyFloodTCP(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            _ = Link3DFloodTCP(local_node, target)
+        }
+    }
+
+    func notifyFloodTCPFinished(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        target.getLinks(with: local_node).forEach { $0.detach() }
+    }
+    
+    func notifyChargenTCP(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            _ = Link3DChargenTCP(local_node, target)
+        }
+    }
+
+    func notifyChargenFinished(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        target.getLinks(with: local_node).forEach { $0.detach() }
+    }
+    
     func notifyBroadcast() {
         addBroadcast()
     }
@@ -1158,7 +1276,7 @@ public class Interman3DModel : ObservableObject {
 
         return;
         
-        addBroadcast()
+        _ = addBroadcast()
         
         return
         
@@ -1220,8 +1338,9 @@ public class Interman3DModel : ObservableObject {
 
 //        b3d_first_host.addLink(b3d_second_host)
 //        b3d_second_host.addLink(b3d_first_host)
-        let foo = Link3DScanNode(b3d_second_host, b3d_first_host)
-
+        // let foo = Link3DScanNode(b3d_second_host, b3d_first_host)
+        _ = Link3DScanNode(b3d_second_host, b3d_first_host)
+        
         /*
         if let host = DBMaster.getNode(mcast_fqdn: FQDN("dns", "google")) {
             print("XXXXX: host dns.google found")

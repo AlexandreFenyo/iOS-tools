@@ -723,6 +723,7 @@ view.backgroundColor = .red
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodUDP(address: address)
             }
 
             await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
@@ -747,6 +748,7 @@ view.backgroundColor = .red
             // objectif : arrivé ici, la boucle de flood est terminée
             DispatchQueue.main.async {
                 self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodUDPFinished(address: address)
             }
         }
     }
@@ -780,6 +782,7 @@ view.backgroundColor = .red
                         is_connected = true
                         DispatchQueue.main.async {
                             self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
+                            DBMaster.shared.notifyFloodTCP(address: address)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
@@ -832,6 +835,7 @@ view.backgroundColor = .red
             await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
                 self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodTCPFinished(address: address)
             }
         }
     }
@@ -852,6 +856,7 @@ view.backgroundColor = .red
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("flood TCP chargen port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyChargenTCP(address: address)
             }
 
             var is_connected = false
@@ -914,6 +919,7 @@ view.backgroundColor = .red
             await self.detail_view_controller?.removeMapButton()
             DispatchQueue.main.async {
                 self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyChargenTCPFinished(address: address)
             }
         }
     }

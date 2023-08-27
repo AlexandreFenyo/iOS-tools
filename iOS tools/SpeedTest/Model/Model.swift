@@ -590,6 +590,54 @@ class DBMaster {
         }
         Interman3DModel.shared.notifyICMPReceived(node, address)
     }
+    
+    func notifyFloodUDP(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDP(node, address)
+    }
+
+    func notifyFloodUDPFinished(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDPFinished(node, address)
+    }
+
+    func notifyFloodTCP(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDP(node, address)
+    }
+
+    func notifyFloodTCPFinished(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDPFinished(node, address)
+    }
+
+    func notifyChargenTCP(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDP(node, address)
+    }
+
+    func notifyChargenTCPFinished(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyFloodUDPFinished(node, address)
+    }
 
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         var first_merged_node: Node? = nil
