@@ -61,8 +61,8 @@ return*/
         
         switch camera_mode {
         case .topManual:
-            camera_mode = .freeFlight
-//            camera_mode = .topStepper
+//            camera_mode = .freeFlight
+            camera_mode = .topStepper
         case .topStepper:
             camera_mode = .sideManual
         case .sideManual:
@@ -72,8 +72,8 @@ return*/
         case .topHostManual:
             camera_mode = .topHostStepper
         case .topHostStepper:
-            camera_mode = .topManual
-//            camera_mode = .freeFlight
+//          camera_mode = .topManual
+            camera_mode = .freeFlight
         case .freeFlight:
             camera_mode = .topManual
         }
@@ -130,6 +130,7 @@ struct Interman3DSwiftUIView: View {
     
     @State private var timer_camera: Timer?
     @State private var timer_text: Timer?
+    @State private var disable_buttons = false
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -257,6 +258,7 @@ struct Interman3DSwiftUIView: View {
         switch camera_model.camera_mode {
         case .topManual:
             // Set constraint to look at sphere
+            // Note: it is not possible to have a smooth transition between look at constraints but it can be done simply by having a smooth transition of the position of the object this contraint follows
 
             if prev_mode == .freeFlight { // OK
                 free_flight_active = false
@@ -270,10 +272,12 @@ struct Interman3DSwiftUIView: View {
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
+                disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
                 animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
                 animation.duration = 1
+                animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
@@ -283,10 +287,12 @@ struct Interman3DSwiftUIView: View {
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
+                disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
                 animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
                 animation.duration = 1
+                animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
@@ -296,6 +302,7 @@ struct Interman3DSwiftUIView: View {
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
+                disable_buttons = true
                 var animation = CABasicAnimation(keyPath: "pivot")
                 animation.fromValue = camera.presentation.pivot
                 animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
@@ -309,6 +316,7 @@ struct Interman3DSwiftUIView: View {
                 animation.fromValue = camera.presentation.transform
                 animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
                 animation.duration = 1
+                animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
@@ -335,12 +343,14 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .topManual { // OK
                 // Constraint is already sphere
 
+                disable_buttons = true
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
 
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
                 animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
                 animation.duration = 1
+                animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
@@ -349,6 +359,7 @@ struct Interman3DSwiftUIView: View {
                 // No constraint
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                disable_buttons = true
 
                 var animation = CABasicAnimation(keyPath: "pivot")
                 animation.fromValue = camera.presentation.pivot
@@ -369,6 +380,7 @@ struct Interman3DSwiftUIView: View {
                     animation.fromValue = camera.presentation.transform
                     animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
                     animation.duration = 1
+                    animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "camtransform")
                     camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
                 })
@@ -385,6 +397,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .freeFlight { // OK
                 dropAxes()
                 free_flight_active = false
+                disable_buttons = true
 
                 camera.parent!.scale = SCNVector3(1.5, 1.5, 1.5)
 
@@ -402,6 +415,7 @@ struct Interman3DSwiftUIView: View {
                     animation.fromValue = camera.presentation.pivot
                     animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
                     animation.duration = 1
+                    animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "campivot")
                     camera.pivot = camera.presentation.pivot
                     
@@ -416,6 +430,7 @@ struct Interman3DSwiftUIView: View {
 
             if prev_mode == .topManual { // OK
                 camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+                disable_buttons = true
 
                 camera.constraints?.removeAll()
 
@@ -424,6 +439,7 @@ struct Interman3DSwiftUIView: View {
                 animation.fromValue = camera.presentation.pivot
                 animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
                 animation.duration = 1
+                animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "campivot")
                 camera.pivot = camera.presentation.pivot
                 
@@ -439,6 +455,7 @@ struct Interman3DSwiftUIView: View {
                 // Constraint is sphere
 
                 camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+                disable_buttons = true
 
                 // Side to top
                 var animation = CABasicAnimation(keyPath: "transform")
@@ -454,6 +471,7 @@ struct Interman3DSwiftUIView: View {
                     animation.fromValue = camera.presentation.pivot
                     animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
                     animation.duration = 1
+                    animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "campivot")
                     camera.pivot = camera.presentation.pivot
                     
@@ -479,6 +497,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .sideManual {
                 free_flight_active = true
                 createAxes()
+                disable_buttons = true
                 
                 camera.constraints?.removeAll()
             }
@@ -494,6 +513,7 @@ struct Interman3DSwiftUIView: View {
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     free_flight_active = true
+                    disable_buttons = false
                     createAxes()
                     camera.constraints?.removeAll()
                 })
@@ -505,6 +525,7 @@ struct Interman3DSwiftUIView: View {
                 // No constraint
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                disable_buttons = true
 
                 var animation = CABasicAnimation(keyPath: "pivot")
                 animation.fromValue = camera.presentation.pivot
@@ -527,6 +548,7 @@ struct Interman3DSwiftUIView: View {
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({
                         free_flight_active = true
+                        disable_buttons = false
                         createAxes()
                         camera.constraints?.removeAll()
                     })
@@ -536,9 +558,6 @@ struct Interman3DSwiftUIView: View {
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
-            
-            
-            
         }
     }
 
@@ -682,43 +701,42 @@ struct Interman3DSwiftUIView: View {
                   } label: {
                       Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
+                  }.disabled(disable_buttons)
 
                   Button {
                       nextCameraMode()
                   } label: {
                       Text("mode")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
+                  }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.freeFlight)
                   } label: {
                       Text("free flight")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
+                  }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.topManual)
                   } label: {
                       Text("top manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
+                  }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.sideManual)
                   } label: {
                       Text("side manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
+                  }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.topHostManual)
                   } label: {
                       Text("top host manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }
-
+                  }.disabled(disable_buttons)
               }
 
               Spacer()
