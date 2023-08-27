@@ -141,6 +141,16 @@ struct Interman3DSwiftUIView: View {
     private let scene: SCNScene
 
     private var render_delegate = RenderDelegate()
+    
+    private func createAxes() {
+        let axes = ComponentTemplates.createAxes(0.2)
+        axes.name = "axes"
+        scene.rootNode.addChildNode(axes)
+    }
+    
+    private func dropAxes() {
+        scene.rootNode.childNode(withName: "axes", recursively: true)!.removeFromParentNode()
+    }
 
     init() {
         scene = Interman3DModel.shared.scene
@@ -152,7 +162,7 @@ struct Interman3DSwiftUIView: View {
         camera.camera!.automaticallyAdjustsZRange = true
 
         // Debug: axes
-        scene.rootNode.addChildNode(ComponentTemplates.createAxes(0.2))
+        // createAxes()
 
         // Set camera initial position
         camera.parent!.scale = SCNVector3(2, 2, 2)
@@ -250,7 +260,8 @@ struct Interman3DSwiftUIView: View {
 
             if prev_mode == .freeFlight { // OK
                 free_flight_active = false
-
+                dropAxes()
+                
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
                 camera.constraints = [lookAtConstraint]
@@ -293,7 +304,6 @@ struct Interman3DSwiftUIView: View {
                 lookAtConstraint.isGimbalLockEnabled = false
                 animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
                 camera.addAnimation(animation, forKey: "campivot")
-//                camera.pivot = camera.presentation.pivot
 
                 animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
@@ -310,6 +320,7 @@ struct Interman3DSwiftUIView: View {
             // Set constraint to look at sphere
 
             if prev_mode == .freeFlight { // OK
+                dropAxes()
                 free_flight_active = false
 
                 camera.parent!.scale = SCNVector3(2, 2, 2)
@@ -372,9 +383,10 @@ struct Interman3DSwiftUIView: View {
             // Remove constraints
 
             if prev_mode == .freeFlight { // OK
+                dropAxes()
                 free_flight_active = false
 
-                camera.parent!.scale = SCNVector3(2, 2, 2)
+                camera.parent!.scale = SCNVector3(1.5, 1.5, 1.5)
 
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -403,7 +415,7 @@ struct Interman3DSwiftUIView: View {
             }
 
             if prev_mode == .topManual { // OK
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
 
                 camera.constraints?.removeAll()
 
@@ -426,7 +438,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .sideManual { // OK
                 // Constraint is sphere
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
 
                 // Side to top
                 var animation = CABasicAnimation(keyPath: "transform")
@@ -466,6 +478,8 @@ struct Interman3DSwiftUIView: View {
         case .freeFlight:
             if prev_mode == .sideManual {
                 free_flight_active = true
+                createAxes()
+                
                 camera.constraints?.removeAll()
             }
 
@@ -480,6 +494,7 @@ struct Interman3DSwiftUIView: View {
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     free_flight_active = true
+                    createAxes()
                     camera.constraints?.removeAll()
                 })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -512,6 +527,7 @@ struct Interman3DSwiftUIView: View {
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({
                         free_flight_active = true
+                        createAxes()
                         camera.constraints?.removeAll()
                     })
                     camera.addAnimation(animation, forKey: "camtransform")
@@ -550,7 +566,11 @@ struct Interman3DSwiftUIView: View {
 
     func resetCamera() {
         rotateCamera(0, smooth: true, duration: 1)
-        camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+        if camera_model.getCameraMode() == .topHostManual || camera_model.getCameraMode() == .topHostStepper {
+            camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+        } else  {
+            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+        }
     }
 
     // ////////////////////////////////
