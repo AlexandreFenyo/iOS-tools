@@ -575,6 +575,22 @@ class DBMaster {
         Interman3DModel.shared.notifyPortDiscovered(node, port)
     }
 
+    func notifyICMPSent(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyICMPSent(node, address)
+    }
+
+    func notifyICMPReceived(address: IPAddress) {
+        guard let node = DBMaster.getNode(address: address) else {
+            print("can not find node with address \(address)")
+            return
+        }
+        Interman3DModel.shared.notifyICMPReceived(node, address)
+    }
+
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         var first_merged_node: Node? = nil
         

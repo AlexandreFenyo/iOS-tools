@@ -860,6 +860,35 @@ class Link3DPortDiscovered : Link3D {
     }
 }
 
+class Link3DICMPRequest : Link3D {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.detach()
+        }
+    }
+}
+
+class Link3DICMPResponse : Link3D {
+    override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
+    override fileprivate var height: Float { -B3D.default_scale }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(_ from_b3d: B3D, _ to_b3d: B3D) {
+        super.init(from_b3d, to_b3d)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.detach()
+        }
+    }
+}
+
 public class Interman3DModel : ObservableObject {
     static let shared = Interman3DModel()
 
@@ -1040,7 +1069,39 @@ public class Interman3DModel : ObservableObject {
             _ = Link3DPortDiscovered(local_node, target, port)
         }
     }
-    
+
+    func notifyICMPSent(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            _ = Link3DICMPRequest(local_node, target)
+        }
+    }
+
+    func notifyICMPReceived(_ node: Node, _ address: IPAddress) {
+        guard let local_node = getB3DLocalHost() else {
+            print("\(#function): Warning: localhost is not backed by a 3D node")
+            return
+        }
+        
+        guard let target = getB3DHost(node) else {
+            print("\(#function): warning, scan target is not backed by a 3D node")
+            return
+        }
+
+        if local_node != target {
+            _ = Link3DICMPResponse(local_node, target)
+        }
+    }
+
     func notifyBroadcast() {
         addBroadcast()
     }

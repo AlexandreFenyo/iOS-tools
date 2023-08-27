@@ -674,6 +674,7 @@ view.backgroundColor = .red
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyICMPSent(address: address)
             }
 
             var has_answered = false
@@ -686,6 +687,7 @@ view.backgroundColor = .red
                         has_answered = true
                         DispatchQueue.main.async {
                             self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
+                            DBMaster.shared.notifyICMPReceived(address: address)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
                     }
