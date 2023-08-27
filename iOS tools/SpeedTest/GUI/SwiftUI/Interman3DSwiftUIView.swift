@@ -38,36 +38,31 @@ print(camera.presentation.scale)
 */
 
 private enum CameraMode : String {
-    case topManual, sideManual, topHostManual, freeFlight
+    case topCentered, sideCentered, topHost, freeFlight
 }
 
 private class CameraModel: ObservableObject {
     static let shared = CameraModel()
 
-    @Published private(set) var camera_mode: CameraMode = CameraMode.topManual
+    @Published private(set) var camera_mode: CameraMode = CameraMode.topCentered
 
     func setCameraMode(_ mode: CameraMode)  {
         camera_mode = mode
     }
     
     func nextCameraMode() {
-        /*
-        if camera_mode == .topManual {
-            camera_mode = .sideManual
-        } else {
-            camera_mode = .topManual
-        }
-return*/
-        
         switch camera_mode {
-        case .topManual:
-            camera_mode = .sideManual
-        case .sideManual:
-            camera_mode = .topHostManual
-        case .topHostManual:
+        case .topCentered:
+            camera_mode = .sideCentered
+            
+        case .sideCentered:
+            camera_mode = .topHost
+            
+        case .topHost:
             camera_mode = .freeFlight
+            
         case .freeFlight:
-            camera_mode = .topManual
+            camera_mode = .topCentered
         }
     }
     
@@ -250,7 +245,7 @@ struct Interman3DSwiftUIView: View {
         camera_model.setCameraMode(mode)
         
         switch camera_model.camera_mode {
-        case .topManual:
+        case .topCentered:
             // Set constraint to look at sphere
             // Note: it is not possible to have a smooth transition between look at constraints but it can be done simply by having a smooth transition of the position of the object this contraint follows
 
@@ -278,7 +273,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
-            if prev_mode == .sideManual { // OK
+            if prev_mode == .sideCentered { // OK
                 // Constraint is already sphere
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -293,7 +288,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
             
-            if prev_mode == .topHostManual { // OK
+            if prev_mode == .topHost { // OK
                 // No constraint
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -317,7 +312,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
-        case .sideManual:
+        case .sideCentered:
             // Set constraint to look at sphere
 
             disable_auto_rotation_button = false
@@ -335,7 +330,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
 
-            if prev_mode == .topManual { // OK
+            if prev_mode == .topCentered { // OK
                 // Constraint is already sphere
 
                 disable_buttons = true
@@ -350,7 +345,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
             
-            if prev_mode == .topHostManual { // OK
+            if prev_mode == .topHost { // OK
                 // No constraint
 
                 disable_auto_rotation_button = false
@@ -385,7 +380,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
-        case .topHostManual:
+        case .topHost:
             // Remove constraints
 
             disable_auto_rotation_button = false
@@ -424,7 +419,7 @@ struct Interman3DSwiftUIView: View {
                 }
             }
 
-            if prev_mode == .topManual { // OK
+            if prev_mode == .topCentered { // OK
                 camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
                 disable_buttons = true
 
@@ -447,7 +442,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
             }
             
-            if prev_mode == .sideManual { // OK
+            if prev_mode == .sideCentered { // OK
                 // Constraint is sphere
 
                 camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
@@ -486,7 +481,7 @@ struct Interman3DSwiftUIView: View {
         case .freeFlight:
             disable_auto_rotation_button = true
 
-            if prev_mode == .sideManual {
+            if prev_mode == .sideCentered {
                 free_flight_active = true
                 auto_rotation_active = false
                 createAxes()
@@ -494,7 +489,7 @@ struct Interman3DSwiftUIView: View {
                 camera.constraints?.removeAll()
             }
 
-            if prev_mode == .topManual {
+            if prev_mode == .topCentered {
                 // Constraint is already sphere
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -514,7 +509,7 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
             }
             
-            if prev_mode == .topHostManual {
+            if prev_mode == .topHost {
                 // No constraint
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -579,7 +574,7 @@ struct Interman3DSwiftUIView: View {
 
     func resetCamera() {
         rotateCamera(0, smooth: true, duration: 1)
-        if camera_model.getCameraMode() == .topHostManual {
+        if camera_model.getCameraMode() == .topHost {
             camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
         } else  {
             camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -714,21 +709,21 @@ struct Interman3DSwiftUIView: View {
                   }.disabled(disable_buttons)
 
                   Button {
-                      setCameraMode(.topManual)
+                      setCameraMode(.topCentered)
                   } label: {
                       Text("top manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
-                      setCameraMode(.sideManual)
+                      setCameraMode(.sideCentered)
                   } label: {
                       Text("side manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
-                      setCameraMode(.topHostManual)
+                      setCameraMode(.topHost)
                   } label: {
                       Text("top host manual")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
