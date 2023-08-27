@@ -10,6 +10,7 @@
 		1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */; };
 		5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 5D039EC329B8A2E100A33898 /* iPhone.jpeg */; };
 		5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D039EC529B8A4CC00A33898 /* Appareils.png */; };
+		5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D0DE45C2A9BA99800892028 /* Interman 3D Scene.scn */; };
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
 		5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D16E60529A77124000A46E4 /* docs-action-bar.png */; };
@@ -23,7 +24,6 @@
 		5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */; };
 		5D1CBC502A642207001F3B8D /* everything.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC4F2A642207001F3B8D /* everything.scn */; };
 		5D1CBC522A646FAE001F3B8D /* Interman 3D Scene bk1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC512A646FAE001F3B8D /* Interman 3D Scene bk1.scn */; };
-		5D1CBC582A648207001F3B8D /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC572A648207001F3B8D /* Interman 3D Scene.scn */; };
 		5D1CBC5A2A67C117001F3B8D /* everything sandbox.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC592A67C117001F3B8D /* everything sandbox.scn */; };
 		5D1CBC5C2A67E263001F3B8D /* everything sandbox 2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC5B2A67E263001F3B8D /* everything sandbox 2.scn */; };
 		5D1CBC5E2A67E369001F3B8D /* everything sandbox 3.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D1CBC5D2A67E369001F3B8D /* everything sandbox 3.scn */; };
@@ -129,6 +129,7 @@
 		5D039EC329B8A2E100A33898 /* iPhone.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = iPhone.jpeg; sourceTree = "<group>"; };
 		5D039EC529B8A4CC00A33898 /* Appareils.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Appareils.png; sourceTree = "<group>"; };
 		5D0B4F7829ABB5DD00F65C68 /* iOS tools.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "iOS tools.entitlements"; sourceTree = "<group>"; };
+		5D0DE45C2A9BA99800892028 /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
 		5D1351EB208538DB00E4A76D /* iOS tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D1351EE208538DB00E4A76D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D1351FC208538E300E4A76D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -150,7 +151,6 @@
 		5D1CBC4D2A63FE33001F3B8D /* laptop2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop2.scn; sourceTree = "<group>"; };
 		5D1CBC4F2A642207001F3B8D /* everything.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = everything.scn; sourceTree = "<group>"; };
 		5D1CBC512A646FAE001F3B8D /* Interman 3D Scene bk1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene bk1.scn"; sourceTree = "<group>"; };
-		5D1CBC572A648207001F3B8D /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
 		5D1CBC592A67C117001F3B8D /* everything sandbox.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "everything sandbox.scn"; sourceTree = "<group>"; };
 		5D1CBC5B2A67E263001F3B8D /* everything sandbox 2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "everything sandbox 2.scn"; sourceTree = "<group>"; };
 		5D1CBC5D2A67E369001F3B8D /* everything sandbox 3.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "everything sandbox 3.scn"; sourceTree = "<group>"; };
@@ -450,7 +450,7 @@
 		5D3BA6632A5C75EA005D11E0 /* 3D models */ = {
 			isa = PBXGroup;
 			children = (
-				5D1CBC572A648207001F3B8D /* Interman 3D Scene.scn */,
+				5D0DE45C2A9BA99800892028 /* Interman 3D Scene.scn */,
 				5D463FBB2A3C4F3100DA77C4 /* Repère.scn */,
 				5D3BA6562A5C3EAA005D11E0 /* printer2.scn */,
 				5D3BA65A2A5C6CB8005D11E0 /* atv.scn */,
@@ -771,6 +771,7 @@
 				5D85623E29C8317E009050AA /* Sandbox.scn in Resources */,
 				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
+				5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
@@ -785,7 +786,6 @@
 				5D1CBC422A63EC19001F3B8D /* server.scn in Resources */,
 				5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */,
 				5D3BA6532A5C37A5005D11E0 /* laptop.scn in Resources */,
-				5D1CBC582A648207001F3B8D /* Interman 3D Scene.scn in Resources */,
 				5D82ACDA297D46CF0021E492 /* docs-browse-stop-fr.png in Resources */,
 				5D3BA6502A5C06FF005D11E0 /* test.scn in Resources */,
 				5D65EE53296381780099871C /* app-icon-60.png in Resources */,
