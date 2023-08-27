@@ -554,7 +554,6 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func updateCameraIfNeeded() {
-        print("salut")
         if auto_rotation_active {
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
@@ -607,7 +606,6 @@ struct Interman3DSwiftUIView: View {
     @State private var timer: Timer?
 
     var body: some View {
-
         ZStack {
             // 3D view
             if free_flight_active == true {
@@ -755,6 +753,6 @@ struct Interman3DSwiftUIView: View {
             .cornerRadius(14)
             .padding(12)
           }
-        }
+        }.background(.black /* beige clair proche du fond de la vue 3D : Color(COLORS.chart_bg) */)
     }
 }
