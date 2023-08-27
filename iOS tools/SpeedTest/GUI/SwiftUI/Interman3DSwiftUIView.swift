@@ -38,7 +38,7 @@ print(camera.presentation.scale)
 */
 
 private enum CameraMode : String {
-    case topManual, topStepper, sideManual, sideStepper, topHostManual, topHostStepper, freeFlight
+    case topManual, sideManual, topHostManual, freeFlight
 }
 
 private class CameraModel: ObservableObject {
@@ -61,18 +61,10 @@ return*/
         
         switch camera_mode {
         case .topManual:
-//            camera_mode = .freeFlight
-            camera_mode = .topStepper
-        case .topStepper:
             camera_mode = .sideManual
         case .sideManual:
-            camera_mode = .sideStepper
-        case .sideStepper:
             camera_mode = .topHostManual
         case .topHostManual:
-            camera_mode = .topHostStepper
-        case .topHostStepper:
-//          camera_mode = .topManual
             camera_mode = .freeFlight
         case .freeFlight:
             camera_mode = .topManual
@@ -127,10 +119,12 @@ struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
     @State private var free_flight_active: Bool = false
-    
+    @State private var auto_rotation_active: Bool = false
+
     @State private var timer_camera: Timer?
     @State private var timer_text: Timer?
     @State private var disable_buttons = false
+    @State private var disable_auto_rotation_button = false
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -260,6 +254,8 @@ struct Interman3DSwiftUIView: View {
             // Set constraint to look at sphere
             // Note: it is not possible to have a smooth transition between look at constraints but it can be done simply by having a smooth transition of the position of the object this contraint follows
 
+            disable_auto_rotation_button = false
+
             if prev_mode == .freeFlight { // OK
                 free_flight_active = false
                 dropAxes()
@@ -321,11 +317,10 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
-        case .topStepper:
-            resetCameraTimer()
-
         case .sideManual:
             // Set constraint to look at sphere
+
+            disable_auto_rotation_button = false
 
             if prev_mode == .freeFlight { // OK
                 dropAxes()
@@ -358,6 +353,8 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .topHostManual { // OK
                 // No constraint
 
+                disable_auto_rotation_button = false
+
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
                 disable_buttons = true
 
@@ -388,11 +385,10 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
 
-        case .sideStepper:
-            resetCameraTimer()
-
         case .topHostManual:
             // Remove constraints
+
+            disable_auto_rotation_button = false
 
             if prev_mode == .freeFlight { // OK
                 dropAxes()
@@ -487,17 +483,13 @@ struct Interman3DSwiftUIView: View {
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
             }
             
-        case .topHostStepper:
-            resetCameraTimer()
-
-            camera.removeAllAnimations()
-
-            
         case .freeFlight:
+            disable_auto_rotation_button = true
+
             if prev_mode == .sideManual {
                 free_flight_active = true
+                auto_rotation_active = false
                 createAxes()
-                disable_buttons = true
                 
                 camera.constraints?.removeAll()
             }
@@ -506,6 +498,7 @@ struct Interman3DSwiftUIView: View {
                 // Constraint is already sphere
 
                 camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                disable_buttons = true
 
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
@@ -566,7 +559,8 @@ struct Interman3DSwiftUIView: View {
     }
     
     private func updateCameraIfNeeded() {
-        if camera_model.getCameraMode() == .sideStepper || camera_model.getCameraMode() == .topStepper || camera_model.getCameraMode() == .topHostStepper {
+        print("salut")
+        if auto_rotation_active {
             let host = interman3d_model.getLowestNodeAngle(getCameraAngle())
             rotateCamera(-host.getAngle(), smooth: true, duration: 1)
         }
@@ -585,7 +579,7 @@ struct Interman3DSwiftUIView: View {
 
     func resetCamera() {
         rotateCamera(0, smooth: true, duration: 1)
-        if camera_model.getCameraMode() == .topHostManual || camera_model.getCameraMode() == .topHostStepper {
+        if camera_model.getCameraMode() == .topHostManual {
             camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
         } else  {
             camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
@@ -673,6 +667,8 @@ struct Interman3DSwiftUIView: View {
                              timer_text = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
                                  updateTextIfNeeded()
                              }
+                             // Avoid situations when buttons are definitely disabled
+                             disable_buttons = false
                          }
                          .onDisappear() {
                              timer?.invalidate()
@@ -701,7 +697,7 @@ struct Interman3DSwiftUIView: View {
                   } label: {
                       Text("create")
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }.disabled(disable_buttons)
+                  }
 
                   Button {
                       nextCameraMode()
@@ -738,6 +734,14 @@ struct Interman3DSwiftUIView: View {
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
               }
+
+                Button {
+                    auto_rotation_active.toggle()
+                    if auto_rotation_active == true { resetCameraTimer() }
+                } label: {
+                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
+                    Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                }.disabled(disable_auto_rotation_button)
 
               Spacer()
               Text("current: \(camera_model.camera_mode.rawValue)").foregroundColor(.white)
