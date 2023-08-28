@@ -728,7 +728,7 @@ struct Interman3DSwiftUIView: View {
                       setCameraMode(.sideCentered)
                   } label: {
                       if horizontalSizeClass == .regular { Text("side") }
-                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                      Image(systemName: "cube.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
