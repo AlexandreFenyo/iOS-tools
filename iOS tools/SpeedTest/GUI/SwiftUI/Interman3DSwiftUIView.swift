@@ -113,6 +113,9 @@ class RunAfterAnimation : NSObject, CAAnimationDelegate {
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
 
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass: UserInterfaceSizeClass?
+    let scale_zoom = UIDevice.current.userInterfaceIdiom == .phone ? 2.0 : 1.0
+    
     @State private var free_flight_active: Bool = false
     @State private var auto_rotation_active: Bool = false
 
@@ -155,7 +158,7 @@ struct Interman3DSwiftUIView: View {
         // createAxes()
 
         // Set camera initial position
-        camera.parent!.scale = SCNVector3(2, 2, 2)
+        camera.parent!.scale = SCNVector3(2 * scale_zoom, 2 * scale_zoom, 2 * scale_zoom)
         camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
         let lookAtConstraint = SCNLookAtConstraint(target: sphere)
         lookAtConstraint.isGimbalLockEnabled = false
@@ -220,6 +223,14 @@ struct Interman3DSwiftUIView: View {
         timer_camera?.invalidate()
         timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
             updateCameraIfNeeded()
+
+            // A SUPPRIMER - pour débugger
+            print(horizontalSizeClass)
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                print("iPhone")
+            } else {
+                print("not iPhone")
+            }
         }
     }
     
@@ -261,7 +272,7 @@ struct Interman3DSwiftUIView: View {
 
                 camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
 
                 disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
@@ -276,7 +287,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .sideCentered { // OK
                 // Constraint is already sphere
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
 
                 disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
@@ -291,7 +302,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .topHost { // OK
                 // No constraint
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
 
                 disable_buttons = true
                 var animation = CABasicAnimation(keyPath: "pivot")
@@ -321,7 +332,7 @@ struct Interman3DSwiftUIView: View {
                 dropAxes()
                 free_flight_active = false
 
-                camera.parent!.scale = SCNVector3(2, 2, 2)
+                camera.parent!.scale = SCNVector3(2 * scale_zoom, 2 * scale_zoom, 2 * scale_zoom)
 
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -334,7 +345,7 @@ struct Interman3DSwiftUIView: View {
                 // Constraint is already sphere
 
                 disable_buttons = true
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
 
                 let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = camera.presentation.transform
@@ -350,7 +361,7 @@ struct Interman3DSwiftUIView: View {
 
                 disable_auto_rotation_button = false
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 disable_buttons = true
 
                 var animation = CABasicAnimation(keyPath: "pivot")
@@ -390,7 +401,7 @@ struct Interman3DSwiftUIView: View {
                 free_flight_active = false
                 disable_buttons = true
 
-                camera.parent!.scale = SCNVector3(1.5, 1.5, 1.5)
+                camera.parent!.scale = SCNVector3(1.5 * scale_zoom, 1.5 * scale_zoom, 1.5 * scale_zoom)
 
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -420,7 +431,7 @@ struct Interman3DSwiftUIView: View {
             }
 
             if prev_mode == .topCentered { // OK
-                camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
                 disable_buttons = true
 
                 camera.constraints?.removeAll()
@@ -445,7 +456,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .sideCentered { // OK
                 // Constraint is sphere
 
-                camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
                 disable_buttons = true
 
                 // Side to top
@@ -492,7 +503,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .topCentered {
                 // Constraint is already sphere
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 disable_buttons = true
 
                 let animation = CABasicAnimation(keyPath: "transform")
@@ -512,7 +523,7 @@ struct Interman3DSwiftUIView: View {
             if prev_mode == .topHost {
                 // No constraint
 
-                camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+                camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 disable_buttons = true
 
                 var animation = CABasicAnimation(keyPath: "pivot")
@@ -574,9 +585,9 @@ struct Interman3DSwiftUIView: View {
     func resetCamera() {
         rotateCamera(0, smooth: true, duration: 1)
         if camera_model.getCameraMode() == .topHost {
-            camera.parent!.runAction(SCNAction.scale(to: 1.5, duration: 0.5))
+            camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
         } else  {
-            camera.parent!.runAction(SCNAction.scale(to: 2, duration: 0.5))
+            camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
         }
     }
 
@@ -688,42 +699,42 @@ struct Interman3DSwiftUIView: View {
                   Button {
                       interman3d_model.testIHMCreate()
                   } label: {
-                      Text("create")
+                      if horizontalSizeClass == .regular { Text("create") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }
 
                   Button {
                       nextCameraMode()
                   } label: {
-                      Text("mode")
+                      if horizontalSizeClass == .regular { Text("mode") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.freeFlight)
                   } label: {
-                      Text("free flight")
+                      if horizontalSizeClass == .regular { Text("free flight") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.topCentered)
                   } label: {
-                      Text("top manual")
+                      if horizontalSizeClass == .regular { Text("top") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.sideCentered)
                   } label: {
-                      Text("side manual")
+                      if horizontalSizeClass == .regular { Text("side") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.topHost)
                   } label: {
-                      Text("top host manual")
+                      if horizontalSizeClass == .regular { Text("top host") }
                       Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
                   }.disabled(disable_buttons)
               }
@@ -753,6 +764,6 @@ struct Interman3DSwiftUIView: View {
             .cornerRadius(14)
             .padding(12)
           }
-        }.background(.black /* beige clair proche du fond de la vue 3D : Color(COLORS.chart_bg) */)
+        }.background(Color(COLORS.chart_bg))
     }
 }
