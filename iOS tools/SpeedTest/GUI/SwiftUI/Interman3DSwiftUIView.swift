@@ -721,7 +721,7 @@ struct Interman3DSwiftUIView: View {
                       setCameraMode(.topCentered)
                   } label: {
                       if horizontalSizeClass == .regular { Text("top") }
-                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                      Image("icon-3D-cube").resizable().frame(width: 35, height: 30)
                   }.disabled(disable_buttons)
 
                   Button {
@@ -735,7 +735,7 @@ struct Interman3DSwiftUIView: View {
                       setCameraMode(.topHost)
                   } label: {
                       if horizontalSizeClass == .regular { Text("top host") }
-                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                      Image(systemName: "arrow.backward.circle.fill")
                   }.disabled(disable_buttons)
               }
 
