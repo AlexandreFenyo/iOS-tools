@@ -721,21 +721,22 @@ struct Interman3DSwiftUIView: View {
                       setCameraMode(.topCentered)
                   } label: {
                       if horizontalSizeClass == .regular { Text("top") }
-                      Image("icon-3D-cube").resizable().frame(width: 35, height: 30)
+                      Image("icon-2D-top").resizable().frame(width: 25, height: 25)
                   }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.sideCentered)
                   } label: {
                       if horizontalSizeClass == .regular { Text("side") }
-                      Image(systemName: "cube.fill").imageScale(.large)
-                  }.disabled(disable_buttons)
+//                      Image(systemName: "cube.fill").imageScale(.large)
+                      Image("icon-3D-cube").resizable().frame(width: 30, height: 25)
+                }.disabled(disable_buttons)
 
                   Button {
                       setCameraMode(.topHost)
                   } label: {
                       if horizontalSizeClass == .regular { Text("top host") }
-                      Image(systemName: "arrow.backward.circle.fill")
+                      Image("icon-2D-left").resizable().frame(width: 25, height: 25)
                   }.disabled(disable_buttons)
               }
 

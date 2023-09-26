@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Généré par Microsoft Visio, SVG Export top.svg Page-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="5.41415in" height="5.88659in"
+		viewBox="0 0 389.819 423.835" xml:space="preserve" color-interpolation-filters="sRGB" class="st4">
+	<v:documentProperties v:langID="1036" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {stroke:#0e7afe;stroke-linecap:round;stroke-linejoin:round;stroke-width:24}
+		.st2 {stroke:#0e7afe;stroke-linecap:round;stroke-linejoin:round;stroke-width:25}
+		.st3 {fill:#0e7afe;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st4 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>Page 1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<v:layer v:name="Lien" v:index="0"/>
+		<g id="group125-1" transform="translate(30.2016,-337.314)" v:mID="125" v:groupContext="group">
+			<title>Feuille.125</title>
+			<g id="shape126-2" v:mID="126" v:groupContext="shape" transform="translate(56.0208,791.648) rotate(180)">
+				<title>Feuille.126</title>
+				<path d="M0 423.83 L56.02 423.83" class="st1"/>
+			</g>
+			<g id="shape127-5" v:mID="127" v:groupContext="shape" transform="translate(-423.835,423.835) rotate(-90)">
+				<title>Feuille.127</title>
+				<path d="M0 423.83 L56.02 423.83" class="st1"/>
+			</g>
+		</g>
+		<g id="group128-8" transform="translate(726.834,30.5) rotate(90)" v:mID="128" v:groupContext="group">
+			<title>Feuille.128</title>
+			<g id="shape129-9" v:mID="129" v:groupContext="shape" transform="translate(56.0208,791.648) rotate(180)">
+				<title>Feuille.129</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+			<g id="shape130-12" v:mID="130" v:groupContext="shape" transform="translate(-423.835,423.835) rotate(-90)">
+				<title>Feuille.130</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+		</g>
+		<g id="group131-15" transform="translate(359.319,761.148) rotate(180)" v:mID="131" v:groupContext="group">
+			<title>Feuille.131</title>
+			<g id="shape132-16" v:mID="132" v:groupContext="shape" transform="translate(56.0208,791.648) rotate(180)">
+				<title>Feuille.132</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+			<g id="shape133-19" v:mID="133" v:groupContext="shape" transform="translate(-423.835,423.835) rotate(-90)">
+				<title>Feuille.133</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+		</g>
+		<g id="group134-22" transform="translate(-337.314,393.335) rotate(-90)" v:mID="134" v:groupContext="group">
+			<title>Feuille.134</title>
+			<g id="shape135-23" v:mID="135" v:groupContext="shape" transform="translate(56.0208,791.648) rotate(180)">
+				<title>Feuille.135</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+			<g id="shape136-26" v:mID="136" v:groupContext="shape" transform="translate(-423.835,423.835) rotate(-90)">
+				<title>Feuille.136</title>
+				<path d="M0 423.83 L56.02 423.83" class="st2"/>
+			</g>
+		</g>
+		<g id="shape137-29" v:mID="137" v:groupContext="shape" transform="translate(57.876,-57.5637)">
+			<title>Feuille.137</title>
+			<rect x="0" y="116.074" width="272.126" height="307.761" class="st3"/>
+		</g>
+	</g>
+</svg>
