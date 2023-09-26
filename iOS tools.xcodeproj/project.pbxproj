@@ -91,6 +91,8 @@
 		5DC7307C28D90CD0004094BB /* LocalAppService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7307B28D90CD0004094BB /* LocalAppService.swift */; };
 		5DC736C420D3A55600C2A199 /* NetTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DC736C220D3A55600C2A199 /* NetTools.c */; };
 		5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */; };
+		5DD5ABB02AC309B1001917EB /* icone8.svg in Resources */ = {isa = PBXBuildFile; fileRef = 5DD5ABAE2AC309B1001917EB /* icone8.svg */; };
+		5DD5ABB12AC309B1001917EB /* icone8.vsdx in Resources */ = {isa = PBXBuildFile; fileRef = 5DD5ABAF2AC309B1001917EB /* icone8.vsdx */; };
 		5DE22F7A29BDC24F002D9BEE /* Interman2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7929BDC24F002D9BEE /* Interman2D.swift */; };
 		5DE22F7C29BDF2CA002D9BEE /* IntermanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */; };
 		5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */; };
@@ -251,6 +253,8 @@
 		5DC736C220D3A55600C2A199 /* NetTools.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NetTools.c; sourceTree = "<group>"; };
 		5DC736C320D3A55600C2A199 /* NetTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetTools.h; sourceTree = "<group>"; };
 		5DC7AFF020C56BA7002A4491 /* LocalChargenService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalChargenService.swift; sourceTree = "<group>"; };
+		5DD5ABAE2AC309B1001917EB /* icone8.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = icone8.svg; sourceTree = "<group>"; };
+		5DD5ABAF2AC309B1001917EB /* icone8.vsdx */ = {isa = PBXFileReference; lastKnownFileType = file; path = icone8.vsdx; sourceTree = "<group>"; };
 		5DE22F7929BDC24F002D9BEE /* Interman2D.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman2D.swift; sourceTree = "<group>"; };
 		5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermanViewController.swift; sourceTree = "<group>"; };
 		5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interman3DSwiftUIView.swift; sourceTree = "<group>"; };
@@ -473,22 +477,10 @@
 		5D463FBA2A3722A500DA77C4 /* Artwork */ = {
 			isa = PBXGroup;
 			children = (
+				5DD5ABAD2AC3099B001917EB /* icons */,
+				5DD5ABAC2AC3097D001917EB /* help */,
 				5D3BA6512A5C30E6005D11E0 /* 3D models */,
 				5D65EE5A296491760099871C /* screen captures */,
-				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
-				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
-				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
-				5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */,
-				5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */,
-				5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */,
-				5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */,
-				5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */,
-				5DE4ED90290586740000B30A /* docs-actions-2.psd */,
-				5DE4ED8A290586740000B30A /* docs-actions.psd */,
-				5DE4ED8E290586740000B30A /* docs-browse-stop.psd */,
-				5DE4ED89290586740000B30A /* docs-chart.psd */,
-				5DE4ED91290586740000B30A /* docs-hosts.psd */,
-				5DE4ED8D290586740000B30A /* docs-ports.psd */,
 			);
 			path = Artwork;
 			sourceTree = "<group>";
@@ -588,6 +580,36 @@
 				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		5DD5ABAC2AC3097D001917EB /* help */ = {
+			isa = PBXGroup;
+			children = (
+				5D16E60929A77FBC000A46E4 /* docs-action-bar-fr.psd */,
+				5D16E60629A77124000A46E4 /* docs-action-bar.psd */,
+				5D82ACE5297D46E30021E492 /* docs-ports-fr.psd */,
+				5D82ACE0297D46DB0021E492 /* docs-hosts-fr.psd */,
+				5D82ACDD297D46D50021E492 /* docs-chart-fr.psd */,
+				5D82ACD9297D46CF0021E492 /* docs-browse-stop-fr.psd */,
+				5D82ACD4297D46C20021E492 /* docs-actions-fr.psd */,
+				5D82ACD1297D46B00021E492 /* docs-actions-2-fr.psd */,
+				5DE4ED90290586740000B30A /* docs-actions-2.psd */,
+				5DE4ED8A290586740000B30A /* docs-actions.psd */,
+				5DE4ED8E290586740000B30A /* docs-browse-stop.psd */,
+				5DE4ED89290586740000B30A /* docs-chart.psd */,
+				5DE4ED91290586740000B30A /* docs-hosts.psd */,
+				5DE4ED8D290586740000B30A /* docs-ports.psd */,
+			);
+			path = help;
+			sourceTree = "<group>";
+		};
+		5DD5ABAD2AC3099B001917EB /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				5DD5ABAE2AC309B1001917EB /* icone8.svg */,
+				5DD5ABAF2AC309B1001917EB /* icone8.vsdx */,
+			);
+			path = icons;
 			sourceTree = "<group>";
 		};
 		5DE22F7829BDC20C002D9BEE /* Interman */ = {
@@ -761,6 +783,7 @@
 				5D1CBC482A63F9D2001F3B8D /* homepod.scn in Resources */,
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
 				5D42E783216DE5890062A654 /* MasterSectionHeader.xib in Resources */,
+				5DD5ABB12AC309B1001917EB /* icone8.vsdx in Resources */,
 				5D3BA6592A5C4028005D11E0 /* printer3.scn in Resources */,
 				5D1CBC622A6E9C61001F3B8D /* Sandbox2.scn in Resources */,
 				5D1CBC502A642207001F3B8D /* everything.scn in Resources */,
@@ -797,6 +820,7 @@
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
 				5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
+				5DD5ABB02AC309B1001917EB /* icone8.svg in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
