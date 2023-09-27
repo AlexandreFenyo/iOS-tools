@@ -16,7 +16,9 @@ struct AdaptiveLabelStyle: LabelStyle {
     if horizontalSizeClass == .compact {
       VStack {
         configuration.icon
-        configuration.title
+          if UIDevice.current.userInterfaceIdiom != .phone {
+              configuration.title
+          }
       }
     } else {
       Label(configuration)
@@ -75,7 +77,7 @@ public enum LogLevel : Int {
 
 struct TracesSwiftUIView: View {
     @ObservedObject var model = TracesViewModel.shared
-    
+
     @State public var locked = true
     @Namespace var topID
     @Namespace var bottomID
@@ -152,6 +154,7 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
                             } label: {
+
                                 Label("DEBUG", systemImage: "tablecells")
                                     .labelStyle(AdaptiveLabelStyle())
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
