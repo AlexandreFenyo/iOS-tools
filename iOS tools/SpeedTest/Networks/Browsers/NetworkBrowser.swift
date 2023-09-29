@@ -137,7 +137,7 @@ class NetworkBrowser {
     
     // Main thread
     public func browse(_ doAtEnd: @escaping () -> Void = {}) {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .background).async {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
@@ -179,7 +179,7 @@ class NetworkBrowser {
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
@@ -229,7 +229,7 @@ class NetworkBrowser {
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
                         DispatchQueue.main.async {
@@ -279,7 +279,7 @@ class NetworkBrowser {
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
                         DispatchQueue.main.async {
@@ -329,9 +329,12 @@ class NetworkBrowser {
             }
 
             // Catch IPv4 replies
-            self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
+            }
+
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -361,7 +364,7 @@ class NetworkBrowser {
                 self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
             }
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)

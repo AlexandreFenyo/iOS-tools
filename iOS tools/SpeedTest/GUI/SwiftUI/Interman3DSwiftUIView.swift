@@ -139,6 +139,8 @@ struct Interman3DSwiftUIView: View {
     private let scene: SCNScene
 
     private var render_delegate = RenderDelegate()
+
+    private let button_size_factor = UIDevice.current.userInterfaceIdiom == .phone ? 1.0 : 1.5
     
     private func createAxes() {
         let axes = ComponentTemplates.createAxes(0.2)
@@ -230,12 +232,13 @@ struct Interman3DSwiftUIView: View {
             updateCameraIfNeeded()
 
             // A SUPPRIMER - pour débugger
+            /*
             print(horizontalSizeClass)
             if UIDevice.current.userInterfaceIdiom == .phone {
                 print("iPhone")
             } else {
                 print("not iPhone")
-            }
+            }*/
         }
     }
     
@@ -705,28 +708,29 @@ struct Interman3DSwiftUIView: View {
 
             HStack {
               HStack {
-                  /*
+                  
+                  Spacer()
+                  
                   Button {
-                      interman3d_model.testIHMCreate()
+                      // interman3d_model.testIHMCreate()
+                      master_view_controller!.update_pressed()
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("create") }
-                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
+                      Image(systemName: "repeat")
+                          .resizable()
+                          .frame(width: 25 * button_size_factor, height: 20 * button_size_factor)
+                          .foregroundColor(Color(COLORS.standard_background))
                   }
 
-                  Button {
-                      nextCameraMode()
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("mode") }
-                      Image(systemName: "arrow.backward.circle.fill").imageScale(.large)
-                  }.disabled(disable_buttons)
-                   */
-                  
                   Button {
                       setCameraMode(.freeFlight)
                       auto_rotation_active = false
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("free flight") }
-                      Image(systemName: "rotate.3d").imageScale(.large).foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
+                      Image(systemName: "rotate.3d")
+                          .resizable()
+                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                          .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                   }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
 
                   Button {
@@ -736,7 +740,7 @@ struct Interman3DSwiftUIView: View {
 //                      Image(systemName: "cube.fill").imageScale(.large)
                       Image("icon-3D-cube").renderingMode(.template).resizable()
                           .foregroundColor((disable_buttons || camera_model.camera_mode == .sideCentered) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 30, height: 25)
+                          .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
                 }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
 
                   Button {
@@ -745,7 +749,7 @@ struct Interman3DSwiftUIView: View {
 //                      if horizontalSizeClass == .regular { Text("top") }
                       Image("icon-2D-top").renderingMode(.template).resizable()
                           .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 25, height: 25)
+                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                   }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
 
                   Button {
@@ -754,7 +758,7 @@ struct Interman3DSwiftUIView: View {
 //                      if horizontalSizeClass == .regular { Text("top host") }
                       Image("icon-2D-left").renderingMode(.template).resizable()
                           .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 25, height: 25)
+                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                   }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
               }
 
@@ -763,23 +767,11 @@ struct Interman3DSwiftUIView: View {
                     if auto_rotation_active == true { resetCameraTimer() }
                 } label: {
 //                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
-                    Image(systemName: "gearshape.arrow.triangle.2.circlepath").imageScale(.large).foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
+                    Image(systemName: "gearshape.arrow.triangle.2.circlepath")
+                        .resizable()
+                        .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
+                        .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
                 }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
-
-                /*
-              Spacer()
-              Text("current: \(camera_model.camera_mode.rawValue)").foregroundColor(.white)
-                
-              Spacer()
-                Button {
-                    testCamera()
-                    interman3d_model.testIHMUpdate()
-                    testQuat()
-                } label: {
-                    Text("update")
-                    Image(systemName: "xmark.circle.fill").imageScale(.large)
-                }
-                 */
             }
             .padding(8)
             .cornerRadius(14)

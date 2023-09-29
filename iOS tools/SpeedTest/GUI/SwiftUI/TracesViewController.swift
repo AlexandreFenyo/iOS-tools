@@ -21,6 +21,9 @@ class TracesViewController : UIViewController {
     }
 
     public func addTrace(_ content: String, level: LogLevel = .ALL) {
+        if Thread.current.isMainThread == false {
+            print("warning: addTrace not called from main thread")
+        }
         hostingViewController.rootView.model.append(content, level: level)
     }
  

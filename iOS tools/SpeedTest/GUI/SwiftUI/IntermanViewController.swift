@@ -18,7 +18,7 @@ class IntermanViewController : UIViewController {
     private var pan_start_angle: Float = 0
     private var start_scale: Float = 0
 
-    private var hostingViewController = {
+    var hostingViewController = {
         let hostingController = UIHostingController(rootView: Interman3DSwiftUIView())
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
