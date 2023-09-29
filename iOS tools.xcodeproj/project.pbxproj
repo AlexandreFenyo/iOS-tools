@@ -164,6 +164,8 @@
 		5D37D20C29734FC300578E59 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
+		5D3B1A272AC75C9300E8F2CE /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5D3B1A282AC75C9300E8F2CE /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5D3BA64F2A5C06FF005D11E0 /* test.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = test.scn; sourceTree = "<group>"; };
 		5D3BA6522A5C37A5005D11E0 /* laptop.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = laptop.scn; sourceTree = "<group>"; };
 		5D3BA6542A5C3E15005D11E0 /* printer.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = printer.scn; sourceTree = "<group>"; };
@@ -970,6 +972,7 @@
 			children = (
 				5D37D20A29734FB700578E59 /* en */,
 				5D37D20C29734FC300578E59 /* fr */,
+				5D3B1A282AC75C9300E8F2CE /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -980,6 +983,7 @@
 				5DF2F9E129700F7A00EEDDCE /* Base */,
 				5D8B7A102970107800F89A32 /* en */,
 				5D8B7A122970107900F89A32 /* fr */,
+				5D3B1A272AC75C9300E8F2CE /* es */,
 			);
 			name = SpeedTest.storyboard;
 			sourceTree = "<group>";
