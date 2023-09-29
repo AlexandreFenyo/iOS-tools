@@ -101,12 +101,14 @@ struct TracesSwiftUIView: View {
                             LazyVStack(alignment: .leading, spacing: 0) {
                                 Spacer().id(topID)
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
-                                    Text(model.traces[i]).font(.footnote)
+//                                    Text(model.traces[i]).font(.footnote) // >=iOS16 only: .monospaced()
+                                    Text(model.traces[i])
+                                        .font(Font.custom("San Francisco", size: 10).monospacedDigit())
                                         .lineLimit(nil)
                                         .foregroundColor(Color(COLORS.standard_background.darker().darker()))
                                 }
                                 Text(model.traces.last!)
-                                    .font(.footnote)
+                                    .font(.footnote) // >=iOS16 only: .monospaced()
                                     .id(bottomID)
                                     .lineLimit(nil)
                                     .foregroundColor(Color(COLORS.standard_background.darker().darker()))
