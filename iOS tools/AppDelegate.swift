@@ -104,7 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // tabBarController.viewControllers?.remove(at: 2)
 
         // A supprimer en production: sélection par défaut du tab Interman nommé Network, pour debugger rapidement
-        tabBarController.selectedIndex = 1
+        // tabBarController.selectedIndex = 1
         
         self.masterViewController = masterViewController
         
