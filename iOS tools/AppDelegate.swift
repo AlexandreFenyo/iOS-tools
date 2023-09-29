@@ -76,6 +76,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
+        _ = DBMaster.shared
+        
         InitTCPPort2Service()
         
         guard
@@ -85,27 +88,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[1] as? TracesViewController /* ,
-                                                                                                      let consoleViewController = tabBarController.viewControllers?[2] */
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController//,
+//            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
                 //            let devices = masterViewController.devices[.localGateway]
         else { fatalError() }
+
+        guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
+        else { fatalError() }
+
         
         // Set the first device displayed in the detail view controller
         //        detailViewController.device = devices.first
         
         // suppression du 3ième view controller (console) pour le MVP
-        tabBarController.viewControllers?.remove(at: 2)
+        // tabBarController.viewControllers?.remove(at: 2)
+
+        // A supprimer en production: sélection par défaut du tab Interman nommé Network, pour debugger rapidement
+        tabBarController.selectedIndex = 1
         
         self.masterViewController = masterViewController
         
-        masterViewController.detail_view_controller = detailViewController
-        masterViewController.detail_navigation_controller = rightNavController
-        masterViewController.split_view_controller = splitViewController
-        masterViewController.traces_view_controller = tracesViewController
-        
+        self.masterViewController!.detail_view_controller = detailViewController
+        self.masterViewController!.detail_navigation_controller = rightNavController
+        self.masterViewController!.split_view_controller = splitViewController
+        self.masterViewController!.traces_view_controller = tracesViewController
+        self.masterViewController!.interman_view_controller = intermanViewController
+
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController
-        
+        intermanViewController.master_view_controller = masterViewController
+        intermanViewController.hostingViewController.rootView.master_view_controller = masterViewController
+
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
         
@@ -212,7 +225,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
             UserDefaults.standard.set(false, forKey: "remove_nodes_key")
-            UserDefaults.standard.set([], forKey: "nodes")
+            UserDefaults.standard.set([String](), forKey: "nodes")
             masterViewController?.resetToDefaultHosts()
             masterViewController?.updateLocalNodeAndGateways()
         }

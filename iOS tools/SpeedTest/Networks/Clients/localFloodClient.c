@@ -40,7 +40,7 @@ int localFloodClientGetLastErrorNo(void) {
 // return values:
 // - 0  : no error
 // - < 0: mutex error, should not happen
-static int setLastErrorNo() {
+static int setLastErrorNo(void) {
     int ret = pthread_mutex_lock(&mutex);
     if (ret < 0) {
         perror("setLastErrorNo pthread_mutex_lock");

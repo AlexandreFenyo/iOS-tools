@@ -182,20 +182,21 @@ public class DetailViewModel : ObservableObject {
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
-        text_addresses = node.v4_addresses.compactMap { $0.toNumericString() ?? nil } + node.v6_addresses.compactMap { $0.toNumericString() ?? nil }
+        text_addresses = node.getV4Addresses().compactMap { $0.toNumericString() ?? nil } + node.getV6Addresses().compactMap { $0.toNumericString() ?? nil }
         
-        let _text_names = node.names.map { $0 } + node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }
+        let _text_names = node.getNames().map { $0 } + node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }
         for name in _text_names {
+            // Do not display duplicated names
             if !text_names.contains(name) {
                 text_names.insert(name, at: text_names.endIndex)
             }
         }
         
-        text_tcp_ports = node.tcp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
-        text_udp_ports = node.udp_ports.map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
-        text_services = node.services.map({ $0.name })
+        text_tcp_ports = node.getTcpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+        text_udp_ports = node.getUdpPorts().map { TCPPort2Service[$0] != nil ? (TCPPort2Service[$0]!.uppercased() + " (\($0))") : "\($0)" }
+        text_services = node.getServices().map({ $0.name })
         
-        _ = node.services.map({ $0 }).map { svc in
+        _ = node.getServices().map({ $0 }).map { svc in
             text_services_port[svc.name] = svc.port
             text_services_attr[svc.name] = svc.attr.map({ (key: String, value: String) in
                 value == "THIS_IS_NOT_A_VALUE_AFAFAF" ? "\(key)" : "\(key): \(value)"
@@ -203,7 +204,7 @@ public class DetailViewModel : ObservableObject {
         }
         
         var interfaces = [""]
-        for addr in node.v6_addresses {
+        for addr in node.getV6Addresses() {
             if let substrings = addr.toNumericString()?.split(separator: "%") {
                 if substrings.count > 1 && !interfaces.contains(String(substrings[1])) {
                     interfaces.append(String(substrings[1]))
@@ -624,6 +625,18 @@ struct DetailSwiftUIView: View {
 
                 }//.id(topID)
                 .cornerRadius(15).padding(7) // VStack
+
+                    /* pour tester Interman dans la vue principale
+                     Text("salut")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.red)
+                
+                     IntermanSwiftUIView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(height: 500)
+                    .background(.blue)
+                     */
+                
             }.background(Color(COLORS.right_pannel_bg)) // ScrollView
             //            .popover(isPresented: $showing_popover) { Text("SALUT")}
         }

@@ -34,7 +34,7 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     private var services: [NetService] = []
     private let type: String
-    private let device_manager : DeviceManager
+    private let device_manager: DeviceManager
 
     init(_ type: String, deviceManager: DeviceManager) {
         self.type = type
@@ -173,23 +173,23 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         if let data = sender.txtRecordData() {
             text_attr = decodeTxt(data)
         }
-        node.services.insert(BonjourServiceInfo(type, String(sender.port), text_attr))
+        node.addService(BonjourServiceInfo(type, String(sender.port), text_attr))
         /*
         print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
         print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
          */
         
         if type == NetworkDefaults.speed_test_app_service_type {
-            node.types = [ .chargen, .discard, .ios ]
-            node.tcp_ports.insert(NetworkDefaults.speed_test_chargen_port)
-            node.tcp_ports.insert(NetworkDefaults.speed_test_discard_port)
-            node.tcp_ports.insert(NetworkDefaults.speed_test_app_port)
+            node.setTypes([ .chargen, .discard, .ios ])
+            node.addTcpPort(NetworkDefaults.speed_test_chargen_port)
+            node.addTcpPort(NetworkDefaults.speed_test_discard_port)
+            node.addTcpPort(NetworkDefaults.speed_test_app_port)
         }
 
         if type.hasSuffix("._tcp.") {
-            node.tcp_ports.insert(UInt16(sender.port))
+            node.addTcpPort(UInt16(sender.port))
         } else {
-            node.udp_ports.insert(UInt16(sender.port))
+            node.addUdpPort(UInt16(sender.port))
         }
 
         if sender.addresses != nil {
@@ -197,11 +197,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 let sock_addr = SockAddr.getSockAddr(data)
                 switch sock_addr.getFamily() {
                 case AF_INET:
-                    node.v4_addresses.insert(sock_addr.getIPAddress() as! IPv4Address)
+                    node.addV4Address(sock_addr.getIPAddress() as! IPv4Address)
                     if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
 
                 case AF_INET6:
-                    node.v6_addresses.insert(sock_addr.getIPAddress() as! IPv6Address)
+                    node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
                     if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
 
                 default:
@@ -212,16 +212,16 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
         // sender.domain not used ("local.")
         if !sender.name.isEmpty {
-            node.names.insert(sender.name)
+            node.addName(sender.name)
             device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
         if let domain = DomainName(sender.hostName!) {
-            node.dns_names.insert(domain)
+            node.addDnsName(domain)
             device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
         }
 
         device_manager.addTrace("Bonjour/mDNS: service found: type:\(type); name:\(sender.name); hostname:\(sender.hostName ?? ""); sender.type:\(sender.type); port:\(sender.port); descr:\(sender.description); domain:\(sender.domain); attributes:\(text_attr)", level: .DEBUG)
-        device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
     }
 }
 

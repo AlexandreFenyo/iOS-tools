@@ -653,6 +653,7 @@
 833;netconfsoapbeep
 847;dhcp-failover2
 848;gdoi
+853;dns-over-tls
 860;iscsi
 861;owamp-control
 873;rsync

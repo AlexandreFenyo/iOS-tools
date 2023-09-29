@@ -61,7 +61,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel)
+    func addTrace(_ content: String, level: LogLevel)
 }
 
 // foncé: 70 80 91
@@ -79,7 +79,7 @@ class DeviceCell : UITableViewCell {
 
 // The MasterViewController instance is the delegate for the main UITableView
 class MasterViewController: UITableViewController, DeviceManager {
-    func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+    func addTrace(_ content: String, level: LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
     }
 
@@ -96,6 +96,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public var split_view_controller: SplitViewController?
     public var traces_view_controller: TracesViewController?
     public var master_ip_view_controller: MasterIPViewController?
+    public var interman_view_controller: IntermanViewController?
 
     // public weak var browser_chargen : ServiceBrowser?
     // public weak var browser_discard : ServiceBrowser?
@@ -117,6 +118,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var local_discard_client : LocalDiscardClient?
     private var local_discard_sync : LocalDiscardSync?
 
+    // Get the first indexPath corresponding to a node
+    func getIndexPath(_ node: Node) -> IndexPath? {
+        return DBMaster.shared.getIndexPath(node)
+    }
+    
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else { fatalError() }
@@ -124,7 +130,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     public func resetToDefaultHosts() {
-        addTrace("main: remove previously discovered hosts", level: .INFO)
+        addTrace("main: remove previously discovered hosts", level: LogLevel.INFO)
 
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
@@ -136,7 +142,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
 
         // Supprimer les réseaux
-        DBMaster.shared.networks = Set<IPNetwork>()
+        DBMaster.shared.resetNetworks()
 
         // Ajouter les noeuds par défaut
         DBMaster.shared.addDefaultNodes()
@@ -333,6 +339,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         startBrowsing()
     }
 
+    func update_pressed() {
+        DispatchQueue.main.async {
+            self.stop_pressed(self)
+            self.update_pressed(self)
+        }
+    }
+
     @IBAction func debug_pressed(_ sender: Any) {
         popUp(NSLocalizedString("Target List", comment: "Target List"), NSLocalizedString("Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", comment: "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet."), "OK")
 
@@ -408,9 +421,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Couleur des boutons en bas (reload par ex.)
         navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
 
-        // view.backgroundColor = .red
+        // TESTING c'était commenté
+view.backgroundColor = .red
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+// TESTING
+        self.clearsSelectionOnViewWillAppear = false
 
         // Display an Edit button in the navigation bar for this view controller.
         navigationItem.rightBarButtonItem = editButtonItem
@@ -464,15 +479,24 @@ class MasterViewController: UITableViewController, DeviceManager {
     public func updateLocalNodeAndGateways() {
         // Update local node
         let node = DBMaster.shared.getLocalNode()
-        addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+        addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
         
         // Update local gateways
-        for gw in DBMaster.shared.getLocalGateways() { self.addNode(gw, resolve_ipv4_addresses: gw.v4_addresses) }
+        for gw in DBMaster.shared.getLocalGateways() {
+            addNode(gw, resolve_ipv4_addresses: gw.getV4Addresses())
+        }
+    }
+    
+    // Reload data without deselecting the selected cell
+    private func reloadData() {
+        let foo = tableView.indexPathForSelectedRow
+        tableView.reloadData()
+        tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        tableView.reloadData()
+        reloadData()
         
         updateLocalNodeAndGateways()
 
@@ -544,7 +568,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
+    internal func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -553,9 +577,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
-                    node.v4_addresses.insert(address)
+                    node.addV4Address(address)
                     guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
+                    node.addDnsName(domain_name)
                     self.addNode(node)
                 }
             }
@@ -563,7 +587,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
+    internal func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
         for address in resolve_ipv6_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -572,9 +596,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                     // Reverse IPv6 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
-                    node.v6_addresses.insert(address)
+                    node.addV6Address(address)
                     guard let domain_name = DomainName(name) else { return }
-                    node.dns_names.insert(domain_name)
+                    node.addDnsName(domain_name)
                     self.addNode(node)
                 }
             }
@@ -582,17 +606,17 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Main thread
-    func addNode(_ node: Node) {
+    internal func addNode(_ node: Node) {
 //        tableView.beginUpdates()
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
 //        tableView.deleteRows(at: index_paths_removed, with: .automatic)
 //        tableView.insertRows(at: index_paths_inserted, with: .automatic)
 //        tableView.endUpdates()
 
-        // comme on a supprimé le bloc suivant, on n'a plus besoin de récupérer les valeurs renvoyées
+        // comme on a supprimé le bloc plus bas (à partir de `if tableView.window...'), on n'a plus besoin de récupérer les valeurs renvoyées
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
         _ = DBMaster.shared.addNode(node)
-
+        
         // Si on faire un refresh et qu'on bascule tout de suite sur onglet Traces, puis qu'on revient un peu après, on a une erreur fatale du type :
         // Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid update: invalid number of rows in section 5. The number of rows contained in an existing section after the update (38) must be equal to the number of rows contained in that section before the update (19), plus or minus the number of rows inserted or deleted from that section (1 inserted, 0 deleted) and plus or minus the number of rows moved into or out of that section (0 moved in, 0 moved out). Table view: <UITableView: 0x10104b800; frame = (0 0; 359 834); clipsToBounds = YES; autoresize = W+H; gestureRecognizers = <NSArray: 0x283241980>; layer = <CALayer: 0x283c975a0>; contentOffset: {0, -50}; contentSize: {359, 2113.5}; adjustedContentInset: {110, 0, 115, 0}; dataSource: <iOS_tools.MasterViewController: 0x101022c00>>'
         // solution semble-t-il : on remplace le bloc suivant par un simple tableView.reloadData()
@@ -607,17 +631,17 @@ class MasterViewController: UITableViewController, DeviceManager {
             // Very important call: without it, the refresh control may not be displayed in some situations (few rows when a device is added)
             tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
 
-            tableView.reloadData()
+            reloadData()
         }
         */
-        tableView.reloadData()
+        reloadData()
 
         // si le noeud a une IP qui est affichée à droite, il faut mettre à jour ce qui est affiché à droite
         detail_view_controller!.updateDetailsIfNodeDisplayed(node, !stop_button!.isEnabled)
     }
 
     // MARK: - Calls from DetailSwiftUIView
-    func scanTCP(_ address: IPAddress) {
+    internal func scanTCP(_ address: IPAddress) {
         stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -640,7 +664,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    func loopICMP(_ address: IPAddress) {
+    internal func loopICMP(_ address: IPAddress) {
         stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -657,6 +681,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyICMPSent(address: address)
             }
 
             var has_answered = false
@@ -671,6 +696,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                             DetailViewModel.shared.setCurrentMeasurementUnit("µs")
                             DetailViewModel.shared.setMeasurementValue(Double(rtt))
                             self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
+                            DBMaster.shared.notifyICMPReceived(address: address)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
                     }
@@ -692,7 +718,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    func floodUDP(_ address: IPAddress) {
+    internal func floodUDP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_UDP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -708,6 +734,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodUDP(address: address)
             }
 
             await self.popUp(NSLocalizedString("UDP flood", comment: "UDP flood"), NSLocalizedString("UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance.", comment: "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance."), NSLocalizedString("I understand", comment: "I understand"))
@@ -736,12 +763,13 @@ class MasterViewController: UITableViewController, DeviceManager {
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodUDPFinished(address: address)
             }
         }
     }
     
     // connect to discard service
-    func floodTCP(_ address: IPAddress) {
+    internal func floodTCP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -771,6 +799,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                             DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                             DetailViewModel.shared.setMeasurementValue(throughput)
                             self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
+                            DBMaster.shared.notifyFloodTCP(address: address)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
@@ -825,11 +854,12 @@ class MasterViewController: UITableViewController, DeviceManager {
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyFloodTCPFinished(address: address)
             }
         }
     }
 
-    func chargenTCP(_ address: IPAddress) {
+    internal func chargenTCP(_ address: IPAddress) {
         stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -845,6 +875,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("flood TCP chargen port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyChargenTCP(address: address)
             }
 
             var is_connected = false
@@ -911,11 +942,12 @@ class MasterViewController: UITableViewController, DeviceManager {
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
+                DBMaster.shared.notifyChargenTCPFinished(address: address)
             }
         }
     }
 
-    public func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
+    internal func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
         let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
@@ -939,7 +971,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
-    public func popUp(_ title: String, _ message: String, _ ok: String) {
+    internal func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)
@@ -1003,40 +1035,51 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Couleur de fond quand on clique sur éditer pour supprimer une cellule
         cell.backgroundColor = COLORS.leftpannel_node_edit_bg
 
+        // Specific background color for the dedicated flooding node on the Interner
+        if node.getMcastDnsNames().contains(FQDN("flood", "eowyn.eu.org")) {
+            cell.backgroundColor =  COLORS.leftpannel_bg.lighter().lighter().lighter()
+        }
+        
+        // Host cell Background color when selected
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = COLORS.leftpannel_bg.darker().darker().darker()
+        cell.selectedBackgroundView = bgColorView
+
         // On supprime le changement de couleur de fond en cas de sélection via le positionnement d'une couleur de fond
-        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
+// TESTING
+        //        cell.contentView.backgroundColor = COLORS.leftpannel_node_select_bg
         
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = (node.mcast_dns_names.map { $0.toString() } + node.dns_names.map { $0.toString() }).first ?? "no name"
+        cell.name.text = (node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }).first ?? "no name"
         
-        if let best = (Array(node.v4_addresses.filter { (address) -> Bool in
+        if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
             // 1st choice: public (not autoconfig) && unicast
             !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
             // 2nd choice: private && not autoconfig
             address.isPrivate() && !address.isAutoConfig()
-        }) + Array(node.v4_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
             // 3rd choice: autoconfig
             address.isAutoConfig()
         })).first { cell.detail1.text = best.toNumericString() }
         else { cell.detail1.text = "no IPv4 address" }
 
-        if let best = (Array(node.v6_addresses.filter { (address) -> Bool in
+        if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
             // 1st choice: unicast public
             address.isUnicastPublic()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
             // 2nd choice: ULA
             address.isULA()
-        }) + Array(node.v6_addresses.filter { (address) -> Bool in
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
             // 3rd choice: LLA
             address.isLLA()
         })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
         else { cell.detail2.text = "no IPv6 address" }
 
-        cell.nIPs.text = String(node.v4_addresses.count + node.v6_addresses.count) + " IP" + (node.v4_addresses.count + node.v6_addresses.count > 1 ? "s" : "")
-        cell.nPorts.text = String(node.tcp_ports.count + node.udp_ports.count) + " " + NSLocalizedString("port", comment: "port") + (node.tcp_ports.count + node.udp_ports.count > 1 ? "s" : "")
+        cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
+        cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")
 
        return cell
     }
@@ -1045,26 +1088,27 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let node = getNode(indexPath: indexPath)
         let node1 = Node()
-        node1.mcast_dns_names.insert(FQDN("dns", "google"))
+        node1.addMcastFQDN(FQDN("dns", "google"))
         let node2 = Node()
-        node2.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
+        node2.addMcastFQDN(FQDN("dns9", "quad9.net"))
         let node3 = Node()
-        node3.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
+        node3.addMcastFQDN(FQDN("flood", "eowyn.eu.org"))
         if node.isSimilar(with: node1) || node.isSimilar(with: node2) {
             popUpHelp(.node_info_public_host, "This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts.")
-        } else if node.types.contains(.localhost) {
+        } else if node.isLocalHost() {
             popUpHelp(.localhost, "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action.")
         } else if node.isSimilar(with: node3) {
             popUpHelp(.internet_speed, "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth.")
-
         }
+
+        interman_view_controller!.setSelectedNode(node)
         
         stopBrowsing(.OTHER_ACTION)
     }
 
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return !getNode(indexPath: indexPath).types.contains(.localhost)
+        return !getNode(indexPath: indexPath).isLocalHost()
     }
 
     // Delete every rows corresponding to a node
@@ -1077,7 +1121,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         for str in config {
             let str_fields = str.split(separator: ";", maxSplits: 2)
             let target_name = String(str_fields[0])
-            if !node.dns_names.map({ $0.toString() }).contains(target_name) {
+            if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
                 new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
             }
         }

@@ -278,7 +278,7 @@ public enum COLORS {
     // Utilisé pour retrouver un élément graphique rapidement
     static let test = UIColor.green // vert fluo
     static let test2 = UIColor.systemGreen // vert normal
-    static let test3 = UIColor.yellow // vert normal
+    static let test3 = UIColor.yellow // jaune normal
 
     // //////////
     // Thème
@@ -346,7 +346,7 @@ public enum COLORS {
     // Fond du chart avant qu'il ne s'affiche
     static let chart_view_bg = chart_bg
     // Couleur du texte des échelles
-    static let chart_scale : UIColor = .systemYellow.darker().darker().darker()
+    static let chart_scale: UIColor = .systemYellow.darker().darker().darker()
     // Couleur de la valeur du point sélectionné
     static let chart_selected_value = UIC_RGB(0, 0, 0)
     // Couleur de la date du point sélectionné

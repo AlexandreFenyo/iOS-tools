@@ -7,28 +7,36 @@ int localChargenClientClose();
 int localChargenClientStop();
 int localChargenClientGetLastErrorNo();
 long localChargenClientGetNRead();
-int localChargenClientLoop(const struct sockaddr *saddr);
+
+// Trick to avoid this warning at localChargenClientLoop(), localDiscardClientLoop(), localPingClientLoop() and localFloodClientLoop() function definitions: "declaration of 'struct sockaddr' will not be visible outside of this function"
+typedef struct foo_struct foo_type;
+
+// int localChargenClientLoop(const struct sockaddr *saddr);
+int localChargenClientLoop(foo_type *);
 
 int localDiscardClientOpen();
 int localDiscardClientClose();
 int localDiscardClientStop();
 int localDiscardClientGetLastErrorNo();
 long localDiscardClientGetNWrite();
-int localDiscardClientLoop(const struct sockaddr *saddr);
+//int localDiscardClientLoop(const struct sockaddr *saddr);
+int localDiscardClientLoop(foo_type *);
 
 int localPingClientOpen();
 int localPingClientClose();
 int localPingClientStop();
 int localPingClientGetLastErrorNo();
 long localPingClientGetRTT();
-int localPingClientLoop(const struct sockaddr *saddr, const int);
+// int localPingClientLoop(const struct sockaddr *saddr, const int);
+int localPingClientLoop(foo_type *, const int);
 
 int localFloodClientOpen();
 int localFloodClientClose();
 int localFloodClientStop();
 int localFloodClientGetLastErrorNo();
 long localFloodClientGetNWrite();
-int localFloodClientLoop(const struct sockaddr *saddr);
+// int localFloodClientLoop(const struct sockaddr *saddr);
+int localFloodClientLoop(foo_type *);
 
 int c_test();
 

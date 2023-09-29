@@ -41,8 +41,8 @@
 /* Class = "UILabel"; text = "Title"; ObjectID = "Rc2-K5-rQo"; */
 "Rc2-K5-rQo.text" = "Title";
 
-/* Class = "UITabBarItem"; title = "CLI"; ObjectID = "W16-9t-txw"; */
-"W16-9t-txw.title" = "CLI";
+/* Class = "UITabBarItem"; title = "Network"; ObjectID = "W16-9t-txw"; */
+"W16-9t-txw.title" = "Network";
 
 /* Class = "UIBarButtonItem"; title = "Debug"; ObjectID = "WCR-6O-86k"; */
 "WCR-6O-86k.title" = "Debug";

@@ -10,9 +10,9 @@ import Foundation
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
-    private let device_manager : DeviceManager
-    private let browser_tcp : TCPPortBrowser?
-    private var reply_ipv4 : [IPv4Address: (Int, Date?)] = [:]
+    private let device_manager: DeviceManager
+    private let browser_tcp: TCPPortBrowser?
+    private var reply_ipv4: [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
     private var unicast_ipv4_finished = false // Main thread
@@ -50,7 +50,7 @@ class NetworkBrowser {
                     if network.mask_len != 32 {
                         var current = network_addr.and(netmask).next() as! IPv4Address
                         repeat {
-                            if (DBMaster.shared.nodes.filter { $0.v4_addresses.contains(current) }).isEmpty {
+                            if (DBMaster.shared.nodes.filter { $0.getV4Addresses().contains(current) }).isEmpty {
                                 device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
                                 reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
                             }
@@ -85,9 +85,9 @@ class NetworkBrowser {
             let node = Node()
             switch from.getFamily() {
             case AF_INET:
-                node.v4_addresses.insert(from as! IPv4Address)
+                node.addV4Address(from as! IPv4Address)
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv4_addresses: node.v4_addresses)
+                device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
                 if let info = from.toNumericString() {
 //                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
@@ -98,9 +98,9 @@ class NetworkBrowser {
                 reply_ipv4.removeValue(forKey: from as! IPv4Address)
 
             case AF_INET6:
-                node.v6_addresses.insert(from as! IPv6Address)
+                node.addV6Address(from as! IPv6Address)
                 // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv6_addresses: node.v6_addresses)
+                device_manager.addNode(node, resolve_ipv6_addresses: node.getV6Addresses())
                 if let info = from.toNumericString() {
 //                    DispatchQueue.main.async {
                         self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
@@ -137,7 +137,7 @@ class NetworkBrowser {
     
     // Main thread
     public func browse(_ doAtEnd: @escaping () -> Void = {}) {
-        DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .background).async {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
@@ -174,10 +174,12 @@ class NetworkBrowser {
             // Send unicast ICMPv4
             DispatchQueue.main.async {
                 self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
+                // Add torus
+                DBMaster.shared.notifyBroadcast()
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 repeat {
                     let address = self.getIPForTask()
                     if let address = address {
@@ -227,7 +229,7 @@ class NetworkBrowser {
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.broadcast_ipv4 {
                         DispatchQueue.main.async {
@@ -277,7 +279,7 @@ class NetworkBrowser {
             }
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
                 for _ in 1...3 {
                     for address in self.multicast_ipv6 {
                         DispatchQueue.main.async {
@@ -327,9 +329,12 @@ class NetworkBrowser {
             }
 
             // Catch IPv4 replies
-            self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
+            DispatchQueue.main.async {
+                self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
+            }
+
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -359,7 +364,7 @@ class NetworkBrowser {
                 self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
             }
             dispatchGroup.enter()
-            DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.global(qos: .background).async {
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -388,6 +393,11 @@ class NetworkBrowser {
   
             close(s)
             close(s6)
+
+            DispatchQueue.main.sync {
+                self.device_manager.addTrace("network browsing: finished", level: .INFO)
+                DBMaster.shared.notifyBroadcastFinished()
+            }
 
             if let browser_tcp = self.browser_tcp {
                 browser_tcp.browse(doAtEnd: doAtEnd)

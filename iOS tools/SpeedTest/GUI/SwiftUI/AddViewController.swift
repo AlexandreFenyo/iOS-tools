@@ -14,7 +14,7 @@ import SwiftUI
 
 @MainActor
 class AddViewController: UIViewController {
-    public var master_view_controller: MasterViewController?
+    public weak var master_view_controller: MasterViewController?
     
     //    @IBOutlet weak var view1: SKView!
     //    @IBOutlet weak var view2: UIView!

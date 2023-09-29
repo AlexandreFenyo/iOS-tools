@@ -20,10 +20,13 @@ class TracesViewController : UIViewController {
         return hostingController
     }
 
-    public func addTrace(_ content: String, level: TracesSwiftUIView.LogLevel = .ALL) {
+    public func addTrace(_ content: String, level: LogLevel = .ALL) {
+        if Thread.current.isMainThread == false {
+            print("warning: addTrace not called from main thread")
+        }
         hostingViewController.rootView.model.append(content, level: level)
     }
-
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
 

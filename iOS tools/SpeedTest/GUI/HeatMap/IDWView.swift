@@ -146,7 +146,7 @@ public struct IDWImage {
     }
     
     public func computeCGImageAsync(power_scale: Float, power_scale_radius: Float, debug_x: UInt16? = nil, debug_y: UInt16? = nil, distance_cache: DistanceCache?) async -> (CGImage?, DistanceCache?) {
-        let now = Date()
+//        let now = Date()
         
         var _poly = Polygon(vertices: values.map { CGPoint(x: Double($0.x), y: Double($0.y)) })
         if _poly.vertices.count >= 3 { _poly.computeConvexHull() }

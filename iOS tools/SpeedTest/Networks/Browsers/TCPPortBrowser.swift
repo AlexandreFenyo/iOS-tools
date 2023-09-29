@@ -41,17 +41,17 @@ class TCPPortBrowser {
     private func addPort(addr: IPAddress, port: UInt16) {
         DispatchQueue.main.async {
             let node = Node()
-            if addr.getFamily() == AF_INET { node.v4_addresses.insert(addr as! IPv4Address) }
-            else { node.v6_addresses.insert(addr as! IPv6Address) }
-            node.tcp_ports.insert(port)
+            if addr.getFamily() == AF_INET { node.addV4Address(addr as! IPv4Address) }
+            else { node.addV6Address(addr as! IPv6Address) }
+            node.addTcpPort(port)
             self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
             switch port {
             case 9:
-                node.types.insert(.discard)
+                node.addType(.discard)
             case 19:
-                node.types.insert(.chargen)
+                node.addType(.chargen)
             case 4:
-                node.types.insert(.ios)
+                node.addType(.ios)
             default:
                 ()
             }
@@ -74,10 +74,10 @@ class TCPPortBrowser {
             // ne pas rescanner les ports déjà identifiés
             DispatchQueue.main.sync {
                 for node in DBMaster.shared.nodes {
-                    if let addr = node.v4_addresses.first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
-                    } else if let addr = node.v6_addresses.first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.tcp_ports)
+                    if let addr = node.getV4Addresses().first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
+                    } else if let addr = node.getV6Addresses().first {
+                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
                     }
                 }
             }
@@ -92,6 +92,8 @@ class TCPPortBrowser {
             if debug { print(addr.toNumericString()!, "tcp - starting address") }
             DispatchQueue.main.async {
                 self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
+                // Add link
+                DBMaster.shared.notifyScanPorts(address: addr)
             }
 
             dispatchGroup.enter()
@@ -165,7 +167,7 @@ class TCPPortBrowser {
                         if (ret < 0) {
                             // connect(): error
                             if errno != EINPROGRESS {
-                                perror(addr.toNumericString()! + "connect")
+                                perror(addr.toNumericString()! + " connect")
                                 if debug { print(addr.toNumericString()!, "ERREUR connect port", port) }
                                 // do not retry this port
                                 ports.remove(port)
@@ -221,6 +223,7 @@ class TCPPortBrowser {
                                                     if debug { print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay) }
                                                     DispatchQueue.main.async {
                                                         self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
+                                                        DBMaster.shared.notifyPortDiscovered(address: addr, port: port)
                                                     }
                                                     // do not retry this port
                                                     ports.remove(port)
@@ -269,6 +272,7 @@ class TCPPortBrowser {
                 
                 DispatchQueue.main.async {
                     self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
+                    DBMaster.shared.notifyScanPortsFinished(address: addr)
                 }
             }
         }

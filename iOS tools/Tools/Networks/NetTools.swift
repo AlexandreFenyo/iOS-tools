@@ -126,7 +126,7 @@ class SockAddr4 : SockAddr {
     }
 }
 
-class SockAddr6 : SockAddr {
+public class SockAddr6 : SockAddr {
     public override init?(_ sockaddr: Data) {
         let family = sockaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> UInt8 in bytes.bindMemory(to: sockaddr_in6.self).baseAddress!.pointee.sin6_family }
         if family != AF_INET6 { return nil }
@@ -146,7 +146,7 @@ class SockAddr6 : SockAddr {
 }
 
 public class IPAddress : Hashable {
-    fileprivate let inaddr : Data
+    fileprivate let inaddr: Data
 
     public func hash(into hasher: inout Hasher) {
         fatalError("should not be called")
@@ -280,7 +280,7 @@ public class IPAddress : Hashable {
     }
 }
 
-class IPv4Address : IPAddress, Comparable {
+public class IPv4Address : IPAddress, Comparable {
     public override func hash(into hasher: inout Hasher) {
         hasher.combine(inaddr)
     }
@@ -370,14 +370,14 @@ class IPv4Address : IPAddress, Comparable {
         return IPv4Address(inaddr)
     }
 
-    static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
+    public static func < (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
         return isLowerThan(lhs: lhs, rhs: rhs)
     }
 }
 
-class IPv6Address : IPAddress, Comparable {
+public class IPv6Address : IPAddress, Comparable {
     // scope zone index
-    private let scope : UInt32
+    private let scope: UInt32
 
     public func getScope() -> UInt32 {
         return scope
@@ -426,16 +426,10 @@ class IPv6Address : IPAddress, Comparable {
     }
 
     public init(_ inaddr: Data, scope: UInt32) {
-        _ = IPv6Address.filterScope(inaddr)
+        var in6_addr = IPv6Address.filterScope(inaddr).addr
+        let _inaddr = NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data
         self.scope = scope
-        super.init(inaddr)
-
-        /*
-        if ret.scope != 0 {
-            print(getRawBytes())
-            fatalError("invalid scope in data")
-        }
-      */
+        super.init(_inaddr)
     }
 
     public init(mask_len: UInt8) {
@@ -535,7 +529,7 @@ class IPv6Address : IPAddress, Comparable {
         return IPv6Address(inaddr, scope: scope)
     }
 
-    static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
+    public static func < (lhs: IPv6Address, rhs: IPv6Address) -> Bool {
         if lhs.scope != rhs.scope { return lhs.scope < rhs.scope }
         return isLowerThan(lhs: lhs, rhs: rhs)
     }
