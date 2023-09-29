@@ -140,7 +140,7 @@ struct Interman3DSwiftUIView: View {
 
     private var render_delegate = RenderDelegate()
 
-    private let button_size_factor = UIDevice.current.userInterfaceIdiom == .phone ? 1.0 : 1.5
+    private let button_size_factor = UIDevice.current.userInterfaceIdiom == .phone ? 1.0 : 1.2
     
     private func createAxes() {
         let axes = ComponentTemplates.createAxes(0.2)
@@ -645,163 +645,194 @@ struct Interman3DSwiftUIView: View {
             }
 
             // Traces
-            GeometryReader { traceGeom in
-                 ScrollViewReader { scrollViewProxy in
-                     ZStack {
-                         ScrollView {
-                             ZStack {
-                                 LazyVStack(alignment: .leading, spacing: 0) {
-                                     Spacer().id(topID)
-                                     ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
-                                         Text(model.traces[i])
-                                         .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                             // .font(.footnote)
-                                             .lineLimit(nil)
-                                             .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                                     }
-                                     Text(model.traces.last!)
-//                                         .font(.footnote)
-                                         .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                         .id(bottomID)
-                                         .lineLimit(nil)
-                                         .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                                 }.padding()
-                                 GeometryReader { scrollViewContentGeom in
-                                     Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
-                                 }
-                             }
-                         }
-                         .onAppear() {
-                             timer_auto_rotation_button = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
-                                 auto_rotation_button_toggle.toggle()
-                             }
-                             
-                             timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                                 withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                             }
-                             timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
-                                 updateCameraIfNeeded()
-                             }
-                             timer_text = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
-                                 updateTextIfNeeded()
-                             }
-                             // Avoid situations when buttons are definitely disabled
-                             disable_buttons = false
-                         }
-                         .onDisappear() {
-                             timer_auto_rotation_button?.invalidate()
-                             timer?.invalidate()
-                             timer_camera?.invalidate()
-                             timer_text?.invalidate()
-                         }
-                         VStack {
-                             HStack {
-                             }.background(Color.clear).lineLimit(1)
-                             Spacer()
-                         }
-                         .padding()
-                     }
-                     .frame(height: traceGeom.size.height / 6)
-                 }
-            }.opacity(disable_traces ? 0 : 0.4)
+            if disable_traces == false {
+                GeometryReader { traceGeom in
+                    ScrollViewReader { scrollViewProxy in
+                        ZStack {
+                            ScrollView {
+                                ZStack {
+                                    LazyVStack(alignment: .leading, spacing: 0) {
+                                        Spacer().id(topID)
+                                        ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
+                                            Text(model.traces[i])
+                                                .font(Font.custom("San Francisco", size: 10).monospacedDigit())
+                                            // .font(.footnote)
+                                                .lineLimit(nil)
+                                                .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                        }
+                                        Text(model.traces.last!)
+                                        //                                         .font(.footnote)
+                                            .font(Font.custom("San Francisco", size: 10).monospacedDigit())
+                                            .id(bottomID)
+                                            .lineLimit(nil)
+                                            .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                    }.padding()
+
+                                    GeometryReader { scrollViewContentGeom in
+                                        Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                                    }
+                                }
+                            }
+                            .onAppear() {
+                                timer_auto_rotation_button = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                                    auto_rotation_button_toggle.toggle()
+                                }
+                                
+                                timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                    withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                }
+                                timer_camera = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { timer in
+                                    updateCameraIfNeeded()
+                                }
+                                timer_text = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
+                                    updateTextIfNeeded()
+                                }
+                                // Avoid situations when buttons are definitely disabled
+                                disable_buttons = false
+                            }
+                            .onDisappear() {
+                                timer_auto_rotation_button?.invalidate()
+                                timer?.invalidate()
+                                timer_camera?.invalidate()
+                                timer_text?.invalidate()
+                            }
+                            VStack {
+                                HStack {
+                                }.background(Color.clear).lineLimit(1)
+                                Spacer()
+                            }
+                            .padding()
+                        }
+                        .frame(height: traceGeom.size.height / 6)
+                        .background(content: {
+                            Rectangle().scale(1.1)
+                                .foregroundColor(Color(COLORS.toolbar_background))
+                                .opacity(0.1)
+                        })
+                    }
+                }
+            }
 
             // Controls
             VStack {
             Spacer()
 
             HStack {
-              HStack {
-                  
-                  Spacer()
-                  
-                  Button {
-                      // interman3d_model.testIHMCreate()
-                      master_view_controller!.update_pressed()
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("create") }
-                      Image(systemName: "repeat")
-                          .resizable()
-                          .frame(width: 25 * button_size_factor, height: 20 * button_size_factor)
-                          .foregroundColor(Color(COLORS.standard_background))
-                  }
-
-                  Button {
-                      setCameraMode(.freeFlight)
-                      auto_rotation_active = false
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("free flight") }
-                      Image(systemName: "rotate.3d")
-                          .resizable()
-                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
-                          .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
-                  }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
-
-                  Button {
-                      setCameraMode(.sideCentered)
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("side") }
-//                      Image(systemName: "cube.fill").imageScale(.large)
-                      Image("icon-3D-cube").renderingMode(.template).resizable()
-                          .foregroundColor((disable_buttons || camera_model.camera_mode == .sideCentered) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
-                }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
-
-                  Button {
-                      setCameraMode(.topCentered)
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("top") }
-                      Image("icon-2D-top").renderingMode(.template).resizable()
-                          .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
-                  }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
-
-                  Button {
-                      setCameraMode(.topHost)
-                  } label: {
-//                      if horizontalSizeClass == .regular { Text("top host") }
-                      Image("icon-2D-left").renderingMode(.template).resizable()
-                          .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
-                          .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
-                  }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
-              }
-
-                Button {
-                    auto_rotation_active.toggle()
-                    if auto_rotation_active == true { resetCameraTimer() }
-                } label: {
-//                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
-                    Image(systemName: "gearshape.arrow.triangle.2.circlepath")
-                        .resizable()
-                        .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
-                        .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
-                }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
-
-                Button {
-                    disable_traces.toggle()
-                } label: {
-                    ZStack {
-                        if disable_traces {
-                            Image(systemName: "line.diagonal").resizable()
-                                .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
-                                .foregroundColor(Color(COLORS.standard_background))
-
-                            Image(systemName: "line.diagonal").resizable()
-                                .rotationEffect(.degrees(90))
-                                .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
+                HStack {
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Button {
+                            // interman3d_model.testIHMCreate()
+                            master_view_controller!.update_pressed()
+                        } label: {
+                            //                      if horizontalSizeClass == .regular { Text("create") }
+                            Image(systemName: "repeat")
+                                .resizable()
+                                .frame(width: 25 * button_size_factor, height: 20 * button_size_factor)
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
                         
-                        Image(systemName: "text.justify")
-                            .resizable()
-                            .frame(width: 20 * button_size_factor, height: 20 * button_size_factor)
-                            .foregroundColor(Color(COLORS.standard_background))
-                    }
+                        Button {
+                            master_view_controller!.interman_view_controller?.hostingViewController.rootView.resetCamera()
+                        } label: {
+                            Image(systemName: "slowmo")
+                                .resizable()
+                                .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                .foregroundColor((camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
+                        }.disabled(camera_model.camera_mode == .freeFlight)
+                        
+                        Spacer().frame(width: 25)
+
+                        Button {
+                            setCameraMode(.freeFlight)
+                            auto_rotation_active = false
+                        } label: {
+                            //                      if horizontalSizeClass == .regular { Text("free flight") }
+                            Image(systemName: "rotate.3d")
+                                .resizable()
+                                .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
+                        }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
+                        
+                        Button {
+                            setCameraMode(.sideCentered)
+                        } label: {
+                            //                      if horizontalSizeClass == .regular { Text("side") }
+                            //                      Image(systemName: "cube.fill").imageScale(.large)
+                            Image("icon-3D-cube").renderingMode(.template).resizable()
+                                .foregroundColor((disable_buttons || camera_model.camera_mode == .sideCentered) ? nil : Color(COLORS.standard_background))
+                                .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
+                        }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
+                        
+                        Button {
+                            setCameraMode(.topCentered)
+                        } label: {
+                            //                      if horizontalSizeClass == .regular { Text("top") }
+                            Image("icon-2D-top").renderingMode(.template).resizable()
+                                .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
+                                .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                        }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
+                        
+                        Button {
+                            setCameraMode(.topHost)
+                        } label: {
+                            //                      if horizontalSizeClass == .regular { Text("top host") }
+                            Image("icon-2D-left").renderingMode(.template).resizable()
+                                .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
+                                .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                        }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
+                    
+                        Spacer().frame(width: 25)
+                        
+                        Button {
+                            disable_traces.toggle()
+                        } label: {
+                            ZStack {
+                                if disable_traces {
+                                    Image(systemName: "line.diagonal").resizable()
+                                        .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
+                                        .foregroundColor(Color(COLORS.standard_background))
+                                    
+                                    Image(systemName: "line.diagonal").resizable()
+                                        .rotationEffect(.degrees(90))
+                                        .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
+                                        .foregroundColor(Color(COLORS.standard_background))
+                                }
+                                
+                                Image(systemName: "text.justify")
+                                    .resizable()
+                                    .frame(width: 20 * button_size_factor, height: 20 * button_size_factor)
+                                    .foregroundColor(Color(COLORS.standard_background))
+                            }
+                        }
+                        
+                        Button {
+                            auto_rotation_active.toggle()
+                            if auto_rotation_active == true { resetCameraTimer() }
+                        } label: {
+                            //                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
+                            Image(systemName: "gearshape.arrow.triangle.2.circlepath")
+                                .resizable()
+                                .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
+                                .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
+                        }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
+                    }.padding()
+                    .background(content: {
+                        Capsule()
+                            .foregroundColor(Color(COLORS.toolbar_background))
+                            .opacity(0.3)
+                            
+                    })
                 }
             }
             .padding(8)
             .cornerRadius(14)
             .padding(12)
-          }
+            }
+            
         }.background(Color(COLORS.chart_bg))
     }
 }
+
