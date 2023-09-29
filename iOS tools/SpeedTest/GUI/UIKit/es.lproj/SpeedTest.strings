@@ -24,7 +24,7 @@
 "IUH-ID-65D.title" = "Debug";
 
 /* Class = "UITabBarItem"; title = "Discover"; ObjectID = "Jgi-Wj-wsx"; */
-"Jgi-Wj-wsx.title" = "Discover";
+"Jgi-Wj-wsx.title" = "Descubrir";
 
 /* Class = "UILabel"; text = "iPad de Alexandre.local"; ObjectID = "KBz-al-Df2"; */
 "KBz-al-Df2.text" = "iPad de Alexandre.local";
@@ -41,14 +41,14 @@
 /* Class = "UILabel"; text = "Title"; ObjectID = "Rc2-K5-rQo"; */
 "Rc2-K5-rQo.text" = "Title";
 
-/* Class = "UITabBarItem"; title = "Network"; ObjectID = "W16-9t-txw"; */
-"W16-9t-txw.title" = "Network";
+/* Class = "UITabBarItem"; title = "CLI"; ObjectID = "W16-9t-txw"; */
+"W16-9t-txw.title" = "Red";
 
 /* Class = "UIBarButtonItem"; title = "Debug"; ObjectID = "WCR-6O-86k"; */
 "WCR-6O-86k.title" = "Debug";
 
 /* Class = "UINavigationItem"; title = "Target List"; ObjectID = "bwG-g9-tTY"; */
-"bwG-g9-tTY.title" = "Target List";
+"bwG-g9-tTY.title" = "Lista de objetivos";
 
 /* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "gZ9-Eb-5vN"; */
 "gZ9-Eb-5vN.title" = "Add";
@@ -60,7 +60,7 @@
 "sld-lA-kLh.text" = "2 IPs";
 
 /* Class = "UITabBarItem"; title = "Traces"; ObjectID = "tYh-kU-aKM"; */
-"tYh-kU-aKM.title" = "Traces";
+"tYh-kU-aKM.title" = "Rastros";
 
 /* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "w26-jr-JrH"; */
 "w26-jr-JrH.title" = "Add";

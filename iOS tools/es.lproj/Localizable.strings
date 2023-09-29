@@ -113,3 +113,5 @@
 "Service key content" = "Contenido clave del servicio";
 "Image rotation applied" = "Rotación de imagen aplicada";
 "The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll." = "El plano de planta que seleccionaste no está en modo retrato. Por lo tanto, se ha aplicado una rotación a la imagen. Al final del proceso de creación del mapa de calor, cuando toques en Compartir tu mapa, el mapa de calor se guardará en el modo vertical original en tu galería de fotos.";
+"Continue" = "Continuar";
+"continue" = "continuar";
