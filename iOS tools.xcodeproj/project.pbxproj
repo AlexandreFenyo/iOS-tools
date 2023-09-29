@@ -60,12 +60,10 @@
 		5D65EE51296381780099871C /* app-icon-1024.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE41296381780099871C /* app-icon-1024.png */; };
 		5D65EE52296381780099871C /* app-icon-120.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE42296381780099871C /* app-icon-120.png */; };
 		5D65EE53296381780099871C /* app-icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE43296381780099871C /* app-icon-60.png */; };
-		5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE44296381780099871C /* app-icon-1024x1024-1.psd */; };
 		5D65EE55296381780099871C /* app-icon-87.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE45296381780099871C /* app-icon-87.png */; };
 		5D65EE56296381780099871C /* app-icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE46296381780099871C /* app-icon-76.png */; };
 		5D65EE57296381780099871C /* app-icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE47296381780099871C /* app-icon-180.png */; };
 		5D65EE58296381780099871C /* app-icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE48296381780099871C /* app-icon-20.png */; };
-		5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE49296381780099871C /* app-icon-1024x1024-5.psd */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
@@ -411,20 +409,6 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
-				5DCD720129D32BF500F0DC53 /* docs-action-bar-es.png */,
-				5DCD71FE29D32BF400F0DC53 /* docs-action-bar-es.psd */,
-				5DCD720429D32BF500F0DC53 /* docs-actions-2-es.png */,
-				5DCD720029D32BF500F0DC53 /* docs-actions-2-es.psd */,
-				5DCD720529D32BF500F0DC53 /* docs-actions-es.png */,
-				5DCD71FB29D32BF400F0DC53 /* docs-actions-es.psd */,
-				5DCD720629D32BF500F0DC53 /* docs-browse-stop-es.png */,
-				5DCD71FA29D32BF400F0DC53 /* docs-browse-stop-es.psd */,
-				5DCD71FF29D32BF400F0DC53 /* docs-chart-es.png */,
-				5DCD71FC29D32BF400F0DC53 /* docs-chart-es.psd */,
-				5DCD71F929D32BF400F0DC53 /* docs-hosts-es.png */,
-				5DCD71FD29D32BF400F0DC53 /* docs-hosts-es.psd */,
-				5DCD720329D32BF500F0DC53 /* docs-ports-es.png */,
-				5DCD720229D32BF500F0DC53 /* docs-ports-es.psd */,
 				5D039EC529B8A4CC00A33898 /* Appareils.png */,
 				5D039EC329B8A2E100A33898 /* iPhone.jpeg */,
 				5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */,
@@ -794,7 +778,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DCD721429D32BF500F0DC53 /* docs-browse-stop-es.png in Resources */,
 				5D65EE57296381780099871C /* app-icon-180.png in Resources */,
 				5D1CBC482A63F9D2001F3B8D /* homepod.scn in Resources */,
 				5D65EE4A296381780099871C /* app-icon-167.png in Resources */,
@@ -812,9 +795,6 @@
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
 				5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
-				5D65EE67296491DF0099871C /* IMG_2515.PNG in Resources */,
-				5D82ACD3297D46B00021E492 /* docs-actions-2-fr.psd in Resources */,
-				5DCD720729D32BF500F0DC53 /* docs-hosts-es.png in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
@@ -834,29 +814,14 @@
 				5D1CBC5C2A67E263001F3B8D /* everything sandbox 2.scn in Resources */,
 				5D3BA6612A5C73B6005D11E0 /* speaker.scn in Resources */,
 				5D3BA65F2A5C709D005D11E0 /* iPhone.scn in Resources */,
-				5DCD721229D32BF500F0DC53 /* docs-actions-2-es.png in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
-				5D65EE54296381780099871C /* app-icon-1024x1024-1.psd in Resources */,
-				5DCD721029D32BF500F0DC53 /* docs-ports-es.psd in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5DD5ABB02AC309B1001917EB /* icone8.svg in Resources */,
-				5DCD720F29D32BF500F0DC53 /* docs-action-bar-es.png in Resources */,
-				5D82ACEF297F2AB30021E492 /* ABF5AC92-2BF9-4FB5-98EB-80F9576283B6_1_102_o.jpeg in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
-				5D82ACFF297F38530021E492 /* IMG-2549.PNG in Resources */,
-				5D82ACEB297F2A630021E492 /* C3C0BB6B-AAEE-4CB0-95D7-CF6F10A3A2CE_1_102_o.jpeg in Resources */,
-				5D65EE69296491DF0099871C /* IMG_2516.PNG in Resources */,
-				5DCD720C29D32BF500F0DC53 /* docs-action-bar-es.psd in Resources */,
-				5D82ACD6297D46C20021E492 /* docs-actions-fr.psd in Resources */,
-				5D16E60829A77124000A46E4 /* docs-action-bar.psd in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
-				5DCD721129D32BF500F0DC53 /* docs-ports-es.png in Resources */,
 				5D65EE4E296381780099871C /* app-icon-80.png in Resources */,
-				5DCD721329D32BF500F0DC53 /* docs-actions-es.png in Resources */,
-				5D82ACE9297F2A4D0021E492 /* E321B005-ACA4-42F0-AB7D-C49DCC930F4F_1_102_o.jpeg in Resources */,
-				5D65EE64296491DF0099871C /* IMG_0072.PNG in Resources */,
 				5D16E60B29A77FEB000A46E4 /* docs-action-bar-fr.png in Resources */,
 				5DE4ED97290586740000B30A /* docs-ports.png in Resources */,
 				5D1CBC522A646FAE001F3B8D /* Interman 3D Scene bk1.scn in Resources */,
@@ -867,27 +832,18 @@
 				5D1CBC5E2A67E369001F3B8D /* everything sandbox 3.scn in Resources */,
 				5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */,
 				5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */,
-				5DCD720A29D32BF500F0DC53 /* docs-chart-es.psd in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
 				5D1CBC5A2A67C117001F3B8D /* everything sandbox.scn in Resources */,
 				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
-				5D65EE59296381780099871C /* app-icon-1024x1024-5.psd in Resources */,
 				5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */,
 				5D1CBC602A67E3D1001F3B8D /* Interman 3D Scene bk2.scn in Resources */,
-				5D82ACF9297F383B0021E492 /* IMG-2546.PNG in Resources */,
-				5DE4ED95290586740000B30A /* docs-chart.psd in Resources */,
-				5DCD720E29D32BF500F0DC53 /* docs-actions-2-es.psd in Resources */,
-				5D65EE68296491DF0099871C /* IMG_2520.PNG in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
 				5D1CBC462A63F53A001F3B8D /* macmini.scn in Resources */,
 				5D3BA6552A5C3E15005D11E0 /* printer.scn in Resources */,
 				5DEDFB6A29C6E65F00052FB7 /* Interman 3D Standard Component.scn in Resources */,
-				5DCD720829D32BF500F0DC53 /* docs-browse-stop-es.psd in Resources */,
-				5D82ACED297F2A6D0021E492 /* 52444BB0-20B2-4E5E-85D9-69726A9A7D70_1_102_o.jpeg in Resources */,
-				5D82ACE7297D46E30021E492 /* docs-ports-fr.psd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1014,7 +970,6 @@
 			children = (
 				5D37D20A29734FB700578E59 /* en */,
 				5D37D20C29734FC300578E59 /* fr */,
-				5DCD71F829D2373400F0DC53 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1025,7 +980,6 @@
 				5DF2F9E129700F7A00EEDDCE /* Base */,
 				5D8B7A102970107800F89A32 /* en */,
 				5D8B7A122970107900F89A32 /* fr */,
-				5DCD71F729D2373400F0DC53 /* es */,
 			);
 			name = SpeedTest.storyboard;
 			sourceTree = "<group>";
