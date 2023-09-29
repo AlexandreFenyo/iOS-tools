@@ -26,7 +26,13 @@ class TracesViewController : UIViewController {
         }
         hostingViewController.rootView.model.append(content, level: level)
     }
- 
+
+    // For this to work, we must set "View controller-based status bar appearance" to true in Plist
+    // See also "Status bar is initially hidden" in Plist
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

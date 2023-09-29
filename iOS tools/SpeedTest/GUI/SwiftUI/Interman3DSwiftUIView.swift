@@ -123,11 +123,11 @@ struct Interman3DSwiftUIView: View {
     @State private var timer_camera: Timer?
     @State private var timer_text: Timer?
     @State private var timer_auto_rotation_button: Timer?
-    
     @State private var timer: Timer?
 
     @State private var disable_buttons = false
     @State private var disable_auto_rotation_button = false
+    @State private var disable_traces = true
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -703,7 +703,7 @@ struct Interman3DSwiftUIView: View {
                      }
                      .frame(height: traceGeom.size.height / 6)
                  }
-            }.opacity(0.4)
+            }.opacity(disable_traces ? 0 : 0.4)
 
             // Controls
             VStack {
@@ -775,6 +775,28 @@ struct Interman3DSwiftUIView: View {
                         .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
                         .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
                 }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
+
+                Button {
+                    disable_traces.toggle()
+                } label: {
+                    ZStack {
+                        if disable_traces {
+                            Image(systemName: "line.diagonal").resizable()
+                                .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
+                                .foregroundColor(Color(COLORS.standard_background))
+
+                            Image(systemName: "line.diagonal").resizable()
+                                .rotationEffect(.degrees(90))
+                                .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
+                                .foregroundColor(Color(COLORS.standard_background))
+                        }
+                        
+                        Image(systemName: "text.justify")
+                            .resizable()
+                            .frame(width: 20 * button_size_factor, height: 20 * button_size_factor)
+                            .foregroundColor(Color(COLORS.standard_background))
+                    }
+                }
             }
             .padding(8)
             .cornerRadius(14)
