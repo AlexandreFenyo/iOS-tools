@@ -118,9 +118,14 @@ struct Interman3DSwiftUIView: View {
     
     @State private var free_flight_active: Bool = false
     @State private var auto_rotation_active: Bool = false
+    @State private var auto_rotation_button_toggle: Bool = false
 
     @State private var timer_camera: Timer?
     @State private var timer_text: Timer?
+    @State private var timer_auto_rotation_button: Timer?
+    
+    @State private var timer: Timer?
+
     @State private var disable_buttons = false
     @State private var disable_auto_rotation_button = false
 
@@ -614,7 +619,6 @@ struct Interman3DSwiftUIView: View {
             value += nextValue()
         }
     }
-    @State private var timer: Timer?
 
     var body: some View {
         ZStack {
@@ -662,6 +666,10 @@ struct Interman3DSwiftUIView: View {
                              }
                          }
                          .onAppear() {
+                             timer_auto_rotation_button = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                                 auto_rotation_button_toggle.toggle()
+                             }
+                             
                              timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                                  withAnimation { scrollViewProxy.scrollTo(bottomID) }
                              }
@@ -675,6 +683,7 @@ struct Interman3DSwiftUIView: View {
                              disable_buttons = false
                          }
                          .onDisappear() {
+                             timer_auto_rotation_button?.invalidate()
                              timer?.invalidate()
                              timer_camera?.invalidate()
                              timer_text?.invalidate()
@@ -717,7 +726,7 @@ struct Interman3DSwiftUIView: View {
                       auto_rotation_active = false
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("free flight") }
-                      Image(systemName: "rotate.3d").imageScale(.large)
+                      Image(systemName: "rotate.3d").imageScale(.large).foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                   }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
 
                   Button {
@@ -725,21 +734,27 @@ struct Interman3DSwiftUIView: View {
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("side") }
 //                      Image(systemName: "cube.fill").imageScale(.large)
-                      Image("icon-3D-cube").renderingMode(.template).resizable().frame(width: 30, height: 25)
+                      Image("icon-3D-cube").renderingMode(.template).resizable()
+                          .foregroundColor((disable_buttons || camera_model.camera_mode == .sideCentered) ? nil : Color(COLORS.standard_background))
+                          .frame(width: 30, height: 25)
                 }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
 
                   Button {
                       setCameraMode(.topCentered)
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("top") }
-                      Image("icon-2D-top").renderingMode(.template).resizable().frame(width: 25, height: 25)
+                      Image("icon-2D-top").renderingMode(.template).resizable()
+                          .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
+                          .frame(width: 25, height: 25)
                   }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
 
                   Button {
                       setCameraMode(.topHost)
                   } label: {
 //                      if horizontalSizeClass == .regular { Text("top host") }
-                      Image("icon-2D-left").renderingMode(.template).resizable().frame(width: 25, height: 25)
+                      Image("icon-2D-left").renderingMode(.template).resizable()
+                          .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
+                          .frame(width: 25, height: 25)
                   }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
               }
 
@@ -748,7 +763,7 @@ struct Interman3DSwiftUIView: View {
                     if auto_rotation_active == true { resetCameraTimer() }
                 } label: {
 //                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
-                    Image(systemName: "gearshape.arrow.triangle.2.circlepath").imageScale(.large).foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? .red : .blue))
+                    Image(systemName: "gearshape.arrow.triangle.2.circlepath").imageScale(.large).foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
                 }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
 
                 /*
