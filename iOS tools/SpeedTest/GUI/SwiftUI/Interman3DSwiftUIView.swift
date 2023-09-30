@@ -591,7 +591,12 @@ struct Interman3DSwiftUIView: View {
     }
     
     func resetCamera() {
-        rotateCamera(0, smooth: true, duration: 1)
+        if let local_hode = DBMaster.shared.getLocalNodeIfExists() {
+            setSelectedHost(local_hode)
+        } else {
+            rotateCamera(0, smooth: true, duration: 1)
+        }
+
         if camera_model.getCameraMode() == .topHost {
             camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
         } else  {
@@ -719,6 +724,8 @@ struct Interman3DSwiftUIView: View {
                                     .resizable()
                                     .frame(width: 25 * button_size_factor, height: 20 * button_size_factor)
                                     .foregroundColor(Color(COLORS.standard_background))
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }
                             
                             Button {
@@ -728,6 +735,8 @@ struct Interman3DSwiftUIView: View {
                                     .resizable()
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                     .foregroundColor((camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(camera_model.camera_mode == .freeFlight)
                             
                             Spacer().frame(width: 25)
@@ -741,6 +750,8 @@ struct Interman3DSwiftUIView: View {
                                     .resizable()
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
                             
                             Button {
@@ -751,6 +762,8 @@ struct Interman3DSwiftUIView: View {
                                 Image("icon-3D-cube").renderingMode(.template).resizable()
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .sideCentered) ? nil : Color(COLORS.standard_background))
                                     .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
                             
                             Button {
@@ -760,6 +773,8 @@ struct Interman3DSwiftUIView: View {
                                 Image("icon-2D-top").renderingMode(.template).resizable()
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
                             
                             Button {
@@ -769,6 +784,8 @@ struct Interman3DSwiftUIView: View {
                                 Image("icon-2D-left").renderingMode(.template).resizable()
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
                             
                             Spacer().frame(width: 25)
@@ -792,6 +809,8 @@ struct Interman3DSwiftUIView: View {
                                         .resizable()
                                         .frame(width: 20 * button_size_factor, height: 20 * button_size_factor)
                                         .foregroundColor(Color(COLORS.standard_background))
+                                    // Let the background clickable
+                                        .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                                 }
                             }
                             
@@ -804,6 +823,8 @@ struct Interman3DSwiftUIView: View {
                                     .resizable()
                                     .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
                                     .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.01) }
                             }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
                         }.padding()
                             .background(content: {

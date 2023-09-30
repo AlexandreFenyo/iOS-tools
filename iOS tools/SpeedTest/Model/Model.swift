@@ -508,6 +508,10 @@ class DBMaster {
         
         return gateways
     }
+
+    func getLocalNodeIfExists() -> Node? {
+        nodes.filter { $0.isLocalHost() }.first
+    }
     
     func getLocalNode() -> Node {
         let node = Node()
