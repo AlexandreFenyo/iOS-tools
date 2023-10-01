@@ -396,7 +396,10 @@ class DBMaster {
         return nil
     }
 
-    func addNode(_ new_node: Node) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
+    func addNode(_ new_node: Node, demo_mode: Bool = false) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
+        if iOS_tools.demo_mode && demo_mode == false {
+            return (removed_paths: [], inserted_paths: [], is_new_node: false, updated_nodes: Set(), removed_nodes: [:])
+        }
         return addOrRemoveNode(new_node, add: true)
     }
 
@@ -824,26 +827,89 @@ class DBMaster {
     private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
 
     func addDefaultNodes() {
+        if demo_mode {
+            // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
+            var node = Node()
+
+            node.mcast_dns_names.insert(FQDN("  router", "fenyo.net"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.254")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
+            node.types = [ .gateway ]
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("   Mac Mini", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.42")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
+            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"]))
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("iPhone Agnès", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.17")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("Mac Book", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.172")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("iPad Alexandre", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.20")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("Home Pod", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.125")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
+            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AudioAccessory"]))
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("Apple TV", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.45")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
+            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AppleTV"]))
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("printer", "fenyo.net"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
+            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
+            node.addService(BonjourServiceInfo("_pdl-datastream._tcp.", "515", [:]))
+            _ = addNode(node, demo_mode: true)
+
+            node = Node()
+            node.mcast_dns_names.insert(FQDN("Marantz", "local"))
+            node.v4_addresses.insert(IPv4Address("192.168.0.63")!)
+            node.addService(BonjourServiceInfo("_raop._tcp.", "49152", [:]))
+            _ = addNode(node, demo_mode: true)
+        }
+        
         var node = Node()
         node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
         node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
         node.types = [ .chargen, .internet ]
-        _ = addNode(node)
+        _ = addNode(node, demo_mode: true)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        _ = addNode(node)
+        _ = addNode(node, demo_mode: true)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
         for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
-        _ = addNode(node)
+        _ = addNode(node, demo_mode: true)
 
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
@@ -860,7 +926,7 @@ class DBMaster {
             if Int(node_type_str) != NodeType.localhost.rawValue {
                 node.types = [ node_type ]
             }
-            _ = addNode(node)
+            _ = addNode(node, demo_mode: true)
         }
     }
 

@@ -11,6 +11,9 @@ import UIKit
 import SwiftUI
 import SpriteKit
 
+// A mode to make screenshots
+let demo_mode = true
+
 // Cette liste doit être synchronisée avec les services déclarés dans Info.plist
 let service_names = [
     "_speedtestapp._tcp.",
