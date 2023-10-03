@@ -119,7 +119,7 @@ struct ComponentTemplates {
     // Pour tester des modèles 3D
 //    public static let standard = SCNScene(named: "test.scn")!.rootNode
 
-    // pas utilisé
+    // non utilisé
     // https://sketchfab.com/3d-models/mini-macbook-pro-2b054523279747c8b5b2e5ed9ea7b311
     // https://sketchfab.com/3d-models/08-printer-householdpropschallenge-a11b8e0bfc8741f08472c09b10202c75
     // https://sketchfab.com/3d-models/old-printer-low-poly-d4a6b284b2984c59ae2a3a1bdeb059cf
@@ -133,12 +133,14 @@ struct ComponentTemplates {
     // https://sketchfab.com/3d-models/iphone-13-pro-concept-43bddf623d24406aae61c8f3ba516e3d#download
     // https://sketchfab.com/3d-models/apple-homepod-2229c164afd84b32aa23d6319a702c1f
     // https://sketchfab.com/3d-models/realistic-speaker-277db5efa378494882aaa820abb84437
-    // https://sketchfab.com/3d-models/apple-ipad-pro-e5ffb3c80b2d4d6690249f8ee2bdafbe
     // https://sketchfab.com/3d-models/server-scayle-08987ebeb0b04a8ca6179344330ceec7
     // https://sketchfab.com/3d-models/server-v2-console-f24594ece9634cec9c1210c041838371
     // https://sketchfab.com/3d-models/apple-mac-mini-m1-79f1f864089d423fb06d220fe2085c71
     // https://sketchfab.com/3d-models/google-home-0e9d0a055dde4d83b7fd53d8b7465916
     // chromecast: https://www.thingiverse.com/thing:4176450
+
+    // à remplacer :
+    // https://sketchfab.com/3d-models/apple-ipad-pro-e5ffb3c80b2d4d6690249f8ee2bdafbe
 
   public static let standard = SCNScene(named: "Interman 3D Standard Component.scn")!.rootNode
 //    public static let standard = SCNScene(named: "laptop.scn")!.rootNode
