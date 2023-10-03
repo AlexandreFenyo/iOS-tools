@@ -12,7 +12,7 @@ import SwiftUI
 import SpriteKit
 
 // A mode to make screenshots
-let demo_mode = true
+let demo_mode = false
 
 // Cette liste doit être synchronisée avec les services déclarés dans Info.plist
 let service_names = [
