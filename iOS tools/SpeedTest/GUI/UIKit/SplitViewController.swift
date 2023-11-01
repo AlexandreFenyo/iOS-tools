@@ -41,7 +41,14 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     // On iPhone, show the primary view controller's view by default
     // https://stackoverflow.com/questions/25875618/uisplitviewcontroller-in-portrait-on-iphone-shows-detail-vc-instead-of-master
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-        return true
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            // We run on an iPhone
+            return true
+        } else  {
+            // We run on an iPad, therefore this method is called when the app goes to background. Therefore a collapse happens, so we need to avoid to incorporate the secondary view (right nav) into the collapsed interface. If we do not do that, the IP list appears on the right view when the user returns in the app.
+            // A side effect is that if the app is first opened as a split app with another one on the screen, therefore the first view will be the right nav one. This is not the default behaviour expected when opening the app in a compact size, like on an iPad or on a splitted app with another on an iPad screen. But it only has effects on iPad with the app splited, therefore this is for advanced users and they only have to click on the back icon at the top of the screen to go back to the nodes list.
+            return false
+        }
     }
 
     // MARK: - Navigation
