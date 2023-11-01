@@ -47,6 +47,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         } else  {
             // We run on an iPad, therefore this method is called when the app goes to background. Therefore a collapse happens, so we need to avoid to incorporate the secondary view (right nav) into the collapsed interface. If we do not do that, the IP list appears on the right view when the user returns in the app.
             // A side effect is that if the app is first opened as a split app with another one on the screen, therefore the first view will be the right nav one. This is not the default behaviour expected when opening the app in a compact size, like on an iPad or on a splitted app with another on an iPad screen. But it only has effects on iPad with the app splitted, therefore this is for advanced users and they only have to click on the back icon at the top of the screen to go back to the nodes list.
+            // A second side effect is that the colors of icons and some other controls are not set until the target list is first displayed.
             return false
         }
     }
