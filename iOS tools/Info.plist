@@ -5,9 +5,9 @@
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>CFBundleVersion</key>
-	<string>3.0.0</string>
+	<string>3.1.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.0</string>
+	<string>3.1.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
