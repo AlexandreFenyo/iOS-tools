@@ -545,7 +545,7 @@ view.backgroundColor = .red
   
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
-        // for iPhone (pas d'effet sur iPad), make the detail view controller visible
+        // for iPhone (no effect on iPad), make the detail view controller visible
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             if self.detail_view_controller?.can_be_launched == true {
                 if self.detail_view_controller?.view.window == nil {
@@ -656,18 +656,21 @@ view.backgroundColor = .red
         // DispatchQueue.global(qos: .userInitiated).async {
         Task.detached(priority: .userInitiated) {
             await self.browser_tcp?.browse(address: address) {
-                DispatchQueue.main.sync {
+                DispatchQueue.main.async {
                     self.stopBrowsing(.OTHER_ACTION)
                 }
             }
-            // arrivé ici, le browse est terminé
         }
     }
 
-    internal func loopICMP(_ address: IPAddress) {
+    internal func loopICMP(_ address: IPAddress, display_timeout: Bool = true) {
         stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
-        detail_view_controller?.enableButtons(false)
+
+        if display_timeout {
+            detail_view_controller?.enableButtons(false)
+        }
+
         self.master_ip_view_controller?.stop_button.isEnabled = true
         self.add_button!.isEnabled = false
         self.remove_button!.isEnabled = false
@@ -705,7 +708,9 @@ view.backgroundColor = .red
                 nloop += 1
                 if has_answered == false && nloop > 50 {
                     await self.stopBrowsing(.OTHER_ACTION)
-                    await self.popUp("ICMP", "timeout occurred, no answer from target", "continue")
+                    if display_timeout {
+                        await self.popUp("ICMP", "timeout occurred, no answer from target", "continue")
+                    }
                     break
                 }
             }
