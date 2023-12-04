@@ -242,6 +242,10 @@ struct DetailSwiftUIView: View {
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
+    var delay = [/*"10 sec",*/ "5 sec", "4 sec", "3 sec", "2 sec", "1 sec", "500 ms", "250 ms", "100 ms"]
+    var _delay : [String: useconds_t] = [/*"10 sec": 10000000,*/ "5 sec": 5000000, "4 sec": 4000000, "3 sec": 3000000, "2 sec": 2000000, "1 sec": 1000000, "500 ms": 500000, "250 ms": 250000, "100 ms": 100000]
+    @State private var selected_delay = "1 sec"
+    
     var body: some View {
         HStack {
             EmptyView().padding(0).onReceive(timer_set_speed) { _ in // 100 Hz
@@ -255,25 +259,33 @@ struct DetailSwiftUIView: View {
                 }
             }
 
-            if horizontalSizeClass != .compact {
-                ZStack(alignment: .top) {
-                    Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+            ZStack(alignment: .top) {
+                Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
 
-                    HStack {
-                        Spacer()
-                        if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
-                            Text("\(Int(speed)) \(model.text_current_measurement_unit)").font(.system(size: 12).monospacedDigit()).foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
-                        }
+                HStack(spacing: 0) {
+                    Menu {
+                        Picker("Please choose a delay", selection: $selected_delay) {
+                            ForEach(delay, id: \.self) { delay in
+                                Text(delay).font(.caption)
+                            }
+                        }.tint(Color(COLORS.chart_scale))
+                            .onChange(of: selected_delay) { new_delay in
+                                Task {
+                                    await master_view_controller.setDelay(_delay[new_delay]!)
+                                }
+                            }
+                        
+                    } label: {
+                        Label(selected_delay, systemImage: "clock")
+                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
                     }
-                }
-            } else {
-                VStack {
-                    Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
-
+                    
+                    
+                    Spacer()
                     if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
-                        Text("\(Int(speed)) \(model.text_current_measurement_unit)").font(.system(size: 12).monospacedDigit()).foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                        Text("\(Int(speed)) \(model.text_current_measurement_unit)")
+                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
                     }
-
                 }
             }
         }

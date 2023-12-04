@@ -162,7 +162,6 @@ class DetailViewController: UIViewController {
                 await self.master_view_controller?.stopBrowsing(.OTHER_ACTION)
 
                 // Start an automatic ping loop
-                await self.master_view_controller?.stopBrowsing(.LOOP_ICMP)
                 await self.master_view_controller?.loopICMP(new_address, display_timeout: false)
             }
         }

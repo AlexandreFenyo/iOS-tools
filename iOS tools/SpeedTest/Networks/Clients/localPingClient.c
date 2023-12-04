@@ -11,11 +11,34 @@
 static pthread_mutex_t mutex;
 static int sock = -1;
 
+static long is_inside_loop = 0;
 static int last_errno;
 static long rtt;
+static useconds_t delay = 1000000;
 
 #define RTT_TIMEOUT 3
 #define ICMP_ID 0xafaf
+
+long localPingClientIsInsideLoop(void) {
+    long retval;
+    int ret;
+    
+    ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("errno pthread_mutex_lock");
+        return -1;
+    }
+    
+    retval = is_inside_loop;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("errno pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return retval;
+}
 
 // return values:
 // - >= 0: last_errno value
@@ -40,6 +63,45 @@ int localPingClientGetLastErrorNo(void) {
     return retval;
 }
 
+int localPingClientSetDelay(useconds_t new_delay) {
+    int ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("localPingClientSetDelay pthread_mutex_lock");
+        return -1;
+    }
+    
+    delay = new_delay;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("localPingClientSetDelay pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return 0;
+}
+
+static useconds_t getDelay(void) {
+    int ret;
+    useconds_t retval;
+    
+    ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("getDelay pthread_mutex_lock");
+        return -1;
+    }
+    
+    retval = delay;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("getDelay pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return retval;
+}
+
 // return values:
 // - 0  : no error
 // - < 0: mutex error, should not happen
@@ -51,6 +113,23 @@ static int setLastErrorNo(void) {
     }
     
     last_errno = errno;
+    
+    ret = pthread_mutex_unlock(&mutex);
+    if (ret < 0) {
+        perror("setLastErrorNo pthread_mutex_unlock");
+        return -1;
+    }
+    
+    return 0;
+}
+static int setIsInsideLoop(int newval) {
+    int ret = pthread_mutex_lock(&mutex);
+    if (ret < 0) {
+        perror("setLastErrorNo pthread_mutex_lock");
+        return -1;
+    }
+    
+    is_inside_loop = newval;
     
     ret = pthread_mutex_unlock(&mutex);
     if (ret < 0) {
@@ -137,6 +216,7 @@ int localPingClientClose(void) {
 // - > 0: value of errno after calling pthread_mutex_destroy
 int localPingClientStop(void) {
     if (sock < 0) return -1;
+    shutdown(sock, SHUT_RDWR);
     close(sock);
     return 0;
 }
@@ -144,7 +224,7 @@ int localPingClientStop(void) {
 // https://stackoverflow.com/questions/8290046/icmp-sockets-linux
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/in.h
 // /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/netinet/ip_icmp.h
-int localPingClientLoop(const struct sockaddr *saddr, int count) {
+int localPingClientLoop(const struct sockaddr *saddr, int count, useconds_t initial_delay) {
     struct icmp icmp_hdr;
     struct icmp6_hdr icmp6_hdr;
     struct timeval tv_now;
@@ -155,15 +235,23 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
 
     int is_v4;
     int ret;
+
+    setIsInsideLoop(1);
+    
+    localPingClientSetDelay(initial_delay);
     
     if (saddr == NULL) return -1;
-    if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) return -2;
+    if (saddr->sa_family != AF_INET && saddr->sa_family != AF_INET6) {
+        setIsInsideLoop(0);
+        return -2;
+    }
     
     is_v4 = (saddr->sa_family == AF_INET) ? 1 : 0;
     
     sock = socket(saddr->sa_family, SOCK_DGRAM, getprotobyname(is_v4 ? "icmp" : "icmp6")->p_proto);
     if (sock < 0) {
         perror("socket()");
+        setIsInsideLoop(0);
         return (setLastErrorNo() << 8) - 3;
     }
     
@@ -173,16 +261,37 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
     ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv_now, sizeof tv_now);
     if (ret < 0) {
         perror("setsockopt()");
+        setIsInsideLoop(0);
         return (setLastErrorNo() << 8) - 4;
     }
     
     int first_loop = 1;
     while (--count >= 0) {
         struct timeval tv_send;
+        struct timeval request;
+
+        useconds_t current_delay = getDelay();
         
-        if (!first_loop) usleep(1000000);
+        if (current_delay >= 1000000) {
+            request.tv_sec = current_delay / 1000000;
+            request.tv_usec = 0;
+        } else {
+            request.tv_sec = 0;
+            request.tv_usec = current_delay;
+        }
+        
+        if (!first_loop) {
+            fd_set fds;
+            FD_ZERO(&fds);
+            FD_SET(sock, &fds);
+            int retval = select(sock + 1, NULL, NULL, &fds, &request);
+            if (retval == 1) {
+                setIsInsideLoop(0);
+                return -7;
+            }
+        }
         else first_loop = 0;
-        
+
         seq++;
         
         if (is_v4) {
@@ -224,9 +333,10 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
             long retval = recvfrom(sock, buf, sizeof buf, 0, NULL, &foo);
             if (retval < 0 && errno != EAGAIN) {
                 perror("recvfrom()");
+                setIsInsideLoop(0);
                 return (setLastErrorNo() << 8) - 5;
             }
-            
+
             // Dump the content of the received buffer
             // or (int bar = 0; bar < retval; bar++) { printf("XXXX buf[%d]=0x%x\n", bar, (unsigned char) (buf[bar])); }
             
@@ -296,5 +406,6 @@ int localPingClientLoop(const struct sockaddr *saddr, int count) {
         perror("close()");
     }
     
+    setIsInsideLoop(0);
     return 0;
 }

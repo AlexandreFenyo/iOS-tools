@@ -77,6 +77,19 @@ class DeviceCell : UITableViewCell {
     @IBOutlet weak var rect2: UIView!
 }
 
+@MainActor
+class DelaySync {
+    private var delay: useconds_t = 1000000
+
+    func setDelay(_ delay: useconds_t) {
+        self.delay = delay
+    }
+
+    func getDelay() -> useconds_t {
+        return delay
+    }
+}
+
 // The MasterViewController instance is the delegate for the main UITableView
 class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String, level: LogLevel = .ALL) {
@@ -100,24 +113,26 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // public weak var browser_chargen : ServiceBrowser?
     // public weak var browser_discard : ServiceBrowser?
-    public var browser_app : ServiceBrowser?
+    public var browser_app: ServiceBrowser?
     public var browsers = [ ServiceBrowser ]()
     
-    private var browser_network : NetworkBrowser?
-    private var browser_tcp : TCPPortBrowser?
+    private var browser_network: NetworkBrowser?
+    private var browser_tcp: TCPPortBrowser?
 
-    private var local_ping_client : LocalPingClient?
-    private var local_ping_sync : LocalPingSync?
+    private var local_ping_client: LocalPingClient?
+    private var local_ping_task: Task<(), any Error>?
 
-    private var local_flood_client : LocalFloodClient?
-    private var local_flood_sync : LocalFloodSync?
+    private var local_flood_client: LocalFloodClient?
+    private var local_flood_sync: LocalFloodSync?
     
-    private var local_chargen_client : LocalChargenClient?
-    private var local_chargen_sync : LocalChargenSync?
+    private var local_chargen_client: LocalChargenClient?
+    private var local_chargen_sync: LocalChargenSync?
 
-    private var local_discard_client : LocalDiscardClient?
-    private var local_discard_sync : LocalDiscardSync?
+    private var local_discard_client: LocalDiscardClient?
+    private var local_discard_sync: LocalDiscardSync?
 
+    private var delay = DelaySync()
+    
     // Get the first indexPath corresponding to a node
     func getIndexPath(_ node: Node) -> IndexPath? {
         return DBMaster.shared.getIndexPath(node)
@@ -216,12 +231,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         browser_tcp = nil
         
         if action != .LOOP_ICMP {
-            Task {
-                await local_ping_sync?.stop()
-                await local_ping_sync?.close()
-                local_ping_sync = nil
-                local_ping_client = nil
-            }
+            local_ping_client?.stop()
+            local_ping_client?.close()
+            local_ping_client = nil
         }
         
         if action != .FLOOD_UDP {
@@ -568,7 +580,12 @@ view.backgroundColor = .red
     }
 
     // Main thread
-    internal func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
+    func setDelay(_ delay: useconds_t) async {
+        await self.delay.setDelay(delay)
+    }
+    
+    // Main thread
+    func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -587,7 +604,7 @@ view.backgroundColor = .red
     }
 
     // Main thread
-    internal func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
+    func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
         for address in resolve_ipv6_addresses {
             DispatchQueue.global(qos: .background).async {
@@ -606,7 +623,7 @@ view.backgroundColor = .red
     }
 
     // Main thread
-    internal func addNode(_ node: Node) {
+    func addNode(_ node: Node) {
 //        tableView.beginUpdates()
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
 //        tableView.deleteRows(at: index_paths_removed, with: .automatic)
@@ -641,7 +658,7 @@ view.backgroundColor = .red
     }
 
     // MARK: - Calls from DetailSwiftUIView
-    internal func scanTCP(_ address: IPAddress) {
+    func scanTCP(_ address: IPAddress) {
         stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -663,7 +680,12 @@ view.backgroundColor = .red
         }
     }
 
-    internal func loopICMP(_ address: IPAddress, display_timeout: Bool = true) {
+    func loopICMP(_ address: IPAddress, display_timeout: Bool = true) {
+        if local_ping_task != nil {
+            local_ping_task!.cancel()
+            local_ping_task = nil
+        }
+        
         stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
 
@@ -676,12 +698,19 @@ view.backgroundColor = .red
         self.remove_button!.isEnabled = false
         self.update_button!.isEnabled = false
 
+        let current_delay = delay.getDelay()
+        
         // WARNING: we should implement an infinite loop (not 0 to 10000), in a further release
-        local_ping_client = LocalPingClient(address: address, count: 10000)
-        local_ping_sync = LocalPingSync(local_ping_client!)
-        local_ping_client!.start()
+        local_ping_client = LocalPingClient(address: address, count: 10000, initial_delay: current_delay)
+        
+        local_ping_task = Task.detached(priority: .userInitiated) {
+            while await self.local_ping_client!.isInsideLoop() == 1 {
+                await self.local_ping_client!.stop()
+                try await Task.sleep(nanoseconds: 200_000_000)
+            }
+            
+            await self.local_ping_client!.start()
 
-        Task.detached(priority: .userInitiated) {
             DispatchQueue.main.async {
                 self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
                 DBMaster.shared.notifyICMPSent(address: address)
@@ -691,7 +720,7 @@ view.backgroundColor = .red
             var nloop = 0
             await self.detail_view_controller?.ts.setUnits(units: .RTT)
             await self.detail_view_controller?.ts.removeAll()
-            while true {
+            while Task.isCancelled == false {
                 if let rtt = await self.local_ping_client?.getRTT() {
                     if rtt > 0 {
                         has_answered = true
@@ -704,6 +733,10 @@ view.backgroundColor = .red
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(rtt)))
                     }
                 } else { break }
+
+                let delay = await self.delay.getDelay()
+                await self.local_ping_client?.setDelay(delay: delay)
+                
                 try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
                 nloop += 1
                 if has_answered == false && nloop > 50 {
@@ -723,7 +756,7 @@ view.backgroundColor = .red
         }
     }
 
-    internal func floodUDP(_ address: IPAddress) {
+    func floodUDP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_UDP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -774,7 +807,7 @@ view.backgroundColor = .red
     }
     
     // connect to discard service
-    internal func floodTCP(_ address: IPAddress) {
+    func floodTCP(_ address: IPAddress) {
         stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -864,7 +897,7 @@ view.backgroundColor = .red
         }
     }
 
-    internal func chargenTCP(_ address: IPAddress) {
+    func chargenTCP(_ address: IPAddress) {
         stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
@@ -952,7 +985,7 @@ view.backgroundColor = .red
         }
     }
 
-    internal func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
+    func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
         let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {
@@ -976,7 +1009,7 @@ view.backgroundColor = .red
         }
     }
     
-    internal func popUp(_ title: String, _ message: String, _ ok: String) {
+    func popUp(_ title: String, _ message: String, _ ok: String) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)

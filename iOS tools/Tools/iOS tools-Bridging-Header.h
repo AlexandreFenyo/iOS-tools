@@ -26,9 +26,8 @@ int localPingClientOpen();
 int localPingClientClose();
 int localPingClientStop();
 int localPingClientGetLastErrorNo();
+long localPingClientIsInsideLoop();
 long localPingClientGetRTT();
-// int localPingClientLoop(const struct sockaddr *saddr, const int);
-int localPingClientLoop(foo_type *, const int);
 
 int localFloodClientOpen();
 int localFloodClientClose();
@@ -58,3 +57,7 @@ int getlocaladdr(int ifindex, struct sockaddr *sa, socklen_t salen);
 int getlocalgatewayipv4(int ifindex, struct sockaddr *sa, socklen_t salen);
 int getlocalgatewayipv6(int ifindex, struct sockaddr *sa, socklen_t salen);
 int multicasticmp6();
+
+#include <unistd.h>
+int localPingClientSetDelay(useconds_t);
+int localPingClientLoop(foo_type *, const int, useconds_t);
