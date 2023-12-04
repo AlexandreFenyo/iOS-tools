@@ -794,7 +794,8 @@ view.backgroundColor = .red
                         }
                     }
                 } else { break }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
+                let delay = await self.delay.getDelay()
+                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
             }
             // objectif : arrivé ici, la boucle de flood est terminée
             DispatchQueue.main.async {
@@ -826,7 +827,7 @@ view.backgroundColor = .red
             }
 
             var is_connected = false
-            var nsec = 0
+            var nsec = 0.0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             while true {
@@ -873,9 +874,9 @@ view.backgroundColor = .red
                     print("\(#function) error: break")
                     break
                 }
-
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-                nsec += 1
+                let delay = await self.delay.getDelay()
+                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
+                nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
@@ -917,7 +918,7 @@ view.backgroundColor = .red
             }
 
             var is_connected = false
-            var nsec = 0
+            var nsec = 0.0
             await self.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
             await self.detail_view_controller?.ts.removeAll()
             while true {
@@ -962,8 +963,9 @@ view.backgroundColor = .red
                 } else {
                     break
                 }
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC)
-                nsec += 1
+                let delay = await self.delay.getDelay()
+                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
+                nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
                     if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
