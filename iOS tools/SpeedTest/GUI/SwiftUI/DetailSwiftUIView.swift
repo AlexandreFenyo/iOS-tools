@@ -246,6 +246,8 @@ struct DetailSwiftUIView: View {
     var _delay : [String: useconds_t] = [/*"10 sec": 10000000,*/ "5 sec": 5000000, "4 sec": 4000000, "3 sec": 3000000, "2 sec": 2000000, "1 sec": 1000000, "500 ms": 500000, "250 ms": 250000, "100 ms": 100000]
     @State private var selected_delay = "1 sec"
     
+    let first_line_font = Font.custom("San Francisco", size: UIDevice.current.userInterfaceIdiom == .phone ? 12 : 17).monospacedDigit()
+    
     var body: some View {
         HStack {
             EmptyView().padding(0).onReceive(timer_set_speed) { _ in // 100 Hz
@@ -259,6 +261,52 @@ struct DetailSwiftUIView: View {
                 }
             }
 
+            HStack {
+                
+                HStack {
+                    Menu {
+                        Picker("Please choose a delay", selection: $selected_delay) {
+                            ForEach(delay, id: \.self) { delay in
+                                Text(delay).font(/*.caption*/first_line_font)
+                            }
+                        }.tint(Color(COLORS.chart_scale))
+                            .onChange(of: selected_delay) { new_delay in
+                                Task {
+                                    await master_view_controller.setDelay(_delay[new_delay]!)
+                                }
+                            }
+                    } label: {
+                        Label(selected_delay, systemImage: "clock")
+                            .font(first_line_font)
+                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .padding(2)
+                            .background(Color(COLORS.right_pannel_bg).lighter())
+                            .cornerRadius(10.0)
+                    }
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
+                
+                Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+                    .font(first_line_font)
+                    .frame(maxWidth: .infinity)
+                
+                HStack {
+                    Spacer()
+                    if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
+                        Text("\(Int(speed)) \(model.text_current_measurement_unit)")
+                            .font(/*Font.custom("San Francisco", size: 17).monospacedDigit()*/first_line_font)
+                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .padding(2)
+                            .background(Color(COLORS.right_pannel_bg).lighter())
+                            .cornerRadius(10.0)
+                    }
+                }.frame(maxWidth: .infinity)
+                
+                
+            }
+            
+/*
             ZStack(alignment: .top) {
                 Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
 
@@ -278,16 +326,24 @@ struct DetailSwiftUIView: View {
                     } label: {
                         Label(selected_delay, systemImage: "clock")
                             .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .padding(2)
+                            .background(Color(COLORS.right_pannel_bg).lighter())
+                            .cornerRadius(10.0)
                     }
                     
                     
                     Spacer()
                     if (model.address_str != nil && !model.text_current_measurement_unit.isEmpty) {
                         Text("\(Int(speed)) \(model.text_current_measurement_unit)")
+                            .font(Font.custom("San Francisco", size: 17).monospacedDigit())
                             .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .padding(2)
+                            .background(Color(COLORS.right_pannel_bg).lighter())
+                            .cornerRadius(10.0)
                     }
                 }
             }
+ */
         }
         
         ScrollViewReader { scrollViewProxy in
