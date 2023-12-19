@@ -63,6 +63,7 @@ struct ChartDefaults {
     static let minimum_highest : Float = 1
     // Set to true to avoid moving left at start
     static let debug_do_not_move = false
+    static let extra_size = 3.0
 }
 
 enum PositionRelativeToScreen {
@@ -167,12 +168,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     
     private var follow_view : UIView?
     
-//    private var delta: CGFloat? = 0
-
     private var last_forced_vertical_check = Date()
-    
-    public func testDebug() {
-    }
     
     public func applicationDidBecomeActive() async {
         current_date = Date()
@@ -217,19 +213,45 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     // Check that a point is not on grid
     private func isCurvePointOnGrid(point: CGPoint) -> Bool {
         let p = grid_node!.convert(point, from: curve_node!)
-        return p.x >= 0 && p.x <= grid_full_width!
+        return p.x >= 0 && p.x < grid_full_width!
     }
     
     // Check that a point is not on grid
     private func isCurvePointOnGrid(tse: TimeSeriesElement) -> Bool {
         return isCurvePointOnGrid(point: toPoint(tse: tse))
     }
+
+    private func isCurvePointNearScreen(point: CGPoint) -> Bool {
+        let p = root_node!.convert(point, from: curve_node!)
+        return p.x + ChartDefaults.extra_size >= left_width && p.x - ChartDefaults.extra_size < size.width
+    }
     
+    // Check that a point is not hidden
+    private func isCurvePointNearScreen(tse: TimeSeriesElement) -> Bool {
+        return isCurvePointNearScreen(point: toPoint(tse: tse))
+    }
+    
+    // Check that a point is not on grid
+    private func isCurvePointNearGrid(point: CGPoint) -> Bool {
+        let p = grid_node!.convert(point, from: curve_node!)
+        return p.x + ChartDefaults.extra_size >= 0 && p.x - ChartDefaults.extra_size < grid_full_width!
+    }
+    
+    // Check that a point is not on grid
+    private func isCurvePointNearGrid(tse: TimeSeriesElement) -> Bool {
+        return isCurvePointNearGrid(point: toPoint(tse: tse))
+    }
+
     // Check that a segment is not hidden
     private func isCurveSegmentOnGrid(from: CGPoint, to: CGPoint) -> Bool {
         return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
     }
-    
+
+    // Check that a segment is not hidden
+    private func isCurveSegmentNearGrid(from: CGPoint, to: CGPoint) -> Bool {
+        return nearPositionRelativeToScreen(point: from) == .onScreen || nearPositionRelativeToScreen(point: to) == .onScreen || nearPositionRelativeToScreen(point: from) != nearPositionRelativeToScreen(point: to)
+    }
+
     // Position of a curve point relative to screen
     private func positionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
         let p = grid_node!.convert(point, from: curve_node!)
@@ -237,7 +259,15 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if p.x > grid_full_width! { return .onRight }
         return .onScreen
     }
-    
+
+    // Position of a curve point relative to screen
+    private func nearPositionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
+        let p = grid_node!.convert(point, from: curve_node!)
+        if p.x + ChartDefaults.extra_size < 0 { return .onLeft }
+        if p.x - ChartDefaults.extra_size > grid_full_width! { return .onRight }
+        return .onScreen
+    }
+
     // Update everything that needs to be, when the width has changed because of auto-layout
     public func updateWidth() async {
         if let new_width = follow_view?.bounds.width, scene!.size.width != new_width {
@@ -363,13 +393,13 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var points: [CGPoint] = [ ]
             if elts.count == 1 {
                 // There is no segment, only one point
-                if self.isCurvePointOnGrid(tse: elts[0]) {
+                if self.isCurvePointNearGrid(tse: elts[0]) {
                     let point = self.toPoint(tse: elts[0])
                     if (highest < elts[0].value) {
                         highest_elt = elts[0]
                         highest = elts[0].value
                     }
-                    if self.isCurvePointOnScreen(tse: elts[0]) { highest_elt_displayed = elts[0] }
+                    if self.isCurvePointNearScreen(tse: elts[0]) { highest_elt_displayed = elts[0] }
                     points.append(point)
                 }
             } else if elts.count > 1 {
@@ -378,7 +408,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 for elt in elts { all_points.append(self.toPoint(tse: elt)) }
                 var prev_segment_was_on_grid = false
                 for i in all_points.indices.dropFirst() {
-                    if self.isCurveSegmentOnGrid(from: all_points[i - 1], to: all_points[i]) {
+                    if self.isCurveSegmentNearGrid(from: all_points[i - 1], to: all_points[i]) {
                         prev_segment_was_on_grid = true
                         points.append(all_points[i - 1])
                         
@@ -399,7 +429,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                         
                         // Handle highest displayed element
                         for _i in [ i - 1, i ] {
-                            if self.isCurvePointOnScreen(point: all_points[_i]) {
+                            if self.isCurvePointNearScreen(point: all_points[_i]) {
                                 if highest_elt_displayed == nil { highest_elt_displayed = elts[_i] }
                                 else if elts[_i].value > highest_elt_displayed!.value { highest_elt_displayed = elts[_i] }
                             }
@@ -495,8 +525,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var (points, target_h, _, tse_displayed) = computePoints()
         
         // Vertical animation
-        // le faire au moins 1 fois toutes les 3 secondes à cause d'un bug qui fait qu'il arrive qu'un PING prenne 10 secondes par ex. avant de s'afficher
-        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 3.0 {
+        // Update at least every second since the grid moves to the left, so we do not want the curve to be updated only when a new data arrived
+        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 1.0 {
             last_forced_vertical_check = Date()
 
             var start_height = highest
