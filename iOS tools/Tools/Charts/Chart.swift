@@ -44,6 +44,8 @@
 //       [left_label_node]: SKLabelNode
 //       [hyphen_node]: SKSpriteNode
 
+// BUG A CORRIGER : sur 127.0.0.1, ça s'affiche presque tout le temps par 2 mesures ICMP
+
 import Foundation
 import UIKit
 import QuartzCore
@@ -383,7 +385,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func drawCurve(elts: [TimeSeriesElement], units: ChartUnits) {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
         if hasActions() { return }
-        
+
         // Returns points to draw, highest value (if higher than ChartDefaults.minimum_highest) and the element corresponding to the highest value (if higher than ChartDefaults.minimum_highest)
         let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?, TimeSeriesElement?) = {
             var highest : Float = ChartDefaults.minimum_highest
@@ -524,9 +526,10 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         var (points, target_h, _, tse_displayed) = computePoints()
         
-        // Vertical animation
-        // Update at least every second since the grid moves to the left, so we do not want the curve to be updated only when a new data arrived
-        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 1.0 {
+        // Vertical animation: we can not call an actor during an SKAction, therefore the curve displayed during a vertical transition can not display new values.
+        // But since the grid move to the left, the vertical scale must be done regularly.
+        // During 1 sec (vertical transition duration) every 5 secs, new values are not displayed.
+        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 5.0 {
             last_forced_vertical_check = Date()
 
             var start_height = highest
