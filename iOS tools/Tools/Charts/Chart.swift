@@ -176,7 +176,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         current_date = Date()
         if mode == .followDate {
             await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
+            drawCurve()
         }
     }
     
@@ -223,35 +223,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         return isCurvePointOnGrid(point: toPoint(tse: tse))
     }
 
-    private func isCurvePointNearScreen(point: CGPoint) -> Bool {
-        let p = root_node!.convert(point, from: curve_node!)
-        return p.x + ChartDefaults.extra_size >= left_width && p.x - ChartDefaults.extra_size < size.width
-    }
-    
-    // Check that a point is not hidden
-    private func isCurvePointNearScreen(tse: TimeSeriesElement) -> Bool {
-        return isCurvePointNearScreen(point: toPoint(tse: tse))
-    }
-    
-    // Check that a point is not on grid
-    private func isCurvePointNearGrid(point: CGPoint) -> Bool {
-        let p = grid_node!.convert(point, from: curve_node!)
-        return p.x + ChartDefaults.extra_size >= 0 && p.x - ChartDefaults.extra_size < grid_full_width!
-    }
-    
-    // Check that a point is not on grid
-    private func isCurvePointNearGrid(tse: TimeSeriesElement) -> Bool {
-        return isCurvePointNearGrid(point: toPoint(tse: tse))
-    }
-
     // Check that a segment is not hidden
     private func isCurveSegmentOnGrid(from: CGPoint, to: CGPoint) -> Bool {
         return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
-    }
-
-    // Check that a segment is not hidden
-    private func isCurveSegmentNearGrid(from: CGPoint, to: CGPoint) -> Bool {
-        return nearPositionRelativeToScreen(point: from) == .onScreen || nearPositionRelativeToScreen(point: to) == .onScreen || nearPositionRelativeToScreen(point: from) != nearPositionRelativeToScreen(point: to)
     }
 
     // Position of a curve point relative to screen
@@ -259,14 +233,6 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         let p = grid_node!.convert(point, from: curve_node!)
         if p.x < 0 { return .onLeft }
         if p.x > grid_full_width! { return .onRight }
-        return .onScreen
-    }
-
-    // Position of a curve point relative to screen
-    private func nearPositionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
-        let p = grid_node!.convert(point, from: curve_node!)
-        if p.x + ChartDefaults.extra_size < 0 { return .onLeft }
-        if p.x - ChartDefaults.extra_size > grid_full_width! { return .onRight }
         return .onScreen
     }
 
@@ -280,7 +246,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 mask_node.size.width = new_width
             }
             await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: highest)
-            await drawCurveAsync(ts: ts)
+            drawCurve()
         }
     }
     
@@ -326,7 +292,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         super.init(texture: nil, color: debug ? .cyan : background, size: full_size)
         updateStateVariables()
         self.anchorPoint = CGPoint(x: 0, y: 0)
-        await ts.register(self)
+        ts.register(self)
         
         // Crop the drawing when working in a 2D scene
         if crop {
@@ -341,9 +307,9 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         
         // Create chart components
         var max_val : Float = 0
-        for elt in await ts.getElements() { max_val = max(max_val, elt.value) }
+        for elt in ts.getElements() { max_val = max(max_val, elt.value) }
         await createChartComponentsAsync(date: mode == .followDate ? Date() : current_date, max_val: max_val)
-        await drawCurveAsync(ts: ts)
+        drawCurve()
     }
     
     // Update displayed dates
@@ -375,14 +341,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     // Display only segments or points that can be viewed
-    private func drawCurveAsync(ts: TimeSeries) async {
-        let elts = await ts.getElements()
-        let units = await ts.getUnits()
-        drawCurve(elts: elts, units: units)
-    }
-    
-    // Display only segments or points that can be viewed
-    private func drawCurve(elts: [TimeSeriesElement], units: ChartUnits) {
+    private func drawCurve() {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
         if hasActions() { return }
 
@@ -393,15 +352,16 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var highest_elt_displayed : TimeSeriesElement?
             // Points from segments that are partly or totally displayed
             var points: [CGPoint] = [ ]
+            let elts = self.ts.getElements()
             if elts.count == 1 {
                 // There is no segment, only one point
-                if self.isCurvePointNearGrid(tse: elts[0]) {
+                if self.isCurvePointOnGrid(tse: elts[0]) {
                     let point = self.toPoint(tse: elts[0])
                     if (highest < elts[0].value) {
                         highest_elt = elts[0]
                         highest = elts[0].value
                     }
-                    if self.isCurvePointNearScreen(tse: elts[0]) { highest_elt_displayed = elts[0] }
+                    if self.isCurvePointOnScreen(tse: elts[0]) { highest_elt_displayed = elts[0] }
                     points.append(point)
                 }
             } else if elts.count > 1 {
@@ -410,7 +370,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 for elt in elts { all_points.append(self.toPoint(tse: elt)) }
                 var prev_segment_was_on_grid = false
                 for i in all_points.indices.dropFirst() {
-                    if self.isCurveSegmentNearGrid(from: all_points[i - 1], to: all_points[i]) {
+                    if self.isCurveSegmentOnGrid(from: all_points[i - 1], to: all_points[i]) {
                         prev_segment_was_on_grid = true
                         points.append(all_points[i - 1])
                         
@@ -431,7 +391,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                         
                         // Handle highest displayed element
                         for _i in [ i - 1, i ] {
-                            if self.isCurvePointNearScreen(point: all_points[_i]) {
+                            if self.isCurvePointOnScreen(point: all_points[_i]) {
                                 if highest_elt_displayed == nil { highest_elt_displayed = elts[_i] }
                                 else if elts[_i].value > highest_elt_displayed!.value { highest_elt_displayed = elts[_i] }
                             }
@@ -526,10 +486,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
 
         var (points, target_h, _, tse_displayed) = computePoints()
         
-        // Vertical animation: we can not call an actor during an SKAction, therefore the curve displayed during a vertical transition can not display new values.
-        // But since the grid move to the left, the vertical scale must be done regularly.
-        // During 1 sec (vertical transition duration) every 5 secs, new values are not displayed.
-        if highest != target_h || Date().timeIntervalSince(last_forced_vertical_check) > 5.0 {
+        if highest != target_h {
             last_forced_vertical_check = Date()
 
             var start_height = highest
@@ -537,6 +494,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             var runnable: ((SKNode, CGFloat) -> ())?
             runnable = {
                 (node, t) in
+                let elts = self.ts.getElements()
+                let units = self.ts.getUnits()
                 self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
                 let check_h : Float
                 (points, check_h, _, tse_displayed) = computePoints()
@@ -553,8 +512,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     private func createChartComponentsAsync(date: Date, max_val: Float) async {
-        let elts = await ts.getElements()
-        let units = await ts.getUnits()
+        let elts = ts.getElements()
+        let units = ts.getUnits()
         createChartComponentsFromElts(date: date, max_val: max_val, elts: elts, units: units)
     }
     
@@ -816,8 +775,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public func cbNewData(ts: TimeSeries, tse: TimeSeriesElement? = nil) async {
-        if await ts.count() == 0 { mode = .followDate }
-        await drawCurveAsync(ts: ts)
+        if ts.count() == 0 { mode = .followDate }
+        drawCurve()
     }
     
     // Compute best vertical parameters
@@ -881,7 +840,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 
                 var tapped_element : TimeSeriesElement?
                 var best_dist : Double?
-                for elt in await ts.getElements() {
+                for elt in ts.getElements() {
                     let point = toPoint(tse: elt)
                     if isCurvePointOnScreen(point: point) {
                         let dist = pow(Double(tapped_point.x - point.x), 2) + pow(Double(tapped_point.y - point.y), 2)
@@ -902,7 +861,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                         
                     } else { await createChartComponentsAsync(date: current_date, max_val: highest) }
                 } else if mode == .followDate { await createChartComponentsAsync(date: Date(), max_val: highest) }
-                await drawCurveAsync(ts: ts)
+                drawCurve()
                 
                 let finger = SKShapeNode(circleOfRadius: 5.0)
                 finger.fillColor = COLORS.chart_finger
@@ -932,19 +891,19 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 date_at_start_of_gesture = current_date
                 mode = .followGesture
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
             
             if gesture_state == .changed {
                 current_date = date_at_start_of_gesture!.addingTimeInterval(TimeInterval(-point!.x / grid_size.width) * grid_time_interval)
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
             
             if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
         }
     }
@@ -963,19 +922,19 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 mode = .followGesture
                 
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
             
             if gesture_state == .changed {
                 grid_time_interval = grid_time_interval_at_start_of_gesture! / TimeInterval(gesture_scale)
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
             
             if gesture_state != .began && gesture_state != .changed {
                 mode = .manual
                 await createChartComponentsAsync(date: current_date, max_val: highest)
-                await drawCurveAsync(ts: ts)
+                drawCurve()
             }
         }
     }

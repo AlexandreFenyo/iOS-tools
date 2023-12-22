@@ -211,7 +211,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     public func stopBrowsing(_ action: NewRunAction) {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
-        Task { await detail_view_controller?.ts.clearAverage() }
+        detail_view_controller?.ts.clearAverage()
 
         refreshControl!.endRefreshing()
         stop_button!.isEnabled = false
@@ -581,7 +581,7 @@ view.backgroundColor = .red
 
     // Main thread
     func setDelay(_ delay: useconds_t) async {
-        await self.delay.setDelay(delay)
+        self.delay.setDelay(delay)
     }
     
     // Main thread

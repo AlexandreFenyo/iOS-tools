@@ -28,7 +28,8 @@ public protocol TimeSeriesReceiver {
 
 let AVERAGE_EXPONENT: Float = 0.3
 
-public actor TimeSeries {
+//public actor TimeSeries {
+@MainActor public class TimeSeries {
     private var receivers: [TimeSeriesReceiver] = []
     private var data: [Date: TimeSeriesElement] = [:]
     // Ordered data keys (dates)
@@ -37,7 +38,7 @@ public actor TimeSeries {
     
     private var units: ChartUnits = .RTT
     
-    public init() { }
+    public nonisolated init() { }
     
     public func getAverage() -> Float {
         return average

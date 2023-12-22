@@ -617,7 +617,7 @@ struct HeatMapSwiftUIView: View {
                                 if let heatmap_view_controller {
                                     average_last_update = Date()
                                     average_prev = average_next
-                                    average_next = await heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                    average_next = heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
                                     if average_prev == 0.0 {
                                         average_prev = average_next
                                     }
