@@ -344,6 +344,7 @@ class B3DHost : B3D {
         return text_node
     }
 
+    // appelé toutes les deux secondes, donc améliorer ses perfs
     func updateText(_ counter: Int) {
         let new_text = Self.getDisplayTextFromIndexAndGroups(all_groups: text_groups, group_index: counter)
         if new_text != text_string {
@@ -365,6 +366,7 @@ class B3DHost : B3D {
         }
 
         let (min, max) = text_node!.boundingBox
+        
         let new_text_2 = Self.getDisplayTextFromIndexAndGroups(all_groups: text2_groups, group_index: counter)
         if new_text_2 != text2_string {
             // 2nd line fade out
@@ -377,6 +379,7 @@ class B3DHost : B3D {
             // 2nd line fade in
             text2_string = new_text_2
             text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift)
+
             text2_node!.opacity = 0
             let timeshift_action_bis_2 = SCNAction.wait(duration: 0.5)
             let fade_in_action_2 = SCNAction.fadeIn(duration: 0.5)

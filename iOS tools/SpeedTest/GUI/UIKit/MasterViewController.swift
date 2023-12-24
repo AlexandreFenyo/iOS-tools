@@ -148,9 +148,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         addTrace("main: remove previously discovered hosts", level: LogLevel.INFO)
 
         // Remove every nodes
-        while !DBMaster.shared.nodes.isEmpty {
-            _ = DBMaster.shared.removeNode(DBMaster.shared.nodes.first!)
-        }
+        DBMaster.shared.removeAllNodes()
         tableView.reloadData()
 
         // Supprimer les réseaux

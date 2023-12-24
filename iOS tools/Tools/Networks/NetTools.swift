@@ -379,12 +379,23 @@ public class IPv6Address : IPAddress, Comparable {
     // scope zone index
     private let scope: UInt32
 
+    static private let _ipv6_fe00 = IPv6Address("fe00::")!
+    static private let _ipv6_fc00 = IPv6Address("fc00::")!
+    static private let _ipv6_ffc0 = IPv6Address("ffc0::")!
+    static private let _ipv6_ff00 = IPv6Address("ff00::")!
+    static private let _ipv6_e000 = IPv6Address("e000::")!
+    static private let _ipv6_fe80 = IPv6Address("fe80::")!
+    static private let _ipv6_2000 = IPv6Address("2000::")!
+    
     public func getScope() -> UInt32 {
         return scope
     }
     
     private static func getBytes(_ addr: in6_addr) -> [UInt8] {
-        return Mirror(reflecting: addr.__u6_addr.__u6_addr8).children.map { $0.value as! UInt8 }
+        let foo = addr.__u6_addr.__u6_addr8
+        // This way, we can do a loop on the tuple members, but it takes a lot of CPU
+        // return Mirror(reflecting: addr.__u6_addr.__u6_addr8).children.map { $0.value as! UInt8 }
+        return [ foo.0, foo.1, foo.2, foo.3, foo.4, foo.5, foo.6, foo.7, foo.8, foo.9, foo.10, foo.11, foo.12, foo.13, foo.14, foo.15 ]
     }
 
     private static func getData(_ addr: in6_addr) -> Data {
@@ -506,19 +517,19 @@ public class IPv6Address : IPAddress, Comparable {
     }
 
     public func isULA() -> Bool {
-        return and(IPv6Address("fe00::")!) as! IPv6Address == IPv6Address("fc00::")!
+        return and(IPv6Address._ipv6_fe00) as! IPv6Address == IPv6Address._ipv6_fc00
     }
 
     public func isLLA() -> Bool {
-        return and(IPv6Address("ffc0::")!).inaddr == IPv6Address("fe80::")!.inaddr
+        return and(IPv6Address._ipv6_fc00).inaddr == IPv6Address._ipv6_fe80.inaddr
     }
 
     public func isUnicastPublic() -> Bool {
-        return and(IPv6Address("e000::")!) as! IPv6Address == IPv6Address("2000::")!
+        return and(IPv6Address._ipv6_e000) as! IPv6Address == IPv6Address._ipv6_2000
     }
 
     public func isMulticastPublic() -> Bool {
-        return and(IPv6Address("ff00::")!) as! IPv6Address == IPv6Address("ff00::")!
+        return and(IPv6Address._ipv6_ff00) as! IPv6Address == IPv6Address._ipv6_ff00
     }
 
     static func == (lhs: IPv6Address, rhs: IPv6Address) -> Bool {

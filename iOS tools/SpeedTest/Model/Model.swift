@@ -646,6 +646,16 @@ class DBMaster {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
+    func removeAllNodes() {
+        SectionType.allCases.forEach {
+            sections[$0]!.nodes.removeAll()
+        }
+        nodes.forEach {
+            Interman3DModel.shared.notifyNodeRemoved($0)
+        }
+        nodes.removeAll()
+    }
+    
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         var first_merged_node: Node? = nil
         
