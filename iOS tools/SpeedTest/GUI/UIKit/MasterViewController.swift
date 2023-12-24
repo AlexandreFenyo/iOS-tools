@@ -149,12 +149,9 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         // Remove every nodes
         while !DBMaster.shared.nodes.isEmpty {
-            tableView.beginUpdates()
-            let node = DBMaster.shared.nodes.first!
-            let index_paths_removed = DBMaster.shared.removeNode(node)
-            tableView.deleteRows(at: index_paths_removed, with: .automatic)
-            tableView.endUpdates()
+            _ = DBMaster.shared.removeNode(DBMaster.shared.nodes.first!)
         }
+        tableView.reloadData()
 
         // Supprimer les réseaux
         DBMaster.shared.resetNetworks()

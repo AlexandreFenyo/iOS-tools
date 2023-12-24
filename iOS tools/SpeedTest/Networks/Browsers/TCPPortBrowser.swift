@@ -12,7 +12,9 @@ import Foundation
 let debug = false
 
 class TCPPortBrowser {
-//    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
+    let debug_perfs = false
+
+    //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     // liste des ports à scanner lors d'un browse du réseau complet
     private static let ports_set: Set<UInt16> = Set(1...65535)
 //    private static let ports_set : Set<UInt16> = Set(8020...8022)
@@ -61,6 +63,10 @@ class TCPPortBrowser {
 
     // userInitiated thread (Browse thread)
     public func browse(address: IPAddress? = nil, doAtEnd: @escaping () -> Void = {}) {
+        
+        // A SUPPRIMER
+        doAtEnd();return
+        
         // Initialize port lists to connect to
         
 //        let a = IPv4Address("192.168.1.254")!
@@ -90,10 +96,13 @@ class TCPPortBrowser {
 
         for addr in self.ip_to_tcp_port.keys {
             if debug { print(addr.toNumericString()!, "tcp - starting address") }
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
-                // Add link
-                DBMaster.shared.notifyScanPorts(address: addr)
+
+            if !debug_perfs {
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
+                    // Add link
+                    DBMaster.shared.notifyScanPorts(address: addr)
+                }
             }
 
             dispatchGroup.enter()
@@ -122,8 +131,10 @@ class TCPPortBrowser {
                     // delay == 10000 => 52 sec (0.01 * 5200)
                     if delay == 10000 { ports.formIntersection(StandardTCPPorts) }
 
-                    DispatchQueue.main.async {
-                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports.count) ports waiting \(delay) µs for each", level: .INFO)
+                    if !self.debug_perfs {
+                        DispatchQueue.main.async {
+                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports.count) ports waiting \(delay) µs for each", level: .INFO)
+                        }
                     }
 
                     // WiFi donc latence élevée donc impossible de parcourir tous les ports sans paralléliser le traitement, même pour une IP => à reprogrammer dans le futur
@@ -221,9 +232,11 @@ class TCPPortBrowser {
                                                 } else {
                                                     // we got a peer name
                                                     if debug { print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay) }
-                                                    DispatchQueue.main.async {
-                                                        self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
-                                                        DBMaster.shared.notifyPortDiscovered(address: addr, port: port)
+                                                    if !self.debug_perfs {
+                                                        DispatchQueue.main.async {
+                                                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
+                                                            DBMaster.shared.notifyPortDiscovered(address: addr, port: port)
+                                                        }
                                                     }
                                                     // do not retry this port
                                                     ports.remove(port)
@@ -270,9 +283,11 @@ class TCPPortBrowser {
                 }
                 dispatchGroup.leave()
                 
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
-                    DBMaster.shared.notifyScanPortsFinished(address: addr)
+                if !self.debug_perfs {
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
+                        DBMaster.shared.notifyScanPortsFinished(address: addr)
+                    }
                 }
             }
         }

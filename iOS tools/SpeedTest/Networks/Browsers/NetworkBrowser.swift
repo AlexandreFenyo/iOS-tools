@@ -10,6 +10,8 @@ import Foundation
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
+    let debug_perfs = false
+
     private let device_manager: DeviceManager
     private let browser_tcp: TCPPortBrowser?
     private var reply_ipv4: [IPv4Address: (Int, Date?)] = [:]
@@ -172,11 +174,14 @@ class NetworkBrowser {
             let dispatchGroup = DispatchGroup()
             
             // Send unicast ICMPv4
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
-                // Add torus
-                DBMaster.shared.notifyBroadcast()
+            if !self.debug_perfs {
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
+                    // Add torus
+                    DBMaster.shared.notifyBroadcast()
+                }
             }
+
             dispatchGroup.enter()
             // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
             DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
@@ -354,14 +359,18 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
+                if !self.debug_perfs {
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
+                    }
                 }
             }
 
             // Catch IPv6 replies
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
+            if !self.debug_perfs {
+                DispatchQueue.main.async {
+                    self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
+                }
             }
             dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async {
@@ -384,8 +393,10 @@ class NetworkBrowser {
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
                 } while !self.isFinishedOrEverythingDone()
                 dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
+                if !self.debug_perfs {
+                    DispatchQueue.main.async {
+                        self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
+                    }
                 }
             }
             
@@ -394,9 +405,11 @@ class NetworkBrowser {
             close(s)
             close(s6)
 
-            DispatchQueue.main.sync {
-                self.device_manager.addTrace("network browsing: finished", level: .INFO)
-                DBMaster.shared.notifyBroadcastFinished()
+            if !self.debug_perfs {
+                DispatchQueue.main.sync {
+                    self.device_manager.addTrace("network browsing: finished", level: .INFO)
+                    DBMaster.shared.notifyBroadcastFinished()
+                }
             }
 
             if let browser_tcp = self.browser_tcp {
