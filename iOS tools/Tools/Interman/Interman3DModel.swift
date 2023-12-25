@@ -345,6 +345,7 @@ class B3DHost : B3D {
     }
 
     // appelé toutes les deux secondes, donc améliorer ses perfs
+    // long
     func updateText(_ counter: Int) {
         let new_text = Self.getDisplayTextFromIndexAndGroups(all_groups: text_groups, group_index: counter)
         if new_text != text_string {
@@ -932,8 +933,10 @@ public class Interman3DModel : ObservableObject {
 
     public var scene = SCNScene(named: "Interman 3D Scene.scn")!
 
-    private var b3d_hosts: [B3DHost]
     private var broadcasts = Set<Broadcast3D>()
+    private var b3d_hosts: [B3DHost]
+    // Associative map to improve performances of getB3DHost(_ host: Node) -> B3DHost?
+    private var node_to_b3d_host = [Node: B3DHost]()
 
     // Does not contain localhost IPs
     private var scanned_IPs = Set<IPAddress>()
@@ -992,11 +995,17 @@ public class Interman3DModel : ObservableObject {
     }
     
     func getB3DHost(_ host: Node) -> B3DHost? {
-        // Should be faster with an associative map
+        // Using isSimilar this way is slow, therefore we use the node_to_b3d_host associative map
+        /*
         guard let b3d_host = (b3d_hosts.filter { $0.getHost().isSimilar(with: host) }).first else {
             return nil
         }
         return b3d_host
+        */
+
+        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == host })!
+        let key = node_to_b3d_host.keys[idx]
+        return node_to_b3d_host[key]
     }
     
     // We could implement a cache, but it is not sure it may really improve global performances
@@ -1030,31 +1039,64 @@ public class Interman3DModel : ObservableObject {
         return b3d_host
     }
 
-    // Sync with the main model
-    func notifyNodeAdded(_ node: Node) {
-        addHost(node)
+    private func debug_dump_b3d_hosts(_ fct: String) {
+        print("XXXX: -------------------")
+        print("XXXX: \(fct)")
+        node_to_b3d_host.keys.forEach { node in
+            print("XXXX: \(node.fullDump())")
+        }
+        print("XXXX: -------------------")
+    }
+    
+    private func get_key_from_node_to_b3d_host(_ node: Node) -> Node {
+        for key in node_to_b3d_host.keys {
+            if key == node { return key }
+        }
+        fatalError("node_to_b3d_host inconsistency")
     }
 
     // Sync with the main model
-    func notifyNodeRemoved(_ host: Node) {
-        guard let b3d_host = detachB3DSimilarHost(host) else { return }
+    func notifyNodeAdded(_ node: Node) {
+        let b3d_host = addHost(node)
+        node_to_b3d_host.updateValue(b3d_host, forKey: node)
+    }
+
+    // Sync with the main model
+    func notifyNodeRemoved(_ node: Node) {
+        if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
+
+        guard let b3d_host = detachB3DSimilarHost(node) else { return }
         updateAngles()
         b3d_host.remove()
     }
 
     // Sync with the main model
     func notifyNodeMerged(_ node: Node, _ into: Node) {
-        // print("\(#function)")
+        if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
+        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
+        node_to_b3d_host.remove(at: idx)
+
         guard let b3d_host = detachB3DHostInstance(into) else { return }
         updateAngles()
         b3d_host.remove()
+
+        node_to_b3d_host.updateValue(b3d_host, forKey: get_key_from_node_to_b3d_host(into))
     }
 
     // Sync with the main model
+    // Update the displayed values and the 3D model
     func notifyNodeUpdated(_ node: Node) {
-        // print("\(#function)")
-        // Update the displayed values and the 3D model
-        guard let b3d_host = getB3DHost(node) else { return }
+        // Bug ceci ne fonctionne pas (la clé n'est pas identifiée) :
+        // let b3d_host = node_to_b3d_host[node]!
+        // if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
+        // node_to_b3d_host[node] = b3d_host
+        // On fait donc le contournement suivant :
+
+        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
+        let b3d_host = node_to_b3d_host[idx].value
+        node_to_b3d_host.remove(at: idx)
+        node_to_b3d_host.updateValue(b3d_host, forKey: node)
+
         b3d_host.updateModelAndValues()
     }
 
@@ -1247,7 +1289,7 @@ public class Interman3DModel : ObservableObject {
         scene.rootNode.addChildNode(broadcast)
     }
     
-    private func addHost(_ host: Node) {
+    private func addHost(_ host: Node) -> B3DHost {
         let b3d_host = B3DHost(ComponentTemplates.laptop2, host)
         b3d_host.updateModelAndValues()
         b3d_hosts.append(b3d_host)
@@ -1258,6 +1300,7 @@ public class Interman3DModel : ObservableObject {
         // Set to add axes to debug 3D orientation of the scene
         // b3d_host.addChildNode(ComponentTemplates.createAxes(0.2))
         updateAngles()
+        return b3d_host
     }
     
     private static var debug_cnt = 0
