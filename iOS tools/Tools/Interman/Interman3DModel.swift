@@ -172,6 +172,7 @@ struct ComponentTemplates {
 class B3D : SCNNode {
     static let default_scale: Float = 0.1
     private let sub_node = SCNNode()
+    private let sub_node2 = SCNNode()
     private var object_sub_node_ref: SCNNode
     private var object_sub_node: SCNNode
     private var angle: Float = 0
@@ -179,18 +180,20 @@ class B3D : SCNNode {
 
     init(_ scn_node: SCNNode) {
         sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
+        sub_node2.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
         object_sub_node_ref = scn_node
         object_sub_node = object_sub_node_ref.clone()
         sub_node.addChildNode(object_sub_node)
         super.init()
         addChildNode(sub_node)
+        addChildNode(sub_node2)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func updateModelScale() {
+    func updateModelScale() -> Float {
         let nhosts = Interman3DModel.shared.getNHosts()
         let space = 0.8 * 2 * .pi / (Float(max(nhosts, 15)) * B3D.default_scale)
         let (bb_min, bb_max) = object_sub_node.boundingBox
@@ -198,6 +201,7 @@ class B3D : SCNNode {
         let max_extend = max(extend.x, extend.z)
         object_sub_node.pivot = SCNMatrix4MakeTranslation(0, bb_min.y, 0)
         object_sub_node.scale = SCNVector3(space * 1 / max_extend, space * 1 / max_extend, space * 1 / max_extend)
+        return space
     }
     
     func updateModel(_ scn_node: SCNNode) {
@@ -206,7 +210,7 @@ class B3D : SCNNode {
         object_sub_node.removeFromParentNode()
         object_sub_node = object_sub_node_ref.clone()
 
-        updateModelScale()
+        _ = updateModelScale()
         
         sub_node.addChildNode(object_sub_node)
     }
@@ -234,11 +238,19 @@ class B3D : SCNNode {
     fileprivate func addSubChildNode(_ child: SCNNode) {
         sub_node.addChildNode(child)
     }
-    
+
+    fileprivate func addSubChildNode2(_ child: SCNNode) {
+        sub_node2.addChildNode(child)
+    }
+
     fileprivate func getSubNode() -> SCNNode {
         sub_node
     }
-    
+
+    fileprivate func getSubNode2() -> SCNNode {
+        sub_node2
+    }
+
     func getAngle() -> Float {
         angle
     }
@@ -278,7 +290,7 @@ class B3D : SCNNode {
         animation.isRemovedOnCompletion = false
         addAnimation(animation, forKey: "circle")
 
-        updateModelScale()
+        _ = updateModelScale()
     }
     
     fileprivate func remove() {
@@ -292,6 +304,7 @@ class B3D : SCNNode {
         // Disappear
         let duration = 1.0
         getSubNode().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
+        getSubNode2().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
         runAction(SCNAction.sequence([SCNAction.wait(duration: duration), SCNAction.removeFromParentNode()]))
     }
 }
@@ -307,6 +320,13 @@ class B3DHost : B3D {
     private var text_string, text2_string, text3_string: String?
     private var (text_groups, text2_groups, text3_groups) = ([String](), [String](), [String]())
 
+    override func updateModelScale() -> Float {
+        let space = super.updateModelScale()
+        // Scale text nodes
+        getSubNode2().scale = SCNVector3(B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0)
+        return space
+    }
+    
     func getHost() -> Node {
         return host
     }
@@ -363,7 +383,7 @@ class B3DHost : B3D {
             let wait_action = SCNAction.wait(duration: 0.5)
             let sequence_bis = SCNAction.sequence([wait_action, fade_in_action])
             text_node!.runAction(sequence_bis)
-            addSubChildNode(text_node!)
+            addSubChildNode2(text_node!)
         }
 
         let (min, max) = text_node!.boundingBox
@@ -387,7 +407,7 @@ class B3DHost : B3D {
             let wait_action_2 = SCNAction.wait(duration: 0.5)
             let sequence_bis_2 = SCNAction.sequence([timeshift_action_bis_2, wait_action_2, fade_in_action_2])
             text2_node!.runAction(sequence_bis_2)
-            addSubChildNode(text2_node!)
+            addSubChildNode2(text2_node!)
         }
 
         let new_text_3 = Self.getDisplayTextFromIndexAndGroups(all_groups: text3_groups, group_index: counter)
@@ -409,7 +429,7 @@ class B3DHost : B3D {
             let wait_action_3 = SCNAction.wait(duration: 0.5)
             let sequence_bis_3 = SCNAction.sequence([timeshift_action_bis_3, wait_action_3, fade_in_action_3])
             text3_node!.runAction(sequence_bis_3)
-            addSubChildNode(text3_node!)
+            addSubChildNode2(text3_node!)
         }
     }
 
@@ -590,21 +610,21 @@ class B3DHost : B3D {
         }
         text_string = display_text.dropLastDot()
         text_node = createSCNTextNode(text_string!, size: 1, shift: 0)
-        addSubChildNode(text_node!)
+        addSubChildNode2(text_node!)
         let (min, max) = text_node!.boundingBox
         
         // Second line of text
         let display_text2 = ""
         text2_string = display_text2
         text2_node = createSCNTextNode(text2_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift)
-        addSubChildNode(text2_node!)
+        addSubChildNode2(text2_node!)
         let (min2, max2) = text2_node!.boundingBox
 
         // Third line of text
         let display_text3 = ""
         text3_string = display_text3
         text3_node = createSCNTextNode(text3_string!, size: 0.6, shift: (max.y - min.y) / 2 + Self.line_shift + (max2.y - min2.y) / 2 + Self.line_shift)
-        addSubChildNode(text3_node!)
+        addSubChildNode2(text3_node!)
     }
 
     // The associated Node has been updated, we may need to update the displayed values and the 3D model
