@@ -516,12 +516,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
               runnable = {
                   let y = runnable
               }
+             This code has a circular ref that creates a leak even if runnable is not invoked, simply because of the allocation of runnable
 
              // It must be written the following way:
               func runnable() -> () {
                   let y = runnable
               }
-
              Note that this function can use self
              */
 
