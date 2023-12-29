@@ -790,7 +790,7 @@ class Broadcast3D : SCNNode {
 // - multicast Bonjour service discovered
 class Link3D : SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
-    private let link_node_draw: SCNNode
+    private weak var link_node_draw: SCNNode?
     
     fileprivate var color: UIColor { UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
  //   fileprivate var height: Float { 0 }
@@ -808,7 +808,7 @@ class Link3D : SCNNode {
     }
     
     init(_ from_b3d: B3D, _ to_b3d: B3D) {
-        link_node_draw = SCNNode()
+        let _link_node_draw = SCNNode()
         super.init()
 
         self.from_b3d = from_b3d
@@ -816,9 +816,11 @@ class Link3D : SCNNode {
         from_b3d.addLinkRef(self)
         to_b3d.addLinkRef(self)
 
-        addChildNode(link_node_draw)
-        link_node_draw.geometry = SCNCylinder(radius: 0.03, height: 1)
-        link_node_draw.geometry!.firstMaterial!.diffuse.contents = color
+        addChildNode(_link_node_draw)
+        link_node_draw = _link_node_draw
+
+        _link_node_draw.geometry = SCNCylinder(radius: 0.03, height: 1)
+        _link_node_draw.geometry!.firstMaterial!.diffuse.contents = color
 
         let look_at_contraint = SCNLookAtConstraint(target: to_b3d.getSubNode())
         look_at_contraint.influenceFactor = 1
@@ -833,7 +835,7 @@ class Link3D : SCNNode {
             return transf
         }
         size_constraint.influenceFactor = 1
-        link_node_draw.constraints = [size_constraint]
+        _link_node_draw.constraints = [size_constraint]
         
         startBlinking()
         
@@ -841,6 +843,7 @@ class Link3D : SCNNode {
     }
 
     private func startBlinking() {
+        guard let link_node_draw else { return }
         let foo = link_node_draw.geometry!.firstMaterial!
         let animation = CABasicAnimation(keyPath: "transparency")
         animation.fromValue = 0.0
@@ -849,7 +852,6 @@ class Link3D : SCNNode {
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         foo.addAnimation(animation, forKey: "blink")
-
     }
     
     // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
