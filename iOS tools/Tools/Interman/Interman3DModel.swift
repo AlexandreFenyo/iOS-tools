@@ -171,22 +171,27 @@ struct ComponentTemplates {
 // Base class for 3D objects in a circle
 class B3D : SCNNode {
     static let default_scale: Float = 0.1
-    private let sub_node = SCNNode()
-    private let sub_node2 = SCNNode()
-    private var object_sub_node_ref: SCNNode
-    private var object_sub_node: SCNNode
+    private weak var sub_node: SCNNode?
+    private weak var sub_node2: SCNNode?
+    private weak var object_sub_node_ref: SCNNode?
+    private weak var object_sub_node: SCNNode?
     private var angle: Float = 0
     private var link_refs = Set<Link3D>()
 
     init(_ scn_node: SCNNode) {
-        sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
-        sub_node2.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
+        let _sub_node = SCNNode()
+        _sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
+        let _sub_node2 = SCNNode()
+        _sub_node2.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
         object_sub_node_ref = scn_node
-        object_sub_node = object_sub_node_ref.clone()
-        sub_node.addChildNode(object_sub_node)
+        let _object_sub_node = object_sub_node_ref!.clone()
+        _sub_node.addChildNode(_object_sub_node)
+        object_sub_node = _object_sub_node
         super.init()
-        addChildNode(sub_node)
-        addChildNode(sub_node2)
+        addChildNode(_sub_node)
+        sub_node = _sub_node
+        addChildNode(_sub_node2)
+        sub_node2 = _sub_node2
     }
     
     required init?(coder: NSCoder) {
@@ -194,6 +199,7 @@ class B3D : SCNNode {
     }
 
     func updateModelScale() -> Float {
+        guard let object_sub_node else { return 1 }
         let nhosts = Interman3DModel.shared.getNHosts()
         let space = 0.8 * 2 * .pi / (Float(max(nhosts, 15)) * B3D.default_scale)
         let (bb_min, bb_max) = object_sub_node.boundingBox
@@ -207,12 +213,12 @@ class B3D : SCNNode {
     func updateModel(_ scn_node: SCNNode) {
         if object_sub_node_ref === scn_node { return }
         object_sub_node_ref = scn_node
-        object_sub_node.removeFromParentNode()
-        object_sub_node = object_sub_node_ref.clone()
+        object_sub_node?.removeFromParentNode()
+        object_sub_node = object_sub_node_ref!.clone()
 
         _ = updateModelScale()
         
-        sub_node.addChildNode(object_sub_node)
+        sub_node?.addChildNode(object_sub_node!)
     }
     
     func addLinkRef(_ link: Link3D) {
@@ -236,18 +242,18 @@ class B3D : SCNNode {
     }
     
     fileprivate func addSubChildNode(_ child: SCNNode) {
-        sub_node.addChildNode(child)
+        sub_node?.addChildNode(child)
     }
 
     fileprivate func addSubChildNode2(_ child: SCNNode) {
-        sub_node2.addChildNode(child)
+        sub_node2?.addChildNode(child)
     }
 
-    fileprivate func getSubNode() -> SCNNode {
+    fileprivate func getSubNode() -> SCNNode? {
         sub_node
     }
 
-    fileprivate func getSubNode2() -> SCNNode {
+    fileprivate func getSubNode2() -> SCNNode? {
         sub_node2
     }
 
@@ -303,8 +309,8 @@ class B3D : SCNNode {
         
         // Disappear
         let duration = 1.0
-        getSubNode().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
-        getSubNode2().runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
+        getSubNode()?.runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
+        getSubNode2()?.runAction(SCNAction.move(to: SCNVector3(4, 0, 0), duration: duration))
         runAction(SCNAction.sequence([SCNAction.wait(duration: duration), SCNAction.removeFromParentNode()]))
     }
 }
@@ -316,14 +322,14 @@ class B3DHost : B3D {
     private static let line_shift: Float = 0.35
     
     private var host: Node
-    private var text_node, text2_node, text3_node: SCNNode?
+    private weak var text_node, text2_node, text3_node: SCNNode?
     private var text_string, text2_string, text3_string: String?
     private var (text_groups, text2_groups, text3_groups) = ([String](), [String](), [String]())
 
     override func updateModelScale() -> Float {
         let space = super.updateModelScale()
         // Scale text nodes
-        getSubNode2().scale = SCNVector3(B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0)
+        getSubNode2()?.scale = SCNVector3(B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0)
         return space
     }
     
