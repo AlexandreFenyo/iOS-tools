@@ -490,10 +490,42 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             last_forced_vertical_check = Date()
 
             var start_height = highest
-            
-            var runnable: ((SKNode, CGFloat) -> ())?
-            runnable = {
-                (node, t) in
+
+            /*
+             We encountered a data leak with this code:
+             var runnable: ((SKNode, CGFloat) -> ())?
+             runnable = {
+                 (node, t) in
+                 let elts = self.ts.getElements()
+                 let units = self.ts.getUnits()
+                 self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
+                 let check_h : Float
+                 (points, check_h, _, tse_displayed) = computePoints()
+                 drawPoints(&points, tse_displayed)
+                 if check_h != target_h {
+                     self.removeAllActions()
+                     start_height = self.highest
+                     target_h = check_h
+                     self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+                 }
+             }
+             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+
+             This was because of this code template:
+              var runnable: (() -> ())?
+              runnable = {
+                  let y = runnable
+              }
+
+             // It must be written the following way:
+              func runnable() -> () {
+                  let y = runnable
+              }
+
+             Note that this function can use self
+             */
+
+            func runnable(node: SKNode, t: CGFloat) -> () {
                 let elts = self.ts.getElements()
                 let units = self.ts.getUnits()
                 self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
@@ -504,10 +536,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     self.removeAllActions()
                     start_height = self.highest
                     target_h = check_h
-                    self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+                    self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable))
                 }
             }
-            run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+
+            run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable))
+            
         } else { drawPoints(&points, tse_displayed) }
     }
     
