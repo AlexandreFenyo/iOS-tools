@@ -751,16 +751,18 @@ class B3DHost : B3D {
 }
 
 class Broadcast3D : SCNNode {
-    private var broadcast_node_draw: SCNNode
-    private var torus: SCNTorus
+    private weak var broadcast_node_draw: SCNNode?
+    private weak var torus: SCNTorus?
 
     override init() {
-        broadcast_node_draw = SCNNode()
-        torus = SCNTorus(ringRadius: 0.1, pipeRadius: 0.01)
-        torus.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
-        broadcast_node_draw.geometry = torus
+        let _broadcast_node_draw = SCNNode()
+        let _torus = SCNTorus(ringRadius: 0.1, pipeRadius: 0.01)
+        _torus.firstMaterial!.diffuse.contents = UIColor(red: 255.0/255.0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1)
+        _broadcast_node_draw.geometry = _torus
         super.init()
-        addChildNode(broadcast_node_draw)
+        addChildNode(_broadcast_node_draw)
+        torus = _torus
+        broadcast_node_draw = _broadcast_node_draw
     }
     
     required init?(coder: NSCoder) {
@@ -768,7 +770,7 @@ class Broadcast3D : SCNNode {
     }
 
     fileprivate func firstAnim() {
-        torus.ringRadius = 0.1
+        torus?.ringRadius = 0.1
         let animation = CABasicAnimation(keyPath: "geometry.ringRadius")
         animation.repeatCount = .infinity
         animation.fromValue = 0.1
@@ -776,11 +778,11 @@ class Broadcast3D : SCNNode {
         animation.duration = 0.5
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
-        broadcast_node_draw.addAnimation(animation, forKey: "broadcast")
+        broadcast_node_draw?.addAnimation(animation, forKey: "broadcast")
     }
     
     fileprivate func removeAnim() {
-        broadcast_node_draw.removeAllAnimations()
+        broadcast_node_draw?.removeAllAnimations()
     }
 }
 
