@@ -168,6 +168,23 @@ struct ComponentTemplates {
     }
 }
 
+// https://stackoverflow.com/questions/24127587/how-do-i-declare-an-array-of-weak-references-in-swift
+class WeakLink3D: Hashable {
+    weak var link_3d: Link3D?
+
+    init(_ value: Link3D) {
+        link_3d = value
+    }
+    
+    static func == (lhs: WeakLink3D, rhs: WeakLink3D) -> Bool {
+        lhs.link_3d == rhs.link_3d
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        return hasher.combine(link_3d)
+    }
+}
+
 // Base class for 3D objects in a circle
 class B3D : SCNNode {
     static let default_scale: Float = 0.1
@@ -176,8 +193,11 @@ class B3D : SCNNode {
     private weak var object_sub_node_ref: SCNNode?
     private weak var object_sub_node: SCNNode?
     private var angle: Float = 0
-    private var link_refs = Set<Link3D>()
 
+//    private var link_refs = Set<Link3D>()
+    private var link_refs = Set<WeakLink3D>()
+
+    
     init(_ scn_node: SCNNode) {
         let _sub_node = SCNNode()
         _sub_node.simdScale = simd_float3(B3D.default_scale, B3D.default_scale, B3D.default_scale)
@@ -222,23 +242,23 @@ class B3D : SCNNode {
     }
     
     func addLinkRef(_ link: Link3D) {
-        link_refs.insert(link)
+        link_refs.insert(WeakLink3D(link))
     }
 
     func removeLinkRef(_ link: Link3D) {
-        link_refs.remove(link)
+        link_refs.remove(WeakLink3D(link))
     }
 
-    func getLinks() -> Set<Link3D> {
+    func getLinks() -> Set<WeakLink3D> {
         link_refs
     }
     
-    func getLinks(with: B3D) -> Set<Link3D> {
-        link_refs.filter { $0.getEnds().contains(with) }
+    func getLinks(with: B3D) -> Set<WeakLink3D> {
+        link_refs.filter { $0.link_3d == nil ? false : $0.link_3d!.getEnds().contains(with) }
     }
 
     func getLink3DScanNodes() -> Set<Link3DScanNode> {
-        link_refs.filter { $0 is Link3DScanNode } as! Set<Link3DScanNode>
+        link_refs.filter { $0.link_3d is Link3DScanNode } as! Set<Link3DScanNode>
     }
     
     fileprivate func addSubChildNode(_ child: SCNNode) {
@@ -301,7 +321,7 @@ class B3D : SCNNode {
     
     fileprivate func remove() {
         // Remove any link connected to this node
-        link_refs.forEach { $0.detach() }
+        link_refs.forEach { $0.link_3d?.detach() }
         
         // Stop any current movement
         simdPivot = presentation.simdPivot
@@ -867,6 +887,7 @@ class Link3D : SCNNode {
         if let from_b3d { from_b3d.removeLinkRef(self) }
         if let to_b3d { to_b3d.removeLinkRef(self) }
         removeFromParentNode()
+        constraints = nil
     }
 }
 
@@ -1159,7 +1180,7 @@ public class Interman3DModel : ObservableObject {
         }
 
         scanned_IPs.remove(address)
-        target.getLinks(with: local_node).forEach { $0.detach() }
+        target.getLinks(with: local_node).forEach { $0.link_3d?.detach() }
     }
 
     func notifyPortDiscovered(_ node: Node, _ port: UInt16) {
@@ -1237,7 +1258,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        target.getLinks(with: local_node).forEach { $0.detach() }
+        target.getLinks(with: local_node).forEach { $0.link_3d?.detach() }
     }
 
     func notifyFloodTCP(_ node: Node, _ address: IPAddress) {
@@ -1267,7 +1288,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        target.getLinks(with: local_node).forEach { $0.detach() }
+        target.getLinks(with: local_node).forEach { $0.link_3d?.detach() }
     }
     
     func notifyChargenTCP(_ node: Node, _ address: IPAddress) {
@@ -1297,7 +1318,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        target.getLinks(with: local_node).forEach { $0.detach() }
+        target.getLinks(with: local_node).forEach { $0.link_3d?.detach() }
     }
     
     func notifyBroadcast() {
@@ -1370,7 +1391,7 @@ public class Interman3DModel : ObservableObject {
             return
         }
 
-        guard let link3d_scan_node = _b3d_first_host.getLinks().first as? Link3DScanNode else {
+        guard let link3d_scan_node = _b3d_first_host.getLinks().first?.link_3d as? Link3DScanNode else {
             print("bad link")
             return
         }
