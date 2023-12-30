@@ -193,10 +193,7 @@ class B3D : SCNNode {
     private weak var object_sub_node_ref: SCNNode?
     private weak var object_sub_node: SCNNode?
     private var angle: Float = 0
-
-//    private var link_refs = Set<Link3D>()
     private var link_refs = Set<WeakLink3D>()
-
     
     init(_ scn_node: SCNNode) {
         let _sub_node = SCNNode()
