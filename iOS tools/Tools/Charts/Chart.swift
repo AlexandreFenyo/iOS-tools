@@ -222,12 +222,12 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func isCurvePointOnGrid(tse: TimeSeriesElement) -> Bool {
         return isCurvePointOnGrid(point: toPoint(tse: tse))
     }
-
+    
     // Check that a segment is not hidden
     private func isCurveSegmentOnGrid(from: CGPoint, to: CGPoint) -> Bool {
         return positionRelativeToScreen(point: from) == .onScreen || positionRelativeToScreen(point: to) == .onScreen || positionRelativeToScreen(point: from) != positionRelativeToScreen(point: to)
     }
-
+    
     // Position of a curve point relative to screen
     private func positionRelativeToScreen(point: CGPoint) -> PositionRelativeToScreen {
         let p = grid_node!.convert(point, from: curve_node!)
@@ -235,7 +235,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         if p.x > grid_full_width! { return .onRight }
         return .onScreen
     }
-
+    
     // Update everything that needs to be, when the width has changed because of auto-layout
     public func updateWidth() async {
         if let new_width = follow_view?.bounds.width, scene!.size.width != new_width {
@@ -344,7 +344,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     private func drawCurve() {
         // Actions created by drawPoints recreate components and draw the curve during vertical animations
         if hasActions() { return }
-
+        
         // Returns points to draw, highest value (if higher than ChartDefaults.minimum_highest) and the element corresponding to the highest value (if higher than ChartDefaults.minimum_highest)
         let computePoints: () -> ([CGPoint], Float, TimeSeriesElement?, TimeSeriesElement?) = {
             var highest : Float = ChartDefaults.minimum_highest
@@ -483,48 +483,48 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                 max_label.position = CGPoint(x: 0, y: -triangle_relative_height * 2)
             }
         }
-
+        
         var (points, target_h, _, tse_displayed) = computePoints()
         
         if highest != target_h {
             last_forced_vertical_check = Date()
-
+            
             var start_height = highest
-
+            
             /*
              We encountered a data leak with this code:
              var runnable: ((SKNode, CGFloat) -> ())?
              runnable = {
-                 (node, t) in
-                 let elts = self.ts.getElements()
-                 let units = self.ts.getUnits()
-                 self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
-                 let check_h : Float
-                 (points, check_h, _, tse_displayed) = computePoints()
-                 drawPoints(&points, tse_displayed)
-                 if check_h != target_h {
-                     self.removeAllActions()
-                     start_height = self.highest
-                     target_h = check_h
-                     self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
-                 }
+             (node, t) in
+             let elts = self.ts.getElements()
+             let units = self.ts.getUnits()
+             self.createChartComponentsFromElts(date: self.mode == .followDate ? Date() : self.current_date, max_val: Float(start_height) + (target_h - Float(start_height)) * Float(t) / Float(ChartDefaults.vertical_transition_duration), elts: elts, units: units)
+             let check_h : Float
+             (points, check_h, _, tse_displayed) = computePoints()
+             drawPoints(&points, tse_displayed)
+             if check_h != target_h {
+             self.removeAllActions()
+             start_height = self.highest
+             target_h = check_h
+             self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
+             }
              }
              run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable!))
-
+             
              This was because of this code template:
-              var runnable: (() -> ())?
-              runnable = {
-                  let y = runnable
-              }
+             var runnable: (() -> ())?
+             runnable = {
+             let y = runnable
+             }
              This code has a circular ref that creates a leak even if runnable is not invoked, simply because of the allocation of runnable
-
+             
              // It must be written the following way:
-              func runnable() -> () {
-                  let y = runnable
-              }
+             func runnable() -> () {
+             let y = runnable
+             }
              Note that this function can use self
              */
-
+            
             func runnable(node: SKNode, t: CGFloat) -> () {
                 let elts = self.ts.getElements()
                 let units = self.ts.getUnits()
@@ -539,7 +539,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
                     self.run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable))
                 }
             }
-
+            
             run(SKAction.customAction(withDuration: ChartDefaults.vertical_transition_duration, actionBlock: runnable))
             
         } else { drawPoints(&points, tse_displayed) }
@@ -849,15 +849,35 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public func registerGestureRecognizers(view: UIView, delta: CGFloat = 0) {
+        let simple_tap = UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:)))
+        simple_tap.numberOfTapsRequired = 1
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleTap(_:))))
+        view.addGestureRecognizer(simple_tap)
+
+        // Shoud be debugged: a double tap first call handleTap before calling handleDoubleTap
+        let double_tap = UITapGestureRecognizer(target: self, action: #selector(SKChartNode.handleDoubleTap(_:)))
+        double_tap.numberOfTapsRequired = 2
+        // This creates a strong ref to the target
+        view.addGestureRecognizer(double_tap)
+
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(SKChartNode.handlePan(_:))))
+        
         // This creates a strong ref to the target
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(SKChartNode.handlePinch(_:))))
-//        self.delta = delta
     }
-
+    
+    // Tap gesture: reset to followDate mode
+    @objc
+    func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
+        if mode != .manual || gesture.state != .ended { return }
+        Task {
+            mode = .followDate
+            grid_time_interval = initial_grid_time_interval
+            await createChartComponentsAsync(date: Date(), max_val: highest)
+        }
+    }
+    
     // Tap gesture: display value/date or a time series element or restart follow_date mode
     @objc
     func handleTap(_ gesture: UITapGestureRecognizer) {
