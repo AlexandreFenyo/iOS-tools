@@ -258,7 +258,13 @@ class B3D : SCNNode {
     }
 
     func getLink3DScanNodes() -> Set<Link3DScanNode> {
-        link_refs.filter { $0.link_3d is Link3DScanNode } as! Set<Link3DScanNode>
+        var retval = Set<Link3DScanNode>()
+        link_refs.forEach { weak_link_3d in
+            if weak_link_3d.link_3d! is Link3DScanNode {
+                retval.insert(weak_link_3d.link_3d! as! Link3DScanNode)
+            }
+        }
+        return retval
     }
     
     fileprivate func addSubChildNode(_ child: SCNNode) {
