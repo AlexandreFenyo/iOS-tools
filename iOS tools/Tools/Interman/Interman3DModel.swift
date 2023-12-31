@@ -858,7 +858,8 @@ class Link3D : SCNNode {
         look_at_contraint.isGimbalLockEnabled = false
         constraints = [look_at_contraint]
 
-        let size_constraint = SCNTransformConstraint(inWorldSpace: false) { node, transform in
+        let size_constraint = SCNTransformConstraint(inWorldSpace: false) { [weak self] node, transform in
+            guard let self else { return SCNMatrix4MakeScale(1, 1, 1) }
             let distance = simd_distance(simd_float3(self.presentation.worldPosition), simd_float3(to_b3d.presentation.worldPosition))
             var transf = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
             transf = SCNMatrix4Mult(SCNMatrix4MakeScale(1, distance / B3D.default_scale, 1), transf)
