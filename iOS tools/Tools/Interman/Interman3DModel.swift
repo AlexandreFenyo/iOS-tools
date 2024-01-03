@@ -355,8 +355,16 @@ class B3DHost : B3D {
         getSubNode2()?.scale = SCNVector3(B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0, B3D.default_scale * space / 3.0)
         return space
     }
-    
+
+    // Test crash dump recovery
+    func generateCrash() {
+        fatalError("salut")
+    }
+
     func getHost() -> Node {
+        // Uncomment to test crash dumps and ios device log console
+        // generateCrash()
+
         return host
     }
     
