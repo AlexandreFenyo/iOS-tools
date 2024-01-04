@@ -357,13 +357,31 @@ class B3DHost : B3D {
     }
 
     // Test crash dump recovery
-    func generateCrash() {
-        fatalError("salut")
+    // assert et fatalError sont pareils dans le crashdump (c'est un assert), mais différents dans les logs console
+    // assert n'est pas exécuté quand le scheme est associé à une build config de release
+    // https://developer.apple.com/documentation/swift/handling-cocoa-errors-in-swift
+    // @inline(never) pour avoir la ligne du code swift d'un crash
+    // il faudrait stocker les fatalerror sur disque pour les récupérer plus tard mais ne pas les lancer en Release
+    // les assert ne s'exécuteront pas si on est en Release, ça peut être intéressant de stocker aussi sur disque l'info
+    // il faudrait aussi stocker les unwrap qui vont planter (on ne peut pas les catcher), voire ne pas les exécuter mais stocker le problème
+    // il faudrait les faire apparaître dans la vue des traces au niveau debug, mais systématiquement les remettre quand on efface tout, pour pouvoir les voir facilement. Et proposer dans la conf de les effacer du disque.
+    // A FAIRE
+    @inline(never)
+    func generateCrash() throws {
+//        print("avant fatal")
+//        fatalError("salut")
+//        let x: Int? = nil ; let y = x!
+      // assert(false)
+        // fatalError("salut")
     }
 
     func getHost() -> Node {
         // Uncomment to test crash dumps and ios device log console
-        // generateCrash()
+        do {
+            try generateCrash()
+        } catch let error as NSError {
+            print("XXXX: catch \(error.domain)")
+        }
 
         return host
     }
@@ -1094,6 +1112,8 @@ public class Interman3DModel : ObservableObject {
         return b3d_host
     }
 
+    // @inline(never) pour debugguer plus facilement si un crash se reproduit (un crash depuis la méthode notifyNodeMerged() appelant cette méthode s'est produit)
+    @inline(never)
     private func detachB3DHostInstance(_ host: Node) -> B3DHost? {
         guard let b3d_host = (b3d_hosts.filter { $0.getHost() === host }).first else {
             return nil
@@ -1134,6 +1154,22 @@ public class Interman3DModel : ObservableObject {
     }
 
     // Sync with the main model
+    // 04/01/2024 : j'ai eu un crash sur mon iPad dont je ne peux pas récupérer les logs console et le crashdump indiquait cette méthode et assertionFailure(_:_:file:line:flags:)
+    /*
+     "exception" : {"codes":"0x0000000000000001, 0x000000018a1b19a8","rawCodes":[1,6611999144],"type":"EXC_BREAKPOINT","signal":"SIGTRAP"},
+     "termination" : {"flags":0,"code":5,"namespace":"SIGNAL","indicator":"Trace\/BPT trap: 5","byProc":"exc handler","byPid":1887},
+     "os_fault" : {"process":"iOS tools"},
+     "ktriageinfo" : "VM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\n",
+     "faultingThread" : 0,
+     */
+    // Ca a donc appelé une https://developer.apple.com/documentation/swift/assertionfailure(_:file:line:)
+    // il faudrait le catcher si possible pour stocker les paramètres
+    // deux moyens :
+    // https://medium.com/swift-programming/adding-try-catch-to-swift-71ab27bcb5b8
+    // https://developer.apple.com/documentation/swift/handling-cocoa-errors-in-swift
+    // car c'est une exception de Cocoa donc de C#
+    // @inline(never) pour debugguer plus facilement si ça se reproduit
+    @inline(never)
     func notifyNodeMerged(_ node: Node, _ into: Node) {
         if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
         let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!

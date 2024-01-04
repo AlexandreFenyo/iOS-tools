@@ -109,6 +109,83 @@ class RunAfterAnimation : NSObject, CAAnimationDelegate {
     }
 }
 
+struct Contact: Identifiable {
+    let id = UUID()
+    let name: String
+}
+// https://sarunw.com/posts/swiftui-list-multiple-selection/
+struct Filter: View {
+    @Binding var filter_active: Bool
+
+    @State var doesClose: Bool = true
+
+    let contacts = [
+            Contact(name: "John"), Contact(name: "Alice"), Contact(name: "Bob")
+    ]
+
+    @State private var multiSelection = Set<UUID>()
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Filter") {
+                    filter_active.toggle()
+                }
+                .padding(8)
+                .foregroundColor(Color(COLORS.standard_background))
+                .background(content: {
+                    Capsule()
+                        .foregroundColor(Color(COLORS.toolbar_background))
+                        .opacity(0.3)
+                })
+            }
+            
+            if filter_active {
+                // https://sarunw.com/posts/swiftui-list-multiple-selection/
+                // https://developer.apple.com/documentation/swiftui/list
+
+                
+                HStack {
+                    Spacer()
+                    ScrollViewReader { scrollViewProxy in
+                        
+                        ScrollView {
+                            VStack {
+                                Toggle(isOn: $doesClose) {
+                                        Label("Mute", systemImage: "speaker.slash.fill")
+                                }.toggleStyle(.button)
+                                
+                                Toggle("Close windows when quitting an app", isOn: $doesClose)
+                                    .toggleStyle(.button)
+                                
+                                Text("TCP/23 telnzefzefet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");
+                                Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");
+                                
+                                
+                                
+                            }.padding(12)
+                            
+                        }.frame(maxHeight: 400)
+//                            .background(Color(COLORS.standard_background).lighter().lighter().lighter())
+                        
+                    }
+                }
+                
+                
+                /*
+                 List(contacts, selection: $multiSelection) { contact in
+                 Text(contact.name)
+                 }*/
+                
+                
+                
+                
+            }
+        }            .padding([.horizontal], 24)
+
+    }
+}
 
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
@@ -128,7 +205,9 @@ struct Interman3DSwiftUIView: View {
     @State private var disable_buttons = false
     @State private var disable_auto_rotation_button = false
     @State private var disable_traces = true
-    
+
+    @State private var filter_active: Bool = true
+
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
     
@@ -596,7 +675,7 @@ struct Interman3DSwiftUIView: View {
         } else {
             rotateCamera(0, smooth: true, duration: 1)
         }
-
+        
         if camera_model.getCameraMode() == .topHost {
             camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
         } else  {
@@ -650,70 +729,85 @@ struct Interman3DSwiftUIView: View {
             }
             
             // Traces
-            if disable_traces == false {
-                GeometryReader { traceGeom in
-                    ScrollViewReader { scrollViewProxy in
-                        ZStack {
-                            ScrollView {
+            VStack {
+                if disable_traces == false {
+                    GeometryReader { traceGeom in
+                        VStack {
+                            ScrollViewReader { scrollViewProxy in
                                 ZStack {
-                                    LazyVStack(alignment: .leading, spacing: 0) {
-                                        Spacer().id(topID)
-                                        ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
-                                            Text(model.traces[i])
-                                                .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                            // .font(.footnote)
-                                                .lineLimit(nil)
-                                                .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                    ScrollView {
+                                        ZStack {
+                                            LazyVStack(alignment: .leading, spacing: 0) {
+                                                Spacer().id(topID)
+                                                ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
+                                                    Text(model.traces[i])
+                                                        .font(Font.custom("San Francisco", size: 10).monospacedDigit())
+                                                    // .font(.footnote)
+                                                        .lineLimit(nil)
+                                                        .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                                }
+                                                Text(model.traces.last!)
+                                                //                                         .font(.footnote)
+                                                    .font(Font.custom("San Francisco", size: 10).monospacedDigit())
+                                                    .id(bottomID)
+                                                    .lineLimit(nil)
+                                                    .foregroundColor(Color(COLORS.standard_background.darker().darker()))
+                                            }.padding()
+                                            
+                                            GeometryReader { scrollViewContentGeom in
+                                                Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
+                                            }
                                         }
-                                        Text(model.traces.last!)
-                                        //                                         .font(.footnote)
-                                            .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                            .id(bottomID)
-                                            .lineLimit(nil)
-                                            .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                                    }.padding()
-                                    
-                                    GeometryReader { scrollViewContentGeom in
-                                        Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                                     }
+                                    .onAppear() {
+                                        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                                            withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                        }
+                                        // Avoid situations when buttons are definitely disabled
+                                        disable_buttons = false
+                                    }
+                                    .onDisappear() {
+                                        timer?.invalidate()
+                                    }
+                                    VStack {
+                                        HStack {
+                                        }.background(Color.clear).lineLimit(1)
+                                        Spacer()
+                                    }
+                                    .padding()
                                 }
+                                .frame(height: traceGeom.size.height / 6)
+                                .background(content: {
+                                    Rectangle().scale(1.1)
+                                        .foregroundColor(Color(COLORS.toolbar_background))
+                                        .opacity(0.1)
+                                })
                             }
-                            .onAppear() {
-                                timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                                    withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                                }
-                                // Avoid situations when buttons are definitely disabled
-                                disable_buttons = false
-                            }
-                            .onDisappear() {
-                                timer?.invalidate()
-                            }
-                            VStack {
-                                HStack {
-                                }.background(Color.clear).lineLimit(1)
+                            
+                            HStack {
                                 Spacer()
+                                    Filter(filter_active: $filter_active).padding([.vertical], 10)
                             }
-                            .padding()
+                            
                         }
-                        .frame(height: traceGeom.size.height / 6)
-                        .background(content: {
-                            Rectangle().scale(1.1)
-                                .foregroundColor(Color(COLORS.toolbar_background))
-                                .opacity(0.1)
-                        })
+                        
                     }
+                } else {
+                    
+                    HStack {
+                        Spacer()
+                            Filter(filter_active: $filter_active).padding([.vertical], 10)
+                    }
+                    Spacer()
                 }
             }
             
             // Controls
             VStack {
                 Spacer()
-                
                 HStack {
                     HStack {
-                        
                         Spacer()
-                        
                         HStack {
                             Button {
                                 // interman3d_model.testIHMCreate()
