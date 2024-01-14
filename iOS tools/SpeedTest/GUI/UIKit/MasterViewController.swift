@@ -428,7 +428,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         super.viewDidLoad()
         Traces.getMessages { (messages: [Trace]?) in
             guard let messages else { return }
-            for message in messages {
+            for message in (messages.sorted { $0.creation! <= $1.creation! }) {
                 self.addTrace("persistent trace: \(message.message!)", date: message.creation!)
             }
         }
