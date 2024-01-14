@@ -62,6 +62,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
     func addTrace(_ content: String, level: LogLevel)
+    func addTrace(_ content: String, level: LogLevel, date: Date)
 }
 
 // foncé: 70 80 91
@@ -94,6 +95,10 @@ class DelaySync {
 class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String, level: LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
+    }
+
+    func addTrace(_ content: String, level: LogLevel = .ALL, date: Date) {
+        traces_view_controller?.addTrace(content, level: level, date: date)
     }
 
     @IBOutlet weak var update_button: UIBarButtonItem!
@@ -421,8 +426,16 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        addTrace("main: application started", level: .INFO)
+        Traces.getMessages { (messages: [Trace]?) in
+            guard let messages else { return }
+            for message in messages {
+                self.addTrace("persistent trace: \(message.message!)", date: message.creation!)
+            }
+        }
         
+        // No more useful since a persistent trace is addded at the start of AppDelegate.application()
+        // addTrace("main: application launched", level: .INFO)
+
         // Couleur du Edit
         navigationController?.navigationBar.tintColor = COLORS.leftpannel_topbar_buttons
         // Couleur des boutons en bas (reload par ex.)
