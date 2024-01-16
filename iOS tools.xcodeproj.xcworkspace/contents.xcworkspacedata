@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:iOS tools/Tools/Persistent/Trace+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:iOS tools/Tools/Persistent/Trace+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:iOS tools.xcodeproj">
    </FileRef>
    <FileRef
