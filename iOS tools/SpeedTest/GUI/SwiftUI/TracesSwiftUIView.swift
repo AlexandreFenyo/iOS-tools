@@ -56,12 +56,13 @@ public class TracesViewModel : ObservableObject {
     
     fileprivate func clear() {
         traces = [ "" ]
+        Traces.deleteMessages()
     }
     
-    public func append(_ str: String, level _level: LogLevel = .ALL) {
+    public func append(_ str: String, level _level: LogLevel = .ALL, date _date: Date? = nil) {
         if _level.rawValue <= level.rawValue {
             let level = log_level_to_string[_level]!
-            traces.append(df.string(from: Date()) + " [" + level + "]: " + str)
+            traces.append(df.string(from: _date ?? Date()) + " [" + level + "]: " + str)
         }
     }
     

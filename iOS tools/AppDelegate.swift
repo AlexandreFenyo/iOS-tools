@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 import ModelIO
 import Network
+import CoreData
 
 // extension UIApplication {}
 
@@ -19,7 +20,17 @@ import Network
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
     public var window: UIWindow?
-    
+
+    lazy var persistentContainer: NSPersistentContainer = {
+            let container = NSPersistentContainer(name: "ToolsDataModel")
+            container.loadPersistentStores { description, error in
+                if let error = error {
+                    fatalError("Unable to load persistent stores: \(error)")
+                }
+            }
+            return container
+        }()
+
     public var local_chargen_service: NetService?
     public var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
     public var local_discard_service: NetService?
@@ -78,6 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
         _ = DBMaster.shared
+        
+        Traces.addMessage("main: application started")
         
         InitTCPPort2Service()
         
