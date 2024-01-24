@@ -36,11 +36,17 @@ public struct SaveTraceMacro: ExpressionMacro {
         }
 
         return """
+            Traces.addMessage(\(argument), fct: #function, path: #file, line: #line)
+        """
+
+        /*
+        return """
           {
             var result: String = Traces.addMessage(\(argument), fct: #function, path: #file, line: #line)
             return result
           }()
         """
+        */
     }
 }
 

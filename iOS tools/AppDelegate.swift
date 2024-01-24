@@ -11,6 +11,7 @@ import SwiftUI
 import ModelIO
 import Network
 import CoreData
+import iOSToolsMacros
 
 // extension UIApplication {}
 
@@ -91,6 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = DBMaster.shared
         
         Traces.addMessage("main: application started")
+        // _ = #saveTrace("main: application started")
         
         InitTCPPort2Service()
         
