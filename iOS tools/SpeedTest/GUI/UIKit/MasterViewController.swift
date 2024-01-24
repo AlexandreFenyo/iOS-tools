@@ -45,6 +45,7 @@
 
 import UIKit
 import CTHelp
+import iOSToolsMacros
 
 enum NewRunAction {
     case SCAN_TCP
@@ -358,17 +359,17 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    var _x: Int = 0
+    // var _x: Int = 0
     @IBAction func debug_pressed(_ sender: Any) {
-        // A SUPPRIMER - pour tester les traces des fatal errors
-        let x = self._x
-        let y = 5 / x
-        if x == 0 { fatalError(Traces.addMessage("ici", fct: #function, path: #file, line: #line)) }
-        
+        // pour tester les traces des fatal errors
+        // let x = self._x
+        // let y = 5 / x
+        // if x == 0 { fatalError(Traces.addMessage("ici", fct: #function, path: #file, line: #line)) }
+
         popUp(NSLocalizedString("Target List", comment: "Target List"), NSLocalizedString("Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", comment: "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet."), "OK")
 
         
-        //        let node = Node()
+//        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
 //        node.v4_addresses.insert(IPv4Address("8.8.8.8")!)
 //        node.v4_addresses.insert(IPv4Address("192.168.0.6")!)

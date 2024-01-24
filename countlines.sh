@@ -1,4 +1,4 @@
 #!/bin/zsh
 
-wc -l ./iOS\ tools/**/*.swift iOS\ tools/**/*.[ch]
+wc -l ./iOS\ tools/**/*.swift ./iOSToolsMacros/**/*.swift iOS\ tools/**/*.[ch]
 
