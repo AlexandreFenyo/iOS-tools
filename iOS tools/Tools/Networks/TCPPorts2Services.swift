@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 // pour produire le fichier de conf :
 // cat /etc/services | grep /tcp | grep -v /udp | egrep -v '^(#| )' | sed 's,/tcp.*,,' | awk '{ print $2" "$1; }' | sort -u -nk 1
@@ -36,7 +37,7 @@ public func InitTCPPort2Service() {
                 }
             }
         } catch {
-            fatalError("no tcpports.txt bundled file")
+            #fatalError("no tcpports.txt bundled file")
         }
     }
 }

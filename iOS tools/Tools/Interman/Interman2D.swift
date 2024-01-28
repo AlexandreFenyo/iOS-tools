@@ -8,6 +8,7 @@
 
 import Foundation
 import SpriteKit
+import iOSToolsMacros
 
 class Interman2DScene: SKScene {
     override func didMove(to view: SKView) {
@@ -28,6 +29,6 @@ class Interman2DScene: SKScene {
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 }

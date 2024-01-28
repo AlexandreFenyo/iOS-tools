@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 actor LocalChargenSync {
     private let local_chargen_client: LocalChargenClient
@@ -48,7 +49,7 @@ class LocalChargenClient : Thread {
     public init(address: IPAddress) {
         let ret = localChargenClientOpen()
         if ret != 0 {
-            fatalError()
+            #fatalError("init")
         }
         self.address = address
     }
@@ -58,7 +59,7 @@ class LocalChargenClient : Thread {
         let ret = localChargenClientClose()
         if ret != 0 {
             // Ca arrive quand j'utiliser simulateur iPadPro 12.9Po et que je fais une heat map
-            print("fatalError 1")
+            _ = #saveTrace("fatalError 1")
 //            fatalError()
         }
     }
@@ -67,7 +68,7 @@ class LocalChargenClient : Thread {
     public func stop() {
         let ret = localChargenClientStop()
         if ret != 0 {
-            print("fatalError 2")
+            _ = #saveTrace("fatalError 2")
 //            fatalError()
         }
     }
@@ -75,14 +76,14 @@ class LocalChargenClient : Thread {
     // Main thread
     public func getNRead() -> Int {
         let ret = localChargenClientGetNRead()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getNRead") }
         return ret
     }
     
     // Main thread
     public func getLastErrno() -> Int32 {
         let ret = localChargenClientGetLastErrorNo()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getLastErrno") }
         return ret
     }
 

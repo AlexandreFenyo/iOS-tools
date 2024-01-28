@@ -11,6 +11,7 @@
 // - les SockAddr permettent de convertir des sock_addr en IPAddress
 
 import Foundation
+import iOSToolsMacros
 
 // reproduire long timeout : blocage step 1 si wifi avec DNS manuel vers 1.2.3.4 et hostname pas dans le cache
 public func resolveHostname(_ target_name: String, _ ipv4: Bool) async -> String? {
@@ -66,12 +67,12 @@ public class SockAddr {
             return SockAddr6(saddrdata)!
 
         default:
-            fatalError("bad address family")
+            fatalError(#saveTrace("bad address family"))
         }
     }
     
     public func getIPAddress() -> IPAddress? {
-        fatalError("should not be called")
+        fatalError(#saveTrace("should not be called"))
     }
 
     // pour debug
@@ -103,7 +104,7 @@ public class SockAddr {
     }
     
     public func getFamily() -> Int32 {
-        fatalError("should not be called")
+        fatalError(#saveTrace("should not be called"))
     }
 }
 
@@ -149,7 +150,7 @@ public class IPAddress : Hashable {
     fileprivate let inaddr: Data
 
     public func hash(into hasher: inout Hasher) {
-        fatalError("should not be called")
+        fatalError(#saveTrace("should not be called"))
     }
     
     fileprivate init(_ inaddr: Data) {
@@ -177,15 +178,15 @@ public class IPAddress : Hashable {
     }
 
     public func getFamily() -> Int32 {
-        fatalError("getFamily() on IPAddress")
+        fatalError(#saveTrace("getFamily() on IPAddress"))
     }
 
     public func toSockAddress() -> SockAddr? {
-        fatalError("toSockAddress() on IPAddress")
+        fatalError(#saveTrace("toSockAddress() on IPAddress"))
     }
 
     public func toSockAddress(port: UInt16) -> SockAddr? {
-        fatalError("toSockAddress(port) on IPAddress")
+        fatalError(#saveTrace("toSockAddress(port) on IPAddress"))
     }
     
     public func resolveHostName() -> String? {
@@ -198,7 +199,7 @@ public class IPAddress : Hashable {
     }
 
     private func map(netmask: IPAddress, _ map: (UInt8, UInt8) -> UInt8) -> Data {
-        if netmask.inaddr.count != inaddr.count { fatalError("incompatible types") }
+        if netmask.inaddr.count != inaddr.count { fatalError(#saveTrace("incompatible types")) }
 
         var addr = inaddr
         let mask_bytes = [UInt8](netmask.inaddr)
@@ -226,19 +227,19 @@ public class IPAddress : Hashable {
     }
 
     public func and(_ netmask: IPAddress) -> IPAddress {
-        fatalError("and on IPAddress")
+        fatalError(#saveTrace("and on IPAddress"))
     }
     
     public func or(_ netmask: IPAddress) -> IPAddress {
-        fatalError("or on IPAddress")
+        fatalError(#saveTrace("or on IPAddress"))
     }
     
     public func xor(_ netmask: IPAddress) -> IPAddress {
-        fatalError("xor on IPAddress")
+        fatalError(#saveTrace("xor on IPAddress"))
     }
 
     public func next() -> IPAddress {
-        fatalError("next on IPAddress")
+        fatalError(#saveTrace("next on IPAddress"))
     }
 
     public static func == (lhs: IPAddress, rhs: IPAddress) -> Bool {
@@ -258,17 +259,21 @@ public class IPAddress : Hashable {
             }
         }
 
-        fatalError("should not be called")
+        #fatalError("equality")
+        return false
     }
 
     func copy(with zone: NSZone? = nil) -> Any {
-        fatalError("copy() on IPAddress")
+        fatalError(#saveTrace("copy() on IPAddress"))
     }
 
     static func isLowerThan(lhs: IPAddress, rhs: IPAddress) -> Bool {
         return withUnsafeBytes(of: lhs.inaddr) { (xp) -> Bool in
             withUnsafeBytes(of: rhs.inaddr, { (yp) -> Bool in
-                if xp.count != yp.count { fatalError() }
+                if xp.count != yp.count {
+                    #fatalError("isLowerThan")
+                    return false
+                }
                 for i in 0..<xp.count { if xp[i] != yp[i] { return xp[i] < yp[i] } }
                 return false
             })
@@ -276,7 +281,8 @@ public class IPAddress : Hashable {
     }
 
     static func < (lhs: IPAddress, rhs: IPAddress) -> Bool {
-        fatalError("< on IPAddress")
+        #fatalError("< on IPAddress")
+        return false
     }
 }
 
@@ -493,27 +499,27 @@ public class IPv6Address : IPAddress, Comparable {
 
     public override func and(_ netmask: IPAddress) -> IPAddress {
         if (netmask as! IPv6Address).scope != 0 {
-            fatalError("invalid scope for netmask")
+            #fatalError("invalid scope for netmask")
         }
         return IPv6Address(super._and(netmask), scope: scope)
     }
 
     public override func or(_ netmask: IPAddress) -> IPAddress {
         if (netmask as! IPv6Address).scope != 0 {
-            fatalError("invalid scope for netmask")
+            #fatalError("invalid scope for netmask")
         }
         return IPv6Address(super._or(netmask), scope: scope)
     }
 
     public override func xor(_ netmask: IPAddress) -> IPAddress {
         if (netmask as! IPv6Address).scope != 0 {
-            fatalError("invalid scope for netmask")
+            #fatalError("invalid scope for netmask")
         }
         return IPv6Address(super._xor(netmask), scope: scope)
     }
 
     public override func next() -> IPAddress {
-        fatalError("next on IPv6Address")
+        fatalError(#saveTrace("next on IPv6Address"))
     }
 
     public func isULA() -> Bool {
@@ -547,8 +553,8 @@ public class IPv6Address : IPAddress, Comparable {
 }
 
 struct IPNetwork : Hashable, Equatable {
-    public let ip_address : IPAddress
-    public let mask_len : UInt8
+    public let ip_address: IPAddress
+    public let mask_len: UInt8
     
     func hash(into hasher: inout Hasher) {
         if let addr = ip_address as? IPv4Address {
@@ -556,7 +562,7 @@ struct IPNetwork : Hashable, Equatable {
         } else if let addr = ip_address as? IPv6Address {
             hasher.combine(addr)
         } else {
-            fatalError("invalid address family")
+            #fatalError("invalid address family")
         }
 
         hasher.combine(mask_len)
@@ -578,7 +584,8 @@ struct IPNetwork : Hashable, Equatable {
         case AF_INET6:
             return lhs.ip_address as! IPv6Address == rhs.ip_address as! IPv6Address && lhs.mask_len == rhs.mask_len
         default:
-            fatalError("invalid family")
+            #fatalError("invalid family")
+            return false
         }
     }
 }

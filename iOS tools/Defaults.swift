@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import SpriteKit
+import iOSToolsMacros
 
 // A mode to make screenshots
 let demo_mode = false
@@ -402,7 +403,8 @@ extension Color {
         var a: CGFloat = 0
 
         guard UIColor(self).getHue(&h, saturation: &s, brightness: &b, alpha: &a) else {
-            fatalError("getHue()")
+            #fatalError("getHue()")
+            return (hue: 1, saturation: 1, brightness: 1, opacity: 1)
         }
         
         return (hue: Double(h), saturation: Double(s), brightness: Double(b), opacity: Double(a))

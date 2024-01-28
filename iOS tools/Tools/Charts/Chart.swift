@@ -51,6 +51,7 @@ import UIKit
 import QuartzCore
 import SceneKit
 import SpriteKit
+import iOSToolsMacros
 
 // Default values
 struct ChartDefaults {
@@ -105,7 +106,7 @@ class SKExtLabelNode : SKLabelNode {
     }
     
     public required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 }
 
@@ -994,7 +995,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     public required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 }
 

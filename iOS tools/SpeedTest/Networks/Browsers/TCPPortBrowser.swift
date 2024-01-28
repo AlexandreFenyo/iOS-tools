@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 // en mode debug, le grand nombre de logs fait qu'on croit que ça ne s'arrête pas quand on fait stop, c'est simplement le buffer de logs qui est devenu énorme et qui ne se vide pas assez vite, on a donc des logs anciens qui continuent à défiler
 let debug = false
@@ -143,7 +144,8 @@ class TCPPortBrowser {
                         let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
                         if s < 0 {
                             GenericTools.perror("socket")
-                            fatalError("browse: socket")
+                            #fatalError("browse: socket")
+                            return
                         }
                         if debug { print(addr.toNumericString()!, "socket fd:", s) }
                         
@@ -153,7 +155,8 @@ class TCPPortBrowser {
                         if (ret < 0) {
                             GenericTools.perror("fcntl")
                             close(s)
-                            fatalError("browse: fcntl")
+                            #fatalError("browse: fcntl")
+                            return
                         }
 
                         /* TROP consommateur de CPU, ça ralentit tout le processus

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
 class NetworkBrowser {
@@ -141,7 +142,8 @@ class NetworkBrowser {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
-                fatalError("browse: socket")
+                #fatalError("browse: socket")
+                return
             }
             
             // Set timeout for no answer
@@ -150,14 +152,16 @@ class NetworkBrowser {
             if ret < 0 {
                 GenericTools.perror("setsockopt")
                 close(s)
-                fatalError("browse: setsockopt")
+                #fatalError("browse: setsockopt")
+                return
             }
 
             let s6 = socket(PF_INET6, SOCK_DGRAM, getprotobyname("icmp6").pointee.p_proto)
             if s6 < 0 {
                 GenericTools.perror("socket6")
                 close(s)
-                fatalError("browse: socket6")
+                #fatalError("browse: socket6")
+                return
             }
             
             // Set timeout for no answer
@@ -166,7 +170,8 @@ class NetworkBrowser {
                 GenericTools.perror("setsockopt")
                 close(s)
                 close(s6)
-                fatalError("browse: setsockopt")
+                #fatalError("browse: setsockopt")
+                return
             }
 
             let dispatchGroup = DispatchGroup()

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import iOSToolsMacros
 
 /*
  voici la commande adéquate sur macOS :
@@ -205,7 +206,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                     if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
 
                 default:
-                    fatalError("can not be here")
+                    #fatalError("can not be here")
                 }
             }
         }

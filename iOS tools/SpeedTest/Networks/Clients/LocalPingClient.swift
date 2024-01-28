@@ -8,12 +8,13 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 class LocalPingClient : Thread {
-    private let address : IPAddress
-    private var last_nread : Int?
-    private var last_date : Date?
-    private let count : Int32
+    private let address: IPAddress
+    private var last_nread: Int?
+    private var last_date: Date?
+    private let count: Int32
     private let initial_delay: useconds_t
     
     // Dedicated background Thread
@@ -35,7 +36,7 @@ class LocalPingClient : Thread {
     init(address: IPAddress, count: Int32, initial_delay: useconds_t) {
         let ret = localPingClientOpen()
         if ret != 0 {
-            fatalError()
+            #fatalError("init")
         }
         self.address = address
         self.count = count
@@ -46,7 +47,7 @@ class LocalPingClient : Thread {
     func close() {
         let ret = localPingClientClose()
         if ret != 0 {
-            fatalError()
+            #fatalError("close")
         }
     }
     
@@ -54,7 +55,7 @@ class LocalPingClient : Thread {
     func stop() {
         let ret = localPingClientStop()
         if ret != 0 {
-            fatalError()
+            #fatalError("stop")
         }
     }
     
@@ -81,7 +82,7 @@ class LocalPingClient : Thread {
     func setDelay(delay: useconds_t) {
         let ret = localPingClientSetDelay(delay);
         if ret != 0 {
-            fatalError()
+            #fatalError("setDelay")
         }
     }
 }

@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import SceneKit
+import iOSToolsMacros
 
 // Blender
 // https://emily-45402.medium.com/building-3d-assets-in-blender-for-ios-developers-c47535755f18
@@ -212,7 +213,7 @@ class B3D : SCNNode {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     func updateModelScale() -> Float {
@@ -358,7 +359,7 @@ class B3DHost : B3D {
 
     // Test crash dump recovery
     func generateCrash() {
-        fatalError("salut")
+        fatalError("generated crash")
     }
 
     func getHost() -> Node {
@@ -783,7 +784,7 @@ class B3DHost : B3D {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 }
 
@@ -803,7 +804,7 @@ class Broadcast3D : SCNNode {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     fileprivate func firstAnim() {
@@ -836,7 +837,7 @@ class Link3D : SCNNode {
     fileprivate var height: Float { -2 * B3D.default_scale }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     func getEnds() -> Set<B3D> {
@@ -905,7 +906,7 @@ class Link3D : SCNNode {
 
 class Link3DScanNode : Link3D {
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -920,7 +921,7 @@ class Link3DPortDiscovered : Link3D {
     override fileprivate var height: Float { -B3D.default_scale }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     init(_ from_b3d: B3D, _ to_b3d: B3D, _ port: UInt16) {
@@ -934,7 +935,7 @@ class Link3DPortDiscovered : Link3D {
 
 class Link3DFloodUDP : Link3D {
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -944,7 +945,7 @@ class Link3DFloodUDP : Link3D {
 
 class Link3DFloodTCP : Link3D {
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -954,7 +955,7 @@ class Link3DFloodTCP : Link3D {
 
 class Link3DChargenTCP : Link3D {
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -964,7 +965,7 @@ class Link3DChargenTCP : Link3D {
 
 class Link3DICMPRequest : Link3D {
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -980,7 +981,7 @@ class Link3DICMPResponse : Link3D {
     override fileprivate var height: Float { -B3D.default_scale }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
@@ -1115,7 +1116,8 @@ public class Interman3DModel : ObservableObject {
         for key in node_to_b3d_host.keys {
             if key == node { return key }
         }
-        fatalError("node_to_b3d_host inconsistency")
+        #fatalError("node_to_b3d_host inconsistency")
+        return Node()
     }
 
     // Sync with the main model
@@ -1126,7 +1128,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeRemoved(_ node: Node) {
-        if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
+        if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeRemoved") }
 
         guard let b3d_host = detachB3DSimilarHost(node) else { return }
         updateAngles()
@@ -1135,7 +1137,7 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     func notifyNodeMerged(_ node: Node, _ into: Node) {
-        if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
+        if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeMerged") }
         let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
         node_to_b3d_host.remove(at: idx)
 

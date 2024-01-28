@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 actor LocalDiscardSync {
     private let local_discard_client: LocalDiscardClient
@@ -25,9 +26,9 @@ actor LocalDiscardSync {
 }
 
 class LocalDiscardClient : Thread {
-    private let address : IPAddress
-    private var last_nwrite : Int?
-    private var last_date : Date?
+    private let address: IPAddress
+    private var last_nwrite: Int?
+    private var last_date: Date?
     
     // Dedicated background Thread
     override internal func main() {
@@ -48,7 +49,7 @@ class LocalDiscardClient : Thread {
     public init(address: IPAddress) {
         let ret = localDiscardClientOpen()
         if ret != 0 {
-            fatalError()
+            #fatalError("init")
         }
         self.address = address
     }
@@ -57,7 +58,7 @@ class LocalDiscardClient : Thread {
     public func close() {
         let ret = localDiscardClientClose()
         if ret != 0 {
-            fatalError()
+            #fatalError("close")
         }
     }
     
@@ -65,21 +66,21 @@ class LocalDiscardClient : Thread {
     public func stop() {
         let ret = localDiscardClientStop()
         if ret != 0 {
-            fatalError()
+            #fatalError("stop")
         }
     }
     
     // Main thread
     public func getNWrite() -> Int {
         let ret = localDiscardClientGetNWrite()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getNWrite") }
         return ret
     }
 
     // Main thread
     public func getLastErrno() -> Int32 {
         let ret = localChargenClientGetLastErrorNo()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getLastErrno") }
         return ret
     }
 

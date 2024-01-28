@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import iOSToolsMacros
 
 actor LocalFloodSync {
     private let local_flood_client: LocalFloodClient
@@ -48,7 +49,7 @@ class LocalFloodClient : Thread {
     public init(address: IPAddress) {
         let ret = localFloodClientOpen()
         if ret != 0 {
-            fatalError()
+            #fatalError("init")
         }
         self.address = address
     }
@@ -57,7 +58,7 @@ class LocalFloodClient : Thread {
     fileprivate func close() {
         let ret = localFloodClientClose()
         if ret != 0 {
-            fatalError()
+            #fatalError("close")
         }
     }
     
@@ -65,21 +66,21 @@ class LocalFloodClient : Thread {
     fileprivate func stop() {
         let ret = localFloodClientStop()
         if ret != 0 {
-            fatalError()
+            #fatalError("stop")
         }
     }
     
     // Main thread
     public func getNWrite() -> Int {
         let ret = localFloodClientGetNWrite()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getNWrite") }
         return ret
     }
     
     // Main thread
     public func getThroughput() -> Double {
         let ret = localFloodClientGetNWrite()
-        if ret < 0 { fatalError() }
+        if ret < 0 { #fatalError("getThroughput") }
         let now = Date()
         let retval = 8 * Double.init(ret - last_nwrite!) / now.timeIntervalSince(last_date!)
         last_nwrite = ret

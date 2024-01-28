@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import iOSToolsMacros
 
 public enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
@@ -26,8 +27,12 @@ public class DomainPart : Hashable, Comparable {
         hasher.combine(name)
     }
 
-    public init(_ name : String) {
-        if name.isEmpty { fatalError("DomainPart") }
+    public init(_ name: String) {
+        if name.isEmpty {
+            #fatalError("DomainPart")
+            self.name = "empty_domain_part"
+            return
+        }
         self.name = name
     }
 
@@ -47,8 +52,12 @@ public class DomainPart : Hashable, Comparable {
 // A host part must not contain a dot
 // ex: www, localhost
 public class HostPart : DomainPart {
-    public override init(_ name : String) {
-        if name.contains(".") { fatalError("HostPart") }
+    public override init(_ name: String) {
+        if name.contains(".") {
+            #fatalError("HostPart")
+            super.init("empty_host_part")
+            return
+        }
         super.init(name)
     }
 }
@@ -537,7 +546,7 @@ class DBMaster {
                     networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
                     
                 default:
-                    fatalError("bad address family")
+                    #fatalError("bad address family")
                 }
             }
             idx += 1

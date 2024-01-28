@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import iOSToolsMacros
 
 class RoundedCornerView : UIView {
     let radius, startAngle, endAngle: CGFloat
@@ -38,6 +39,6 @@ class RoundedCornerView : UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
 }

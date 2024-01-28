@@ -17,6 +17,8 @@ import iOSToolsMacros
 
 // bug : je lance un update et je passe dans l'onglet traces et je reviens une fois qu'il y a des nouveaux noeuds => exception
 
+let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! Bool
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
@@ -26,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let container = NSPersistentContainer(name: "ToolsDataModel")
             container.loadPersistentStores { description, error in
                 if let error = error {
+                    // Do not log this error using #fatalError() nor #saveTrace() because it would not be saved, since the persistant store is not loaded
                     fatalError("Unable to load persistent stores: \(error)")
                 }
             }
@@ -106,10 +109,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController//,
 //            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
                 //            let devices = masterViewController.devices[.localGateway]
-        else { fatalError() }
+        else { fatalError(#saveTrace("application")) }
 
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
-        else { fatalError() }
+        else { fatalError(#saveTrace("application / intermanViewController")) }
 
         
         // Set the first device displayed in the detail view controller

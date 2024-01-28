@@ -30,7 +30,7 @@ public struct SaveTraceMacro: ExpressionMacro {
         of node: some FreestandingMacroExpansionSyntax,
         in context: some MacroExpansionContext
     ) -> ExprSyntax {
-        print("XXXX: Expanding iOS tools macro")
+        print("XXXX: Expanding SaveTraceMacro macro")
         guard let argument = node.argumentList.first?.expression else {
             fatalError("compiler bug: the macro does not have any arguments")
         }
@@ -50,10 +50,31 @@ public struct SaveTraceMacro: ExpressionMacro {
     }
 }
 
+public struct FatalErrorMacro: ExpressionMacro {
+    public static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+    ) -> ExprSyntax {
+        print("XXXX: Expanding FatalErrorMacro macro")
+        guard let argument = node.argumentList.first?.expression else {
+            fatalError("compiler bug: the macro does not have any arguments")
+        }
+
+        return """
+            {
+                let _message = Traces.addMessage(\(argument), fct: #function, path: #file, line: #line)
+                print("XXXX: \\(_message)")
+                if isAppResilient == false { fatalError(_message) }
+            }()
+        """
+    }
+}
+
 @main
 struct iOSToolsMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         StringifyMacro.self,
-        SaveTraceMacro.self
+        SaveTraceMacro.self,
+        FatalErrorMacro.self
     ]
 }
