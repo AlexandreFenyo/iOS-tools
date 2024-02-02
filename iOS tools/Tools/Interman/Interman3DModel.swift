@@ -364,7 +364,11 @@ class B3DHost : B3D {
 
     func getHost() -> Node {
         // Uncomment to test crash dumps and ios device log console
-        // generateCrash()
+        do {
+            try generateCrash()
+        } catch let error as NSError {
+            print("XXXX: catch \(error.domain)")
+        }
 
         return host
     }
@@ -1095,6 +1099,8 @@ public class Interman3DModel : ObservableObject {
         return b3d_host
     }
 
+    // @inline(never) pour debugguer plus facilement si un crash se reproduit (un crash depuis la méthode notifyNodeMerged() appelant cette méthode s'est produit)
+    @inline(never)
     private func detachB3DHostInstance(_ host: Node) -> B3DHost? {
         guard let b3d_host = (b3d_hosts.filter { $0.getHost() === host }).first else {
             return nil
@@ -1136,6 +1142,22 @@ public class Interman3DModel : ObservableObject {
     }
 
     // Sync with the main model
+    // 04/01/2024 : j'ai eu un crash sur mon iPad dont je ne peux pas récupérer les logs console et le crashdump indiquait cette méthode et assertionFailure(_:_:file:line:flags:)
+    /*
+     "exception" : {"codes":"0x0000000000000001, 0x000000018a1b19a8","rawCodes":[1,6611999144],"type":"EXC_BREAKPOINT","signal":"SIGTRAP"},
+     "termination" : {"flags":0,"code":5,"namespace":"SIGNAL","indicator":"Trace\/BPT trap: 5","byProc":"exc handler","byPid":1887},
+     "os_fault" : {"process":"iOS tools"},
+     "ktriageinfo" : "VM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\nVM - (arg = 0x3) mach_vm_allocate_kernel failed within call to vm_map_enter\n",
+     "faultingThread" : 0,
+     */
+    // Ca a donc appelé une https://developer.apple.com/documentation/swift/assertionfailure(_:file:line:)
+    // il faudrait le catcher si possible pour stocker les paramètres
+    // deux moyens :
+    // https://medium.com/swift-programming/adding-try-catch-to-swift-71ab27bcb5b8
+    // https://developer.apple.com/documentation/swift/handling-cocoa-errors-in-swift
+    // car c'est une exception de Cocoa donc de C#
+    // @inline(never) pour debugguer plus facilement si ça se reproduit
+    @inline(never)
     func notifyNodeMerged(_ node: Node, _ into: Node) {
         if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeMerged") }
         let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
