@@ -364,11 +364,12 @@ class B3DHost : B3D {
 
     func getHost() -> Node {
         // Uncomment to test crash dumps and ios device log console
+        /*
         do {
             try generateCrash()
         } catch let error as NSError {
             print("XXXX: catch \(error.domain)")
-        }
+        }*/
 
         return host
     }

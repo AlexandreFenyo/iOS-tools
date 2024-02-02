@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -48,7 +48,7 @@
 		0040F94AF3C9D8477623A7668DEA9D07 /* Pods-iOS tools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-iOS tools.release.xcconfig"; sourceTree = "<group>"; };
 		05FE0422E57F9D7DE1FEAFECAD995B26 /* Pods-iOS tools-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-iOS tools-umbrella.h"; sourceTree = "<group>"; };
 		137614A5A902197F89528521F2B776C6 /* CTHelp-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CTHelp-umbrella.h"; sourceTree = "<group>"; };
-		1AB3DF1370AA9FDF6151204530247DC8 /* libCTHelp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCTHelp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AB3DF1370AA9FDF6151204530247DC8 /* CTHelp */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = CTHelp; path = libCTHelp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2244735B26B646DE04DB91E51A94A79A /* CTEmailFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CTEmailFunctions.swift; path = CTHelp/Classes/Helpers/CTEmailFunctions.swift; sourceTree = "<group>"; };
 		3003FC6A720F89DA31C9CDD4E3407A40 /* Pods-iOS tools-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-iOS tools-dummy.m"; sourceTree = "<group>"; };
 		4015EC2C7CA576889EEBA382C1A70DC8 /* CTHelpItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CTHelpItem.swift; path = CTHelp/Classes/Models/CTHelpItem.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 		2B84A28BF1E7FAEDDAB73478A8768DC8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1AB3DF1370AA9FDF6151204530247DC8 /* libCTHelp.a */,
+				1AB3DF1370AA9FDF6151204530247DC8 /* CTHelp */,
 				CE1A6F49465CF8306ABE879B06C38DA3 /* CTHelp.bundle */,
 				9703110A0C106BA5E02E417CC268072A /* Pods-iOS tools */,
 			);
@@ -283,7 +283,7 @@
 			);
 			name = CTHelp;
 			productName = CTHelp;
-			productReference = 1AB3DF1370AA9FDF6151204530247DC8 /* libCTHelp.a */;
+			productReference = 1AB3DF1370AA9FDF6151204530247DC8 /* CTHelp */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -292,11 +292,11 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1300;
-				LastUpgradeCheck = 1300;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -417,7 +417,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/CTHelp/CTHelp-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MODULEMAP_FILE = Headers/Public/CTHelp/CTHelp.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
@@ -570,7 +570,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				IBSC_MODULE = CTHelp;
 				INFOPLIST_FILE = "Target Support Files/CTHelp/ResourceBundle-CTHelp-CTHelp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = CTHelp;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -632,7 +632,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				IBSC_MODULE = CTHelp;
 				INFOPLIST_FILE = "Target Support Files/CTHelp/ResourceBundle-CTHelp-CTHelp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				PRODUCT_NAME = CTHelp;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -650,7 +650,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/CTHelp/CTHelp-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MODULEMAP_FILE = Headers/Public/CTHelp/CTHelp.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
