@@ -109,22 +109,46 @@ class RunAfterAnimation : NSObject, CAAnimationDelegate {
     }
 }
 
+
+
+
 struct Contact: Identifiable {
     let id = UUID()
-    let name: String
+    var name: String
+    var is_selected = false
 }
+
+class ContactStore : ObservableObject {
+    static var store = ContactStore()
+    @Published var contacts: [Contact]
+    
+    init() {
+        contacts = [
+            Contact(name: "John"),
+            Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),
+            Contact(name: "Bob", is_selected: true)
+        ]
+    }
+
+    func getContact(id: UUID) -> Array<Contact>.Index? {
+        return contacts.firstIndex { $0.id == id }
+    }
+}
+
+
+
+
 // https://sarunw.com/posts/swiftui-list-multiple-selection/
 struct Filter: View {
     @Binding var filter_active: Bool
 
     @State var doesClose: Bool = true
-
-    let contacts = [
-            Contact(name: "John"), Contact(name: "Alice"), Contact(name: "Bob")
-    ]
-
     @State private var multiSelection = Set<UUID>()
 
+
+    @ObservedObject var model = ContactStore.store
+
+    
     var body: some View {
         VStack {
             HStack {
@@ -140,49 +164,37 @@ struct Filter: View {
                         .opacity(0.3)
                 })
             }
-            
-            if filter_active {
-                // https://sarunw.com/posts/swiftui-list-multiple-selection/
-                // https://developer.apple.com/documentation/swiftui/list
 
+            HStack {
+                Spacer()
                 
-                HStack {
-                    Spacer()
-                    ScrollViewReader { scrollViewProxy in
-                        
-                        ScrollView {
-                            VStack {
-                                Toggle(isOn: $doesClose) {
-                                        Label("Mute", systemImage: "speaker.slash.fill")
-                                }.toggleStyle(.button)
-                                
-                                Toggle("Close windows when quitting an app", isOn: $doesClose)
-                                    .toggleStyle(.button)
-                                
-                                Text("TCP/23 telnzefzefet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");
-                                Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");Text("TCP/23 telnet");
-                                
-                                
-                                
-                            }.padding(12)
-                            
-                        }.frame(maxHeight: 400)
-//                            .background(Color(COLORS.standard_background).lighter().lighter().lighter())
-                        
+                if filter_active {
+                    if #available(iOS 16, *) {
+                        List(model.contacts) { contact in
+                            Text(contact.name).listRowBackground(Color.clear)
+                        }
+                        .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                        .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                        .scrollContentBackground(.hidden)
+                        .opacity(0.8)
+                    } else {
+                        // iOS 15
+                        List(model.contacts) { contact in
+                            Text(contact.name).listRowBackground(Color.clear)
+                        }
+                        .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                        .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                        .onAppear {
+                            // On iOS 15, List are implemented with UITableView, therefore the equivalent of .scrollContentBackground(.hidden) is the following line.
+                            // Note that it applies everywhere in the app once it is used here.
+                            UITableView.appearance().backgroundColor = .clear
+                        }
+                        .opacity(0.8)
                     }
                 }
-                
-                
-                /*
-                 List(contacts, selection: $multiSelection) { contact in
-                 Text(contact.name)
-                 }*/
-                
-                
-                
-                
             }
-        }            .padding([.horizontal], 24)
+        }
+        .padding([.horizontal], 24)
 
     }
 }
