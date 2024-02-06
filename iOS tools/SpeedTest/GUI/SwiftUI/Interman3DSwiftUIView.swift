@@ -169,6 +169,7 @@ struct Filter: View {
                 Spacer()
                 
                 if filter_active {
+                    // Removing the background of a scrollable view is not done the same way before and after iOS 15
                     if #available(iOS 16, *) {
                         List(model.contacts) { contact in
                             Text(contact.name).listRowBackground(Color.clear)
@@ -195,7 +196,6 @@ struct Filter: View {
             }
         }
         .padding([.horizontal], 24)
-
     }
 }
 
