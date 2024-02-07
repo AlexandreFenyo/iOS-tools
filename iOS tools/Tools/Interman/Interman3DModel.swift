@@ -1160,8 +1160,15 @@ public class Interman3DModel : ObservableObject {
     // @inline(never) pour debugguer plus facilement si ça se reproduit
     @inline(never)
     func notifyNodeMerged(_ node: Node, _ into: Node) {
+        // J'ai eu une fois ce cas le 7 fév 2024 sur iPad Pro
         if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeMerged") }
-        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
+        // Mais je ne sais pas si ça a crashé après la ligne précédente, je rajoute donc ceci pour éviter de crasher :
+        let _idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })
+        if _idx == nil {
+            #fatalError("notifyNodeMerged 2")
+            return
+        }
+        let idx = _idx!
         node_to_b3d_host.remove(at: idx)
 
         guard let b3d_host = detachB3DHostInstance(into) else { return }

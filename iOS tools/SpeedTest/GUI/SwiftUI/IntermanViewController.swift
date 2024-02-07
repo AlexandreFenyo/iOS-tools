@@ -7,12 +7,14 @@
 //
 
 import SwiftUI
+import iOSToolsMacros
 
 // a noter : view.frame inclut la bandeau du bas, si on veut retirer le bandeau on utilise les valeurs de view.safeAreaInsets
 
 @MainActor
 class IntermanViewController : UIViewController {
     weak var master_view_controller: MasterViewController?
+    var tap_gesture_recognizer: UITapGestureRecognizer?
     
     private var camera_start_angle: Float = 0
     private var pan_start_angle: Float = 0
@@ -43,9 +45,9 @@ class IntermanViewController : UIViewController {
             hostingViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
             hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
-
         // This creates a strong ref to the target
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(IntermanViewController.handleTap(_:))))
+        tap_gesture_recognizer = UITapGestureRecognizer(target: self, action: #selector(IntermanViewController.handleTap(_:)))
+        view.addGestureRecognizer(tap_gesture_recognizer!)
         // This creates a strong ref to the target
         let double_tap = UITapGestureRecognizer(target: self, action: #selector(IntermanViewController.handleDoubleTap(_:)))
         double_tap.numberOfTapsRequired = 2
@@ -58,6 +60,24 @@ class IntermanViewController : UIViewController {
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(IntermanViewController.handlePinch(_:))))
     }
     
+    func disableTapGestureRecognizer() {
+        if tap_gesture_recognizer == nil {
+            #fatalError("tap gesture recognizer")
+            return
+        }
+        view.removeGestureRecognizer(tap_gesture_recognizer!)
+        tap_gesture_recognizer = nil
+    }
+
+    func enableTapGestureRecognizer() {
+        if tap_gesture_recognizer != nil {
+            #fatalError("tap gesture recognizer")
+            return
+        }
+        tap_gesture_recognizer = UITapGestureRecognizer(target: self, action: #selector(IntermanViewController.handleTap(_:)))
+        view.addGestureRecognizer(tap_gesture_recognizer!)
+    }
+
     func setSelectedNode(_ node: Node) {
         hostingViewController.rootView.setSelectedHost(node)
     }
@@ -71,8 +91,6 @@ class IntermanViewController : UIViewController {
         }
         
         guard let index_path = master_view_controller.getIndexPath(host.getHost()) else { return }
-
-        print(index_path)
         
         // Simulate a tap on a TableView: https://stackoverflow.com/questions/24787098/programmatically-emulate-the-selection-in-uitableviewcontroller-in-swift
         

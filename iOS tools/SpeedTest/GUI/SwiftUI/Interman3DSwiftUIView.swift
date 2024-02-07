@@ -140,6 +140,7 @@ class ContactStore : ObservableObject {
 
 // https://sarunw.com/posts/swiftui-list-multiple-selection/
 struct Filter: View {
+    var master_view_controller: MasterViewController?
     @Binding var filter_active: Bool
 
     @State var doesClose: Bool = true
@@ -155,6 +156,11 @@ struct Filter: View {
                 Spacer()
                 Button("Filter") {
                     filter_active.toggle()
+                    if filter_active {
+                        self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
+                    } else {
+                        self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()
+                    }
                 }
                 .padding(8)
                 .foregroundColor(Color(COLORS.standard_background))
@@ -169,7 +175,24 @@ struct Filter: View {
                 Spacer()
                 
                 if filter_active {
-                    // Removing the background of a scrollable view is not done the same way before and after iOS 15
+                    // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
+                    List(model.contacts) { contact in
+                        HStack {
+                            Button(action: {print("salut")}) {
+                                HStack {
+                                    Image(systemName: model.contacts[model.getContact(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                    Text(contact.name)
+                                }
+                            }
+                            
+                        }.listRowBackground(Color.clear).listRowSeparator(.hidden)
+                    }
+                    .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                    .listStyle(PlainListStyle())
+                    .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                    .opacity(0.8)
+
+                    /* Removing the background of the scroll view on iOS 16 and more
                     if #available(iOS 16, *) {
                         List(model.contacts) { contact in
                             Text(contact.name).listRowBackground(Color.clear)
@@ -179,7 +202,7 @@ struct Filter: View {
                         .scrollContentBackground(.hidden)
                         .opacity(0.8)
                     } else {
-                        // iOS 15
+                        // Removing the background of the scroll view on iOS 15
                         List(model.contacts) { contact in
                             Text(contact.name).listRowBackground(Color.clear)
                         }
@@ -192,6 +215,7 @@ struct Filter: View {
                         }
                         .opacity(0.8)
                     }
+                    */
                 }
             }
         }
@@ -218,7 +242,7 @@ struct Interman3DSwiftUIView: View {
     @State private var disable_auto_rotation_button = false
     @State private var disable_traces = true
 
-    @State private var filter_active: Bool = true
+    @State private var filter_active: Bool = false
 
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
@@ -798,17 +822,16 @@ struct Interman3DSwiftUIView: View {
                             
                             HStack {
                                 Spacer()
-                                    Filter(filter_active: $filter_active).padding([.vertical], 10)
+                                Filter(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
                             }
                             
                         }
                         
                     }
                 } else {
-                    
                     HStack {
                         Spacer()
-                            Filter(filter_active: $filter_active).padding([.vertical], 10)
+                        Filter(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
                     }
                     Spacer()
                 }
