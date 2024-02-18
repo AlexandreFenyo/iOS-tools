@@ -118,7 +118,7 @@ struct Contact: Identifiable {
     var is_selected = false
 }
 
-class ContactStore : ObservableObject {
+class ContactStore: ObservableObject {
     static var store = ContactStore()
     @Published var contacts: [Contact]
     
@@ -157,6 +157,9 @@ struct Filter: View {
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
+                        // CONTINUER ICI
+                        DBMaster.getPorts()
+                        model.contacts = [ Contact(name: "Alex") ]
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
                         self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()

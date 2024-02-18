@@ -481,6 +481,15 @@ class DBMaster {
         }
     }
 
+    // CONTINUER ICI
+    static func getPorts() {
+        var tcp_ports = Set<UInt16>()
+        for node in shared.nodes {
+            tcp_ports.formUnion(node.tcp_ports)
+        }
+        print(tcp_ports.sorted())
+    }
+
     /* A unique gateway */
     func getLocalGateways() -> [Node] {
         var gateways = [Node]()
