@@ -15,7 +15,7 @@ import iOSToolsMacros
 // A mode to make screenshots
 let demo_mode = false
 
-// Cette liste doit être synchronisée avec les services déclarés dans Info.plist
+// Cette liste doit être synchronisée avec les services déclarés dans Info.plist, afin d'avoir l'autorisation d'écouter les annonces de services correspondant
 let service_names = [
     "_speedtestapp._tcp.",
     "_speedtestchargen._tcp.",

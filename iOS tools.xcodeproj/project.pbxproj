@@ -72,6 +72,7 @@
 		5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */; };
 		5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5D86321028E9D7D4000B7E2D /* tcpports.txt */; };
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
+		5D8B17E12B82AACF00CA168F /* Ports2BonjourServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8B17E02B82AACF00CA168F /* Ports2BonjourServices.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
@@ -232,6 +233,7 @@
 		5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPorts2Services.swift; sourceTree = "<group>"; };
 		5D86321028E9D7D4000B7E2D /* tcpports.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tcpports.txt; sourceTree = "<group>"; };
 		5D8944A120A57C7800E26476 /* Chart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chart.swift; sourceTree = "<group>"; };
+		5D8B17E02B82AACF00CA168F /* Ports2BonjourServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ports2BonjourServices.swift; sourceTree = "<group>"; };
 		5D8B7A102970107800F89A32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D8B7A122970107900F89A32 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
@@ -634,6 +636,7 @@
 				5DC736C320D3A55600C2A199 /* NetTools.h */,
 				5D945D0B2100CF51007E4844 /* NetTools.swift */,
 				5D86320E28E88544000B7E2D /* TCPPorts2Services.swift */,
+				5D8B17E02B82AACF00CA168F /* Ports2BonjourServices.swift */,
 			);
 			path = Networks;
 			sourceTree = "<group>";
@@ -924,6 +927,7 @@
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */,
 				5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */,
+				5D8B17E12B82AACF00CA168F /* Ports2BonjourServices.swift in Sources */,
 				5DE4EDA12905CB650000B30A /* AddSwiftUIView.swift in Sources */,
 				5DE4ED9F2905CB0D0000B30A /* AddViewController.swift in Sources */,
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,

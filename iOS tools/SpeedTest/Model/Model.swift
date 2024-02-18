@@ -18,6 +18,17 @@ public enum NodeType: Int, CaseIterable {
     case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
+public enum IPProtocol: Int, CaseIterable {
+    case TCP, UDP
+}
+typealias PortNumber = UInt16
+typealias ServiceName = String
+typealias BonjourServiceName = String
+struct Port : Hashable {
+    let port_number: PortNumber
+    let ip_protocol: IPProtocol
+}
+
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
 public class DomainPart : Hashable, Comparable {
@@ -482,10 +493,19 @@ class DBMaster {
     }
 
     // CONTINUER ICI
+    // renvoyer pour chaque port exposé par au moins un Node, le nombre de Node (et non les nodes eux-mêmes car ça peut évoluer dans le temps), en fournissant le port, le protocole et le service associés et service bonjour associé
+    // construire le type de retour :
+    // Dictionary<Key, Value>
+    // Dictionary<(PortNumber, PortProtocol), (String, String)>
     static func getPorts() {
-        var tcp_ports = Set<UInt16>()
+        var port_list = [Port: (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
+        
+        var tcp_ports = Set<PortNumber>()
         for node in shared.nodes {
+//            let port = Port(port_number: node.tcp_, ip_protocol: <#T##IPProtocol#>)
             tcp_ports.formUnion(node.tcp_ports)
+            
+            
         }
         print(tcp_ports.sorted())
     }

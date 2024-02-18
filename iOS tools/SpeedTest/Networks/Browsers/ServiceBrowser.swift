@@ -174,11 +174,28 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
         if let data = sender.txtRecordData() {
             text_attr = decodeTxt(data)
         }
+        // type value ex.: "_adisk._tcp."
         node.addService(BonjourServiceInfo(type, String(sender.port), text_attr))
         /*
         print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
         print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
          */
+        // Fill in the dictionary ports_to_bonjour_services with the latest bonjour service name associated to a port.
+        let port_number = PortNumber(sender.port)
+        let service_type = sender.type
+        Task {
+            let ip_protocol: IPProtocol
+            if type.hasSuffix("._tcp.") {
+                ip_protocol = .TCP
+            } else if type.hasSuffix("._udp.") {
+                ip_protocol = .UDP
+            } else {
+                #fatalError("invalid Bonjour service name")
+                return
+            }
+            let port = Port(port_number: port_number, ip_protocol: ip_protocol)
+            await ports_to_bonjour_services.add(port, service_type)
+        }
         
         if type == NetworkDefaults.speed_test_app_service_type {
             node.setTypes([ .chargen, .discard, .ios ])

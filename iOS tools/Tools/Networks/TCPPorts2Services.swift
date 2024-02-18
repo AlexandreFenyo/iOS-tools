@@ -12,12 +12,12 @@ import iOSToolsMacros
 // pour produire le fichier de conf :
 // cat /etc/services | grep /tcp | grep -v /udp | egrep -v '^(#| )' | sed 's,/tcp.*,,' | awk '{ print $2" "$1; }' | sort -u -nk 1
 
-public var TCPPort2Service: [UInt16 : String] = [:]
-public var TCPPort2Description: [UInt16 : String] = [:]
-public var StandardTCPPorts = Set<UInt16>(1...1023) // environ 5200 ports
-public var ReducedStandardTCPPorts: Set<UInt16> = Set([4, 9, 19, 20, 21, 22, 23, 25, 53, 80, 81, 82, 110, 143, 443, 445, 465, 513, 514, 587, 853, 993, 995, 3020, 8080, 8081, 8082]) // environ 30 ports
+var TCPPort2Service: [UInt16 : String] = [:]
+var TCPPort2Description: [UInt16 : String] = [:]
+var StandardTCPPorts = Set<UInt16>(1...1023) // environ 5200 ports
+var ReducedStandardTCPPorts: Set<UInt16> = Set([4, 9, 19, 20, 21, 22, 23, 25, 53, 80, 81, 82, 110, 143, 443, 445, 465, 513, 514, 587, 853, 993, 995, 3020, 8080, 8081, 8082]) // environ 30 ports
 
-public func InitTCPPort2Service() {
+func InitTCPPort2Service() {
     if let filepath = Bundle.main.path(forResource: "tcpports", ofType: "txt") {
         do {
             let contents = try String(contentsOfFile: filepath)
