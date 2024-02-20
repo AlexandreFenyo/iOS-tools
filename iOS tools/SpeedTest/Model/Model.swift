@@ -492,22 +492,39 @@ class DBMaster {
         }
     }
 
-    // CONTINUER ICI
-    // renvoyer pour chaque port exposé par au moins un Node, le nombre de Node (et non les nodes eux-mêmes car ça peut évoluer dans le temps), en fournissant le port, le protocole et le service associés et service bonjour associé
-    // construire le type de retour :
-    // Dictionary<Key, Value>
-    // Dictionary<(PortNumber, PortProtocol), (String, String)>
-    static func getPorts() {
-        var port_list = [Port: (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
-        
+    @MainActor
+    static func getPorts() -> [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)] {
+        var port_list = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
+
         var tcp_ports = Set<PortNumber>()
+        var udp_ports = Set<PortNumber>()
+        var tcp_ports_count = [PortNumber : UInt]()
+        var udp_ports_count = [PortNumber : UInt]()
+
         for node in shared.nodes {
-//            let port = Port(port_number: node.tcp_, ip_protocol: <#T##IPProtocol#>)
             tcp_ports.formUnion(node.tcp_ports)
-            
-            
+            udp_ports.formUnion(node.udp_ports)
+            for n in node.tcp_ports {
+                if !tcp_ports_count.keys.contains(n) { tcp_ports_count[n] = 0 }
+                tcp_ports_count[n]! += 1
+            }
+            for n in node.udp_ports {
+                if !udp_ports_count.keys.contains(n) { udp_ports_count[n] = 0 }
+                udp_ports_count[n]! += 1
+            }
         }
-        print(tcp_ports.sorted())
+
+        for n in tcp_ports {
+            let port = Port(port_number: n, ip_protocol: .TCP)
+            port_list[port] = (service: TCPPort2Service[n], bonjour_service: Ports2BonjourServices.shared.get(port), count: tcp_ports_count[n]!)
+        }
+
+        for n in udp_ports {
+            let port = Port(port_number: n, ip_protocol: .UDP)
+            port_list[port] = (service: TCPPort2Service[n], bonjour_service: Ports2BonjourServices.shared.get(port), count: udp_ports_count[n]!)
+        }
+        
+        return port_list
     }
 
     /* A unique gateway */

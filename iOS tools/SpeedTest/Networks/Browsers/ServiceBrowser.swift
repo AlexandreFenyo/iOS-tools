@@ -194,7 +194,7 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                 return
             }
             let port = Port(port_number: port_number, ip_protocol: ip_protocol)
-            await ports_to_bonjour_services.add(port, service_type)
+            await Ports2BonjourServices.shared.add(port, service_type)
         }
         
         if type == NetworkDefaults.speed_test_app_service_type {

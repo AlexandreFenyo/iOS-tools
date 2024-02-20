@@ -1192,7 +1192,7 @@
 				5D135214208538E300E4A76D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		5D135215208538E300E4A76D /* Build configuration list for PBXNativeTarget "iOS tools" */ = {
 			isa = XCConfigurationList;
@@ -1201,7 +1201,7 @@
 				5D135217208538E300E4A76D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 
