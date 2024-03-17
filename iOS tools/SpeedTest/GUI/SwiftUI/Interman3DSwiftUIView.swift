@@ -158,7 +158,7 @@ struct Filter: View {
                     filter_active.toggle()
                     if filter_active {
                         // CONTINUER ICI
-                        DBMaster.getPorts()
+                        let port_list = DBMaster.getPorts()
                         model.contacts = [ Contact(name: "Alex") ]
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
