@@ -138,7 +138,7 @@ struct AddSwiftUIView: View {
                             var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
                             let str = target_name + ";" + target_ip
                             if Array().firstIndex(of: str) == nil {
-                                config.append(String(target_name + ";" + target_ip + ";" + String(scope.rawValue)))
+                                config.append(target_name + ";" + target_ip + ";" + String(scope.rawValue))
                             }
                             UserDefaults.standard.set(config, forKey: "nodes")
                         }
