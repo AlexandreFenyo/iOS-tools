@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -41,6 +41,8 @@
 		5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42E784216DE6000062A654 /* MasterSectionHeader.swift */; };
 		5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D463FBB2A3C4F3100DA77C4 /* Repère.scn */; };
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
+		5D524C032BC053CE00B522E1 /* iOSToolsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C022BC053CE00B522E1 /* iOSToolsMacros */; };
+		5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */; };
 		5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
@@ -304,7 +306,9 @@
 			files = (
 				1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */,
 				5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
+				5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
 				5D1D55D92BBE18E600BC3D56 /* iOSToolsMacros in Frameworks */,
+				5D524C032BC053CE00B522E1 /* iOSToolsMacros in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -744,6 +748,8 @@
 			packageProductDependencies = (
 				5D1D55D82BBE18E600BC3D56 /* iOSToolsMacros */,
 				5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */,
+				5D524C022BC053CE00B522E1 /* iOSToolsMacros */,
+				5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */,
 			);
 			productName = "iOS tools";
 			productReference = 5D1351EB208538DB00E4A76D /* iOS tools.app */;
@@ -778,8 +784,8 @@
 			);
 			mainGroup = 5D1351E2208538DB00E4A76D;
 			packageReferences = (
-				5D1D55D72BBE18E600BC3D56 /* XCLocalSwiftPackageReference "../iOSToolsMacros" */,
-				5D551ED62BBE1EED00201638 /* XCLocalSwiftPackageReference "../SwiftAdvancedAtomicsSwiftPackage" */,
+				5D524C012BC053CE00B522E1 /* XCRemoteSwiftPackageReference "iOSToolsMacros" */,
+				5D524C042BC055EF00B522E1 /* XCRemoteSwiftPackageReference "SwiftAdvancedAtomicsSwiftPackage" */,
 			);
 			productRefGroup = 5D1351EC208538DB00E4A76D /* Products */;
 			projectDirPath = "";
@@ -1206,21 +1212,39 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		5D1D55D72BBE18E600BC3D56 /* XCLocalSwiftPackageReference "../iOSToolsMacros" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../iOSToolsMacros;
+/* Begin XCRemoteSwiftPackageReference section */
+		5D524C012BC053CE00B522E1 /* XCRemoteSwiftPackageReference "iOSToolsMacros" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AlexandreFenyo/iOSToolsMacros";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
 		};
-		5D551ED62BBE1EED00201638 /* XCLocalSwiftPackageReference "../SwiftAdvancedAtomicsSwiftPackage" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SwiftAdvancedAtomicsSwiftPackage;
+		5D524C042BC055EF00B522E1 /* XCRemoteSwiftPackageReference "SwiftAdvancedAtomicsSwiftPackage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AlexandreFenyo/SwiftAdvancedAtomicsSwiftPackage";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		5D1D55D82BBE18E600BC3D56 /* iOSToolsMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = iOSToolsMacros;
+		};
+		5D524C022BC053CE00B522E1 /* iOSToolsMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D524C012BC053CE00B522E1 /* XCRemoteSwiftPackageReference "iOSToolsMacros" */;
+			productName = iOSToolsMacros;
+		};
+		5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D524C042BC055EF00B522E1 /* XCRemoteSwiftPackageReference "SwiftAdvancedAtomicsSwiftPackage" */;
+			productName = SwiftAdvancedAtomicsSwiftPackage;
 		};
 		5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
