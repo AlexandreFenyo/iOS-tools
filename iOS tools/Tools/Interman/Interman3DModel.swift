@@ -1071,8 +1071,10 @@ public class Interman3DModel : ObservableObject {
         }
         return b3d_host
         */
-
-        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == host })!
+        guard let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == host }) else {
+            #fatalError("node is not in node_to_b3d_host array (2)")
+            return nil
+        }
         let key = node_to_b3d_host.keys[idx]
         return node_to_b3d_host[key]
     }
@@ -1180,18 +1182,27 @@ public class Interman3DModel : ObservableObject {
 
     // Sync with the main model
     // Update the displayed values and the 3D model
+    // @inline(never) pour debugguer plus facilement si ça se reproduit
+    @inline(never)
     func notifyNodeUpdated(_ node: Node) {
         // Bug ceci ne fonctionne pas (la clé n'est pas identifiée) :
         // let b3d_host = node_to_b3d_host[node]!
         // if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
         // node_to_b3d_host[node] = b3d_host
         // On fait donc le contournement suivant :
+        // let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
+        // let b3d_host = node_to_b3d_host[idx].value
+        // node_to_b3d_host.remove(at: idx)
+        // node_to_b3d_host.updateValue(b3d_host, forKey: node)
 
-        let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
+        // Mais le 6 avril 2024, un utilisateur signale un bug dont le stacktrace du crashdump montre que c'est dans cette méthode qu'il y a une trap, on contourne donc comme ceci :
+        guard let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node }) else {
+            #fatalError("node is not in node_to_b3d_host array")
+            return
+        }
         let b3d_host = node_to_b3d_host[idx].value
         node_to_b3d_host.remove(at: idx)
         node_to_b3d_host.updateValue(b3d_host, forKey: node)
-
         b3d_host.updateModelAndValues()
     }
 

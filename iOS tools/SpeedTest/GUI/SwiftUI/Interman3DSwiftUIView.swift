@@ -154,6 +154,8 @@ struct Filter: View {
         VStack {
             HStack {
                 Spacer()
+                
+                /* commenté pour publier la 3.6.0 sur le store
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
@@ -172,6 +174,8 @@ struct Filter: View {
                         .foregroundColor(Color(COLORS.toolbar_background))
                         .opacity(0.3)
                 })
+                 */
+                
             }
 
             HStack {
