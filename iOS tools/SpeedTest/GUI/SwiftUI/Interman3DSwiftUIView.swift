@@ -155,13 +155,36 @@ struct Filter: View {
             HStack {
                 Spacer()
                 
-                /* commenté pour publier la 3.6.0 sur le store
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
-                        // CONTINUER ICI
+                        model.contacts = [Contact]()
                         let port_list = DBMaster.getPorts()
-                        model.contacts = [ Contact(name: "Alex") ]
+                        for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
+                            let port_info = port_list[port_list_key]!
+                            var name = port_info.bonjour_service?.description
+                            if name == nil {
+                                name = port_info.service?.description
+                                if name == nil {
+                                    name = ""
+                                }
+                            }
+                            guard var name else {
+                                fatalError("should not happen")
+                            }
+                            
+                            let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
+                            
+                            if name.hasPrefix("_") {
+                                name = String(name.dropFirst())
+                            }
+                            
+                            if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
+                                name = String(name.dropLast(6))
+                            }
+                            
+                            model.contacts.append(Contact(name: "\(name_prefix): \(name)"))
+                        }
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
                         self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()
@@ -174,7 +197,6 @@ struct Filter: View {
                         .foregroundColor(Color(COLORS.toolbar_background))
                         .opacity(0.3)
                 })
-                 */
                 
             }
 
@@ -188,7 +210,7 @@ struct Filter: View {
                             Button(action: {print("salut")}) {
                                 HStack {
                                     Image(systemName: model.contacts[model.getContact(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
-                                    Text(contact.name)
+                                    Text(contact.name).font(.caption)
                                 }
                             }
                             
