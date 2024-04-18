@@ -187,7 +187,7 @@ class WeakLink3D: Hashable {
 }
 
 // Base class for 3D objects in a circle
-class B3D : SCNNode {
+class B3D: SCNNode {
     static let default_scale: Float = 0.1
     private weak var sub_node: SCNNode?
     private weak var sub_node2: SCNNode?
@@ -339,7 +339,7 @@ class B3D : SCNNode {
     }
 }
 
-class B3DHost : B3D {
+class B3DHost: B3D {
 //    private static geometry cache
     private static var text_geometry_cache = [String: SCNText]()
 
@@ -793,7 +793,7 @@ class B3DHost : B3D {
     }
 }
 
-class Broadcast3D : SCNNode {
+class Broadcast3D: SCNNode {
     private weak var broadcast_node_draw: SCNNode?
     private weak var torus: SCNTorus?
 
@@ -833,7 +833,7 @@ class Broadcast3D : SCNNode {
 // - scan TCP ports
 // - port discovered
 // - multicast Bonjour service discovered
-class Link3D : SCNNode {
+class Link3D: SCNNode {
     fileprivate weak var from_b3d: B3D?, to_b3d: B3D?
     private weak var link_node_draw: SCNNode?
     
@@ -909,7 +909,7 @@ class Link3D : SCNNode {
     }
 }
 
-class Link3DScanNode : Link3D {
+class Link3DScanNode: Link3D {
     required init?(coder: NSCoder) {
         fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
@@ -919,7 +919,7 @@ class Link3DScanNode : Link3D {
     }
 }
 
-class Link3DPortDiscovered : Link3D {
+class Link3DPortDiscovered: Link3D {
     private let port: UInt16
 
     override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
@@ -938,7 +938,7 @@ class Link3DPortDiscovered : Link3D {
     }
 }
 
-class Link3DFloodUDP : Link3D {
+class Link3DFloodUDP: Link3D {
     required init?(coder: NSCoder) {
         fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
@@ -948,7 +948,7 @@ class Link3DFloodUDP : Link3D {
     }
 }
 
-class Link3DFloodTCP : Link3D {
+class Link3DFloodTCP: Link3D {
     required init?(coder: NSCoder) {
         fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
@@ -958,7 +958,7 @@ class Link3DFloodTCP : Link3D {
     }
 }
 
-class Link3DChargenTCP : Link3D {
+class Link3DChargenTCP: Link3D {
     required init?(coder: NSCoder) {
         fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
@@ -968,7 +968,7 @@ class Link3DChargenTCP : Link3D {
     }
 }
 
-class Link3DICMPRequest : Link3D {
+class Link3DICMPRequest: Link3D {
     required init?(coder: NSCoder) {
         fatalError(#saveTrace("init(coder:) has not been implemented"))
     }
@@ -981,7 +981,7 @@ class Link3DICMPRequest : Link3D {
     }
 }
 
-class Link3DICMPResponse : Link3D {
+class Link3DICMPResponse: Link3D {
     override fileprivate var color: UIColor { UIColor(red: 0, green: 108.0/255.0, blue: 91.0/255.0, alpha: 1) }
     override fileprivate var height: Float { -B3D.default_scale }
 
@@ -997,7 +997,7 @@ class Link3DICMPResponse : Link3D {
     }
 }
 
-public class Interman3DModel : ObservableObject {
+public class Interman3DModel: ObservableObject {
     static let shared = Interman3DModel()
 
     public var scene = SCNScene(named: "Interman 3D Scene.scn")!
@@ -1005,7 +1005,7 @@ public class Interman3DModel : ObservableObject {
     private var broadcasts = Set<Broadcast3D>()
     private var b3d_hosts: [B3DHost]
     // Associative map to improve performances of getB3DHost(_ host: Node) -> B3DHost?
-    private var node_to_b3d_host = [Node: B3DHost]()
+    private var node_to_b3d_host = [Node : B3DHost]()
 
     // Does not contain localhost IPs
     private var scanned_IPs = Set<IPAddress>()

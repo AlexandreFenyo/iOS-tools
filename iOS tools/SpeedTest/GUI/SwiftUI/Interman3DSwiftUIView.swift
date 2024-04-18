@@ -8,6 +8,7 @@
 
 import SwiftUI
 import SceneKit
+import iOSToolsMacros
 
 /*
  Debugging camera movements:
@@ -83,7 +84,7 @@ private class RenderDelegate: NSObject, SCNSceneRendererDelegate {
     }
 }
 
-class SetCameraConstraint : NSObject, CAAnimationDelegate {
+class SetCameraConstraint: NSObject, CAAnimationDelegate {
     let camera: SCNNode
     let constraint: SCNConstraint
     
@@ -97,7 +98,7 @@ class SetCameraConstraint : NSObject, CAAnimationDelegate {
     }
 }
 
-class RunAfterAnimation : NSObject, CAAnimationDelegate {
+class RunAfterAnimation: NSObject, CAAnimationDelegate {
     let to_run: () -> ()
     
     init(_ to_run: @escaping () -> ()) {
@@ -109,34 +110,21 @@ class RunAfterAnimation : NSObject, CAAnimationDelegate {
     }
 }
 
-
-
-
-struct Contact: Identifiable {
+struct DiscoveredPort: Identifiable {
     let id = UUID()
     var name: String
-    var is_selected = false
+    var is_selected = true
+    var port: Port
 }
 
-class ContactStore: ObservableObject {
-    static var store = ContactStore()
-    @Published var contacts: [Contact]
+class DiscoveredPortsStore: ObservableObject {
+    static var store = DiscoveredPortsStore()
+    @Published var discovered_ports = [DiscoveredPort]()
     
-    init() {
-        contacts = [
-            Contact(name: "John"),
-            Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),Contact(name: "Alice"),
-            Contact(name: "Bob", is_selected: true)
-        ]
-    }
-
-    func getContact(id: UUID) -> Array<Contact>.Index? {
-        return contacts.firstIndex { $0.id == id }
+    func getDiscoveredPortIndex(id: UUID) -> Array<DiscoveredPort>.Index? {
+        return discovered_ports.firstIndex { $0.id == id }
     }
 }
-
-
-
 
 // https://sarunw.com/posts/swiftui-list-multiple-selection/
 struct Filter: View {
@@ -146,9 +134,8 @@ struct Filter: View {
     @State var doesClose: Bool = true
     @State private var multiSelection = Set<UUID>()
 
-
-    @ObservedObject var model = ContactStore.store
-
+    @ObservedObject var model = DiscoveredPortsStore.store
+    @ObservedObject private var interman3d_model = Interman3DModel.shared
     
     var body: some View {
         VStack {
@@ -158,7 +145,7 @@ struct Filter: View {
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
-                        model.contacts = [Contact]()
+                        model.discovered_ports = [DiscoveredPort]()
                         let port_list = DBMaster.getPorts()
                         for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
                             let port_info = port_list[port_list_key]!
@@ -182,8 +169,9 @@ struct Filter: View {
                             if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
                                 name = String(name.dropLast(6))
                             }
+
                             
-                            model.contacts.append(Contact(name: "\(name_prefix): \(name)"))
+                            model.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
                         }
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
@@ -197,7 +185,6 @@ struct Filter: View {
                         .foregroundColor(Color(COLORS.toolbar_background))
                         .opacity(0.3)
                 })
-                
             }
 
             HStack {
@@ -205,12 +192,45 @@ struct Filter: View {
                 
                 if filter_active {
                     // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
-                    List(model.contacts) { contact in
+                    List(model.discovered_ports) { contact in
                         HStack {
-                            Button(action: {print("salut")}) {
+                            Button(action: {
+                                // CONTINUER ICI
+                                print("salut")
+                                
+                                // objectif : trouver les noeuds 3D correspondant
+                                // procédure : identifier les Node via getNodes(_ port: Port) et utiliser getB3DHost(_ host: Node)
+                                
+                                let discovered_port = model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!]
+                                
+                                let hosts = DBMaster.getNodes(discovered_port.port)
+
+                                print("noeuds correspondant : \(hosts)")
+
+                                for host in hosts {
+                                    let node = interman3d_model.getB3DHost(host)
+                                    guard let node else {
+                                        _ = #saveTrace("node not found")
+                                        break
+                                    }
+                                    print("host: \(host.getNames())")
+                                    print("node: \(node)")
+                                    
+                                    // CONTINUER ICI
+                                    node.opacity = 0.0
+
+                                    
+                                }
+                                
+                                
+                                model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
+
+                            }) {
                                 HStack {
-                                    Image(systemName: model.contacts[model.getContact(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                    Image(systemName: model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(Color(COLORS.standard_background))
                                     Text(contact.name).font(.caption)
+                                        .foregroundColor(Color(COLORS.standard_background))
                                 }
                             }
                             

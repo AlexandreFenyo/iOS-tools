@@ -527,6 +527,27 @@ class DBMaster {
         return port_list
     }
 
+    @MainActor
+    static func getNodes(_ port: Port) -> Set<Node> {
+        var nodes = Set<Node>()
+
+        for node in shared.nodes {
+            switch port.ip_protocol {
+            case .TCP:
+                if node.tcp_ports.contains(port.port_number) {
+                    nodes.insert(node)
+                }
+
+            case .UDP:
+                if node.udp_ports.contains(port.port_number) {
+                    nodes.insert(node)
+                }
+            }
+        }
+
+        return nodes
+    }
+
     /* A unique gateway */
     func getLocalGateways() -> [Node] {
         var gateways = [Node]()
