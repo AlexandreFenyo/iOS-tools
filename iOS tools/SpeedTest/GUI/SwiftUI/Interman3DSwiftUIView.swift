@@ -136,6 +136,26 @@ struct Filter: View {
 
     @ObservedObject var model = DiscoveredPortsStore.store
     @ObservedObject private var interman3d_model = Interman3DModel.shared
+
+    // TODO : on veut que l'ajout ou la suppression d'un host refasse la liste Filter, même si on n'utilise pas cette variable
+    // Mais il se peut que surveiller DiscoveredPortsStore suffise : A VERIFIER
+//    @ObservedObject private var hosts_model = DBMaster.shared // nécessite class DBMaster: ObservableObject
+    
+    // discovered_ports est créé quand on active Filter, ce n'est pas le bon moment pour les créer, il faut le faire quand ils peuvent avoir changé,
+    // il faut ensuite surveiller ce changement pour recréer Filter, il faut donc que ça soit Filter qui surveille ce changement
+    // le pb c'est qu'on veut maintenir une nouvelle info : les ports sélectionnés et ceux non sélectionnés, sachant qu'un nouveau port qui est identifié doit être dans l'un ou l'autre état, à définir
+
+    // We create a init function to debug creations of this view
+    init(master_view_controller: MasterViewController? = nil, filter_active: Binding<Bool>, multiSelection: Set<UUID> = Set<UUID>(), model: DiscoveredPortsStore = DiscoveredPortsStore.store, interman3d_model: Interman3DModel = Interman3DModel.shared, hosts_model: DBMaster = DBMaster.shared) {
+        self.master_view_controller = master_view_controller
+        // Since filter_active is declared as @Binding, we need to use _filter_active to set its value
+        self._filter_active = filter_active
+        self.multiSelection = multiSelection
+        self.model = model
+        self.interman3d_model = interman3d_model
+//        self.hosts_model = hosts_model
+        print("XXXX: INIT Filter")
+    }
     
     var body: some View {
         VStack {
@@ -195,31 +215,16 @@ struct Filter: View {
                     List(model.discovered_ports) { contact in
                         HStack {
                             Button(action: {
-                                // CONTINUER ICI
-                                print("salut")
-                                
-                                // objectif : trouver les noeuds 3D correspondant
-                                // procédure : identifier les Node via getNodes(_ port: Port) et utiliser getB3DHost(_ host: Node)
-                                
                                 let discovered_port = model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!]
                                 
                                 let hosts = DBMaster.getNodes(discovered_port.port)
-
-                                print("noeuds correspondant : \(hosts)")
-
                                 for host in hosts {
                                     let node = interman3d_model.getB3DHost(host)
                                     guard let node else {
                                         _ = #saveTrace("node not found")
                                         break
                                     }
-                                    print("host: \(host.getNames())")
-                                    print("node: \(node)")
-                                    
-                                    // CONTINUER ICI
-                                    node.opacity = 0.0
-
-                                    
+                                    node.opacity = model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
                                 }
                                 
                                 

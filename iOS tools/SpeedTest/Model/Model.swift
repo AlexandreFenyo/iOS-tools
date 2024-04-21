@@ -391,12 +391,12 @@ class ModelSection {
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
-class DBMaster {
+class DBMaster /*: ObservableObject*/ {
     var sections: [SectionType : ModelSection]
     private(set) var nodes: Set<Node>
     private(set) var networks: Set<IPNetwork>
     
-    static public let shared = DBMaster()
+    static let shared = DBMaster()
 
     func resetNetworks() {
         networks = Set<IPNetwork>()
