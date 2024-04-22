@@ -110,22 +110,6 @@ class RunAfterAnimation: NSObject, CAAnimationDelegate {
     }
 }
 
-struct DiscoveredPort: Identifiable {
-    let id = UUID()
-    var name: String
-    var is_selected = true
-    var port: Port
-}
-
-class DiscoveredPortsStore: ObservableObject {
-    static var store = DiscoveredPortsStore()
-    @Published var discovered_ports = [DiscoveredPort]()
-    
-    func getDiscoveredPortIndex(id: UUID) -> Array<DiscoveredPort>.Index? {
-        return discovered_ports.firstIndex { $0.id == id }
-    }
-}
-
 // https://sarunw.com/posts/swiftui-list-multiple-selection/
 struct Filter: View {
     var master_view_controller: MasterViewController?
