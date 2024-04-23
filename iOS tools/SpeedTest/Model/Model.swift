@@ -21,17 +21,19 @@ public enum NodeType: Int, CaseIterable {
 public enum IPProtocol: Int, CaseIterable {
     case TCP, UDP
 }
+
 typealias PortNumber = UInt16
 typealias ServiceName = String
 typealias BonjourServiceName = String
-struct Port : Hashable {
+
+struct Port: Hashable {
     let port_number: PortNumber
     let ip_protocol: IPProtocol
 }
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-public class DomainPart : Hashable, Comparable {
+public class DomainPart: Hashable, Comparable {
     public let name: String
 
     public func hash(into hasher: inout Hasher) {
@@ -62,7 +64,7 @@ public class DomainPart : Hashable, Comparable {
 
 // A host part must not contain a dot
 // ex: www, localhost
-public class HostPart : DomainPart {
+public class HostPart: DomainPart {
     public override init(_ name: String) {
         if name.contains(".") {
             #fatalError("HostPart")
@@ -75,7 +77,7 @@ public class HostPart : DomainPart {
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-public class DomainName : Hashable, Comparable {
+public class DomainName: Hashable, Comparable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
@@ -124,13 +126,13 @@ public class DomainName : Hashable, Comparable {
 
 // A FQDN is a domain name that both contains a host part and a domain part
 // ex: {www, fenyo.net}, {localhost, localdomain}
-public class FQDN : DomainName {
+public class FQDN: DomainName {
     public init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
 }
 
-public class BonjourServiceInfo : Hashable {
+public class BonjourServiceInfo: Hashable {
     public let name: String
     public let port: String
     public let attr: [String : String]
@@ -155,7 +157,7 @@ public class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-public class Node : Hashable {
+public class Node: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
@@ -407,8 +409,10 @@ class DiscoveredPortsStore: ObservableObject {
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
-class DBMaster /*: ObservableObject*/ {
-    var sections: [SectionType : ModelSection]
+// https://medium.com/jamf-engineering/swift-6-upgrade-preparation-0941fbea2db6 "Global or Static Var is Not Concurrency-Safe in a Non-Isolated Context"
+@MainActor
+class DBMaster: ObservableObject {
+    private(set) var sections: [SectionType : ModelSection]
 
     private(set) var nodes: Set<Node> {
         didSet(oldValue) {
@@ -447,7 +451,6 @@ class DBMaster /*: ObservableObject*/ {
         }
     }
     private(set) var networks: Set<IPNetwork>
-    
     static let shared = DBMaster()
 
     func resetNetworks() {
@@ -468,6 +471,7 @@ class DBMaster /*: ObservableObject*/ {
         return nil
     }
 
+    @MainActor
     func addNode(_ new_node: Node, demo_mode: Bool = false) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node?]) {
         if iOS_tools.demo_mode && demo_mode == false {
             return (removed_paths: [], inserted_paths: [], is_new_node: false, updated_nodes: Set(), removed_nodes: [:])
@@ -475,6 +479,7 @@ class DBMaster /*: ObservableObject*/ {
         return addOrRemoveNode(new_node, add: true)
     }
 
+    @MainActor
     func removeNode(_ node: Node) -> [IndexPath] {
         return addOrRemoveNode(node, add: false).removed_paths
     }
@@ -518,14 +523,17 @@ class DBMaster /*: ObservableObject*/ {
     }
  */
 
+    @MainActor
     static func getNode(name: String) -> Node? {
         shared.nodes.filter { $0.names.contains(name) }.first
     }
 
+    @MainActor
     static func getNode(mcast_fqdn: FQDN) -> Node? {
         shared.nodes.filter { $0.mcast_dns_names.contains(mcast_fqdn) }.first
     }
 
+    @MainActor
     static func getNode(address: IPAddress) -> Node? {
         if address.getFamily() == AF_INET {
             let addr = address as! IPv4Address
@@ -676,14 +684,17 @@ class DBMaster /*: ObservableObject*/ {
         return node
     }
     
+    @MainActor
     func notifyBroadcast() {
         Interman3DModel.shared.notifyBroadcast()
     }
 
+    @MainActor
     func notifyBroadcastFinished() {
         Interman3DModel.shared.notifyBroadcastFinished()
     }
     
+    @MainActor
     func notifyScanPorts(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -692,6 +703,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyScanNode(node, address)
     }
 
+    @MainActor
     func notifyScanPortsFinished(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -701,6 +713,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyScanNodeFinished(node, address)
     }
 
+    @MainActor
     func notifyPortDiscovered(address: IPAddress, port: UInt16) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -710,6 +723,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyPortDiscovered(node, port)
     }
 
+    @MainActor
     func notifyICMPSent(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -718,6 +732,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyICMPSent(node, address)
     }
 
+    @MainActor
     func notifyICMPReceived(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -726,6 +741,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyICMPReceived(node, address)
     }
     
+    @MainActor
     func notifyFloodUDP(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -734,6 +750,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDP(node, address)
     }
 
+    @MainActor
     func notifyFloodUDPFinished(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -742,6 +759,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
+    @MainActor
     func notifyFloodTCP(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -750,6 +768,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDP(node, address)
     }
 
+    @MainActor
     func notifyFloodTCPFinished(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -758,6 +777,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
+    @MainActor
     func notifyChargenTCP(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -766,6 +786,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDP(node, address)
     }
 
+    @MainActor
     func notifyChargenTCPFinished(address: IPAddress) {
         guard let node = DBMaster.getNode(address: address) else {
             print("can not find node with address \(address)")
@@ -774,6 +795,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
+    @MainActor
     func removeAllNodes() {
         SectionType.allCases.forEach {
             sections[$0]!.nodes.removeAll()
@@ -784,6 +806,7 @@ class DBMaster /*: ObservableObject*/ {
         nodes.removeAll()
     }
     
+    @MainActor
     private func addOrRemoveNode(_ new_node: Node, add: Bool) -> (removed_paths: [IndexPath], inserted_paths: [IndexPath], is_new_node: Bool, updated_nodes: Set<Node>, removed_nodes: [Node : Node]) {
         var first_merged_node: Node? = nil
         
@@ -964,6 +987,7 @@ class DBMaster /*: ObservableObject*/ {
     private let ips_v4_quad9 = [ "9.9.9.9", "149.112.112.9" ]
     private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
 
+    @MainActor
     func addDefaultNodes() {
         if demo_mode {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
@@ -1073,6 +1097,7 @@ class DBMaster /*: ObservableObject*/ {
         return false
     }
     
+    @MainActor
     init() {
         networks = Set<IPNetwork>()
 

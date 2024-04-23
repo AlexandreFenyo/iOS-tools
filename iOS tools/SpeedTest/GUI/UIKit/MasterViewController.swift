@@ -93,6 +93,7 @@ class DelaySync {
 }
 
 // The MasterViewController instance is the delegate for the main UITableView
+@MainActor
 class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String, level: LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
@@ -173,8 +174,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Supprimer tous les noeuds
         resetToDefaultHosts()
 
-        // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
+        Task.detached { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000)
             self.addTrace("network browsing: start browsing the network", level: .INFO)
 
             self.stop_button!.isEnabled = true
@@ -208,6 +209,9 @@ class MasterViewController: UITableViewController, DeviceManager {
                 }
             }
         }
+
+
+
     }
 
     // Stop looking for new nodes
@@ -677,6 +681,7 @@ view.backgroundColor = .red
     }
 
     // MARK: - Calls from DetailSwiftUIView
+    @MainActor
     func scanTCP(_ address: IPAddress) {
         stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
@@ -873,7 +878,9 @@ view.backgroundColor = .red
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
                                 var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                
+                                let foo = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                                if address.toNumericString() != nil && foo {
                                     message = "connection \(str) - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                                 }
                                 await self.popUp("TCP discard", message, "continue")
@@ -904,7 +911,8 @@ view.backgroundColor = .red
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                    let foo = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                    if address.toNumericString() != nil && foo {
                         message = "timeout occurred - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                     }
                     await self.popUp("TCP discard", message, "continue")
@@ -963,7 +971,8 @@ view.backgroundColor = .red
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
                                 var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                let foo = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                                if address.toNumericString() != nil && foo {
                                     message = "connection \(str) - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
@@ -993,7 +1002,8 @@ view.backgroundColor = .red
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                    let foo = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                    if address.toNumericString() != nil && foo {
                         message = "timeout occurred - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                     }
                     await self.popUp("TCP chargen", message, "continue")

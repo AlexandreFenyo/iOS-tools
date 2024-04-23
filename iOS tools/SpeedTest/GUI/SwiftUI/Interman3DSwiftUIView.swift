@@ -130,6 +130,7 @@ struct Filter: View {
     // le pb c'est qu'on veut maintenir une nouvelle info : les ports sélectionnés et ceux non sélectionnés, sachant qu'un nouveau port qui est identifié doit être dans l'un ou l'autre état, à définir
 
     // We create a init function to debug creations of this view
+    /*
     init(master_view_controller: MasterViewController? = nil, filter_active: Binding<Bool>, multiSelection: Set<UUID> = Set<UUID>(), model: DiscoveredPortsStore = DiscoveredPortsStore.store, interman3d_model: Interman3DModel = Interman3DModel.shared, hosts_model: DBMaster = DBMaster.shared) {
         self.master_view_controller = master_view_controller
         // Since filter_active is declared as @Binding, we need to use _filter_active to set its value
@@ -139,7 +140,7 @@ struct Filter: View {
         self.interman3d_model = interman3d_model
 //        self.hosts_model = hosts_model
         print("XXXX: INIT Filter")
-    }
+    }*/
     
     var body: some View {
         VStack {

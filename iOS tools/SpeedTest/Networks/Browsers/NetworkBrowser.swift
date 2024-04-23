@@ -16,13 +16,17 @@ class NetworkBrowser {
     private var reply_ipv4: [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
+
+//    @MainActor
     private var unicast_ipv4_finished = false // Main thread
+
     private var broadcast_ipv4_finished = false // Main thread
     private var multicast_ipv6_finished = false // Main thread
     private var finished = false // Main thread
 
     // Browse a set of networks
     // Main thread
+    @MainActor
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser? = nil) {
         self.device_manager = device_manager
         self.browser_tcp = browser_tcp
@@ -116,6 +120,7 @@ class NetworkBrowser {
     }
     
     // Main thread
+    @MainActor
     public func stop() {
         browser_tcp?.stop()
         finished = true
@@ -133,12 +138,34 @@ class NetworkBrowser {
 
     // Any thread
     private func isFinishedOrEverythingDone() -> Bool {
-        return DispatchQueue.main.sync { return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished) }
+       return DispatchQueue.main.sync { return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished) }
+    }
+
+    // Main thread
+    @MainActor
+    public func browseREECRIT(_ doAtEnd: @escaping () -> Void = {}) {
+        
+        // CONTINUER ICI : réécrit avec des tâches et non des dispatch queues
+
+        Task.detached(priority: .background) {
+
+            try? await Task.sleep(nanoseconds: 1)
+            
+        }
+        
+
     }
     
+    
     // Main thread
+    @MainActor
     public func browse(_ doAtEnd: @escaping () -> Void = {}) {
-        DispatchQueue.global(qos: .background).async {
+        
+        
+        // CONTINUER ICI : réécrit avec des tâches et non des dispatch queues
+        
+        
+        Task.detached(priority: .background) {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
                 GenericTools.perror("socket")
@@ -370,7 +397,13 @@ class NetworkBrowser {
                 self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
             }
             dispatchGroup.enter()
+
+            
+            
             DispatchQueue.global(qos: .background).async {
+                
+                let tst = self.isFinishedOrEverythingDone()
+                
                 repeat {
                     let buf_size = 10000
                     var buf = [UInt8](repeating: 0, count: buf_size)
@@ -388,7 +421,9 @@ class NetworkBrowser {
                     }
                     
                     self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+                    
                 } while !self.isFinishedOrEverythingDone()
+                
                 dispatchGroup.leave()
                 DispatchQueue.main.async {
                     self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
@@ -400,13 +435,15 @@ class NetworkBrowser {
             close(s)
             close(s6)
 
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 self.device_manager.addTrace("network browsing: finished", level: .INFO)
                 DBMaster.shared.notifyBroadcastFinished()
             }
 
-            if let browser_tcp = self.browser_tcp {
-                browser_tcp.browse(doAtEnd: doAtEnd)
+            Task.detached { @MainActor in
+                if let browser_tcp = self.browser_tcp {
+                    await browser_tcp.browse(doAtEnd: doAtEnd)
+                }
             }
         }
     }

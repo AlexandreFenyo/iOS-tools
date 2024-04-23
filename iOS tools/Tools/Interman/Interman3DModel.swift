@@ -997,6 +997,7 @@ class Link3DICMPResponse: Link3D {
     }
 }
 
+@MainActor
 public class Interman3DModel: ObservableObject {
     static let shared = Interman3DModel()
 

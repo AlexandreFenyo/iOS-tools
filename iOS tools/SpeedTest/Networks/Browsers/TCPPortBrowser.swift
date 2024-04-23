@@ -61,7 +61,7 @@ class TCPPortBrowser {
     }
 
     // userInitiated thread (Browse thread)
-    public func browse(address: IPAddress? = nil, doAtEnd: @escaping () -> Void = {}) {
+    public func browse(address: IPAddress? = nil, doAtEnd: @escaping () -> Void = {}) async {
         
         // A SUPPRIMER
 //        doAtEnd();return
@@ -77,10 +77,10 @@ class TCPPortBrowser {
             ip_to_tcp_port[address] = TCPPortBrowser.ports_set_one_host
         } else {
             // ne pas rescanner les ports déjà identifiés
-            DispatchQueue.main.sync {
+            await DispatchQueue.main.async { [self] in
                 for node in DBMaster.shared.nodes {
                     if let addr = node.getV4Addresses().first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
+                        self.ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
                     } else if let addr = node.getV6Addresses().first {
                         ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
                     }
