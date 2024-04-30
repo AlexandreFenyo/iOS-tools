@@ -352,9 +352,33 @@ class MasterViewController: UITableViewController, DeviceManager {
         add_button!.isEnabled = false
         remove_button!.isEnabled = false
         update_button!.isEnabled = false
+
+        // REPRENDRE ICI pour passer en structured concurrency
+        test()
+
         startBrowsing()
     }
 
+    @MainActor
+    func test() {
+//        test1()
+    }
+//    @MainActor
+    func test1() async {
+        await test()
+        await test11()
+    }
+    func test11() {
+//        try? await Task.sleep(nanoseconds: 10)
+
+    }
+    @MainActor
+    func test2() async {
+        try? await Task.sleep(nanoseconds: 10)
+    }
+
+    
+    
     func update_pressed() {
         DispatchQueue.main.async {
             self.stop_pressed(self)
