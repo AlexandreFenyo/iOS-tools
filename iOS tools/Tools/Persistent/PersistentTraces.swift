@@ -57,14 +57,16 @@ class Traces {
 
     @discardableResult
     static func addMessage(_ msg: String) -> String {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        let trace = Trace(context: context)
-        trace.creation = .now
-        trace.message = msg
-        do {
-            try context.save()
-        } catch {
-            print("error adding data")
+        Task.detached { @MainActor in
+            guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
+            let trace = Trace(context: context)
+            trace.creation = .now
+            trace.message = msg
+            do {
+                try context.save()
+            } catch {
+                print("error adding data")
+            }
         }
         return msg
     }
@@ -93,7 +95,7 @@ class Traces {
             print("error fetching OS log store")
         }*/
         
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
 
         do {
             let items = try context.fetch(Trace.fetchRequest()) as? [Trace]
@@ -104,17 +106,18 @@ class Traces {
     }
 
     static func deleteMessages() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-
-        do {
-            let items = try context.fetch(Trace.fetchRequest()) as? [Trace]
-            guard let items else { return }
-            for item in items {
-                context.delete(item)
+        Task.detached { @MainActor in
+            guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
+            do {
+                let items = try context.fetch(Trace.fetchRequest()) as? [Trace]
+                guard let items else { return }
+                for item in items {
+                    context.delete(item)
+                }
+                try context.save()
+            } catch {
+                print("error deleting data")
             }
-            try context.save()
-        } catch {
-            print("error deleting data")
         }
     }
 }

@@ -22,25 +22,16 @@ let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! B
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
-    public var window: UIWindow?
+    var window: UIWindow?
 
-    lazy var persistentContainer: NSPersistentContainer = {
-            let container = NSPersistentContainer(name: "ToolsDataModel")
-            container.loadPersistentStores { description, error in
-                if let error = error {
-                    // Do not log this error using #fatalError() nor #saveTrace() because it would not be saved, since the persistant store is not loaded
-                    fatalError("Unable to load persistent stores: \(error)")
-                }
-            }
-            return container
-        }()
+    var persistentContainer: NSPersistentContainer?
 
-    public var local_chargen_service: NetService?
-    public var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
-    public var local_discard_service: NetService?
-    public var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
-    public var local_app_service: NetService?
-    public var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
+    private var local_chargen_service: NetService?
+    private var local_chargen_service_delegate: LocalGenericDelegate<SpeedTestChargenClient>?
+    private var local_discard_service: NetService?
+    private var local_discard_service_delegate: LocalGenericDelegate<SpeedTestDiscardClient>?
+    private var local_app_service: NetService?
+    private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
     
     private var local_chargen_listener: NetworkServiceListener?
 
@@ -52,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var tracesViewController: TracesViewController?
     
     // pour tester la publication : dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
-    public func startChargenService() {
+    private func startChargenService() {
         if let local_chargen_service_delegate {
             local_chargen_service_delegate.timer!.invalidate()
         }
@@ -64,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         local_chargen_service!.publish(options: .listenForConnections)
     }
     
-    public func startDiscardService() {
+    private func startDiscardService() {
         if let local_discard_service_delegate {
             local_discard_service_delegate.timer!.invalidate()
         }
@@ -76,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         local_discard_service!.publish(options: .listenForConnections)
     }
     
-    public func startAppService() {
+    private func startAppService() {
         if let local_app_service_delegate {
             local_app_service_delegate.timer!.invalidate()
         }
@@ -255,12 +246,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
+    // Main thread
     override init() {
         // call super.init() to be able to use self
         super.init()
         //        GenericTools.here("init()", self)
+
+        // Since we run in the main thread, the Data Store context is associated to the main thread
+        let container = NSPersistentContainer(name: "ToolsDataModel")
+        container.loadPersistentStores { description, error in
+            if let error = error {
+                // Do not log this error using #fatalError() nor #saveTrace() because it would not be saved, since the persistant store is not loaded
+                print("Unable to load persistent stores: \(error)")
+            } else {
+                self.persistentContainer = container
+            }
+        }
     }
-    
 }
 
 // Example: changing the tab bar height
