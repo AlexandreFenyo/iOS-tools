@@ -13,10 +13,6 @@ import Network
 import CoreData
 import iOSToolsMacros
 
-// extension UIApplication {}
-
-// bug : je lance un update et je passe dans l'onglet traces et je reviens une fois qu'il y a des nouveaux noeuds => exception
-
 let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! Bool
 
 @UIApplicationMain
@@ -35,14 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private var local_chargen_listener: NetworkServiceListener?
 
-    // private var browser_chargen: ServiceBrowser?
-    // private var browser_discard: ServiceBrowser?
-    // private var browser_app: ServiceBrowser?
-    
     private var masterViewController: MasterViewController?
     private var tracesViewController: TracesViewController?
     
-    // pour tester la publication : dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
+    // Check that the service is published with: dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
     private func startChargenService() {
         if let local_chargen_service_delegate {
             local_chargen_service_delegate.timer!.invalidate()
@@ -80,13 +72,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        
         // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
         _ = DBMaster.shared
-        
+
+        // We do not call #saveTrace("main: application started") since we do not want to display the file name and line number
         Traces.addMessage("main: application started")
-        // _ = #saveTrace("main: application started")
         
         InitTCPPort2Service()
         
@@ -97,22 +87,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController//,
-//            let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
-                //            let devices = masterViewController.devices[.localGateway]
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController
+            // May be useful for debugging:
+            //,
+            // let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
+            // let devices = masterViewController.devices[.localGateway]
         else { fatalError(#saveTrace("application")) }
 
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
         else { fatalError(#saveTrace("application / intermanViewController")) }
 
+        // May be useful for debugging:
+        // Set the first device displayed in the detail view controller:
+        // detailViewController.device = devices.first
         
-        // Set the first device displayed in the detail view controller
-        //        detailViewController.device = devices.first
-        
-        // suppression du 3ième view controller (console) pour le MVP
+        // May be useful for debugging:
+        // Suppress the third view controller (Traces) to get a MVP (Minimum Viable Product)
         // tabBarController.viewControllers?.remove(at: 2)
 
-        // A supprimer en production: sélection par défaut du tab Interman nommé Network, pour debugger rapidement
+        // May be useful for debugging:
+        // Select the Network tab as the default one, to debug faster
         // tabBarController.selectedIndex = 1
         
         self.masterViewController = masterViewController
@@ -137,12 +131,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         startAppService()
         
         // Start browsing for remote services
-        // We can test easily to browse using _ssh._tcp.
-        // browser_chargen = ServiceBrowser(NetworkDefaults.speed_test_chargen_service_type, deviceManager: masterViewController)
-        // browser_discard = ServiceBrowser(NetworkDefaults.speed_test_discard_service_type, deviceManager: masterViewController)
-        // masterViewController.browser_chargen = browser_chargen
-        // masterViewController.browser_discard = browser_discard
-
         masterViewController.browser_app = ServiceBrowser(NetworkDefaults.speed_test_app_service_type, deviceManager: masterViewController)
 
 //        for svcname in [ "_airplay._tcp.", "_airport._tcp." ] {

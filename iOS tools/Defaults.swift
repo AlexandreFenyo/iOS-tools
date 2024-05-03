@@ -15,7 +15,7 @@ import iOSToolsMacros
 // A mode to make screenshots
 let demo_mode = false
 
-// Cette liste doit être synchronisée avec les services déclarés dans Info.plist, afin d'avoir l'autorisation d'écouter les annonces de services correspondant
+// This list must be synchronized with the services declared in Info.plist, in order to have authorization to listen to the corresponding service announcements
 let service_names = [
     "_speedtestapp._tcp.",
     "_speedtestchargen._tcp.",
@@ -135,7 +135,9 @@ let service_names = [
     "_xserveraid._tcp."
 ]
 
-//RAJOUTER LES SERVICES NOUVEAUX AUX AUTRES TABLEAUX !
+// When adding a new service into this array, also add this service to:
+// - the service_names array
+// - the file named Info.plist
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
     service_names_descr["_speedtestapp._tcp."] = "WiFiMapExplorer discovering service"
@@ -250,7 +252,6 @@ var service_names_descr: [String : String] = {
     service_names_descr["_xserveraid._tcp."] = "Xserve RAID, Apple"
     return service_names_descr
 }()
-
 
 // Default values
 struct NetworkDefaults {
