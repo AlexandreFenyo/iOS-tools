@@ -450,228 +450,237 @@ class NetworkBrowser {
                 return
             }
             
-            let dispatchGroup = DispatchGroup()
-            
-            // Send unicast ICMPv4
-            DispatchQueue.main.async {
+            await MainActor.run {
                 self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packets", level: .INFO)
                 // Add torus
                 DBMaster.shared.notifyBroadcast()
             }
             
-            dispatchGroup.enter()
-            // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
-            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
-                repeat {
-                    let address = self.getIPForTask()
-                    if let address = address {
-                        DispatchQueue.main.async {
-                            self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
-                        }
-                        
-                        var hdr = icmp()
-                        hdr.icmp_type = UInt8(ICMP_ECHO)
-                        hdr.icmp_code = 0
-                        hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
-                        let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
-                        hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
-                            $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
-                                var sum : u_short = 0
-                                for idx in 0..<capacity { sum = sum &+ $0[idx] }
-                                sum ^= u_short.max
-                                return sum
+            await withTaskGroup(of: Void.self) { group in
+                // Send unicast ICMPv4
+                group.addTask {
+                    // wait .5 sec to let the recvfrom() start before sending ICMP packets // is it necessary?
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+
+                    repeat {
+                        let address = self.getIPForTask()
+                        if let address = address {
+                            await MainActor.run {
+                                self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
                             }
-                        }
-                        
-                        let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.getData().withUnsafeBytes {
-                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
-                            }
-                        }
-                        if ret < 0 { GenericTools.perror("sendto") }
-                    } else {
-                        // Do not overload the proc
-                        usleep(250000)
-                    }
-                } while !self.isFinishedOrUnicastEmpty()
-                
-                // Wait .5 sec between the last unicast packet sent and toggling the finished flag
-                usleep(500000)
-                DispatchQueue.main.sync { self.unicast_ipv4_finished = true }
-                
-                dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
-                }
-            }
-            
-            // Send broadcast ICMPv4
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
-            }
-            dispatchGroup.enter()
-            // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
-                for _ in 1...3 {
-                    for address in self.broadcast_ipv4 {
-                        DispatchQueue.main.async {
-                            self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
-                        }
-                        
-                        var hdr = icmp()
-                        hdr.icmp_type = UInt8(ICMP_ECHO)
-                        hdr.icmp_code = 0
-                        hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
-                        let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
-                        hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
-                            $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
-                                var sum : u_short = 0
-                                for idx in 0..<capacity { sum = sum &+ $0[idx] }
-                                sum ^= u_short.max
-                                return sum
-                            }
-                        }
-                        
-                        let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
-                            address.toSockAddress()!.getData().withUnsafeBytes {
-                                sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
-                            }
-                        }
-                        if ret < 0 { GenericTools.perror("sendto") }
-                    }
-                    
-                    if self.isFinished() { break }
-                    // wait some delay before sending another broadcast packet
-                    usleep(250000)
-                }
-                
-                // Wait .5 sec between the last broadcast packet sent and toggling the finished flag
-                usleep(500000)
-                DispatchQueue.main.sync { self.broadcast_ipv4_finished = true }
-                
-                dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished sending ICMPv4 broadcast packets", level: .INFO)
-                }
-            }
-            
-            // Send multicast ICMPv6
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
-            }
-            dispatchGroup.enter()
-            // wait .5 sec to let the recvfrom() start before sending ICMP packets
-            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) {
-                for _ in 1...3 {
-                    for address in self.multicast_ipv6 {
-                        DispatchQueue.main.async {
-                            self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
-                        }
-                        
-                        var saddr = address.toSockAddress()!.getData()
-                        var msg_hdr = msghdr()
-                        var hdr = icmp6_hdr()
-                        var iov = iovec()
-                        hdr.icmp6_type = UInt8(ICMP6_ECHO_REQUEST)
-                        hdr.icmp6_code = 0
-                        hdr.icmp6_dataun.icmp6_un_data16.0 = 55 // icmp6_id
-                        hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
-                        iov.iov_len = 8
-                        msg_hdr.msg_namelen = UInt32(saddr.count)
-                        let retlen = saddr.withUnsafeMutableBytes { (ptr) -> Int in
-                            msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr.bindMemory(to: sockaddr_in6.self).baseAddress)
-                            return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
-                                iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
-                                return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
-                                    msg_hdr.msg_iov = ptr
-                                    msg_hdr.msg_iovlen = 1
-                                    return sendmsg(s6, &msg_hdr, 0)
+                            
+                            var hdr = icmp()
+                            hdr.icmp_type = UInt8(ICMP_ECHO)
+                            hdr.icmp_code = 0
+                            hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                            let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                            hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                                $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                                    var sum : u_short = 0
+                                    for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                                    sum ^= u_short.max
+                                    return sum
                                 }
                             }
+                            
+                            let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                                address.toSockAddress()!.getData().withUnsafeBytes {
+                                    sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
+                                }
+                            }
+                            if ret < 0 { GenericTools.perror("sendto") }
+                        } else {
+                            // Do not overload the proc
+                            try? await Task.sleep(nanoseconds: 250_000_000)
                         }
-                        if retlen < 0 {
-                            //                            print("IPV6 sendmsg: retval=", retlen)
-                            //                            GenericTools.perror()
+                    } while !self.isFinishedOrUnicastEmpty()
+                    
+                    
+                    // Wait .5 sec between the last unicast packet sent and toggling the finished flag
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    await MainActor.run {
+                        self.unicast_ipv4_finished = true
+                        self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
+                    }
+                }
+
+
+                
+                // Send broadcast ICMPv4
+                group.addTask {
+
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
+                    }
+
+                    // wait .5 sec to let the recvfrom() start before sending ICMP packets
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+
+                    for _ in 1...3 {
+                        for address in self.broadcast_ipv4 {
+                            await MainActor.run {
+                                self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                            }
+                            
+                            var hdr = icmp()
+                            hdr.icmp_type = UInt8(ICMP_ECHO)
+                            hdr.icmp_code = 0
+                            hdr.icmp_hun.ih_idseq.icd_seq = _htons(13)
+                            let capacity = MemoryLayout<icmp>.size / MemoryLayout<ushort>.size
+                            hdr.icmp_cksum = withUnsafePointer(to: &hdr) {
+                                $0.withMemoryRebound(to: u_short.self, capacity: capacity) {
+                                    var sum : u_short = 0
+                                    for idx in 0..<capacity { sum = sum &+ $0[idx] }
+                                    sum ^= u_short.max
+                                    return sum
+                                }
+                            }
+                            
+                            let ret = withUnsafePointer(to: &hdr) { (bytes) -> Int in
+                                address.toSockAddress()!.getData().withUnsafeBytes {
+                                    sendto(s, bytes, MemoryLayout<icmp>.size, 0, $0.bindMemory(to: sockaddr.self).baseAddress, UInt32(MemoryLayout<sockaddr_in>.size))
+                                }
+                            }
+                            if ret < 0 { GenericTools.perror("sendto") }
                         }
+                        
+                        if self.isFinished() { break }
+                        // wait some delay before sending another broadcast packet
+                        try? await Task.sleep(nanoseconds: 250_000_000)
                     }
                     
-                    if self.isFinished() { break }
-                    // wait some delay before sending another broadcast packet
-                    usleep(250000)
+                    // Wait .5 sec between the last broadcast packet sent and toggling the finished flag
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    await MainActor.run {
+                        self.broadcast_ipv4_finished = true
+                        self.device_manager.addTrace("network browsing: finished sending ICMPv4 broadcast packets", level: .INFO)
+                    }
+
+                }
+
+                // Send multicast ICMPv6
+                group.addTask {
+
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
+                    }
+                    // wait .5 sec to let the recvfrom() start before sending ICMP packets
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+
+                    for _ in 1...3 {
+                        for address in self.multicast_ipv6 {
+                            await MainActor.run {
+                                self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
+                            }
+                            
+                            var saddr = address.toSockAddress()!.getData()
+                            var msg_hdr = msghdr()
+                            var hdr = icmp6_hdr()
+                            var iov = iovec()
+                            hdr.icmp6_type = UInt8(ICMP6_ECHO_REQUEST)
+                            hdr.icmp6_code = 0
+                            hdr.icmp6_dataun.icmp6_un_data16.0 = 55 // icmp6_id
+                            hdr.icmp6_dataun.icmp6_un_data16.1 = _ntohs(0) // icmp6_seq
+                            iov.iov_len = 8
+                            msg_hdr.msg_namelen = UInt32(saddr.count)
+                            let retlen = saddr.withUnsafeMutableBytes { (ptr) -> Int in
+                                msg_hdr.msg_name = UnsafeMutableRawPointer(mutating: ptr.bindMemory(to: sockaddr_in6.self).baseAddress)
+                                return withUnsafeMutablePointer(to: &hdr) { (ptr) -> Int in
+                                    iov.iov_base = UnsafeMutableRawPointer(mutating: ptr)
+                                    return withUnsafeMutablePointer(to: &iov) { (ptr) -> Int in
+                                        msg_hdr.msg_iov = ptr
+                                        msg_hdr.msg_iovlen = 1
+                                        return sendmsg(s6, &msg_hdr, 0)
+                                    }
+                                }
+                            }
+                            if retlen < 0 {
+                                //                            print("IPV6 sendmsg: retval=", retlen)
+                                //                            GenericTools.perror()
+                            }
+                        }
+                        
+                        if self.isFinished() { break }
+                        // wait some delay before sending another broadcast packet
+                        try? await Task.sleep(nanoseconds: 250_000_000)
+                    }
+                    
+                    
+                    // Wait .5 sec between the last multicast packet sent and toggling the finished flag
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    await MainActor.run {
+                        self.multicast_ipv6_finished = true
+                        self.device_manager.addTrace("network browsing: finished sending ICMPv6 multicast packets", level: .INFO)
+                    }
+                }
+
+                
+                // Catch IPv4 replies
+                group.addTask {
+
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
+                    }
+
+
+                    repeat {
+                        let buf_size = 10000
+                        var buf = [UInt8](repeating: 0, count: buf_size)
+                        var from = Data(count: MemoryLayout<sockaddr_in>.size)
+                        var from_len : socklen_t = UInt32(from.count)
+                        
+                        let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
+                            from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
+                                buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
+                            }
+                        }
+                        if ret < 0 {
+                            GenericTools.perror("recvfrom")
+                            continue
+                        }
+                        
+                        self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
+                    } while !self.isFinishedOrEverythingDone()
+                    
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
+                    }
+
                 }
                 
-                // Wait .5 sec between the last multicast packet sent and toggling the finished flag
-                usleep(500000)
-                DispatchQueue.main.sync { self.multicast_ipv6_finished = true }
+                // Catch IPv6 replies
+                group.addTask {
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
+                    }
+
+                    repeat {
+                        let buf_size = 10000
+                        var buf = [UInt8](repeating: 0, count: buf_size)
+                        var from = Data(count: MemoryLayout<sockaddr_in6>.size)
+                        var from_len : socklen_t = UInt32(from.count)
+                        
+                        let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
+                            from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
+                                buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
+                            }
+                        }
+                        if ret < 0 {
+                            GenericTools.perror("reply from IPv6")
+                            continue
+                        }
+                        
+                        self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+                    } while !self.isFinishedOrEverythingDone()
+                 
+                    await MainActor.run {
+                        self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
+                    }
+
+                }
                 
-                dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished sending ICMPv6 multicast packets", level: .INFO)
-                }
             }
-            
-            // Catch IPv4 replies
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
-            }
-            
-            dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async {
-                repeat {
-                    let buf_size = 10000
-                    var buf = [UInt8](repeating: 0, count: buf_size)
-                    var from = Data(count: MemoryLayout<sockaddr_in>.size)
-                    var from_len : socklen_t = UInt32(from.count)
-                    
-                    let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
-                        from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
-                            buf.withUnsafeMutableBytes { recvfrom(s, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
-                        }
-                    }
-                    if ret < 0 {
-                        GenericTools.perror("recvfrom")
-                        continue
-                    }
-                    
-                    self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                } while !self.isFinishedOrEverythingDone()
-                dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
-                }
-            }
-            
-            // Catch IPv6 replies
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("network browsing: waiting for IPv6 replies", level: .INFO)
-            }
-            dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async {
-                repeat {
-                    let buf_size = 10000
-                    var buf = [UInt8](repeating: 0, count: buf_size)
-                    var from = Data(count: MemoryLayout<sockaddr_in6>.size)
-                    var from_len : socklen_t = UInt32(from.count)
-                    
-                    let ret = withUnsafeMutablePointer(to: &from_len) { (from_len_p) -> Int in
-                        from.withUnsafeMutableBytes { (from_p : UnsafeMutableRawBufferPointer) -> Int in
-                            buf.withUnsafeMutableBytes { recvfrom(s6, $0.baseAddress, buf_size, 0, from_p.bindMemory(to: sockaddr.self).baseAddress, from_len_p) }
-                        }
-                    }
-                    if ret < 0 {
-                        GenericTools.perror("reply from IPv6")
-                        continue
-                    }
-                    
-                    self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-                } while !self.isFinishedOrEverythingDone()
-                dispatchGroup.leave()
-                DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
-                }
-            }
-            
-            dispatchGroup.wait()
+
             
             close(s)
             close(s6)

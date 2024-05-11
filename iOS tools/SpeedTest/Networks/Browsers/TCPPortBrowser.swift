@@ -298,26 +298,14 @@ class TCPPortBrowser {
         doAtEnd()
     }
 
-    // Appelé depuis Task (donc nonisolated context)
+    // Appelé depuis Task, donc (background) nonisolated context
     public func browseAsync(address: IPAddress? = nil, doAtEnd: @escaping () async -> Void = {}) async {
-        
-        // A SUPPRIMER
-//        doAtEnd();return
-        
-        // Initialize port lists to connect to
-        
-//        let a = IPv4Address("192.168.1.254")!
-//        let a = IPv4Address("10.69.184.194")!
-//        let a = IPv4Address("1.2.3.4")!
-//        ip_to_tcp_port[a] = TCPPortBrowser.ports_set
-
         if let address = address {
             ip_to_tcp_port[address] = TCPPortBrowser.ports_set_one_host
         } else {
             // ne pas rescanner les ports déjà identifiés
 
             await MainActor.run {
-//            DispatchQueue.main.sync {
                 for node in DBMaster.shared.nodes {
                     if let addr = node.getV4Addresses().first {
                         ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
