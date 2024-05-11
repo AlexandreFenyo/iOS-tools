@@ -44,10 +44,8 @@ class DetailViewController: UIViewController {
         return hostingController
     }
 
-    public func applicationDidBecomeActive() {
-        Task {
-            await chart_node?.applicationDidBecomeActive()
-        }
+    public func applicationDidBecomeActive() async {
+        await chart_node?.applicationDidBecomeActive()
     }
     
     override func viewDidLoad() {

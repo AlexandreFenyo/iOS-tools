@@ -138,6 +138,7 @@ let service_names = [
 // When adding a new service into this array, also add this service to:
 // - the service_names array
 // - the file named Info.plist
+// - the file named tcpports.txt
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
     service_names_descr["_speedtestapp._tcp."] = "WiFiMapExplorer discovering service"

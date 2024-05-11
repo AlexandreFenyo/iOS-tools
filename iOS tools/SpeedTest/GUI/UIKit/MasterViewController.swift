@@ -153,7 +153,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         return section.nodes[index_path.item]
     }
 
-    public func resetToDefaultHosts() {
+    @MainActor
+    func resetToDefaultHosts() async {
         addTrace("main: remove previously discovered hosts", level: LogLevel.INFO)
 
         // Remove every nodes
@@ -164,48 +165,49 @@ class MasterViewController: UITableViewController, DeviceManager {
         DBMaster.shared.resetNetworks()
 
         // Ajouter les noeuds par défaut
-        DBMaster.shared.addDefaultNodes()
+        await DBMaster.shared.addDefaultNodes()
     }
 
     // Update nodes and find new nodes
     // Main thread
-    private func startBrowsing() {
+    @MainActor
+    private func startBrowsing() async {
         // Supprimer tous les noeuds
-        resetToDefaultHosts()
+        await resetToDefaultHosts()
 
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) { _ in
-            self.addTrace("network browsing: start browsing the network", level: .INFO)
+        try? await Task.sleep(nanoseconds: 500_000_000)
+        
+        addTrace("network browsing: start browsing the network", level: .INFO)
 
-            self.stop_button!.isEnabled = true
-            self.detail_view_controller?.enableButtons(false)
-            self.master_ip_view_controller?.stop_button.isEnabled = true
-            self.add_button!.isEnabled = false
-            self.remove_button!.isEnabled = false
-            self.update_button!.isEnabled = false
+        stop_button!.isEnabled = true
+        detail_view_controller?.enableButtons(false)
+        master_ip_view_controller?.stop_button.isEnabled = true
+        add_button!.isEnabled = false
+        remove_button!.isEnabled = false
+        update_button!.isEnabled = false
 
-            // forcer une nouvelle recherche multicast
-            self.browser_app!.stop()
-            self.browser_app!.search()
-            for browser in self.browsers {
-                browser.stop()
-                browser.search()
-            }
+        // forcer une nouvelle recherche multicast
+        browser_app!.stop()
+        browser_app!.search()
+        for browser in self.browsers {
+            browser.stop()
+            browser.search()
+        }
 
-            self.updateLocalNodeAndGateways()
+        updateLocalNodeAndGateways()
 
-            // Use ICMP to find new nodes
-            let tb = TCPPortBrowser(device_manager: self)
-            self.browser_tcp = tb
+        // Use ICMP to find new nodes
+        let tb = TCPPortBrowser(device_manager: self)
+        browser_tcp = tb
 
-            let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
-            // let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
+        let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
+        // let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
 
-            self.browser_network = nb
-            nb.browse() {
-                DispatchQueue.main.sync {
-                    self.stopBrowsing(.OTHER_ACTION)
-                }
+        browser_network = nb
+        nb.browse() {
+            DispatchQueue.main.sync {
+                self.stopBrowsing(.OTHER_ACTION)
             }
         }
     }
@@ -283,9 +285,11 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     @IBAction func remove_pressed(_ sender: Any) {
         popUpHelp(.remove_nodes, "This button will remove every node automatically discovered during the current session. It will not affect local host, local gateway, static default nodes nor nodes you added manually. To remove a node you added manually, swipe left on this node.") {
-            self.resetToDefaultHosts()
-            DBMaster.shared.addDefaultNodes()
-            self.updateLocalNodeAndGateways()
+            Task.detached { @MainActor in
+                await self.resetToDefaultHosts()
+                await DBMaster.shared.addDefaultNodes()
+                self.updateLocalNodeAndGateways()
+            }
         }
     }
     
@@ -342,43 +346,22 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func update_pressed(_ sender: Any) {
         popUpHelp(.update_nodes, "This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. When needed, press the stop button to cancel this task. Traces panel will provide you with progress information if needed.")
-        
-        refreshControl!.beginRefreshing()
-//        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
-        tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
-        stop_button!.isEnabled = false
-        detail_view_controller?.enableButtons(true)
-        master_ip_view_controller?.stop_button.isEnabled = false
-        add_button!.isEnabled = false
-        remove_button!.isEnabled = false
-        update_button!.isEnabled = false
 
-        // REPRENDRE ICI pour passer en structured concurrency
-        test()
-
-        startBrowsing()
+        Task.detached { @MainActor in
+            self.refreshControl!.beginRefreshing()
+            //        tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+            self.tableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+            self.stop_button!.isEnabled = false
+            self.detail_view_controller?.enableButtons(true)
+            self.master_ip_view_controller?.stop_button.isEnabled = false
+            self.add_button!.isEnabled = false
+            self.remove_button!.isEnabled = false
+            self.update_button!.isEnabled = false
+            
+            await self.startBrowsing()
+        }
     }
 
-    @MainActor
-    func test() {
-//        test1()
-    }
-//    @MainActor
-    func test1() async {
-        await test()
-        await test11()
-    }
-    func test11() {
-//        try? await Task.sleep(nanoseconds: 10)
-
-    }
-    @MainActor
-    func test2() async {
-        try? await Task.sleep(nanoseconds: 10)
-    }
-
-    
-    
     func update_pressed() {
         DispatchQueue.main.async {
             self.stop_pressed(self)
@@ -429,13 +412,23 @@ class MasterViewController: UITableViewController, DeviceManager {
     // Refresh started with gesture
     @objc
     private func userRefresh(_ sender: Any) {
-        stop_button!.isEnabled = false
-        detail_view_controller?.enableButtons(true)
-        master_ip_view_controller?.stop_button.isEnabled = false
-        add_button!.isEnabled = false
-        remove_button!.isEnabled = false
-        update_button!.isEnabled = false
-        startBrowsing()
+        Task.detached { @MainActor in
+            self.stop_button!.isEnabled = false
+            self.detail_view_controller?.enableButtons(true)
+            self.master_ip_view_controller?.stop_button.isEnabled = false
+            self.add_button!.isEnabled = false
+            self.remove_button!.isEnabled = false
+            self.update_button!.isEnabled = false
+            
+            // CONTINUER LE DEBUG ICI : je ne suis pas dans le thread main quand le bug se produit en appelant la ligne suivante
+            if Thread.isMainThread {
+                print("XXXX MAIN THREAD")
+            } else {
+                print("XXXX BAD THREAD")
+            }
+
+            await self.startBrowsing()
+        }
     }
 
     public func applicationWillResignActive() {

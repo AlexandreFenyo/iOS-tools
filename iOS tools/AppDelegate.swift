@@ -220,14 +220,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
-            UserDefaults.standard.set(false, forKey: "remove_nodes_key")
-            UserDefaults.standard.set([String](), forKey: "nodes")
-            masterViewController?.resetToDefaultHosts()
-            masterViewController?.updateLocalNodeAndGateways()
+        Task.detached { @MainActor in
+            // Note: The UserDefaults class is thread-safe (https://developer.apple.com/documentation/foundation/userdefaults)
+            if UserDefaults.standard.bool(forKey: "remove_nodes_key") {
+                UserDefaults.standard.set(false, forKey: "remove_nodes_key")
+                UserDefaults.standard.set([String](), forKey: "nodes")
+                await self.masterViewController?.resetToDefaultHosts()
+                self.masterViewController?.updateLocalNodeAndGateways()
+            }
+            
+            await self.masterViewController?.detail_view_controller?.applicationDidBecomeActive()
         }
-        
-        masterViewController?.detail_view_controller?.applicationDidBecomeActive()
     }
     
     func applicationWillTerminate(_ application: UIApplication) {

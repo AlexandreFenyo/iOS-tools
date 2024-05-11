@@ -397,8 +397,9 @@ struct DiscoveredPort: Identifiable {
     var port: Port
 }
 
-class DiscoveredPortsStore: ObservableObject {
-    static var store = DiscoveredPortsStore()
+@MainActor
+class DiscoveredPortsModel: ObservableObject {
+    static let shared = DiscoveredPortsModel()
     @Published var discovered_ports = [DiscoveredPort]()
     
     func getDiscoveredPortIndex(id: UUID) -> Array<DiscoveredPort>.Index? {
@@ -407,14 +408,20 @@ class DiscoveredPortsStore: ObservableObject {
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
-class DBMaster /*: ObservableObject*/ {
+// We do not want to declare DBMaster as an ObservableObject: DBMaster is used by UIKit and we do not want to mix UIKit and SwiftUI. This is why we create the DiscoveredPortsModel class, that is only used by SwuiftUI.
+class DBMaster {
     var sections: [SectionType : ModelSection]
 
     private(set) var nodes: Set<Node> {
         didSet(oldValue) {
 
-            /*
-            DiscoveredPortsStore.store.discovered_ports = [DiscoveredPort]()
+            // Deux moyens pour identifier les méthodes qu'il faut rendre async:
+            // - soit déclarer @MainActor poru la propriété nodes de DBMaster
+            // - soit décommenter ce qui suit
+            // On commmence par addOrRemoveNode(), il faut remonter à la source des appels
+            // Ca remonte à addDefaultNodes()
+/*
+            DiscoveredPortsModel.shared.discovered_ports = [DiscoveredPort]()
             let port_list = DBMaster.getPorts()
             for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
                 let port_info = port_list[port_list_key]!
@@ -439,10 +446,10 @@ class DBMaster /*: ObservableObject*/ {
                     name = String(name.dropLast(6))
                 }
                 
-                DiscoveredPortsStore.store.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
+                DiscoveredPortsModel.shared.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
 
             }
-            */
+ */
             
         }
     }
@@ -450,6 +457,7 @@ class DBMaster /*: ObservableObject*/ {
     
     static let shared = DBMaster()
 
+    @MainActor
     func resetNetworks() {
         networks = Set<IPNetwork>()
     }
@@ -774,6 +782,7 @@ class DBMaster /*: ObservableObject*/ {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
+    @MainActor
     func removeAllNodes() {
         SectionType.allCases.forEach {
             sections[$0]!.nodes.removeAll()
@@ -964,7 +973,8 @@ class DBMaster /*: ObservableObject*/ {
     private let ips_v4_quad9 = [ "9.9.9.9", "149.112.112.9" ]
     private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
 
-    func addDefaultNodes() {
+    @MainActor
+    func addDefaultNodes() async {
         if demo_mode {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
             var node = Node()
@@ -1086,7 +1096,10 @@ class DBMaster /*: ObservableObject*/ {
             .other: ModelSection("Other hosts", "Other hosts", "any host")
         ]
 
-        addDefaultNodes()
+        // CONTINUER ICI : il faut la déclarer async et faire un await en l'appelant
+        Task.detached { @MainActor in
+            await self.addDefaultNodes()
+        }
         
 //        var node = Node()
         /*

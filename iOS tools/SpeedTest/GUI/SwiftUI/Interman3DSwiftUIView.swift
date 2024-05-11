@@ -118,24 +118,24 @@ struct Filter: View {
     @State var doesClose: Bool = true
     @State private var multiSelection = Set<UUID>()
 
-    @ObservedObject var model = DiscoveredPortsStore.store
+    @ObservedObject private var discovered_ports_model = DiscoveredPortsModel.shared
     @ObservedObject private var interman3d_model = Interman3DModel.shared
 
     // TODO : on veut que l'ajout ou la suppression d'un host refasse la liste Filter, même si on n'utilise pas cette variable
     // Mais il se peut que surveiller DiscoveredPortsStore suffise : A VERIFIER
-//    @ObservedObject private var hosts_model = DBMaster.shared // nécessite class DBMaster: ObservableObject
+    // @ObservedObject private var hosts_model = DBMaster.shared // nécessite class DBMaster: ObservableObject
     
     // discovered_ports est créé quand on active Filter, ce n'est pas le bon moment pour les créer, il faut le faire quand ils peuvent avoir changé,
     // il faut ensuite surveiller ce changement pour recréer Filter, il faut donc que ça soit Filter qui surveille ce changement
     // le pb c'est qu'on veut maintenir une nouvelle info : les ports sélectionnés et ceux non sélectionnés, sachant qu'un nouveau port qui est identifié doit être dans l'un ou l'autre état, à définir
 
     // We create a init function to debug creations of this view
-    init(master_view_controller: MasterViewController? = nil, filter_active: Binding<Bool>, multiSelection: Set<UUID> = Set<UUID>(), model: DiscoveredPortsStore = DiscoveredPortsStore.store, interman3d_model: Interman3DModel = Interman3DModel.shared, hosts_model: DBMaster = DBMaster.shared) {
+    init(master_view_controller: MasterViewController? = nil, filter_active: Binding<Bool>, multiSelection: Set<UUID> = Set<UUID>(), model: DiscoveredPortsModel = DiscoveredPortsModel.shared, interman3d_model: Interman3DModel = Interman3DModel.shared, hosts_model: DBMaster = DBMaster.shared) {
         self.master_view_controller = master_view_controller
         // Since filter_active is declared as @Binding, we need to use _filter_active to set its value
         self._filter_active = filter_active
         self.multiSelection = multiSelection
-        self.model = model
+        self.discovered_ports_model = model
         self.interman3d_model = interman3d_model
 //        self.hosts_model = hosts_model
         print("XXXX: INIT Filter")
@@ -149,7 +149,10 @@ struct Filter: View {
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
-                        model.discovered_ports = [DiscoveredPort]()
+                        
+                        
+                        // Ne pas faire ce qui suit : ce n'est pas ici qu'il faut le faire mais quand un nouveau port est découvert
+                        var foo = [DiscoveredPort]()
                         let port_list = DBMaster.getPorts()
                         for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
                             let port_info = port_list[port_list_key]!
@@ -173,10 +176,16 @@ struct Filter: View {
                             if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
                                 name = String(name.dropLast(6))
                             }
-
                             
-                            model.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
+                            foo.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
                         }
+                        // On annule l'effet de cette recherche des ports en commentant la ligne qui suit
+                        discovered_ports_model.discovered_ports = foo
+
+                        
+                        
+                        
+                        
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
                         self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()
@@ -196,10 +205,10 @@ struct Filter: View {
                 
                 if filter_active {
                     // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
-                    List(model.discovered_ports) { contact in
+                    List(discovered_ports_model.discovered_ports) { contact in
                         HStack {
                             Button(action: {
-                                let discovered_port = model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!]
+                                let discovered_port = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!]
                                 
                                 let hosts = DBMaster.getNodes(discovered_port.port)
                                 for host in hosts {
@@ -208,15 +217,15 @@ struct Filter: View {
                                         _ = #saveTrace("node not found")
                                         break
                                     }
-                                    node.opacity = model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
+                                    node.opacity = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
                                 }
                                 
                                 
-                                model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
+                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
 
                             }) {
                                 HStack {
-                                    Image(systemName: model.discovered_ports[model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                    Image(systemName: discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
                                         .foregroundColor(Color(COLORS.standard_background))
                                     Text(contact.name).font(.caption)
                                         .foregroundColor(Color(COLORS.standard_background))
