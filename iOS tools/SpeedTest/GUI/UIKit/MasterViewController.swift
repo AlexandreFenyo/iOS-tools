@@ -201,20 +201,79 @@ class MasterViewController: UITableViewController, DeviceManager {
         let tb = TCPPortBrowser(device_manager: self)
         browser_tcp = tb
 
-        let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
+        let nb = await NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self, browser_tcp: tb)
         // let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
 
         browser_network = nb
-        nb.browse() {
-            DispatchQueue.main.sync {
-                self.stopBrowsing(.OTHER_ACTION)
-            }
+        // nb.browse() {
+        await nb.browseAsync() {
+//            DispatchQueue.main.sync {
+                await self.stopBrowsingAsync(.OTHER_ACTION)
+//            }
         }
     }
 
     // Stop looking for new nodes
     // Main thread ?
     public func stopBrowsing(_ action: NewRunAction) {
+        if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
+
+        detail_view_controller?.ts.clearAverage()
+
+        refreshControl!.endRefreshing()
+        stop_button!.isEnabled = false
+        detail_view_controller?.enableButtons(true)
+        master_ip_view_controller?.stop_button.isEnabled = false
+        add_button!.isEnabled = true
+        remove_button!.isEnabled = true
+        update_button!.isEnabled = true
+
+        // browser_discard?.stop()
+        // browser_chargen?.stop()
+        // browser_app?.stop()
+        
+        browser_network?.stop()
+        browser_tcp?.stop()
+        browser_network = nil
+        browser_tcp = nil
+        
+        if action != .LOOP_ICMP {
+            local_ping_client?.stop()
+            local_ping_client?.close()
+            local_ping_client = nil
+        }
+        
+        if action != .FLOOD_UDP {
+            Task {
+                await local_flood_sync?.stop()
+                await local_flood_sync?.close()
+                local_flood_sync = nil
+                local_flood_client = nil
+            }
+        }
+        
+        if action != .CHARGEN_TCP {
+            Task {
+                await local_chargen_sync?.stop()
+                await local_chargen_sync?.close()
+                local_chargen_sync = nil
+                local_chargen_client = nil
+            }
+        }
+        
+        if action != .FLOOD_TCP {
+            Task {
+                await local_discard_sync?.stop()
+                await local_discard_sync?.close()
+                local_discard_sync = nil
+                local_discard_client = nil
+            }
+        }
+
+        setTitle(NSLocalizedString("Target List", comment: "Target List"))
+    }
+    
+    public func stopBrowsingAsync(_ action: NewRunAction) async {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
         detail_view_controller?.ts.clearAverage()
@@ -419,13 +478,6 @@ class MasterViewController: UITableViewController, DeviceManager {
             self.add_button!.isEnabled = false
             self.remove_button!.isEnabled = false
             self.update_button!.isEnabled = false
-            
-            // CONTINUER LE DEBUG ICI : je ne suis pas dans le thread main quand le bug se produit en appelant la ligne suivante
-            if Thread.isMainThread {
-                print("XXXX MAIN THREAD")
-            } else {
-                print("XXXX BAD THREAD")
-            }
 
             await self.startBrowsing()
         }
@@ -890,7 +942,8 @@ view.backgroundColor = .red
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
                                 var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                                if address.toNumericString() != nil && is_public_default_service {
                                     message = "connection \(str) - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                                 }
                                 await self.popUp("TCP discard", message, "continue")
@@ -921,7 +974,8 @@ view.backgroundColor = .red
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                    let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                    if address.toNumericString() != nil && is_public_default_service {
                         message = "timeout occurred - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
                     }
                     await self.popUp("TCP discard", message, "continue")
@@ -980,7 +1034,8 @@ view.backgroundColor = .red
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
                                 var message = str
-                                if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                                let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                                if address.toNumericString() != nil && is_public_default_service {
                                     message = "connection \(str) - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
@@ -1010,7 +1065,9 @@ view.backgroundColor = .red
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
-                    if address.toNumericString() != nil && DBMaster.shared.isPublicDefaultService(address.toNumericString()!) {
+                    
+                    let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
+                    if address.toNumericString() != nil && is_public_default_service {
                         message = "timeout occurred - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
                     }
                     await self.popUp("TCP chargen", message, "continue")

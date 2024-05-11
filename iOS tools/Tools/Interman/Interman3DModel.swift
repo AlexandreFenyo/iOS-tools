@@ -1010,6 +1010,7 @@ class Link3DICMPResponse: Link3D {
     }
 }
 
+@MainActor
 public class Interman3DModel: ObservableObject {
     static let shared = Interman3DModel()
 
@@ -1028,7 +1029,9 @@ public class Interman3DModel: ObservableObject {
     public init() {
         b3d_hosts = [B3DHost]()
         Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: true) { _ in
-            self.scheduledOperations()
+            Task.detached {
+                await self.scheduledOperations()
+            }
         }
     }
 

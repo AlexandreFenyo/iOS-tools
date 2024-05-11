@@ -408,7 +408,7 @@ class DiscoveredPortsModel: ObservableObject {
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
-// We do not want to declare DBMaster as an ObservableObject: DBMaster is used by UIKit and we do not want to mix UIKit and SwiftUI. This is why we create the DiscoveredPortsModel class, that is only used by SwuiftUI.
+@MainActor
 class DBMaster {
     var sections: [SectionType : ModelSection]
 
