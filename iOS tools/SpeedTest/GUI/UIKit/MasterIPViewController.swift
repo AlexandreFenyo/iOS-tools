@@ -27,6 +27,8 @@ class DeviceAddressCell : UITableViewCell {
 }
 
 // The MasterIPViewController instance is the delegate for the UITableView
+// Since we do not want to declare viewDidLoad() as @MainActor, and since it would not work declaring it nonisolated (calling super.viewDidLoad() would generate a warning), we have to declare each var and func as @MainActor.
+@MainActor
 class MasterIPViewController: UITableViewController {
     public var master_view_controller: MasterViewController?
     public var node : Node?
@@ -109,19 +111,24 @@ class MasterIPViewController: UITableViewController {
         super.viewDidDisappear(animated)
     }
     
+    // We do not use Timer.scheduledTimer() anymore but a detached task with a loop. Using scheduledTimer() would forbid us to declare viewDidLoad() as @MainActor:
+    // we already know that the closure launched by Timer.scheduledTimer() will be run on the calling queue, so on the main actor, and if we were declaring viewDidLoad() as @MainActor, we would have warnings about accessing self properties incorrectly: the compiler does not know that the closure launched by Timer.scheduledTimer will be run on the main queue.
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Uncomment the following line to preserve selection between presentations
         clearsSelectionOnViewWillAppear = false
-        
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
-            self.stop_button_toggle.toggle()
-            if self.stop_button.isEnabled {
-                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
-            } else {
-                self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
-            }
+
+        Task.detached { @MainActor in
+            repeat {
+                self.stop_button_toggle.toggle()
+                if self.stop_button.isEnabled {
+                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
+                } else {
+                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
+                }
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            } while Task.isCancelled == false
         }
     }
     
@@ -188,7 +195,6 @@ class MasterIPViewController: UITableViewController {
         
         return cell
     }
-    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]

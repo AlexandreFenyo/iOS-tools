@@ -9,7 +9,7 @@
 import Foundation
 import iOSToolsMacros
 
-// Only a single instance can work at a time, since ICMP replies are sent to any thread calling recvfrom()
+// Only a single instance can work at a time, since ICMP replies are sent to any thread while calling recvfrom()
 class NetworkBrowser {
     private let device_manager: DeviceManager
     private let browser_tcp: TCPPortBrowser?
@@ -19,10 +19,13 @@ class NetworkBrowser {
     private var unicast_ipv4_finished = false // Main thread
     private var broadcast_ipv4_finished = false // Main thread
     private var multicast_ipv6_finished = false // Main thread
+    
+    // A REMETTRE CONTINUER ICI
+//@MainActor
     private var finished = false // Main thread
     
     // Browse a set of networks
-    // Main thread
+    // Any Thread
     public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser? = nil) async {
         self.device_manager = device_manager
         self.browser_tcp = browser_tcp
@@ -34,7 +37,7 @@ class NetworkBrowser {
                 if network_addr == IPv6Address("::1") { continue }
                 if network_addr.isLLA() {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
-                    device_manager.addTrace("network browsing: will send IPV6 multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
+                    await device_manager.addTrace("network browsing: will send IPV6 multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
                     multicast_ipv6.insert(multicast)
                 }
             }
@@ -45,14 +48,14 @@ class NetworkBrowser {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
                 if network.mask_len < 22 {
-                    device_manager.addTrace("network browsing: will send IPv4 broadcast packet to \(broadcast.toNumericString() ?? "")", level: .DEBUG)
+                    await device_manager.addTrace("network browsing: will send IPv4 broadcast packet to \(broadcast.toNumericString() ?? "")", level: .DEBUG)
                     broadcast_ipv4.insert(broadcast)
                 } else {
                     if network.mask_len != 32 {
                         var current = network_addr.and(netmask).next() as! IPv4Address
                         repeat {
                             if (await DBMaster.shared.nodes.filter { $0.getV4Addresses().contains(current) }).isEmpty {
-                                device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
+                                await device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
                                 reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
                             }
                             current = current.next() as! IPv4Address
@@ -63,55 +66,47 @@ class NetworkBrowser {
         }
     }
     
-    // Any thread
-    private func getIPForTask() -> IPv4Address? {
-        return DispatchQueue.main.sync {
-            // Collect one address among those left and used more than 3 secs ago
-            guard let address = reply_ipv4.filter({
-                guard let last_use = $0.value.1 else { return true }
-                return Date().timeIntervalSince(last_use) > 3
-            }).first?.key else { return nil }
-            reply_ipv4[address]!.0 -= 1
-            if let info = address.toNumericString() { device_manager.setInformation((reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + NSLocalizedString("trying ", comment: "trying ") + info) }
-            // Remove the address if used 3 times, but note that when the last one is removed, we should wait 3 secs before considering we have been able to wait for a reply from this last address
-            if reply_ipv4[address]!.0 == 0 { reply_ipv4.removeValue(forKey: address) }
-            else { reply_ipv4[address]!.1 = Date() }
-            return address
-        }
+    @MainActor
+    private func getIPForTask() async -> IPv4Address? {
+        // Collect one address among those left and used more than 3 secs ago
+        guard let address = reply_ipv4.filter({
+            guard let last_use = $0.value.1 else { return true }
+            return Date().timeIntervalSince(last_use) > 3
+        }).first?.key else { return nil }
+        reply_ipv4[address]!.0 -= 1
+        if let info = address.toNumericString() { device_manager.setInformation((reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + NSLocalizedString("trying ", comment: "trying ") + info) }
+        // Remove the address if used 3 times, but note that when the last one is removed, we should wait 3 secs before considering we have been able to wait for a reply from this last address
+        if reply_ipv4[address]!.0 == 0 { reply_ipv4.removeValue(forKey: address) }
+        else { reply_ipv4[address]!.1 = Date() }
+        return address
     }
     
-    // Any thread
-    private func manageAnswer(from: IPAddress) {
-        DispatchQueue.main.sync {
-            let node = Node()
-            switch from.getFamily() {
-            case AF_INET:
-                node.addV4Address(from as! IPv4Address)
-                // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
-                if let info = from.toNumericString() {
-                    //                    DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
-                    //                    }
-                    device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
-                }
-                // Do not try to reach this address with unicast anymore
-                reply_ipv4.removeValue(forKey: from as! IPv4Address)
-                
-            case AF_INET6:
-                node.addV6Address(from as! IPv6Address)
-                // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
-                device_manager.addNode(node, resolve_ipv6_addresses: node.getV6Addresses())
-                if let info = from.toNumericString() {
-                    //                    DispatchQueue.main.async {
-                    self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
-                    //                    }
-                    device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
-                }
-                
-            default:
-                print("manageAnswer(): invalid family", from.getFamily())
+    @MainActor
+    private func manageAnswer(from: IPAddress) async {
+        let node = Node()
+        switch from.getFamily() {
+        case AF_INET:
+            node.addV4Address(from as! IPv4Address)
+            // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
+            device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
+            if let info = from.toNumericString() {
+                self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
+                device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
             }
+            // Do not try to reach this address with unicast anymore
+            reply_ipv4.removeValue(forKey: from as! IPv4Address)
+            
+        case AF_INET6:
+            node.addV6Address(from as! IPv6Address)
+            // We want to increase the probability to get a name for this address, so try to resolve every addresses of this node, because this could have not worked previously
+            device_manager.addNode(node, resolve_ipv6_addresses: node.getV6Addresses())
+            if let info = from.toNumericString() {
+                self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
+                device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
+            }
+            
+        default:
+            print("manageAnswer(): invalid family", from.getFamily())
         }
     }
     
@@ -187,7 +182,7 @@ class NetworkBrowser {
                     try? await Task.sleep(nanoseconds: 500_000_000)
 
                     repeat {
-                        let address = self.getIPForTask()
+                        let address = await self.getIPForTask()
                         if let address = address {
                             await MainActor.run {
                                 self.device_manager.addTrace("network browsing: sending ICMPv4 unicast packet to \(address.toNumericString() ?? "")", level: .ALL)
@@ -363,7 +358,7 @@ class NetworkBrowser {
                             continue
                         }
                         
-                        self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
+                        await self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
                     } while !self.isFinishedOrEverythingDone()
                     
                     await MainActor.run {
@@ -394,7 +389,7 @@ class NetworkBrowser {
                             continue
                         }
                         
-                        self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
+                        await self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
                     } while !self.isFinishedOrEverythingDone()
                  
                     await MainActor.run {

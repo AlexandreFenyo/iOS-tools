@@ -105,8 +105,9 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         // print(#function)
         if let idx = services.firstIndex(of: service) {
-            DispatchQueue.main.async {
-                self.device_manager.addTrace("Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)", level: .DEBUG)
+            let trace = "Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)"
+            Task.detached {
+                await self.device_manager.addTrace(trace, level: .DEBUG)
             }
             services.remove(at: idx)
         }
@@ -132,13 +133,17 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     // A search is commencing
     public func netServiceBrowserWillSearch(_ browser: NetServiceBrowser) {
 //        print(#function)
-        device_manager.addTrace("Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
+        Task {
+            await device_manager.addTrace("Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
+        }
     }
 
     // A search was stopped
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
         // print(#function)
-        device_manager.addTrace("Bonjour/mDNS: stop browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
+        Task {
+            await device_manager.addTrace("Bonjour/mDNS: stop browsing multicast DNS / Bonjour services of type \(type)", level: .ALL)
+        }
     }
 
     // MARK: - NetServiceDelegate
@@ -164,82 +169,94 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
 
     // May have found some addresses for the service
     public func netServiceDidResolveAddress(_ sender: NetService) {
-//        print(#function)
+        //        print(#function)
         // print("netServiceDidResolveAddress: name:", sender.name, "port:", sender.port)
         // From the documentation: "It is possible for a single service to resolve to more than one address or not resolve to any addresses."
-
-        let node = Node()
-
-        var text_attr = [String : String]()
-        if let data = sender.txtRecordData() {
-            text_attr = decodeTxt(data)
-        }
-        // type value ex.: "_adisk._tcp."
-        node.addService(BonjourServiceInfo(type, String(sender.port), text_attr))
-        /*
-        print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
-        print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
-         */
-        // Fill in the dictionary ports_to_bonjour_services with the latest bonjour service name associated to a port.
-        let port_number = PortNumber(sender.port)
-        let service_type = sender.type
-        Task {
-            let ip_protocol: IPProtocol
-            if type.hasSuffix("._tcp.") {
-                ip_protocol = .TCP
-            } else if type.hasSuffix("._udp.") {
-                ip_protocol = .UDP
-            } else {
-                #fatalError("invalid Bonjour service name")
-                return
-            }
-            let port = Port(port_number: port_number, ip_protocol: ip_protocol)
-            await Ports2BonjourServices.shared.add(port, service_type)
-        }
         
-        if type == NetworkDefaults.speed_test_app_service_type {
-            node.setTypes([ .chargen, .discard, .ios ])
-            node.addTcpPort(NetworkDefaults.speed_test_chargen_port)
-            node.addTcpPort(NetworkDefaults.speed_test_discard_port)
-            node.addTcpPort(NetworkDefaults.speed_test_app_port)
-        }
-
-        if type.hasSuffix("._tcp.") {
-            node.addTcpPort(UInt16(sender.port))
-        } else {
-            node.addUdpPort(UInt16(sender.port))
-        }
-
-        if sender.addresses != nil {
-            for data in sender.addresses! {
-                let sock_addr = SockAddr.getSockAddr(data)
-                switch sock_addr.getFamily() {
-                case AF_INET:
-                    node.addV4Address(sock_addr.getIPAddress() as! IPv4Address)
-                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
-
-                case AF_INET6:
-                    node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
-                    if let info = sock_addr.getIPAddress()!.toNumericString() { device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
-
-                default:
-                    #fatalError("can not be here")
+        let txt_record = sender.txtRecordData()
+        let port = sender.port
+        let type = sender.type
+        let addresses = sender.addresses
+        let name = sender.name
+        let host_name = sender.hostName
+        let description = sender.description
+        let domain = sender.domain
+        
+        Task.detached { @MainActor in
+            
+            let node = Node()
+            
+            var text_attr = [String : String]()
+            if let data = txt_record {
+                text_attr = self.decodeTxt(data)
+            }
+            // type value ex.: "_adisk._tcp."
+            node.addService(BonjourServiceInfo(self.type, String(port), text_attr))
+            /*
+             print("STATIC ATTRIBUTES: type:\(type) name:\(sender.name) hostname:\(sender.hostName) sender.type:\(sender.type) port:\(sender.port) descr:\(sender.description) debug:\(sender.debugDescription) domain:\(sender.domain)")
+             print("DYNAMIC ATTRIBUTES for '\(sender.name)' with type \(type): \(text_attr)")
+             */
+            // Fill in the dictionary ports_to_bonjour_services with the latest bonjour service name associated to a port.
+            let port_number = PortNumber(port)
+            let service_type = type
+            Task {
+                let ip_protocol: IPProtocol
+                if self.type.hasSuffix("._tcp.") {
+                    ip_protocol = .TCP
+                } else if self.type.hasSuffix("._udp.") {
+                    ip_protocol = .UDP
+                } else {
+                    #fatalError("invalid Bonjour service name")
+                    return
+                }
+                let port = Port(port_number: port_number, ip_protocol: ip_protocol)
+                Ports2BonjourServices.shared.add(port, service_type)
+            }
+            
+            if self.type == NetworkDefaults.speed_test_app_service_type {
+                node.setTypes([ .chargen, .discard, .ios ])
+                node.addTcpPort(NetworkDefaults.speed_test_chargen_port)
+                node.addTcpPort(NetworkDefaults.speed_test_discard_port)
+                node.addTcpPort(NetworkDefaults.speed_test_app_port)
+            }
+            
+            if self.type.hasSuffix("._tcp.") {
+                node.addTcpPort(UInt16(port))
+            } else {
+                node.addUdpPort(UInt16(port))
+            }
+            
+            if addresses != nil {
+                for data in addresses! {
+                    let sock_addr = SockAddr.getSockAddr(data)
+                    switch sock_addr.getFamily() {
+                    case AF_INET:
+                        node.addV4Address(sock_addr.getIPAddress() as! IPv4Address)
+                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
+                        
+                    case AF_INET6:
+                        node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
+                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
+                        
+                    default:
+                        #fatalError("can not be here")
+                    }
                 }
             }
+            
+            // sender.domain not used ("local.")
+            if !name.isEmpty {
+                node.addName(name)
+                self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + name)
+            }
+            if let domain = DomainName(host_name!) {
+                node.addDnsName(domain)
+                self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + name)
+            }
+            
+            self.device_manager.addTrace("Bonjour/mDNS: service found: type:\(self.type); name:\(name); hostname:\(host_name ?? ""); sender.type:\(type); port:\(port); descr:\(description); domain:\(domain); attributes:\(text_attr)", level: .DEBUG)
+            self.device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
         }
-
-        // sender.domain not used ("local.")
-        if !sender.name.isEmpty {
-            node.addName(sender.name)
-            device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
-        }
-        if let domain = DomainName(sender.hostName!) {
-            node.addDnsName(domain)
-            device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + sender.name)
-        }
-
-        device_manager.addTrace("Bonjour/mDNS: service found: type:\(type); name:\(sender.name); hostname:\(sender.hostName ?? ""); sender.type:\(sender.type); port:\(sender.port); descr:\(sender.description); domain:\(sender.domain); attributes:\(text_attr)", level: .DEBUG)
-        device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
     }
 }
 

@@ -57,12 +57,15 @@ enum NewRunAction {
 }
 
 // MasterViewController is a DeviceManager
+@MainActor
 protocol DeviceManager {
     func addNode(_ node: Node)
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
+    @MainActor
     func addTrace(_ content: String, level: LogLevel)
+    @MainActor
     func addTrace(_ content: String, level: LogLevel, date: Date)
 }
 
@@ -93,6 +96,7 @@ class DelaySync {
 }
 
 // The MasterViewController instance is the delegate for the main UITableView
+@MainActor
 class MasterViewController: UITableViewController, DeviceManager {
     func addTrace(_ content: String, level: LogLevel = .ALL) {
         traces_view_controller?.addTrace(content, level: level)
@@ -545,13 +549,16 @@ view.backgroundColor = .red
             UITableView.appearance().sectionHeaderTopPadding = 0
         }
 
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { (timer) in
-            self.stop_button_toggle.toggle()
-            if self.stop_button.isEnabled {
-                self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
-            } else {
-                self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
-            }
+        Task.detached { @MainActor in
+            repeat {
+                self.stop_button_toggle.toggle()
+                if self.stop_button.isEnabled {
+                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
+                } else {
+                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
+                }
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            } while Task.isCancelled == false
         }
 
         //self.browser_chargen?.search()
