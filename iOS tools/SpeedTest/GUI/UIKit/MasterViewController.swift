@@ -760,7 +760,7 @@ view.backgroundColor = .red
 
         // DispatchQueue.global(qos: .userInitiated).async {
         Task.detached(priority: .userInitiated) {
-            await self.browser_tcp?.browse(address: address) {
+            await self.browser_tcp?.browseAsync(address: address) {
                 DispatchQueue.main.async {
                     self.stopBrowsing(.OTHER_ACTION)
                 }
