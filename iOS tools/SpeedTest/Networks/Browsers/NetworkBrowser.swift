@@ -10,19 +10,17 @@ import Foundation
 import iOSToolsMacros
 
 // Only a single instance can work at a time, since ICMP replies are sent to any thread while calling recvfrom()
+@MainActor
 class NetworkBrowser {
     private let device_manager: DeviceManager
     private let browser_tcp: TCPPortBrowser?
     private var reply_ipv4: [IPv4Address: (Int, Date?)] = [:]
     private var broadcast_ipv4 = Set<IPv4Address>()
     private var multicast_ipv6 = Set<IPv6Address>()
-    private var unicast_ipv4_finished = false // Main thread
-    private var broadcast_ipv4_finished = false // Main thread
-    private var multicast_ipv6_finished = false // Main thread
-    
-    // A REMETTRE CONTINUER ICI
-//@MainActor
-    private var finished = false // Main thread
+    private var unicast_ipv4_finished = false
+    private var broadcast_ipv4_finished = false
+    private var multicast_ipv6_finished = false
+    private var finished = false
     
     // Browse a set of networks
     // Any Thread
@@ -37,7 +35,7 @@ class NetworkBrowser {
                 if network_addr == IPv6Address("::1") { continue }
                 if network_addr.isLLA() {
                     let multicast = IPv6Address("ff02::1")!.changeScope(scope: network_addr.getScope())
-                    await device_manager.addTrace("network browsing: will send IPV6 multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
+                    device_manager.addTrace("network browsing: will send IPV6 multicast packet to \(multicast.toNumericString() ?? "")", level: .DEBUG)
                     multicast_ipv6.insert(multicast)
                 }
             }
@@ -48,14 +46,14 @@ class NetworkBrowser {
                 let netmask = IPv4Address(mask_len: network.mask_len)
                 let broadcast = network_addr.or(netmask.xor(IPv4Address("255.255.255.255")!)) as! IPv4Address
                 if network.mask_len < 22 {
-                    await device_manager.addTrace("network browsing: will send IPv4 broadcast packet to \(broadcast.toNumericString() ?? "")", level: .DEBUG)
+                    device_manager.addTrace("network browsing: will send IPv4 broadcast packet to \(broadcast.toNumericString() ?? "")", level: .DEBUG)
                     broadcast_ipv4.insert(broadcast)
                 } else {
                     if network.mask_len != 32 {
                         var current = network_addr.and(netmask).next() as! IPv4Address
                         repeat {
-                            if (await DBMaster.shared.nodes.filter { $0.getV4Addresses().contains(current) }).isEmpty {
-                                await device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
+                            if (DBMaster.shared.nodes.filter { $0.getV4Addresses().contains(current) }).isEmpty {
+                                device_manager.addTrace("network browsing: will send IPv4 unicast packet to \(current.toNumericString() ?? "")", level: .ALL)
                                 reply_ipv4[current] = (NetworkDefaults.n_icmp_echo_reply, nil)
                             }
                             current = current.next() as! IPv4Address
@@ -66,7 +64,6 @@ class NetworkBrowser {
         }
     }
     
-    @MainActor
     private func getIPForTask() async -> IPv4Address? {
         // Collect one address among those left and used more than 3 secs ago
         guard let address = reply_ipv4.filter({
@@ -81,7 +78,6 @@ class NetworkBrowser {
         return address
     }
     
-    @MainActor
     private func manageAnswer(from: IPAddress) async {
         let node = Node()
         switch from.getFamily() {
@@ -110,28 +106,23 @@ class NetworkBrowser {
         }
     }
     
-    // Main thread
     public func stop() {
         browser_tcp?.stop()
         finished = true
     }
     
-    // Any thread
     private func isFinished() -> Bool {
-        return DispatchQueue.main.sync { return finished }
+        return finished
     }
     
-    // Any thread
     private func isFinishedOrUnicastEmpty() -> Bool {
-        return DispatchQueue.main.sync { return finished || reply_ipv4.isEmpty }
+        return finished || reply_ipv4.isEmpty
     }
     
-    // Any thread
     private func isFinishedOrEverythingDone() -> Bool {
-        return DispatchQueue.main.sync { return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished) }
+        return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished)
     }
 
-    // Main thread
     public func browseAsync(_ doAtEnd: @escaping () async -> Void = {}) async {
         Task.detached {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
@@ -212,8 +203,7 @@ class NetworkBrowser {
                             // Do not overload the proc
                             try? await Task.sleep(nanoseconds: 250_000_000)
                         }
-                    } while !self.isFinishedOrUnicastEmpty()
-                    
+                    } while await !self.isFinishedOrUnicastEmpty()
                     
                     // Wait .5 sec between the last unicast packet sent and toggling the finished flag
                     try? await Task.sleep(nanoseconds: 500_000_000)
@@ -222,12 +212,9 @@ class NetworkBrowser {
                         self.device_manager.addTrace("network browsing: finished sending ICMPv4 unicast packets", level: .INFO)
                     }
                 }
-
-
                 
                 // Send broadcast ICMPv4
                 group.addTask {
-
                     await MainActor.run {
                         self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packets", level: .INFO)
                     }
@@ -236,7 +223,7 @@ class NetworkBrowser {
                     try? await Task.sleep(nanoseconds: 500_000_000)
 
                     for _ in 1...3 {
-                        for address in self.broadcast_ipv4 {
+                        for address in await self.broadcast_ipv4 {
                             await MainActor.run {
                                 self.device_manager.addTrace("network browsing: sending ICMPv4 broadcast packet to \(address.toNumericString() ?? "")", level: .ALL)
                             }
@@ -263,7 +250,7 @@ class NetworkBrowser {
                             if ret < 0 { GenericTools.perror("sendto") }
                         }
                         
-                        if self.isFinished() { break }
+                        if await self.isFinished() { break }
                         // wait some delay before sending another broadcast packet
                         try? await Task.sleep(nanoseconds: 250_000_000)
                     }
@@ -279,7 +266,6 @@ class NetworkBrowser {
 
                 // Send multicast ICMPv6
                 group.addTask {
-
                     await MainActor.run {
                         self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packets", level: .INFO)
                     }
@@ -287,7 +273,7 @@ class NetworkBrowser {
                     try? await Task.sleep(nanoseconds: 500_000_000)
 
                     for _ in 1...3 {
-                        for address in self.multicast_ipv6 {
+                        for address in await self.multicast_ipv6 {
                             await MainActor.run {
                                 self.device_manager.addTrace("network browsing: sending ICMPv6 multicast packet to \(address.toNumericString() ?? "")", level: .ALL)
                             }
@@ -319,7 +305,7 @@ class NetworkBrowser {
                             }
                         }
                         
-                        if self.isFinished() { break }
+                        if await self.isFinished() { break }
                         // wait some delay before sending another broadcast packet
                         try? await Task.sleep(nanoseconds: 250_000_000)
                     }
@@ -333,14 +319,11 @@ class NetworkBrowser {
                     }
                 }
 
-                
                 // Catch IPv4 replies
                 group.addTask {
-
                     await MainActor.run {
                         self.device_manager.addTrace("network browsing: waiting for IPv4 replies", level: .INFO)
                     }
-
 
                     repeat {
                         let buf_size = 10000
@@ -359,12 +342,11 @@ class NetworkBrowser {
                         }
                         
                         await self.manageAnswer(from: SockAddr4(from)?.getIPAddress() as! IPv4Address)
-                    } while !self.isFinishedOrEverythingDone()
+                    } while await !self.isFinishedOrEverythingDone()
                     
                     await MainActor.run {
                         self.device_manager.addTrace("network browsing: finished waiting for IPv4 replies", level: .INFO)
                     }
-
                 }
                 
                 // Catch IPv6 replies
@@ -390,16 +372,13 @@ class NetworkBrowser {
                         }
                         
                         await self.manageAnswer(from: SockAddr6(from)?.getIPAddress() as! IPv6Address)
-                    } while !self.isFinishedOrEverythingDone()
+                    } while await !self.isFinishedOrEverythingDone()
                  
                     await MainActor.run {
                         self.device_manager.addTrace("network browsing: finished waiting for IPv6 replies", level: .INFO)
                     }
-
                 }
-                
             }
-
             
             close(s)
             close(s6)

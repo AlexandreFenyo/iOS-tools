@@ -115,12 +115,14 @@ class MasterIPViewController: UITableViewController {
     // we already know that the closure launched by Timer.scheduledTimer() will be run on the calling queue, so on the main actor, and if we were declaring viewDidLoad() as @MainActor, we would have warnings about accessing self properties incorrectly: the compiler does not know that the closure launched by Timer.scheduledTimer will be run on the main queue.
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("MasterIPViewController.viewDidLoad() called")
         
         // Uncomment the following line to preserve selection between presentations
         clearsSelectionOnViewWillAppear = false
 
         Task.detached { @MainActor in
             repeat {
+                print("LOOP MasterIPViewController.viewDidLoad()")
                 self.stop_button_toggle.toggle()
                 if self.stop_button.isEnabled {
                     self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()

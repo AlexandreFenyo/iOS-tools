@@ -63,9 +63,7 @@ protocol DeviceManager {
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>)
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>)
     func setInformation(_ info: String)
-    @MainActor
     func addTrace(_ content: String, level: LogLevel)
-    @MainActor
     func addTrace(_ content: String, level: LogLevel, date: Date)
 }
 
@@ -510,6 +508,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        print("MasterViewController.viewDidLoad() called")
+
         Traces.getMessages { (messages: [Trace]?) in
             guard let messages else { return }
             for message in (messages.sorted { $0.creation! <= $1.creation! }) {
@@ -551,6 +552,7 @@ view.backgroundColor = .red
 
         Task.detached { @MainActor in
             repeat {
+                print("LOOP MasterViewController.viewDidLoad()")
                 self.stop_button_toggle.toggle()
                 if self.stop_button.isEnabled {
                     self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()

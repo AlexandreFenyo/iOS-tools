@@ -233,23 +233,8 @@ class B3D: SCNNode {
         object_sub_node_ref = scn_node
         object_sub_node?.removeFromParentNode()
         object_sub_node = object_sub_node_ref!.clone()
-        print("---------------------------")
-        print(object_sub_node)
-        if Thread.isMainThread {
-            print("Nous sommes sur le thread PRINCIPAL.")
-        } else {
-            print("Nous sommes sur un thread secondaire.")
-        }
-
-        Thread.callStackSymbols.forEach{print($0)}
-
         _ = updateModelScale()
-
-        // CONTINUER ICI pour résoudre ce bug
-
-        // le stack trace montre un appel venant de update_pressed(), qui a alors appelé addDefaultNodes()
-        // il faut essayer 5 à 10 fois un refresh sur mon iPad (pas pro) pour faire reproduire le problème
-        sub_node?.addChildNode(object_sub_node!) // 4 mai 2024: Thread 53: Fatal error: Unexpectedly found nil while unwrapping an Optional value
+        sub_node?.addChildNode(object_sub_node!)
     }
     
     func addLinkRef(_ link: Link3D) {
