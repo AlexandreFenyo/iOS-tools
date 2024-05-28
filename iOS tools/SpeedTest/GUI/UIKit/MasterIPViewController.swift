@@ -30,9 +30,11 @@ class DeviceAddressCell : UITableViewCell {
 // Since we do not want to declare viewDidLoad() as @MainActor, and since it would not work declaring it nonisolated (calling super.viewDidLoad() would generate a warning), we have to declare each var and func as @MainActor.
 @MainActor
 class MasterIPViewController: UITableViewController {
-    public var master_view_controller: MasterViewController?
-    public var node : Node?
-    public var auto_select: String?
+    var master_view_controller: MasterViewController?
+    var node : Node?
+    var auto_select: String?
+
+    private var loop_task: Task<(), Never>?
     
     @IBOutlet weak var stop_button: UIBarButtonItem!
     private var stop_button_toggle = false
@@ -53,7 +55,7 @@ class MasterIPViewController: UITableViewController {
         present(heatmap_view_controller, animated: true)
     }
     
-    public func applicationWillResignActive() {
+    func applicationWillResignActive() {
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -105,6 +107,19 @@ class MasterIPViewController: UITableViewController {
          await self.master_view_controller?.detail_view_controller?.ts.removeAll()
          }
          */
+
+        loop_task?.cancel()
+        loop_task = Task.detached { @MainActor in
+            repeat {
+                self.stop_button_toggle.toggle()
+                if self.stop_button.isEnabled {
+                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
+                } else {
+                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
+                }
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            } while Task.isCancelled == false
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -119,19 +134,6 @@ class MasterIPViewController: UITableViewController {
         
         // Uncomment the following line to preserve selection between presentations
         clearsSelectionOnViewWillAppear = false
-
-        Task.detached { @MainActor in
-            repeat {
-                print("LOOP MasterIPViewController.viewDidLoad()")
-                self.stop_button_toggle.toggle()
-                if self.stop_button.isEnabled {
-                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
-                } else {
-                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
-                }
-                try? await Task.sleep(nanoseconds: 500_000_000)
-            } while Task.isCancelled == false
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -146,6 +148,8 @@ class MasterIPViewController: UITableViewController {
         if isMovingFromParent {
             master_view_controller!.addressDeselected()
         }
+
+        loop_task?.cancel()
     }
     
     override func didReceiveMemoryWarning() {

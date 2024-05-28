@@ -140,6 +140,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var local_discard_sync: LocalDiscardSync?
 
     private var delay = DelaySync()
+
+    private var loop_task: Task<(), Never>?
     
     // Get the first indexPath corresponding to a node
     func getIndexPath(_ node: Node) -> IndexPath? {
@@ -506,6 +508,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.setButtonMasterHiddenState(false)
     }
     
+    
+    override func viewWillDisappear(_ animated : Bool) {
+        super.viewWillDisappear(animated)
+
+        loop_task?.cancel()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -548,19 +557,6 @@ view.backgroundColor = .red
         if #available(iOS 15.0, *) {
             // à remettre : ça pose pb avec MacCatalyst
             UITableView.appearance().sectionHeaderTopPadding = 0
-        }
-
-        Task.detached { @MainActor in
-            repeat {
-                print("LOOP MasterViewController.viewDidLoad()")
-                self.stop_button_toggle.toggle()
-                if self.stop_button.isEnabled {
-                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
-                } else {
-                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
-                }
-                try? await Task.sleep(nanoseconds: 500_000_000)
-            } while Task.isCancelled == false
         }
 
         //self.browser_chargen?.search()
@@ -620,6 +616,19 @@ view.backgroundColor = .red
 
         // A SUPPRIMER - pour faciliter DEBUG
         // add_pressed("")
+
+        loop_task?.cancel()
+        loop_task = Task.detached { @MainActor in
+            repeat {
+                self.stop_button_toggle.toggle()
+                if self.stop_button.isEnabled {
+                    self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
+                } else {
+                    self.stop_button.tintColor = COLORS.leftpannel_bottombar_buttons
+                }
+                try? await Task.sleep(nanoseconds: 500_000_000)
+            } while Task.isCancelled == false
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
