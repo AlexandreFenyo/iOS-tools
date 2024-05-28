@@ -457,7 +457,6 @@ class DBMaster {
     
     static let shared = DBMaster()
 
-    @MainActor
     func resetNetworks() {
         networks = Set<IPNetwork>()
     }
@@ -552,7 +551,6 @@ class DBMaster {
         }
     }
 
-    @MainActor
     static func getPorts() -> [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)] {
         var port_list = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
 
@@ -587,7 +585,6 @@ class DBMaster {
         return port_list
     }
 
-    @MainActor
     static func getNodes(_ port: Port) -> Set<Node> {
         var nodes = Set<Node>()
 
@@ -782,7 +779,6 @@ class DBMaster {
         Interman3DModel.shared.notifyFloodUDPFinished(node, address)
     }
 
-    @MainActor
     func removeAllNodes() {
         SectionType.allCases.forEach {
             sections[$0]!.nodes.removeAll()
@@ -973,7 +969,6 @@ class DBMaster {
     private let ips_v4_quad9 = [ "9.9.9.9", "149.112.112.9" ]
     private let ips_v6_quad9 = [ "2620:fe::9", "2620:fe::fe:9" ]
 
-    @MainActor
     func addDefaultNodes() async {
         if demo_mode {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
@@ -1096,7 +1091,6 @@ class DBMaster {
             .other: ModelSection("Other hosts", "Other hosts", "any host")
         ]
 
-        // CONTINUER ICI : il faut la déclarer async et faire un await en l'appelant
         Task.detached { @MainActor in
             await self.addDefaultNodes()
         }

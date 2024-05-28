@@ -219,6 +219,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Stop looking for new nodes
     // Main thread ?
+    // CONTINUER ici : la déclarer async pour faire des await dedans
     public func stopBrowsing(_ action: NewRunAction) {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
@@ -237,7 +238,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // browser_app?.stop()
         
         browser_network?.stop()
-        browser_tcp?.stop()
+        await browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
         

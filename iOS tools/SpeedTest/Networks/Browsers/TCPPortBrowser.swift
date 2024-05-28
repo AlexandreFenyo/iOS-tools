@@ -12,6 +12,23 @@ import iOSToolsMacros
 // en mode debug, le grand nombre de logs fait qu'on croit que ça ne s'arrête pas quand on fait stop, c'est simplement le buffer de logs qui est devenu énorme et qui ne se vide pas assez vite, on a donc des logs anciens qui continuent à défiler
 let debug = false
 
+// CONTINUER comme ceci : supprimer tous les appels à une Queue
+// puis faire mettre à jour la liste des ports dans SwiftUI à la création d'un nouveau port
+
+actor TCPPortBrowserData {
+    private var finished: Bool = false
+    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
+    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
+
+    func isFinished() -> Bool {
+        return finished
+    }
+
+    func setFinished(_ finished: Bool) {
+        self.finished = finished
+    }
+}
+
 class TCPPortBrowser {
     //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     // liste des ports à scanner lors d'un browse du réseau complet
@@ -24,19 +41,22 @@ class TCPPortBrowser {
     
     //    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 30, 80]))
     private let device_manager: DeviceManager
-    private var finished: Bool = false // Set by Main thread
+
+    private let private_data_actor = TCPPortBrowserData()
+    
+//    private var finished: Bool = false // Set by Main thread
+    // CONTINUER ICI : supprimer les deux var suivantes pour utiliser private_data_actor
     private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
     private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
     
     // Main thread
-    public func stop() {
-        //        NSLog("STOPPED")
-        finished = true
+    func stop() async {
+        await private_data_actor.setFinished(true)
     }
     
     // Any thread
-    private func isFinished() -> Bool {
-        return DispatchQueue.main.sync { return finished }
+    private func isFinished() async -> Bool {
+        await private_data_actor.isFinished()
     }
     
     private func addPort(addr: IPAddress, port: UInt16) {
@@ -61,7 +81,7 @@ class TCPPortBrowser {
     }
     
     // Appelé depuis Task, donc (background) nonisolated context
-    public func browseAsync(address: IPAddress? = nil, doAtEnd: @escaping () async -> Void = {}) async {
+    func browseAsync(address: IPAddress? = nil, doAtEnd: @escaping () async -> Void = {}) async {
         if let address = address {
             ip_to_tcp_port[address] = TCPPortBrowser.ports_set_one_host
         } else {
@@ -100,7 +120,7 @@ class TCPPortBrowser {
                     
                     // delay: microseconds
                     for delay : Int32 in [ 100000, 20000,  10000 /*, 40000*/ ] {
-                        if self.isFinished() { break }
+                        if await self.isFinished() { break }
                         
                         var ports = _ports
                         
@@ -127,7 +147,7 @@ class TCPPortBrowser {
                         // if delay == 40000 { ports.formIntersection(StandardTCPPorts) }
                         
                         for port in self.ip_to_tcp_port[addr]!.sorted() {
-                            if self.isFinished() { break }
+                            if await self.isFinished() { break }
                             if ports.contains(port) == false { continue }
                             
                             let s = socket(addr.getFamily(), SOCK_STREAM, getprotobyname("tcp").pointee.p_proto)
@@ -172,7 +192,7 @@ class TCPPortBrowser {
                                     // EINPROGRESS
                                     var need_retry = false
                                     repeat {
-                                        if self.isFinished() { break }
+                                        if await self.isFinished() { break }
                                         
                                         let t1 = NSDate().timeIntervalSince1970
                                         // https://cr.yp.to/docs/connect.html
@@ -289,7 +309,7 @@ class TCPPortBrowser {
     
     // Browse a set of networks
     // Main thread
-    public init(device_manager: DeviceManager) {
+    init(device_manager: DeviceManager) {
         self.device_manager = device_manager
     }
 }
