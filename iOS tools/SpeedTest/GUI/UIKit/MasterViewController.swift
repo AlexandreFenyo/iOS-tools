@@ -157,7 +157,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         return section.nodes[index_path.item]
     }
 
-    @MainActor
     func resetToDefaultHosts() async {
         addTrace("main: remove previously discovered hosts", level: LogLevel.INFO)
 
@@ -173,8 +172,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Update nodes and find new nodes
-    // Main thread
-    @MainActor
     private func startBrowsing() async {
         // Supprimer tous les noeuds
         await resetToDefaultHosts()
@@ -218,9 +215,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Stop looking for new nodes
-    // Main thread ?
     // CONTINUER ici : la déclarer async pour faire des await dedans
-    public func stopBrowsing(_ action: NewRunAction) {
+    func stopBrowsing(_ action: NewRunAction) async {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
         detail_view_controller?.ts.clearAverage()
@@ -237,7 +233,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // browser_chargen?.stop()
         // browser_app?.stop()
         
-        browser_network?.stop()
+        await browser_network?.stop()
         await browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
@@ -295,8 +291,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         // browser_chargen?.stop()
         // browser_app?.stop()
         
-        browser_network?.stop()
-        browser_tcp?.stop()
+        await browser_network?.stop()
+        await browser_tcp?.stop()
         browser_network = nil
         browser_tcp = nil
         
@@ -398,14 +394,16 @@ class MasterViewController: UITableViewController, DeviceManager {
         UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
     }
 
-    public func stop_pressed() {
-        stopBrowsing(.OTHER_ACTION)
+    func stop_pressed() async {
+        await stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
     }
     
     @IBAction func stop_pressed(_ sender: Any) {
-        stop_pressed()
+        Task {
+            await stop_pressed()
+        }
     }
 
     @IBAction func update_pressed(_ sender: Any) {
@@ -488,7 +486,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
-    public func applicationWillResignActive() {
+    func applicationWillResignActive() {
         // on ne stoppe plus l'action en cours quand on revient d'un changement d'appli ou d'une fermeture de l'iPad
         // ce stop permettait : de ne pas avoir une courbe qui n'est pas une fonction pour une action sur le chart, de ne pas avoir un blocage de la roue qui tourne pour une action de recherche de nœuds ou de ports.
         
@@ -582,7 +580,7 @@ view.backgroundColor = .red
         return cell
     }
     
-    public func updateLocalNodeAndGateways() {
+    func updateLocalNodeAndGateways() {
         // Update local node
         let node = DBMaster.shared.getLocalNode()
         addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
@@ -659,7 +657,7 @@ view.backgroundColor = .red
     }
 
     // Called by MasterIPViewController when an address is selected
-    public func addressSelected(address: IPAddress) {
+    func addressSelected(address: IPAddress) {
         detail_view_controller?.scrollToTop()
   
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
@@ -679,7 +677,7 @@ view.backgroundColor = .red
     }
 
     // Called by MasterIPViewController when an address is deselected and no other address is selected
-    public func addressDeselected() {
+    func addressDeselected() {
     }
 
     override func didReceiveMemoryWarning() {
@@ -765,8 +763,8 @@ view.backgroundColor = .red
     }
 
     // MARK: - Calls from DetailSwiftUIView
-    func scanTCP(_ address: IPAddress) {
-        stopBrowsing(.SCAN_TCP)
+    func scanTCP(_ address: IPAddress) async {
+        await stopBrowsing(.SCAN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -777,23 +775,22 @@ view.backgroundColor = .red
         let tb = TCPPortBrowser(device_manager: self)
         self.browser_tcp = tb
 
-        // DispatchQueue.global(qos: .userInitiated).async {
         Task.detached(priority: .userInitiated) {
             await self.browser_tcp?.browseAsync(address: address) {
-                DispatchQueue.main.async {
-                    self.stopBrowsing(.OTHER_ACTION)
+                Task {
+                    await self.stopBrowsing(.OTHER_ACTION)
                 }
             }
         }
     }
 
-    func loopICMP(_ address: IPAddress, display_timeout: Bool = true) {
+    func loopICMP(_ address: IPAddress, display_timeout: Bool = true) async {
         if local_ping_task != nil {
             local_ping_task!.cancel()
             local_ping_task = nil
         }
         
-        stopBrowsing(.LOOP_ICMP)
+        await stopBrowsing(.LOOP_ICMP)
         self.stop_button!.isEnabled = true
 
         if display_timeout {
@@ -869,8 +866,8 @@ view.backgroundColor = .red
         }
     }
 
-    func floodUDP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_UDP)
+    func floodUDP(_ address: IPAddress) async {
+        await stopBrowsing(.FLOOD_UDP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -921,8 +918,8 @@ view.backgroundColor = .red
     }
     
     // connect to discard service
-    func floodTCP(_ address: IPAddress) {
-        stopBrowsing(.FLOOD_TCP)
+    func floodTCP(_ address: IPAddress) async {
+        await stopBrowsing(.FLOOD_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -1013,8 +1010,8 @@ view.backgroundColor = .red
         }
     }
 
-    func chargenTCP(_ address: IPAddress) {
-        stopBrowsing(.CHARGEN_TCP)
+    func chargenTCP(_ address: IPAddress) async {
+        await stopBrowsing(.CHARGEN_TCP)
         self.stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
         self.master_ip_view_controller?.stop_button.isEnabled = true
@@ -1262,7 +1259,9 @@ view.backgroundColor = .red
 
         interman_view_controller!.setSelectedNode(node)
         
-        stopBrowsing(.OTHER_ACTION)
+        Task {
+            await stopBrowsing(.OTHER_ACTION)
+        }
     }
 
     // Local gateway and Internet rows can not be removed

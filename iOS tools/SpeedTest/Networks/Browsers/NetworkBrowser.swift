@@ -24,7 +24,7 @@ class NetworkBrowser {
     
     // Browse a set of networks
     // Any Thread
-    public init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser? = nil) async {
+    init(networks: Set<IPNetwork>, device_manager: DeviceManager, browser_tcp: TCPPortBrowser? = nil) async {
         self.device_manager = device_manager
         self.browser_tcp = browser_tcp
         
@@ -106,8 +106,8 @@ class NetworkBrowser {
         }
     }
     
-    public func stop() {
-        browser_tcp?.stop()
+    func stop() async {
+        await browser_tcp?.stop()
         finished = true
     }
     
@@ -123,7 +123,7 @@ class NetworkBrowser {
         return finished || (unicast_ipv4_finished && broadcast_ipv4_finished && multicast_ipv6_finished)
     }
 
-    public func browseAsync(_ doAtEnd: @escaping () async -> Void = {}) async {
+    func browseAsync(_ doAtEnd: @escaping () async -> Void = {}) async {
         Task.detached {
             let s = socket(PF_INET, SOCK_DGRAM, getprotobyname("icmp").pointee.p_proto)
             if s < 0 {
