@@ -50,8 +50,8 @@ class StreamNetworkThread : Thread {
 
 // Manage a remote client with two threads, one for each stream
 class SpeedTestClient : NSObject, StreamDelegate {
-    var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
-    let input_stream, output_stream : Stream?
+    var background_network_thread_in, background_network_thread_out: StreamNetworkThread?
+    let input_stream, output_stream: Stream?
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
     private weak var from: LocalDelegate?
@@ -66,6 +66,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
     // May be called in any thread
     func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
+        // pas sûr du tout que ces close() soient thread safe
         input_stream?.close()
         output_stream?.close()
     }
@@ -97,6 +98,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
         stream.close()
         
         // Inform the parent object that the stream has just been closed
+        // CONTINUER ICI pour supprimer ce DispatchQueue
         DispatchQueue.main.async {
             self.from?.refClosed(self)
         }
@@ -114,8 +116,9 @@ class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
     
     // Manage new connections from clients
     override func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
-        DispatchQueue.main.async {
-            self.ref_master_view_controller?.addTrace("\(sender.port == 9 ? "chargen" : "discard") service: new client connection", level: .INFO)
+        let port = sender.port
+        Task {
+            await self.ref_master_view_controller?.addTrace("\(port == 9 ? "chargen" : "discard") service: new client connection", level: .INFO)
         }
 
         if manage_input == false { inputStream.close() }
@@ -186,8 +189,8 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     
     // If one client stream is closed, close the other to end communications with this client
     func refClosed(_ client: SpeedTestClient) {
-        DispatchQueue.main.async {
-            self.ref_master_view_controller?.addTrace("chargen/discard service: client connection closed", level: .INFO)
+        Task {
+            await self.ref_master_view_controller?.addTrace("chargen/discard service: client connection closed", level: .INFO)
         }
         client.exitThreads()
     }
@@ -222,7 +225,10 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
 //                print("PB REUSEADDR")
             // quand ça vient ici, il y a quand même un netServiceWillPublish et un netServiceDidPublish qui sont appelés apprès, même si on ne fait rien ici !
             
-            DispatchQueue.main.async { self.restartService() }
+            Task {
+                // The three possible values for the restartService lambda are AppDelegate.startChargenService(), AppDelegate.startDiscardService() and AppDelegate.startAppService() (see AppDelegate.swift). They all are managed by the main actor since AppDelegate is decorated with @MainActor
+                self.restartService()
+            }
             
         } else if errorDict["NSNetServicesErrorDomain"] == 10 && errorDict["NSNetServicesErrorCode"] == -72000 {
 //            print("PB -72000 - PARFOIS rien à faire pour que ça fonctionne à nouveau")

@@ -15,6 +15,8 @@ import iOSToolsMacros
 
 let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! Bool
 
+// Even if UIResponder and UIApplicationDelete are decorated with @MainActor, explicitely declaring @MainActor here let the Swift compiler check for correctness of accesses and calls to the properties and methods of this class.
+@MainActor
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
@@ -29,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private var local_app_service: NetService?
     private var local_app_service_delegate: LocalGenericDelegate<SpeedTestAppClient>?
     
-    private var local_chargen_listener: NetworkServiceListener?
+   // private var local_chargen_listener: NetworkServiceListener?
 
     private var masterViewController: MasterViewController?
     private var tracesViewController: TracesViewController?

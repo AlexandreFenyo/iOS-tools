@@ -77,6 +77,8 @@ class Traces {
         return addMessage("'\(msg)' at \(fct)@\(filename):\(line)")
     }
     
+    // We decorate this function with @MainActor to avoid a compiler error while accessing AppDelegate.persistentContainer.viewContext, since this property is also managed by the main actor (AppDelegate is decorated with @MainActor)
+    @MainActor
     static func getMessages(onSuccess: @escaping ([Trace]?) -> Void) {
         /*
         print("avant accès os log store")
@@ -95,6 +97,7 @@ class Traces {
             print("error fetching OS log store")
         }*/
         
+        // The viewContext property contains a reference to the NSManagedObjectContext that is created and owned by the persistent container which is associated with the main queue of the application.
         guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
 
         do {
