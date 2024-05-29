@@ -17,9 +17,39 @@ let debug = false
 
 actor TCPPortBrowserData {
     private var finished: Bool = false
-    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
-    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
+    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:]
+    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:]
 
+    func setIpToTcpPort(address: IPAddress, port_set: Set<UInt16>) {
+        ip_to_tcp_port[address] = port_set
+    }
+
+    func substractPorts(address: IPAddress, port_set: Set<UInt16>) {
+        ip_to_tcp_port[address] = TCPPortBrowser.ports_set.subtracting(port_set)
+    }
+
+    func getAddresses() -> Set<IPAddress> {
+        var addresses = Set<IPAddress>()
+        for addr in ip_to_tcp_port.keys {
+            addresses.insert(addr)
+        }
+        return addresses
+    }
+
+    func getIPToTcpPorts(address: IPAddress) -> Set<UInt16> {
+        guard let ports = ip_to_tcp_port[address] else {
+            return Set<UInt16>()
+        }
+        return ports
+    }
+
+    func addOpenPort(address: IPAddress, port: UInt16) {
+        if ip_to_tcp_port_open.keys.contains(address) == false {
+            ip_to_tcp_port_open[address] = Set<UInt16>()
+        }
+        ip_to_tcp_port_open[address]!.insert(port)
+    }
+    
     func isFinished() -> Bool {
         return finished
     }
@@ -32,11 +62,11 @@ actor TCPPortBrowserData {
 class TCPPortBrowser {
     //    private static let ports_set : Set<UInt16> = Set(1...1023).union(Set([8080, 3389, 5900, 6000]))
     // liste des ports à scanner lors d'un browse du réseau complet
-    private static let ports_set: Set<UInt16> = Set(1...65535)
+    fileprivate static let ports_set: Set<UInt16> = Set(1...65535)
     //    private static let ports_set : Set<UInt16> = Set(8020...8022)
     
     // liste des ports à scanner lors d'un browse d'une IP spécifique
-    private static let ports_set_one_host: Set<UInt16> = Set(1...65535)
+    fileprivate static let ports_set_one_host: Set<UInt16> = Set(1...65535)
     //    private static let ports_set_one_host : Set<UInt16> = Set(8020...8022)
     
     //    private static let ports_set : Set<UInt16> = Set(22...24).union(Set([22, 30, 80]))
@@ -46,8 +76,8 @@ class TCPPortBrowser {
     
 //    private var finished: Bool = false // Set by Main thread
     // CONTINUER ICI : supprimer les deux var suivantes pour utiliser private_data_actor
-    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
-    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
+//    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
+//    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
     
     // Main thread
     func stop() async {
@@ -83,18 +113,11 @@ class TCPPortBrowser {
     // Appelé depuis Task, donc (background) nonisolated context
     func browseAsync(address: IPAddress? = nil, doAtEnd: @escaping () async -> Void = {}) async {
         if let address = address {
-            ip_to_tcp_port[address] = TCPPortBrowser.ports_set_one_host
+            await private_data_actor.setIpToTcpPort(address: address, port_set: TCPPortBrowser.ports_set_one_host)
         } else {
-            // ne pas rescanner les ports déjà identifiés
-            
-            await MainActor.run {
-                for node in DBMaster.shared.nodes {
-                    if let addr = node.getV4Addresses().first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
-                    } else if let addr = node.getV6Addresses().first {
-                        ip_to_tcp_port[addr] = TCPPortBrowser.ports_set.subtracting(node.getTcpPorts())
-                    }
-                }
+            // Do not scan already discovered ports
+            for (addr, ports) in await DBMaster.getIPsAndPorts() {
+                await private_data_actor.substractPorts(address: addr, port_set: ports)
             }
         }
         
@@ -103,8 +126,7 @@ class TCPPortBrowser {
         }
         
         await withTaskGroup(of: Void.self) { group in
-            
-            for addr in self.ip_to_tcp_port.keys {
+            for addr in await self.private_data_actor.getAddresses() {
                 if debug { print(addr.toNumericString()!, "tcp - starting address") }
                 
                 await MainActor.run {
@@ -113,10 +135,9 @@ class TCPPortBrowser {
                     DBMaster.shared.notifyScanPorts(address: addr)
                 }
                 
-                self.ip_to_tcp_port_open[addr] = Set<UInt16>()
-                
                 group.addTask {
-                    let _ports = self.ip_to_tcp_port[addr]!
+//                    let _ports = self.ip_to_tcp_port[addr]!
+                    let _ports = await self.private_data_actor.getIPToTcpPorts(address: addr)
                     
                     // delay: microseconds
                     for delay : Int32 in [ 100000, 20000,  10000 /*, 40000*/ ] {
@@ -146,7 +167,7 @@ class TCPPortBrowser {
                         // delay == 40000 => 52 sec (0.04 * 65535)
                         // if delay == 40000 { ports.formIntersection(StandardTCPPorts) }
                         
-                        for port in self.ip_to_tcp_port[addr]!.sorted() {
+                        for port in await self.private_data_actor.getIPToTcpPorts(address: addr).sorted() {
                             if await self.isFinished() { break }
                             if ports.contains(port) == false { continue }
                             
@@ -277,7 +298,8 @@ class TCPPortBrowser {
                             } else {
                                 // connect(): no error, successful completion
                                 if debug { print("port found", port) }
-                                self.ip_to_tcp_port_open[addr]!.insert(port)
+                                
+                                await self.private_data_actor.addOpenPort(address: addr, port: port)
                                 // do not retry this port
                                 ports.remove(port)
                                 self.addPort(addr: addr, port: port)

@@ -10,15 +10,15 @@ import Foundation
 import UIKit
 import iOSToolsMacros
 
-public enum SectionType: Int, CaseIterable {
+enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
 }
 
-public enum NodeType: Int, CaseIterable {
+enum NodeType: Int, CaseIterable {
     case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
-public enum IPProtocol: Int, CaseIterable {
+enum IPProtocol: Int, CaseIterable {
     case TCP, UDP
 }
 typealias PortNumber = UInt16
@@ -31,14 +31,14 @@ struct Port : Hashable {
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-public class DomainPart : Hashable, Comparable {
-    public let name: String
+class DomainPart : Hashable, Comparable {
+    let name: String
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(name)
     }
 
-    public init(_ name: String) {
+    init(_ name: String) {
         if name.isEmpty {
             #fatalError("DomainPart")
             self.name = "empty_domain_part"
@@ -47,23 +47,23 @@ public class DomainPart : Hashable, Comparable {
         self.name = name
     }
 
-    public func toString() -> String {
+    func toString() -> String {
         return name
     }
     
-    public static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
+    static func == (lhs: DomainPart, rhs: DomainPart) -> Bool {
         return lhs.name == rhs.name
     }
     
-    public static func < (lhs: DomainPart, rhs: DomainPart) -> Bool {
+    static func < (lhs: DomainPart, rhs: DomainPart) -> Bool {
         return lhs.name < rhs.name
     }
  }
 
 // A host part must not contain a dot
 // ex: www, localhost
-public class HostPart : DomainPart {
-    public override init(_ name: String) {
+class HostPart : DomainPart {
+    override init(_ name: String) {
         if name.contains(".") {
             #fatalError("HostPart")
             super.init("empty_host_part")
@@ -75,22 +75,22 @@ public class HostPart : DomainPart {
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-public class DomainName : Hashable, Comparable {
-    public func hash(into hasher: inout Hasher) {
+class DomainName : Hashable, Comparable {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
     }
     
-    public let host_part: HostPart
-    public let domain_part: DomainPart?
+    let host_part: HostPart
+    let domain_part: DomainPart?
     
-    public init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
+    init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
         if let domain_part = domain_part { self.domain_part = domain_part }
         else { self.domain_part = nil }
     }
     
-    public init?(_ name: String) {
+    init?(_ name: String) {
         if let idx = name.firstIndex(of: ".") {
             if idx == name.indices.first || idx == name.indices.last { return nil }
             host_part = HostPart(String(name.prefix(upTo: idx)))
@@ -101,7 +101,7 @@ public class DomainName : Hashable, Comparable {
         }
     }
     
-    public func toString() -> String {
+    func toString() -> String {
         if let domain_part = domain_part {
             return host_part.toString() + "." + domain_part.toString()
         } else {
@@ -109,43 +109,43 @@ public class DomainName : Hashable, Comparable {
         }
     }
     
-    public func isFQDN() -> Bool {
+    func isFQDN() -> Bool {
         return domain_part != nil
     }
     
-    public static func == (lhs: DomainName, rhs: DomainName) -> Bool {
+    static func == (lhs: DomainName, rhs: DomainName) -> Bool {
         return lhs.host_part == rhs.host_part && lhs.domain_part == rhs.domain_part
     }
     
-    public static func < (lhs: DomainName, rhs: DomainName) -> Bool {
+    static func < (lhs: DomainName, rhs: DomainName) -> Bool {
         return lhs.toString() < rhs.toString()
     }
 }
 
 // A FQDN is a domain name that both contains a host part and a domain part
 // ex: {www, fenyo.net}, {localhost, localdomain}
-public class FQDN : DomainName {
-    public init(_ host_part : String, _ domain_part : String) {
+class FQDN : DomainName {
+    init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
 }
 
-public class BonjourServiceInfo : Hashable {
-    public let name: String
-    public let port: String
-    public let attr: [String : String]
+class BonjourServiceInfo : Hashable {
+    let name: String
+    let port: String
+    let attr: [String : String]
     
-    public init(_ name: String, _ port: String, _ attr: [String: String]) {
+    init(_ name: String, _ port: String, _ attr: [String: String]) {
         self.name = name
         self.port = port
         self.attr = attr
     }
     
-    public static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
+    static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
         return lhs.name == rhs.name && lhs.port == rhs.port && lhs.attr == rhs.attr
     }
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(port)
         hasher.combine(attr)
@@ -155,8 +155,8 @@ public class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-public class Node : Hashable {
-    public func hash(into hasher: inout Hasher) {
+class Node : Hashable {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
         hasher.combine(names)
@@ -181,7 +181,7 @@ public class Node : Hashable {
     fileprivate var types = Set<NodeType>()
     fileprivate var services = Set<BonjourServiceInfo>()
 
-    public func isLocalHost() -> Bool {
+    func isLocalHost() -> Bool {
         return types.contains(.localhost)
     }
 
@@ -338,7 +338,7 @@ public class Node : Hashable {
         return false
     }
     
-    public static func == (lhs: Node, rhs: Node) -> Bool {
+    static func == (lhs: Node, rhs: Node) -> Bool {
         return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
     }
 
@@ -488,7 +488,7 @@ class DBMaster {
 
     /* 1 gateway per IP */
     /*
-    public func getLocalGateways() -> [Node] {
+    func getLocalGateways() -> [Node] {
         var gateways = [Node]()
 
         var idx : Int32 = 0, ret : Int32
@@ -603,6 +603,21 @@ class DBMaster {
         }
 
         return nodes
+    }
+
+    static func getIPsAndPorts() -> [(IPAddress, Set<UInt16>)] {
+        var result = [(IPAddress, Set<UInt16>)]()
+
+        for node in shared.nodes {
+            // We only get the first IPv4 and IPv6 addresses to optimize the browsing process
+            if let addr = node.getV4Addresses().first {
+                result.append((addr, node.getTcpPorts()))
+            } else if let addr = node.getV6Addresses().first {
+                result.append((addr, node.getTcpPorts()))
+            }
+        }
+
+        return result
     }
 
     /* A unique gateway */
