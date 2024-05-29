@@ -86,6 +86,7 @@ struct TagCloudView: View {
     }
 }
 
+@MainActor
 public class DetailViewModel : ObservableObject {
     static let shared = DetailViewModel()
     

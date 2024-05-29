@@ -22,19 +22,19 @@ class MySKSceneDelegate : NSObject, SKSceneDelegate {
 
 @MainActor
 class DetailViewController: UIViewController {
-    public weak var master_view_controller: MasterViewController?
+    weak var master_view_controller: MasterViewController?
     
     private var chart_node : SKChartNode?
     private var scene_delegate : MySKSceneDelegate?
 
-    public let ts = TimeSeries()
+    let ts = TimeSeries()
 
-    public var prev_addr_selected = ""
+    var prev_addr_selected = ""
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
 
-     public var can_be_launched = true
+    var can_be_launched = true
     
     private lazy var hostingViewController = makeHostingController()
 
@@ -44,7 +44,7 @@ class DetailViewController: UIViewController {
         return hostingController
     }
 
-    public func applicationDidBecomeActive() async {
+    func applicationDidBecomeActive() async {
         await chart_node?.applicationDidBecomeActive()
     }
     
@@ -93,46 +93,34 @@ class DetailViewController: UIViewController {
 
     }
     
-    public func stopButtonWillAppear() {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setStopButtonEnabled(false)
-        }
+    func stopButtonWillAppear() {
+        hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
     
-    public func stopButtonWillDisappear() {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setStopButtonEnabled(true)
-        }
+    func stopButtonWillDisappear() {
+        hostingViewController.rootView.model.setStopButtonEnabled(true)
     }
 
-    public func scrollToTop() {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.toggleScrollToTop()
-        }
-
+    func scrollToTop() {
+        hostingViewController.rootView.model.toggleScrollToTop()
     }
 
-    public func setButtonMasterHiddenState(_ state: Bool) {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setButtonMasterHiddenState(state)
-        }
+    func setButtonMasterHiddenState(_ state: Bool) {
+        hostingViewController.rootView.model.setButtonMasterHiddenState(state)
     }
 
-    public func setButtonMasterIPHiddenState(_ state: Bool) {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
-        }
+    func setButtonMasterIPHiddenState(_ state: Bool) {
+        hostingViewController.rootView.model.setButtonMasterIPHiddenState(state)
     }
-
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.hostingViewController.rootView.model.setStopButtonEnabled(true)
+        hostingViewController.rootView.model.setStopButtonEnabled(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.hostingViewController.rootView.model.setStopButtonEnabled(false)
+        hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -165,12 +153,12 @@ class DetailViewController: UIViewController {
         }
     }
 
-    public func clearChartAndNode() {
+    func clearChartAndNode() {
         hostingViewController.rootView.model.clearDetails()
     }
 
     // called by MasterViewController when the user selects an address
-    public func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
+    func addressSelected(_ address: IPAddress, _ buttons_enabled: Bool) {
         // retrouver le node
         var node: Node? = nil
         if address.getFamily() == AF_INET {
@@ -198,21 +186,19 @@ class DetailViewController: UIViewController {
         }
     }
     
-    public func removeMapButton() {
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setButtonMapHiddenState(true)
-        }
+    func removeMapButton() {
+        hostingViewController.rootView.model.setButtonMapHiddenState(true)
     }
     
-    public func enableButtons(_ state: Bool) {
+    func enableButtons(_ state: Bool) {
         // ce dispatch est obligatoire sinon on écrase le modèle par un simple accès à hostingViewController.rootView.model
         // il est async pour éviter une exception
-        DispatchQueue.main.async {
-            self.hostingViewController.rootView.model.setButtonsEnabled(state)
-        }
+//        DispatchQueue.main.async {
+            hostingViewController.rootView.model.setButtonsEnabled(state)
+//        }
     }
 
-    public func updateDetailsIfNodeDisplayed(_ node: Node, _ buttons_enabled: Bool) {
+    func updateDetailsIfNodeDisplayed(_ node: Node, _ buttons_enabled: Bool) {
         if let v4 = hostingViewController.rootView.model.v4address {
             if node.getV4Addresses().contains(v4) {
                 if let node = findNodeFromAddress(v4) {
@@ -231,7 +217,7 @@ class DetailViewController: UIViewController {
         }
     }
 
-    public func findNodeFromAddress(_ address: IPAddress) -> Node? {
+    func findNodeFromAddress(_ address: IPAddress) -> Node? {
         if address.getFamily() == AF_INET {
             let v4addr = address as! IPv4Address
             for n in DBMaster.shared.nodes {

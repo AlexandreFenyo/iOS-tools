@@ -29,12 +29,12 @@ protocol RefClosed : AnyObject {
 // Start a run loop to manage a stream
 class StreamNetworkThread : Thread {
     private let stream: Stream
-    public var run_loop: RunLoop?
+    var run_loop: RunLoop?
     
     deinit {
     }
     
-    public init(_ stream: Stream) {
+    init(_ stream: Stream) {
         self.stream = stream
     }
     
@@ -50,8 +50,8 @@ class StreamNetworkThread : Thread {
 
 // Manage a remote client with two threads, one for each stream
 class SpeedTestClient : NSObject, StreamDelegate {
-    public var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
-    public let input_stream, output_stream : Stream?
+    var background_network_thread_in, background_network_thread_out : StreamNetworkThread?
+    let input_stream, output_stream : Stream?
     
     // Needed to inform the the parent that this SpeedTestClient instance can be disposed
     private weak var from: LocalDelegate?
@@ -59,19 +59,19 @@ class SpeedTestClient : NSObject, StreamDelegate {
     deinit {
     }
     
-    public func threadsFinished() -> Bool {
+    func threadsFinished() -> Bool {
         return background_network_thread_in?.isFinished ?? true && background_network_thread_out?.isFinished ?? true
     }
     
     // May be called in any thread
-    public func exitThreads() {
+    func exitThreads() {
         // Closing a stream makes it being unscheduled, this will force the run loop to exit
         input_stream?.close()
         output_stream?.close()
     }
     
     // Prepare threads and data buffers to handle a remote client
-    required public init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
+    required init(input_stream: InputStream?, output_stream: OutputStream?, from: LocalDelegate) {
         self.input_stream = input_stream
         self.output_stream = output_stream
         
@@ -92,7 +92,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
         background_network_thread_out?.start()
     }
     
-    public func end(_ stream: Stream) {
+    func end(_ stream: Stream) {
         // Closing the stream makes it being unscheduled, this will force the run loop to exit -- but there are some bugs on the kernel, so this does not work everytime
         stream.close()
         
@@ -104,14 +104,14 @@ class SpeedTestClient : NSObject, StreamDelegate {
 class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
     private let manage_input: Bool, manage_output: Bool
 
-    public init(manage_input: Bool, manage_output: Bool, master_view_controller: MasterViewController?) {
+    init(manage_input: Bool, manage_output: Bool, master_view_controller: MasterViewController?) {
         self.manage_input = manage_input
         self.manage_output = manage_output
         super.init(master_view_controller: master_view_controller)
     }
     
     // Manage new connections from clients
-    public override func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
+    override func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) {
         DispatchQueue.main.async {
             self.ref_master_view_controller?.addTrace("\(sender.port == 9 ? "chargen" : "discard") service: new client connection", level: .INFO)
         }
@@ -127,17 +127,17 @@ class LocalGenericDelegate<T : SpeedTestClient> : LocalDelegate {
 // Manage callbacks for the speed test service
 class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     // Strong refs
-    public var clients: [SpeedTestClient] = [ ]
+    var clients: [SpeedTestClient] = [ ]
 
     fileprivate weak var ref_master_view_controller: MasterViewController?
 
-    public var restartService = {}
-    public var timer: Timer? = nil
+    var restartService = {}
+    var timer: Timer? = nil
 
     // Définie pour pouvoir être surchargée
-    public func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) { }
+    func netService(_ sender: NetService, didAcceptConnectionWith inputStream: InputStream, outputStream: OutputStream) { }
 
-    public init(master_view_controller: MasterViewController?) {
+    init(master_view_controller: MasterViewController?) {
         super.init()
         self.ref_master_view_controller = master_view_controller
         
@@ -183,7 +183,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     }
     
     // If one client stream is closed, close the other to end communications with this client
-    public func refClosed(_ client: SpeedTestClient) {
+    func refClosed(_ client: SpeedTestClient) {
         DispatchQueue.main.async {
             self.ref_master_view_controller?.addTrace("chargen/discard service: client connection closed", level: .INFO)
         }
@@ -213,7 +213,7 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     //   publish(.listenForConnections)
     // netServiceWillPublish(_:)
     // netServiceDidPublish(_:)
-    public func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
+    func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
 //        print("XXXXX: \(#function)")
 //        print(errorDict)
         if errorDict["NSNetServicesErrorDomain"] == 1 && errorDict["NSNetServicesErrorCode"] == 48 {
@@ -231,32 +231,32 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
         }
     }
     
-    public func netServiceDidPublish(_ sender: NetService) {
+    func netServiceDidPublish(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
     }
     
-    public func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
+    func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
 //        print("XXXXX: \(#function)")
     }
     
-    public func netServiceDidStop(_ sender: NetService) {
+    func netServiceDidStop(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
         sender.publish(options: .listenForConnections)
     }
     
-    public func netServiceWillPublish(_ sender: NetService) {
+    func netServiceWillPublish(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
     }
     
-    public func netServiceWillResolve(_ sender: NetService) {
+    func netServiceWillResolve(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
     }
     
-    public func netServiceDidResolveAddress(_ sender: NetService) {
+    func netServiceDidResolveAddress(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
     }
     
-    public func netService(_ sender: NetService, didUpdateTXTRecord data: Data) {
+    func netService(_ sender: NetService, didUpdateTXTRecord data: Data) {
 //        print("XXXXX: \(#function)")
     }
 }
