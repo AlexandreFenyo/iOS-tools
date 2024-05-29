@@ -116,23 +116,21 @@ struct AddSwiftUIView: View {
                     }
 
                     Button("Add this new target") {
-                        DispatchQueue.main.async {
-                            let node = Node()
-                            node.addDnsName(DomainName(target_name)!)
-                            if isIPv4(target_ip) {
-                                if !node.getV4Addresses().contains(IPv4Address(target_ip)!) {
-                                    node.addV4Address(IPv4Address(target_ip)!)
-                                }
-                            } else if isIPv6(target_ip) {
-                                if !node.getV6Addresses().contains(IPv6Address(target_ip)!) {
-                                    node.addV6Address(IPv6Address(target_ip)!)
-                                }
+                        let node = Node()
+                        node.addDnsName(DomainName(target_name)!)
+                        if isIPv4(target_ip) {
+                            if !node.getV4Addresses().contains(IPv4Address(target_ip)!) {
+                                node.addV4Address(IPv4Address(target_ip)!)
                             }
-                            if scope != .localhost {
-                                node.setTypes([ scope ])
+                        } else if isIPv6(target_ip) {
+                            if !node.getV6Addresses().contains(IPv6Address(target_ip)!) {
+                                node.addV6Address(IPv6Address(target_ip)!)
                             }
-                            add_view_controller?.master_view_controller!.addNode(node)
                         }
+                        if scope != .localhost {
+                            node.setTypes([ scope ])
+                        }
+                        add_view_controller?.master_view_controller!.addNode(node)
 
                         if isPermanent {
                             var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
@@ -149,7 +147,6 @@ struct AddSwiftUIView: View {
                     
                     Button("Dismiss") {
                         /* debug rapide de addNode()
-                        DispatchQueue.main.async {
                             let node = Node()
                             node.dns_names.insert(DomainName("a string")!)
                             node.v4_addresses.insert(IPv4Address("55.33.22.11")!)

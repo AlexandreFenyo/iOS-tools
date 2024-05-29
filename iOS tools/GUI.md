@@ -69,8 +69,4 @@ requête d'un iOS en IPv4 et IPv6 :
 66  11.364183 10.69.184.195 → 224.0.0.251  MDNS 340 Standard query 0x0000 PTR _sleep-proxy._udp.local, "QM" question PTR _airport._tcp.local, "QM" question PTR _airplay._tcp.local, "QM" question PTR _raop._tcp.local, "QM" question PTR _uscans._tcp.local, "QM" question PTR _uscan._tcp.local, "QM" question PTR _ippusb._tcp.local, "QM" question PTR _ipp._tcp.local, "QM" question PTR _scanner._tcp.local, "QM" question PTR _ipps._tcp.local, "QM" question PTR _printer._tcp.local, "QM" question PTR _pdl-datastream._tcp.local, "QM" question PTR _ptp._tcp.local, "QM" question PTR _apple-mobdev2._tcp.local, "QM" question PTR _apple-mobdev._tcp.local, "QM" question PTR 8d1a07c0._sub._apple-mobdev2._tcp.local, "QM" question PTR _apple-pairable._tcp.local, "QM" question
 67  11.364225 fe80::146d:6335:18ad:a939 → ff02::fb     MDNS 360 Standard query 0x0000 PTR _sleep-proxy._udp.local, "QM" question PTR _airport._tcp.local, "QM" question PTR _airplay._tcp.local, "QM" question PTR _raop._tcp.local, "QM" question PTR _uscans._tcp.local, "QM" question PTR _uscan._tcp.local, "QM" question PTR _ippusb._tcp.local, "QM" question PTR _ipp._tcp.local, "QM" question PTR _scanner._tcp.local, "QM" question PTR _ipps._tcp.local, "QM" question PTR _printer._tcp.local, "QM" question PTR _pdl-datastream._tcp.local, "QM" question PTR _ptp._tcp.local, "QM" question PTR _apple-mobdev2._tcp.local, "QM" question PTR _apple-mobdev._tcp.local, "QM" question PTR 8d1a07c0._sub._apple-mobdev2._tcp.local, "QM" question PTR _apple-pairable._tcp.local, "QM" question
 
-////////////////////////////////////////////
-
-        return DispatchQueue.main.sync { }
-        
 # 3D GUI

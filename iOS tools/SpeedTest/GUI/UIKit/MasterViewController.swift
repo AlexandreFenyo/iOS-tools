@@ -112,17 +112,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     private var stop_button_toggle = false
     
-    public var detail_view_controller: DetailViewController?
-    public var detail_navigation_controller: UINavigationController?
-    public var split_view_controller: SplitViewController?
-    public var traces_view_controller: TracesViewController?
-    public var master_ip_view_controller: MasterIPViewController?
-    public var interman_view_controller: IntermanViewController?
+    var detail_view_controller: DetailViewController?
+    var detail_navigation_controller: UINavigationController?
+    var split_view_controller: SplitViewController?
+    var traces_view_controller: TracesViewController?
+    var master_ip_view_controller: MasterIPViewController?
+    var interman_view_controller: IntermanViewController?
 
     // public weak var browser_chargen : ServiceBrowser?
     // public weak var browser_discard : ServiceBrowser?
-    public var browser_app: ServiceBrowser?
-    public var browsers = [ ServiceBrowser ]()
+    var browser_app: ServiceBrowser?
+    var browsers = [ ServiceBrowser ]()
     
     private var browser_network: NetworkBrowser?
     private var browser_tcp: TCPPortBrowser?
@@ -274,7 +274,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         setTitle(NSLocalizedString("Target List", comment: "Target List"))
     }
     
-    public func stopBrowsingAsync(_ action: NewRunAction) async {
+    func stopBrowsingAsync(_ action: NewRunAction) async {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
         detail_view_controller?.ts.clearAverage()
@@ -332,7 +332,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         setTitle(NSLocalizedString("Target List", comment: "Target List"))
     }
 
-    public func setTitle(_ title: String) {
+    func setTitle(_ title: String) {
         navigationItem.title = title
 
         // changer la couleur du texte qui est en noir par défaut
@@ -425,10 +425,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     func update_pressed() {
-        DispatchQueue.main.async {
-            self.stop_pressed(self)
-            self.update_pressed(self)
-        }
+        stop_pressed(self)
+        update_pressed(self)
     }
 
     // var _x: Int = 0
@@ -465,7 +463,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         launch_heatmap()
     }
 
-    public func launch_heatmap() {
+    func launch_heatmap() {
         let heatmap_view_controller = HeatMapViewController()
         heatmap_view_controller.master_view_controller = self
         present(heatmap_view_controller, animated: true)
@@ -765,15 +763,15 @@ view.backgroundColor = .red
     // MARK: - Calls from DetailSwiftUIView
     func scanTCP(_ address: IPAddress) async {
         await stopBrowsing(.SCAN_TCP)
-        self.stop_button!.isEnabled = true
+        stop_button!.isEnabled = true
         detail_view_controller?.enableButtons(false)
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
+        master_ip_view_controller?.stop_button.isEnabled = true
+        add_button!.isEnabled = false
+        remove_button!.isEnabled = false
+        update_button!.isEnabled = false
 
         let tb = TCPPortBrowser(device_manager: self)
-        self.browser_tcp = tb
+        browser_tcp = tb
 
         Task.detached(priority: .userInitiated) {
             await self.browser_tcp?.browseAsync(address: address) {
@@ -791,16 +789,16 @@ view.backgroundColor = .red
         }
         
         await stopBrowsing(.LOOP_ICMP)
-        self.stop_button!.isEnabled = true
+        stop_button!.isEnabled = true
 
         if display_timeout {
             detail_view_controller?.enableButtons(false)
         }
 
-        self.master_ip_view_controller?.stop_button.isEnabled = true
-        self.add_button!.isEnabled = false
-        self.remove_button!.isEnabled = false
-        self.update_button!.isEnabled = false
+        master_ip_view_controller?.stop_button.isEnabled = true
+        add_button!.isEnabled = false
+        remove_button!.isEnabled = false
+        update_button!.isEnabled = false
 
         let current_delay = delay.getDelay()
         

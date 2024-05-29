@@ -90,23 +90,23 @@ class TCPPortBrowser {
     }
     
     private func addPort(addr: IPAddress, port: UInt16) {
-        DispatchQueue.main.async {
-            let node = Node()
-            if addr.getFamily() == AF_INET { node.addV4Address(addr as! IPv4Address) }
-            else { node.addV6Address(addr as! IPv6Address) }
-            node.addTcpPort(port)
-            self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
-            switch port {
-            case 9:
-                node.addType(.discard)
-            case 19:
-                node.addType(.chargen)
-            case 4:
-                node.addType(.ios)
-            default:
-                ()
-            }
-            self.device_manager.addNode(node)
+        let node = Node()
+        if addr.getFamily() == AF_INET { node.addV4Address(addr as! IPv4Address) }
+        else { node.addV6Address(addr as! IPv6Address) }
+        node.addTcpPort(port)
+        switch port {
+        case 9:
+            node.addType(.discard)
+        case 19:
+            node.addType(.chargen)
+        case 4:
+            node.addType(.ios)
+        default:
+            ()
+        }
+        Task {
+            await self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
+            await self.device_manager.addNode(node)
         }
     }
     

@@ -97,7 +97,9 @@ class SpeedTestClient : NSObject, StreamDelegate {
         stream.close()
         
         // Inform the parent object that the stream has just been closed
-        DispatchQueue.main.async { self.from?.refClosed(self) }
+        DispatchQueue.main.async {
+            self.from?.refClosed(self)
+        }
     }
 }
 
