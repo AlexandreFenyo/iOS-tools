@@ -414,12 +414,6 @@ class DBMaster {
 
     private(set) var nodes: Set<Node> {
         didSet(oldValue) {
-
-            // Deux moyens pour identifier les méthodes qu'il faut rendre async:
-            // - soit déclarer @MainActor poru la propriété nodes de DBMaster
-            // - soit décommenter ce qui suit
-            // On commmence par addOrRemoveNode(), il faut remonter à la source des appels
-            // Ca remonte à addDefaultNodes()
 /*
             DiscoveredPortsModel.shared.discovered_ports = [DiscoveredPort]()
             let port_list = DBMaster.getPorts()
