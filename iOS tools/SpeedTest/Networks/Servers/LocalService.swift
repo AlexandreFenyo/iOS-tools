@@ -53,7 +53,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
     var background_network_thread_in, background_network_thread_out: StreamNetworkThread?
     let input_stream, output_stream: Stream?
     
-    // Needed to inform the the parent that this SpeedTestClient instance can be disposed
+    // Needed to inform the the parent that this SpeedTestClient instance should be disposed
     private weak var from: LocalDelegate?
     
     deinit {
@@ -98,8 +98,7 @@ class SpeedTestClient : NSObject, StreamDelegate {
         stream.close()
         
         // Inform the parent object that the stream has just been closed
-        // CONTINUER ICI pour supprimer ce DispatchQueue
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.from?.refClosed(self)
         }
     }

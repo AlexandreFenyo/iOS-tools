@@ -657,7 +657,8 @@ view.backgroundColor = .red
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (no effect on iPad), make the detail view controller visible
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 500_000_000)
             if self.detail_view_controller?.can_be_launched == true {
                 if self.detail_view_controller?.view.window == nil {
                     self.detail_view_controller?.can_be_launched = false
@@ -687,9 +688,9 @@ view.backgroundColor = .red
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
-            DispatchQueue.global(qos: .background).async {
+            Task(priority: .background) {
                 guard let name = address.resolveHostName() else { return }
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
@@ -706,9 +707,9 @@ view.backgroundColor = .red
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
         for address in resolve_ipv6_addresses {
-            DispatchQueue.global(qos: .background).async {
+            Task(priority: .background) {
                 guard let name = address.resolveHostName() else { return }
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     // Reverse IPv6 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
                     let node = Node()
@@ -815,7 +816,7 @@ view.backgroundColor = .red
             
             await self.local_ping_client!.start()
 
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)
                 DBMaster.shared.notifyICMPSent(address: address)
             }
@@ -828,7 +829,7 @@ view.backgroundColor = .red
                 if let rtt = await self.local_ping_client?.getRTT() {
                     if rtt > 0 {
                         has_answered = true
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             DetailViewModel.shared.setCurrentMeasurementUnit("µs")
                             DetailViewModel.shared.setMeasurementValue(Double(rtt))
                             self.addTrace("ICMP loop: received answer from \(address.toNumericString() ?? "") after \(rtt) µs", level: .INFO)
@@ -852,7 +853,7 @@ view.backgroundColor = .red
                 }
             }
             // objectif : arrivé ici, la boucle de ping est terminée
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("ICMP loop: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
@@ -874,7 +875,7 @@ view.backgroundColor = .red
         local_flood_client!.start()
 
         Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.addTrace("flood UDP port 8888 starting for target \(address.toNumericString() ?? "")", level: .INFO)
                 DBMaster.shared.notifyFloodUDP(address: address)
             }
@@ -889,7 +890,7 @@ view.backgroundColor = .red
                         if first_skipped == false {
                             first_skipped = true
                         } else {
-                            DispatchQueue.main.async {
+                            Task { @MainActor in
                                 DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                                 DetailViewModel.shared.setMeasurementValue(throughput)
                                 self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(Int(throughput))", level: .INFO)
@@ -902,7 +903,7 @@ view.backgroundColor = .red
                 try? await Task.sleep(nanoseconds: UInt64(delay) * 1000)
             }
             // objectif : arrivé ici, la boucle de flood est terminée
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood UDP port 8888: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
@@ -926,7 +927,7 @@ view.backgroundColor = .red
         local_discard_client!.start()
 
         Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.addTrace("flood TCP discard port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
             }
 
@@ -938,7 +939,7 @@ view.backgroundColor = .red
                 if let throughput = await self.local_discard_client?.getThroughput() {
                     if throughput > 0 {
                         is_connected = true
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                             DetailViewModel.shared.setMeasurementValue(throughput)
                             self.addTrace("flood TCP discard port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
@@ -995,7 +996,7 @@ view.backgroundColor = .red
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
             await self.detail_view_controller?.removeMapButton()
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP discard port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
@@ -1018,7 +1019,7 @@ view.backgroundColor = .red
         local_chargen_client!.start()
 
         Task.detached(priority: .userInitiated) {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.addTrace("flood TCP chargen port: starting for target \(address.toNumericString() ?? "")", level: .INFO)
                 DBMaster.shared.notifyChargenTCP(address: address)
             }
@@ -1031,7 +1032,7 @@ view.backgroundColor = .red
                 if let throughput = await self.local_chargen_client?.getThroughput() {
                     if throughput > 0 {
                         is_connected = true
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                             DetailViewModel.shared.setMeasurementValue(throughput)
                             self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
@@ -1087,7 +1088,7 @@ view.backgroundColor = .red
             await self.stopBrowsing(.OTHER_ACTION)
             // objectif : arrivé ici, la boucle de chargen est terminée
             await self.detail_view_controller?.removeMapButton()
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 DetailViewModel.shared.setCurrentMeasurementUnit("")
                 DetailViewModel.shared.setMeasurementValue(0)
                 self.addTrace("flood TCP chargen port: stopped with target \(address.toNumericString() ?? "")", level: .INFO)
@@ -1121,7 +1122,7 @@ view.backgroundColor = .red
     }
     
     func popUp(_ title: String, _ message: String, _ ok: String) {
-        DispatchQueue.main.async {
+        Task { @MainActor in
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: ok, style: .default)
             alert.addAction(action)
