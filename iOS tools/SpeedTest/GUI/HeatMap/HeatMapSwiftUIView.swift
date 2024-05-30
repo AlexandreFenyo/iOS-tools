@@ -78,6 +78,7 @@ struct LoadingView<Content>: View where Content: View {
     }
 }
 
+@MainActor
 class PhotoController: NSObject {
     weak var heatmap_view_controller: HeatMapViewController?
     
@@ -98,14 +99,12 @@ class PhotoController: NSObject {
     }
     
     public func popUp(_ title: String, _ message: String, _ ok: String) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let action = UIAlertAction(title: ok, style: .default) {_ in
-                SKStoreReviewController.requestReview()
-            }
-            alert.addAction(action)
-            self.heatmap_view_controller?.present(alert, animated: true)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: ok, style: .default) {_ in
+            SKStoreReviewController.requestReview()
         }
+        alert.addAction(action)
+        self.heatmap_view_controller?.present(alert, animated: true)
     }
     
     public func saveImage(image: UIImage) {

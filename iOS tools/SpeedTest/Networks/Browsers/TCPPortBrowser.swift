@@ -12,7 +12,6 @@ import iOSToolsMacros
 // en mode debug, le grand nombre de logs fait qu'on croit que ça ne s'arrête pas quand on fait stop, c'est simplement le buffer de logs qui est devenu énorme et qui ne se vide pas assez vite, on a donc des logs anciens qui continuent à défiler
 let debug = false
 
-// CONTINUER comme ceci : supprimer tous les appels à une Queue
 // puis faire mettre à jour la liste des ports dans SwiftUI à la création d'un nouveau port
 
 actor TCPPortBrowserData {
@@ -73,11 +72,6 @@ class TCPPortBrowser {
     private let device_manager: DeviceManager
 
     private let private_data_actor = TCPPortBrowserData()
-    
-//    private var finished: Bool = false // Set by Main thread
-    // CONTINUER ICI : supprimer les deux var suivantes pour utiliser private_data_actor
-//    private var ip_to_tcp_port: [IPAddress : Set<UInt16>] = [:] // Browse thread
-//    private var ip_to_tcp_port_open: [IPAddress : Set<UInt16>] = [:] // Browse thread
     
     // Main thread
     func stop() async {

@@ -206,16 +206,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         // let nb = NetworkBrowser(networks: DBMaster.shared.networks, device_manager: self)
 
         browser_network = nb
-        // nb.browse() {
         await nb.browseAsync() {
-//            DispatchQueue.main.sync {
-                await self.stopBrowsingAsync(.OTHER_ACTION)
-//            }
+            await self.stopBrowsingAsync(.OTHER_ACTION)
         }
     }
 
     // Stop looking for new nodes
-    // CONTINUER ici : la déclarer async pour faire des await dedans
     func stopBrowsing(_ action: NewRunAction) async {
         if stop_button!.isEnabled { self.addTrace("network browsing: stop browsing the network", level: .INFO) }
 
