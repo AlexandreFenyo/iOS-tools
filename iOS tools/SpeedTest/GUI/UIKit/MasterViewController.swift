@@ -810,7 +810,7 @@ view.backgroundColor = .red
 
             while await self.local_ping_client!.isInsideLoop() == 1 {
                 await self.local_ping_client!.stop()
-                try await Task.sleep(nanoseconds: 200_000_000)
+                try? await Task.sleep(nanoseconds: 200_000_000)
             }
             
             await self.local_ping_client!.start()
@@ -841,7 +841,7 @@ view.backgroundColor = .red
                 let delay = await self.delay.getDelay()
                 await self.local_ping_client?.setDelay(delay: delay)
                 
-                try await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
+                try? await Task.sleep(nanoseconds: NSEC_PER_SEC / 10)
                 nloop += 1
                 if has_answered == false && nloop > 50 {
                     await self.stopBrowsing(.OTHER_ACTION)
@@ -899,7 +899,7 @@ view.backgroundColor = .red
                     }
                 } else { break }
                 let delay = await self.delay.getDelay()
-                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
+                try? await Task.sleep(nanoseconds: UInt64(delay) * 1000)
             }
             // objectif : arrivé ici, la boucle de flood est terminée
             DispatchQueue.main.async {
@@ -980,7 +980,7 @@ view.backgroundColor = .red
                     break
                 }
                 let delay = await self.delay.getDelay()
-                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
+                try? await Task.sleep(nanoseconds: UInt64(delay) * 1000)
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"
@@ -1071,7 +1071,7 @@ view.backgroundColor = .red
                     break
                 }
                 let delay = await self.delay.getDelay()
-                try await Task.sleep(nanoseconds: UInt64(delay) * 1000)
+                try? await Task.sleep(nanoseconds: UInt64(delay) * 1000)
                 nsec += Double(delay) / 1000000
                 if is_connected == false && nsec > 5 {
                     var message = "timeout occurred"

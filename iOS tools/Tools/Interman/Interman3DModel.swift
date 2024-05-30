@@ -899,6 +899,7 @@ class Link3D: SCNNode {
     }
     
     // Ask the object to remove itself, either because one of the connected node will be removed soon, or because the link is not needed anymore
+    @MainActor
     fileprivate func detach() {
         if let from_b3d { from_b3d.removeLinkRef(self) }
         if let to_b3d { to_b3d.removeLinkRef(self) }
@@ -930,7 +931,8 @@ class Link3DPortDiscovered: Link3D {
     init(_ from_b3d: B3D, _ to_b3d: B3D, _ port: UInt16) {
         self.port = port
         super.init(from_b3d, to_b3d)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
             self.detach()
         }
     }
@@ -973,7 +975,8 @@ class Link3DICMPRequest: Link3D {
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init(from_b3d, to_b3d)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        Task {
+            try? await Task.sleep(nanoseconds: 200_000_000)
             self.detach()
         }
     }
@@ -989,7 +992,8 @@ class Link3DICMPResponse: Link3D {
 
     override init(_ from_b3d: B3D, _ to_b3d: B3D) {
         super.init(from_b3d, to_b3d)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        Task {
+            try? await Task.sleep(nanoseconds: 200_000_000)
             self.detach()
         }
     }

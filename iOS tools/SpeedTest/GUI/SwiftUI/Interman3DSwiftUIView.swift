@@ -579,8 +579,9 @@ struct Interman3DSwiftUIView: View {
                 camera.constraints = [lookAtConstraint]
                 
                 camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
-                
-                DispatchQueue.global(qos: .userInteractive).asyncAfter(deadline: .now() + 0.1) {
+
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 100_000_000)
                     camera.constraints?.removeAll()
                     
                     // Since we removed the contraint, we must set the pivot

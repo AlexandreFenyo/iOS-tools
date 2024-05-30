@@ -10,6 +10,7 @@ import SwiftUI
 import SpriteKit
 
 // struct TagCloudView by Asperi@stackoverflow https://stackoverflow.com/questions/62102647/swiftui-hstack-with-wrap-and-dynamic-height/62103264#62103264
+@MainActor
 struct TagCloudView: View {
     var tags: [String]
     let master_view_controller: MasterViewController
@@ -78,7 +79,8 @@ struct TagCloudView: View {
     private func viewHeightReader(_ binding: Binding<CGFloat>) -> some View {
         return GeometryReader { geometry -> Color in
             let rect = geometry.frame(in: .local)
-            DispatchQueue.main.async {
+            // Si on ne passe pas par ce Task @MainActor, ou un DispatchQueue.main.async, alors quand on sélectionne certains hosts à gauche, la taille de la droite n'est pas bonne (trop petite)
+            Task { @MainActor in
                 binding.wrappedValue = rect.size.height
             }
             return .clear
@@ -145,21 +147,16 @@ public class DetailViewModel : ObservableObject {
     }
     
     public func setStopButtonEnabled(_ state: Bool) {
-        DispatchQueue.main.async {
-            Task {
-                switch state {
-                case true:
-                    if self.stop_button_master_view_hidden && self.stop_button_master_ip_view_hidden {
-                        self.stop_button_enabled = true
-                    } else {
-                        self.stop_button_enabled = false
-                    }
-                    
-                case false:
-                    self.stop_button_enabled = false
-                    
-                }
+        switch state {
+        case true:
+            if self.stop_button_master_view_hidden && self.stop_button_master_ip_view_hidden {
+                self.stop_button_enabled = true
+            } else {
+                self.stop_button_enabled = false
             }
+            
+        case false:
+            self.stop_button_enabled = false
         }
     }
     
@@ -639,16 +636,12 @@ struct DetailSwiftUIView: View {
                             }
                             
                             TagCloudView(tags: model.text_addresses, master_view_controller: master_view_controller, font: .caption) { tag in
-                                DispatchQueue.main.async {
-                                    Task {
-                                        if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
-                                            master_view_controller.master_ip_view_controller?.auto_select = tag
-                                            master_view_controller.master_ip_view_controller?.viewDidAppear(true)
-                                        } else {
-                                            master_view_controller.master_ip_view_controller?.auto_select = tag
-                                            _ = master_view_controller.navigationController?.popViewController(animated: true)
-                                        }
-                                    }
+                                if master_view_controller.master_ip_view_controller?.viewIfLoaded?.window != nil {
+                                    master_view_controller.master_ip_view_controller?.auto_select = tag
+                                    master_view_controller.master_ip_view_controller?.viewDidAppear(true)
+                                } else {
+                                    master_view_controller.master_ip_view_controller?.auto_select = tag
+                                    _ = master_view_controller.navigationController?.popViewController(animated: true)
                                 }
                             }
                             
