@@ -150,43 +150,6 @@ struct Filter: View {
                 Button("Filter") {
                     filter_active.toggle()
                     if filter_active {
-                        
-                        
-                        // Ne pas faire ce qui suit : ce n'est pas ici qu'il faut le faire mais quand un nouveau port est découvert
-                        var foo = [DiscoveredPort]()
-                        let port_list = DBMaster.getPorts()
-                        for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
-                            let port_info = port_list[port_list_key]!
-                            var name = port_info.bonjour_service?.description
-                            if name == nil {
-                                name = port_info.service?.description
-                                if name == nil {
-                                    name = ""
-                                }
-                            }
-                            guard var name else {
-                                fatalError("should not happen")
-                            }
-                            
-                            let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
-                            
-                            if name.hasPrefix("_") {
-                                name = String(name.dropFirst())
-                            }
-                            
-                            if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
-                                name = String(name.dropLast(6))
-                            }
-                            
-                            foo.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
-                        }
-                        // On annule l'effet de cette recherche des ports en commentant la ligne qui suit
-                        discovered_ports_model.discovered_ports = foo
-
-                        
-                        
-                        
-                        
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
                         self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()

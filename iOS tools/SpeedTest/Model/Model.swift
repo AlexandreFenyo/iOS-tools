@@ -410,11 +410,13 @@ class DiscoveredPortsModel: ObservableObject {
 // The DBMaster database instance is accessible with DBMaster.shared
 @MainActor
 class DBMaster {
+    static let shared = DBMaster()
+
     var sections: [SectionType : ModelSection]
 
     private(set) var nodes: Set<Node> {
         didSet(oldValue) {
-/*
+            // Update DiscoveredPortsModel
             DiscoveredPortsModel.shared.discovered_ports = [DiscoveredPort]()
             let port_list = DBMaster.getPorts()
             for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
@@ -426,9 +428,7 @@ class DBMaster {
                         name = ""
                     }
                 }
-                guard var name else {
-                    fatalError("should not happen")
-                }
+                guard var name else { fatalError("should not happen") }
                 
                 let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
                 
@@ -441,15 +441,11 @@ class DBMaster {
                 }
                 
                 DiscoveredPortsModel.shared.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
-
             }
- */
-            
         }
     }
-    private(set) var networks: Set<IPNetwork>
     
-    static let shared = DBMaster()
+    private(set) var networks: Set<IPNetwork>
 
     func resetNetworks() {
         networks = Set<IPNetwork>()
