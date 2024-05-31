@@ -119,15 +119,7 @@ struct Filter: View {
     @State private var multiSelection = Set<UUID>()
 
     @ObservedObject private var discovered_ports_model = DiscoveredPortsModel.shared
-    @ObservedObject private var interman3d_model = Interman3DModel.shared
-
-    // TODO : on veut que l'ajout ou la suppression d'un host refasse la liste Filter, même si on n'utilise pas cette variable
-    // Mais il se peut que surveiller DiscoveredPortsStore suffise : A VERIFIER
-    // @ObservedObject private var hosts_model = DBMaster.shared // nécessite class DBMaster: ObservableObject
-    
-    // discovered_ports est créé quand on active Filter, ce n'est pas le bon moment pour les créer, il faut le faire quand ils peuvent avoir changé,
-    // il faut ensuite surveiller ce changement pour recréer Filter, il faut donc que ça soit Filter qui surveille ce changement
-    // le pb c'est qu'on veut maintenir une nouvelle info : les ports sélectionnés et ceux non sélectionnés, sachant qu'un nouveau port qui est identifié doit être dans l'un ou l'autre état, à définir
+    var interman3d_model = Interman3DModel.shared
 
     // We create a init function to debug creations of this view
     /*
