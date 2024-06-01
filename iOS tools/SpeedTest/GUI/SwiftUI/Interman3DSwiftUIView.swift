@@ -161,9 +161,13 @@ struct Filter: View {
                 
                 if filter_active {
                     // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
+
                     List(discovered_ports_model.discovered_ports) { contact in
                         HStack {
                             Button(action: {
+                                print("XXXXX: abc")
+                                
+/*
                                 let discovered_port = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!]
                                 
                                 let hosts = DBMaster.getNodes(discovered_port.port)
@@ -176,8 +180,8 @@ struct Filter: View {
                                     node.opacity = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
                                 }
                                 
-                                
                                 discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
+ */
 
                             }) {
                                 HStack {
@@ -225,6 +229,126 @@ struct Filter: View {
         .padding([.horizontal], 24)
     }
 }
+
+struct Filter2: View {
+    var master_view_controller: MasterViewController?
+    @Binding var filter_active: Bool
+
+    @State var doesClose: Bool = true
+    @State private var multiSelection = Set<UUID>()
+
+    @ObservedObject private var discovered_ports_model = DiscoveredPortsModel.shared
+    var interman3d_model = Interman3DModel.shared
+
+    // We create a init function to debug creations of this view
+    /*
+    init(master_view_controller: MasterViewController? = nil, filter_active: Binding<Bool>, multiSelection: Set<UUID> = Set<UUID>(), model: DiscoveredPortsModel = DiscoveredPortsModel.shared, interman3d_model: Interman3DModel = Interman3DModel.shared, hosts_model: DBMaster = DBMaster.shared) {
+        self.master_view_controller = master_view_controller
+        // Since filter_active is declared as @Binding, we need to use _filter_active to set its value
+        self._filter_active = filter_active
+        self.multiSelection = multiSelection
+        self.discovered_ports_model = model
+        self.interman3d_model = interman3d_model
+//        self.hosts_model = hosts_model
+        print("XXXX: INIT Filter")
+    }*/
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                
+                Button("Filter") {
+                    filter_active.toggle()
+                    if filter_active {
+                        self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
+                    } else {
+                        self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()
+                    }
+                }
+                .padding(8)
+                .foregroundColor(Color(COLORS.standard_background))
+                .background(content: {
+                    Capsule()
+                        .foregroundColor(Color(COLORS.toolbar_background))
+                        .opacity(0.3)
+                })
+            }
+
+            HStack {
+                Spacer()
+                
+                if filter_active {
+                    // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
+
+                    List(discovered_ports_model.discovered_ports) { contact in
+                        HStack {
+                            Button(action: {
+                                print("XXXXX: test3")
+                                
+/*
+                                let discovered_port = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!]
+                                
+                                let hosts = DBMaster.getNodes(discovered_port.port)
+                                for host in hosts {
+                                    let node = interman3d_model.getB3DHost(host)
+                                    guard let node else {
+                                        _ = #saveTrace("node not found")
+                                        break
+                                    }
+                                    node.opacity = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
+                                }
+                                
+                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
+ */
+
+                            }) {
+                                HStack {
+                                    Image(systemName: discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(Color(COLORS.standard_background))
+                                    Text(contact.name).font(.caption)
+                                        .foregroundColor(Color(COLORS.standard_background))
+                                }
+                                
+                            }
+                        }.listRowBackground(Color.clear).listRowSeparator(.hidden)
+                    }
+                    .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                    .listStyle(PlainListStyle())
+                    .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                    .opacity(0.8)
+
+                    /* Removing the background of the scroll view on iOS 16 and more
+                    if #available(iOS 16, *) {
+                        List(model.contacts) { contact in
+                            Text(contact.name).listRowBackground(Color.clear)
+                        }
+                        .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                        .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                        .scrollContentBackground(.hidden)
+                        .opacity(0.8)
+                    } else {
+                        // Removing the background of the scroll view on iOS 15
+                        List(model.contacts) { contact in
+                            Text(contact.name).listRowBackground(Color.clear)
+                        }
+                        .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
+                        .background(Color(COLORS.toolbar_background), in: RoundedRectangle(cornerRadius: 28))
+                        .onAppear {
+                            // On iOS 15, List are implemented with UITableView, therefore the equivalent of .scrollContentBackground(.hidden) is the following line.
+                            // Note that it applies everywhere in the app once it is used here.
+                            UITableView.appearance().backgroundColor = .clear
+                        }
+                        .opacity(0.8)
+                    }
+                    */
+                }
+            }
+        }
+        .padding([.horizontal], 24)
+    }
+}
+
 
 struct Interman3DSwiftUIView: View {
     weak var master_view_controller: MasterViewController?
@@ -836,6 +960,7 @@ struct Interman3DSwiftUIView: View {
                     HStack {
                         Spacer()
                         Filter(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
+//                        Filter2(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
                     }
                     Spacer()
                 }
