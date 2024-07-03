@@ -549,11 +549,13 @@ class DBMaster {
         var tcp_ports_count = [PortNumber : UInt]()
         var udp_ports_count = [PortNumber : UInt]()
 
+        /* CONTINUER ICI ?
         var _nodes: Set<Node>?
         if nodes = 
         guard var nodes else {
-            nodes = shared.noded
+            nodes = shared.nodes
         }
+         */
         
         for node in shared.nodes {
             tcp_ports.formUnion(node.tcp_ports)
