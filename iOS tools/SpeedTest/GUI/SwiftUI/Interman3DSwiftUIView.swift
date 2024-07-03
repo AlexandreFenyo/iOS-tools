@@ -166,7 +166,8 @@ struct Filter: View {
                         HStack {
                             Button(action: {
                                 print("XXXXX: abc")
-                                
+                                // Dans le thread Main, j'ai eu une erreur à cause du unwrapping ! pour le reproduire : cliquer plein de fois sur les coches des ports
+                                // CONTINUER ICI : corriger le bug
                                 let discovered_port = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!]
                                 
                                 let hosts = DBMaster.getNodes(discovered_port.port)
