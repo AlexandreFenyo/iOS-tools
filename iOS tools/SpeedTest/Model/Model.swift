@@ -10,6 +10,8 @@ import Foundation
 import UIKit
 import iOSToolsMacros
 
+typealias PortMapper = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]
+
 enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, gateway, internet, other
 }
@@ -417,6 +419,52 @@ class DiscoveredPortsModel: ObservableObject {
             discovered_ports[idx].is_selected = false
         }
     }
+    
+    func update(port_list: PortMapper) {
+        // CONTINUER ICI : plutôt que de tout recréer, il faudrait plutôt faire du différentiel pour ne pas supprimer les UUID déjà existants et qui restent
+        
+        // CONTINUER ICI : il faut décider ce qu'on fait si pour un node on a des ports sélectionnés et d'autres non
+        // Il faut ensuite mettre à jour l'opacité dans DBMaster.addOrRemoveNode(), au moment des signalement vers le modèle 3D via notifyNodeAdded() et notifyNodeUpdated() 
+        
+        var is_prev_name_selected = [String: Bool]()
+        for port in discovered_ports {
+            is_prev_name_selected[port.name] = port.is_selected
+        }
+        
+        var new_discovered_ports = [DiscoveredPort]()
+
+        for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
+            let port_info = port_list[port_list_key]!
+            var name = port_info.bonjour_service?.description
+            if name == nil {
+                name = port_info.service?.description
+                if name == nil {
+                    name = ""
+                }
+            }
+            guard var name else { fatalError("should not happen") }
+            
+            let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
+            
+            if name.hasPrefix("_") {
+                name = String(name.dropFirst())
+            }
+            
+            if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
+                name = String(name.dropLast(6))
+            }
+
+            // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports et leurs ports sont remis à "sélectionné" (l'ancien node qui avait ce port reste transparent et le nouveau n'est pas transparent)
+            
+            // Already discovered ports do not change selection status and new ports are selected by default
+            let full_name = "\(name_prefix) x\(port_info.count): \(name)"
+            let is_selected = is_prev_name_selected[full_name] ?? true
+            
+            new_discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", is_selected: is_selected, port: port_list_key))
+        }
+        
+        discovered_ports = new_discovered_ports
+    }
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
@@ -431,47 +479,9 @@ class DBMaster {
             // Update DiscoveredPortsModel
 
             // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports et leurs ports sont remis à "sélectionné" (l'ancien node qui avait ce port reste transparent et le nouveau n'est pas transparent)
-            // Question : quand le nouveau noeud est créé, est-ce que l'objet 3D est déjà créé ? Important si on modifie l'opacité ici !
+            // Question : quand le nouveau noeud est créé, est-ce que l'objet 3D est déjà créé ? Important si on modifie l'opacité ici ! réponse : l'objet 3D est créé APRES le node
 
-            var is_prev_name_selected = [String: Bool]()
-            for port in DiscoveredPortsModel.shared.discovered_ports {
-                is_prev_name_selected[port.name] = port.is_selected
-            }
-            
-            var new_discovered_ports = [DiscoveredPort]()
-            let port_list = DBMaster.getPorts()
-            
-            for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
-                let port_info = port_list[port_list_key]!
-                var name = port_info.bonjour_service?.description
-                if name == nil {
-                    name = port_info.service?.description
-                    if name == nil {
-                        name = ""
-                    }
-                }
-                guard var name else { fatalError("should not happen") }
-                
-                let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
-                
-                if name.hasPrefix("_") {
-                    name = String(name.dropFirst())
-                }
-                
-                if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
-                    name = String(name.dropLast(6))
-                }
-
-                // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports et leurs ports sont remis à "sélectionné" (l'ancien node qui avait ce port reste transparent et le nouveau n'est pas transparent)
-                
-                // Already discovered ports do not change selection status and new ports are selected by default
-                let full_name = "\(name_prefix) x\(port_info.count): \(name)"
-                let is_selected = is_prev_name_selected[full_name] ?? true
-                
-                new_discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", is_selected: is_selected, port: port_list_key))
-            }
-            
-            DiscoveredPortsModel.shared.discovered_ports = new_discovered_ports
+            DiscoveredPortsModel.shared.update(port_list: DBMaster.getPorts())
         }
     }
     
@@ -571,8 +581,8 @@ class DBMaster {
         }
     }
 
-    static private func getPorts(nodes: Set<Node>? = nil) -> [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)] {
-        var port_list = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
+    static private func getPorts(nodes: Set<Node>? = nil) -> PortMapper {
+        var port_list = PortMapper()
 
         var tcp_ports = Set<PortNumber>()
         var udp_ports = Set<PortNumber>()
@@ -613,7 +623,7 @@ class DBMaster {
         return port_list
     }
     
-    static private func getPorts() -> [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)] {
+    static private func getPorts() -> PortMapper {
         var port_list = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]()
 
         var tcp_ports = Set<PortNumber>()
