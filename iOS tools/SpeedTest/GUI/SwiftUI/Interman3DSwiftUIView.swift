@@ -140,6 +140,25 @@ struct Filter: View {
                 Spacer()
 
                 if filter_active {
+                    
+                    // pour débugger
+                    Button("TEST add new node") {
+                        var node = Node()
+                        node.addName("NODE-\(Int.random(in: 0 ..< 1000000))")
+                        node.addTcpPort(50)
+                        _ = master_view_controller?.addNode(node)
+                    }
+                    .padding(8)
+                    .foregroundColor(Color(COLORS.standard_background))
+                    .background(content: {
+                        Capsule()
+                            .foregroundColor(Color(COLORS.toolbar_background))
+                            .opacity(0.3)
+                    })
+
+
+                
+                
                     Button("deselect all") {
                         interman3d_model.resetOpacity(false)
                         DiscoveredPortsModel.shared.deSelectAll()
@@ -180,6 +199,7 @@ struct Filter: View {
                     List(discovered_ports_model.discovered_ports) { contact in
                         HStack {
                             Button(action: {
+                                // Il semble que la liste discovered_ports_model.discovered_ports puisse évoluer pendant qu'on parcours cette List
                                 guard let idx = discovered_ports_model.getDiscoveredPortIndex(id: contact.id) else { return }
                                 let discovered_port = discovered_ports_model.discovered_ports[idx]
 

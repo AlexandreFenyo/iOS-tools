@@ -430,6 +430,9 @@ class DBMaster {
         didSet(oldValue) {
             // Update DiscoveredPortsModel
 
+            // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports et leurs ports sont remis à "sélectionné" (l'ancien node qui avait ce port reste transparent et le nouveau n'est pas transparent)
+            // Question : quand le nouveau noeud est créé, est-ce que l'objet 3D est déjà créé ? Important si on modifie l'opacité ici !
+
             var is_prev_name_selected = [String: Bool]()
             for port in DiscoveredPortsModel.shared.discovered_ports {
                 is_prev_name_selected[port.name] = port.is_selected
@@ -459,7 +462,7 @@ class DBMaster {
                     name = String(name.dropLast(6))
                 }
 
-                // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports
+                // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports et leurs ports sont remis à "sélectionné" (l'ancien node qui avait ce port reste transparent et le nouveau n'est pas transparent)
                 
                 // Already discovered ports do not change selection status and new ports are selected by default
                 let full_name = "\(name_prefix) x\(port_info.count): \(name)"
