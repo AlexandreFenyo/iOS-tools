@@ -1024,6 +1024,12 @@ public class Interman3DModel: ObservableObject {
         }
     }
 
+    func resetOpacity(_ selected: Bool = true) {
+        for host in b3d_hosts {
+            host.opacity = selected ? 1.0 : 0.1
+        }
+    }
+    
     func getNHosts() -> Int {
         return b3d_hosts.count
     }

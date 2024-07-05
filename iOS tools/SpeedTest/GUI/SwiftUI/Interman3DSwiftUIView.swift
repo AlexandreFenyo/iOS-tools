@@ -138,6 +138,22 @@ struct Filter: View {
         VStack {
             HStack {
                 Spacer()
+
+                if filter_active {
+                    Button("deselect all") {
+                        interman3d_model.resetOpacity(false)
+                        DiscoveredPortsModel.shared.deSelectAll()
+                        // CONTINUER ICI
+                        // bug dès qu'un nouveau port est découvert, tout est déselectionné
+                    }
+                    .padding(8)
+                    .foregroundColor(Color(COLORS.standard_background))
+                    .background(content: {
+                        Capsule()
+                            .foregroundColor(Color(COLORS.toolbar_background))
+                            .opacity(0.3)
+                    })
+                }
                 
                 Button("Filter") {
                     filter_active.toggle()
@@ -161,15 +177,12 @@ struct Filter: View {
                 
                 if filter_active {
                     // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
-
                     List(discovered_ports_model.discovered_ports) { contact in
                         HStack {
                             Button(action: {
-                                print("XXXXX: abc")
-                                // Dans le thread Main, j'ai eu une erreur à cause du unwrapping ! pour le reproduire : cliquer plein de fois sur les coches des ports
-                                // CONTINUER ICI : corriger le bug
-                                let discovered_port = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!]
-                                
+                                guard let idx = discovered_ports_model.getDiscoveredPortIndex(id: contact.id) else { return }
+                                let discovered_port = discovered_ports_model.discovered_ports[idx]
+
                                 let hosts = DBMaster.getNodes(discovered_port.port)
                                 for host in hosts {
                                     let node = interman3d_model.getB3DHost(host)
@@ -177,14 +190,18 @@ struct Filter: View {
                                         _ = #saveTrace("node not found")
                                         break
                                     }
-                                    node.opacity = discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? 0.1 : 1.0
+                                    node.opacity = discovered_ports_model.discovered_ports[idx].is_selected ? 0.1 : 1.0
                                 }
                                 
-                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected.toggle()
+                                discovered_ports_model.discovered_ports[idx].is_selected.toggle()
 
                             }) {
                                 HStack {
-                                    Image(systemName: discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle")
+                                    Image(systemName:
+                                            (discovered_ports_model.getDiscoveredPortIndex(id: contact.id) != nil) ? (
+                                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle") :
+                                            "circle"
+                                          )
                                         .foregroundColor(Color(COLORS.standard_background))
                                     Text(contact.name).font(.caption)
                                         .foregroundColor(Color(COLORS.standard_background))
@@ -192,6 +209,10 @@ struct Filter: View {
                             }
                             
                         }.listRowBackground(Color.clear).listRowSeparator(.hidden)
+                    }
+                    .onAppear {
+                        interman3d_model.resetOpacity()
+                        discovered_ports_model.selectAll()
                     }
                     .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
                     .listStyle(PlainListStyle())

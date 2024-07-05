@@ -803,18 +803,17 @@ view.backgroundColor = .red
         local_ping_client = LocalPingClient(address: address, count: 10000, initial_delay: current_delay)
         
         local_ping_task = Task.detached(priority: .userInitiated) {
-            // This code added after a crash log certainly due to self.local_ping_client!
-            if await self.local_ping_client == nil {
+            // This code added after a _local_ping_client crash log certainly due to self.local_ping_client!
+            guard let _local_ping_client = await self.local_ping_client else {
                 _ = #saveTrace("local_ping_client is nil")
                 return
             }
-
-            while await self.local_ping_client!.isInsideLoop() == 1 {
-                await self.local_ping_client!.stop()
+            while _local_ping_client.isInsideLoop() == 1 {
+                _local_ping_client.stop()
                 try? await Task.sleep(nanoseconds: 200_000_000)
             }
             
-            await self.local_ping_client!.start()
+            _local_ping_client.start()
 
             Task { @MainActor in
                 self.addTrace("ICMP loop: starting for target \(address.toNumericString() ?? "")", level: .INFO)

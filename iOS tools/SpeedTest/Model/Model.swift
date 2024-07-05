@@ -405,6 +405,18 @@ class DiscoveredPortsModel: ObservableObject {
     func getDiscoveredPortIndex(id: UUID) -> Array<DiscoveredPort>.Index? {
         return discovered_ports.firstIndex { $0.id == id }
     }
+    
+    func selectAll() {
+        for idx in discovered_ports.indices {
+            discovered_ports[idx].is_selected = true
+        }
+    }
+    
+    func deSelectAll() {
+        for idx in discovered_ports.indices {
+            discovered_ports[idx].is_selected = false
+        }
+    }
 }
 
 // The DBMaster database instance is accessible with DBMaster.shared
@@ -417,8 +429,15 @@ class DBMaster {
     private(set) var nodes: Set<Node> {
         didSet(oldValue) {
             // Update DiscoveredPortsModel
-            DiscoveredPortsModel.shared.discovered_ports = [DiscoveredPort]()
+
+            var is_prev_name_selected = [String: Bool]()
+            for port in DiscoveredPortsModel.shared.discovered_ports {
+                is_prev_name_selected[port.name] = port.is_selected
+            }
+            
+            var new_discovered_ports = [DiscoveredPort]()
             let port_list = DBMaster.getPorts()
+            
             for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
                 let port_info = port_list[port_list_key]!
                 var name = port_info.bonjour_service?.description
@@ -439,9 +458,17 @@ class DBMaster {
                 if name.hasSuffix("._tcp.") || name.hasSuffix("._udp.") {
                     name = String(name.dropLast(6))
                 }
+
+                // CONTINUER ICI : bug(s) : quand de nouvelles machines apparaissent, leur opacité n'est pas mise à jour vis à vis de leurs ports
                 
-                DiscoveredPortsModel.shared.discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", port: port_list_key))
+                // Already discovered ports do not change selection status and new ports are selected by default
+                let full_name = "\(name_prefix) x\(port_info.count): \(name)"
+                let is_selected = is_prev_name_selected[full_name] ?? true
+                
+                new_discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", is_selected: is_selected, port: port_list_key))
             }
+            
+            DiscoveredPortsModel.shared.discovered_ports = new_discovered_ports
         }
     }
     
