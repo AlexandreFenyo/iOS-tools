@@ -1,0 +1,42 @@
+{
+  "originHash" : "58f80d8912e92f71c4abd7b5f5765555a280706b8887d6a53ca8740ec1da7d04",
+  "pins" : [
+    {
+      "identity" : "iostoolsmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/iOSToolsMacros",
+      "state" : {
+        "branch" : "main",
+        "revision" : "84b6a4fe001dd295c8ccff7ab7623ad4df263b0f"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftadvancedatomicscpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/SwiftAdvancedAtomicsCPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d2b04455a4fb8fc28bc645cca7790a716dc4eab2"
+      }
+    },
+    {
+      "identity" : "swiftadvancedatomicsswiftpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/SwiftAdvancedAtomicsSwiftPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "bd6da2eb0906556406caf48e3733837a766fd4fe"
+      }
+    }
+  ],
+  "version" : 3
+}
