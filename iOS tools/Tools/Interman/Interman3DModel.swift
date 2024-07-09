@@ -1026,7 +1026,7 @@ public class Interman3DModel: ObservableObject {
 
     func resetOpacity(_ selected: Bool = true) {
         for host in b3d_hosts {
-            host.opacity = selected ? 1.0 : 0.1
+            host.opacity = selected ? 1.0 : 0.3
         }
     }
     
@@ -1140,10 +1140,40 @@ public class Interman3DModel: ObservableObject {
         return Node()
     }
 
+    func updateOpacity(_ node: Node, _ b3d_host: B3DHost) {
+        if DiscoveredPortsModel.shared.filtering == false {
+            b3d_host.opacity = DiscoveredPortsModel.shared.filter_active ? 0.3 : 1.0
+            return
+        }
+        b3d_host.opacity = 1.0
+        for port in DiscoveredPortsModel.shared.getSelectedPorts() {
+            switch port.ip_protocol {
+            case .TCP:
+                if node.getTcpPorts().contains(port.port_number) {
+                    return
+                }
+                
+            case .UDP:
+                if node.getUdpPorts().contains(port.port_number) {
+                    return
+                }
+            }
+        }
+        b3d_host.opacity = 0.3
+    }
+
+    func resetOpacity() {
+        for b3d_host in b3d_hosts {
+            b3d_host.opacity = 1.0
+        }
+    }
+
     // Sync with the main model
     func notifyNodeAdded(_ node: Node) {
         let b3d_host = addHost(node)
         node_to_b3d_host.updateValue(b3d_host, forKey: node)
+
+        updateOpacity(node, b3d_host)
     }
 
     // Sync with the main model
@@ -1215,6 +1245,8 @@ public class Interman3DModel: ObservableObject {
         node_to_b3d_host.remove(at: idx)
         node_to_b3d_host.updateValue(b3d_host, forKey: node)
         b3d_host.updateModelAndValues()
+
+        updateOpacity(node, b3d_host)
     }
 
     func notifyScanNode(_ node: Node, _ address: IPAddress) {

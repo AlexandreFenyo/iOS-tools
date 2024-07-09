@@ -114,7 +114,8 @@ class RunAfterAnimation: NSObject, CAAnimationDelegate {
 struct Filter: View {
     var master_view_controller: MasterViewController?
     @Binding var filter_active: Bool
-
+    @Binding var filtering: Bool
+    
     @State var doesClose: Bool = true
     @State private var multiSelection = Set<UUID>()
 
@@ -134,14 +135,34 @@ struct Filter: View {
         print("XXXX: INIT Filter")
     }*/
     
+    func resetFilter() {
+        filtering = false
+        discovered_ports_model.deSelectAll()
+        filter_active = false
+        interman3d_model.resetOpacity()
+    }
+    
     var body: some View {
         VStack {
             HStack {
                 Spacer()
 
+                if filtering {
+                    Button("Reset filter") {
+                        resetFilter()
+                    }
+                    .padding(8)
+                    .foregroundColor(Color(COLORS.standard_background))
+                    .background(content: {
+                        Capsule()
+                            .foregroundColor(Color(COLORS.toolbar_background))
+                            .opacity(0.3)
+                    })
+                }
+
                 if filter_active {
-                    
-                    // pour débugger
+                    // For debugging
+                    /*
                     Button("TEST add new node") {
                         var node = Node()
                         node.addName("NODE-\(Int.random(in: 0 ..< 1000000))")
@@ -155,23 +176,7 @@ struct Filter: View {
                             .foregroundColor(Color(COLORS.toolbar_background))
                             .opacity(0.3)
                     })
-
-
-                
-                
-                    Button("deselect all") {
-                        interman3d_model.resetOpacity(false)
-                        DiscoveredPortsModel.shared.deSelectAll()
-                        // CONTINUER ICI
-                        // bug dès qu'un nouveau port est découvert, tout est déselectionné
-                    }
-                    .padding(8)
-                    .foregroundColor(Color(COLORS.standard_background))
-                    .background(content: {
-                        Capsule()
-                            .foregroundColor(Color(COLORS.toolbar_background))
-                            .opacity(0.3)
-                    })
+                    */
                 }
                 
                 Button("Filter") {
@@ -180,6 +185,10 @@ struct Filter: View {
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
                     } else {
                         self.master_view_controller?.interman_view_controller?.enableTapGestureRecognizer()
+
+                        if discovered_ports_model.getSelectedPorts().isEmpty {
+                            resetFilter()
+                        }
                     }
                 }
                 .padding(8)
@@ -212,7 +221,7 @@ struct Filter: View {
                                     }
                                     node.opacity = discovered_ports_model.discovered_ports[idx].is_selected ? 0.1 : 1.0
                                 }
-                                
+
                                 discovered_ports_model.discovered_ports[idx].is_selected.toggle()
 
                             }) {
@@ -231,8 +240,10 @@ struct Filter: View {
                         }.listRowBackground(Color.clear).listRowSeparator(.hidden)
                     }
                     .onAppear {
-                        interman3d_model.resetOpacity()
-                        discovered_ports_model.selectAll()
+                        if filtering == false {
+                            interman3d_model.resetOpacity(false)
+                            discovered_ports_model.deSelectAll()
+                        }
                     }
                     .frame(maxWidth: UIScreen.main.bounds.size.width / 2, maxHeight: UIScreen.main.bounds.size.height * 2 / 3)
                     .listStyle(PlainListStyle())
@@ -289,10 +300,10 @@ struct Interman3DSwiftUIView: View {
     @State private var disable_auto_rotation_button = false
     @State private var disable_traces = true
 
-    @State private var filter_active: Bool = false
-
     @ObservedObject private var interman3d_model = Interman3DModel.shared
     @ObservedObject private var model = TracesViewModel.shared
+
+    @ObservedObject private var discovered_ports_model = DiscoveredPortsModel.shared
     
     @ObservedObject private var camera_model = CameraModel.shared
     private let camera: SCNNode
@@ -870,7 +881,10 @@ struct Interman3DSwiftUIView: View {
                             
                             HStack {
                                 Spacer()
-                                Filter(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
+                                Filter(master_view_controller: self.master_view_controller, filter_active: $discovered_ports_model.filter_active, filtering: $discovered_ports_model.filtering).padding([.vertical], 10)
+//                                    .onAppear() {
+//                                        discovered_ports_model.filtering = true
+//                                    }
                             }
                             
                         }
@@ -879,7 +893,10 @@ struct Interman3DSwiftUIView: View {
                 } else {
                     HStack {
                         Spacer()
-                        Filter(master_view_controller: self.master_view_controller, filter_active: $filter_active).padding([.vertical], 10)
+                        Filter(master_view_controller: self.master_view_controller, filter_active: $discovered_ports_model.filter_active, filtering: $discovered_ports_model.filtering).padding([.vertical], 10)
+//                            .onAppear() {
+//                                discovered_ports_model.filtering = true
+//                            }
                     }
                     Spacer()
                 }
