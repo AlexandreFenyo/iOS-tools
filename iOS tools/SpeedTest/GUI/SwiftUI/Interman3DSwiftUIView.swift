@@ -148,16 +148,18 @@ struct Filter: View {
                 Spacer()
 
                 if filtering {
-                    Button("Reset filter") {
+                    Button(action: {
                         resetFilter()
+                    }) {
+                        Text("Reset filter")
+                            .padding(8)
+                            .foregroundColor(Color(COLORS.standard_background))
+                            .background(content: {
+                                Capsule()
+                                    .foregroundColor(Color(COLORS.toolbar_background))
+                                    .opacity(0.3)
+                            })
                     }
-                    .padding(8)
-                    .foregroundColor(Color(COLORS.standard_background))
-                    .background(content: {
-                        Capsule()
-                            .foregroundColor(Color(COLORS.toolbar_background))
-                            .opacity(0.3)
-                    })
                 }
 
                 /*
@@ -178,8 +180,8 @@ struct Filter: View {
                     })
                 }
                 */
-                
-                Button("Filter") {
+
+                Button(action: {
                     filter_active.toggle()
                     if filter_active {
                         self.master_view_controller?.interman_view_controller?.disableTapGestureRecognizer()
@@ -190,14 +192,16 @@ struct Filter: View {
                             resetFilter()
                         }
                     }
+                }) {
+                    Text("Filter")
+                        .padding(8)
+                        .foregroundColor(Color(COLORS.standard_background))
+                        .background(content: {
+                            Capsule()
+                                .foregroundColor(Color(COLORS.toolbar_background))
+                                .opacity(0.3)
+                        })
                 }
-                .padding(8)
-                .foregroundColor(Color(COLORS.standard_background))
-                .background(content: {
-                    Capsule()
-                        .foregroundColor(Color(COLORS.toolbar_background))
-                        .opacity(0.3)
-                })
             }
 
             HStack {
@@ -804,6 +808,8 @@ struct Interman3DSwiftUIView: View {
         }
     }
     
+    let space_between_buttons: CGFloat = 5
+    
     var body: some View {
         ZStack {
             // 3D view
@@ -910,7 +916,7 @@ struct Interman3DSwiftUIView: View {
                 HStack {
                     HStack {
                         Spacer()
-                        HStack {
+                        HStack(alignment: .center, spacing: 0) {
                             Button {
                                 // interman3d_model.testIHMCreate()
                                 master_view_controller!.update_pressed()
@@ -922,7 +928,8 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor(Color(COLORS.standard_background))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                            }
+                                    .padding(space_between_buttons)
+                            }//.background(Color.blue)
                             
                             Button {
                                 master_view_controller!.interman_view_controller?.hostingViewController.rootView.resetCamera()
@@ -933,7 +940,9 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor((camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(camera_model.camera_mode == .freeFlight)
+                                //.background(Color.blue)
                             
                             Spacer().frame(width: 25)
                             
@@ -948,6 +957,7 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
                             
                             Button {
@@ -960,6 +970,7 @@ struct Interman3DSwiftUIView: View {
                                     .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
                             
                             Button {
@@ -971,6 +982,7 @@ struct Interman3DSwiftUIView: View {
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
                             
                             Button {
@@ -982,6 +994,7 @@ struct Interman3DSwiftUIView: View {
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
                             
                             Spacer().frame(width: 25)
@@ -1007,6 +1020,7 @@ struct Interman3DSwiftUIView: View {
                                         .foregroundColor(Color(COLORS.standard_background))
                                     // Let the background clickable
                                         .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                        .padding(space_between_buttons)
                                 }
                             }
                             
@@ -1021,8 +1035,9 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    .padding(space_between_buttons)
                             }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
-                        }.padding()
+                        }.padding(0)
                             .background(content: {
                                 Capsule()
                                     .foregroundColor(Color(COLORS.toolbar_background))
@@ -1031,7 +1046,7 @@ struct Interman3DSwiftUIView: View {
                             })
                     }
                 }
-                .padding(8)
+//                .padding(8)
                 .cornerRadius(14)
                 .padding(12)
             }
