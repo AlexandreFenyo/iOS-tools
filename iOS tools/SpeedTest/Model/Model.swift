@@ -20,13 +20,21 @@ enum NodeType: Int, CaseIterable {
     case localhost = 0, ios, chargen, discard, gateway, internet
 }
 
-enum IPProtocol: Int, CaseIterable {
+enum IPProtocol: Int, CaseIterable, CustomStringConvertible {
+    var description: String {
+        return rawValue == 0 ? "TCP" : "UDP"
+    }
+    
     case TCP, UDP
 }
 typealias PortNumber = UInt16
 typealias ServiceName = String
 typealias BonjourServiceName = String
-struct Port : Hashable {
+struct Port : Hashable, CustomStringConvertible {
+    var description: String {
+        return "\(ip_protocol)/\(port_number)"
+    }
+    
     let port_number: PortNumber
     let ip_protocol: IPProtocol
 }
