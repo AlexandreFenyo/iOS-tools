@@ -1026,7 +1026,8 @@ public class Interman3DModel: ObservableObject {
 
     func resetOpacity(_ selected: Bool = true) {
         for host in b3d_hosts {
-            host.opacity = selected ? 1.0 : 0.3
+//            host.opacity = selected ? 1.0 : 0.3
+            host.runAction(SCNAction.fadeOpacity(to: selected ? 1.0 : 0.3, duration: 1))
         }
     }
     
@@ -1142,29 +1143,44 @@ public class Interman3DModel: ObservableObject {
 
     func updateOpacity(_ node: Node, _ b3d_host: B3DHost) {
         if DiscoveredPortsModel.shared.filtering == false {
-            b3d_host.opacity = DiscoveredPortsModel.shared.filter_active ? 0.3 : 1.0
+//            b3d_host.opacity = DiscoveredPortsModel.shared.filter_active ? 0.3 : 1.0
+            b3d_host.runAction(SCNAction.fadeOpacity(to: DiscoveredPortsModel.shared.filter_active ? 0.3 : 1.0, duration: 1))
             return
         }
-        b3d_host.opacity = 1.0
+        
+        let current = b3d_host.opacity
+//        b3d_host.opacity = 1.0
+        var new: CGFloat = 1.0
         for port in DiscoveredPortsModel.shared.getSelectedPorts() {
             switch port.ip_protocol {
             case .TCP:
                 if node.getTcpPorts().contains(port.port_number) {
+                    if new != current {
+                        b3d_host.runAction(SCNAction.fadeOpacity(to: new, duration: 1))
+                    }
                     return
                 }
                 
             case .UDP:
                 if node.getUdpPorts().contains(port.port_number) {
+                    if new != current {
+                        b3d_host.runAction(SCNAction.fadeOpacity(to: new, duration: 1))
+                    }
                     return
                 }
             }
         }
-        b3d_host.opacity = 0.3
+//        b3d_host.opacity = 0.3
+        new = 0.3
+        if new != current {
+            b3d_host.runAction(SCNAction.fadeOpacity(to: new, duration: 1))
+        }
     }
 
     func resetOpacity() {
         for b3d_host in b3d_hosts {
-            b3d_host.opacity = 1.0
+//            b3d_host.opacity = 1.0
+            b3d_host.runAction(SCNAction.fadeOpacity(to: 1.0, duration: 1))
         }
     }
 

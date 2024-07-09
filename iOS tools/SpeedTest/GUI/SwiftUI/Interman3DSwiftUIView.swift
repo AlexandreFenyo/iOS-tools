@@ -219,7 +219,8 @@ struct Filter: View {
                                         _ = #saveTrace("node not found")
                                         break
                                     }
-                                    node.opacity = discovered_ports_model.discovered_ports[idx].is_selected ? 0.1 : 1.0
+                                    // node.opacity = discovered_ports_model.discovered_ports[idx].is_selected ? 0.1 : 1.0
+                                    node.runAction(SCNAction.fadeOpacity(to: discovered_ports_model.discovered_ports[idx].is_selected ? 0.3 : 1.0, duration: 1))
                                 }
 
                                 discovered_ports_model.discovered_ports[idx].is_selected.toggle()
