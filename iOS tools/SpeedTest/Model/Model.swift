@@ -450,6 +450,7 @@ class DiscoveredPortsModel: ObservableObject {
 
         for port_list_key in port_list.keys.sorted(by: { $0.port_number <= $1.port_number }) {
             let port_info = port_list[port_list_key]!
+            
             var name = port_info.bonjour_service?.description
             if name == nil {
                 name = port_info.service?.description
@@ -459,8 +460,9 @@ class DiscoveredPortsModel: ObservableObject {
             }
             guard var name else { fatalError("should not happen") }
             
-            let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
-            
+            // let name_prefix = "\(port_list_key.ip_protocol == .TCP ? "TCP" : "UDP")/\(port_list_key.port_number)"
+            let name_prefix = port_list_key.description
+
             if name.hasPrefix("_") {
                 name = String(name.dropFirst())
             }
@@ -471,7 +473,11 @@ class DiscoveredPortsModel: ObservableObject {
 
             // Already discovered ports do not change selection status and new ports are selected by default
             let is_selected = is_prev_name_selected[port_list_key] ?? false
-            
+
+            // Some devices rename standard TCP ports with weird names (HP scanners name the TCP/80 port "uscan" and the TCP/443 port "uscans"), so we recover the standard name
+            if port_list_key.port_number == 80 && port_list_key.ip_protocol == .TCP { name = "http" }
+            if port_list_key.port_number == 443 && port_list_key.ip_protocol == .TCP { name = "https" }
+
             new_discovered_ports.append(DiscoveredPort(name: "\(name_prefix) x\(port_info.count): \(name)", is_selected: is_selected, port: port_list_key))
         }
         

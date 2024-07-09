@@ -160,9 +160,9 @@ struct Filter: View {
                     })
                 }
 
+                /*
+                // For debugging
                 if filter_active {
-                    // For debugging
-                    /*
                     Button("TEST add new node") {
                         var node = Node()
                         node.addName("NODE-\(Int.random(in: 0 ..< 1000000))")
@@ -176,8 +176,8 @@ struct Filter: View {
                             .foregroundColor(Color(COLORS.toolbar_background))
                             .opacity(0.3)
                     })
-                    */
                 }
+                */
                 
                 Button("Filter") {
                     filter_active.toggle()
@@ -205,11 +205,11 @@ struct Filter: View {
                 
                 if filter_active {
                     // Removing the background of the scroll view: version that runs correctly on iOS 16 and more
-                    List(discovered_ports_model.discovered_ports) { contact in
+                    List(discovered_ports_model.discovered_ports) { discovered_port in
                         HStack {
                             Button(action: {
                                 // Il semble que la liste discovered_ports_model.discovered_ports puisse évoluer pendant qu'on parcours cette List
-                                guard let idx = discovered_ports_model.getDiscoveredPortIndex(id: contact.id) else { return }
+                                guard let idx = discovered_ports_model.getDiscoveredPortIndex(id: discovered_port.id) else { return }
                                 let discovered_port = discovered_ports_model.discovered_ports[idx]
 
                                 let hosts = DBMaster.getNodes(discovered_port.port)
@@ -229,12 +229,12 @@ struct Filter: View {
                             }) {
                                 HStack {
                                     Image(systemName:
-                                            (discovered_ports_model.getDiscoveredPortIndex(id: contact.id) != nil) ? (
-                                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: contact.id)!].is_selected ? "checkmark.circle.fill" : "circle") :
+                                            (discovered_ports_model.getDiscoveredPortIndex(id: discovered_port.id) != nil) ? (
+                                                discovered_ports_model.discovered_ports[discovered_ports_model.getDiscoveredPortIndex(id: discovered_port.id)!].is_selected ? "checkmark.circle.fill" : "circle") :
                                             "circle"
                                           )
                                         .foregroundColor(Color(COLORS.standard_background))
-                                    Text(contact.name).font(.caption)
+                                    Text(discovered_port.name).font(.caption)
                                         .foregroundColor(Color(COLORS.standard_background))
                                 }
                             }
