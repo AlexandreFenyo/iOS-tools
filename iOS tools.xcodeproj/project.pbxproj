@@ -76,6 +76,8 @@
 		5D8944A220A57C7800E26476 /* Chart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8944A120A57C7800E26476 /* Chart.swift */; };
 		5D8B17E12B82AACF00CA168F /* Ports2BonjourServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D8B17E02B82AACF00CA168F /* Ports2BonjourServices.swift */; };
 		5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D945D0B2100CF51007E4844 /* NetTools.swift */; };
+		5D9BCBEF2C3F001300F9ADE6 /* StepByStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */; };
+		5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
@@ -239,6 +241,8 @@
 		5D8B7A102970107800F89A32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D8B7A122970107900F89A32 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D945D0B2100CF51007E4844 /* NetTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetTools.swift; sourceTree = "<group>"; };
+		5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepViewController.swift; sourceTree = "<group>"; };
+		5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepSwiftUIView.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
@@ -574,6 +578,8 @@
 				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
 				5D78EF6D290FC56400842B76 /* IDWView.swift */,
 				5DE8DC41295074BB00FAE74D /* Graham.swift */,
+				5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */,
+				5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */,
 			);
 			path = HeatMap;
 			sourceTree = "<group>";
@@ -944,11 +950,13 @@
 				5DF215222133D7DA002B7603 /* NetworkBrowser.swift in Sources */,
 				5DF21516212D7C13002B7603 /* genericTools.c in Sources */,
 				5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */,
+				5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */,
 				5DE22F7C29BDF2CA002D9BEE /* IntermanViewController.swift in Sources */,
 				5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */,
 				5DC7307C28D90CD0004094BB /* LocalAppService.swift in Sources */,
 				5D42E785216DE6000062A654 /* MasterSectionHeader.swift in Sources */,
 				5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */,
+				5D9BCBEF2C3F001300F9ADE6 /* StepByStepViewController.swift in Sources */,
 				5DF21518212D8A1C002B7603 /* LocalFlood.swift in Sources */,
 				5DF214FE211B4EF7002B7603 /* localChargenClient.c in Sources */,
 				5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */,
