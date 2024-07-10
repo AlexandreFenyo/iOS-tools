@@ -99,7 +99,7 @@ class TCPPortBrowser {
             ()
         }
         Task {
-            await self.device_manager.setInformation(addr.toNumericString()! + ": port " + String(port))
+            await self.device_manager.setInformation(addr.toNumericString() ?? "addr is nil" + ": port " + String(port))
             await self.device_manager.addNode(node)
         }
     }
@@ -121,10 +121,10 @@ class TCPPortBrowser {
         
         await withTaskGroup(of: Void.self) { group in
             for addr in await self.private_data_actor.getAddresses() {
-                if debug { print(addr.toNumericString()!, "tcp - starting address") }
+                if debug { print(addr.toNumericString() ?? "addr is nil", "tcp - starting address") }
                 
                 await MainActor.run {
-                    self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!)", level: .INFO)
+                    self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString() ?? "addr is nil")", level: .INFO)
                     // Add link
                     DBMaster.shared.notifyScanPorts(address: addr)
                 }
@@ -153,7 +153,7 @@ class TCPPortBrowser {
                         
                         let ports_count = ports.count
                         await MainActor.run {
-                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): will scan \(ports_count) ports waiting \(delay) µs for each", level: .INFO)
+                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString() ?? "addr is nil"): will scan \(ports_count) ports waiting \(delay) µs for each", level: .INFO)
                         }
                         
                         // WiFi donc latence élevée donc impossible de parcourir tous les ports sans paralléliser le traitement, même pour une IP => à reprogrammer dans le futur
@@ -171,7 +171,7 @@ class TCPPortBrowser {
                                 #fatalError("browse: socket")
                                 return
                             }
-                            if debug { print(addr.toNumericString()!, "socket fd:", s) }
+                            if debug { print(addr.toNumericString() ?? "addr is nil", "socket fd:", s) }
                             
                             var ret : Int32;
                             ret = fcntl(s, F_GETFL)
@@ -185,23 +185,23 @@ class TCPPortBrowser {
                             
                             /* TROP consommateur de CPU, ça ralentit tout le processus
                              DispatchQueue.main.async {
-                             self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!): trying port \(port) for \(delay)ms", level: .ALL)
+                             self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString() ?? "addr is nil"): trying port \(port) for \(delay)ms", level: .ALL)
                              }*/
                             
-                            if debug { print(addr.toNumericString()!, ": trying port", port, "for", delay, "microseconds") }
+                            if debug { print(addr.toNumericString() ?? "addr is nil", ": trying port", port, "for", delay, "microseconds") }
                             let t0 = NSDate().timeIntervalSince1970
                             
                             ret = addr.toSockAddress(port: port)!.getData().withUnsafeBytes {
 //                                if Thread.isMainThread { print("XXXXX: connect in main thread") }
                                 return connect(s, $0.bindMemory(to: sockaddr.self).baseAddress, addr.getFamily() == AF_INET ? UInt32(MemoryLayout<sockaddr_in>.size) : UInt32(MemoryLayout<sockaddr_in6>.size))
                             }
-                            if debug { var d0 = 1000000 * (NSDate().timeIntervalSince1970 - t0); d0.round(.down); print(addr.toNumericString()!, "duration connect", d0) }
+                            if debug { var d0 = 1000000 * (NSDate().timeIntervalSince1970 - t0); d0.round(.down); print(addr.toNumericString() ?? "addr is nil", "duration connect", d0) }
                             
                             if (ret < 0) {
                                 // connect(): error
                                 if errno != EINPROGRESS {
-                                    perror(addr.toNumericString()! + " connect")
-                                    if debug { print(addr.toNumericString()!, "ERREUR connect port", port) }
+                                    perror(addr.toNumericString() ?? "addr is nil" + " connect")
+                                    if debug { print(addr.toNumericString() ?? "addr is nil", "ERREUR connect port", port) }
                                     // do not retry this port
                                     ports.remove(port)
                                 } else {
@@ -220,7 +220,7 @@ class TCPPortBrowser {
                                         ret = select(s + 1, &read_fds, &write_fds, &except_fds, &tv)
                                         if debug {
                                             var d1 = 1000000 * (NSDate().timeIntervalSince1970 - t1); d1.round(.down)
-                                            print(addr.toNumericString()!, "duration select", d1)
+                                            print(addr.toNumericString() ?? "addr is nil", "duration select", d1)
                                         }
                                         if ret > 0 {
                                             // socket is in FDS
@@ -230,8 +230,8 @@ class TCPPortBrowser {
                                             if ret < 0 {
                                                 // can not get socket status
                                                 if debug {
-                                                    perror(addr.toNumericString()! + "getsockopt")
-                                                    print(addr.toNumericString()!, "ERREUR getsockopt", "port", port)
+                                                    perror(addr.toNumericString() ?? "addr is nil" + "getsockopt")
+                                                    print(addr.toNumericString() ?? "addr is nil", "ERREUR getsockopt", "port", port)
                                                 }
                                                 // do not retry this port
                                                 ports.remove(port)
@@ -244,18 +244,18 @@ class TCPPortBrowser {
                                                     let rr = getpeername(s, &saddr, &slen)
                                                     if rr < 0 {
                                                         if errno == ENOTCONN {
-                                                            print(addr.toNumericString()!, "ENOTCONN")
+                                                            print(addr.toNumericString() ?? "addr is nil", "ENOTCONN")
                                                             need_retry = true
                                                         } else {
-                                                            if debug { perror(addr.toNumericString()! + "getpeername") }
+                                                            if debug { perror(addr.toNumericString() ?? "addr is nil" + "getpeername") }
                                                             // do not retry this port
                                                             ports.remove(port)
                                                         }
                                                     } else {
                                                         // we got a peer name
-                                                        if debug { print(addr.toNumericString()!, "getpeername PORT CONNECTED : port", port, "after", delay) }
+                                                        if debug { print(addr.toNumericString() ?? "addr is nil", "getpeername PORT CONNECTED : port", port, "after", delay) }
                                                         await MainActor.run {
-                                                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  discovered open port \(port)", level: .DEBUG)
+                                                            self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString() ?? "addr is nil"):  discovered open port \(port)", level: .DEBUG)
                                                             DBMaster.shared.notifyPortDiscovered(address: addr, port: port)
                                                         }
                                                         // do not retry this port
@@ -268,23 +268,23 @@ class TCPPortBrowser {
                                                     ports.remove(port)
                                                     /* TROP consommateur de CPU, ça ralentit tout le processus
                                                      DispatchQueue.main.async {
-                                                     self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString()!):  connection refused on port \(port)", level: .ALL)
+                                                     self.device_manager.addTrace("TCP ports browsing: \(addr.toNumericString() ?? "addr is nil"):  connection refused on port \(port)", level: .ALL)
                                                      }*/
-                                                    if debug { print(addr.toNumericString()!, "getsockopt connection refused port", port) }
+                                                    if debug { print(addr.toNumericString() ?? "addr is nil", "getsockopt connection refused port", port) }
                                                     
                                                 default:
-                                                    if debug { print(addr.toNumericString()!, "ERREUR getsockopt other state port", port, "so_error", so_error) }
+                                                    if debug { print(addr.toNumericString() ?? "addr is nil", "ERREUR getsockopt other state port", port, "so_error", so_error) }
                                                 }
                                             }
                                         } else {
                                             // socket in FDS
                                             if ret == 0 {
                                                 // timeout reached
-                                                if debug { print(addr.toNumericString()!, "select timeout reached port", port) }
+                                                if debug { print(addr.toNumericString() ?? "addr is nil", "select timeout reached port", port) }
                                             } else {
                                                 // select error : ??? EBADF
-                                                perror(addr.toNumericString()! + "select")
-                                                print(addr.toNumericString()!, "ERREUR select", s, "port", port)
+                                                perror(addr.toNumericString() ?? "addr is nil" + "select")
+                                                print(addr.toNumericString() ?? "addr is nil", "ERREUR select", s, "port", port)
                                             }
                                         }
                                     } while need_retry
@@ -304,7 +304,7 @@ class TCPPortBrowser {
                     }
                     
                     await MainActor.run {
-                        self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString()!)", level: .INFO)
+                        self.device_manager.addTrace("TCP ports browsing: finished with address \(addr.toNumericString() ?? "addr is nil")", level: .INFO)
                         DBMaster.shared.notifyScanPortsFinished(address: addr)
                     }
                 }

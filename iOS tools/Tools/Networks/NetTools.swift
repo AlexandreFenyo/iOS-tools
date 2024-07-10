@@ -96,10 +96,12 @@ public class SockAddr {
     }
 
     public func resolveHostName() -> String? {
+        // DNS request
         return getNameInfo(NI_NAMEREQD)
     }
 
     public func toNumericString() -> String? {
+        // no DNS request
         return getNameInfo(NI_NUMERICHOST)
     }
     

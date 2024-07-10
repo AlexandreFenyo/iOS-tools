@@ -688,8 +688,12 @@ view.backgroundColor = .red
     func addNode(_ node: Node, resolve_ipv4_addresses: Set<IPv4Address>) {
         addNode(node)
         for address in resolve_ipv4_addresses {
-            Task(priority: .background) {
+            // A Task may sometimes be executed on the Main thread, therefore it would block the main thread because of the system call to getnameinfo(). This occurred, this is why we use a DispatchQueue and not a Task here.
+            // Task(priority: .background) {
+            DispatchQueue.global(qos: .background).async {
+                
                 guard let name = address.resolveHostName() else { return }
+                
                 Task { @MainActor in
                     // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
@@ -702,12 +706,15 @@ view.backgroundColor = .red
             }
         }
     }
-
+    
     // Main thread
     func addNode(_ node: Node, resolve_ipv6_addresses: Set<IPv6Address>) {
         addNode(node)
         for address in resolve_ipv6_addresses {
-            Task(priority: .background) {
+            // A Task may sometimes be executed on the Main thread, therefore it would block the main thread because of the system call to getnameinfo(). This occurred, this is why we use a DispatchQueue and not a Task here.
+            // Task(priority: .background) {
+            DispatchQueue.global(qos: .background).async {
+                
                 guard let name = address.resolveHostName() else { return }
                 Task { @MainActor in
                     // Reverse IPv6 résolue
