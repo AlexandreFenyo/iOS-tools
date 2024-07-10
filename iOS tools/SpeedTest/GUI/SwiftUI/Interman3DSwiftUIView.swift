@@ -225,7 +225,7 @@ struct Filter: View {
                                     }
                                     // node.opacity = discovered_ports_model.discovered_ports[idx].is_selected ? 0.1 : 1.0
                                     node.runAction(SCNAction.fadeOpacity(to: discovered_ports_model.discovered_ports[idx].is_selected ? 0.3 : 1.0, duration: 1))
-                                    master_view_controller?.addTrace("Filter: port \(discovered_port.port) exposed by \(host.getNames())", level: .ALL)
+                                    master_view_controller?.addTrace("Filter: port \(discovered_port.port) exposed by \(host.concisefullDump())", level: .INFO)
                                 }
 
                                 discovered_ports_model.discovered_ports[idx].is_selected.toggle()

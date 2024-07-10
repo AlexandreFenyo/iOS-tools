@@ -177,8 +177,8 @@ class Node : Hashable {
         hasher.combine(types)
         hasher.combine(services)
     }
-
-//    private var is_in_model = false
+    
+    //    private var is_in_model = false
     
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
     fileprivate var mcast_dns_names = Set<FQDN>()
@@ -190,96 +190,96 @@ class Node : Hashable {
     fileprivate var udp_ports = Set<UInt16>()
     fileprivate var types = Set<NodeType>()
     fileprivate var services = Set<BonjourServiceInfo>()
-
+    
     func isLocalHost() -> Bool {
         return types.contains(.localhost)
     }
-
+    
     // NodeType is an enum, therefore no need to copy the Set elements to be sure they are not updated
     private func getTypes() -> Set<NodeType> {
         return types
     }
-
+    
     // BonjourServiceInfo is a class with constant attributes (each declared as a let String), therefore no need to copy the Set elements to be sure they are not updated
     func getServices() -> Set<BonjourServiceInfo> {
         return services
     }
-
+    
     // FQDN is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getMcastDnsNames() -> Set<FQDN> {
         return mcast_dns_names
     }
-
+    
     // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getDnsNames() -> Set<DomainName> {
         return dns_names
     }
-
+    
     // No need to copy the set elements to be sure they are not updated
     func getNames() -> Set<String> {
         return names
     }
-
+    
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getV4Addresses() -> Set<IPv4Address> {
         return v4_addresses
     }
-
+    
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getV6Addresses() -> Set<IPv6Address> {
         return v6_addresses
     }
-
+    
     // No need to copy the set elements to be sure they are not updated
     func getTcpPorts() -> Set<UInt16> {
         return tcp_ports
     }
-
+    
     // No need to copy the set elements to be sure they are not updated
     func getUdpPorts() -> Set<UInt16> {
         return udp_ports
     }
-
+    
     func setTypes(_ types: Set<NodeType>) {
         self.types = types
     }
-
+    
     func addType(_ type: NodeType) {
         types.insert(type)
     }
-
+    
     func addService(_ service: BonjourServiceInfo) {
         services.insert(service)
     }
-
+    
     func addV4Address(_ address: IPv4Address) {
         v4_addresses.insert(address)
     }
-
+    
     func addV6Address(_ address: IPv6Address) {
         v6_addresses.insert(address)
     }
-
+    
     func addName(_ name: String) {
         names.insert(name)
     }
-
+    
     func addDnsName(_ domain_name: DomainName) {
         dns_names.insert(domain_name)
     }
-
+    
     func addMcastFQDN(_ domain_name: FQDN) {
         mcast_dns_names.insert(domain_name)
     }
-
+    
     func addTcpPort(_ port: UInt16) {
         tcp_ports.insert(port)
     }
-
+    
     func addUdpPort(_ port: UInt16) {
         udp_ports.insert(port)
     }
-
+    
     init() { }
     
     private var adresses: Set<IPAddress> {
@@ -326,7 +326,7 @@ class Node : Hashable {
         types.formUnion(node.types)
         tcp_ports.formUnion(node.tcp_ports)
         udp_ports.formUnion(node.udp_ports)
-
+        
         // merge services
         var name_to_service_info = [String: BonjourServiceInfo]()
         _ = services.map({ name_to_service_info[$0.name] = $0 })
@@ -351,7 +351,7 @@ class Node : Hashable {
     static func == (lhs: Node, rhs: Node) -> Bool {
         return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
     }
-
+    
     func dump() -> String {
         var ret = "DUMP NODE: "
         ret = ret + "dns_names: "
@@ -360,7 +360,7 @@ class Node : Hashable {
         }
         return ret
     }
-
+    
     func fullDump() -> String {
         var ret = "FULL DUMP NODE: "
         ret = ret + "mcast_dns_names: "
@@ -382,6 +382,26 @@ class Node : Hashable {
         ret = ret + "IPv6: "
         for foo in v6_addresses {
             ret = ret + (foo.toNumericString() ?? "no_string_for_this_IPv6") + "; "
+        }
+        return ret
+    }
+    
+    func concisefullDump() -> String {
+        var ret = ""
+        for foo in mcast_dns_names {
+            ret = ret + (ret.isEmpty ? "" :  " - ") + foo.toString()
+        }
+        for foo in dns_names {
+            ret = ret + (ret.isEmpty ? "" :  " - ") + foo.toString()
+        }
+        for foo in names {
+            ret = ret + (ret.isEmpty ? "" :  " - ") + foo
+        }
+        for foo in v4_addresses {
+            ret = ret + (ret.isEmpty ? "" :  " - ") + (foo.toNumericString() ?? "no_string_for_this_IPv4")
+        }
+        for foo in v6_addresses {
+            ret = ret + (ret.isEmpty ? "" :  " - ") + (foo.toNumericString() ?? "no_string_for_this_IPv6")
         }
         return ret
     }
