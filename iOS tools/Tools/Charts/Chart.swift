@@ -314,6 +314,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
     }
     
     // Update displayed dates
+    // Only called when in followData mode
     private func updateXaxis(bottom_mask_node: SKSpriteNode, curve_node: SKShapeNode) {
         // Move date nodes to the left
         bottom_mask_node.enumerateChildNodes(withName: "//date-*") { node, _ in node.position.x -= self.grid_size.width }
@@ -338,6 +339,18 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             let node = leftmost_node! as! SKExtLabelNode
             node.date!.addTimeInterval(TimeInterval(TimeInterval(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
             node.position.x = rightmost_node!.position.x + grid_size.width
+
+            // When in followData mode, we need to resync the X axis if the app has been paused more than 1 sec
+            // Note that the new right-most node is "grid_time_interval" seconds in the future in order to be partially out of the screen (one grid width to the right of the screen)
+            // Note that the value "node.date!.distance(to: Date()) + grid_time_interval" depends on the size of the graph (should find why): may be more or less 2 seconds away from the current date
+            // print(node.date!.distance(to: Date()) + grid_time_interval)
+            if abs(node.date!.distance(to: Date()) + grid_time_interval) > 5 {
+                Task {
+                    mode = .followDate
+                    grid_time_interval = initial_grid_time_interval
+                    await createChartComponentsAsync(date: Date(), max_val: highest)
+                }
+            }
         }
     }
     
