@@ -175,6 +175,38 @@ struct StepByStepSwiftUIView: View {
     }
     
     var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("Heat Map Builder")
+                    .foregroundColor(Color(COLORS.leftpannel_ip_text))
+                    .padding()
+                Spacer()
+            }.background(Color(COLORS.toolbar_background))
+            
+            VStack {
+                HStack() {
+                    HStack(alignment: .top) {
+
+                        Spacer()
+                        Text("Salut")
+                        Spacer()
+
+                    }.padding(.top)
+                }
+                Spacer()
+            }
+            .background(Color(COLORS.right_pannel_scroll_bg))
+            .cornerRadius(15).padding(10)
+            
+            Button("Quit step-by-step mode") {
+                step_by_step_view_controller?.dismiss(animated: true)
+            }.padding()
+        }.background(Color(COLORS.right_pannel_bg))
+    }
+    
+    
+    var body2: some View {
         LoadingView(showing_progress: $showing_progress) {
             VStack {
                 HStack {
@@ -588,7 +620,7 @@ struct StepByStepSwiftUIView: View {
                 .background(Color(COLORS.right_pannel_scroll_bg))
                 .cornerRadius(15).padding(10)
                 
-                Button("Hide map") {
+                Button("Quit step-by-step mode") {
                     step_by_step_view_controller?.dismiss(animated: true)
                 }.padding()
             }.background(Color(COLORS.right_pannel_bg))

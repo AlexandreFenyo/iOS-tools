@@ -556,6 +556,13 @@ view.backgroundColor = .red
         //self.browser_discard?.search()
          self.browser_app?.search()
         for browser in self.browsers { browser.search() }
+
+        // Launch the step-by-step process
+        let step_by_step_view_controller = StepByStepViewController()
+        step_by_step_view_controller.master_view_controller = self
+        step_by_step_view_controller.modalPresentationStyle = .fullScreen
+        step_by_step_view_controller.isModalInPresentation = true
+        present(step_by_step_view_controller, animated: true)
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
