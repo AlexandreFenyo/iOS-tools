@@ -11,10 +11,7 @@ import SpriteKit
 import PhotosUI
 import StoreKit
 
-// app équivalente : WiFi All In One Network Survey (18,99€)
-
-// ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
-// https://www.hackingwithswift.com/books/ios-swiftui/integrating-core-image-with-swiftui
+// CONTINUER ICI : NavigationStack
 
 public var step_by_step_exporting_map = false
 

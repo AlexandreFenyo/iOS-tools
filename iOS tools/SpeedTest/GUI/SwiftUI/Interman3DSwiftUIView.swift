@@ -771,8 +771,8 @@ struct Interman3DSwiftUIView: View {
     }
     
     func resetCamera() {
-        if let local_hode = DBMaster.shared.getLocalNodeIfExists() {
-            setSelectedHost(local_hode)
+        if let local_node = DBMaster.shared.getLocalNodeIfExists() {
+            setSelectedHost(local_node)
         } else {
             rotateCamera(0, smooth: true, duration: 1)
         }
