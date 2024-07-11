@@ -340,7 +340,7 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
             node.date!.addTimeInterval(TimeInterval(TimeInterval(1 + ((rightmost_node!.position.x - leftmost_node!.position.x) / grid_size.width)) * grid_time_interval))
             node.position.x = rightmost_node!.position.x + grid_size.width
 
-            // When in followData mode, we need to resync the X axis if the app has been paused more than 1 sec
+            // When in followDate mode, we need to resync the X axis if the app has been paused more than 1 sec
             // Note that the new right-most node is "grid_time_interval" seconds in the future in order to be partially out of the screen (one grid width to the right of the screen)
             // Note that the value "node.date!.distance(to: Date()) + grid_time_interval" depends on the size of the graph (should find why): may be more or less 2 seconds away from the current date
             // print(node.date!.distance(to: Date()) + grid_time_interval)

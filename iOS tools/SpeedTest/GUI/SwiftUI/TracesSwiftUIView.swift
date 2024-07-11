@@ -104,11 +104,13 @@ struct TracesSwiftUIView: View {
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
 //                                    Text(model.traces[i]).font(.footnote) // >=iOS16 only: .monospaced()
                                     Text(model.traces[i])
+                                        .textSelection(.enabled)
                                         .font(Font.custom("San Francisco", size: 10).monospacedDigit())
                                         .lineLimit(nil)
                                         .foregroundColor(Color(COLORS.standard_background.darker().darker()))
                                 }
                                 Text(model.traces.last!)
+                                    .textSelection(.enabled)
                                     .font(.footnote) // >=iOS16 only: .monospaced()
                                     .id(bottomID)
                                     .lineLimit(nil)
