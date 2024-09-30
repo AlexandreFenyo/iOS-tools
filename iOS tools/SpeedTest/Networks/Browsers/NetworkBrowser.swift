@@ -388,7 +388,7 @@ class NetworkBrowser {
                 DBMaster.shared.notifyBroadcastFinished()
             }
             
-            if let browser_tcp = self.browser_tcp {
+            if let browser_tcp = await self.browser_tcp {
                 await browser_tcp.browseAsync(doAtEnd: doAtEnd)
             }
         }

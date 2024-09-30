@@ -77,9 +77,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
-                            let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image))
+                            let resized_image = await Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image))
                             self.parent.original_map_image_rotation = image.cgImage!.width < image.cgImage!.height
-                            self.parent.original_map_image = Coordinator.rotateIfNeeded(image)
+                            self.parent.original_map_image = await Coordinator.rotateIfNeeded(image)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
                         }
@@ -90,9 +90,9 @@ struct ImagePicker: UIViewControllerRepresentable {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
                             // image est nil uniquement dans le simulateur, pour certaines images préinstallées (bug du simulateur de mon point de vue)
-                            let resized_image = Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
+                            let resized_image = await Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
                             self.parent.original_map_image_rotation = (image as! UIImage).cgImage!.width < (image as! UIImage).cgImage!.height
-                            self.parent.original_map_image = Coordinator.rotateIfNeeded(image as! UIImage)
+                            self.parent.original_map_image = await Coordinator.rotateIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
 
