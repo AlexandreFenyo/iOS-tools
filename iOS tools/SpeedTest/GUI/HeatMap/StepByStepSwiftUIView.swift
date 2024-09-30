@@ -173,6 +173,15 @@ struct StepByStepSwiftUIView: View {
             image_update_ratio = 0
         }
     }
+
+    /*
+    @State private var steps: [Step] = []
+
+    var body: some View {
+        NavigationStack {
+            
+        }
+    }*/
     
     var body: some View {
         VStack {

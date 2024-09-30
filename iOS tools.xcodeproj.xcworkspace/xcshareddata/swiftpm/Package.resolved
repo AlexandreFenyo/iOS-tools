@@ -1,5 +1,5 @@
 {
-  "originHash" : "58f80d8912e92f71c4abd7b5f5765555a280706b8887d6a53ca8740ec1da7d04",
+  "originHash" : "009c9b20527e0d4439e6907bb7c77ae84726f32cd0654540e128224a5393043a",
   "pins" : [
     {
       "identity" : "iostoolsmacros",
@@ -35,6 +35,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "bd6da2eb0906556406caf48e3733837a766fd4fe"
+      }
+    },
+    {
+      "identity" : "webclientspackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/WebClientsPackage.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "64c7bba570da44b23898a8ff28f6ac4631206e62"
       }
     }
   ],

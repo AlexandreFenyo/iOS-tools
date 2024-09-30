@@ -6,12 +6,14 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import SwiftUI
 import ModelIO
 import Network
 import CoreData
 import iOSToolsMacros
+import WebClientsPackage
 
 let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! Bool
 
@@ -73,12 +75,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         local_app_service!.publish(options: .listenForConnections)
     }
     
+    // Called once at app start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
         _ = DBMaster.shared
 
         // We do not call #saveTrace("main: application started") since we do not want to display the file name and line number
         Traces.addMessage("main: application started")
+
+        Task.detached {
+            let system_version = await UIDevice.current.systemVersion
+            let model = await UIDevice.current.model
+            let identifier_for_vendor = await UIDevice.current.identifierForVendor?.uuidString
+            let name = await UIDevice.current.name
+            
+            do {
+                let parsed_url = try ParsedURL("https://www.fenyo.net/wifimapexplorer/api/v1/info.cgi?action=start&appversion=\(GenericTools.app_short_version_string ?? "noversion")&model=\(model)&name=\(name)&systemversion=\(system_version)&identifierforvendor=\(identifier_for_vendor ?? "")")
+                let session = try WebClientSession(config: AccessNetworkConfig(is_check_ssl: true))
+                let (data, _, response) = try await session.fetch(target: parsed_url.toTarget())
+                guard let data, let response else {
+                    throw WebClientError(kind: .generalError, reason: "invalid fetch results")
+                }
+                let html = try HTML(data: data, response: response).content.components(separatedBy: .newlines).first
+                // print(response)
+                // print(html.content)
+                Traces.addMessage("appversion=\(GenericTools.app_short_version_string ?? "noversion")&model=\(model)&name=\(name)&systemversion=\(system_version)&serverinfo=\(html ?? "")")
+            } catch {
+                print(error)
+                Traces.addMessage(error.localizedDescription)
+            }
+        }
         
         InitTCPPort2Service()
         

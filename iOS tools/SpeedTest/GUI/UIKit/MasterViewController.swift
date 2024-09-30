@@ -500,8 +500,8 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         detail_view_controller?.setButtonMasterHiddenState(false)
     }
-    
-    
+        
+    // Called once at app start
     override func viewWillDisappear(_ animated : Bool) {
         super.viewWillDisappear(animated)
 

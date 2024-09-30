@@ -8,6 +8,8 @@
 
 #include "genericTools.h"
 
+#include <sys/_types/_fd_def.h>
+
 int c_test(void) {
     printf("c_test\n");
     unsigned short ck = 0b1000000000000000;

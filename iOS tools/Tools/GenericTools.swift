@@ -78,6 +78,13 @@ final class GenericTools : AutoTrace {
     public static let must_call_initial_tests = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must call initial tests") ?? false) as! Bool
     public static let must_create_demo_ship_scene = (NSDictionary(contentsOfFile: Bundle.main.path(forResource: "config", ofType: "plist")!)!.object(forKey: "must create demo ship scene") ?? false) as! Bool
 
+    static let app_short_version_string: String? = {
+        guard let path = Bundle.main.path(forResource: "Info", ofType: "plist"), let dict = NSDictionary(contentsOfFile: path), let version = dict.value(forKey: "CFBundleShortVersionString") as? String else {
+            return nil
+        }
+        return version
+    }()
+    
     public static func printDuration(idx: Int, start_time: Date) {
         let duration = Date().timeIntervalSince(start_time)
         if duration > 0.001 {

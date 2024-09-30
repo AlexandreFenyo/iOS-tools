@@ -29,6 +29,7 @@
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
+		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
 		5D37D20929734FB700578E59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5D37D20B29734FB700578E59 /* Localizable.strings */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
@@ -80,6 +81,7 @@
 		5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
+		5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */ = {isa = PBXBuildFile; fileRef = 5DC43CFE2CAB493500B90FAA /* infos.cgi */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
 		5DC62F7D290AD29800C4B58E /* HeatMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */; };
 		5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */; };
@@ -245,6 +247,7 @@
 		5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepSwiftUIView.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
+		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
 		5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapViewController.swift; sourceTree = "<group>"; };
 		5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
@@ -312,6 +315,7 @@
 				1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */,
 				5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
 				5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
+				5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */,
 				5D1D55D92BBE18E600BC3D56 /* iOSToolsMacros in Frameworks */,
 				5D524C032BC053CE00B522E1 /* iOSToolsMacros in Frameworks */,
 			);
@@ -352,6 +356,7 @@
 		5D1351ED208538DB00E4A76D /* iOS tools */ = {
 			isa = PBXGroup;
 			children = (
+				5DC43CFE2CAB493500B90FAA /* infos.cgi */,
 				5DDAE2A72C0A2A79008744E1 /* Models.md */,
 				5D0B4F7829ABB5DD00F65C68 /* iOS tools.entitlements */,
 				5D63644B213EAA4100BFEB0F /* GUI.md */,
@@ -758,6 +763,7 @@
 				5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */,
 				5D524C022BC053CE00B522E1 /* iOSToolsMacros */,
 				5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */,
+				5D3779522CA1B29D00235C5C /* WebClientsPackage */,
 			);
 			productName = "iOS tools";
 			productReference = 5D1351EB208538DB00E4A76D /* iOS tools.app */;
@@ -794,6 +800,7 @@
 			packageReferences = (
 				5D524C012BC053CE00B522E1 /* XCRemoteSwiftPackageReference "iOSToolsMacros" */,
 				5D524C042BC055EF00B522E1 /* XCRemoteSwiftPackageReference "SwiftAdvancedAtomicsSwiftPackage" */,
+				5D3779512CA1B29D00235C5C /* XCRemoteSwiftPackageReference "WebClientsPackage" */,
 			);
 			productRefGroup = 5D1351EC208538DB00E4A76D /* Products */;
 			projectDirPath = "";
@@ -820,6 +827,7 @@
 				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
 				5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */,
+				5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
@@ -1066,7 +1074,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1124,7 +1132,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1149,7 +1157,7 @@
 				INFOPLIST_FILE = "iOS tools/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1183,7 +1191,7 @@
 				INFOPLIST_FILE = "iOS tools/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1225,6 +1233,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5D3779512CA1B29D00235C5C /* XCRemoteSwiftPackageReference "WebClientsPackage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AlexandreFenyo/WebClientsPackage.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		5D524C012BC053CE00B522E1 /* XCRemoteSwiftPackageReference "iOSToolsMacros" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AlexandreFenyo/iOSToolsMacros";
@@ -1247,6 +1263,11 @@
 		5D1D55D82BBE18E600BC3D56 /* iOSToolsMacros */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = iOSToolsMacros;
+		};
+		5D3779522CA1B29D00235C5C /* WebClientsPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D3779512CA1B29D00235C5C /* XCRemoteSwiftPackageReference "WebClientsPackage" */;
+			productName = WebClientsPackage;
 		};
 		5D524C022BC053CE00B522E1 /* iOSToolsMacros */ = {
 			isa = XCSwiftPackageProductDependency;
