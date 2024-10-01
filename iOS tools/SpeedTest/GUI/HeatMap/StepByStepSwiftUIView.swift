@@ -64,8 +64,75 @@ class StepByStepPhotoController: NSObject {
     }
 }
 
+
+struct StepWelcomeView2: View {
+    var body: some View {
+        HStack(alignment: .top) {
+            Text("Salut")
+            Spacer()
+            NavigationLink("Work Folder") {
+                Text("nav link 1")
+                Text("nav link 2")
+            }
+        }.padding(.top)
+    }
+}
+
+struct StepWelcomeView: View {
+    var body: some View {
+        VStack(alignment: .center) {
+            Text("Salut")
+            Text("Salut")
+            Spacer()
+            NavigationLink("Work Folder") {
+                StepWelcomeView2()
+            }
+        }.padding(.top).background(.red)
+    }
+}
+
 @MainActor
 struct StepByStepSwiftUIView: View {
+    weak var step_by_step_view_controller: StepByStepViewController?
+
+    init(_ step_by_step_view_controller: StepByStepViewController) {
+        self.step_by_step_view_controller = step_by_step_view_controller
+    }
+
+    public func cleanUp() {
+    }
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("Heat Map Builder")
+                    .foregroundColor(Color(COLORS.leftpannel_ip_text))
+                    .padding()
+                Spacer()
+            }.background(Color(COLORS.toolbar_background))
+
+            NavigationStack {
+                StepWelcomeView()
+            }
+            .background(Color(COLORS.right_pannel_scroll_bg))
+            .cornerRadius(15).padding(10)
+            
+            Button("Quit step-by-step mode") {
+                step_by_step_view_controller?.dismiss(animated: true)
+            }.padding()
+        }.background(Color(COLORS.right_pannel_bg))
+    }
+}
+
+
+
+
+
+
+
+@MainActor
+struct XXXStepByStepSwiftUIView: View {
     init(_ step_by_step_view_controller: StepByStepViewController) {
         self.step_by_step_view_controller = step_by_step_view_controller
         self.stepByStepPhotoController = StepByStepPhotoController(step_by_step_view_controller: step_by_step_view_controller)
@@ -213,6 +280,21 @@ struct StepByStepSwiftUIView: View {
             }.padding()
         }.background(Color(COLORS.right_pannel_bg))
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     var body2: some View {
