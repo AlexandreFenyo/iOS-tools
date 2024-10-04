@@ -26,6 +26,10 @@
 		5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F12422728002500656D0D /* TracesSwiftUIView.swift */; };
 		5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1F1244272803A900656D0D /* TracesViewController.swift */; };
 		5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */; };
+		5D25C8442CB029ED008D858D /* BlinkingContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8432CB029ED008D858D /* BlinkingContent.swift */; };
+		5D25C8462CB029F2008D858D /* WebContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8452CB029F2008D858D /* WebContent.swift */; };
+		5D25C8482CB029F6008D858D /* ModalPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8472CB029F6008D858D /* ModalPopUp.swift */; };
+		5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */; };
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
@@ -156,6 +160,10 @@
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
+		5D25C8432CB029ED008D858D /* BlinkingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkingContent.swift; sourceTree = "<group>"; };
+		5D25C8452CB029F2008D858D /* WebContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContent.swift; sourceTree = "<group>"; };
+		5D25C8472CB029F6008D858D /* ModalPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPopUp.swift; sourceTree = "<group>"; };
+		5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePortraitView.swift; sourceTree = "<group>"; };
 		5D2DFC332902DBBD0080A9EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "iOS tools/SpeedTest/Settings.bundle"; sourceTree = SOURCE_ROOT; };
 		5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTraces.swift; sourceTree = "<group>"; };
 		5D2FFB3B2B543A38006D1F57 /* ToolsDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToolsDataModel.xcdatamodel; sourceTree = "<group>"; };
@@ -408,6 +416,10 @@
 		5D1F12462728300F00656D0D /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				5D25C8432CB029ED008D858D /* BlinkingContent.swift */,
+				5D25C8452CB029F2008D858D /* WebContent.swift */,
+				5D25C8472CB029F6008D858D /* ModalPopUp.swift */,
+				5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */,
 				5D1F12422728002500656D0D /* TracesSwiftUIView.swift */,
 				5D1F1244272803A900656D0D /* TracesViewController.swift */,
 				5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */,
@@ -939,6 +951,7 @@
 				5DF2151B212D8B62002B7603 /* localFloodClient.c in Sources */,
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
+				5D25C8462CB029F2008D858D /* WebContent.swift in Sources */,
 				5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */,
 				5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
@@ -956,6 +969,7 @@
 				5D8944A220A57C7800E26476 /* Chart.swift in Sources */,
 				5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */,
 				5DF215222133D7DA002B7603 /* NetworkBrowser.swift in Sources */,
+				5D25C8442CB029ED008D858D /* BlinkingContent.swift in Sources */,
 				5DF21516212D7C13002B7603 /* genericTools.c in Sources */,
 				5DF2150C2121D397002B7603 /* localDiscardClient.c in Sources */,
 				5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */,
@@ -971,6 +985,7 @@
 				5DF2150E2121D664002B7603 /* LocalDiscardClient.swift in Sources */,
 				5DE9CE9921501E5C006F3BC0 /* RoundedCornerView.swift in Sources */,
 				5DF215132121EBA8002B7603 /* LocalPingClient.swift in Sources */,
+				5D25C8482CB029F6008D858D /* ModalPopUp.swift in Sources */,
 				5D7C6CE421120DC60095FAD0 /* LocalChargenClient.swift in Sources */,
 				5DC62F7D290AD29800C4B58E /* HeatMapViewController.swift in Sources */,
 				5DEDFB6C29C7195600052FB7 /* Interman3DModel.swift in Sources */,
@@ -983,6 +998,7 @@
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
 				5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */,
+				5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */,
 				5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */,
 				5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */,
 				5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */,
