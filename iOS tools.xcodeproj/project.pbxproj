@@ -48,6 +48,13 @@
 		5D4B385620A2ECD9006AC172 /* Tools.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D4B385520A2ECD9006AC172 /* Tools.xcassets */; };
 		5D524C032BC053CE00B522E1 /* iOSToolsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C022BC053CE00B522E1 /* iOSToolsMacros */; };
 		5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */; };
+		5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A412CB598E900CB7474 /* design-auto-3.png */; };
+		5D536A482CB5990200CB7474 /* design-all.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A472CB5990200CB7474 /* design-all.psd */; };
+		5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A492CB59AC100CB7474 /* design-doc-5.png */; };
+		5D536A4C2CB59BFB00CB7474 /* design-manual-5.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A4B2CB59BFB00CB7474 /* design-manual-5.png */; };
+		5D536A4E2CB59C0900CB7474 /* design-manual-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */; };
+		5D536A502CB59C1200CB7474 /* design-doc-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A4F2CB59C1200CB7474 /* design-doc-5.psd */; };
+		5D536A522CB59C1C00CB7474 /* design-auto-3.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A512CB59C1C00CB7474 /* design-auto-3.psd */; };
 		5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
 		5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63644D213EE0FD00BFEB0F /* Model.swift */; };
@@ -186,6 +193,13 @@
 		5D42E784216DE6000062A654 /* MasterSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterSectionHeader.swift; sourceTree = "<group>"; };
 		5D463FBB2A3C4F3100DA77C4 /* Repère.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Repère.scn"; sourceTree = "<group>"; };
 		5D4B385520A2ECD9006AC172 /* Tools.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tools.xcassets; sourceTree = "<group>"; };
+		5D536A412CB598E900CB7474 /* design-auto-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "design-auto-3.png"; sourceTree = "<group>"; };
+		5D536A472CB5990200CB7474 /* design-all.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "design-all.psd"; sourceTree = "<group>"; };
+		5D536A492CB59AC100CB7474 /* design-doc-5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "design-doc-5.png"; sourceTree = "<group>"; };
+		5D536A4B2CB59BFB00CB7474 /* design-manual-5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "design-manual-5.png"; sourceTree = "<group>"; };
+		5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "design-manual-5.psd"; sourceTree = "<group>"; };
+		5D536A4F2CB59C1200CB7474 /* design-doc-5.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "design-doc-5.psd"; sourceTree = "<group>"; };
+		5D536A512CB59C1C00CB7474 /* design-auto-3.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "design-auto-3.psd"; sourceTree = "<group>"; };
 		5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPPortBrowser.swift; sourceTree = "<group>"; };
 		5D63644B213EAA4100BFEB0F /* GUI.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = GUI.md; sourceTree = "<group>"; };
 		5D63644D213EE0FD00BFEB0F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -435,6 +449,13 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */,
+				5D536A512CB59C1C00CB7474 /* design-auto-3.psd */,
+				5D536A4F2CB59C1200CB7474 /* design-doc-5.psd */,
+				5D536A4B2CB59BFB00CB7474 /* design-manual-5.png */,
+				5D536A492CB59AC100CB7474 /* design-doc-5.png */,
+				5D536A472CB5990200CB7474 /* design-all.psd */,
+				5D536A412CB598E900CB7474 /* design-auto-3.png */,
 				5D039EC529B8A4CC00A33898 /* Appareils.png */,
 				5D039EC329B8A2E100A33898 /* iPhone.jpeg */,
 				5D16E60A29A77FEB000A46E4 /* docs-action-bar-fr.png */,
@@ -838,11 +859,14 @@
 				5D82ACD7297D46C20021E492 /* docs-actions-fr.png in Resources */,
 				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
+				5D536A502CB59C1200CB7474 /* design-doc-5.psd in Resources */,
 				5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */,
 				5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
+				5D536A522CB59C1C00CB7474 /* design-auto-3.psd in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
+				5D536A4C2CB59BFB00CB7474 /* design-manual-5.png in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
 				5D65EE56296381780099871C /* app-icon-76.png in Resources */,
 				5D65EE50296381780099871C /* app-icon-152.png in Resources */,
@@ -858,8 +882,10 @@
 				5D3BA6612A5C73B6005D11E0 /* speaker.scn in Resources */,
 				5D3BA65F2A5C709D005D11E0 /* iPhone.scn in Resources */,
 				5DE4ED94290586740000B30A /* docs-browse-stop.png in Resources */,
+				5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
+				5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
 				5DE4ED9B290586740000B30A /* docs-actions.png in Resources */,
@@ -874,11 +900,13 @@
 				5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
+				5D536A482CB5990200CB7474 /* design-all.psd in Resources */,
 				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
 				5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
+				5D536A4E2CB59C0900CB7474 /* design-manual-5.psd in Resources */,
 				5D1CBC462A63F53A001F3B8D /* macmini.scn in Resources */,
 				5DEDFB6A29C6E65F00052FB7 /* Interman 3D Standard Component.scn in Resources */,
 			);

@@ -21,7 +21,7 @@ struct BlinkingContent<Content: View>: View {
             .overlay(
                 Rectangle()
                     .stroke(
-                        is_highlighted ? Color.red : Color.clear, lineWidth: 4
+                        is_highlighted ? Color.red : Color.clear, lineWidth: 2
                     )
                     .animation(
                         Animation.linear(duration: 0.5).repeatForever(

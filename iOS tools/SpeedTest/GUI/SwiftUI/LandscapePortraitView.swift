@@ -26,21 +26,21 @@ struct LandscapePortraitView<Content: View>: View {
                 makeBody()
                     .onAppear {
                         is_portrait =
-                        geometry.size.width < geometry.size.height
+                            geometry.size.width < geometry.size.height
                     }
                     .onChange(of: geometry.size) { _, new_value in
                         is_portrait =
-                        new_value.width < new_value.height
+                            new_value.width < new_value.height
                     }
             } else {
                 makeBody()
                     .onAppear {
                         is_portrait =
-                        geometry.size.width < geometry.size.height
+                            geometry.size.width < geometry.size.height
                     }
                     .onChange(of: geometry.size) { new_value in
                         is_portrait =
-                        new_value.width < new_value.height
+                            new_value.width < new_value.height
                     }
             }
         }
@@ -49,12 +49,20 @@ struct LandscapePortraitView<Content: View>: View {
     @ViewBuilder
     private func makeBody() -> some View {
         if is_portrait {
-            VStack {
-                content
-            }
-        } else {
             HStack {
-                content
+                Spacer()
+                VStack {
+                    content
+                }
+                Spacer()
+            }//.background(.green)
+        } else {
+            VStack {
+                Spacer()
+                HStack {
+                    content
+                }
+                Spacer()
             }
         }
     }
