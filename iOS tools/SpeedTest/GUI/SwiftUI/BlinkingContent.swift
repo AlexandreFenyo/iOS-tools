@@ -19,7 +19,7 @@ struct BlinkingContent<Content: View>: View {
     var body: some View {
         content
             .overlay(
-                Rectangle()
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(
                         is_highlighted ? Color.red : Color.clear, lineWidth: 2
                     )
@@ -28,7 +28,9 @@ struct BlinkingContent<Content: View>: View {
                             autoreverses: true), value: is_highlighted)
             )
             .onAppear {
-                is_highlighted = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    is_highlighted = true
+                }
             }
     }
 }
