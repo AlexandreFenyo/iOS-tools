@@ -48,10 +48,10 @@ struct SizePreferenceKey: PreferenceKey {
     }
 }
 
-
 struct ModalPopPupShell<Content: View>: View {
     @State private var frac: CGFloat = 0.8
     @State private var view_height: CGSize = .zero
+    let action: () -> Void
     let shell_content: Content
     let title: String
     let dismiss: String
@@ -59,9 +59,11 @@ struct ModalPopPupShell<Content: View>: View {
     let other_components_height: CGFloat = 200
 
     init(
+        action: @escaping () -> Void,
         _ title: String, _ dismiss: String,
         @ViewBuilder _ shell_content: () -> Content
     ) {
+        self.action = action
         self.shell_content = shell_content()
         self.title = title
         self.dismiss = dismiss
@@ -69,6 +71,7 @@ struct ModalPopPupShell<Content: View>: View {
 
     var body: some View {
         ModalPopUp(
+            action: action,
             title,
             dismiss
         ) {
@@ -91,13 +94,16 @@ struct ModalPopUp<Content: View>: View {
     let content: Content
     let title: String
     let dismiss: String
+    let action: () -> Void
 
     @Environment(\.presentationMode) var presentationMode
 
     init(
+        action: @escaping () -> Void,
         _ title: String, _ dismiss: String,
         @ViewBuilder content: () -> Content
     ) {
+        self.action = action
         self.content = content()
         self.title = title
         self.dismiss = dismiss
@@ -118,6 +124,7 @@ struct ModalPopUp<Content: View>: View {
         if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
         Button(action: {
             presentationMode.wrappedValue.dismiss()
+            action()
         }) {
             Text(dismiss)
         }

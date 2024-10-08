@@ -93,6 +93,8 @@ struct StepWelcomeView: View {
 
 @MainActor
 struct StepByStepSwiftUIView: View {
+    @State private var showing_exit_popup = false
+
     weak var step_by_step_view_controller: StepByStepViewController?
 
     init(_ step_by_step_view_controller: StepByStepViewController) {
@@ -119,9 +121,44 @@ struct StepByStepSwiftUIView: View {
             .cornerRadius(15).padding(10)
             
             Button("Quit step-by-step mode") {
-                step_by_step_view_controller?.dismiss(animated: true)
+
+                showing_exit_popup = true
+
+//                step_by_step_view_controller?.dismiss(animated: true)
+                // CONTINUER ICI POUR DIRE COMMENT REVENIR
             }.padding()
         }.background(Color(COLORS.right_pannel_bg))
+            .sheet(
+                isPresented: $showing_exit_popup,
+                content: { ModalPopPupShell(
+                    action: {
+                        step_by_step_view_controller?.dismiss(animated: true)
+                    },
+                    
+                    
+                    "Titre", "J'ai compris", {
+                        Text("""
+                           You can come back \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           fzeozeifjefz oijzfe oiezfj \
+                           to this page
+                        """)
+                    })
+                }
+            )
+        
     }
 }
 
