@@ -170,7 +170,8 @@ struct StepWelcomeView: View {
                     showing_exit_button = false
                 }
             }
-        }  //.padding(.top)  //.background(.red)
+            .background(Color(COLORS.right_pannel_scroll_bg))
+        }  //.padding(.top) //.background(.red)
     }
 }
 
@@ -224,8 +225,8 @@ struct StepByStepSwiftUIView: View {
 
         }
         .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
-
         .background(Color(COLORS.right_pannel_bg))
+
         .sheet(
             isPresented: $showing_exit_popup,
             content: {
@@ -234,29 +235,34 @@ struct StepByStepSwiftUIView: View {
                         step_by_step_view_controller?.dismiss(
                             animated: true)
                     },
-
-                    "Titre", "J'ai compris",
+                    "RETURNING TO THE MAIN INTERFACE", "I understand",
                     {
-                        Text(
-                            """
-                               You can come back \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               fzeozeifjefz oijzfe oiezfj \
-                               to this page
-                            """)
+                        Text("")
+                        Text("You can come back later to this home window simply by clicking on the following icon:")
+                        BlinkingContent {
+                            Image(systemName: "house")
+                                .scaleEffect(2)
+                                .padding(10)
+                        }
+                        
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            // We run on an iPad
+                            LandscapePortraitView {
+                                Image("design-manual").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+                                Image("design-auto").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+                                Image("design-doc").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+                            }
+                        }
+                        
+                        Text("")
                     })
+                .background(Color(COLORS.right_pannel_scroll_bg))
             }
         )
 

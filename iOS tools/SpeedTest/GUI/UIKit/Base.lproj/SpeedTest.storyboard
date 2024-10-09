@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -194,42 +195,50 @@
                         </connections>
                     </tableView>
                     <toolbarItems>
-                        <barButtonItem title="Debug" image="house" catalog="system" id="WCR-6O-86k" userLabel="Home">
+                        <barButtonItem title="Debug" id="WCR-6O-86k" userLabel="Home">
+                            <imageReference key="image" image="house" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="home_pressed:" destination="9rn-U2-Uvj" id="cBr-RV-42g"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Debug" image="info.circle" catalog="system" id="gfk-Fz-a3U">
+                        <barButtonItem title="Debug" id="gfk-Fz-a3U">
+                            <imageReference key="image" image="info.circle" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="debug_pressed:" destination="9rn-U2-Uvj" id="zTS-Xk-tYB"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem enabled="NO" title="Stop" image="stop.circle" catalog="system" id="9XB-83-j13">
+                        <barButtonItem enabled="NO" title="Stop" id="9XB-83-j13">
+                            <imageReference key="image" image="stop.circle" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="stop_pressed:" destination="9rn-U2-Uvj" id="ah7-ZC-teK"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Update" image="repeat" catalog="system" id="Hoh-gZ-vw9">
+                        <barButtonItem title="Update" id="Hoh-gZ-vw9">
+                            <imageReference key="image" image="repeat" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="update_pressed:" destination="9rn-U2-Uvj" id="muL-rx-85B"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="rectangle.badge.plus" catalog="system" id="w26-jr-JrH">
+                        <barButtonItem title="Add" id="w26-jr-JrH">
+                            <imageReference key="image" image="rectangle.badge.plus" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="add_pressed:" destination="9rn-U2-Uvj" id="oKz-aZ-1CR"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="rectangle.badge.minus" catalog="system" id="gZ9-Eb-5vN" userLabel="Remove button">
+                        <barButtonItem title="Add" id="gZ9-Eb-5vN" userLabel="Remove button">
+                            <imageReference key="image" image="rectangle.badge.minus" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="remove_pressed:" destination="9rn-U2-Uvj" id="Avf-qI-6sX"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="map" catalog="system" id="MOv-aN-EaL" userLabel="Heatmap button">
+                        <barButtonItem title="Add" id="MOv-aN-EaL" userLabel="Heatmap button">
+                            <imageReference key="image" image="map" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="launch_heatmap:" destination="9rn-U2-Uvj" id="dAO-E8-TFb"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem title="Add" image="gearshape" catalog="system" id="7F6-g0-bjU" userLabel="Settings button">
+                        <barButtonItem title="Add" id="7F6-g0-bjU" userLabel="Settings button">
+                            <imageReference key="image" image="gearshape" catalog="system" symbolScale="medium"/>
                             <connections>
                                 <action selector="settings_button:" destination="9rn-U2-Uvj" id="dih-dP-pLv"/>
                             </connections>

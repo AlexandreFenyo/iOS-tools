@@ -85,7 +85,6 @@ struct ModalPopPupShell<Content: View>: View {
             print("frac = \(frac)")
         }
         .presentationDetents([.fraction(frac)])
-
     }
 }
 
@@ -112,7 +111,13 @@ struct ModalPopUp<Content: View>: View {
     var body: some View {
         // Note: the estimated size of the components added by ModalPopUp, like Text(title) and Text(dismiss), MUST be set in ModalPopPupShell.other_components_height
 
-        Text(title)
+        Text(title).bold().padding(10)
+
+        Rectangle()
+            .fill(Color.gray)
+            .frame(height: 2)
+            .padding(.horizontal)
+
         if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
         content
             .background(
@@ -126,7 +131,14 @@ struct ModalPopUp<Content: View>: View {
             presentationMode.wrappedValue.dismiss()
             action()
         }) {
-            Text(dismiss)
+            VStack {
+                Rectangle()
+                    .fill(Color.gray)
+                    .frame(height: 2)
+                    .padding(.horizontal)
+                
+                Text(dismiss).padding(10)
+            }
         }
     }
 }
