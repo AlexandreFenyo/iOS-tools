@@ -425,6 +425,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         update_pressed(self)
     }
 
+    @IBAction func home_pressed(_ sender: Any) {
+        let step_by_step_view_controller = StepByStepViewController()
+        step_by_step_view_controller.master_view_controller = self
+        step_by_step_view_controller.modalPresentationStyle = .fullScreen
+        step_by_step_view_controller.isModalInPresentation = true
+        present(step_by_step_view_controller, animated: true)
+    }
+    
     // var _x: Int = 0
     @IBAction func debug_pressed(_ sender: Any) {
         // pour tester les traces des fatal errors
