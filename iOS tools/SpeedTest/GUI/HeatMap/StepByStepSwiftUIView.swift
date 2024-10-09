@@ -98,27 +98,26 @@ struct StepWelcomeView2: View {
 
 struct StepWelcomeView: View {
     @Binding var showing_exit_button: Bool
-    
+    @Binding var showing_exit_popup: Bool
+    @Binding var scale: CGFloat
+
     let padding_size: CGFloat = 10
     var body: some View {
         VStack(alignment: .center) {
-
             LandscapePortraitView {
-                
-                NavigationLink {
-                    StepWelcomeView2().onAppear {
-                        print("APPEAR")
-                        showing_exit_button = true
-                    }
-                } label: {
+                Button(action: {
+                    showing_exit_popup = true
+                }){
                     BlinkingContent {
                         HStack {
                             Spacer()
                             VStack {
-                                Text("Go to manual interface")
+                                Text("Open professionnal interface")
                                 Spacer()
-                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
-                                    .padding(padding_size)
+                                Image("design-manual").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
+                                .padding(padding_size)
                             }
                             Spacer()
                         }
@@ -127,7 +126,6 @@ struct StepWelcomeView: View {
                 
                 NavigationLink {
                     StepWelcomeView2().onAppear {
-                        print("APPEAR")
                         showing_exit_button = true
                     }
                 } label: {
@@ -135,10 +133,12 @@ struct StepWelcomeView: View {
                         HStack {
                             Spacer()
                             VStack {
-                                Text("Step-by-step")
+                                Text("Step-by-step easy mode")
                                 Spacer()
-                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
-                                    .padding(padding_size)
+                                Image("design-auto").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
+                                .padding(padding_size)
                             }
                             Spacer()
                         }
@@ -157,15 +157,20 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Documentation")
                                 Spacer()
-                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
-                                    .padding(padding_size)
+                                Image("design-doc").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
+                                .padding(padding_size)
                             }
                             Spacer()
                         }
                     }.padding(padding_size)
+                }.onAppear {
+                    scale = 0
+                    showing_exit_button = false
                 }
             }
-        }//.padding(.top)  //.background(.red)
+        }  //.padding(.top)  //.background(.red)
     }
 }
 
@@ -173,6 +178,7 @@ struct StepWelcomeView: View {
 struct StepByStepSwiftUIView: View {
     @State private var showing_exit_popup = false
     @State private var showing_exit_button = false
+    @State private var scale: CGFloat = 0.0
 
     weak var step_by_step_view_controller: StepByStepViewController?
 
@@ -194,53 +200,65 @@ struct StepByStepSwiftUIView: View {
             }.background(Color(COLORS.toolbar_background))
 
             NavigationStack {
-                StepWelcomeView(showing_exit_button: $showing_exit_button)
+                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale)
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
-            .cornerRadius(15).padding(10)
+            .cornerRadius(15)
 
             if showing_exit_button {
                 Button("Quit step-by-step mode") {
-                    showing_exit_button = true
-                    step_by_step_view_controller?.dismiss(animated: true)
-                }.padding()
-                
-            }
-            
-        }.background(Color(COLORS.right_pannel_bg))
-            .sheet(
-                isPresented: $showing_exit_popup,
-                content: {
-                    ModalPopPupShell(
-                        action: {
-                            step_by_step_view_controller?.dismiss(
-                                animated: true)
-                        },
-
-                        "Titre", "J'ai compris",
-                        {
-                            Text(
-                                """
-                                   You can come back \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   fzeozeifjefz oijzfe oiezfj \
-                                   to this page
-                                """)
-                        })
+                    showing_exit_popup = true
                 }
-            )
+                .opacity(scale)
+                .padding(0)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1.0)) {
+                        scale = 1
+                    }
+                }
+            } else {
+                Button("Quit step-by-step mode") {}
+                    .opacity(0)
+                    .padding(0)
+            }
+
+        }
+        .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
+
+        .background(Color(COLORS.right_pannel_bg))
+        .sheet(
+            isPresented: $showing_exit_popup,
+            content: {
+                ModalPopPupShell(
+                    action: {
+                        step_by_step_view_controller?.dismiss(
+                            animated: true)
+                    },
+
+                    "Titre", "J'ai compris",
+                    {
+                        Text(
+                            """
+                               You can come back \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               fzeozeifjefz oijzfe oiezfj \
+                               to this page
+                            """)
+                    })
+            }
+        )
 
     }
 }
