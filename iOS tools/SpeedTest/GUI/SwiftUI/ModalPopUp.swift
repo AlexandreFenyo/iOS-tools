@@ -56,7 +56,7 @@ struct ModalPopPupShell<Content: View>: View {
     let title: String
     let dismiss: String
     // Note: this is the size of the components added by ModalPopUp
-    let other_components_height: CGFloat = 200
+    let other_components_height: CGFloat = 300
 
     init(
         action: @escaping () -> Void,
