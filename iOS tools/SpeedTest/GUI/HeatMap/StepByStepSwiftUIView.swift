@@ -6,6 +6,9 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
+// Credits for images: https://www.freepik.com/free-vector/remote-management-teamwork-isometric-icons-set-with-employees-working-computers-from-home-isolated-vector-illustration_26762614.htm
+// made by https://www.freepik.com/author/macrovector
+
 import PhotosUI
 import SpriteKit
 import StoreKit
@@ -96,6 +99,13 @@ struct StepWelcomeView2: View {
     }
 }
 
+struct StepDocumentation: View {
+    var body: some View {
+            WebContent(url: "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")
+                .padding(20)
+    }
+}
+
 struct StepWelcomeView: View {
     @Binding var showing_exit_button: Bool
     @Binding var showing_exit_popup: Bool
@@ -146,8 +156,7 @@ struct StepWelcomeView: View {
                 }
 
                 NavigationLink {
-                    StepWelcomeView2().onAppear {
-                        print("APPEAR")
+                    StepDocumentation().onAppear {
                         showing_exit_button = true
                     }
                 } label: {
@@ -171,7 +180,7 @@ struct StepWelcomeView: View {
                 }
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
-        }  //.padding(.top) //.background(.red)
+        }
     }
 }
 

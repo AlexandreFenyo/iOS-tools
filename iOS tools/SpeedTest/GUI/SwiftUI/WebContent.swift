@@ -2,21 +2,21 @@ import SwiftUI
 import WebKit
 
 /* Usage:
- let url: URL = URL("https://google.com")!
  var body: some View {
-        WebContent(url: url).background(.red)
+    WebContent(url: "https://fenyo.net/wifimapexplorer/new-manual.html")
  }
 */
 
 struct WebContent: UIViewRepresentable {
-    let url: URL
+    let url: String
 
     func makeUIView(context: Context) -> WKWebView {
         return WKWebView()
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        uiView.load(request)
+        let url = URL(string: url)!
+        uiView.load(URLRequest(url: url))
+        uiView.allowsBackForwardNavigationGestures = true
     }
 }

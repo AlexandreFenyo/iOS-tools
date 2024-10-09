@@ -387,7 +387,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         ctHelp.appendDefaults(companyName: "Alexandre Fenyo", emailAddress: "support@wifimapexplorer.com", data: nil, webSite: "http://wifimapexplorer.com/index.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))", companyImageName: "")
         ctHelp.presentHelp(from: self)
 
-        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
+        // UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
     }
 
     func stop_pressed() async {
