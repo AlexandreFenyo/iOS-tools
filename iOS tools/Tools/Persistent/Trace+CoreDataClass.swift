@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-@objc(Trace)
-public class Trace: NSManagedObject {
+@objc(XTrace)
+public class XTrace: NSManagedObject {
 
 }

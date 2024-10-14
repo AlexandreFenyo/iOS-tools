@@ -9,14 +9,11 @@
 import Foundation
 import CoreData
 
-
-extension Trace {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Trace> {
-        return NSFetchRequest<Trace>(entityName: "Trace")
+extension XTrace {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<XTrace> {
+        return NSFetchRequest<XTrace>(entityName: "XTrace")
     }
 
     @NSManaged public var creation: Date?
     @NSManaged public var message: String?
-
 }

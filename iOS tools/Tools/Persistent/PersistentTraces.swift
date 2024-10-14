@@ -59,7 +59,7 @@ class Traces {
     static func addMessage(_ msg: String) -> String {
         Task.detached { @MainActor in
             guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
-            let trace = Trace(context: context)
+            let trace = XTrace(context: context)
             trace.creation = .now
             trace.message = msg
             do {
@@ -79,7 +79,7 @@ class Traces {
     
     // We decorate this function with @MainActor to avoid a compiler error while accessing AppDelegate.persistentContainer.viewContext, since this property is also managed by the main actor (AppDelegate is decorated with @MainActor)
     @MainActor
-    static func getMessages(onSuccess: @escaping ([Trace]?) -> Void) {
+    static func getMessages(onSuccess: @escaping ([XTrace]?) -> Void) {
         /*
         print("avant accès os log store")
         do {
@@ -101,7 +101,7 @@ class Traces {
         guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
 
         do {
-            let items = try context.fetch(Trace.fetchRequest()) as? [Trace]
+            let items = try context.fetch(XTrace.fetchRequest()) as? [XTrace]
             onSuccess(items)
         } catch {
             print("error fetching data")
@@ -112,7 +112,7 @@ class Traces {
         Task.detached { @MainActor in
             guard let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer?.viewContext else { return }
             do {
-                let items = try context.fetch(Trace.fetchRequest()) as? [Trace]
+                let items = try context.fetch(XTrace.fetchRequest()) as? [XTrace]
                 guard let items else { return }
                 for item in items {
                     context.delete(item)
