@@ -122,7 +122,7 @@ struct StepWelcomeView: View {
                         HStack {
                             Spacer()
                             VStack {
-                                Text("Open professionnal interface")
+                                Text("Open advanced interface")
                                 Spacer()
                                 Image("design-manual").resizable().aspectRatio(
                                     contentMode: .fit
@@ -134,6 +134,7 @@ struct StepWelcomeView: View {
                     }.padding(padding_size)
                 }
                 
+                /* CONTINUER ICI
                 NavigationLink {
                     StepWelcomeView2().onAppear {
                         showing_exit_button = true
@@ -154,6 +155,7 @@ struct StepWelcomeView: View {
                         }
                     }.padding(padding_size)
                 }
+                 */
 
                 NavigationLink {
                     StepDocumentation().onAppear {
@@ -203,7 +205,7 @@ struct StepByStepSwiftUIView: View {
         VStack {
             HStack {
                 Spacer()
-                Text("Heat Map Builder")
+                Text("WifiMapExplorer")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                 Spacer()
@@ -244,10 +246,10 @@ struct StepByStepSwiftUIView: View {
                         step_by_step_view_controller?.dismiss(
                             animated: true)
                     },
-                    "RETURNING TO THE MAIN INTERFACE", "I understand",
+                    NSLocalizedString("RETURNING TO THE APP HOME PAGE", comment: "RETURNING TO THE APP HOME PAGE"), NSLocalizedString("I understand", comment: "I Understand"),
                     {
                         Text("")
-                        Text("You can come back later to this home window simply by clicking on the following icon:")
+                        Text("You can come back later to the home window simply by clicking on the following icon:")
                         BlinkingContent {
                             Image(systemName: "house")
                                 .scaleEffect(2)
@@ -260,9 +262,14 @@ struct StepByStepSwiftUIView: View {
                                 Image("design-manual").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
+
+                                // A REMETTRE CONTINUER ICI
+                                /*
                                 Image("design-auto").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
+                                 */
+
                                 Image("design-doc").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
