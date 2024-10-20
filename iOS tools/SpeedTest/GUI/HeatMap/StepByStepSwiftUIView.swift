@@ -218,18 +218,41 @@ struct StepByStepSwiftUIView: View {
             .cornerRadius(15)
 
             if showing_exit_button {
-                Button("Quit step-by-step mode") {
-                    showing_exit_popup = true
-                }
-                .opacity(scale)
-                .padding(0)
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 1.0)) {
-                        scale = 1
+                HStack {
+                    Spacer()
+                    
+                    Button("Advanced interface") {
+                        showing_exit_popup = true
                     }
+                    .opacity(scale)
+                    .padding(0)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            scale = 1
+                        }
+                    }
+                    
+                    Spacer()
+
+                    Button("Web site") {
+                        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
+                    }
+                    .opacity(scale)
+                    .padding(0)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            scale = 1
+                        }
+                    }
+
+                    Spacer()
                 }
             } else {
-                Button("Quit step-by-step mode") {}
+                Button("") {}
+                    .opacity(0)
+                    .padding(0)
+
+                Button("") {}
                     .opacity(0)
                     .padding(0)
             }

@@ -111,7 +111,8 @@
 "continue" = "continuer";
 "Filter" = "Filtre";
 "Reset filter" = "Annuler le filtre";
-"Open advanced interface" = "Accéder à l'interface avancée";
+"Advanced interface" = "Interface avancée";
+"Web site" = "Site web";
 "Documentation" = "Documentation";
 "RETURNING TO THE APP HOME PAGE" = "REVENIR A LA PAGE D'ACCUEIL DE L'APP";
 "You can come back later to the home window simply by clicking on the following icon:" = "Vous pouvez revenir à la page d'accueil en cliquant simplement sur cette icône:";
