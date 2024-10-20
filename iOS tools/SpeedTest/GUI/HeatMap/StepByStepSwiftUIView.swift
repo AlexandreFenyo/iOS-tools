@@ -14,8 +14,6 @@ import SpriteKit
 import StoreKit
 import SwiftUI
 
-// CONTINUER ICI : NavigationStack
-
 public var step_by_step_exporting_map = false
 
 // sliders et toggles de réglage fin des paramètres
@@ -88,9 +86,26 @@ class StepByStepPhotoController: NSObject {
 
 struct StepWelcomeView2: View {
     var body: some View {
-        HStack(alignment: .top) {
-            Text("Salut")
+        VStack(alignment: .center) {
+            Text("Choose your preferred floor plan")
             Spacer()
+
+            // CONTINUER ICI
+            OrientationView {
+                HStack {
+                    Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                    Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                }
+                HStack {
+                    Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                    Image("plan-2rectreverse").resizable().aspectRatio(contentMode: .fit)
+                }
+                HStack {
+                    Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                    Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                }
+            }
+
             NavigationLink("Work Folder") {
                 Text("nav link 1")
                 Text("nav link 2")
@@ -124,9 +139,7 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Open advanced interface")
                                 Spacer()
-                                Image("design-manual").resizable().aspectRatio(
-                                    contentMode: .fit
-                                )
+                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
                             }
                             Spacer()
@@ -145,9 +158,7 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Step-by-step easy mode")
                                 Spacer()
-                                Image("design-auto").resizable().aspectRatio(
-                                    contentMode: .fit
-                                )
+                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
                             }
                             Spacer()
@@ -166,9 +177,7 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Documentation")
                                 Spacer()
-                                Image("design-doc").resizable().aspectRatio(
-                                    contentMode: .fit
-                                )
+                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
                             }
                             Spacer()

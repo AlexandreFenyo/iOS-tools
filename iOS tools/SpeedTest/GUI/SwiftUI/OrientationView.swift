@@ -1,9 +1,18 @@
+//
+//  OrientationView.swift
+//  iOS tools
+//
+//  Created by Alexandre Fenyo on 20/10/2024.
+//  Copyright © 2024 Alexandre Fenyo. All rights reserved.
+//
+
+import Foundation
 import SwiftUI
 
 /* usage:
 struct ContentView: View {
     var body: some View {
-        LandscapePortraitView {
+        OrientationView {
             Text("123")
             Text("456")
         }
@@ -12,7 +21,7 @@ struct ContentView: View {
 */
 
 // Display a View in a HStack when in portrait mode and in a VStack otherwise
-struct LandscapePortraitView<Content: View>: View {
+struct OrientationView<Content: View>: View {
     @State private var is_portrait: Bool = true
     let content: Content
 
