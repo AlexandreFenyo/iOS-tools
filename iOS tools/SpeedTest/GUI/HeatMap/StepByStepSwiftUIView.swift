@@ -134,7 +134,6 @@ struct StepWelcomeView: View {
                     }.padding(padding_size)
                 }
                 
-                /* CONTINUER ICI
                 NavigationLink {
                     StepWelcomeView2().onAppear {
                         showing_exit_button = true
@@ -155,7 +154,6 @@ struct StepWelcomeView: View {
                         }
                     }.padding(padding_size)
                 }
-                 */
 
                 NavigationLink {
                     StepDocumentation().onAppear {
@@ -286,12 +284,9 @@ struct StepByStepSwiftUIView: View {
                                     contentMode: .fit
                                 ).padding(10)
 
-                                // A REMETTRE CONTINUER ICI
-                                /*
                                 Image("design-auto").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
-                                 */
 
                                 Image("design-doc").resizable().aspectRatio(
                                     contentMode: .fit
