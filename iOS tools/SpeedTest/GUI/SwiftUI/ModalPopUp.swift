@@ -56,7 +56,7 @@ struct ModalPopPupShell<Content: View>: View {
     let title: String
     let dismiss: String
     // Note: this is the size of the components added by ModalPopUp
-    let other_components_height: CGFloat = 300
+    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : 500
 
     init(
         action: @escaping () -> Void,
@@ -117,6 +117,7 @@ struct ModalPopUp<Content: View>: View {
             .padding(.horizontal)
 
         if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
+        
         content
             .background(
                 GeometryReader { geometry in
@@ -124,7 +125,9 @@ struct ModalPopUp<Content: View>: View {
                         key: SizePreferenceKey.self, value: geometry.size)
                 }
             )
+        
         if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
+        
         Button(action: {
             presentationMode.wrappedValue.dismiss()
             action()

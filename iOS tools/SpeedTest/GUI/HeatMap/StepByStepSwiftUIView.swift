@@ -256,7 +256,7 @@ struct StepByStepSwiftUIView: View {
                                 .padding(10)
                         }
                         
-                        if UIDevice.current.userInterfaceIdiom != .phone {
+                        if UIDevice.current.userInterfaceIdiom != .phone && ProcessInfo.processInfo.isMacCatalystApp == false {
                             // We run on an iPad
                             LandscapePortraitView {
                                 Image("design-manual").resizable().aspectRatio(
