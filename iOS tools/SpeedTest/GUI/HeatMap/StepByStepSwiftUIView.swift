@@ -91,7 +91,7 @@ struct StepFloorPlan: View {
     var body: some View {
         VStack(alignment: .center) {
             if is_portrait {
-                HStack {
+                HStack(alignment: .center) {
                     BlinkingContent {
                         Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
                     }
@@ -100,7 +100,7 @@ struct StepFloorPlan: View {
                     }
                 }
 
-                HStack {
+                HStack(alignment: .center) {
                     BlinkingContent {
                         Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
                     }
@@ -109,7 +109,7 @@ struct StepFloorPlan: View {
                     }
                 }
                 
-                HStack {
+                HStack(alignment: .center) {
                     BlinkingContent {
                         Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
                     }
@@ -118,7 +118,7 @@ struct StepFloorPlan: View {
                     }
                 }
             } else {
-                HStack {
+                HStack(alignment: .center) {
                     BlinkingContent {
                         Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
                     }
@@ -130,7 +130,7 @@ struct StepFloorPlan: View {
                     }
                 }
                 
-                HStack {
+                HStack(alignment: .center) {
                     BlinkingContent {
                         Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
                     }
@@ -140,7 +140,7 @@ struct StepFloorPlan: View {
                     BlinkingContent {
                         Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
                     }
-                }
+                }.scaledToFit().background(.red)
             }
 
             /*
