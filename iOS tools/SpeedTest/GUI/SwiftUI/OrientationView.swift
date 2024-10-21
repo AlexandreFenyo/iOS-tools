@@ -23,9 +23,10 @@ struct InsideView: View {
 
 struct OrientationView<Content: View>: View {
     @State private var is_portrait: Bool = true
-    let content: (Bool) -> Content
+    @State private var size: CGSize = CGSize()
+    let content: (Bool, CGSize) -> Content
 
-    init(@ViewBuilder content: @escaping (Bool) -> Content) {
+    init(@ViewBuilder content: @escaping (Bool, CGSize) -> Content) {
         self.content = content
     }
 
@@ -35,18 +36,21 @@ struct OrientationView<Content: View>: View {
                 makeBody()
                     .onAppear {
                         is_portrait = geometry.size.width < geometry.size.height
+                        size = geometry.size
                     }
                     .onChange(of: geometry.size) { _, new_value in
                         is_portrait = new_value.width < new_value.height
+                        size = geometry.size
                     }
             } else {
-                
                 makeBody()
                     .onAppear {
                         is_portrait = geometry.size.width < geometry.size.height
+                        size = geometry.size
                     }
                     .onChange(of: geometry.size) { new_value in
                         is_portrait = new_value.width < new_value.height
+                        size = geometry.size
                     }
                 
             }
@@ -55,6 +59,6 @@ struct OrientationView<Content: View>: View {
 
     @ViewBuilder
     private func makeBody() -> some View {
-        content(is_portrait)
+        content(is_portrait, size)
     }
 }

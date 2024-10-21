@@ -86,39 +86,72 @@ class StepByStepPhotoController: NSObject {
 
 struct StepFloorPlan: View {
     var is_portrait: Bool
+    var size: CGSize
 
     var body: some View {
         VStack(alignment: .center) {
-            Text("Choose your preferred floor plan")
-            Spacer()
-            
-            Text("is_portrait: \(is_portrait)")
+            if is_portrait {
                 HStack {
-                    Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                    Image("plan-rectangle").resizable().aspectRatio(
+                        contentMode: .fit)
                     Image("plan-T").resizable().aspectRatio(contentMode: .fit)
                 }
+
                 HStack {
                     Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
                     Image("plan-2rectreverse").resizable().aspectRatio(contentMode: .fit)
                 }
+                
                 HStack {
                     Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
                     Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
                 }
-//            }
+            } else {
+                let width = size.width / 3
+                let height: CGFloat = 400 // size.height / 2
 
-            NavigationLink("Work Folder") {
-                Text("nav link 1")
-                Text("nav link 2")
+                HStack {
+                    Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit).frame(height: 200)
+                    Image("plan-T").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                    Image("plan-2rect").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                }
+                
+                HStack {
+                    Image("plan-2rectreverse").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                    Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                    Image("plan-empty").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                }
             }
+
+            /*
+            HStack {
+                Image("plan-rectangle").resizable().aspectRatio(
+                    contentMode: .fit)
+                Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+            }
+            HStack {
+                Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                Image("plan-2rectreverse").resizable().aspectRatio(
+                    contentMode: .fit)
+            }
+            HStack {
+                Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+            }
+             */
+            //            }
+
         }.padding(.top)
     }
 }
 
 struct StepDocumentation: View {
     var body: some View {
-            WebContent(url: "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")
-                .padding(20)
+        WebContent(
+            url:
+                "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
+        )
+        .padding(20)
     }
 }
 
@@ -133,28 +166,36 @@ struct StepWelcomeView: View {
             LandscapePortraitView {
                 Button(action: {
                     showing_exit_popup = true
-                }){
+                }) {
                     BlinkingContent {
                         HStack {
                             Spacer()
                             VStack {
                                 Text("Open advanced interface")
                                 Spacer()
-                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
+                                Image("design-manual").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
                                 .padding(padding_size)
                             }
                             Spacer()
                         }
                     }.padding(padding_size)
                 }
-                
+
                 NavigationLink {
-                    OrientationView { is_portrait in
-                        StepFloorPlan(is_portrait: is_portrait)
-                            .onAppear() {
+                    Text("Choose your preferred floor plan")
+                    OrientationView { is_portrait, size in
+                        StepFloorPlan(is_portrait: is_portrait, size: size)
+                            .onAppear {
                                 showing_exit_button = true
                             }
                     }
+                    NavigationLink("Work Folder") {
+                        Text("nav link 1")
+                        Text("nav link 2")
+                    }
+
                 } label: {
                     BlinkingContent {
                         HStack {
@@ -162,7 +203,9 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Step-by-step easy mode")
                                 Spacer()
-                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
+                                Image("design-auto").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
                                 .padding(padding_size)
                             }
                             Spacer()
@@ -181,7 +224,9 @@ struct StepWelcomeView: View {
                             VStack {
                                 Text("Documentation")
                                 Spacer()
-                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
+                                Image("design-doc").resizable().aspectRatio(
+                                    contentMode: .fit
+                                )
                                 .padding(padding_size)
                             }
                             Spacer()
@@ -223,7 +268,9 @@ struct StepByStepSwiftUIView: View {
             }.background(Color(COLORS.toolbar_background))
 
             NavigationStack {
-                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale)
+                StepWelcomeView(
+                    showing_exit_button: $showing_exit_button,
+                    showing_exit_popup: $showing_exit_popup, scale: $scale)
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15)
@@ -231,7 +278,7 @@ struct StepByStepSwiftUIView: View {
             if showing_exit_button {
                 HStack {
                     Spacer()
-                    
+
                     Button("Advanced interface") {
                         showing_exit_popup = true
                     }
@@ -242,11 +289,15 @@ struct StepByStepSwiftUIView: View {
                             scale = 1
                         }
                     }
-                    
+
                     Spacer()
 
                     Button("Web site") {
-                        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
+                        UIApplication.shared.open(
+                            URL(
+                                string:
+                                    "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
+                            )!)
                     }
                     .opacity(scale)
                     .padding(0)
@@ -280,17 +331,24 @@ struct StepByStepSwiftUIView: View {
                         step_by_step_view_controller?.dismiss(
                             animated: true)
                     },
-                    NSLocalizedString("RETURNING TO THE APP HOME PAGE", comment: "RETURNING TO THE APP HOME PAGE"), NSLocalizedString("I understand", comment: "I Understand"),
+                    NSLocalizedString(
+                        "RETURNING TO THE APP HOME PAGE",
+                        comment: "RETURNING TO THE APP HOME PAGE"),
+                    NSLocalizedString("I understand", comment: "I Understand"),
                     {
                         Text("")
-                        Text("You can come back later to the home window simply by clicking on the following icon:")
+                        Text(
+                            "You can come back later to the home window simply by clicking on the following icon:"
+                        )
                         BlinkingContent {
                             Image(systemName: "house")
                                 .scaleEffect(2)
                                 .padding(10)
                         }
-                        
-                        if UIDevice.current.userInterfaceIdiom != .phone && ProcessInfo.processInfo.isMacCatalystApp == false {
+
+                        if UIDevice.current.userInterfaceIdiom != .phone
+                            && ProcessInfo.processInfo.isMacCatalystApp == false
+                        {
                             // We run on an iPad
                             LandscapePortraitView {
                                 Image("design-manual").resizable().aspectRatio(
@@ -306,9 +364,10 @@ struct StepByStepSwiftUIView: View {
                                 ).padding(10)
                             }
                         }
-                        
+
                         Text("")
-                    })
+                    }
+                )
                 .background(Color(COLORS.right_pannel_scroll_bg))
             }
         )
