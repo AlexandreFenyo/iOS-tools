@@ -92,34 +92,54 @@ struct StepFloorPlan: View {
         VStack(alignment: .center) {
             if is_portrait {
                 HStack {
-                    Image("plan-rectangle").resizable().aspectRatio(
-                        contentMode: .fit)
-                    Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                    BlinkingContent {
+                        Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                    }
                 }
 
                 HStack {
-                    Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
-                    Image("plan-2rectreverse").resizable().aspectRatio(contentMode: .fit)
+                    BlinkingContent {
+                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                    }
                 }
                 
                 HStack {
-                    Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
-                    Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                    BlinkingContent {
+                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                    }
                 }
             } else {
-                let width = size.width / 3
-                let height: CGFloat = 400 // size.height / 2
-
                 HStack {
-                    Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit).frame(height: 200)
-                    Image("plan-T").resizable().aspectRatio(contentMode: .fit).frame(height: height)
-                    Image("plan-2rect").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                    BlinkingContent {
+                        Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                    }
                 }
                 
                 HStack {
-                    Image("plan-2rectreverse").resizable().aspectRatio(contentMode: .fit).frame(height: height)
-                    Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit).frame(height: height)
-                    Image("plan-empty").resizable().aspectRatio(contentMode: .fit).frame(height: height)
+                    BlinkingContent {
+                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                    }
+                    BlinkingContent {
+                        Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                    }
                 }
             }
 
