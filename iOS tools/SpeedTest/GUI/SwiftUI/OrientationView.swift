@@ -12,21 +12,21 @@ import SwiftUI
 /* usage:
 struct ContentView: View {
     var body: some View {
-        OrientationView {
-            Text("123")
-            Text("456")
-        }
-    }
- }
+        OrientationView { is_portrait in
+          InsideView(is_portrait: is_portrait)
+ ...
+ 
+struct InsideView: View {
+    var is_portrait: Bool
+...
 */
 
-// Display a View in a HStack when in portrait mode and in a VStack otherwise
 struct OrientationView<Content: View>: View {
     @State private var is_portrait: Bool = true
-    let content: Content
+    let content: (Bool) -> Content
 
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+    init(@ViewBuilder content: @escaping (Bool) -> Content) {
+        self.content = content
     }
 
     var body: some View {
@@ -40,6 +40,7 @@ struct OrientationView<Content: View>: View {
                         is_portrait = new_value.width < new_value.height
                     }
             } else {
+                
                 makeBody()
                     .onAppear {
                         is_portrait = geometry.size.width < geometry.size.height
@@ -47,28 +48,13 @@ struct OrientationView<Content: View>: View {
                     .onChange(of: geometry.size) { new_value in
                         is_portrait = new_value.width < new_value.height
                     }
+                
             }
         }
     }
 
     @ViewBuilder
     private func makeBody() -> some View {
-        if is_portrait {
-            HStack {
-                Spacer()
-                VStack {
-                    content
-                }
-                Spacer()
-            }
-        } else {
-            VStack {
-                Spacer()
-                HStack {
-                    content
-                }
-                Spacer()
-            }
-        }
+        content(is_portrait)
     }
 }

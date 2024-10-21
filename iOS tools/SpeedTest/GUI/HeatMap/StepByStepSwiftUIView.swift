@@ -84,14 +84,15 @@ class StepByStepPhotoController: NSObject {
     }
 }
 
-struct StepWelcomeView2: View {
+struct StepFloorPlan: View {
+    var is_portrait: Bool
+
     var body: some View {
         VStack(alignment: .center) {
             Text("Choose your preferred floor plan")
             Spacer()
-
-            // CONTINUER ICI
-            OrientationView {
+            
+            Text("is_portrait: \(is_portrait)")
                 HStack {
                     Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
                     Image("plan-T").resizable().aspectRatio(contentMode: .fit)
@@ -104,7 +105,7 @@ struct StepWelcomeView2: View {
                     Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
                     Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
                 }
-            }
+//            }
 
             NavigationLink("Work Folder") {
                 Text("nav link 1")
@@ -148,8 +149,11 @@ struct StepWelcomeView: View {
                 }
                 
                 NavigationLink {
-                    StepWelcomeView2().onAppear {
-                        showing_exit_button = true
+                    OrientationView { is_portrait in
+                        StepFloorPlan(is_portrait: is_portrait)
+                            .onAppear() {
+                                showing_exit_button = true
+                            }
                     }
                 } label: {
                     BlinkingContent {
