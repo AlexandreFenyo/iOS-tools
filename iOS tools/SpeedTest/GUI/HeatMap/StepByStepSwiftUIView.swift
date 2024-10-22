@@ -224,6 +224,10 @@ struct StepFloorPlan: View {
                             }
                         }
                     }
+                    .navigationDestination(for: NavigationTarget.self) { target in
+                        Text("SALUTXXX5") //                StepHeatMap()
+                    }
+
                     
                     Spacer()
                 }
@@ -331,6 +335,11 @@ struct StepWelcomeView: View {
                         }
                     }.padding(padding_size)
                 }
+                .navigationDestination(for: NavigationTarget.self) { target in
+                    Text("SALUTXXX4") //                StepHeatMap()
+                }
+
+                
 
                 NavigationLink {
                     StepDocumentation().onAppear {
