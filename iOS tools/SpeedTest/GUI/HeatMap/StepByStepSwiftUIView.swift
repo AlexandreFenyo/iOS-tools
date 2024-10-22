@@ -123,6 +123,25 @@ struct StepFloorPlan: View {
 
     var body: some View {
         VStack(alignment: .center) {
+            
+
+            Button(action: {
+                print("button test pressé")
+                print(navigation_path.count)
+//                navigation_path.append(NavigationTarget.step1)
+//                print(navigation_path.count)
+            }, label: {
+                Text("button test appuyer")
+            })
+                   
+            Text("")
+            
+            NavigationLink {
+                StepHeatMap()
+            } label: {
+                Text("test via nav link")
+            }
+
             if is_portrait {
                 HStack(alignment: .center) {
                     Spacer()
@@ -213,7 +232,7 @@ struct StepFloorPlan: View {
                     
                     Button(action: {
 //                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step1)
+                        navigation_path.append(NavigationTarget.step2)
                         print("ICI")
                         
                     }) {
@@ -304,6 +323,38 @@ struct StepWelcomeView: View {
                     }.padding(padding_size)
                 }
 
+                Button(action: {
+                    navigation_path.append(NavigationTarget.step1)
+                }) {
+                    BlinkingContent {
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Text("Step-by-step easy mode")
+                                Spacer()
+                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
+                                .padding(padding_size)
+                            }
+                            Spacer()
+                        }
+                    }.padding(padding_size)
+                }.navigationDestination(for: NavigationTarget.self) { target in
+                    if target == .step1 {
+                        
+                        VStack {
+                            Text("Choose a predefined floor plan or load an image")
+                            OrientationView { is_portrait, size in
+                                StepFloorPlan(navigation_path: $navigation_path, is_portrait: is_portrait, size: size)
+                                    .onAppear {
+                                        showing_exit_button = true
+                                    }
+                            }
+                        }.background(Color(COLORS.right_pannel_scroll_bg))
+                    } else {
+                        StepHeatMap()
+                    }
+                }
+                /*
                 NavigationLink {
                     VStack {
                         Text("Choose a predefined floor plan or load an image")
@@ -337,7 +388,7 @@ struct StepWelcomeView: View {
                 }
                 .navigationDestination(for: NavigationTarget.self) { target in
                     Text("SALUTXXX4") //                StepHeatMap()
-                }
+                }*/
 
                 
 
@@ -367,6 +418,11 @@ struct StepWelcomeView: View {
         }
     }
 }
+
+// Dans l'ordre :
+// StepWelcomeView: propose 3 choix: advanced gui, step by step mode, doc
+//   StepFloorPlan: propose de choisir un floor plan parmi 6
+//
 
 enum NavigationTarget: Hashable {
     case step1
