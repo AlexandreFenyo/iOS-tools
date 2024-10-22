@@ -114,7 +114,7 @@ struct StepFloorPlan: View {
     @State private var showing_map_picker = false
     @State private var showing_alert = false
 
-    @Binding var is_step_heat_map: Bool
+    @Binding var navigation_path: NavigationPath
 
     @ObservedObject var model = StepByStepViewModel.shared
 
@@ -162,8 +162,10 @@ struct StepFloorPlan: View {
                     Spacer()
 
                     Button(action: {
-                        showing_map_picker = true
-                        is_step_heat_map = true
+//                        showing_map_picker = true
+                        navigation_path.append(NavigationTarget.step1)
+                        print("_ICI")
+
                     }) {
                         BlinkingContent {
                             ZStack {
@@ -211,7 +213,7 @@ struct StepFloorPlan: View {
                     
                     Button(action: {
 //                        showing_map_picker = true
-                        is_step_heat_map = true
+                        navigation_path.append(NavigationTarget.step1)
                         print("ICI")
                         
                     }) {
@@ -275,8 +277,8 @@ struct StepWelcomeView: View {
     @Binding var showing_exit_button: Bool
     @Binding var showing_exit_popup: Bool
     @Binding var scale: CGFloat
-    @Binding var is_step_heat_map: Bool
-
+    @Binding var navigation_path: NavigationPath
+    
     let padding_size: CGFloat = 10
     var body: some View {
         VStack(alignment: .center) {
@@ -302,10 +304,17 @@ struct StepWelcomeView: View {
                     VStack {
                         Text("Choose a predefined floor plan or load an image")
                         OrientationView { is_portrait, size in
-                            StepFloorPlan(is_step_heat_map: $is_step_heat_map, is_portrait: is_portrait, size: size)
+                            StepFloorPlan(navigation_path: $navigation_path, is_portrait: is_portrait, size: size)
                                 .onAppear {
                                     showing_exit_button = true
                                 }
+                            
+                                .navigationDestination(for: NavigationTarget.self) { target in
+                                    Text("SALUTXXX3") //                StepHeatMap()
+                                }
+
+                            
+                            
                         }
                     }.background(Color(COLORS.right_pannel_scroll_bg))
                 } label: {
@@ -350,13 +359,18 @@ struct StepWelcomeView: View {
     }
 }
 
+enum NavigationTarget: Hashable {
+    case step1
+    case step2
+}
+
 @MainActor
 struct StepByStepSwiftUIView: View {
     @State private var showing_exit_popup = false
     @State private var showing_exit_button = false
     @State private var scale: CGFloat = 0.0
-    @State private var is_step_heat_map: Bool = false
-
+    @State private var navigation_path = NavigationPath()
+    
     weak var step_by_step_view_controller: StepByStepViewController?
 
     init(_ step_by_step_view_controller: StepByStepViewController) {
@@ -376,19 +390,20 @@ struct StepByStepSwiftUIView: View {
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
 
-            NavigationStack {
+            NavigationStack(path: $navigation_path) {
                 StepWelcomeView(
                     showing_exit_button: $showing_exit_button,
-                    showing_exit_popup: $showing_exit_popup, scale: $scale,
-                    is_step_heat_map: $is_step_heat_map)
-            }.navigationDestination(isPresented: $is_step_heat_map) {
-                Text("SALUTXXX")
-                StepHeatMap()
+                    showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path
+                )
+                .navigationDestination(for: NavigationTarget.self) { target in
+                    Text("SALUTXXX2") //                StepHeatMap()
+                }
+
             }
-            
-            .navigationDestination(for: Color.self) { color in
-                Text("SALUTYYYY")
+            .navigationDestination(for: NavigationTarget.self) { target in
+                Text("SALUTXXX") //                StepHeatMap()
             }
+
             
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15)
