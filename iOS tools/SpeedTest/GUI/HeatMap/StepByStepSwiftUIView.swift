@@ -391,10 +391,7 @@ struct StepByStepSwiftUIView: View {
             }.background(Color(COLORS.toolbar_background))
 
             NavigationStack(path: $navigation_path) {
-                StepWelcomeView(
-                    showing_exit_button: $showing_exit_button,
-                    showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path
-                )
+                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path)
                 .navigationDestination(for: NavigationTarget.self) { target in
                     Text("SALUTXXX2") //                StepHeatMap()
                 }
