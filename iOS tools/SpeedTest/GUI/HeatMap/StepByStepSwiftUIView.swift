@@ -109,7 +109,13 @@ struct StepHeatMap: View {
 }
 
 struct StepFloorPlan: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     @State private var showing_map_picker = false
+    @State private var showing_alert = false
+
+    @Binding var is_step_heat_map: Bool
+
     @ObservedObject var model = StepByStepViewModel.shared
 
     var is_portrait: Bool
@@ -156,8 +162,8 @@ struct StepFloorPlan: View {
                     Spacer()
 
                     Button(action: {
-                        print("showing_map_picker => true")
                         showing_map_picker = true
+                        is_step_heat_map = true
                     }) {
                         BlinkingContent {
                             ZStack {
@@ -172,9 +178,15 @@ struct StepFloorPlan: View {
             } else {
                 HStack(alignment: .center) {
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap()
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
                     BlinkingContent {
                         Image("plan-T").resizable().aspectRatio(contentMode: .fit)
@@ -198,8 +210,10 @@ struct StepFloorPlan: View {
                     Spacer()
                     
                     Button(action: {
-                        print("showing_map_picker => true")
-                        showing_map_picker = true
+//                        showing_map_picker = true
+                        is_step_heat_map = true
+                        print("ICI")
+                        
                     }) {
                         BlinkingContent {
                             ZStack {
@@ -214,11 +228,35 @@ struct StepFloorPlan: View {
             }
         }.padding()
             .sheet(isPresented: $showing_map_picker, onDismiss: {() -> Void in
+                print("SALUT")
+                print(model.input_map_image)
+                print(model.original_map_image)
+                print(model.original_map_image_rotation)
                 if model.original_map_image_rotation == true {
-//                    showing_alert = true
+                    showing_alert = true
                 }
             }) {
                 ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values)
+            }
+        
+            .sheet(isPresented: $showing_alert) {
+                VStack {
+                    Text("Image rotation applied")
+                        .font(.title)
+                        .padding(20)
+                    Spacer()
+                    Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
+                        .font(.caption)
+                    Image(uiImage: model.input_map_image!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxHeight: horizontalSizeClass != .compact ? 400 : 200)
+                        .padding(5)
+                    Spacer()
+                    Button("Continue",
+                           action: { showing_alert.toggle() })
+                    .padding(20)
+                }
             }
     }
 }
@@ -237,6 +275,7 @@ struct StepWelcomeView: View {
     @Binding var showing_exit_button: Bool
     @Binding var showing_exit_popup: Bool
     @Binding var scale: CGFloat
+    @Binding var is_step_heat_map: Bool
 
     let padding_size: CGFloat = 10
     var body: some View {
@@ -263,7 +302,7 @@ struct StepWelcomeView: View {
                     VStack {
                         Text("Choose a predefined floor plan or load an image")
                         OrientationView { is_portrait, size in
-                            StepFloorPlan(is_portrait: is_portrait, size: size)
+                            StepFloorPlan(is_step_heat_map: $is_step_heat_map, is_portrait: is_portrait, size: size)
                                 .onAppear {
                                     showing_exit_button = true
                                 }
@@ -316,6 +355,7 @@ struct StepByStepSwiftUIView: View {
     @State private var showing_exit_popup = false
     @State private var showing_exit_button = false
     @State private var scale: CGFloat = 0.0
+    @State private var is_step_heat_map: Bool = false
 
     weak var step_by_step_view_controller: StepByStepViewController?
 
@@ -339,8 +379,17 @@ struct StepByStepSwiftUIView: View {
             NavigationStack {
                 StepWelcomeView(
                     showing_exit_button: $showing_exit_button,
-                    showing_exit_popup: $showing_exit_popup, scale: $scale)
+                    showing_exit_popup: $showing_exit_popup, scale: $scale,
+                    is_step_heat_map: $is_step_heat_map)
+            }.navigationDestination(isPresented: $is_step_heat_map) {
+                Text("SALUTXXX")
+                StepHeatMap()
             }
+            
+            .navigationDestination(for: Color.self) { color in
+                Text("SALUTYYYY")
+            }
+            
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15)
 
