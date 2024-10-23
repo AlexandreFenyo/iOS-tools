@@ -9,6 +9,8 @@ struct ImagePicker: UIViewControllerRepresentable {
     @Binding var original_map_image: UIImage?
     @Binding var original_map_image_rotation: Bool?
     @Binding var idw_values: Array<IDWValue<Float>>
+    
+    var when_done: () -> Void = {}
 
     func makeUIViewController(context: Context) -> PHPickerViewController {
         var config = PHPickerConfiguration()
@@ -83,6 +85,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                             self.parent.original_map_image = await Coordinator.rotateIfNeeded(image)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
+                            self.parent.when_done()
                         }
                     }
                 }
@@ -103,6 +106,7 @@ struct ImagePicker: UIViewControllerRepresentable {
                             self.parent.original_map_image = await Coordinator.rotateIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
+                            self.parent.when_done()
 
                             // pour tester avec trois mesures déjà réalisées
                             /*

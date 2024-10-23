@@ -110,11 +110,7 @@ struct StepByStepSwiftUIView: View {
                     Spacer()
 
                     Button("Web site") {
-                        UIApplication.shared.open(
-                            URL(
-                                string:
-                                    "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
-                            )!)
+                        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                     }
                     .opacity(scale)
                     .padding(0)
@@ -187,7 +183,6 @@ struct StepByStepSwiftUIView: View {
                 .background(Color(COLORS.right_pannel_scroll_bg))
             }
         )
-
     }
 }
 
@@ -246,7 +241,7 @@ struct StepWelcomeView: View {
                             }
                         }.background(Color(COLORS.right_pannel_scroll_bg))
                     } else {
-                        StepHeatMap()
+                        StepHeatMap(navigation_path: $navigation_path)
                     }
                 }
 
@@ -316,20 +311,12 @@ class StepByStepPhotoController: NSObject {
         let action = UIAlertAction(title: ok, style: .default) { _ in
             SKStoreReviewController.requestReview()
         }
-        alert.addAction(action)
-        self.step_by_step_view_controller?.present(alert, animated: true)
-    }
-
-    public func saveImage(image: UIImage) {
-        UIImageWriteToSavedPhotosAlbum(
-            image, self,
-            #selector(
-                image(_:didFinishPhotoLibrarySavingWithError:contextInfo:)), nil
-        )
     }
 }
 
 struct StepHeatMap: View {
+    @Binding var navigation_path: NavigationPath
+
     var body: some View {
         Text("HeatMap")
     }
@@ -355,7 +342,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap()
+                        StepHeatMap(navigation_path: $navigation_path)
                     } label: {
                         BlinkingContent {
                             Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
@@ -363,36 +350,57 @@ struct StepChoosePlan: View {
                     }
 
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
                 }
 
                 HStack(alignment: .center) {
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+                    
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+                    
                     Spacer()
                 }
                 
                 HStack(alignment: .center) {
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
 
                     Button(action: {
-//                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step_choose_plan)
-                        print("_ICI")
-
+                        showing_map_picker = true
                     }) {
                         BlinkingContent {
                             ZStack {
@@ -409,7 +417,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap()
+                        StepHeatMap(navigation_path: $navigation_path)
                     } label: {
                         BlinkingContent {
                             Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
@@ -417,32 +425,53 @@ struct StepChoosePlan: View {
                     }
 
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+                    
                     Spacer()
                 }
                 
                 HStack(alignment: .center) {
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                    
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
-                    BlinkingContent {
-                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                        }
                     }
+
                     Spacer()
                     
                     Button(action: {
-//                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step_heat_map)
-                        print("ICI")
-                        
+                        showing_map_picker = true
                     }) {
                         BlinkingContent {
                             ZStack {
@@ -451,25 +480,18 @@ struct StepChoosePlan: View {
                             }
                         }
                     }
-                    .navigationDestination(for: NavigationTarget.self) { target in
-                        Text("SALUTXXX5") //                StepHeatMap()
-                    }
-
-                    
                     Spacer()
                 }
             }
         }.padding()
             .sheet(isPresented: $showing_map_picker, onDismiss: {() -> Void in
-                print("SALUT")
-                print(model.input_map_image)
-                print(model.original_map_image)
-                print(model.original_map_image_rotation)
                 if model.original_map_image_rotation == true {
                     showing_alert = true
                 }
             }) {
-                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values)
+                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values, when_done: {
+                    navigation_path.append(NavigationTarget.step_heat_map)
+                })
             }
         
             .sheet(isPresented: $showing_alert) {
@@ -504,4 +526,56 @@ struct StepDocumentation: View {
     }
 }
 
+@MainActor
+class StepByStepPhotoController: NSObject {
+    weak var step_by_step_view_controller: StepByStepViewController?
+
+    public init(step_by_step_view_controller: StepByStepViewController) {
+        self.step_by_step_view_controller = step_by_step_view_controller
+    }
+
+    @objc private func image(
+        _ image: UIImage,
+        didFinishPhotoLibrarySavingWithError error: Error?,
+        contextInfo: UnsafeRawPointer
+    ) {
+        //        print("Image successfully written to camera roll")
+        exporting_map = false
+        if error != nil {
+            popUp(
+                NSLocalizedString(
+                    "Error saving map", comment: "Error saving map"),
+                NSLocalizedString(
+                    "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)",
+                    comment:
+                        "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)"
+                ), "OK")
+        } else {
+            popUp(
+                NSLocalizedString("Map saved", comment: "Map saved"),
+                NSLocalizedString(
+                    "You can find the heatmap in you photo roll",
+                    comment: "You can find the heatmap in you photo roll"), "OK"
+            )
+        }
+    }
+
+    public func popUp(_ title: String, _ message: String, _ ok: String) {
+        let alert = UIAlertController(
+            title: title, message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: ok, style: .default) { _ in
+            SKStoreReviewController.requestReview()
+        }
+        alert.addAction(action)
+        self.step_by_step_view_controller?.present(alert, animated: true)
+    }
+
+    public func saveImage(image: UIImage) {
+        UIImageWriteToSavedPhotosAlbum(
+            image, self,
+            #selector(
+                image(_:didFinishPhotoLibrarySavingWithError:contextInfo:)), nil
+        )
+    }
+}
 
