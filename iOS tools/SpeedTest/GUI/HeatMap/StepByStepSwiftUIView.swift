@@ -110,11 +110,7 @@ struct StepByStepSwiftUIView: View {
                     Spacer()
 
                     Button("Web site") {
-                        UIApplication.shared.open(
-                            URL(
-                                string:
-                                    "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
-                            )!)
+                        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                     }
                     .opacity(scale)
                     .padding(0)
@@ -390,8 +386,8 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     Button(action: {
-//                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step_choose_plan)
+                        showing_map_picker = true
+//                        navigation_path.append(NavigationTarget.step_heat_map)
                         print("_ICI")
 
                     }) {
@@ -440,8 +436,8 @@ struct StepChoosePlan: View {
                     Spacer()
                     
                     Button(action: {
-//                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step_heat_map)
+                        showing_map_picker = true
+//                        navigation_path.append(NavigationTarget.step_heat_map)
                         print("ICI")
                         
                     }) {
@@ -470,7 +466,9 @@ struct StepChoosePlan: View {
                     showing_alert = true
                 }
             }) {
-                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values)
+                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values, when_done: {
+                    navigation_path.append(NavigationTarget.step_heat_map)
+                })
             }
         
             .sheet(isPresented: $showing_alert) {
