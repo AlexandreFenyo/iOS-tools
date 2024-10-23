@@ -312,8 +312,7 @@ class StepByStepPhotoController: NSObject {
     }
 
     public func popUp(_ title: String, _ message: String, _ ok: String) {
-        let alert = UIAlertController(
-            title: title, message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: ok, style: .default) { _ in
             SKStoreReviewController.requestReview()
         }
