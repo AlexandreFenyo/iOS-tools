@@ -79,7 +79,6 @@ struct ImagePicker: UIViewControllerRepresentable {
                 provider.loadDataRepresentation(forTypeIdentifier: UTType.webP.identifier) {data, err in
                     if let data = data, let image = UIImage.init(data: data) {
                         Task {
-                            print("LABAS")
                             let resized_image = await Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image))
                             self.parent.original_map_image_rotation = image.cgImage!.width < image.cgImage!.height
                             self.parent.original_map_image = await Coordinator.rotateIfNeeded(image)
@@ -93,16 +92,10 @@ struct ImagePicker: UIViewControllerRepresentable {
                 if provider.canLoadObject(ofClass: UIImage.self) {
                     provider.loadObject(ofClass: UIImage.self) { image, _ in
                         Task {
-                            print("LABAS2")
                            // image est nil uniquement dans le simulateur, pour certaines images préinstallées (bug du simulateur de mon point de vue)
                             let resized_image = await Coordinator.resizeIfNeeded(Coordinator.rotateIfNeeded(image as! UIImage))
                             self.parent.original_map_image_rotation = (image as! UIImage).cgImage!.width < (image as! UIImage).cgImage!.height
 
-                            
-                            print("LABAS2: \((image as! UIImage).cgImage!.width) \((image as! UIImage).cgImage!.height) \(self.parent.original_map_image_rotation)")
-                            
-                            print((image as! UIImage).imageOrientation.rawValue)
-                            
                             self.parent.original_map_image = await Coordinator.rotateIfNeeded(image as! UIImage)
                             self.parent.image = resized_image
                             self.parent.idw_values = Array<IDWValue>()
