@@ -79,7 +79,7 @@ struct LoadingView<Content>: View where Content: View {
 }
 
 @MainActor
-class PhotoController: NSObject {
+private class HeatMapPhotoController: NSObject {
     weak var heatmap_view_controller: HeatMapViewController?
     
     public init(heatmap_view_controller: HeatMapViewController) {
@@ -116,12 +116,12 @@ class PhotoController: NSObject {
 struct HeatMapSwiftUIView: View {
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
-        self.photoController = PhotoController(heatmap_view_controller: heatmap_view_controller)
+        self.photoController = HeatMapPhotoController(heatmap_view_controller: heatmap_view_controller)
     }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    let photoController: PhotoController
+    private let photoController: HeatMapPhotoController
     weak var heatmap_view_controller: HeatMapViewController?
     
     @ObservedObject var model = MapViewModel.shared
