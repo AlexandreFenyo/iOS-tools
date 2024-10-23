@@ -9,10 +9,15 @@
 // Credits for images: https://www.freepik.com/free-vector/remote-management-teamwork-isometric-icons-set-with-employees-working-computers-from-home-isolated-vector-illustration_26762614.htm
 // made by https://www.freepik.com/author/macrovector
 
+// Dans l'ordre :
+// StepWelcomeView: propose 3 choix: advanced gui, step by step mode, doc
+//   StepFloorPlan: propose de choisir un floor plan parmi 6
+
 import PhotosUI
 import SpriteKit
 import StoreKit
 import SwiftUI
+import iOSToolsMacros
 
 public var step_by_step_exporting_map = false
 
@@ -53,11 +58,6 @@ enum NavigationTarget: Hashable {
     case step_choose_plan
     case step_heat_map
 }
-
-// Dans l'ordre :
-// StepWelcomeView: propose 3 choix: advanced gui, step by step mode, doc
-//   StepFloorPlan: propose de choisir un floor plan parmi 6
-//
 
 @MainActor
 private class StepByStepPhotoController: NSObject {
@@ -799,7 +799,8 @@ struct StepWelcomeView: View {
                         }
                     }.padding(padding_size)
                 }.navigationDestination(for: NavigationTarget.self) { target in
-                    if target == .step_choose_plan {
+                    switch target {
+                    case .step_choose_plan:
                         VStack {
                             Text("Choose a predefined floor plan or load an image")
                             OrientationView { is_portrait, size in
@@ -809,7 +810,8 @@ struct StepWelcomeView: View {
                                     }
                             }
                         }.background(Color(COLORS.right_pannel_scroll_bg))
-                    } else {
+                        
+                    case .step_heat_map:
                         StepHeatMap(navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
                     }
                 }
