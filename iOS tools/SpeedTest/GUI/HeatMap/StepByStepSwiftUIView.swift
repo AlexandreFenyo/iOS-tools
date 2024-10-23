@@ -49,6 +49,234 @@ public class StepByStepViewModel : ObservableObject {
     @Published var max_scale: Float = LOWEST_MAX_SCALE
 }
 
+enum NavigationTarget: Hashable {
+    case step_choose_plan
+    case step_heat_map
+}
+
+// Dans l'ordre :
+// StepWelcomeView: propose 3 choix: advanced gui, step by step mode, doc
+//   StepFloorPlan: propose de choisir un floor plan parmi 6
+//
+
+@MainActor
+struct StepByStepSwiftUIView: View {
+    @State private var showing_exit_popup = false
+    @State private var showing_exit_button = false
+    @State private var scale: CGFloat = 0.0
+    @State private var navigation_path = NavigationPath()
+    
+    weak var step_by_step_view_controller: StepByStepViewController?
+
+    init(_ step_by_step_view_controller: StepByStepViewController) {
+        self.step_by_step_view_controller = step_by_step_view_controller
+    }
+
+    public func cleanUp() {
+    }
+
+    var body: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Text("WifiMapExplorer")
+                    .foregroundColor(Color(COLORS.leftpannel_ip_text))
+                    .padding()
+                Spacer()
+            }.background(Color(COLORS.toolbar_background))
+
+            // NavigationStack root screen: StepWelcomeView
+            NavigationStack(path: $navigation_path) {
+                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path)
+            }
+            .background(Color(COLORS.right_pannel_scroll_bg))
+            .cornerRadius(15)
+
+            if showing_exit_button {
+                HStack {
+                    Spacer()
+
+                    Button("Advanced interface") {
+                        showing_exit_popup = true
+                    }
+                    .opacity(scale)
+                    .padding(0)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            scale = 1
+                        }
+                    }
+
+                    Spacer()
+
+                    Button("Web site") {
+                        UIApplication.shared.open(
+                            URL(
+                                string:
+                                    "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
+                            )!)
+                    }
+                    .opacity(scale)
+                    .padding(0)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            scale = 1
+                        }
+                    }
+
+                    Spacer()
+                }
+            } else {
+                Button("") {}
+                    .opacity(0)
+                    .padding(0)
+
+                Button("") {}
+                    .opacity(0)
+                    .padding(0)
+            }
+
+        }
+        .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
+        .background(Color(COLORS.right_pannel_bg))
+        .sheet(
+            isPresented: $showing_exit_popup,
+            content: {
+                ModalPopPupShell(
+                    action: {
+                        step_by_step_view_controller?.dismiss(
+                            animated: true)
+                    },
+                    NSLocalizedString(
+                        "RETURNING TO THE APP HOME PAGE",
+                        comment: "RETURNING TO THE APP HOME PAGE"),
+                    NSLocalizedString("I understand", comment: "I Understand"),
+                    {
+                        Text("")
+                        Text(
+                            "You can come back later to the home window simply by clicking on the following icon:"
+                        )
+                        BlinkingContent {
+                            Image(systemName: "house")
+                                .scaleEffect(2)
+                                .padding(10)
+                        }
+
+                        if UIDevice.current.userInterfaceIdiom != .phone
+                            && ProcessInfo.processInfo.isMacCatalystApp == false
+                        {
+                            // We run on an iPad
+                            LandscapePortraitView {
+                                Image("design-manual").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+
+                                Image("design-auto").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+
+                                Image("design-doc").resizable().aspectRatio(
+                                    contentMode: .fit
+                                ).padding(10)
+                            }
+                        }
+
+                        Text("")
+                    }
+                )
+                .background(Color(COLORS.right_pannel_scroll_bg))
+            }
+        )
+
+    }
+}
+
+struct StepWelcomeView: View {
+    @Binding var showing_exit_button: Bool
+    @Binding var showing_exit_popup: Bool
+    @Binding var scale: CGFloat
+    @Binding var navigation_path: NavigationPath
+    
+    let padding_size: CGFloat = 10
+
+    var body: some View {
+        VStack(alignment: .center) {
+            LandscapePortraitView {
+                Button(action: {
+                    showing_exit_popup = true
+                }) {
+                    BlinkingContent {
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Text("Open advanced interface")
+                                Spacer()
+                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
+                                .padding(padding_size)
+                            }
+                            Spacer()
+                        }
+                    }.padding(padding_size)
+                }
+
+                Button(action: {
+                    navigation_path.append(NavigationTarget.step_choose_plan)
+                }) {
+                    BlinkingContent {
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Text("Step-by-step easy mode")
+                                Spacer()
+                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
+                                .padding(padding_size)
+                            }
+                            Spacer()
+                        }
+                    }.padding(padding_size)
+                }.navigationDestination(for: NavigationTarget.self) { target in
+                    if target == .step_choose_plan {
+                        VStack {
+                            Text("Choose a predefined floor plan or load an image")
+                            OrientationView { is_portrait, size in
+                                StepChoosePlan(navigation_path: $navigation_path, is_portrait: is_portrait, size: size)
+                                    .onAppear {
+                                        showing_exit_button = true
+                                    }
+                            }
+                        }.background(Color(COLORS.right_pannel_scroll_bg))
+                    } else {
+                        StepHeatMap()
+                    }
+                }
+
+                NavigationLink {
+                    StepDocumentation().onAppear {
+                        showing_exit_button = true
+                    }
+                } label: {
+                    BlinkingContent {
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Text("Documentation")
+                                Spacer()
+                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
+                                .padding(padding_size)
+                            }
+                            Spacer()
+                        }
+                    }.padding(padding_size)
+                }.onAppear {
+                    scale = 0
+                    showing_exit_button = false
+                }
+            }
+            .background(Color(COLORS.right_pannel_scroll_bg))
+        }
+    }
+}
+
 @MainActor
 class StepByStepPhotoController: NSObject {
     weak var step_by_step_view_controller: StepByStepViewController?
@@ -108,7 +336,7 @@ struct StepHeatMap: View {
     }
 }
 
-struct StepFloorPlan: View {
+struct StepChoosePlan: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @State private var showing_map_picker = false
@@ -123,25 +351,6 @@ struct StepFloorPlan: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            
-
-            Button(action: {
-                print("button test pressé")
-                print(navigation_path.count)
-//                navigation_path.append(NavigationTarget.step1)
-//                print(navigation_path.count)
-            }, label: {
-                Text("button test appuyer")
-            })
-                   
-            Text("")
-            
-            NavigationLink {
-                StepHeatMap()
-            } label: {
-                Text("test via nav link")
-            }
-
             if is_portrait {
                 HStack(alignment: .center) {
                     Spacer()
@@ -182,7 +391,7 @@ struct StepFloorPlan: View {
 
                     Button(action: {
 //                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step1)
+                        navigation_path.append(NavigationTarget.step_choose_plan)
                         print("_ICI")
 
                     }) {
@@ -232,7 +441,7 @@ struct StepFloorPlan: View {
                     
                     Button(action: {
 //                        showing_map_picker = true
-                        navigation_path.append(NavigationTarget.step2)
+                        navigation_path.append(NavigationTarget.step_heat_map)
                         print("ICI")
                         
                     }) {
@@ -296,276 +505,4 @@ struct StepDocumentation: View {
     }
 }
 
-struct StepWelcomeView: View {
-    @Binding var showing_exit_button: Bool
-    @Binding var showing_exit_popup: Bool
-    @Binding var scale: CGFloat
-    @Binding var navigation_path: NavigationPath
-    
-    let padding_size: CGFloat = 10
-    var body: some View {
-        VStack(alignment: .center) {
-            LandscapePortraitView {
-                Button(action: {
-                    showing_exit_popup = true
-                }) {
-                    BlinkingContent {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Text("Open advanced interface")
-                                Spacer()
-                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
-                            }
-                            Spacer()
-                        }
-                    }.padding(padding_size)
-                }
 
-                Button(action: {
-                    navigation_path.append(NavigationTarget.step1)
-                }) {
-                    BlinkingContent {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Text("Step-by-step easy mode")
-                                Spacer()
-                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
-                            }
-                            Spacer()
-                        }
-                    }.padding(padding_size)
-                }.navigationDestination(for: NavigationTarget.self) { target in
-                    if target == .step1 {
-                        
-                        VStack {
-                            Text("Choose a predefined floor plan or load an image")
-                            OrientationView { is_portrait, size in
-                                StepFloorPlan(navigation_path: $navigation_path, is_portrait: is_portrait, size: size)
-                                    .onAppear {
-                                        showing_exit_button = true
-                                    }
-                            }
-                        }.background(Color(COLORS.right_pannel_scroll_bg))
-                    } else {
-                        StepHeatMap()
-                    }
-                }
-                /*
-                NavigationLink {
-                    VStack {
-                        Text("Choose a predefined floor plan or load an image")
-                        OrientationView { is_portrait, size in
-                            StepFloorPlan(navigation_path: $navigation_path, is_portrait: is_portrait, size: size)
-                                .onAppear {
-                                    showing_exit_button = true
-                                }
-                            
-                                .navigationDestination(for: NavigationTarget.self) { target in
-                                    Text("SALUTXXX3") //                StepHeatMap()
-                                }
-
-                            
-                            
-                        }
-                    }.background(Color(COLORS.right_pannel_scroll_bg))
-                } label: {
-                    BlinkingContent {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Text("Step-by-step easy mode")
-                                Spacer()
-                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
-                            }
-                            Spacer()
-                        }
-                    }.padding(padding_size)
-                }
-                .navigationDestination(for: NavigationTarget.self) { target in
-                    Text("SALUTXXX4") //                StepHeatMap()
-                }*/
-
-                
-
-                NavigationLink {
-                    StepDocumentation().onAppear {
-                        showing_exit_button = true
-                    }
-                } label: {
-                    BlinkingContent {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Text("Documentation")
-                                Spacer()
-                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
-                            }
-                            Spacer()
-                        }
-                    }.padding(padding_size)
-                }.onAppear {
-                    scale = 0
-                    showing_exit_button = false
-                }
-            }
-            .background(Color(COLORS.right_pannel_scroll_bg))
-        }
-    }
-}
-
-// Dans l'ordre :
-// StepWelcomeView: propose 3 choix: advanced gui, step by step mode, doc
-//   StepFloorPlan: propose de choisir un floor plan parmi 6
-//
-
-enum NavigationTarget: Hashable {
-    case step1
-    case step2
-}
-
-@MainActor
-struct StepByStepSwiftUIView: View {
-    @State private var showing_exit_popup = false
-    @State private var showing_exit_button = false
-    @State private var scale: CGFloat = 0.0
-    @State private var navigation_path = NavigationPath()
-    
-    weak var step_by_step_view_controller: StepByStepViewController?
-
-    init(_ step_by_step_view_controller: StepByStepViewController) {
-        self.step_by_step_view_controller = step_by_step_view_controller
-    }
-
-    public func cleanUp() {
-    }
-
-    var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Text("WifiMapExplorer")
-                    .foregroundColor(Color(COLORS.leftpannel_ip_text))
-                    .padding()
-                Spacer()
-            }.background(Color(COLORS.toolbar_background))
-
-            NavigationStack(path: $navigation_path) {
-                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path)
-                .navigationDestination(for: NavigationTarget.self) { target in
-                    Text("SALUTXXX2") //                StepHeatMap()
-                }
-
-            }
-            .navigationDestination(for: NavigationTarget.self) { target in
-                Text("SALUTXXX") //                StepHeatMap()
-            }
-
-            
-            .background(Color(COLORS.right_pannel_scroll_bg))
-            .cornerRadius(15)
-
-            if showing_exit_button {
-                HStack {
-                    Spacer()
-
-                    Button("Advanced interface") {
-                        showing_exit_popup = true
-                    }
-                    .opacity(scale)
-                    .padding(0)
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 1.0)) {
-                            scale = 1
-                        }
-                    }
-
-                    Spacer()
-
-                    Button("Web site") {
-                        UIApplication.shared.open(
-                            URL(
-                                string:
-                                    "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
-                            )!)
-                    }
-                    .opacity(scale)
-                    .padding(0)
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 1.0)) {
-                            scale = 1
-                        }
-                    }
-
-                    Spacer()
-                }
-            } else {
-                Button("") {}
-                    .opacity(0)
-                    .padding(0)
-
-                Button("") {}
-                    .opacity(0)
-                    .padding(0)
-            }
-
-        }
-        .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
-        .background(Color(COLORS.right_pannel_bg))
-
-        .sheet(
-            isPresented: $showing_exit_popup,
-            content: {
-                ModalPopPupShell(
-                    action: {
-                        step_by_step_view_controller?.dismiss(
-                            animated: true)
-                    },
-                    NSLocalizedString(
-                        "RETURNING TO THE APP HOME PAGE",
-                        comment: "RETURNING TO THE APP HOME PAGE"),
-                    NSLocalizedString("I understand", comment: "I Understand"),
-                    {
-                        Text("")
-                        Text(
-                            "You can come back later to the home window simply by clicking on the following icon:"
-                        )
-                        BlinkingContent {
-                            Image(systemName: "house")
-                                .scaleEffect(2)
-                                .padding(10)
-                        }
-
-                        if UIDevice.current.userInterfaceIdiom != .phone
-                            && ProcessInfo.processInfo.isMacCatalystApp == false
-                        {
-                            // We run on an iPad
-                            LandscapePortraitView {
-                                Image("design-manual").resizable().aspectRatio(
-                                    contentMode: .fit
-                                ).padding(10)
-
-                                Image("design-auto").resizable().aspectRatio(
-                                    contentMode: .fit
-                                ).padding(10)
-
-                                Image("design-doc").resizable().aspectRatio(
-                                    contentMode: .fit
-                                ).padding(10)
-                            }
-                        }
-
-                        Text("")
-                    }
-                )
-                .background(Color(COLORS.right_pannel_scroll_bg))
-            }
-        )
-
-    }
-}
