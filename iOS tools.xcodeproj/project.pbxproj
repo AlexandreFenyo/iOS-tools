@@ -31,6 +31,7 @@
 		5D25C8482CB029F6008D858D /* ModalPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8472CB029F6008D858D /* ModalPopUp.swift */; };
 		5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */; };
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
+		5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
 		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
@@ -173,6 +174,7 @@
 		5D25C8472CB029F6008D858D /* ModalPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPopUp.swift; sourceTree = "<group>"; };
 		5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePortraitView.swift; sourceTree = "<group>"; };
 		5D2DFC332902DBBD0080A9EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "iOS tools/SpeedTest/Settings.bundle"; sourceTree = SOURCE_ROOT; };
+		5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepHeatMapView.swift; sourceTree = "<group>"; };
 		5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTraces.swift; sourceTree = "<group>"; };
 		5D2FFB3B2B543A38006D1F57 /* ToolsDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToolsDataModel.xcdatamodel; sourceTree = "<group>"; };
 		5D37D20A29734FB700578E59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -626,6 +628,7 @@
 				5DE8DC41295074BB00FAE74D /* Graham.swift */,
 				5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */,
 				5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */,
+				5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */,
 			);
 			path = HeatMap;
 			sourceTree = "<group>";
@@ -995,6 +998,7 @@
 				5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
+				5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */,
 				5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */,

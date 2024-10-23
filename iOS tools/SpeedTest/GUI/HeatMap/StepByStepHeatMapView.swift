@@ -1,31 +1,22 @@
 //
-//  TracesSwiftUIView.swift
+//  StepByStepHeatMapView.swift
 //  iOS tools
 //
-//  Created by Alexandre Fenyo on 26/10/2021.
-//  Copyright © 2021 Alexandre Fenyo. All rights reserved.
+//  Created by Alexandre Fenyo on 23/10/2024.
+//  Copyright © 2024 Alexandre Fenyo. All rights reserved.
 //
 
-import SwiftUI
-import SpriteKit
+import Foundation
 import PhotosUI
+import SpriteKit
 import StoreKit
-
-// app équivalente : WiFi All In One Network Survey (18,99€)
-
-// ex.: https://gist.github.com/ricardo0100/4e04edae0c8b0dff68bc2fba6ef82bf5
-// https://www.hackingwithswift.com/books/ios-swiftui/integrating-core-image-with-swiftui
-
-public var exporting_map = false
-
-// sliders et toggles de réglage fin des paramètres
-private var ENABLE_DEBUG_INTERFACE = false
+import SwiftUI
+import iOSToolsMacros
 
 private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
-private let NEW_PROBE_VALUE: Float = 10000000
+private let NEW_PROBE_VALUE: Float = 10_000_000
 private let SCALE_WIDTH: CGFloat = 30
-let LOWEST_MAX_SCALE: Float = 1000
 private let POWER_SCALE_DEFAULT: Float = 5
 private let POWER_SCALE_MAX: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
@@ -33,98 +24,19 @@ private let POWER_SCALE_RADIUS_DEFAULT: Float = 120 /* 180 */
 private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
 private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
-public class MapViewModel: ObservableObject {
-    static let shared = MapViewModel()
-    static let step2String = [
-        "step 1/5: select your floor plan (click on the Select your floor plan green button)",
-        NSLocalizedString("Come back here after having started a TCP Flood Chargen action on a target (download speed testing).\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;\n- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", comment: "Come back here after having started a TCP Flood Chargen action on a target (download speed testing).\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;\n- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org."),
-        "step 2/5:\n- at the bottom left of the map, you can see a white access point blinking;\n- go near an access point;\n- click on its location on the map to move the white access point to your location on the map;\n- on the vertical left scale, you can see the real time network speed;\n- when the speed is stable, associate this value to your access point by clicking on Add an access point or probe.",
-        "step 3/5:\n- your first access point color has changed to black, this means it has been registered with the speed value at its location;\n- a new white access point is ready for a new value, at the bottom left of the map;\n- you may optionally want to take a measure far from an access point. In that case, click again on Add an access point or probe to change the image of the white access point to a probe one;\n- move to a new location to take a new measure;\n- click on the location on the map to move the white access point or probe to your location on the map;\n- when the speed on the vertical left scale is stable, associate this value to your location by clicking on Add an access point or probe.",
-        "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by enabling the preview switch."
-    ]
-    
-    @Published var input_map_image: UIImage?
-    @Published var original_map_image: UIImage?
-    @Published var original_map_image_rotation: Bool?
-    @Published var idw_values = Array<IDWValue<Float>>()
-    @Published var step = 0
-    @Published var max_scale: Float = LOWEST_MAX_SCALE
-}
-
-// LoadingView derived from https://roddy.io/2020/07/27/create-progressview-modal-in-swiftui/
-struct LoadingView<Content>: View where Content: View {
-    @Binding var showing_progress: Bool
-    var content: () -> Content
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .center) {
-                content()
-                    .disabled(showing_progress)
-                if showing_progress {
-                    Rectangle()
-                        .fill(Color.black).opacity(showing_progress ? 0.6 : 0)
-                        .edgesIgnoringSafeArea(.all)
-                    VStack(spacing: 48) {
-                        ProgressView().scaleEffect(2.0, anchor: .center).padding()
-                        Text("Wait while saving heat map...").font(.headline).fontWeight(.semibold).padding()
-                        Text("This may take up to a minute to produce a high resolution map.\nThe map will be saved into your photo roll.").font(.caption).padding()
-                    }
-                    .background(Color(COLORS.chart_bg))
-                    .foregroundColor(Color(COLORS.standard_background))
-                    .cornerRadius(16)
-                }
-            }
-        }
-    }
-}
-
 @MainActor
-private class HeatMapPhotoController: NSObject {
-    weak var heatmap_view_controller: HeatMapViewController?
-    
-    public init(heatmap_view_controller: HeatMapViewController) {
-        self.heatmap_view_controller = heatmap_view_controller
-    }
-    
-    @objc private func image(_ image: UIImage,
-                             didFinishPhotoLibrarySavingWithError error: Error?,
-                             contextInfo: UnsafeRawPointer) {
-        //        print("Image successfully written to camera roll")
-        exporting_map = false
-        if error != nil {
-            popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)"), "OK")
-        } else {
-            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heatmap in you photo roll", comment: "You can find the heatmap in you photo roll"), "OK")
-        }
-    }
-    
-    public func popUp(_ title: String, _ message: String, _ ok: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: ok, style: .default) {_ in
-            SKStoreReviewController.requestReview()
-        }
-        alert.addAction(action)
-        self.heatmap_view_controller?.present(alert, animated: true)
-    }
-    
-    public func saveImage(image: UIImage) {
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishPhotoLibrarySavingWithError:contextInfo:)), nil)
-    }
-}
-
-@MainActor
-struct HeatMapSwiftUIView: View {
-    init(_ heatmap_view_controller: HeatMapViewController) {
-        self.heatmap_view_controller = heatmap_view_controller
-        self.photoController = HeatMapPhotoController(heatmap_view_controller: heatmap_view_controller)
+struct StepByStepHeatMapView: View {
+    init(_ step_by_step_view_controller: StepByStepViewController) {
+        self.step_by_step_view_controller = step_by_step_view_controller
+        self.photoController = StepByStepPhotoController(step_by_step_view_controller: step_by_step_view_controller)
     }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    private let photoController: HeatMapPhotoController
-    weak var heatmap_view_controller: HeatMapViewController?
+    fileprivate let photoController: StepByStepPhotoController
+    weak var step_by_step_view_controller: StepByStepViewController?
     
-    @ObservedObject var model = MapViewModel.shared
+    @ObservedObject var model = StepByStepViewModel.shared
     @State private var showing_map_picker = false
     @State private var showing_alert = false
     @State private var showing_progress = false
@@ -420,39 +332,6 @@ struct HeatMapSwiftUIView: View {
                         }.padding(.top)
                     }
                     
-                    if ENABLE_DEBUG_INTERFACE {
-                        if toggle_help {
-                            HStack {
-                                Spacer()
-                                Text(MapViewModel.step2String[model.step])
-                                    .font(Font.system(size: 7).bold())
-                                    .foregroundColor(.white)
-                                    .padding(5.0)
-                                Spacer()
-                            }
-                            .background(.gray)
-                            .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
-                            .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
-                            .onChange(of: cg_image_next, perform: { _ in
-                                updateSteps()
-                            })
-                        }
-                    } else {
-                        HStack {
-                            if model.input_map_image != nil && average_next == 0 {
-                                Spacer()
-                                Text(MapViewModel.step2String[1])
-                                    .font(Font.system(size: 12).bold())
-                                    .foregroundColor(.white)
-                                    .padding(5.0)
-                                Spacer()
-                            }
-                        }
-                        .background(.gray)
-                        .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
-                        .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
-                    }
-                    
                     if model.input_map_image != nil {
                         ZStack {
                             if cg_image_prev != nil {
@@ -537,11 +416,6 @@ struct HeatMapSwiftUIView: View {
                                                     last_loc_x = UInt16(xx)
                                                     last_loc_y = UInt16(yy)
                                                     
-                                                    // Easter egg: drag gesture to top right to enable/disable debug interface
-                                                    if xx == model.input_map_image!.cgImage!.width - 1 && yy == model.input_map_image!.cgImage!.height - 1 {
-                                                        ENABLE_DEBUG_INTERFACE.toggle()
-                                                    }
-                                                    
                                                     let foo = CGFloat(last_loc_x!)
                                                     if foo >= SCALE_WIDTH {
                                                         idw_transient_value = IDWValue(x: last_loc_x!, y: last_loc_y!, v: speed, type: idw_transient_value!.type)
@@ -557,32 +431,6 @@ struct HeatMapSwiftUIView: View {
                                     )
                             }
                         }
-                    }
-                    
-                    if ENABLE_DEBUG_INTERFACE {
-                        HStack {
-                            VStack {
-                                Toggle(isOn: $toggle_help) {
-                                    Text("help").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
-                                }
-                                Toggle(isOn: $toggle_preview) {
-                                    Text("ignore white AP").font(.footnote).foregroundColor(Color(COLORS.standard_background)).frame(maxWidth: .infinity, alignment: .trailing)
-                                }
-                            }.fixedSize()
-                            Spacer(minLength: 30)
-                            VStack {
-                                HStack {
-                                    Image(systemName: "checkerboard.rectangle").foregroundColor(Color(COLORS.standard_background))
-                                    Slider(value: $power_scale, in: 0...POWER_SCALE_MAX)
-                                }
-                                HStack {
-                                    Image(systemName: "slowmo").foregroundColor(Color(COLORS.standard_background))
-                                    Slider(value: $power_scale_radius, in: 1...POWER_SCALE_RADIUS_MAX)
-                                }
-                            }
-                        }.padding()
-                        
-                        Slider(value: $power_blur_radius, in: 1...POWER_BLUR_RADIUS_MAX)
                     }
                     
                     Spacer()
@@ -613,10 +461,10 @@ struct HeatMapSwiftUIView: View {
                             
                             display_steps.toggle()
                             Task {
-                                if let heatmap_view_controller {
+                                if let step_by_step_view_controller = photoController.step_by_step_view_controller {
                                     average_last_update = Date()
                                     average_prev = average_next
-                                    average_next = heatmap_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
+                                    average_next = step_by_step_view_controller.master_view_controller!.detail_view_controller!.ts.getAverage()
                                     if average_prev == 0.0 {
                                         average_prev = average_next
                                     }
@@ -637,7 +485,7 @@ struct HeatMapSwiftUIView: View {
                 .cornerRadius(15).padding(10)
                 
                 Button("Hide map") {
-                    heatmap_view_controller?.dismiss(animated: true)
+                    step_by_step_view_controller?.dismiss(animated: true)
                 }.padding()
             }.background(Color(COLORS.right_pannel_bg))
         }
