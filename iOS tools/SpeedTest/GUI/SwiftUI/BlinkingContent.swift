@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BlinkingContent<Content: View>: View {
     @State private var is_highlighted = false
-    let content: Content
+    private let content: Content
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()

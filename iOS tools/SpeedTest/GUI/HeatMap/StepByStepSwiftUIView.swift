@@ -183,7 +183,6 @@ struct StepByStepSwiftUIView: View {
                 .background(Color(COLORS.right_pannel_scroll_bg))
             }
         )
-
     }
 }
 
@@ -242,7 +241,7 @@ struct StepWelcomeView: View {
                             }
                         }.background(Color(COLORS.right_pannel_scroll_bg))
                     } else {
-                        StepHeatMap()
+                        StepHeatMap(navigation_path: $navigation_path)
                     }
                 }
 
@@ -270,6 +269,218 @@ struct StepWelcomeView: View {
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
         }
+    }
+}
+
+struct StepHeatMap: View {
+    @Binding var navigation_path: NavigationPath
+
+    var body: some View {
+        Text("HeatMap")
+    }
+}
+
+struct StepChoosePlan: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    @State private var showing_map_picker = false
+    @State private var showing_alert = false
+
+    @Binding var navigation_path: NavigationPath
+
+    @ObservedObject var model = StepByStepViewModel.shared
+
+    var is_portrait: Bool
+    var size: CGSize
+
+    var body: some View {
+        VStack(alignment: .center) {
+            if is_portrait {
+                HStack(alignment: .center) {
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+                }
+
+                HStack(alignment: .center) {
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+                    
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                
+                HStack(alignment: .center) {
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+
+                    Button(action: {
+                        showing_map_picker = true
+                    }) {
+                        BlinkingContent {
+                            ZStack {
+                                Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                                Image(systemName: "photo.badge.plus").scaleEffect(2).opacity(0.5)
+                            }
+                        }
+                    }
+
+                    Spacer()
+                }
+            } else {
+                HStack(alignment: .center) {
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-T").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                
+                HStack(alignment: .center) {
+                    Spacer()
+                    
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+
+                    NavigationLink {
+                        StepHeatMap(navigation_path: $navigation_path)
+                    } label: {
+                        BlinkingContent {
+                            Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
+                        }
+                    }
+
+                    Spacer()
+                    
+                    Button(action: {
+                        showing_map_picker = true
+                    }) {
+                        BlinkingContent {
+                            ZStack {
+                                Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
+                                Image(systemName: "photo.badge.plus").scaleEffect(2).opacity(0.5)
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+            }
+        }.padding()
+            .sheet(isPresented: $showing_map_picker, onDismiss: {() -> Void in
+                if model.original_map_image_rotation == true {
+                    showing_alert = true
+                }
+            }) {
+                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values, when_done: {
+                    navigation_path.append(NavigationTarget.step_heat_map)
+                })
+            }
+        
+            .sheet(isPresented: $showing_alert) {
+                VStack {
+                    Text("Image rotation applied")
+                        .font(.title)
+                        .padding(20)
+                    Spacer()
+                    Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
+                        .font(.caption)
+                    Image(uiImage: model.input_map_image!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxHeight: horizontalSizeClass != .compact ? 400 : 200)
+                        .padding(5)
+                    Spacer()
+                    Button("Continue",
+                           action: { showing_alert.toggle() })
+                    .padding(20)
+                }
+            }
+    }
+}
+
+struct StepDocumentation: View {
+    var body: some View {
+        WebContent(
+            url:
+                "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
+        )
+        .padding(20)
     }
 }
 
@@ -325,182 +536,4 @@ class StepByStepPhotoController: NSObject {
         )
     }
 }
-
-struct StepHeatMap: View {
-    var body: some View {
-        Text("HeatMap")
-    }
-}
-
-struct StepChoosePlan: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-    @State private var showing_map_picker = false
-    @State private var showing_alert = false
-
-    @Binding var navigation_path: NavigationPath
-
-    @ObservedObject var model = StepByStepViewModel.shared
-
-    var is_portrait: Bool
-    var size: CGSize
-
-    var body: some View {
-        VStack(alignment: .center) {
-            if is_portrait {
-                HStack(alignment: .center) {
-                    Spacer()
-
-                    NavigationLink {
-                        StepHeatMap()
-                    } label: {
-                        BlinkingContent {
-                            Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
-                        }
-                    }
-
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                }
-
-                HStack(alignment: .center) {
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                }
-                
-                HStack(alignment: .center) {
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-
-                    Button(action: {
-                        showing_map_picker = true
-//                        navigation_path.append(NavigationTarget.step_heat_map)
-                        print("_ICI")
-
-                    }) {
-                        BlinkingContent {
-                            ZStack {
-                                Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
-                                Image(systemName: "photo.badge.plus").scaleEffect(2).opacity(0.5)
-                            }
-                        }
-                    }
-
-                    Spacer()
-                }
-            } else {
-                HStack(alignment: .center) {
-                    Spacer()
-
-                    NavigationLink {
-                        StepHeatMap()
-                    } label: {
-                        BlinkingContent {
-                            Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
-                        }
-                    }
-
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-T").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                }
-                
-                HStack(alignment: .center) {
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                    BlinkingContent {
-                        Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
-                    }
-                    Spacer()
-                    
-                    Button(action: {
-                        showing_map_picker = true
-//                        navigation_path.append(NavigationTarget.step_heat_map)
-                        print("ICI")
-                        
-                    }) {
-                        BlinkingContent {
-                            ZStack {
-                                Image("plan-empty").resizable().aspectRatio(contentMode: .fit)
-                                Image(systemName: "photo.badge.plus").scaleEffect(2).opacity(0.5)
-                            }
-                        }
-                    }
-                    .navigationDestination(for: NavigationTarget.self) { target in
-                        Text("SALUTXXX5") //                StepHeatMap()
-                    }
-
-                    
-                    Spacer()
-                }
-            }
-        }.padding()
-            .sheet(isPresented: $showing_map_picker, onDismiss: {() -> Void in
-                print("SALUT")
-                print(model.input_map_image)
-                print(model.original_map_image)
-                print(model.original_map_image_rotation)
-                if model.original_map_image_rotation == true {
-                    showing_alert = true
-                }
-            }) {
-                ImagePicker(image: $model.input_map_image, original_map_image: $model.original_map_image, original_map_image_rotation: $model.original_map_image_rotation, idw_values: $model.idw_values, when_done: {
-                    navigation_path.append(NavigationTarget.step_heat_map)
-                })
-            }
-        
-            .sheet(isPresented: $showing_alert) {
-                VStack {
-                    Text("Image rotation applied")
-                        .font(.title)
-                        .padding(20)
-                    Spacer()
-                    Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
-                        .font(.caption)
-                    Image(uiImage: model.input_map_image!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxHeight: horizontalSizeClass != .compact ? 400 : 200)
-                        .padding(5)
-                    Spacer()
-                    Button("Continue",
-                           action: { showing_alert.toggle() })
-                    .padding(20)
-                }
-            }
-    }
-}
-
-struct StepDocumentation: View {
-    var body: some View {
-        WebContent(
-            url:
-                "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
-        )
-        .padding(20)
-    }
-}
-
 
