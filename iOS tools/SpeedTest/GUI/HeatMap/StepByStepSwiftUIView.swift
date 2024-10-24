@@ -301,18 +301,56 @@ struct StepWelcomeView: View {
 }
 
 struct StepHeatMap: View {
+    static let MAX_SIZE = 600
+    
     @ObservedObject var model: StepByStepViewModel
     
     @Binding var navigation_path: NavigationPath
     
     weak var step_by_step_view_controller: StepByStepViewController?
+    var image_name: String?
+
+    static func rotateIfNeeded(_ img: UIImage) -> UIImage {
+        if img.cgImage!.width < img.cgImage!.height {
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: img.cgImage!.height, height: img.cgImage!.width))
+            let image = renderer.image { _ in
+                let context = UIGraphicsGetCurrentContext()
+                context?.rotate(by: Double.pi / 2)
+                context?.draw(img.cgImage!, in: CGRect(origin: CGPoint(x: 0, y: -img.cgImage!.height), size: CGSize(width: img.cgImage!.width, height: img.cgImage!.height)))
+            }
+            return image.withHorizontallyFlippedOrientation()
+        }
+        return img
+    }
+
+    static func resizeIfNeeded(_ img: UIImage) -> UIImage {
+        if img.cgImage!.width > MAX_SIZE || img.cgImage!.height > MAX_SIZE {
+            let size: CGSize
+            if img.cgImage!.width > img.cgImage!.height {
+                size = CGSize(width: MAX_SIZE, height: img.cgImage!.height * MAX_SIZE / img.cgImage!.width)
+            } else {
+                size = CGSize(width: img.cgImage!.width * MAX_SIZE / img.cgImage!.height, height: MAX_SIZE)
+            }
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 1
+            let image = UIGraphicsImageRenderer(size: size, format: format).image { _ in
+                img.draw(in: CGRect(origin: .zero, size: size))
+            }
+            return image
+        }
+        return img
+    }
 
     var body: some View {
         StepByStepHeatMapView(step_by_step_view_controller!)
             .onAppear {
-                if model.input_map_image == nil {
-                    CONTINUER ICI
-                    print("SHOULD RECOMPUTE IMAGES2")
+                if let image_name {
+                    let image = UIImage(named: image_name)
+                    let resized_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image!))
+                    model.original_map_image_rotation = (image!).cgImage!.width < (image!).cgImage!.height
+                    model.original_map_image = StepHeatMap.rotateIfNeeded(image!)
+                    model.input_map_image = resized_image
+                    model.idw_values = Array<IDWValue>()
                 }
             }
     }
@@ -340,7 +378,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-rectangle")
                     } label: {
                         BlinkingContent {
                             Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
@@ -350,7 +388,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-T")
                     } label: {
                         BlinkingContent {
                             Image("plan-T").resizable().aspectRatio(contentMode: .fit)
@@ -364,7 +402,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-2rect")
                     } label: {
                         BlinkingContent {
                             Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
@@ -374,7 +412,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-thin")
                     } label: {
                         BlinkingContent {
                             Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
@@ -388,7 +426,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-bgonly")
                     } label: {
                         BlinkingContent {
                             Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
@@ -415,7 +453,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-rectangle")
                     } label: {
                         BlinkingContent {
                             Image("plan-rectangle").resizable().aspectRatio(contentMode: .fit)
@@ -425,7 +463,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-T")
                     } label: {
                         BlinkingContent {
                             Image("plan-T").resizable().aspectRatio(contentMode: .fit)
@@ -435,7 +473,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-2rect")
                     } label: {
                         BlinkingContent {
                             Image("plan-2rect").resizable().aspectRatio(contentMode: .fit)
@@ -449,7 +487,7 @@ struct StepChoosePlan: View {
                     Spacer()
                     
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-thin")
                     } label: {
                         BlinkingContent {
                             Image("plan-thin").resizable().aspectRatio(contentMode: .fit)
@@ -459,7 +497,7 @@ struct StepChoosePlan: View {
                     Spacer()
 
                     NavigationLink {
-                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller)
+                        StepHeatMap(model: model, navigation_path: $navigation_path, step_by_step_view_controller: step_by_step_view_controller, image_name: "plan-bgonly")
                     } label: {
                         BlinkingContent {
                             Image("plan-bgonly").resizable().aspectRatio(contentMode: .fit)
@@ -509,7 +547,7 @@ struct StepChoosePlan: View {
                     Button("Continue",
                            action: { showing_alert.toggle() })
                     .padding(20)
-                }
+                }.background(Color(COLORS.right_pannel_scroll_bg))
             }
     }
 }
