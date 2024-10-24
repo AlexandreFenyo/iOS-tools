@@ -344,6 +344,10 @@ struct StepHeatMap: View {
     var body: some View {
         StepByStepHeatMapView(step_by_step_view_controller!)
             .onAppear {
+                Task {
+                    await step_by_step_view_controller?.master_view_controller?.chargenTCP(IPv4Address("146.59.154.26")!)
+                }
+                
                 if let image_name {
                     let image = UIImage(named: image_name)
                     let resized_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image!))

@@ -914,7 +914,7 @@ view.backgroundColor = .red
                             Task { @MainActor in
                                 DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                                 DetailViewModel.shared.setMeasurementValue(throughput)
-                                self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(Int(throughput))", level: .INFO)
+                                self.addTrace("flood UDP port 8888: target \(address.toNumericString() ?? "") throughput \(String(describing: GenericTools.convertDoubleToInt(throughput)))", level: .INFO)
                             }
                             await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                         }
@@ -1056,7 +1056,7 @@ view.backgroundColor = .red
                         Task { @MainActor in
                             DetailViewModel.shared.setCurrentMeasurementUnit("bit/s")
                             DetailViewModel.shared.setMeasurementValue(throughput)
-                            self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(Int(throughput)) bit/s", level: .INFO)
+                            self.addTrace("flood TCP chargen port: target \(address.toNumericString() ?? "") throughput \(String(describing: GenericTools.convertDoubleToInt(throughput))) bit/s", level: .INFO)
                         }
                         await self.detail_view_controller?.ts.add(TimeSeriesElement(date: Date(), value: Float(throughput)))
                     }
