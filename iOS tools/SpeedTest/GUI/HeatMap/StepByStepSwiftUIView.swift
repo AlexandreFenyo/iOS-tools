@@ -355,6 +355,9 @@ struct StepHeatMap: View {
                     model.original_map_image = StepHeatMap.rotateIfNeeded(image!)
                     model.input_map_image = resized_image
                     model.idw_values = Array<IDWValue>()
+                    
+                    // Initialize other model parameters
+                    model.step = 0
                 }
             }
     }

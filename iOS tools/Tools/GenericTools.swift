@@ -93,6 +93,16 @@ final class GenericTools : AutoTrace {
             return nil
         }
     }
+
+    static func convertFloatToInt(_ floatValue: Float) -> Int? {
+        if floatValue.isFinite {
+            return Int(floatValue)
+        } else {
+            print("Erreur : La valeur ne peut pas être convertie en Int car elle est infinie ou NaN.")
+            return nil
+        }
+    }
+
     public static func printDuration(idx: Int, start_time: Date) {
         let duration = Date().timeIntervalSince(start_time)
         if duration > 0.001 {

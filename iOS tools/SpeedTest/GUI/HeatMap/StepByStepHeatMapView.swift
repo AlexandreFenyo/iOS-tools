@@ -154,15 +154,23 @@ struct StepByStepHeatMapView: View {
 
     var body: some View {
         LandscapePortraitView {
-            
+
             VStack {
-                Text("CECI EST UN")
-                Text("CECI EST UN")
-                Text("CECI EST UN")
+                if model.step == 0 {
+                    Text("la première mesure")
+                    Button {
+                        model.step = 1
+                    } label: {
+                        Text("appuyer pour passer au step 1")
+                    }
+
+                } else {
+                    Text("step non traité")
+                }
             }
 
             Spacer()
-            
+
             if model.input_map_image != nil {
                 ZStack {
                     if cg_image_prev != nil {
@@ -185,12 +193,9 @@ struct StepByStepHeatMapView: View {
                                         )
                                         .colorInvert()
                                         .position(
-                                            x: CGFloat(
-                                                idw_transient_value!.x)
+                                            x: CGFloat(idw_transient_value!.x)
                                                 * geom.size.width
-                                                / CGFloat(
-                                                    cg_image_prev!.width
-                                                ),
+                                                / CGFloat(cg_image_prev!.width),
                                             y: geom.size.height
                                                 - CGFloat(
                                                     idw_transient_value!
@@ -408,7 +413,7 @@ struct StepByStepHeatMapView: View {
             }
         }
         // Couleur de fond de ce qui est spécifique à la fenêtre, c'est à dire le fond des infos en haut et autour de la carte
-//        .background(Color(COLORS.right_pannel_scroll_bg))
+        //        .background(Color(COLORS.right_pannel_scroll_bg))
         .background(.white)
 
         .cornerRadius(15).padding(10)
@@ -438,7 +443,7 @@ struct StepByStepHeatMapView: View {
                 .padding(20)
             }
         }
-        .background(Color(COLORS.right_pannel_scroll_bg))//.background(.red)//.background(Color(COLORS.right_pannel_bg))
+        .background(Color(COLORS.right_pannel_scroll_bg))  //.background(.red)//.background(Color(COLORS.right_pannel_bg))
 
         EmptyView().onReceive(timer_set_speed) { _ in  // 100 Hz
             // Manage speed
