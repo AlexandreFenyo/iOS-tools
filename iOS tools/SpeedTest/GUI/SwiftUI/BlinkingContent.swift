@@ -27,6 +27,7 @@ struct BlinkingContent<Content: View>: View {
                         Animation.linear(duration: 0.5).repeatForever(
                             autoreverses: true), value: is_highlighted)
             )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     is_highlighted = true

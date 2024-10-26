@@ -236,7 +236,7 @@ struct StepWelcomeView: View {
                                 .padding(padding_size)
                             }
                             Spacer()
-                        }
+                        }.background(.white)
                     }.padding(padding_size)
                 }
 
@@ -253,7 +253,7 @@ struct StepWelcomeView: View {
                                 .padding(padding_size)
                             }
                             Spacer()
-                        }
+                        }.background(.white)
                     }.padding(padding_size)
                 }.navigationDestination(for: NavigationTarget.self) { target in
                     switch target {
@@ -288,7 +288,7 @@ struct StepWelcomeView: View {
                                 .padding(padding_size)
                             }
                             Spacer()
-                        }
+                        }.background(.white)
                     }.padding(padding_size)
                 }.onAppear {
                     scale = 0
