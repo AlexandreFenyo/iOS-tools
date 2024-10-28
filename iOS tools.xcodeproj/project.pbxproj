@@ -32,6 +32,7 @@
 		5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */; };
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
 		5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */; };
+		5D2F34F22CD04217006529DD /* press4.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D2F34F12CD04217006529DD /* press4.psd */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
 		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
@@ -175,6 +176,7 @@
 		5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePortraitView.swift; sourceTree = "<group>"; };
 		5D2DFC332902DBBD0080A9EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "iOS tools/SpeedTest/Settings.bundle"; sourceTree = SOURCE_ROOT; };
 		5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepHeatMapView.swift; sourceTree = "<group>"; };
+		5D2F34F12CD04217006529DD /* press4.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = press4.psd; sourceTree = "<group>"; };
 		5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTraces.swift; sourceTree = "<group>"; };
 		5D2FFB3B2B543A38006D1F57 /* ToolsDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToolsDataModel.xcdatamodel; sourceTree = "<group>"; };
 		5D37D20A29734FB700578E59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D2F34F12CD04217006529DD /* press4.psd */,
 				5D536A532CB6C30500CB7474 /* design-manual-6.png */,
 				5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */,
 				5D536A512CB59C1C00CB7474 /* design-auto-3.psd */,
@@ -895,6 +898,7 @@
 				5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
+				5D2F34F22CD04217006529DD /* press4.psd in Resources */,
 				5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
