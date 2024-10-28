@@ -175,20 +175,21 @@ struct StepByStepHeatMapView: View {
 
             VStack {
                 if model.step == 0 {
-                    Text("Indiquez où vous vous trouvez !")
-                    /*
+//                    Text("Indiquez où vous vous trouvez !").bold()//.padding()
                     Button {
-                        model.step = 1
+                     //   model.step = 1
+//                        offset = 10
                     } label: {
                         Text("appuyer pour passer au step 1")
-                    }*/
+                    }
                     ZStack {
-                        Image("press-on-screen-device").opacity(0.8)
+//                        Image("press-on-screen-device").opacity(0.8)
                         Image("press-on-screen-hand")
                             .offset(x: offset, y: offset)
                             .onAppear {
                                 startAnimationLoop()
-                            }
+                            }//.background(.yellow)
+                            .opacity(0)
                     }
                 } else {
                     Text("step non traité")
