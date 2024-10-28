@@ -26,12 +26,6 @@ private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
 @MainActor
 struct StepByStepHeatMapView: View {
-    init(_ step_by_step_view_controller: StepByStepViewController) {
-        self.step_by_step_view_controller = step_by_step_view_controller
-        self.photoController = StepByStepPhotoController(
-            step_by_step_view_controller: step_by_step_view_controller)
-    }
-
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     fileprivate let photoController: StepByStepPhotoController
@@ -75,12 +69,20 @@ struct StepByStepHeatMapView: View {
     // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
     @State private var speed: Float = 0
 
+    @State private var offset: CGFloat = 0
+    
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common)
         .autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common)
         .autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common)
         .autoconnect()
+
+    init(_ step_by_step_view_controller: StepByStepViewController) {
+        self.step_by_step_view_controller = step_by_step_view_controller
+        self.photoController = StepByStepPhotoController(
+            step_by_step_view_controller: step_by_step_view_controller)
+    }
 
     public func cleanUp() {
     }
@@ -152,18 +154,42 @@ struct StepByStepHeatMapView: View {
         }
     }
 
+    func startAnimationLoop() {
+        withAnimation(Animation.linear(duration: 0.5).delay(0.5)) {
+            self.offset = 10
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            withAnimation(Animation.linear(duration: 0.5)) {
+                self.offset = 0
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.startAnimationLoop()
+            }
+        }
+    }
+
     var body: some View {
         LandscapePortraitView {
 
             VStack {
                 if model.step == 0 {
-                    Text("la première mesure")
+                    Text("Indiquez où vous vous trouvez !")
+                    /*
                     Button {
                         model.step = 1
                     } label: {
                         Text("appuyer pour passer au step 1")
+                    }*/
+                    ZStack {
+                        Image("press-on-screen-device").opacity(0.8)
+                        Image("press-on-screen-hand")
+                            .offset(x: offset, y: offset)
+                            .onAppear {
+                                startAnimationLoop()
+                            }
                     }
-
                 } else {
                     Text("step non traité")
                 }
