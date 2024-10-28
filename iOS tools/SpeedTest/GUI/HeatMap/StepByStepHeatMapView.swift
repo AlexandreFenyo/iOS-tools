@@ -169,13 +169,15 @@ struct StepByStepHeatMapView: View {
             }
         }
     }
+    
+    let scale_image = IDWImage.getScaleImage(height: 60)!
 
     var body: some View {
         LandscapePortraitView {
 
             VStack {
                 if model.step == 0 {
-//                    Text("Indiquez où vous vous trouvez !").bold()//.padding()
+                    Text("Indiquez où vous vous trouvez !").bold()//.padding()
                     Button {
                      //   model.step = 1
 //                        offset = 10
@@ -183,13 +185,12 @@ struct StepByStepHeatMapView: View {
                         Text("appuyer pour passer au step 1")
                     }
                     ZStack {
-//                        Image("press-on-screen-device").opacity(0.8)
+                        Image("press-on-screen-device").opacity(0.8)
                         Image("press-on-screen-hand")
                             .offset(x: offset, y: offset)
                             .onAppear {
                                 startAnimationLoop()
                             }//.background(.yellow)
-                            .opacity(0)
                     }
                 } else {
                     Text("step non traité")
@@ -280,8 +281,7 @@ struct StepByStepHeatMapView: View {
                                 GeometryReader { geom in
                                     Image(
                                         decorative:
-                                            IDWImage.getScaleImage(
-                                                height: 60)!, scale: 1.0
+                                            scale_image, scale: 1.0
                                     ).resizable().frame(
                                         width: SCALE_WIDTH)
 

@@ -222,6 +222,8 @@ struct HeatMapSwiftUIView: View {
         }
     }
     
+    let scale_image = IDWImage.getScaleImage(height: 60)!
+    
     var body: some View {
         LoadingView(showing_progress: $showing_progress) {
             VStack {
@@ -490,8 +492,7 @@ struct HeatMapSwiftUIView: View {
                                     .aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                                     .overlay {
                                         GeometryReader { geom in
-                                            Image(decorative: IDWImage.getScaleImage(height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
-                                            
+                                            Image(decorative: scale_image, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
                                             
                                             if model.max_scale != 0 {
                                                 let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)
