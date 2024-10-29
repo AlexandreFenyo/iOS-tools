@@ -13,10 +13,10 @@ import StoreKit
 import SwiftUI
 import iOSToolsMacros
 
-private let NEW_PROBE_X: UInt16 = 100
-private let NEW_PROBE_Y: UInt16 = 50
+private let NEW_PROBE_X: UInt16 = 0
+private let NEW_PROBE_Y: UInt16 = 0
 private let NEW_PROBE_VALUE: Float = 10_000_000
-private let SCALE_WIDTH: CGFloat = 30
+private let SCALE_WIDTH: CGFloat = 10
 private let POWER_SCALE_DEFAULT: Float = 5
 private let POWER_SCALE_MAX: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
@@ -190,6 +190,8 @@ struct StepByStepHeatMapView: View {
                             .offset(x: offset, y: offset)
                             .onAppear {
                                 startAnimationLoop()
+                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+
                             }//.background(.yellow)
                     }
                 } else {
@@ -211,7 +213,7 @@ struct StepByStepHeatMapView: View {
                             .aspectRatio(contentMode: .fit)
                             .overlay {
                                 GeometryReader { geom in
-                                    if idw_transient_value != nil {
+                                    if let idw_transient_value, idw_transient_value.x > 0, idw_transient_value.y > 0 {
                                         Image(
                                             systemName:
                                                 "dot.radiowaves.left.and.right"
@@ -221,12 +223,12 @@ struct StepByStepHeatMapView: View {
                                         )
                                         .colorInvert()
                                         .position(
-                                            x: CGFloat(idw_transient_value!.x)
+                                            x: CGFloat(idw_transient_value.x)
                                                 * geom.size.width
                                                 / CGFloat(cg_image_prev!.width),
                                             y: geom.size.height
                                                 - CGFloat(
-                                                    idw_transient_value!
+                                                    idw_transient_value
                                                         .y)
                                                 * geom.size.width
                                                 / CGFloat(
@@ -400,7 +402,6 @@ struct StepByStepHeatMapView: View {
                                         last_loc_y = UInt16(yy)
 
                                         let foo = CGFloat(last_loc_x!)
-                                        if foo >= SCALE_WIDTH {
                                             idw_transient_value =
                                                 IDWValue(
                                                     x: last_loc_x!,
@@ -412,26 +413,6 @@ struct StepByStepHeatMapView: View {
                                             updateMap(
                                                 debug_x: last_loc_x,
                                                 debug_y: last_loc_y)
-                                        } else {
-                                            let foo =
-                                                model.max_scale
-                                                * Float(last_loc_y!)
-                                                / Float(
-                                                    model
-                                                        .input_map_image!
-                                                        .cgImage!.height
-                                                )
-                                            let val = IDWValue<Float>(
-                                                x: idw_transient_value!
-                                                    .x,
-                                                y: idw_transient_value!
-                                                    .y, v: foo,
-                                                type:
-                                                    idw_transient_value!
-                                                    .type)
-                                            model.idw_values.append(val)
-                                            idw_transient_value = nil
-                                        }
                                     }
                                 }
                             )
