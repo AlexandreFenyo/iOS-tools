@@ -109,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         InitTCPPort2Service()
         
         guard
-            let tabBarController = window?.rootViewController as? UITabBarController,
+            let tabBarController = window?.rootViewController as? MyTabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
