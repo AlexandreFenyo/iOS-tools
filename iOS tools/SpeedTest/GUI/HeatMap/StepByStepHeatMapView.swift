@@ -71,6 +71,8 @@ struct StepByStepHeatMapView: View {
 
     @State private var offset: CGFloat = 0
     
+    @State private var angle: Double = 20
+    
     let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common)
         .autoconnect()
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common)
@@ -184,6 +186,10 @@ struct StepByStepHeatMapView: View {
                     } label: {
                         Text("appuyer pour passer au step 1")
                     }
+ 
+                    
+                    
+                    
                     ZStack {
                         Image("press-on-screen-device").opacity(0.8)
                         Image("press-on-screen-hand")
@@ -193,7 +199,38 @@ struct StepByStepHeatMapView: View {
                                 idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
 
                             }//.background(.yellow)
+                        
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    ZStack {
+                        SpeedometerView()
+                            .frame(width: 100, height: 100)
+                        NeedleView(size: 50, angle: $angle)
+        //                    .opacity(0.5)
+                            .offset(y: 20)
+                    }
+                    
+                    Text("test1").onTapGesture {
+                        print("TEST1")
+                        withAnimation {
+                            angle = 120
+                      }
+                    }
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+
+                    
                 } else {
                     Text("step non traité")
                 }

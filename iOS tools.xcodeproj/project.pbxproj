@@ -339,6 +339,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5D7289E92CC570D200DD4B8A /* plans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = plans; sourceTree = "<group>"; };
+		5D8503B22CFE572D00B0D720 /* Speedometer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Speedometer; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,6 +426,7 @@
 		5D13521E20853BB400E4A76D /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				5D8503B22CFE572D00B0D720 /* Speedometer */,
 				5D2FFB3D2B5445E9006D1F57 /* Persistent */,
 				5DE22F7829BDC20C002D9BEE /* Interman */,
 				5DF21515212D7C13002B7603 /* genericTools.h */,
@@ -806,6 +808,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5D8503B22CFE572D00B0D720 /* Speedometer */,
 			);
 			name = "iOS tools";
 			packageProductDependencies = (
