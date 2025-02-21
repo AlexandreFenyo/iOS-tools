@@ -101,7 +101,7 @@ struct StepWelcomeView2: View {
 
 struct StepDocumentation: View {
     var body: some View {
-            WebContent(url: "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")
+            WebContent(url: "https://fenyo.net/network3dwifitools/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")
                 .padding(20)
     }
 }
@@ -205,7 +205,7 @@ struct StepByStepSwiftUIView: View {
         VStack {
             HStack {
                 Spacer()
-                Text("WifiMapExplorer")
+                Text("Network3DWiFiTools")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                 Spacer()

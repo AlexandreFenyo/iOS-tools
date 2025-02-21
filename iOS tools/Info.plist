@@ -7,13 +7,13 @@
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>CFBundleVersion</key>
-	<string>4.2.0</string>
+	<string>4.3.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.2.0</string>
+	<string>4.3.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>WiFi Map Explorer</string>
+	<string>Network 3D WiFi Tools</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
