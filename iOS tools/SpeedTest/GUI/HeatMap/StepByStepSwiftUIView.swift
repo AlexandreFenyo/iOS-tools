@@ -101,7 +101,7 @@ struct StepByStepSwiftUIView: View {
         VStack {
             HStack {
                 Spacer()
-                Text("WifiMapExplorer")
+                Text("Network3DWiFiTools")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                 Spacer()
