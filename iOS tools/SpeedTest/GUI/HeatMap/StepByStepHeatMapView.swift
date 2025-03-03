@@ -32,7 +32,7 @@ struct StepByStepHeatMapView: View {
     weak var step_by_step_view_controller: StepByStepViewController?
 
     @ObservedObject var model = StepByStepViewModel.shared
-    @State private var showing_map_picker = false
+    
     @State private var showing_alert = false
     @State private var showing_progress = false
 
@@ -50,17 +50,12 @@ struct StepByStepHeatMapView: View {
 
     @State private var idw_transient_value: IDWValue<Float>?  // = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
 
-    @State private var display_steps = false
-
     @State private var power_scale: Float = POWER_SCALE_DEFAULT
     @State private var power_scale_radius: Float = POWER_SCALE_RADIUS_DEFAULT
     @State private var power_blur_radius: CGFloat = POWER_BLUR_RADIUS_DEFAULT
 
     // pourrait être associé à un toggle, mais la valeur par défaut de POWER_SCALE_RADIUS_MAX correspond au même aux performances près puisqu'avec toggle_radius à true, il faut calculer un cache des distances au polygone
     @State private var toggle_radius = true
-
-    @State private var toggle_help = true
-    @State private var toggle_preview = false
 
     @State private var distance_cache: DistanceCache? = nil
 
@@ -89,35 +84,13 @@ struct StepByStepHeatMapView: View {
     public func cleanUp() {
     }
 
-    private func updateSteps() {
-        if model.input_map_image == nil {
-            model.step = 0
-        } else {
-            if average_next == 0 {
-                model.step = 1
-            } else {
-                if model.idw_values.count == 0 {
-                    model.step = 2
-                } else {
-                    if model.idw_values.count == 1 {
-                        model.step = 3
-                    } else {
-                        model.step = 4
-                    }
-                }
-            }
-        }
-    }
-
     private func updateMap(debug_x: UInt16? = nil, debug_y: UInt16? = nil) {
         if exporting_map == true { return }
 
         let width = UInt16(model.input_map_image!.cgImage!.width)
         let height = UInt16(model.input_map_image!.cgImage!.height)
         var idw_image = IDWImage(width: width, height: height)
-        let transient_set: Set<IDWValue<Float>> =
-            (!toggle_preview && idw_transient_value != nil)
-            ? Set([idw_transient_value!]) : Set()
+        let transient_set: Set<IDWValue<Float>> = Set()
 
         // on prend toute la plage disponible pour les valeurs des mesures qu'on prend en compte
         let max = model.max_scale
@@ -438,18 +411,23 @@ struct StepByStepHeatMapView: View {
                                         last_loc_x = UInt16(xx)
                                         last_loc_y = UInt16(yy)
 
-                                        let foo = CGFloat(last_loc_x!)
-                                            idw_transient_value =
-                                                IDWValue(
-                                                    x: last_loc_x!,
-                                                    y: last_loc_y!,
-                                                    v: speed,
-                                                    type:
-                                                        idw_transient_value!
-                                                        .type)
-                                            updateMap(
-                                                debug_x: last_loc_x,
-                                                debug_y: last_loc_y)
+                                        idw_transient_value =
+                                        IDWValue(
+                                            x: last_loc_x!,
+                                            y: last_loc_y!,
+                                            v: speed,
+                                            type:
+                                                idw_transient_value!
+                                                .type)
+
+                                        if model.idw_values.contains(idw_transient_value!) == false {
+                                            model.idw_values.append(idw_transient_value!)
+                                        }
+
+                                        updateMap(
+                                            debug_x: last_loc_x,
+                                            debug_y: last_loc_y)
+                                        
                                     }
                                 }
                             )
@@ -528,7 +506,6 @@ struct StepByStepHeatMapView: View {
                 showing_progress = false
             }
 
-            display_steps.toggle()
             Task {
                 if let step_by_step_view_controller =
                     photoController.step_by_step_view_controller

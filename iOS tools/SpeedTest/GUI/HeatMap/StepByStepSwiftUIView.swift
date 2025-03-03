@@ -45,6 +45,8 @@ enum NavigationTarget: Hashable {
     case step_heat_map
 }
 
+faire descendre le max_scale s’il est supérieur au max des mesures aux endroits choisis
+
 @MainActor
 class StepByStepPhotoController: NSObject {
     weak var step_by_step_view_controller: StepByStepViewController?
@@ -132,7 +134,7 @@ struct StepByStepSwiftUIView: View {
                     Spacer()
 
                     Button("Web site") {
-                        UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
+                        UIApplication.shared.open(URL(string: "https://fenyo.net/network3dwifitools/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                     }
                     .opacity(scale)
                     .padding(0)
@@ -358,6 +360,7 @@ struct StepHeatMap: View {
                     
                     // Initialize other model parameters
                     model.step = 0
+                    model.max_scale = LOWEST_MAX_SCALE
                 }
             }
     }
@@ -563,7 +566,7 @@ struct StepDocumentation: View {
     var body: some View {
         WebContent(
             url:
-                "https://fenyo.net/wifimapexplorer/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
+                "https://fenyo.net/network3dwifitools/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))"
         )
         .padding(20)
     }
