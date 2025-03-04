@@ -74,6 +74,8 @@ struct StepByStepHeatMapView: View {
         .autoconnect()
     let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common)
         .autoconnect()
+    let timer_set_angle = Timer.publish(every: 0.1, on: .main, in: .common)
+        .autoconnect()
 
     init(_ step_by_step_view_controller: StepByStepViewController) {
         self.step_by_step_view_controller = step_by_step_view_controller
@@ -175,34 +177,19 @@ struct StepByStepHeatMapView: View {
                         
                     }
                     
-                    
-                    
-                    
-                    
-                    
                     ZStack {
                         SpeedometerView()
                             .frame(width: 100, height: 100)
                         NeedleView(size: 50, angle: $angle)
-        //                    .opacity(0.5)
                             .offset(y: 20)
+                            .onReceive(timer_set_angle) { _ in  // 1 Hz
+                                var _angle: Double = 180
+                                _angle = _angle * Double(speed) / 250_000_000 - 90
+                                withAnimation {
+                                    angle = _angle
+                              }
+                            }
                     }
-                    
-                    Text("test1").onTapGesture {
-                        print("TEST1")
-                        withAnimation {
-                            angle = 120
-                      }
-                    }
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-
                     
                 } else {
                     Text("step non traité")
@@ -483,15 +470,17 @@ struct StepByStepHeatMapView: View {
             } else {
                 speed = average_next
             }
-            
-            // max_scale = max ( speed, speed de chaque mesure prise )
-            
-            print("speed: \(speed) - max_scale: \(model.max_scale) - max_value: \(model.max_value())")
-            
+
             if speed > model.max_scale {
                 model.max_scale = speed
             }
 
+            /*
+            //angle = speed / 100_000_000
+            let _angle: Double = 180 * speed / 250_000_000 - 90
+            angle = _angle
+            */
+            
             // Manage heat maps
             let interval_image = Float(
                 Date().timeIntervalSince(self.image_last_update)
@@ -502,8 +491,22 @@ struct StepByStepHeatMapView: View {
             } else {
                 image_update_ratio = 1
             }
+
+            // update speedometer
+            /*
+            var _angle: Double = 180
+            _angle = _angle * Double(speed) / 250_000_000 - 90
+            withAnimation {
+                angle = _angle
+          }*/
         }
         .onReceive(timer_get_average) { _ in  // 1 Hz
+            if model.max_value() > 0 {
+                if model.max_scale > model.max_value() {
+                    model.max_scale = model.max_value()
+                }
+            }
+
             if exporting_map == false {
                 showing_progress = false
             }
