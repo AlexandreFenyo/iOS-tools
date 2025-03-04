@@ -480,14 +480,16 @@ struct StepByStepHeatMapView: View {
                     * (UPDATE_SPEED_DELAY - interval_speed)
                     / UPDATE_SPEED_DELAY + average_next
                     * interval_speed / UPDATE_SPEED_DELAY
-                if speed > model.max_scale {
-                    model.max_scale = speed
-                }
             } else {
                 speed = average_next
-                if speed > model.max_scale {
-                    model.max_scale = speed
-                }
+            }
+            
+            // max_scale = max ( speed, speed de chaque mesure prise )
+            
+            print("speed: \(speed) - max_scale: \(model.max_scale) - max_value: \(model.max_value())")
+            
+            if speed > model.max_scale {
+                model.max_scale = speed
             }
 
             // Manage heat maps

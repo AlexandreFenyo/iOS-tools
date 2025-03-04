@@ -24,20 +24,16 @@ public var step_by_step_exporting_map = false
 
 public class StepByStepViewModel : ObservableObject {
     static let shared = StepByStepViewModel()
-    static let step2String = [
-        "step 1/5: select your floor plan (click on the Select your floor plan green button)",
-        NSLocalizedString("Come back here after having started a TCP Flood Chargen action on a target (download speed testing).\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;\n- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org.", comment: "Come back here after having started a TCP Flood Chargen action on a target (download speed testing).\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;\n- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org."),
-        "step 2/5:\n- at the bottom left of the map, you can see a white access point blinking;\n- go near an access point;\n- click on its location on the map to move the white access point to your location on the map;\n- on the vertical left scale, you can see the real time network speed;\n- when the speed is stable, associate this value to your access point by clicking on Add an access point or probe.",
-        "step 3/5:\n- your first access point color has changed to black, this means it has been registered with the speed value at its location;\n- a new white access point is ready for a new value, at the bottom left of the map;\n- you may optionally want to take a measure far from an access point. In that case, click again on Add an access point or probe to change the image of the white access point to a probe one;\n- move to a new location to take a new measure;\n- click on the location on the map to move the white access point or probe to your location on the map;\n- when the speed on the vertical left scale is stable, associate this value to your location by clicking on Add an access point or probe.",
-        "step 4/4:\n- you see a triangle since you have reached three measures;\n- the last one is located on the top bottom white access point;\n- you can optionally click again on Add an access point or probe to replace the white access point with a white probe;\n- click on the map to change the location of this third measure;\n- try different positions of the horizontal sliders to adjust the map;\n- click on Add an access point or probe to associate the speed measure to your current location and add another white access point at the bottom left of the map;\n- when finished, remove the latest white access point or probe by enabling the preview switch."
-    ]
-    
     @Published var input_map_image: UIImage? = nil
     @Published var original_map_image: UIImage? = nil
     @Published var original_map_image_rotation: Bool? = nil
     @Published var idw_values = Array<IDWValue<Float>>()
     @Published var step = 0
     @Published var max_scale: Float = LOWEST_MAX_SCALE
+
+    func max_value() -> Float {
+       return idw_values.max(by: { $0.v < $1.v })?.v ?? 0
+   }
 }
 
 enum NavigationTarget: Hashable {
@@ -45,7 +41,7 @@ enum NavigationTarget: Hashable {
     case step_heat_map
 }
 
-faire descendre le max_scale s’il est supérieur au max des mesures aux endroits choisis
+// faire descendre le max_scale s’il est supérieur au max des mesures aux endroits choisis
 
 @MainActor
 class StepByStepPhotoController: NSObject {
