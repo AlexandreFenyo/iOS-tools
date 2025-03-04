@@ -182,7 +182,7 @@ struct StepByStepHeatMapView: View {
                             .frame(width: 100, height: 100)
                         NeedleView(size: 50, angle: $angle)
                             .offset(y: 20)
-                            .onReceive(timer_set_angle) { _ in  // 1 Hz
+                            .onReceive(timer_set_angle) { _ in  // 0.1 Hz
                                 var _angle: Double = 180
                                 _angle = _angle * Double(speed) / 250_000_000 - 90
                                 withAnimation {
