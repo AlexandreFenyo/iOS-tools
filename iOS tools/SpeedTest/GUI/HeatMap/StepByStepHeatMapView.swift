@@ -31,6 +31,8 @@ struct StepByStepHeatMapView: View {
     fileprivate let photoController: StepByStepPhotoController
     weak var step_by_step_view_controller: StepByStepViewController?
 
+    static let messages = [ "Click on the map on your location!", "Move and click\nagain!", "Continue to cover your whole map!", "Yes! Let's take a few measures more..." ]
+    
     @ObservedObject var model = StepByStepViewModel.shared
     
     @State private var showing_alert = false
@@ -49,6 +51,8 @@ struct StepByStepHeatMapView: View {
     @State private var last_loc_y: UInt16?
 
     @State private var idw_transient_value: IDWValue<Float>?  // = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+
+    @State private var display_steps = false
 
     @State private var power_scale: Float = POWER_SCALE_DEFAULT
     @State private var power_scale_radius: Float = POWER_SCALE_RADIUS_DEFAULT
@@ -83,9 +87,6 @@ struct StepByStepHeatMapView: View {
             step_by_step_view_controller: step_by_step_view_controller)
     }
 
-    public func cleanUp() {
-    }
-
     private func updateMap(debug_x: UInt16? = nil, debug_y: UInt16? = nil) {
         if exporting_map == true { return }
 
@@ -101,7 +102,8 @@ struct StepByStepHeatMapView: View {
             let values = Set(model.idw_values).union(transient_set).map {
                 IDWValue<UInt16>(
                     x: $0.x, y: $0.y,
-                    v: UInt16($0.v / max * Float(UInt16.max - 1)))
+                    v: ((Double($0.v) / Double(max) * Double(UInt16.max - 1) > Double(UInt16.max - 1)) ? (UInt16.max - 1) : UInt16($0.v / max * Float(UInt16.max - 1)))
+                )
             }
             _ = values.map { idw_image.addValue($0) }
         }
@@ -110,19 +112,19 @@ struct StepByStepHeatMapView: View {
             let new_vertices = idw_image.getValues().map {
                 CGPoint(x: Double($0.x), y: Double($0.y))
             }
-
+            
             let need_update_cache =
-                distance_cache == nil
-                || Set(new_vertices) != Set(distance_cache!.vertices)
+            distance_cache == nil
+            || Set(new_vertices) != Set(distance_cache!.vertices)
             cg_image_prev = cg_image_next
-
+            
             var new_distance_cache: DistanceCache?
             (cg_image_next, new_distance_cache) =
-                await idw_image.computeCGImageAsync(
-                    power_scale: power_scale,
-                    power_scale_radius: toggle_radius ? power_scale_radius : 0,
-                    debug_x: debug_x, debug_y: debug_y,
-                    distance_cache: need_update_cache ? nil : distance_cache)
+            await idw_image.computeCGImageAsync(
+                power_scale: power_scale,
+                power_scale_radius: toggle_radius ? power_scale_radius : 0,
+                debug_x: debug_x, debug_y: debug_y,
+                distance_cache: need_update_cache ? nil : distance_cache)
             if let new_distance_cache {
                 distance_cache = new_distance_cache
             }
@@ -151,49 +153,64 @@ struct StepByStepHeatMapView: View {
 
     var body: some View {
         LandscapePortraitView {
-
             VStack {
-                if model.step == 0 {
-                    Text("Indiquez où vous vous trouvez !").bold()//.padding()
-                    Button {
-                     //   model.step = 1
-//                        offset = 10
-                    } label: {
-                        Text("appuyer pour passer au step 1")
-                    }
- 
-                    
-                    
-                    
-                    ZStack {
-                        Image("press-on-screen-device").opacity(0.8)
-                        Image("press-on-screen-hand")
-                            .offset(x: offset, y: offset)
-                            .onAppear {
-                                startAnimationLoop()
-                                idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                Text(Self.messages[model.step])//.bold()//.padding()
+                .font(Font.system(size: 12).bold())
+                .foregroundColor(.white)
+                .padding(5.0)
 
-                            }//.background(.yellow)
+                .background(.gray)
+                .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
+                .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
+
+                Spacer()
+                
+                HStack {
+                    if model.step == 0 {
+                        ZStack {
+                            Image("press-on-screen-device").opacity(0.8)
+                            Image("press-on-screen-hand")
+                                .offset(x: offset, y: offset)
+                                .onAppear {
+                                    startAnimationLoop()
+                                    idw_transient_value = IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                                }
+                        }
+                        .transition(.opacity)
+                    } else {
                         
+                        VStack {
+                            Image(systemName: "trash").resizable().frame(width: 30, height: 30).foregroundColor(Color(UIColor.systemBlue))
+                            Text("Reset all").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                        }.padding()
+
+                        Spacer().frame(width: 10)
+                        ZStack {
+                            SpeedometerView()
+                                .frame(width: 100, height: 100)
+                            NeedleView(size: 50, angle: $angle)
+                                .offset(y: 20)
+                                .onReceive(timer_set_angle) { _ in  // 0.1 Hz
+                                    var _angle: Double = 180
+                                    _angle = _angle * Double(speed) / 250_000_000 - 90
+                                    withAnimation {
+                                        angle = _angle
+                                    }
+                                }
+                        }//.scaleEffect(1.2)
+                            .transition(.opacity)
+                        Spacer().frame(width: 10)
+                        
+                        VStack {
+                            Image(systemName: "square.and.arrow.up").resizable().frame(width: 25, height: 30).foregroundColor(Color(UIColor.systemBlue))
+                            Text("Share your map").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                        }.padding()
+
+
                     }
-                    
-                    ZStack {
-                        SpeedometerView()
-                            .frame(width: 100, height: 100)
-                        NeedleView(size: 50, angle: $angle)
-                            .offset(y: 20)
-                            .onReceive(timer_set_angle) { _ in  // 0.1 Hz
-                                var _angle: Double = 180
-                                _angle = _angle * Double(speed) / 250_000_000 - 90
-                                withAnimation {
-                                    angle = _angle
-                              }
-                            }
-                    }
-                    
-                } else {
-                    Text("step non traité")
                 }
+                .animation(.easeInOut(duration: 0.8), value: model.step)
+
             }
 
             Spacer()
@@ -283,47 +300,43 @@ struct StepByStepHeatMapView: View {
                                             scale_image, scale: 1.0
                                     ).resizable().frame(
                                         width: SCALE_WIDTH)
-
+                                    
                                     if model.max_scale != 0 {
-                                        let foo: Float =
-                                            speed / model.max_scale
-                                            * (Float(
-                                                cg_image_next!.height)
-                                                - 1.0)
+                                        let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)
                                         let bar = CGFloat(foo)
-
+                                        
                                         Image(systemName: "restart")
                                             .position(
                                                 x: SCALE_WIDTH,
                                                 y: speed
-                                                    <= model.max_scale
-                                                    ? geom.size.height
-                                                        - bar
-                                                        * geom.size
-                                                        .width
-                                                        / CGFloat(
-                                                            cg_image_next!
-                                                                .width)
-                                                    : 0)
-
-                                        let foo2 =
-                                            speed <= model.max_scale
-                                            ? geom.size.height - bar
-                                                * geom.size.width
+                                                <= model.max_scale
+                                                ? geom.size.height
+                                                - bar
+                                                * geom.size
+                                                    .width
                                                 / CGFloat(
-                                                    cg_image_next!.width
-                                                ) + 3 : 0
-
+                                                    cg_image_next!
+                                                        .width)
+                                                : 0)
+                                        
+                                        let foo2 =
+                                        speed <= model.max_scale
+                                        ? geom.size.height - bar
+                                        * geom.size.width
+                                        / CGFloat(
+                                            cg_image_next!.width
+                                        ) + 3 : 0
+                                        
                                         Text("\(UInt64(speed)) bit/s")
                                             .font(
                                                 .system(size: 8)
-                                                    .monospacedDigit()
+                                                .monospacedDigit()
                                             )
-                                            //.frame(maxWidth: .infinity, alignment: .trailing)
+                                        //.frame(maxWidth: .infinity, alignment: .trailing)
                                             .position(
                                                 x: SCALE_WIDTH + 50,
                                                 y: foo2)
-
+                                        
                                         if foo2 >= 20 {
                                             Image(systemName: "restart")
                                                 .position(
@@ -333,7 +346,7 @@ struct StepByStepHeatMapView: View {
                                                 "\(UInt64(model.max_scale)) bit/s"
                                             ).font(
                                                 .system(size: 8)
-                                                    .monospacedDigit()
+                                                .monospacedDigit()
                                             )
                                             .position(
                                                 x: SCALE_WIDTH + 50,
@@ -409,6 +422,9 @@ struct StepByStepHeatMapView: View {
 
                                         if model.idw_values.contains(idw_transient_value!) == false {
                                             model.idw_values.append(idw_transient_value!)
+                                            if model.step < 3 {
+                                                model.step += 1
+                                            }
                                         }
 
                                         updateMap(
@@ -423,8 +439,7 @@ struct StepByStepHeatMapView: View {
             }
         }
         // Couleur de fond de ce qui est spécifique à la fenêtre, c'est à dire le fond des infos en haut et autour de la carte
-        //        .background(Color(COLORS.right_pannel_scroll_bg))
-        .background(.white)
+        .background(Color(COLORS.right_pannel_scroll_bg))
 
         .cornerRadius(15).padding(10)
         .sheet(isPresented: $showing_alert) {
@@ -467,19 +482,19 @@ struct StepByStepHeatMapView: View {
                     * (UPDATE_SPEED_DELAY - interval_speed)
                     / UPDATE_SPEED_DELAY + average_next
                     * interval_speed / UPDATE_SPEED_DELAY
+                if speed > 1_000_000_000 {
+                    print("SPEED1: \(speed)")
+                }
             } else {
                 speed = average_next
+                if speed > 1_000_000_000 {
+                    print("SPEED2: \(speed)")
+                }
             }
 
             if speed > model.max_scale {
                 model.max_scale = speed
             }
-
-            /*
-            //angle = speed / 100_000_000
-            let _angle: Double = 180 * speed / 250_000_000 - 90
-            angle = _angle
-            */
             
             // Manage heat maps
             let interval_image = Float(
@@ -491,16 +506,12 @@ struct StepByStepHeatMapView: View {
             } else {
                 image_update_ratio = 1
             }
-
-            // update speedometer
-            /*
-            var _angle: Double = 180
-            _angle = _angle * Double(speed) / 250_000_000 - 90
-            withAnimation {
-                angle = _angle
-          }*/
         }
         .onReceive(timer_get_average) { _ in  // 1 Hz
+            if model.step > 0 {
+                display_steps.toggle()
+            }
+
             if model.max_value() > 0 {
                 if model.max_scale > model.max_value() {
                     model.max_scale = model.max_value()
