@@ -121,12 +121,10 @@ struct StepByStepHeatMapView: View {
             cg_image_prev = cg_image_next
             
             var new_distance_cache: DistanceCache?
+            print("BEGIN COMPUTE")
             (cg_image_next, new_distance_cache) =
-            await idw_image.computeCGImageAsync(
-                power_scale: power_scale,
-                power_scale_radius: toggle_radius ? power_scale_radius : 0,
-                debug_x: debug_x, debug_y: debug_y,
-                distance_cache: need_update_cache ? nil : distance_cache)
+            await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: need_update_cache ? nil : distance_cache)
+            print("END COMPUTE")
             if let new_distance_cache {
                 distance_cache = new_distance_cache
             }
@@ -399,6 +397,7 @@ struct StepByStepHeatMapView: View {
                                                     }
                                                 }
                                                 
+                                                print("ICI")
                                                 updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                             }
                                         }
@@ -493,6 +492,7 @@ struct StepByStepHeatMapView: View {
                         if idw_transient_value != nil {
                             idw_transient_value = IDWValue(x: idw_transient_value!.x, y: idw_transient_value!.y, v: speed, type: idw_transient_value!.type)
                         }
+                        print("ICI2")
                         updateMap()
                     }
                 }
