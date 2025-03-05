@@ -318,7 +318,7 @@ struct StepByStepHeatMapView: View {
                                             ForEach(0..<256) { index in
                                                 if index < values.count {
                                                     let idw_value: IDWValue = values[index]
-                                                    Image( Name: idw_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right"
+                                                    Image(systemName: idw_value.type == .ap ? "antenna.radiowaves.left.and.right" : "dot.radiowaves.left.and.right"
                                                     )
                                                     .position(x: CGFloat(idw_value.x) * geom.size.width / CGFloat(cg_image_prev!.width),
                                                               y: geom.size.height - CGFloat(idw_value.y) * geom.size.width / CGFloat(cg_image_prev!.width))
@@ -416,7 +416,7 @@ struct StepByStepHeatMapView: View {
                         Text("Image rotation applied").font(.title).padding(20)
                         Spacer()
                         Text("The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll.")
-                        .font(.caption)
+                            .font(.caption)
                         Image(uiImage: model.input_map_image!)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -424,7 +424,7 @@ struct StepByStepHeatMapView: View {
                             .padding(5)
                         Spacer()
                         Button("Continue", action: { showing_alert.toggle() })
-                        .padding(20)
+                            .padding(20)
                     }
                 }
                 .background(Color(COLORS.right_pannel_scroll_bg))  //.background(.red)//.background(Color(COLORS.right_pannel_bg))
@@ -476,9 +476,7 @@ struct StepByStepHeatMapView: View {
                     }
                     
                     Task {
-                        if let step_by_step_view_controller =
-                            photoController.step_by_step_view_controller
-                        {
+                        if let step_by_step_view_controller = photoController.step_by_step_view_controller {
                             average_last_update = Date()
                             average_prev = average_next
                             average_next = step_by_step_view_controller
