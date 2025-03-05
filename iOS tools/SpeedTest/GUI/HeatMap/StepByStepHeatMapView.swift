@@ -31,7 +31,7 @@ struct StepByStepHeatMapView: View {
     fileprivate let photoController: StepByStepPhotoController
     weak var step_by_step_view_controller: StepByStepViewController?
 
-    static let messages = [ "Click on the map on your location!", "Move and click\nagain!", "Continue to cover your whole map!", "Yes! Let's take a few measures more..." ]
+    static let messages = [ "Click on the map on your location!", "Move and click\nagain!", "Continue to cover your whole map!", "Yes! Let's take a few measures more...", "When you want to compute the highres map, click on Share your map. To restart from the beginning, click on Reset all!" ]
     
     @ObservedObject var model = StepByStepViewModel.shared
     
@@ -152,7 +152,15 @@ struct StepByStepHeatMapView: View {
     let scale_image = IDWImage.getScaleImage(height: 60)!
 
     var body: some View {
+        
+            LoadingView(showing_progress: $showing_progress) {
+                VStack {
+
+        
         LandscapePortraitView {
+
+
+            
             VStack {
                 Text(Self.messages[model.step])//.bold()//.padding()
                 .font(Font.system(size: 12).bold())
@@ -180,8 +188,20 @@ struct StepByStepHeatMapView: View {
                     } else {
                         
                         VStack {
-                            Image(systemName: "trash").resizable().frame(width: 30, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                            Text("Reset all").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                            Button {
+                                model.idw_values = Array<IDWValue>()
+                                distance_cache = nil
+                                model.max_scale = LOWEST_MAX_SCALE
+                                power_scale = POWER_SCALE_DEFAULT
+                                power_scale_radius = POWER_SCALE_RADIUS_DEFAULT
+                                idw_transient_value = nil // IDWValue<Float>(x: NEW_PROBE_X, y: NEW_PROBE_Y, v: NEW_PROBE_VALUE, type: .ap)
+                                model.step = 0
+                            } label: {
+                                VStack {
+                                    Image(systemName: "trash").resizable().frame(width: 30, height: 30).foregroundColor(Color(UIColor.systemBlue))
+                                    Text("Reset all").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                }
+                            }
                         }.padding()
 
                         Spacer().frame(width: 10)
@@ -202,8 +222,73 @@ struct StepByStepHeatMapView: View {
                         Spacer().frame(width: 10)
                         
                         VStack {
-                            Image(systemName: "square.and.arrow.up").resizable().frame(width: 25, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                            Text("Share your map").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                            Button {
+                                // Duplicated code with HeatMapSwiftUIView
+                                
+                                    if model.original_map_image == nil || model.max_scale == 0 { return }
+                                    
+                                    showing_progress.toggle()
+                                    exporting_map = true
+                                    
+                                    let image = model.original_map_image!
+                                    let image_rotation = model.original_map_image_rotation!
+                                    let width = image.cgImage!.width
+                                    let height = image.cgImage!.height
+                                    let screen_width = model.input_map_image?.cgImage!.width
+                                    let screen_height = model.input_map_image?.cgImage!.height
+                                    let factor_x = Float(width) / Float(screen_width!)
+                                    let factor_y = Float(height) / Float(screen_height!)
+                                    var idw_image = IDWImage(width: UInt16(width), height: UInt16(height))
+                                    let max = model.max_scale
+                                    let values = Set(model.idw_values).map {
+                                        IDWValue<UInt16>(x: UInt16(Float($0.x) * factor_x), y: UInt16(Float($0.y) * factor_y), v: UInt16($0.v / max * Float(UInt16.max - 1)))
+                                    }
+                                    _ = values.map { idw_image.addValue($0) }
+                                    
+                                    Task {
+                                        let (cg_image, _) = await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: power_scale_radius * factor_x, distance_cache: nil)
+                                        
+                                        let ci_image_map = CIImage(cgImage: cg_image!)
+                                        let ci_image_map_ext = ci_image_map.extent
+                                        let ci_image_clamped = ci_image_map.clampedToExtent()
+                                        let ci_context_blur = CIContext()
+                                        let blur = CIFilter(name: "CIGaussianBlur")!
+                                        blur.setValue(ci_image_clamped, forKey: kCIInputImageKey)
+                                        blur.setValue(power_blur_radius * CGFloat(factor_x), forKey: kCIInputRadiusKey)
+                                        let blurred_image = blur.outputImage
+                                        let new_blur_cg_image = ci_context_blur.createCGImage(blurred_image!, from: ci_image_map_ext)
+                                        let blur_image = UIImage(cgImage: new_blur_cg_image!)
+                                        let ci_image_original = CIImage(cgImage: image.cgImage!)
+                                        let ci_image_original_ext = ci_image_original.extent
+                                        let ci_context_grayscale = CIContext()
+                                        let grayscale = CIFilter(name: "CIPhotoEffectNoir")!
+                                        grayscale.setValue(ci_image_original, forKey: kCIInputImageKey)
+                                        var gray_image = grayscale.outputImage
+                                        
+                                        if image_rotation {
+                                            gray_image = gray_image?.oriented(CGImagePropertyOrientation.upMirrored)
+                                        }
+                                        
+                                        let new_grayscale_cg_image = ci_context_grayscale.createCGImage(gray_image!, from: ci_image_original_ext)
+                                        let grayscale_image = UIImage(cgImage: new_grayscale_cg_image!)
+                                        
+                                        let size = CGSize(width: cg_image!.width, height: cg_image!.height)
+                                        UIGraphicsBeginImageContext(size)
+                                        let area_size = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+                                        blur_image.draw(in: area_size,blendMode: .normal, alpha: 1.0)
+                                        grayscale_image.draw(in: area_size, blendMode: .normal, alpha: 0.2)
+                                        let merged_image = UIGraphicsGetImageFromCurrentImageContext()!
+                                        UIGraphicsEndImageContext()
+                                        
+                                        photoController.saveImage(image: merged_image)
+                                    }
+                                
+                            } label: {
+                                VStack {
+                                    Image(systemName: "square.and.arrow.up").resizable().frame(width: 25, height: 30).foregroundColor(Color(UIColor.systemBlue))
+                                    Text("Share your map").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                }
+                            }
                         }.padding()
 
 
@@ -422,7 +507,7 @@ struct StepByStepHeatMapView: View {
 
                                         if model.idw_values.contains(idw_transient_value!) == false {
                                             model.idw_values.append(idw_transient_value!)
-                                            if model.step < 3 {
+                                            if model.step < Self.messages.count - 1 {
                                                 model.step += 1
                                             }
                                         }
@@ -484,11 +569,13 @@ struct StepByStepHeatMapView: View {
                     * interval_speed / UPDATE_SPEED_DELAY
                 if speed > 1_000_000_000 {
                     print("SPEED1: \(speed)")
+                    print("SPEED12: \(speed)")
                 }
             } else {
                 speed = average_next
                 if speed > 1_000_000_000 {
                     print("SPEED2: \(speed)")
+                    print("SPEED22: \(speed)")
                 }
             }
 
@@ -548,5 +635,7 @@ struct StepByStepHeatMapView: View {
                 updateMap()
             }
         }
+    }
+            }
     }
 }
