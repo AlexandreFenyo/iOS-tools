@@ -48,8 +48,10 @@
 "Add new probe" = "Ajouter une sonde";
 "Save measure" = "Sauvegarder la mesure";
 "Undo" = "Annuler";
-"Reset all"= "Tout effacer";
+"Reset all" = "Tout effacer";
+"Reset\nall" = "Tout\neffacer";
 "Share your map" = "Partagez votre carte";
+"Share\nyour map" = "Partagez\nvotre carte";
 "Hide map" = "Masquer la carte";
 "ALL" = "TOUS";
 "Scan local network" = "Parcourir le réseau local";
@@ -119,3 +121,8 @@
 "Step-by-step easy mode" = "Mode pas-à-pas";
 "Choose a predefined floor plan or load an image" = "Choisissez un plan prédéfini ou chargez une image";
 "Load an image" = "Charger une image";
+"Click on the map on your location!" = "Cliquez sur la carte pour indiquer votre position !";
+"Move and click again!" = "Déplacez-vous et cliquez à nouveau !";
+"Continue to cover your whole map!" = "Continuez jusqu'à avoir rempli toute la carte !";
+"Yes! Let's take a few measurements more..." = "Bravo ! Prenez encore quelques mesures...";
+"When you want to compute the highres map, click on the Share icon. To restart from the beginning, click on the trash bin icon!" = "Quand vous voudrez produire la carte haute résolution, cliquez sur l'icône de partage. Pour redémarrer depuis le début, cliquez sur l'icône de la corbeille.";

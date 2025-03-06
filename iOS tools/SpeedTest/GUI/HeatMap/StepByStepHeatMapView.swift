@@ -33,7 +33,7 @@ struct StepByStepHeatMapView: View {
 
     var compute_semaphore = ComputeSemaphore()
     
-    static let messages = [ "Click on the map on your location!", "Move and click\nagain!", "Continue to cover your whole map!", "Yes! Let's take a few measures more...", "When you want to compute the highres map, click on Share your map. To restart from the beginning, click on Reset all!" ]
+    static let messages = [ "Click on the map on your location!", "Move and click again!", "Continue to cover your whole map!", "Yes! Let's take a few measurements more...", "When you want to compute the highres map, click on the Share icon. To restart from the beginning, click on the trash bin icon!" ]
     
     @ObservedObject var model = StepByStepViewModel.shared
     
@@ -169,6 +169,10 @@ struct StepByStepHeatMapView: View {
                             .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
                         
                         Spacer()
+
+                        if model.step != 0 {
+                            Image(systemName: "steeringwheel.road.lane.dashed").resizable().scaledToFit().opacity(0.05).transition(.opacity)
+                        }
                         
                         HStack {
                             if model.step == 0 {
@@ -195,7 +199,7 @@ struct StepByStepHeatMapView: View {
                                     } label: {
                                         VStack {
                                             Image(systemName: "trash").resizable().frame(width: 30, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                                            Text("Reset all").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                            Text("Reset\nall").fixedSize().multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
                                         }
                                     }
                                 }.padding()
@@ -288,7 +292,7 @@ struct StepByStepHeatMapView: View {
                                     } label: {
                                         VStack {
                                             Image(systemName: "square.and.arrow.up").resizable().frame(width: 25, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                                            Text("Share your map").multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                            Text("Share\nyour map").fixedSize().multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
                                         }
                                     }
                                 }.padding()
@@ -504,7 +508,6 @@ struct StepByStepHeatMapView: View {
                         if idw_transient_value != nil {
                             idw_transient_value = IDWValue(x: idw_transient_value!.x, y: idw_transient_value!.y, v: speed, type: idw_transient_value!.type)
                         }
-                        print("UPDATE")
                         updateMap()
                     }
                 }
