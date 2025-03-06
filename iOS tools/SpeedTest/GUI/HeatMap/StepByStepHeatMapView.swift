@@ -160,10 +160,10 @@ struct StepByStepHeatMapView: View {
                 LandscapePortraitView {
                     VStack {
                         Text(NSLocalizedString(Self.messages[model.step], comment: Self.messages[model.step]))//.bold()//.padding()
+                            .frame(maxWidth: 300)
                             .font(Font.system(size: 12).bold())
                             .foregroundColor(.white)
                             .padding(5.0)
-                        
                             .background(.gray)
                             .cornerRadius(15).padding(.bottom).padding(.leading).padding(.trailing)
                             .opacity(display_steps ? 1.0 : 0.8).animation(.default, value: display_steps)
@@ -171,7 +171,10 @@ struct StepByStepHeatMapView: View {
                         Spacer()
 
                         if model.step != 0 {
-                            Image(systemName: "steeringwheel.road.lane.dashed").resizable().scaledToFit().opacity(0.05).transition(.opacity)
+                            if horizontalSizeClass == .compact {
+                                Image(systemName: "steeringwheel.road.lane.dashed").resizable().scaledToFit().opacity(0.05)
+                                    .transition(.opacity)
+                            }
                         }
                         
                         HStack {
