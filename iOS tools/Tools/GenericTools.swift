@@ -50,6 +50,23 @@ extension String {
     }
 }
 
+actor ComputeSemaphore {
+    private var is_active = false
+
+    func release() {
+        is_active = false
+    }
+    
+    // Test and Set
+    func setActiveIfNot() -> Bool {
+        if is_active == false {
+            is_active = true
+            return true
+        }
+        return false
+    }
+}
+
 final class GenericTools : AutoTrace {
 //    public static var plane_node : SCNChartNode?
     public static var chart_node : SKChartNode?

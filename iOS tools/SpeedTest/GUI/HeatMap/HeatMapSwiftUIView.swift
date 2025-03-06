@@ -123,7 +123,9 @@ struct HeatMapSwiftUIView: View {
 
     private let photoController: HeatMapPhotoController
     weak var heatmap_view_controller: HeatMapViewController?
-    
+
+    var compute_semaphore = ComputeSemaphore()
+
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
     @State private var showing_alert = false
@@ -207,6 +209,13 @@ struct HeatMapSwiftUIView: View {
         }
         
         Task {
+            // On ne rentre pas deux fois en même temps dans cette tâche lourde pour le CPU.
+            // On peut se le permettre car elle est appelée toutes les secondes.
+            let cpu_available = await compute_semaphore.setActiveIfNot()
+            if cpu_available == false {
+                return
+            }
+
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
             
             let need_update_cache = distance_cache == nil || Set(new_vertices) != Set(distance_cache!.vertices)
@@ -219,6 +228,8 @@ struct HeatMapSwiftUIView: View {
             }
             image_last_update = Date()
             image_update_ratio = 0
+            
+            await compute_semaphore.release()
         }
     }
     

@@ -30,6 +30,8 @@ struct StepByStepHeatMapView: View {
     
     fileprivate let photoController: StepByStepPhotoController
     weak var step_by_step_view_controller: StepByStepViewController?
+
+    var compute_semaphore = ComputeSemaphore()
     
     static let messages = [ "Click on the map on your location!", "Move and click\nagain!", "Continue to cover your whole map!", "Yes! Let's take a few measures more...", "When you want to compute the highres map, click on Share your map. To restart from the beginning, click on Reset all!" ]
     
@@ -37,7 +39,7 @@ struct StepByStepHeatMapView: View {
     
     @State private var showing_alert = false
     @State private var showing_progress = false
-    
+
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
@@ -45,6 +47,8 @@ struct StepByStepHeatMapView: View {
     @State private var image_last_update = Date()
     @State private var cg_image_prev: CGImage?
     @State private var cg_image_next: CGImage?
+    
+    // Permet d'animer le fondu enchaîné entre les deux cartes cg_image_prev et cg_image_next
     @State private var image_update_ratio: Float = 0
     
     @State private var last_loc_x: UInt16?
@@ -68,28 +72,23 @@ struct StepByStepHeatMapView: View {
     // tous les centièmes de seconde, speed est mis à jour comme un ratio entre average_prev et average_next
     @State private var speed: Float = 0
     
+    // Offset pour le déplacement de l'image d'une main
     @State private var offset: CGFloat = 0
+
+    // Angle de l'aiguille du compteur de vitesse
+    @State private var angle: Double = -90
     
-    @State private var angle: Double = 20
-    
-    let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common)
-        .autoconnect()
-    let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common)
-        .autoconnect()
-    let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common)
-        .autoconnect()
-    let timer_set_angle = Timer.publish(every: 0.1, on: .main, in: .common)
-        .autoconnect()
+    let timer_get_average = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
+    let timer_create_map = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    let timer_set_angle = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     
     init(_ step_by_step_view_controller: StepByStepViewController) {
         self.step_by_step_view_controller = step_by_step_view_controller
-        self.photoController = StepByStepPhotoController(
-            step_by_step_view_controller: step_by_step_view_controller)
+        self.photoController = StepByStepPhotoController(step_by_step_view_controller: step_by_step_view_controller)
     }
-    
+
     private func updateMap(debug_x: UInt16? = nil, debug_y: UInt16? = nil) {
-        print("UPDATE")
-        
         if exporting_map == true { return }
         
         let width = UInt16(model.input_map_image!.cgImage!.width)
@@ -102,34 +101,38 @@ struct StepByStepHeatMapView: View {
         
         if max != 0 {
             let values = Set(model.idw_values).union(transient_set).map {
-                IDWValue<UInt16>(
-                    x: $0.x, y: $0.y,
-                    v: ((Double($0.v) / Double(max) * Double(UInt16.max - 1) > Double(UInt16.max - 1)) ? (UInt16.max - 1) : UInt16($0.v / max * Float(UInt16.max - 1)))
+                IDWValue<UInt16>(x: $0.x, y: $0.y,
+                                 v: ((Double($0.v) / Double(max) * Double(UInt16.max - 1) > Double(UInt16.max - 1)) ? (UInt16.max - 1) : UInt16($0.v / max * Float(UInt16.max - 1)))
                 )
             }
             _ = values.map { idw_image.addValue($0) }
         }
         
         Task {
+            // On ne rentre pas deux fois en même temps dans cette tâche lourde pour le CPU.
+            // On peut se le permettre car elle est appelée toutes les secondes.
+            let cpu_available = await compute_semaphore.setActiveIfNot()
+            if cpu_available == false {
+                return
+            }
+            
             let new_vertices = idw_image.getValues().map {
                 CGPoint(x: Double($0.x), y: Double($0.y))
             }
             
-            let need_update_cache =
-            distance_cache == nil
-            || Set(new_vertices) != Set(distance_cache!.vertices)
+            let need_update_cache = distance_cache == nil || Set(new_vertices) != Set(distance_cache!.vertices)
             cg_image_prev = cg_image_next
             
             var new_distance_cache: DistanceCache?
-            print("BEGIN COMPUTE")
             (cg_image_next, new_distance_cache) =
             await idw_image.computeCGImageAsync(power_scale: power_scale, power_scale_radius: toggle_radius ? power_scale_radius : 0, debug_x: debug_x, debug_y: debug_y, distance_cache: need_update_cache ? nil : distance_cache)
-            print("END COMPUTE")
             if let new_distance_cache {
                 distance_cache = new_distance_cache
             }
             image_last_update = Date()
             image_update_ratio = 0
+            
+            await compute_semaphore.release()
         }
     }
     
@@ -180,7 +183,6 @@ struct StepByStepHeatMapView: View {
                                 }
                                 .transition(.opacity)
                             } else {
-                                
                                 VStack {
                                     Button {
                                         model.idw_values = Array<IDWValue>()
@@ -206,6 +208,12 @@ struct StepByStepHeatMapView: View {
                                         .onReceive(timer_set_angle) { _ in  // 0.1 Hz
                                             var _angle: Double = 180
                                             _angle = _angle * Double(speed) / 250_000_000 - 90
+                                            if _angle < -90 {
+                                                _angle = -90
+                                            }
+                                            if _angle > 90 {
+                                                _angle = 90
+                                            }
                                             withAnimation {
                                                 angle = _angle
                                             }
@@ -216,6 +224,7 @@ struct StepByStepHeatMapView: View {
                                 
                                 VStack {
                                     Button {
+                                        // Exporter la heatmap
                                         // Duplicated code with HeatMapSwiftUIView
                                         
                                         if model.original_map_image == nil || model.max_scale == 0 { return }
@@ -292,15 +301,15 @@ struct StepByStepHeatMapView: View {
                     
                     if model.input_map_image != nil {
                         ZStack {
+                            // Affiche cg_image_prev, en bas du ZStack
                             if cg_image_prev != nil {
                                 Image(decorative: cg_image_prev!, scale: 1.0)
                                     .resizable()
-                                    .blur(
-                                        radius: power_blur_radius, opaque: true
-                                    )
+                                    .blur(radius: power_blur_radius, opaque: true)
                                     .clipped()
                                     .aspectRatio(contentMode: .fit)
                                     .overlay {
+                                        // Affiche les mesures
                                         GeometryReader { geom in
                                             if let idw_transient_value, idw_transient_value.x > 0, idw_transient_value.y > 0 {
                                                 Image(systemName: "dot.radiowaves.left.and.right")
@@ -325,14 +334,17 @@ struct StepByStepHeatMapView: View {
                                         }
                                     }
                             }
-                            
+                            // Affiche cg_image_next au dessus de cg_image_prev
                             if cg_image_next != nil {
                                 Image(decorative: cg_image_next!, scale: 1.0)
                                     .resizable()
                                     .blur(radius: power_blur_radius, opaque: true)
                                     .clipped()
-                                    .aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
+                                    .aspectRatio(contentMode: .fit)
+                                    .opacity(Double(image_update_ratio))
+                                    // Affiche l'échelle
                                     .overlay {
+                                        // Affiche les valeurs de débits sur l'échelle
                                         GeometryReader { geom in
                                             Image(decorative: scale_image, scale: 1.0)
                                                 .resizable()
@@ -368,6 +380,7 @@ struct StepByStepHeatMapView: View {
                                 .resizable().aspectRatio(contentMode: .fit)
                                 .grayscale(1.0).opacity(0.2)
                         }
+                        // Gérer les clicks sur l'écran pour ajouter une mesure
                         .overlay {
                             GeometryReader { geom in
                                 Rectangle().foregroundColor(.gray).opacity(0.01)
@@ -397,7 +410,6 @@ struct StepByStepHeatMapView: View {
                                                     }
                                                 }
                                                 
-                                                print("ICI")
                                                 updateMap(debug_x: last_loc_x, debug_y: last_loc_y)
                                             }
                                         }
@@ -434,16 +446,16 @@ struct StepByStepHeatMapView: View {
                     let UPDATE_SPEED_DELAY: Float = 1.0
                     if interval_speed < UPDATE_SPEED_DELAY {
                         speed = average_prev * (UPDATE_SPEED_DELAY - interval_speed) / UPDATE_SPEED_DELAY + average_next * interval_speed / UPDATE_SPEED_DELAY
+                        /*
                         if speed > 1_000_000_000 {
                             print("SPEED1: \(speed)")
-                            print("SPEED12: \(speed)")
-                        }
+                        }*/
                     } else {
                         speed = average_next
+                        /*
                         if speed > 1_000_000_000 {
                             print("SPEED2: \(speed)")
-                            print("SPEED22: \(speed)")
-                        }
+                        }*/
                     }
                     
                     if speed > model.max_scale {
@@ -492,7 +504,7 @@ struct StepByStepHeatMapView: View {
                         if idw_transient_value != nil {
                             idw_transient_value = IDWValue(x: idw_transient_value!.x, y: idw_transient_value!.y, v: speed, type: idw_transient_value!.type)
                         }
-                        print("ICI2")
+                        print("UPDATE")
                         updateMap()
                     }
                 }
