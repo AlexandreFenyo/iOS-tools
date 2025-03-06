@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -31,6 +31,9 @@
 		5D25C8482CB029F6008D858D /* ModalPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8472CB029F6008D858D /* ModalPopUp.swift */; };
 		5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */; };
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
+		5D2E6D742CDB7E1F00372A11 /* MyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E6D732CDB7E1F00372A11 /* MyTabBarController.swift */; };
+		5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */; };
+		5D2F34F22CD04217006529DD /* press4.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D2F34F12CD04217006529DD /* press4.psd */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
 		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
@@ -72,6 +75,7 @@
 		5D65EE57296381780099871C /* app-icon-180.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE47296381780099871C /* app-icon-180.png */; };
 		5D65EE58296381780099871C /* app-icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE48296381780099871C /* app-icon-20.png */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
+		5D7289F12CC5728F00DD4B8A /* OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7289F02CC5728F00DD4B8A /* OrientationView.swift */; };
 		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
@@ -172,6 +176,9 @@
 		5D25C8472CB029F6008D858D /* ModalPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPopUp.swift; sourceTree = "<group>"; };
 		5D25C8492CB029FC008D858D /* LandscapePortraitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePortraitView.swift; sourceTree = "<group>"; };
 		5D2DFC332902DBBD0080A9EA /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "iOS tools/SpeedTest/Settings.bundle"; sourceTree = SOURCE_ROOT; };
+		5D2E6D732CDB7E1F00372A11 /* MyTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTabBarController.swift; sourceTree = "<group>"; };
+		5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepHeatMapView.swift; sourceTree = "<group>"; };
+		5D2F34F12CD04217006529DD /* press4.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = press4.psd; sourceTree = "<group>"; };
 		5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTraces.swift; sourceTree = "<group>"; };
 		5D2FFB3B2B543A38006D1F57 /* ToolsDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToolsDataModel.xcdatamodel; sourceTree = "<group>"; };
 		5D37D20A29734FB700578E59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -228,6 +235,7 @@
 		5D65EE62296491DF0099871C /* IMG_0069.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0069.PNG; sourceTree = "<group>"; };
 		5D65EE63296491DF0099871C /* IMG_0071.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0071.PNG; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		5D7289F02CC5728F00DD4B8A /* OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationView.swift; sourceTree = "<group>"; };
 		5D78EF6D290FC56400842B76 /* IDWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDWView.swift; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -329,6 +337,11 @@
 		FE1B554AAEFF369AC974FA67 /* Pods-iOS tools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.release.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5D7289E92CC570D200DD4B8A /* plans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = plans; sourceTree = "<group>"; };
+		5D8503B22CFE572D00B0D720 /* Speedometer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Speedometer; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		5D1351E8208538DB00E4A76D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -413,6 +426,7 @@
 		5D13521E20853BB400E4A76D /* Tools */ = {
 			isa = PBXGroup;
 			children = (
+				5D8503B22CFE572D00B0D720 /* Speedometer */,
 				5D2FFB3D2B5445E9006D1F57 /* Persistent */,
 				5DE22F7829BDC20C002D9BEE /* Interman */,
 				5DF21515212D7C13002B7603 /* genericTools.h */,
@@ -442,6 +456,7 @@
 				5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */,
 				5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */,
 				5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */,
+				5D7289F02CC5728F00DD4B8A /* OrientationView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -449,6 +464,7 @@
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				5D2F34F12CD04217006529DD /* press4.psd */,
 				5D536A532CB6C30500CB7474 /* design-manual-6.png */,
 				5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */,
 				5D536A512CB59C1C00CB7474 /* design-auto-3.psd */,
@@ -531,6 +547,7 @@
 		5D463FBA2A3722A500DA77C4 /* Artwork */ = {
 			isa = PBXGroup;
 			children = (
+				5D7289E92CC570D200DD4B8A /* plans */,
 				5DD5ABAD2AC3099B001917EB /* icons */,
 				5DD5ABAC2AC3097D001917EB /* help */,
 				5D3BA6512A5C30E6005D11E0 /* 3D models */,
@@ -618,6 +635,7 @@
 				5DE8DC41295074BB00FAE74D /* Graham.swift */,
 				5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */,
 				5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */,
+				5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */,
 			);
 			path = HeatMap;
 			sourceTree = "<group>";
@@ -634,6 +652,7 @@
 				5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */,
 				5DE9CE9821501E5C006F3BC0 /* RoundedCornerView.swift */,
 				5D42E784216DE6000062A654 /* MasterSectionHeader.swift */,
+				5D2E6D732CDB7E1F00372A11 /* MyTabBarController.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -790,6 +809,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				5D8503B22CFE572D00B0D720 /* Speedometer */,
+			);
 			name = "iOS tools";
 			packageProductDependencies = (
 				5D1D55D82BBE18E600BC3D56 /* iOSToolsMacros */,
@@ -884,6 +906,7 @@
 				5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
+				5D2F34F22CD04217006529DD /* press4.psd in Resources */,
 				5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
@@ -987,6 +1010,7 @@
 				5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
+				5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */,
 				5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */,
 				5D7C6CA5210A1B9C0095FAD0 /* MasterIPViewController.swift in Sources */,
 				5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */,
@@ -1018,10 +1042,12 @@
 				5DC62F7D290AD29800C4B58E /* HeatMapViewController.swift in Sources */,
 				5DEDFB6C29C7195600052FB7 /* Interman3DModel.swift in Sources */,
 				5D945D0C2100CF51007E4844 /* NetTools.swift in Sources */,
+				5D2E6D742CDB7E1F00372A11 /* MyTabBarController.swift in Sources */,
 				5DF2151D212DAF2B002B7603 /* LocalHttpClient.swift in Sources */,
 				5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */,
 				5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */,
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
+				5D7289F12CC5728F00DD4B8A /* OrientationView.swift in Sources */,
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
@@ -1194,19 +1220,19 @@
 				CODE_SIGN_ENTITLEMENTS = "iOS tools/iOS tools.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Network 3D WiFi tools";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.2;
+				MARKETING_VERSION = 4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1229,18 +1255,18 @@
 				CODE_SIGN_ENTITLEMENTS = "iOS tools/iOS tools.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Map Explorer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Network 3D WiFi tools";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.2;
+				MARKETING_VERSION = 4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

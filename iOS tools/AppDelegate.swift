@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let name = await UIDevice.current.name
             
             do {
-                let parsed_url = try ParsedURL("https://www.fenyo.net/wifimapexplorer/api/v1/info.cgi?action=start&appversion=\(GenericTools.app_short_version_string ?? "noversion")&model=\(model)&name=\(name)&systemversion=\(system_version)&identifierforvendor=\(identifier_for_vendor ?? "")")
+                let parsed_url = try ParsedURL("https://fenyo.net/network3dwifitools/api/v1/info.cgi?action=start&appversion=\(GenericTools.app_short_version_string ?? "noversion")&model=\(model)&name=\(name)&systemversion=\(system_version)&identifierforvendor=\(identifier_for_vendor ?? "")")
                 let session = try WebClientSession(config: AccessNetworkConfig(is_check_ssl: true))
                 let (data, _, response) = try await session.fetch(target: parsed_url.toTarget())
                 guard let data, let response else {
@@ -109,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         InitTCPPort2Service()
         
         guard
-            let tabBarController = window?.rootViewController as? UITabBarController,
+            let tabBarController = window?.rootViewController as? MyTabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,

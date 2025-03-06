@@ -25,7 +25,7 @@ private let NEW_PROBE_X: UInt16 = 100
 private let NEW_PROBE_Y: UInt16 = 50
 private let NEW_PROBE_VALUE: Float = 10000000
 private let SCALE_WIDTH: CGFloat = 30
-private let LOWEST_MAX_SCALE: Float = 1000
+let LOWEST_MAX_SCALE: Float = 1000
 private let POWER_SCALE_DEFAULT: Float = 5
 private let POWER_SCALE_MAX: Float = 5
 private let POWER_SCALE_RADIUS_MAX: Float = 600
@@ -33,7 +33,7 @@ private let POWER_SCALE_RADIUS_DEFAULT: Float = 120 /* 180 */
 private let POWER_BLUR_RADIUS_DEFAULT: CGFloat = 10
 private let POWER_BLUR_RADIUS_MAX: CGFloat = 20
 
-public class MapViewModel : ObservableObject {
+public class MapViewModel: ObservableObject {
     static let shared = MapViewModel()
     static let step2String = [
         "step 1/5: select your floor plan (click on the Select your floor plan green button)",
@@ -79,7 +79,7 @@ struct LoadingView<Content>: View where Content: View {
 }
 
 @MainActor
-class PhotoController: NSObject {
+private class HeatMapPhotoController: NSObject {
     weak var heatmap_view_controller: HeatMapViewController?
     
     public init(heatmap_view_controller: HeatMapViewController) {
@@ -116,14 +116,16 @@ class PhotoController: NSObject {
 struct HeatMapSwiftUIView: View {
     init(_ heatmap_view_controller: HeatMapViewController) {
         self.heatmap_view_controller = heatmap_view_controller
-        self.photoController = PhotoController(heatmap_view_controller: heatmap_view_controller)
+        self.photoController = HeatMapPhotoController(heatmap_view_controller: heatmap_view_controller)
     }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    let photoController: PhotoController
+    private let photoController: HeatMapPhotoController
     weak var heatmap_view_controller: HeatMapViewController?
-    
+
+    var compute_semaphore = ComputeSemaphore()
+
     @ObservedObject var model = MapViewModel.shared
     @State private var showing_map_picker = false
     @State private var showing_alert = false
@@ -207,6 +209,13 @@ struct HeatMapSwiftUIView: View {
         }
         
         Task {
+            // On ne rentre pas deux fois en même temps dans cette tâche lourde pour le CPU.
+            // On peut se le permettre car elle est appelée toutes les secondes.
+            let cpu_available = await compute_semaphore.setActiveIfNot()
+            if cpu_available == false {
+                return
+            }
+
             let new_vertices = idw_image.getValues().map { CGPoint(x: Double($0.x), y: Double($0.y)) }
             
             let need_update_cache = distance_cache == nil || Set(new_vertices) != Set(distance_cache!.vertices)
@@ -219,8 +228,12 @@ struct HeatMapSwiftUIView: View {
             }
             image_last_update = Date()
             image_update_ratio = 0
+            
+            await compute_semaphore.release()
         }
     }
+    
+    let scale_image = IDWImage.getScaleImage(height: 60)!
     
     var body: some View {
         LoadingView(showing_progress: $showing_progress) {
@@ -407,7 +420,7 @@ struct HeatMapSwiftUIView: View {
                             .frame(maxWidth: 200)
                             
                             Button {
-                                UIApplication.shared.open(URL(string: "http://wifimapexplorer.com/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
+                                UIApplication.shared.open(URL(string: "https://fenyo.net/network3dwifitools/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                             } label: {
                                 VStack {
                                     Image(systemName: "questionmark").resizable().frame(width: 20, height: 30)
@@ -490,8 +503,7 @@ struct HeatMapSwiftUIView: View {
                                     .aspectRatio(contentMode: .fit).opacity(Double(image_update_ratio))
                                     .overlay {
                                         GeometryReader { geom in
-                                            Image(decorative: IDWImage.getScaleImage(height: 60)!, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
-                                            
+                                            Image(decorative: scale_image, scale: 1.0).resizable().frame(width: SCALE_WIDTH)
                                             
                                             if model.max_scale != 0 {
                                                 let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)

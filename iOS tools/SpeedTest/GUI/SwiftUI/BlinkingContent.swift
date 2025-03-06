@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BlinkingContent<Content: View>: View {
     @State private var is_highlighted = false
-    let content: Content
+    private let content: Content
 
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
@@ -27,6 +27,7 @@ struct BlinkingContent<Content: View>: View {
                         Animation.linear(duration: 0.5).repeatForever(
                             autoreverses: true), value: is_highlighted)
             )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     is_highlighted = true

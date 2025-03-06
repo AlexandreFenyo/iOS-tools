@@ -141,9 +141,9 @@ let service_names = [
 // - the file named tcpports.txt
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
-    service_names_descr["_speedtestapp._tcp."] = "WiFiMapExplorer discovering service"
-    service_names_descr["_speedtestchargen._tcp."] = "WiFiMapExplorer chargen service"
-    service_names_descr["_speedtestdiscard._tcp."] = "WiFiMapExplorer discard service"
+    service_names_descr["_speedtestapp._tcp."] = "Network3DWiFiTools discovering service"
+    service_names_descr["_speedtestchargen._tcp."] = "Network3DWiFiTools chargen service"
+    service_names_descr["_speedtestdiscard._tcp."] = "Network3DWiFiTools discard service"
     service_names_descr["_1password4._tcp."] = "1Password Wi-Fi Sync"
     service_names_descr["_KeynoteControl._tcp."] = "OSX Keynote"
     service_names_descr["_acp-sync._tcp."] = "Airport Base Station Sync"

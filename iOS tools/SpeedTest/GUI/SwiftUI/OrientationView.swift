@@ -1,23 +1,33 @@
+//
+//  OrientationView.swift
+//  iOS tools
+//
+//  Created by Alexandre Fenyo on 20/10/2024.
+//  Copyright © 2024 Alexandre Fenyo. All rights reserved.
+//
+
+import Foundation
 import SwiftUI
 
 /* usage:
 struct ContentView: View {
     var body: some View {
-        LandscapePortraitView {
-            Text("123")
-            Text("456")
-        }
-    }
- }
+        OrientationView { is_portrait in
+          InsideView(is_portrait: is_portrait)
+ ...
+ 
+struct InsideView: View {
+    var is_portrait: Bool
+...
 */
 
-// Display a View in a HStack when in portrait mode and in a VStack otherwise
-struct LandscapePortraitView<Content: View>: View {
+struct OrientationView<Content: View>: View {
     @State private var is_portrait: Bool = true
-    let content: Content
+    @State private var size: CGSize = CGSize()
+    let content: (Bool, CGSize) -> Content
 
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+    init(@ViewBuilder content: @escaping (Bool, CGSize) -> Content) {
+        self.content = content
     }
 
     var body: some View {
@@ -26,40 +36,29 @@ struct LandscapePortraitView<Content: View>: View {
                 makeBody()
                     .onAppear {
                         is_portrait = geometry.size.width < geometry.size.height
+                        size = geometry.size
                     }
                     .onChange(of: geometry.size) { _, new_value in
                         is_portrait = new_value.width < new_value.height
+                        size = geometry.size
                     }
             } else {
                 makeBody()
                     .onAppear {
                         is_portrait = geometry.size.width < geometry.size.height
+                        size = geometry.size
                     }
                     .onChange(of: geometry.size) { new_value in
                         is_portrait = new_value.width < new_value.height
+                        size = geometry.size
                     }
+                
             }
         }
     }
 
     @ViewBuilder
     private func makeBody() -> some View {
-        if is_portrait {
-            HStack {
-                Spacer()
-                VStack {
-                    content
-                }
-                Spacer()
-            }
-        } else {
-            VStack {
-                Spacer()
-                HStack {
-                    content
-                }
-                Spacer()
-            }
-        }
+        content(is_portrait, size)
     }
 }

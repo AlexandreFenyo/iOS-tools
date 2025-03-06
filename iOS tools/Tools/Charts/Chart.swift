@@ -677,7 +677,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         while y <= graph_height! {
             // Add quantity
             let left_label_node = SKLabelNode(fontNamed: font_name)
-            left_label_node.text = String(Int(grid_vertical_cost! * Float(y / grid_size.height)))
+            
+            left_label_node.text = String(GenericTools.convertFloatToInt(grid_vertical_cost! * Float(y / grid_size.height)) ?? 0)
             if left_label_node.text!.count > grid_vertical_factor! { left_label_node.text = left_label_node.text!.sub(0, left_label_node.text!.count - grid_vertical_factor!) }
             left_label_node.text! += " " + vertical_unit
             left_label_node.fontSize = vertical_font_size_ratio * grid_size.height / font.capHeight * font.pointSize
@@ -841,8 +842,8 @@ class SKChartNode : SKSpriteNode, TimeSeriesReceiver {
         var max_val = max_val
         max_val *= Float(ChartDefaults.optimal_vertical_resolution_ratio)
         if max_val < Float(nlines) { max_val = Float(nlines) }
+        let first_label = String(GenericTools.convertFloatToInt((max_val / Float(nlines)).rounded(.down)) ?? 0)
         
-        let first_label = String(Int((max_val / Float(nlines)).rounded(.down)))
         var left_digit = first_label.sub(0, 1)
         switch left_digit {
         case "3", "4":
