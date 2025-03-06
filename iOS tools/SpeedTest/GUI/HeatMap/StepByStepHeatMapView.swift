@@ -159,7 +159,7 @@ struct StepByStepHeatMapView: View {
             VStack {
                 LandscapePortraitView {
                     VStack {
-                        Text(Self.messages[model.step])//.bold()//.padding()
+                        Text(NSLocalizedString(Self.messages[model.step], comment: Self.messages[model.step]))//.bold()//.padding()
                             .font(Font.system(size: 12).bold())
                             .foregroundColor(.white)
                             .padding(5.0)

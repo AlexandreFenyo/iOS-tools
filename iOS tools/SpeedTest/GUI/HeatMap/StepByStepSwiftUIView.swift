@@ -169,9 +169,7 @@ struct StepByStepSwiftUIView: View {
                     NSLocalizedString("I understand", comment: "I Understand"),
                     {
                         Text("")
-                        Text(
-                            "You can come back later to the home window simply by clicking on the following icon:"
-                        )
+                        Text("You can come back later to the home window simply by clicking on the following icon:")
                         BlinkingContent {
                             Image(systemName: "house")
                                 .scaleEffect(2)
