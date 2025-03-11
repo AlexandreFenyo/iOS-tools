@@ -79,8 +79,7 @@ struct ModalPopPupShell<Content: View>: View {
         }
         .onPreferenceChange(SizePreferenceKey.self) { size in
             view_height = size
-            frac =
-                (view_height.height + other_components_height) / UIScreen.main.bounds.height
+            frac = (view_height.height + other_components_height) / UIScreen.main.bounds.height
         }
         .presentationDetents([.fraction(frac)])
     }

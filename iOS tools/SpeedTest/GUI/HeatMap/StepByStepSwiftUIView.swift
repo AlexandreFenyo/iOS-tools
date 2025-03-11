@@ -155,6 +155,7 @@ struct StepByStepSwiftUIView: View {
         }
         .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
         .background(Color(COLORS.right_pannel_bg))
+
         .sheet(
             isPresented: $showing_exit_popup,
             content: {
@@ -175,7 +176,7 @@ struct StepByStepSwiftUIView: View {
                                 .scaleEffect(2)
                                 .padding(10)
                         }
-
+                        
                         if UIDevice.current.userInterfaceIdiom != .phone
                             && ProcessInfo.processInfo.isMacCatalystApp == false
                         {
@@ -184,21 +185,20 @@ struct StepByStepSwiftUIView: View {
                                 Image("design-manual").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
-
+                                
                                 Image("design-auto").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
-
+                                
                                 Image("design-doc").resizable().aspectRatio(
                                     contentMode: .fit
                                 ).padding(10)
                             }
                         }
-
+                        
                         Text("")
                     }
                 )
-                .background(Color(COLORS.right_pannel_scroll_bg))
             }
         )
     }
