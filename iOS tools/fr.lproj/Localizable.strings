@@ -111,7 +111,8 @@
 "The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll." = "Le plan que vous avez choisi est au format vertical. Une rotation dans le sens des aiguilles d'une montre a donc été appliquée afin qu'il se retrouve en mode portrait. A la fin du processus de génération de la heat map, lorsque vous appuierez sur Partagez votre carte, l'image finale sera enregistrée dans l'application Photos avec l'orientation verticale originale.";
 "Continue" = "Continuer";
 "continue" = "continuer";
-"Filter" = "Filtre";
+"Filter" = "Filtrer";
+"Hide list" = "Cacher la liste";
 "Reset filter" = "Annuler le filtre";
 "Advanced interface" = "Interface avancée";
 "Web site" = "Site web";

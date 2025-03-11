@@ -193,7 +193,7 @@ struct Filter: View {
                         }
                     }
                 }) {
-                    Text("Filter")
+                    Text(filter_active ? "Hide list" : "Filter")
                         .padding(8)
                         .foregroundColor(Color(COLORS.standard_background))
                         .background(content: {
