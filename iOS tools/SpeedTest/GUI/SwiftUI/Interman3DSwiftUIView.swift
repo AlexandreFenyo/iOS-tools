@@ -579,8 +579,6 @@ struct Interman3DSwiftUIView: View {
             }
             
         case .topHost:
-            // Remove constraints
-            
             disable_auto_rotation_button = false
             
             if prev_mode == .freeFlight { // OK
@@ -985,17 +983,20 @@ struct Interman3DSwiftUIView: View {
                                     .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
                             
-                            Button {
-                                setCameraMode(.topHost)
-                            } label: {
-                                //                      if horizontalSizeClass == .regular { Text("top host") }
-                                Image("icon-2D-left").renderingMode(.template).resizable()
-                                    .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
-                                    .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
-                                // Let the background clickable
-                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
-                            }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
+                            // Les animations vers .topHost se finissent sans qu'on ne voit plus rien sur iPad et MacOS, donc on supprime ce bouton sur ces plate-formes
+                            if ProcessInfo.processInfo.isMacCatalystApp == false && UIDevice.current.userInterfaceIdiom != .pad {
+                                Button {
+                                    setCameraMode(.topHost)
+                                } label: {
+                                    //                      if horizontalSizeClass == .regular { Text("top host") }
+                                    Image("icon-2D-left").renderingMode(.template).resizable()
+                                        .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
+                                        .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                    // Let the background clickable
+                                        .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                        .padding(space_between_buttons)
+                                }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
+                            }
                             
                             Spacer().frame(width: 25)
                             
