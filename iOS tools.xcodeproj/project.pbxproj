@@ -95,6 +95,7 @@
 		5D9BCBEF2C3F001300F9ADE6 /* StepByStepViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */; };
 		5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
+		5DA794142D80C80C006900F3 /* SwiftUIViewSharedTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
 		5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */ = {isa = PBXBuildFile; fileRef = 5DC43CFE2CAB493500B90FAA /* infos.cgi */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
@@ -276,6 +277,7 @@
 		5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepViewController.swift; sourceTree = "<group>"; };
 		5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepSwiftUIView.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewSharedTools.swift; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
@@ -628,6 +630,7 @@
 		5D95C170294286A200EBE9E8 /* HeatMap */ = {
 			isa = PBXGroup;
 			children = (
+				5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */,
 				5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */,
 				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
 				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
@@ -1054,6 +1057,7 @@
 				5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */,
 				5D25C84A2CB029FC008D858D /* LandscapePortraitView.swift in Sources */,
 				5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */,
+				5DA794142D80C80C006900F3 /* SwiftUIViewSharedTools.swift in Sources */,
 				5D20A0DA28591DA300C958E9 /* DetailSwiftUIView.swift in Sources */,
 				5D63644E213EE0FD00BFEB0F /* Model.swift in Sources */,
 				5DF215112121E16C002B7603 /* localPingClient.c in Sources */,
