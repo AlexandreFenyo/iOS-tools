@@ -9,8 +9,7 @@ import Foundation
 import UIKit
 
 class MyTabBarController: UITabBarController {
-
-    /// Active for iPads running iOS 18+ where the traditional tab bar has been removed by Apple
+    // Active for iPads running iOS 18+ where the traditional tab bar has been removed by Apple
     lazy var alternateTabBarActive: Bool = {
     #if compiler(>=6.0) // Compiler flag for Xcode >= 16
         if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
@@ -26,6 +25,10 @@ class MyTabBarController: UITabBarController {
     lazy var alternateTabBar: UITabBar = {
         UITabBar()
     }()
+
+    func getTabBar() -> UITabBar {
+        return alternateTabBarActive ? alternateTabBar : tabBar
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +43,7 @@ class MyTabBarController: UITabBarController {
                 // Add Custom Tabbar
                 let tabbar = self.alternateTabBar
                 self.view.addSubview(tabbar)
-                
+
                 // Add layout constraints
                 tabbar.translatesAutoresizingMaskIntoConstraints = false
                 let bottom = tabbar.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)

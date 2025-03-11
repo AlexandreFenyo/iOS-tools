@@ -301,7 +301,7 @@ public enum COLORS {
     static let tabbar_title = standard_background // UIC_RGB(0, 122, 255)
 
     // Tab bar background
-    static let tabbar_bg = global_background
+    static let tabbar_bg = UIColor.lightGray.lighter().lighter() // global_background
     
     static let tabbar_bg5 = Color.red.darker().darker()
     

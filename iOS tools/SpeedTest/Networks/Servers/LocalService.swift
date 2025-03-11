@@ -175,12 +175,15 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
             } while nothing_removed == false
 
             if self.clients.count != 0 {
-                self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.barTintColor = .red
-                self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.backgroundColor = .red
-                
+                let myTabBarController = self.ref_master_view_controller?.navigationController?.tabBarController as! MyTabBarController
+
+                myTabBarController.getTabBar().barTintColor = .red
+                myTabBarController.getTabBar().backgroundColor = .red
+
                 Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {_ in
-                    self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg
-                    self.ref_master_view_controller?.navigationController!.tabBarController?.tabBar.backgroundColor = COLORS.tabbar_bg
+                    
+                    myTabBarController.getTabBar().barTintColor = COLORS.tabbar_bg
+                    myTabBarController.getTabBar().backgroundColor = COLORS.tabbar_bg
                 }
             }
         }
