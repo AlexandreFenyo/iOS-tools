@@ -99,9 +99,12 @@ struct StepByStepSwiftUIView: View {
         VStack {
             HStack {
                 Spacer()
-                Text("Network3DWiFiTools")
+                
+                Text("Network 3D WiFi Tools")
+                    .font(Font.system(size: 20, weight: .bold).lowercaseSmallCaps())
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
+
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
 
@@ -165,12 +168,13 @@ struct StepByStepSwiftUIView: View {
                             animated: true)
                     },
                     NSLocalizedString(
-                        "RETURNING TO THE APP HOME PAGE",
-                        comment: "RETURNING TO THE APP HOME PAGE"),
+                        "Returning To The App Home Page",
+                        comment: "Returning To The App Home Page"),
                     NSLocalizedString("I understand", comment: "I Understand"),
                     {
                         Text("")
                         Text("You can come back later to the home window simply by clicking on the following icon:")
+                        
                         BlinkingContent {
                             Image(systemName: "house")
                                 .scaleEffect(2)
@@ -227,6 +231,8 @@ struct StepWelcomeView: View {
                             Spacer()
                             VStack {
                                 Text("Open advanced interface")
+                                    .font(.custom("Verdana", size: 15)).bold()
+                                    .foregroundColor(.gray.darker())
                                 Spacer()
                                 Image("design-manual").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
@@ -244,6 +250,8 @@ struct StepWelcomeView: View {
                             Spacer()
                             VStack {
                                 Text("Step-by-step easy mode")
+                                    .font(.custom("Verdana", size: 15)).bold()
+                                    .foregroundColor(.gray.darker())
                                 Spacer()
                                 Image("design-auto").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
@@ -279,6 +287,8 @@ struct StepWelcomeView: View {
                             Spacer()
                             VStack {
                                 Text("Documentation")
+                                    .font(.custom("Verdana", size: 15)).bold()
+                                    .foregroundColor(.gray.darker())
                                 Spacer()
                                 Image("design-doc").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)

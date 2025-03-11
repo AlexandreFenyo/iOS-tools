@@ -108,7 +108,9 @@ struct ModalPopUp<Content: View>: View {
     var body: some View {
         // Note: the estimated size of the components added by ModalPopUp, like Text(title) and Text(dismiss), MUST be set in ModalPopPupShell.other_components_height
 
-        Text(title).bold().padding(10)
+        Text(title)
+            .font(Font.system(size: 18, weight: .bold).lowercaseSmallCaps())
+            .bold().padding(10)
 
         Rectangle()
             .fill(Color.gray)
