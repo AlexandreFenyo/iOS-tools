@@ -56,7 +56,7 @@ struct ModalPopPupShell<Content: View>: View {
     let title: String
     let dismiss: String
     // Note: this is the size of the components added by ModalPopUp
-    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : 500
+    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : 320
 
     init(
         action: @escaping () -> Void,
@@ -107,10 +107,14 @@ struct ModalPopUp<Content: View>: View {
 
     var body: some View {
         // Note: the estimated size of the components added by ModalPopUp, like Text(title) and Text(dismiss), MUST be set in ModalPopPupShell.other_components_height
-
-        Text(title)
-            .font(Font.system(size: 18, weight: .bold).lowercaseSmallCaps())
-            .bold().padding(10)
+        Button(action: {
+            presentationMode.wrappedValue.dismiss()
+            action()
+        }) {
+            Text(title)
+                .font(Font.system(size: 18, weight: .bold).lowercaseSmallCaps())
+                .bold().padding(10)
+        }
 
         Rectangle()
             .fill(Color.gray)
@@ -126,21 +130,53 @@ struct ModalPopUp<Content: View>: View {
                         key: SizePreferenceKey.self, value: geometry.size)
                 }
             )
-        
+    }
+}
+
+struct ModalPopPupShellDoc<Content: View>: View {
+    @State private var frac: CGFloat = 0.8
+    @State private var view_height: CGSize = .zero
+    let shell_content: Content
+    // Note: this is the size of the components added by ModalPopUp
+    let other_components_height: CGFloat = 100
+
+    init(@ViewBuilder _ shell_content: () -> Content) {
+        self.shell_content = shell_content()
+    }
+
+    var body: some View {
+        ModalPopUpDoc() {
+            shell_content
+        }
+        .onPreferenceChange(SizePreferenceKey.self) { size in
+            view_height = size
+            frac = (view_height.height + other_components_height) / UIScreen.main.bounds.height
+        }
+        .presentationDetents([.fraction(frac)])
+    }
+}
+
+// Display a modal popup
+struct ModalPopUpDoc<Content: View>: View {
+    let content: Content
+
+    @Environment(\.presentationMode) var presentationMode
+
+    init(
+        @ViewBuilder content: () -> Content
+    ) {
+        self.content = content()
+    }
+
+    var body: some View {
         if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
         
-        Button(action: {
-            presentationMode.wrappedValue.dismiss()
-            action()
-        }) {
-            VStack {
-                Rectangle()
-                    .fill(Color.gray)
-                    .frame(height: 2)
-                    .padding(.horizontal)
-                
-                Text(dismiss).padding(10)
-            }
-        }
+        content
+            .background(
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: SizePreferenceKey.self, value: geometry.size)
+                }
+            )
     }
 }

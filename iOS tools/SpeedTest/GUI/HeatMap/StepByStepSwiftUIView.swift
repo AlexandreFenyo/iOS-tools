@@ -80,6 +80,9 @@ class StepByStepPhotoController: NSObject {
 @MainActor
 struct StepByStepSwiftUIView: View {
     @State private var showing_exit_popup = false
+    @State private var showing_doc_popup = false
+    @State private var showing_doc_popup2 = false
+    @State private var showing_doc_popup3 = false
     @State private var showing_exit_button = false
     @State private var scale: CGFloat = 0.0
     @State private var navigation_path = NavigationPath()
@@ -110,7 +113,7 @@ struct StepByStepSwiftUIView: View {
 
             // NavigationStack root screen: StepWelcomeView
             NavigationStack(path: $navigation_path) {
-                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, scale: $scale, navigation_path: $navigation_path, model: model, step_by_step_view_controller: step_by_step_view_controller)
+                StepWelcomeView(showing_exit_button: $showing_exit_button, showing_exit_popup: $showing_exit_popup, showing_doc_popup: $showing_doc_popup, showing_doc_popup2: $showing_doc_popup2, showing_doc_popup3: $showing_doc_popup3, scale: $scale, navigation_path: $navigation_path, model: model, step_by_step_view_controller: step_by_step_view_controller)
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15)
@@ -155,36 +158,39 @@ struct StepByStepSwiftUIView: View {
                     .padding(0)
             }
 
+            if UIDevice.current.userInterfaceIdiom != .pad
+                && ProcessInfo.processInfo.isMacCatalystApp == false && showing_exit_button == false {
+                Text("Click on your prefered blinking rectangle to choose between advanced interface, step-by-step heatmap and documentation. Click on the question marks to get help about each interface.")
+                    .font(.custom("Verdana", size: 12))
+                    .foregroundColor(.gray.darker())
+                    .multilineTextAlignment(.center).padding()
+            }
         }
         .padding(.init(top: 10, leading: 10, bottom: 10, trailing: 10))
         .background(Color(COLORS.right_pannel_bg))
-
         .sheet(
             isPresented: $showing_exit_popup,
             content: {
                 ModalPopPupShell(
                     action: {
-                        step_by_step_view_controller?.dismiss(
-                            animated: true)
+                        step_by_step_view_controller?.dismiss(animated: true)
                     },
                     NSLocalizedString(
-                        "Returning To The App Home Page",
+                        "Open Advanced Interface",
                         comment: "Returning To The App Home Page"),
-                    NSLocalizedString("I understand", comment: "I Understand"),
+                    NSLocalizedString("OPEN ADVANCED INTERFACE", comment: "OPEN ADVANCED INTERFACE"),
                     {
                         Text("")
-                        Text("You can come back later to the home window simply by clicking on the following icon:")
+                        Text("You will be able to come back later to the home window simply by clicking on the following icon:")
                         
-                        BlinkingContent {
-                            Image(systemName: "house")
-                                .scaleEffect(2)
-                                .padding(10)
-                        }
+                        Image(systemName: "house")
+                            .scaleEffect(2)
+                            .padding(10)
                         
-                        if UIDevice.current.userInterfaceIdiom != .phone
-                            && ProcessInfo.processInfo.isMacCatalystApp == false
-                        {
-                            // We run on an iPad
+                        if UIDevice.current.userInterfaceIdiom != .phone {
+                            Spacer()
+                            /*
+                            // We run on an iPad or a Mac
                             LandscapePortraitView {
                                 Image("design-manual").resizable().aspectRatio(
                                     contentMode: .fit
@@ -198,6 +204,7 @@ struct StepByStepSwiftUIView: View {
                                     contentMode: .fit
                                 ).padding(10)
                             }
+                             */
                         }
                         
                         Text("")
@@ -205,12 +212,54 @@ struct StepByStepSwiftUIView: View {
                 )
             }
         )
+        
+        // iPhone only (showing_doc_popup is always false on iPad or macOS)
+        .sheet(isPresented: $showing_doc_popup,
+            content: {
+                ModalPopPupShellDoc(
+                    {
+                        Text("The advanced interface provides access to every network tools (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...).\n\nIt also allows building a WiFi coverage heatmap, with many options. This interface is intended for users who already have some initial knowledge of networks.")
+                            .font(.custom("Verdana", size: 13))
+                            .foregroundColor(.gray.darker())
+                            .multilineTextAlignment(.leading).padding()
+                    }
+                )
+            }
+        )
+        .sheet(isPresented: $showing_doc_popup2,
+            content: {
+                ModalPopPupShellDoc(
+                    {
+                        Text("The step-by-step interface is dedicated to building a WiFi coverage heatmap, it is specifically aimed at users wishing to create a WiFi coverage heatmap as simply as possible, with complete support.\n\nNo prior knowledge of networks is necessary.")
+                            .font(.custom("Verdana", size: 13))
+                            .foregroundColor(.gray.darker())
+                            .multilineTextAlignment(.leading).padding()
+                    }
+                )
+            }
+        )
+        .sheet(isPresented: $showing_doc_popup3,
+            content: {
+                ModalPopPupShellDoc(
+                    {
+                        Text("The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen.")
+                            .font(.custom("Verdana", size: 13))
+                            .foregroundColor(.gray.darker())
+                            .multilineTextAlignment(.leading).padding()
+                    }
+                )
+            }
+        )
+
     }
 }
 
 struct StepWelcomeView: View {
     @Binding var showing_exit_button: Bool
     @Binding var showing_exit_popup: Bool
+    @Binding var showing_doc_popup: Bool
+    @Binding var showing_doc_popup2: Bool
+    @Binding var showing_doc_popup3: Bool
     @Binding var scale: CGFloat
     @Binding var navigation_path: NavigationPath
 
@@ -243,8 +292,20 @@ struct StepWelcomeView: View {
 
                                 Spacer()
 
-                                Image("design-manual").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
+                                HStack {
+                                    Spacer()
+                                    Image("design-manual").resizable().aspectRatio(contentMode: .fit)
+                                        .padding(padding_size)
+                                    Spacer()
+
+                                    if (ProcessInfo.processInfo.isMacCatalystApp == false && UIDevice.current.userInterfaceIdiom != .pad) {
+                                        Button(action: {
+                                            showing_doc_popup = true
+                                        }) {
+                                            Image(systemName: "questionmark.circle.fill").scaleEffect(2).padding().opacity(0.7)
+                                        }
+                                    }
+                                }
                             }
                             Spacer()
                         }.background(.white)
@@ -258,22 +319,39 @@ struct StepWelcomeView: View {
                         HStack {
                             Spacer()
                             VStack {
-                                Text("Step-by-step easy mode")
-                                    .font(.custom("Verdana", size: 15)).bold()
-                                    .foregroundColor(.gray.darker())
+                                if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
+                                    Text("Step-by-step easy mode")
+                                        .font(.custom("Verdana", size: 15)).bold()
+                                        .foregroundColor(.gray.darker())
+                                } else {
+                                    Text("Step-by-step easy mode (heatmap only)")
+                                        .font(.custom("Verdana", size: 15)).bold()
+                                        .foregroundColor(.gray.darker())
+                                }
 
                                 if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
-                                    if (ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad) {
-                                        Text("The step-by-step interface is dedicated to building a WiFi coverage heatmap, it is specifically aimed at users wishing to create a WiFi coverage heatmap as simply as possible, with complete support.\n\nNo prior knowledge of networks is necessary.")
-                                            .font(.custom("Verdana", size: 13))
-                                            .foregroundColor(.gray.darker())
-                                            .multilineTextAlignment(.leading).padding()
-                                    }
+                                    Text("The step-by-step interface is dedicated to building a WiFi coverage heatmap, it is specifically aimed at users wishing to create a WiFi coverage heatmap as simply as possible, with complete support.\n\nNo prior knowledge of networks is necessary.")
+                                        .font(.custom("Verdana", size: 13))
+                                        .foregroundColor(.gray.darker())
+                                        .multilineTextAlignment(.leading).padding()
                                 }
 
                                 Spacer()
-                                Image("design-auto").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
+                                
+                                HStack {
+                                    Spacer()
+                                    Image("design-auto").resizable().aspectRatio(contentMode: .fit)
+                                        .padding(padding_size)
+                                    Spacer()
+
+                                    if (ProcessInfo.processInfo.isMacCatalystApp == false && UIDevice.current.userInterfaceIdiom != .pad) {
+                                        Button(action: {
+                                            showing_doc_popup2 = true
+                                        }) {
+                                            Image(systemName: "questionmark.circle.fill").scaleEffect(2).padding().opacity(0.7)
+                                        }
+                                    }
+                                }
                             }
                             Spacer()
                         }.background(.white)
@@ -310,17 +388,28 @@ struct StepWelcomeView: View {
                                     .foregroundColor(.gray.darker())
                                 
                                 if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
-                                    if (ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad) {
-                                        Text("The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen.")
-                                            .font(.custom("Verdana", size: 13))
-                                            .foregroundColor(.gray.darker())
-                                            .multilineTextAlignment(.leading).padding()
-                                    }
+                                    Text("The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen.")
+                                        .font(.custom("Verdana", size: 13))
+                                        .foregroundColor(.gray.darker())
+                                        .multilineTextAlignment(.leading).padding()
                                 }
 
                                 Spacer()
-                                Image("design-doc").resizable().aspectRatio(contentMode: .fit)
-                                .padding(padding_size)
+                                
+                                HStack {
+                                    Spacer()
+                                    Image("design-doc").resizable().aspectRatio(contentMode: .fit)
+                                        .padding(padding_size)
+                                    Spacer()
+
+                                    if (ProcessInfo.processInfo.isMacCatalystApp == false && UIDevice.current.userInterfaceIdiom != .pad) {
+                                        Button(action: {
+                                            showing_doc_popup3 = true
+                                        }) {
+                                            Image(systemName: "questionmark.circle.fill").scaleEffect(2).padding().opacity(0.7)
+                                        }
+                                    }
+                                }
                             }
                             Spacer()
                         }.background(.white)
