@@ -497,6 +497,23 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        print("XXXX: ICI")
+        let toolbar = self.navigationController!.toolbar!
+        for subview in toolbar.subviews {
+               print("Subview: \(subview)")
+           }
+        if toolbar.subviews.count == 3 {
+            print("SUPPRIME")
+//            toolbar.subviews.first?.removeFromSuperview()
+            toolbar.subviews.first?.isHidden = true
+        }
+        print("-------------")
+        for subview in toolbar.subviews {
+               print("Subview: \(subview)")
+           }
+
+        
+        
         super.viewWillAppear(animated)
         detail_view_controller?.clearChartAndNode()
         tableView.backgroundColor = COLORS.leftpannel_bg
@@ -606,7 +623,7 @@ view.backgroundColor = .red
         tableView.reloadData()
         tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         reloadData()
@@ -628,6 +645,11 @@ view.backgroundColor = .red
         loop_task?.cancel()
         loop_task = Task.detached { @MainActor in
             repeat {
+                // TESTS à enlever
+//                self.navigationController?.toolbar.backgroundColor = .red
+
+                
+                
                 self.stop_button_toggle.toggle()
                 if self.stop_button.isEnabled {
                     self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()

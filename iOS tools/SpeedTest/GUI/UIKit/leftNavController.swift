@@ -25,7 +25,7 @@ class LeftNavController : UINavigationController {
         let masterIPViewController = topViewController as? MasterIPViewController
         masterIPViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,9 +33,7 @@ class LeftNavController : UINavigationController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapScrollView(_:)))
         navigationBar.addGestureRecognizer(tapGestureRecognizer)
         
-        ////////////////////////////////////////////////////////////
         // Manage the toolbar background
-
         let h = toolbar.bounds.height
         let margin : CGFloat = 5
         let d = h - 2 * margin
@@ -67,18 +65,7 @@ class LeftNavController : UINavigationController {
         toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         // Remove the top border of the toolbar
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-
         
-//        toolbar.barStyle = .
-        
-        ////////////////////////////////////////////////////////////
-        // Manage the top left rounded corner
-
-        /* SUPPRIME POUR LE MVP
-        rv = RoundedCornerView(radius: r, startAngle: 1.0 * CGFloat.pi, endAngle: 1.5 * CGFloat.pi, arc_center: CGPoint(x: r, y: r))
-        navigationBar.addSubview(rv!)
-         */
-
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         let appearance = UINavigationBarAppearance()
@@ -88,18 +75,5 @@ class LeftNavController : UINavigationController {
 
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
-        
-        // Manage constraints for auto resizing
-        /* SUPPRIME POUR LE MVP
-        rv!.translatesAutoresizingMaskIntoConstraints = false
-        view.addConstraints(
-            [
-                NSLayoutConstraint(item: view!, attribute: .leading, relatedBy: .equal, toItem: rv, attribute: .leading, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: navigationBar, attribute: .top, relatedBy: .equal, toItem: rv, attribute: .top, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: rv!, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r),
-                NSLayoutConstraint(item: rv!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: r)
-            ])
-         */
-
     }
 }
