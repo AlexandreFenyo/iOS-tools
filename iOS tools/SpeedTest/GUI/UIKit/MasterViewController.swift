@@ -497,22 +497,13 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        print("XXXX: ICI")
-        let toolbar = self.navigationController!.toolbar!
-        for subview in toolbar.subviews {
-               print("Subview: \(subview)")
-           }
-        if toolbar.subviews.count == 3 {
-            print("SUPPRIME")
-//            toolbar.subviews.first?.removeFromSuperview()
-            toolbar.subviews.first?.isHidden = true
+        // Astuce personnelle :
+        // Sur iPhone, quand on démarre l'app et qu'on cliquer sur un noeud pour aller jusqu'au graphique des RTT, puis qu'on revient en arrière d'un cran pour voir la liste des IPs, le fond de la toolbar n'est plus transparent. C'est dû à un bug d'iOS qui recrée une subview de la toolmar de type _UIBarBackground. Pour détecter ce cas, il suffit de décompter le nombre de subviews. Si on est dans ce cas, on cache alors cette subview, car l'enlever n'a pas d'effet visuel.
+        // si on liste les subviews de toolbar, on s'aperçoit
+        let toolbar = self.navigationController?.toolbar
+        if toolbar?.subviews.count == 3 {
+            toolbar?.subviews.first?.isHidden = true
         }
-        print("-------------")
-        for subview in toolbar.subviews {
-               print("Subview: \(subview)")
-           }
-
-        
         
         super.viewWillAppear(animated)
         detail_view_controller?.clearChartAndNode()
