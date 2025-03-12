@@ -233,7 +233,16 @@ struct StepWelcomeView: View {
                                 Text("Open advanced interface")
                                     .font(.custom("Verdana", size: 15)).bold()
                                     .foregroundColor(.gray.darker())
+
+                                if (ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad) {
+                                    Text("The advanced interface provides access to every network tools (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...).\n\nIt also allows building a WiFi coverage heatmap, with many options. This interface is intended for users who already have some initial knowledge of networks.")
+                                        .font(.custom("Verdana", size: 13))
+                                        .foregroundColor(.gray.darker())
+                                        .multilineTextAlignment(.leading).padding()
+                                }
+
                                 Spacer()
+
                                 Image("design-manual").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
                             }
@@ -252,6 +261,16 @@ struct StepWelcomeView: View {
                                 Text("Step-by-step easy mode")
                                     .font(.custom("Verdana", size: 15)).bold()
                                     .foregroundColor(.gray.darker())
+
+                                if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
+                                    if (ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad) {
+                                        Text("The step-by-step interface is dedicated to building a WiFi coverage heatmap, it is specifically aimed at users wishing to create a WiFi coverage heatmap as simply as possible, with complete support.\n\nNo prior knowledge of networks is necessary.")
+                                            .font(.custom("Verdana", size: 13))
+                                            .foregroundColor(.gray.darker())
+                                            .multilineTextAlignment(.leading).padding()
+                                    }
+                                }
+
                                 Spacer()
                                 Image("design-auto").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)
@@ -289,6 +308,16 @@ struct StepWelcomeView: View {
                                 Text("Documentation")
                                     .font(.custom("Verdana", size: 15)).bold()
                                     .foregroundColor(.gray.darker())
+                                
+                                if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
+                                    if (ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad) {
+                                        Text("The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen.")
+                                            .font(.custom("Verdana", size: 13))
+                                            .foregroundColor(.gray.darker())
+                                            .multilineTextAlignment(.leading).padding()
+                                    }
+                                }
+
                                 Spacer()
                                 Image("design-doc").resizable().aspectRatio(contentMode: .fit)
                                 .padding(padding_size)

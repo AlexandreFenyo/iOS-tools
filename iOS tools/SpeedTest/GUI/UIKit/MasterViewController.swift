@@ -498,7 +498,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func viewWillAppear(_ animated: Bool) {
         // Astuce personnelle :
-        // Sur iPhone, quand on démarre l'app et qu'on cliquer sur un noeud pour aller jusqu'au graphique des RTT, puis qu'on revient en arrière d'un cran pour voir la liste des IPs, le fond de la toolbar n'est plus transparent. C'est dû à un bug d'iOS qui recrée une subview de la toolmar de type _UIBarBackground. Pour détecter ce cas, il suffit de décompter le nombre de subviews. Si on est dans ce cas, on cache alors cette subview, car l'enlever n'a pas d'effet visuel.
+        // Sur iPhone, quand on démarre l'app et qu'on clique sur un noeud pour aller jusqu'au graphique des RTT, puis qu'on revient en arrière d'un cran pour voir la liste des IPs, le fond de la toolbar n'est plus transparent. C'est dû à un bug d'iOS qui recrée une subview de la toolmar de type _UIBarBackground. Pour détecter ce cas, il suffit de décompter le nombre de subviews. Si on est dans ce cas, on cache alors cette subview, car l'enlever n'a pas d'effet visuel.
         // si on liste les subviews de toolbar, on s'aperçoit
         let toolbar = self.navigationController?.toolbar
         if toolbar?.subviews.count == 3 {
