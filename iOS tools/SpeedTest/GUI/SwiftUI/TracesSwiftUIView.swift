@@ -102,7 +102,6 @@ struct TracesSwiftUIView: View {
                             LazyVStack(alignment: .leading, spacing: 0) {
                                 Spacer().id(topID)
                                 ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
-//                                    Text(model.traces[i]).font(.footnote) // >=iOS16 only: .monospaced()
                                     Text(model.traces[i])
                                         .textSelection(.enabled)
                                         .font(Font.custom("San Francisco", size: 10).monospacedDigit())
@@ -111,7 +110,7 @@ struct TracesSwiftUIView: View {
                                 }
                                 Text(model.traces.last!)
                                     .textSelection(.enabled)
-                                    .font(.footnote) // >=iOS16 only: .monospaced()
+                                    .font(Font.custom("San Francisco", size: 10).monospacedDigit())
                                     .id(bottomID)
                                     .lineLimit(nil)
                                     .foregroundColor(Color(COLORS.standard_background.darker().darker()))
@@ -121,17 +120,21 @@ struct TracesSwiftUIView: View {
                                 Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
                             }
                         }
+                        
                     }
                     .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
                         if value > 0 { locked = true }
                     }
-                    .gesture(DragGesture().onChanged { _ in
+                    // The DragGesture is made inside a simultaneousGesture since we want the default DragGesture that scrolls the ScrollView continue to work
+                    .simultaneousGesture(DragGesture().onEnded { _ in
                         locked = false
-                    })
+                    }, isEnabled: true)
                     .onAppear() {
                         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                             if locked {
-                                withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                Task { @MainActor in
+                                    withAnimation { scrollViewProxy.scrollTo(bottomID) }
+                                }
                             }
                         }
                     }
