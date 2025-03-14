@@ -159,7 +159,6 @@ struct TracesSwiftUIView: View {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
                             } label: {
-
                                 Label("DEBUG", systemImage: "tablecells")
                                     .labelStyle(AdaptiveLabelStyle())
                                     .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
