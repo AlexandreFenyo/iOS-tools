@@ -55,8 +55,8 @@ struct ModalPopPupShell<Content: View>: View {
     let shell_content: Content
     let title: String
     let dismiss: String
-    // Note: this is the size of the components added by ModalPopUp
-    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : 320
+    // Note: this is the size of the components added by ModalPopUp. The height of the popup is derivated from this value.
+    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : (UIDevice.current.userInterfaceIdiom == .pad ? 320 : 400)
 
     init(
         action: @escaping () -> Void,
@@ -107,21 +107,6 @@ struct ModalPopUp<Content: View>: View {
 
     var body: some View {
         // Note: the estimated size of the components added by ModalPopUp, like Text(title) and Text(dismiss), MUST be set in ModalPopPupShell.other_components_height
-        Button(action: {
-            presentationMode.wrappedValue.dismiss()
-            action()
-        }) {
-            Text(title)
-                .font(Font.system(size: 18, weight: .bold).lowercaseSmallCaps())
-                .bold().padding(10)
-        }
-
-        Rectangle()
-            .fill(Color.gray)
-            .frame(height: 2)
-            .padding(.horizontal)
-
-        if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
         
         content
             .background(
@@ -130,6 +115,22 @@ struct ModalPopUp<Content: View>: View {
                         key: SizePreferenceKey.self, value: geometry.size)
                 }
             )
+
+        Rectangle()
+            .fill(Color.gray)
+            .frame(height: 2)
+            .padding(.horizontal)
+
+        if UIDevice.current.userInterfaceIdiom != .phone { Spacer() }
+        
+        Button(action: {
+            presentationMode.wrappedValue.dismiss()
+            action()
+        }) {
+            Text(title)
+                .font(Font.system(size: 18, weight: .bold).lowercaseSmallCaps())
+                .bold().padding(10)
+        }
     }
 }
 

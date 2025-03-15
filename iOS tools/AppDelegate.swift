@@ -77,6 +77,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Called once at app start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        // Set a minimal window size on Mac Catalyst
+        if ProcessInfo.processInfo.isMacCatalystApp {
+            if let windowScene = window?.windowScene {
+                windowScene.sizeRestrictions?.minimumSize = CGSize(width: 1200, height: 800)
+            }
+        }
+        
         // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
         _ = DBMaster.shared
 
