@@ -122,9 +122,10 @@ struct StepByStepSwiftUIView: View {
                 HStack {
                     Spacer()
 
-                    Button("Advanced interface") {
+                    Button("Advanced Interface") {
                         showing_exit_popup = true
                     }
+                    .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                     .opacity(scale)
                     .padding(0)
                     .onAppear {
@@ -135,9 +136,10 @@ struct StepByStepSwiftUIView: View {
 
                     Spacer()
 
-                    Button("Web site") {
+                    Button("Web Site") {
                         UIApplication.shared.open(URL(string: "https://fenyo.net/network3dwifitools/new-manual.html?lang=\(NSLocalizedString("parameter-lang", comment: "parameter-lang"))")!)
                     }
+                    .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                     .opacity(scale)
                     .padding(0)
                     .onAppear {
@@ -361,6 +363,9 @@ struct StepWelcomeView: View {
                     case .step_choose_plan:
                         VStack {
                             Text("Choose a predefined floor plan or load an image")
+                                .font(.custom("Verdana", size: 15)).bold()
+                                .foregroundColor(.gray.darker())
+
                             OrientationView { is_portrait, size in
                                 StepChoosePlan(navigation_path: $navigation_path, model: model, step_by_step_view_controller: step_by_step_view_controller, is_portrait: is_portrait, size: size)
                                     .onAppear {

@@ -159,9 +159,10 @@ struct StepByStepHeatMapView: View {
             VStack {
                 LandscapePortraitView {
                     VStack {
-                        Text(NSLocalizedString(Self.messages[model.step], comment: Self.messages[model.step]))//.bold()//.padding()
+                        Text(NSLocalizedString(Self.messages[model.step], comment: Self.messages[model.step]))
                             .frame(maxWidth: 300)
-                            .font(Font.system(size: 12).bold())
+                            .font(.custom("Verdana", size: 12).bold())
+//                            .font(Font.system(size: 12).bold())
                             .foregroundColor(.white)
                             .padding(5.0)
                             .background(.gray)
@@ -202,7 +203,9 @@ struct StepByStepHeatMapView: View {
                                     } label: {
                                         VStack {
                                             Image(systemName: "trash").resizable().frame(width: 30, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                                            Text("Reset\nall").fixedSize().multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                            Text("Reset\nall").fixedSize().multilineTextAlignment(.center)
+                                                .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
+                                                .foregroundColor(Color(UIColor.systemBlue))
                                         }
                                     }
                                 }.padding()
@@ -260,7 +263,8 @@ struct StepByStepHeatMapView: View {
                                     } label: {
                                         VStack {
                                             Image(systemName: "square.and.arrow.up").resizable().frame(width: 25, height: 30).foregroundColor(Color(UIColor.systemBlue))
-                                            Text("Share\nyour map").fixedSize().multilineTextAlignment(.center).font(.footnote).foregroundColor(Color(UIColor.systemBlue))
+                                            Text("Share\nyour map").fixedSize().multilineTextAlignment(.center)
+                                                .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())                                                .foregroundColor(Color(UIColor.systemBlue))
                                         }
                                     }
                                 }.padding()
