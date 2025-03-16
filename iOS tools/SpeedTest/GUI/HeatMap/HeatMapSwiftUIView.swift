@@ -97,7 +97,7 @@ private class HeatMapPhotoController: NSObject {
             popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heatmap in you photo roll", comment: "You can find the heatmap in you photo roll"), "OK")
         }
     }
-    
+
     public func popUp(_ title: String, _ message: String, _ ok: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: ok, style: .default) {_ in

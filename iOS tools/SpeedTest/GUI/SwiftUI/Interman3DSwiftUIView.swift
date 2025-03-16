@@ -9,6 +9,7 @@
 import SwiftUI
 import SceneKit
 import iOSToolsMacros
+import StoreKit
 
 /*
  Debugging camera movements:
@@ -1122,8 +1123,11 @@ struct Interman3DSwiftUIView: View {
                 timer_camera?.invalidate()
                 timer_text?.invalidate()
             }
-        
+            .onAppear() {
+                Task { @MainActor in
+                    try await Task.sleep(nanoseconds: 5_000_000_000)
+                    if let windowScene = UIApplication.shared.windows.first?.windowScene { SKStoreReviewController.requestReview(in: windowScene) }
+                }
+            }
     }
 }
-
-
