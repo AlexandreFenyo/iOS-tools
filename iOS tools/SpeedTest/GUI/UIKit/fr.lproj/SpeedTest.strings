@@ -42,7 +42,7 @@
 "Rc2-K5-rQo.text" = "Title";
 
 /* Class = "UITabBarItem"; title = "Network"; ObjectID = "W16-9t-txw"; */
-"W16-9t-txw.title" = "Réseau";
+"W16-9t-txw.title" = "Vue Réseau 3D";
 
 /* Class = "UIBarButtonItem"; title = "Debug"; ObjectID = "WCR-6O-86k"; */
 "WCR-6O-86k.title" = "Debug";

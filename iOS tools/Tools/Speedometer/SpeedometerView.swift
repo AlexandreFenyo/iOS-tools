@@ -56,7 +56,7 @@ struct SpeedometerView: View {
             }
 
             Text("250").position(x: 85, y: 74)
-                .font(.system(size: 5))
+                .font(.system(size: 7))
 
         }.background(.yellow)
 

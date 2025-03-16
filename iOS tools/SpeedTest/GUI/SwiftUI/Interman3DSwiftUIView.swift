@@ -152,6 +152,7 @@ struct Filter: View {
                         resetFilter()
                     }) {
                         Text("Reset filter")
+                            .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                             .padding(8)
                             .foregroundColor(Color(COLORS.standard_background))
                             .background(content: {
@@ -194,6 +195,7 @@ struct Filter: View {
                     }
                 }) {
                     Text(filter_active ? "Hide list" : "Filter")
+                        .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                         .padding(8)
                         .foregroundColor(Color(COLORS.standard_background))
                         .background(content: {
@@ -238,7 +240,10 @@ struct Filter: View {
                                             "circle"
                                           )
                                         .foregroundColor(Color(COLORS.standard_background))
-                                    Text(discovered_port.name).font(.caption)
+                                    Text(discovered_port.name)
+//                                        .font(.caption)
+                                        .font(.custom("Arial Narrow", size: 10))
+//                                        .font(Font.system(size: 12, weight: .bold).lowercaseSmallCaps())
                                         .foregroundColor(Color(COLORS.standard_background))
                                 }
                             }
@@ -919,26 +924,36 @@ struct Interman3DSwiftUIView: View {
                                 // interman3d_model.testIHMCreate()
                                 master_view_controller!.update_pressed()
                             } label: {
-                                //                      if horizontalSizeClass == .regular { Text("create") }
-                                Image(systemName: "repeat")
-                                    .resizable()
-                                    .frame(width: 25 * button_size_factor, height: 20 * button_size_factor)
-                                    .foregroundColor(Color(COLORS.standard_background))
-                                // Let the background clickable
-                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                VStack {
+                                    //                      if horizontalSizeClass == .regular { Text("create") }
+                                    Image(systemName: "repeat")
+                                        .resizable()
+                                        .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                        .foregroundColor(Color(COLORS.standard_background))
+                                    // Let the background clickable
+                                        .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    Text("scan")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }//.background(Color.blue)
                             
                             Button {
                                 master_view_controller!.interman_view_controller?.hostingViewController.rootView.resetCamera()
                             } label: {
+                                VStack {
                                 Image(systemName: "slowmo")
                                     .resizable()
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                     .foregroundColor((camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                    Text("auto")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }.disabled(camera_model.camera_mode == .freeFlight)
                                 //.background(Color.blue)
                             
@@ -948,6 +963,7 @@ struct Interman3DSwiftUIView: View {
                                 setCameraMode(.freeFlight)
                                 auto_rotation_active = false
                             } label: {
+                                VStack {
                                 //                      if horizontalSizeClass == .regular { Text("free flight") }
                                 Image(systemName: "rotate.3d")
                                     .resizable()
@@ -955,12 +971,17 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .freeFlight) ? nil : Color(COLORS.standard_background))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                    Text("3D flight")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .freeFlight)
                             
                             Button {
                                 setCameraMode(.sideCentered)
                             } label: {
+                                VStack {
                                 //                      if horizontalSizeClass == .regular { Text("side") }
                                 //                      Image(systemName: "cube.fill").imageScale(.large)
                                 Image("icon-3D-cube").renderingMode(.template).resizable()
@@ -968,19 +989,28 @@ struct Interman3DSwiftUIView: View {
                                     .frame(width: 30 * button_size_factor, height: 25 * button_size_factor)
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                    Text("3D")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .sideCentered)
                             
                             Button {
                                 setCameraMode(.topCentered)
                             } label: {
+                                VStack {
                                 //                      if horizontalSizeClass == .regular { Text("top") }
                                 Image("icon-2D-top").renderingMode(.template).resizable()
                                     .foregroundColor((disable_buttons || camera_model.camera_mode == .topCentered) ? nil : Color(COLORS.standard_background))
                                     .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                    Text("2D")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
                             
                             // Les animations vers .topHost se finissent sans qu'on ne voit plus rien sur iPad et MacOS, donc on supprime ce bouton sur ces plate-formes
@@ -988,13 +1018,18 @@ struct Interman3DSwiftUIView: View {
                                 Button {
                                     setCameraMode(.topHost)
                                 } label: {
+                                    VStack {
                                     //                      if horizontalSizeClass == .regular { Text("top host") }
                                     Image("icon-2D-left").renderingMode(.template).resizable()
                                         .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
                                         .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
                                     // Let the background clickable
                                         .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                        .padding(space_between_buttons)
+                                        Text("left")
+                                            .font(.custom("Arial Narrow", size: 8))
+                                            .foregroundColor(.gray.darker().darker())
+                                    }
+                                    .padding(space_between_buttons)
                                 }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
                             }
                             
@@ -1003,7 +1038,9 @@ struct Interman3DSwiftUIView: View {
                             Button {
                                 disable_traces.toggle()
                             } label: {
-                                ZStack {
+                                VStack {
+
+                                    ZStack {
                                     if disable_traces {
                                         Image(systemName: "line.diagonal").resizable()
                                             .frame(width: 16 * button_size_factor, height: 16 * button_size_factor)
@@ -1017,18 +1054,24 @@ struct Interman3DSwiftUIView: View {
                                     
                                     Image(systemName: "text.justify")
                                         .resizable()
-                                        .frame(width: 20 * button_size_factor, height: 20 * button_size_factor)
+                                        .frame(width: 20 * button_size_factor, height: 25 * button_size_factor)
                                         .foregroundColor(Color(COLORS.standard_background))
                                     // Let the background clickable
                                         .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                        .padding(space_between_buttons)
                                 }
+                                    
+                                    Text("traces")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }
                             
                             Button {
                                 auto_rotation_active.toggle()
                                 if auto_rotation_active == true { resetCameraTimer() }
                             } label: {
+                                VStack {
                                 //                    Text("auto rotation").foregroundColor(auto_rotation_active ? .red : .blue)
                                 Image(systemName: "gearshape.arrow.triangle.2.circlepath")
                                     .resizable()
@@ -1036,8 +1079,14 @@ struct Interman3DSwiftUIView: View {
                                     .foregroundColor(camera_model.camera_mode == .freeFlight ? nil : (auto_rotation_active ? (auto_rotation_button_toggle ? Color(COLORS.standard_background) : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter())) : Color(COLORS.standard_background)))
                                 // Let the background clickable
                                     .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                    .padding(space_between_buttons)
+                                    Text("reset")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
                             }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
+                            
+                            
                         }.padding(0)
                             .background(content: {
                                 Capsule()
