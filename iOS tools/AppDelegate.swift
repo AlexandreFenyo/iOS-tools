@@ -77,7 +77,56 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Called once at app start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Initialize net-snmp library
 
+        /*
+        print("AVANT add_mibdir")
+        var foo = add_mibdir(".")
+        print("foo: \(foo)")
+        print("APRES add_mibdir")
+
+        print("AVANT init")
+        init_snmp("test")
+        print("APRES init")
+*/
+
+        try? FileBrowsing.shared.listDirectory("/")
+/*
+        // Obtenir le chemin du répertoire de documents
+         let fileManager = FileManager.default
+         if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+             
+             // Créer le chemin du répertoire .snmp/mibs
+             let snmpDirectory = documentsDirectory.appendingPathComponent(".")
+
+             
+             do {
+                 // Créer le répertoire .snmp/mibs
+                 try fileManager.createDirectory(at: snmpDirectory, withIntermediateDirectories: true, attributes: nil)
+                 
+                 // Chemin du fichier TOTO.txt
+                 let filePath = snmpDirectory.appendingPathComponent("SNMPv2-MIB.txt")
+                 
+                 // Contenu du fichier
+                 let content = "Ceci est le contenu de TOTO.txt"
+                 
+                 // Écrire le contenu dans le fichier
+                 try content.write(to: filePath, atomically: true, encoding: .utf8)
+                 
+                 print("Répertoire et fichier créés avec succès.")
+             } catch {
+                 print("Erreur lors de la création du répertoire ou du fichier : \(error)")
+             }
+         }
+        
+        
+      */
+        
+        
+        
+        
+
+        
         // Set a minimal window size on Mac Catalyst
         if ProcessInfo.processInfo.isMacCatalystApp {
             if let windowScene = window?.windowScene {

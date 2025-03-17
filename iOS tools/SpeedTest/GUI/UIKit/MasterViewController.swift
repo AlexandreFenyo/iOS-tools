@@ -639,8 +639,6 @@ view.backgroundColor = .red
                 // TESTS à enlever
 //                self.navigationController?.toolbar.backgroundColor = .red
 
-                
-                
                 self.stop_button_toggle.toggle()
                 if self.stop_button.isEnabled {
                     self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()

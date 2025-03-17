@@ -27,6 +27,30 @@ import SpriteKit
 // Useful declaration to get definitions of Swift (right-click / "Jump to definition")
 import Swift
 
+class FileBrowsing {
+    static let shared = FileBrowsing()
+    
+    let file_manager = FileManager.default
+    let documents_directory: URL?
+    
+    init() {
+        documents_directory = file_manager.urls(for: .documentDirectory, in: .userDomainMask).first
+     //   file_manager.urls(for: ., in: .userDomainMask).first
+    }
+    
+    func listDirectory(_ path: String) throws -> [String] {
+        var filename_list = [String]()
+        if let documents_directory {
+            let fileURLs = try file_manager.contentsOfDirectory(at: documents_directory, includingPropertiesForKeys: nil)
+            for fileURL in fileURLs {
+                print("Fichier trouvé : \(fileURL.absoluteString)")
+                filename_list.append(fileURL.absoluteString)
+            }
+        }
+        return filename_list
+    }
+}
+
 class MyMemoryTracker {
     public var description: String
     public init(_ description: String) {

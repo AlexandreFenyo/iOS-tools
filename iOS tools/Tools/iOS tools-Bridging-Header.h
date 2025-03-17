@@ -2,6 +2,9 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
+extern void init_snmp(const char *);
+extern int add_mibdir(const char *);
+
 int localChargenClientOpen();
 int localChargenClientClose();
 int localChargenClientStop();

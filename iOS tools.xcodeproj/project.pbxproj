@@ -10,6 +10,7 @@
 		1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */; };
 		5D039EC429B8A2E100A33898 /* iPhone.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 5D039EC329B8A2E100A33898 /* iPhone.jpeg */; };
 		5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D039EC529B8A4CC00A33898 /* Appareils.png */; };
+		5D0571772D873049009B4FA1 /* libnetsnmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0571762D873049009B4FA1 /* libnetsnmp.a */; };
 		5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D0DE45C2A9BA99800892028 /* Interman 3D Scene.scn */; };
 		5D1351EF208538DB00E4A76D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1351EE208538DB00E4A76D /* AppDelegate.swift */; };
 		5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D13521F20853BEA00E4A76D /* GenericTools.swift */; };
@@ -115,6 +116,7 @@
 		5DE4ED9B290586740000B30A /* docs-actions.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4ED8F290586740000B30A /* docs-actions.png */; };
 		5DE4ED9F2905CB0D0000B30A /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */; };
 		5DE4EDA12905CB650000B30A /* AddSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */; };
+		5DE4F7FC2D872C700074C227 /* net-snmp-config.h.in in Resources */ = {isa = PBXBuildFile; fileRef = 5DE4F7EE2D872C700074C227 /* net-snmp-config.h.in */; };
 		5DE8DC42295074BB00FAE74D /* Graham.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE8DC41295074BB00FAE74D /* Graham.swift */; };
 		5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */; };
 		5DE9CE97214FEA5A006F3BC0 /* RightNavController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */; };
@@ -141,6 +143,8 @@
 /* Begin PBXFileReference section */
 		5D039EC329B8A2E100A33898 /* iPhone.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = iPhone.jpeg; sourceTree = "<group>"; };
 		5D039EC529B8A4CC00A33898 /* Appareils.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Appareils.png; sourceTree = "<group>"; };
+		5D0571762D873049009B4FA1 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libnetsnmp.a; path = "iOS tools/libnetsnmp/libnetsnmp.a"; sourceTree = "<group>"; };
+		5D0571782D873072009B4FA1 /* libnetsnmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libnetsnmp.a; sourceTree = "<group>"; };
 		5D0B4F7829ABB5DD00F65C68 /* iOS tools.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "iOS tools.entitlements"; sourceTree = "<group>"; };
 		5D0DE45C2A9BA99800892028 /* Interman 3D Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Interman 3D Scene.scn"; sourceTree = "<group>"; };
 		5D1351EB208538DB00E4A76D /* iOS tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +176,7 @@
 		5D1F12422728002500656D0D /* TracesSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesSwiftUIView.swift; sourceTree = "<group>"; };
 		5D1F1244272803A900656D0D /* TracesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracesViewController.swift; sourceTree = "<group>"; };
 		5D20A0D928591DA300C958E9 /* DetailSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSwiftUIView.swift; sourceTree = "<group>"; };
+		5D22C6C52D872AA600CDF30E /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		5D25C8432CB029ED008D858D /* BlinkingContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkingContent.swift; sourceTree = "<group>"; };
 		5D25C8452CB029F2008D858D /* WebContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebContent.swift; sourceTree = "<group>"; };
 		5D25C8472CB029F6008D858D /* ModalPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalPopUp.swift; sourceTree = "<group>"; };
@@ -308,6 +313,263 @@
 		5DE4ED91290586740000B30A /* docs-hosts.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = "docs-hosts.psd"; sourceTree = "<group>"; };
 		5DE4ED9E2905CB0D0000B30A /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		5DE4EDA02905CB650000B30A /* AddSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSwiftUIView.swift; sourceTree = "<group>"; };
+		5DE4F71B2D872C700074C227 /* cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cpu.h; sourceTree = "<group>"; };
+		5DE4F71C2D872C700074C227 /* fsys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsys.h; sourceTree = "<group>"; };
+		5DE4F71D2D872C700074C227 /* memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		5DE4F71E2D872C700074C227 /* sensors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sensors.h; sourceTree = "<group>"; };
+		5DE4F7202D872C700074C227 /* agent_callbacks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_callbacks.h; sourceTree = "<group>"; };
+		5DE4F7212D872C700074C227 /* agent_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_handler.h; sourceTree = "<group>"; };
+		5DE4F7222D872C700074C227 /* agent_index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_index.h; sourceTree = "<group>"; };
+		5DE4F7232D872C700074C227 /* agent_module_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_module_config.h; sourceTree = "<group>"; };
+		5DE4F7242D872C700074C227 /* agent_read_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_read_config.h; sourceTree = "<group>"; };
+		5DE4F7252D872C700074C227 /* agent_registry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_registry.h; sourceTree = "<group>"; };
+		5DE4F7262D872C700074C227 /* agent_sysORTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_sysORTable.h; sourceTree = "<group>"; };
+		5DE4F7272D872C700074C227 /* agent_trap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_trap.h; sourceTree = "<group>"; };
+		5DE4F7282D872C700074C227 /* all_helpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = all_helpers.h; sourceTree = "<group>"; };
+		5DE4F7292D872C700074C227 /* auto_nlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = auto_nlist.h; sourceTree = "<group>"; };
+		5DE4F72A2D872C700074C227 /* baby_steps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = baby_steps.h; sourceTree = "<group>"; };
+		5DE4F72B2D872C700074C227 /* bulk_to_next.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bulk_to_next.h; sourceTree = "<group>"; };
+		5DE4F72C2D872C700074C227 /* cache_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_handler.h; sourceTree = "<group>"; };
+		5DE4F72D2D872C700074C227 /* debug_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug_handler.h; sourceTree = "<group>"; };
+		5DE4F72E2D872C700074C227 /* ds_agent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ds_agent.h; sourceTree = "<group>"; };
+		5DE4F72F2D872C700074C227 /* instance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = instance.h; sourceTree = "<group>"; };
+		5DE4F7302D872C700074C227 /* mfd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mfd.h; sourceTree = "<group>"; };
+		5DE4F7312D872C700074C227 /* mib_module_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib_module_config.h; sourceTree = "<group>"; };
+		5DE4F7322D872C700074C227 /* mib_modules.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib_modules.h; sourceTree = "<group>"; };
+		5DE4F7332D872C700074C227 /* mode_end_call.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mode_end_call.h; sourceTree = "<group>"; };
+		5DE4F7342D872C700074C227 /* multiplexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = multiplexer.h; sourceTree = "<group>"; };
+		5DE4F7352D872C700074C227 /* net-snmp-agent-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "net-snmp-agent-includes.h"; sourceTree = "<group>"; };
+		5DE4F7362D872C700074C227 /* netsnmp_close_fds.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = netsnmp_close_fds.h; sourceTree = "<group>"; };
+		5DE4F7372D872C700074C227 /* null.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = null.h; sourceTree = "<group>"; };
+		5DE4F7382D872C700074C227 /* object_monitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object_monitor.h; sourceTree = "<group>"; };
+		5DE4F7392D872C700074C227 /* old_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = old_api.h; sourceTree = "<group>"; };
+		5DE4F73A2D872C700074C227 /* read_only.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = read_only.h; sourceTree = "<group>"; };
+		5DE4F73B2D872C700074C227 /* row_merge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = row_merge.h; sourceTree = "<group>"; };
+		5DE4F73C2D872C700074C227 /* scalar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scalar.h; sourceTree = "<group>"; };
+		5DE4F73D2D872C700074C227 /* scalar_group.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scalar_group.h; sourceTree = "<group>"; };
+		5DE4F73E2D872C700074C227 /* serialize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = serialize.h; sourceTree = "<group>"; };
+		5DE4F73F2D872C700074C227 /* set_helper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = set_helper.h; sourceTree = "<group>"; };
+		5DE4F7402D872C700074C227 /* snmp_agent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_agent.h; sourceTree = "<group>"; };
+		5DE4F7412D872C700074C227 /* snmp_get_statistic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_get_statistic.h; sourceTree = "<group>"; };
+		5DE4F7422D872C700074C227 /* snmp_vars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_vars.h; sourceTree = "<group>"; };
+		5DE4F7432D872C700074C227 /* stash_cache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stash_cache.h; sourceTree = "<group>"; };
+		5DE4F7442D872C700074C227 /* stash_to_next.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stash_to_next.h; sourceTree = "<group>"; };
+		5DE4F7452D872C700074C227 /* sysORTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sysORTable.h; sourceTree = "<group>"; };
+		5DE4F7462D872C700074C227 /* table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
+		5DE4F7472D872C700074C227 /* table_array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_array.h; sourceTree = "<group>"; };
+		5DE4F7482D872C700074C227 /* table_container.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_container.h; sourceTree = "<group>"; };
+		5DE4F7492D872C700074C227 /* table_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_data.h; sourceTree = "<group>"; };
+		5DE4F74A2D872C700074C227 /* table_dataset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_dataset.h; sourceTree = "<group>"; };
+		5DE4F74B2D872C700074C227 /* table_iterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_iterator.h; sourceTree = "<group>"; };
+		5DE4F74C2D872C700074C227 /* table_tdata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_tdata.h; sourceTree = "<group>"; };
+		5DE4F74D2D872C700074C227 /* var_struct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = var_struct.h; sourceTree = "<group>"; };
+		5DE4F74E2D872C700074C227 /* watcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = watcher.h; sourceTree = "<group>"; };
+		5DE4F7502D872C700074C227 /* arp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = arp.h; sourceTree = "<group>"; };
+		5DE4F7512D872C700074C227 /* defaultrouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = defaultrouter.h; sourceTree = "<group>"; };
+		5DE4F7522D872C700074C227 /* interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = interface.h; sourceTree = "<group>"; };
+		5DE4F7532D872C700074C227 /* ip_scalars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ip_scalars.h; sourceTree = "<group>"; };
+		5DE4F7542D872C700074C227 /* ipaddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ipaddress.h; sourceTree = "<group>"; };
+		5DE4F7552D872C700074C227 /* ipstats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ipstats.h; sourceTree = "<group>"; };
+		5DE4F7562D872C700074C227 /* net-snmp-data-access-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "net-snmp-data-access-includes.h"; sourceTree = "<group>"; };
+		5DE4F7572D872C700074C227 /* route.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = route.h; sourceTree = "<group>"; };
+		5DE4F7582D872C700074C227 /* scopezone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scopezone.h; sourceTree = "<group>"; };
+		5DE4F7592D872C700074C227 /* swinst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swinst.h; sourceTree = "<group>"; };
+		5DE4F75A2D872C700074C227 /* swrun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = swrun.h; sourceTree = "<group>"; };
+		5DE4F75B2D872C700074C227 /* systemstats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = systemstats.h; sourceTree = "<group>"; };
+		5DE4F75C2D872C700074C227 /* tcpConn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tcpConn.h; sourceTree = "<group>"; };
+		5DE4F75D2D872C700074C227 /* udp_endpoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = udp_endpoint.h; sourceTree = "<group>"; };
+		5DE4F75F2D872C700074C227 /* asn1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
+		5DE4F7602D872C700074C227 /* callback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = callback.h; sourceTree = "<group>"; };
+		5DE4F7612D872C700074C227 /* cert_util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cert_util.h; sourceTree = "<group>"; };
+		5DE4F7622D872C700074C227 /* check_varbind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = check_varbind.h; sourceTree = "<group>"; };
+		5DE4F7632D872C700074C227 /* container.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = container.h; sourceTree = "<group>"; };
+		5DE4F7642D872C700074C227 /* container_binary_array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = container_binary_array.h; sourceTree = "<group>"; };
+		5DE4F7652D872C700074C227 /* container_iterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = container_iterator.h; sourceTree = "<group>"; };
+		5DE4F7662D872C700074C227 /* container_list_ssll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = container_list_ssll.h; sourceTree = "<group>"; };
+		5DE4F7672D872C700074C227 /* container_null.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = container_null.h; sourceTree = "<group>"; };
+		5DE4F7682D872C700074C227 /* data_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = data_list.h; sourceTree = "<group>"; };
+		5DE4F7692D872C700074C227 /* default_store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = default_store.h; sourceTree = "<group>"; };
+		5DE4F76A2D872C700074C227 /* dir_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dir_utils.h; sourceTree = "<group>"; };
+		5DE4F76B2D872C700074C227 /* fd_event_manager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fd_event_manager.h; sourceTree = "<group>"; };
+		5DE4F76C2D872C700074C227 /* file_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = file_utils.h; sourceTree = "<group>"; };
+		5DE4F76D2D872C700074C227 /* getopt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = getopt.h; sourceTree = "<group>"; };
+		5DE4F76E2D872C700074C227 /* int64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = int64.h; sourceTree = "<group>"; };
+		5DE4F76F2D872C700074C227 /* keytools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keytools.h; sourceTree = "<group>"; };
+		5DE4F7702D872C700074C227 /* large_fd_set.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = large_fd_set.h; sourceTree = "<group>"; };
+		5DE4F7712D872C700074C227 /* lcd_time.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lcd_time.h; sourceTree = "<group>"; };
+		5DE4F7722D872C700074C227 /* libsnmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libsnmp.h; sourceTree = "<group>"; };
+		5DE4F7732D872C700074C227 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		5DE4F7742D872C700074C227 /* mib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib.h; sourceTree = "<group>"; };
+		5DE4F7752D872C700074C227 /* mt_support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mt_support.h; sourceTree = "<group>"; };
+		5DE4F7762D872C700074C227 /* netsnmp-attribute-format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "netsnmp-attribute-format.h"; sourceTree = "<group>"; };
+		5DE4F7772D872C700074C227 /* oid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oid.h; sourceTree = "<group>"; };
+		5DE4F7782D872C700074C227 /* oid_stash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = oid_stash.h; sourceTree = "<group>"; };
+		5DE4F7792D872C700074C227 /* openssl_aes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_aes.h; sourceTree = "<group>"; };
+		5DE4F77A2D872C700074C227 /* openssl_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_config.h; sourceTree = "<group>"; };
+		5DE4F77B2D872C700074C227 /* openssl_des.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_des.h; sourceTree = "<group>"; };
+		5DE4F77C2D872C700074C227 /* openssl_md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_md5.h; sourceTree = "<group>"; };
+		5DE4F77D2D872C700074C227 /* openssl_sha.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_sha.h; sourceTree = "<group>"; };
+		5DE4F77E2D872C700074C227 /* parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
+		5DE4F77F2D872C700074C227 /* read_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = read_config.h; sourceTree = "<group>"; };
+		5DE4F7812D872C700074C227 /* scapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scapi.h; sourceTree = "<group>"; };
+		5DE4F7822D872C700074C227 /* sd-daemon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sd-daemon.h"; sourceTree = "<group>"; };
+		5DE4F7832D872C700074C227 /* snmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp.h; sourceTree = "<group>"; };
+		5DE4F7842D872C700074C227 /* snmp_alarm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_alarm.h; sourceTree = "<group>"; };
+		5DE4F7852D872C700074C227 /* snmp_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_api.h; sourceTree = "<group>"; };
+		5DE4F7862D872C700074C227 /* snmp_assert.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_assert.h; sourceTree = "<group>"; };
+		5DE4F7872D872C700074C227 /* snmp_client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_client.h; sourceTree = "<group>"; };
+		5DE4F7882D872C700074C227 /* snmp_debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_debug.h; sourceTree = "<group>"; };
+		5DE4F7892D872C700074C227 /* snmp_enum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_enum.h; sourceTree = "<group>"; };
+		5DE4F78A2D872C700074C227 /* snmp_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_impl.h; sourceTree = "<group>"; };
+		5DE4F78B2D872C700074C227 /* snmp_logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_logging.h; sourceTree = "<group>"; };
+		5DE4F78C2D872C700074C227 /* snmp_openssl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_openssl.h; sourceTree = "<group>"; };
+		5DE4F78D2D872C700074C227 /* snmp_parse_args.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_parse_args.h; sourceTree = "<group>"; };
+		5DE4F78E2D872C700074C227 /* snmp_secmod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_secmod.h; sourceTree = "<group>"; };
+		5DE4F78F2D872C700074C227 /* snmp_service.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_service.h; sourceTree = "<group>"; };
+		5DE4F7902D872C700074C227 /* snmp_transport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_transport.h; sourceTree = "<group>"; };
+		5DE4F7912D872C700074C227 /* snmp-tc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "snmp-tc.h"; sourceTree = "<group>"; };
+		5DE4F7922D872C700074C227 /* snmpAAL5PVCDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpAAL5PVCDomain.h; sourceTree = "<group>"; };
+		5DE4F7932D872C700074C227 /* snmpAliasDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpAliasDomain.h; sourceTree = "<group>"; };
+		5DE4F7942D872C700074C227 /* snmpCallbackDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpCallbackDomain.h; sourceTree = "<group>"; };
+		5DE4F7952D872C700074C227 /* snmpDTLSUDPDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpDTLSUDPDomain.h; sourceTree = "<group>"; };
+		5DE4F7962D872C700074C227 /* snmpIPv4BaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpIPv4BaseDomain.h; sourceTree = "<group>"; };
+		5DE4F7972D872C700074C227 /* snmpIPv6BaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpIPv6BaseDomain.h; sourceTree = "<group>"; };
+		5DE4F7982D872C700074C227 /* snmpIPXDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpIPXDomain.h; sourceTree = "<group>"; };
+		5DE4F7992D872C700074C227 /* snmpksm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpksm.h; sourceTree = "<group>"; };
+		5DE4F79A2D872C700074C227 /* snmpSocketBaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpSocketBaseDomain.h; sourceTree = "<group>"; };
+		5DE4F79B2D872C700074C227 /* snmpSSHDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpSSHDomain.h; sourceTree = "<group>"; };
+		5DE4F79C2D872C700074C227 /* snmpSTDDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpSTDDomain.h; sourceTree = "<group>"; };
+		5DE4F79D2D872C700074C227 /* snmpTCPBaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpTCPBaseDomain.h; sourceTree = "<group>"; };
+		5DE4F79E2D872C700074C227 /* snmpTCPDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpTCPDomain.h; sourceTree = "<group>"; };
+		5DE4F79F2D872C700074C227 /* snmpTCPIPv6Domain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpTCPIPv6Domain.h; sourceTree = "<group>"; };
+		5DE4F7A02D872C700074C227 /* snmpTLSBaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpTLSBaseDomain.h; sourceTree = "<group>"; };
+		5DE4F7A12D872C700074C227 /* snmpTLSTCPDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpTLSTCPDomain.h; sourceTree = "<group>"; };
+		5DE4F7A22D872C700074C227 /* snmptsm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmptsm.h; sourceTree = "<group>"; };
+		5DE4F7A32D872C700074C227 /* snmpUDPBaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUDPBaseDomain.h; sourceTree = "<group>"; };
+		5DE4F7A42D872C700074C227 /* snmpUDPDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUDPDomain.h; sourceTree = "<group>"; };
+		5DE4F7A52D872C700074C227 /* snmpUDPIPv4BaseDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUDPIPv4BaseDomain.h; sourceTree = "<group>"; };
+		5DE4F7A62D872C700074C227 /* snmpUDPIPv6Domain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUDPIPv6Domain.h; sourceTree = "<group>"; };
+		5DE4F7A72D872C700074C227 /* snmpUDPsharedDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUDPsharedDomain.h; sourceTree = "<group>"; };
+		5DE4F7A82D872C700074C227 /* snmpUnixDomain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpUnixDomain.h; sourceTree = "<group>"; };
+		5DE4F7A92D872C700074C227 /* snmpusm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpusm.h; sourceTree = "<group>"; };
+		5DE4F7AA2D872C700074C227 /* snmpv3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpv3.h; sourceTree = "<group>"; };
+		5DE4F7AB2D872C700074C227 /* snmpv3-security-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "snmpv3-security-includes.h"; sourceTree = "<group>"; };
+		5DE4F7AC2D872C700074C227 /* system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		5DE4F7AD2D872C700074C227 /* testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = testing.h; sourceTree = "<group>"; };
+		5DE4F7AE2D872C700074C227 /* text_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = text_utils.h; sourceTree = "<group>"; };
+		5DE4F7AF2D872C700074C227 /* tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tools.h; sourceTree = "<group>"; };
+		5DE4F7B02D872C700074C227 /* transform_oids.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = transform_oids.h; sourceTree = "<group>"; };
+		5DE4F7B12D872C700074C227 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		5DE4F7B22D872C700074C227 /* ucd_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ucd_compat.h; sourceTree = "<group>"; };
+		5DE4F7B32D872C700074C227 /* vacm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vacm.h; sourceTree = "<group>"; };
+		5DE4F7B42D872C700074C227 /* winpipe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = winpipe.h; sourceTree = "<group>"; };
+		5DE4F7B52D872C700074C227 /* winservice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = winservice.h; sourceTree = "<group>"; };
+		5DE4F7B72D872C700074C227 /* generic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = generic.h; sourceTree = "<group>"; };
+		5DE4F7B92D872C700074C227 /* aix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aix.h; sourceTree = "<group>"; };
+		5DE4F7BA2D872C700074C227 /* bsd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bsd.h; sourceTree = "<group>"; };
+		5DE4F7BB2D872C700074C227 /* bsdi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bsdi.h; sourceTree = "<group>"; };
+		5DE4F7BC2D872C700074C227 /* bsdi3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bsdi3.h; sourceTree = "<group>"; };
+		5DE4F7BD2D872C700074C227 /* bsdi4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bsdi4.h; sourceTree = "<group>"; };
+		5DE4F7BE2D872C700074C227 /* cygwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cygwin.h; sourceTree = "<group>"; };
+		5DE4F7BF2D872C700074C227 /* darwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = darwin.h; sourceTree = "<group>"; };
+		5DE4F7C02D872C700074C227 /* dragonfly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dragonfly.h; sourceTree = "<group>"; };
+		5DE4F7C12D872C700074C227 /* dynix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dynix.h; sourceTree = "<group>"; };
+		5DE4F7C22D872C700074C227 /* freebsd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd.h; sourceTree = "<group>"; };
+		5DE4F7C32D872C700074C227 /* freebsd2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd2.h; sourceTree = "<group>"; };
+		5DE4F7C42D872C700074C227 /* freebsd3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd3.h; sourceTree = "<group>"; };
+		5DE4F7C52D872C700074C227 /* freebsd4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd4.h; sourceTree = "<group>"; };
+		5DE4F7C62D872C700074C227 /* freebsd5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd5.h; sourceTree = "<group>"; };
+		5DE4F7C72D872C700074C227 /* freebsd6.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd6.h; sourceTree = "<group>"; };
+		5DE4F7C82D872C700074C227 /* freebsd7.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd7.h; sourceTree = "<group>"; };
+		5DE4F7C92D872C700074C227 /* freebsd8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd8.h; sourceTree = "<group>"; };
+		5DE4F7CA2D872C700074C227 /* freebsd9.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd9.h; sourceTree = "<group>"; };
+		5DE4F7CB2D872C700074C227 /* freebsd10.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd10.h; sourceTree = "<group>"; };
+		5DE4F7CC2D872C700074C227 /* freebsd11.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd11.h; sourceTree = "<group>"; };
+		5DE4F7CD2D872C700074C227 /* freebsd12.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd12.h; sourceTree = "<group>"; };
+		5DE4F7CE2D872C700074C227 /* freebsd13.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd13.h; sourceTree = "<group>"; };
+		5DE4F7CF2D872C700074C227 /* freebsd14.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = freebsd14.h; sourceTree = "<group>"; };
+		5DE4F7D02D872C700074C227 /* generic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = generic.h; sourceTree = "<group>"; };
+		5DE4F7D12D872C700074C227 /* hpux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hpux.h; sourceTree = "<group>"; };
+		5DE4F7D22D872C700074C227 /* irix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = irix.h; sourceTree = "<group>"; };
+		5DE4F7D32D872C700074C227 /* kfreebsd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kfreebsd.h; sourceTree = "<group>"; };
+		5DE4F7D42D872C700074C227 /* linux.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = linux.h; sourceTree = "<group>"; };
+		5DE4F7D52D872C700074C227 /* mingw32.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mingw32.h; sourceTree = "<group>"; };
+		5DE4F7D62D872C700074C227 /* mingw32msvc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mingw32msvc.h; sourceTree = "<group>"; };
+		5DE4F7D72D872C700074C227 /* mips.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mips.h; sourceTree = "<group>"; };
+		5DE4F7D82D872C700074C227 /* netbsd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = netbsd.h; sourceTree = "<group>"; };
+		5DE4F7D92D872C700074C227 /* nto-qnx6.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nto-qnx6.h"; sourceTree = "<group>"; };
+		5DE4F7DA2D872C700074C227 /* openbsd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openbsd.h; sourceTree = "<group>"; };
+		5DE4F7DB2D872C700074C227 /* openbsd4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openbsd4.h; sourceTree = "<group>"; };
+		5DE4F7DC2D872C700074C227 /* openbsd5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openbsd5.h; sourceTree = "<group>"; };
+		5DE4F7DD2D872C700074C227 /* openbsd6.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openbsd6.h; sourceTree = "<group>"; };
+		5DE4F7DE2D872C700074C227 /* openbsd7.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openbsd7.h; sourceTree = "<group>"; };
+		5DE4F7DF2D872C700074C227 /* osf5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osf5.h; sourceTree = "<group>"; };
+		5DE4F7E02D872C700074C227 /* solaris.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solaris.h; sourceTree = "<group>"; };
+		5DE4F7E12D872C700074C227 /* solaris2.3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solaris2.3.h; sourceTree = "<group>"; };
+		5DE4F7E22D872C700074C227 /* solaris2.4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solaris2.4.h; sourceTree = "<group>"; };
+		5DE4F7E32D872C700074C227 /* solaris2.5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solaris2.5.h; sourceTree = "<group>"; };
+		5DE4F7E42D872C700074C227 /* solaris2.6.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = solaris2.6.h; sourceTree = "<group>"; };
+		5DE4F7E52D872C700074C227 /* sunos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sunos.h; sourceTree = "<group>"; };
+		5DE4F7E62D872C700074C227 /* svr5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = svr5.h; sourceTree = "<group>"; };
+		5DE4F7E72D872C700074C227 /* sysv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sysv.h; sourceTree = "<group>"; };
+		5DE4F7E82D872C700074C227 /* ultrix4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ultrix4.h; sourceTree = "<group>"; };
+		5DE4F7EA2D872C700074C227 /* config_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config_api.h; sourceTree = "<group>"; };
+		5DE4F7EB2D872C700074C227 /* definitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = definitions.h; sourceTree = "<group>"; };
+		5DE4F7EC2D872C700074C227 /* mib_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib_api.h; sourceTree = "<group>"; };
+		5DE4F7ED2D872C700074C227 /* net-snmp-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "net-snmp-config.h"; sourceTree = "<group>"; };
+		5DE4F7EE2D872C700074C227 /* net-snmp-config.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = "net-snmp-config.h.in"; sourceTree = "<group>"; };
+		5DE4F7EF2D872C700074C227 /* net-snmp-features.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "net-snmp-features.h"; sourceTree = "<group>"; };
+		5DE4F7F02D872C700074C227 /* net-snmp-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "net-snmp-includes.h"; sourceTree = "<group>"; };
+		5DE4F7F12D872C700074C227 /* openssl_md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = openssl_md5.h; sourceTree = "<group>"; };
+		5DE4F7F22D872C700074C227 /* output_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = output_api.h; sourceTree = "<group>"; };
+		5DE4F7F32D872C700074C227 /* pdu_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pdu_api.h; sourceTree = "<group>"; };
+		5DE4F7F42D872C700074C227 /* session_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = session_api.h; sourceTree = "<group>"; };
+		5DE4F7F52D872C700074C227 /* snmpv3_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpv3_api.h; sourceTree = "<group>"; };
+		5DE4F7F62D872C700074C227 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		5DE4F7F72D872C700074C227 /* utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utilities.h; sourceTree = "<group>"; };
+		5DE4F7F82D872C700074C227 /* varbind_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = varbind_api.h; sourceTree = "<group>"; };
+		5DE4F7F92D872C700074C227 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		5DE4F7FD2D872C830074C227 /* agent_index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_index.h; sourceTree = "<group>"; };
+		5DE4F7FE2D872C830074C227 /* agent_read_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_read_config.h; sourceTree = "<group>"; };
+		5DE4F7FF2D872C830074C227 /* agent_registry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_registry.h; sourceTree = "<group>"; };
+		5DE4F8002D872C830074C227 /* agent_trap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agent_trap.h; sourceTree = "<group>"; };
+		5DE4F8012D872C830074C227 /* asn1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = asn1.h; sourceTree = "<group>"; };
+		5DE4F8022D872C830074C227 /* auto_nlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = auto_nlist.h; sourceTree = "<group>"; };
+		5DE4F8032D872C830074C227 /* callback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = callback.h; sourceTree = "<group>"; };
+		5DE4F8042D872C830074C227 /* default_store.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = default_store.h; sourceTree = "<group>"; };
+		5DE4F8052D872C830074C227 /* ds_agent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ds_agent.h; sourceTree = "<group>"; };
+		5DE4F8062D872C830074C227 /* header_complex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = header_complex.h; sourceTree = "<group>"; };
+		5DE4F8072D872C830074C227 /* int64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = int64.h; sourceTree = "<group>"; };
+		5DE4F8082D872C830074C227 /* keytools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keytools.h; sourceTree = "<group>"; };
+		5DE4F8092D872C830074C227 /* mib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib.h; sourceTree = "<group>"; };
+		5DE4F80A2D872C830074C227 /* mib_module_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mib_module_config.h; sourceTree = "<group>"; };
+		5DE4F80B2D872C830074C227 /* mibincl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mibincl.h; sourceTree = "<group>"; };
+		5DE4F80C2D872C830074C227 /* parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
+		5DE4F80D2D872C830074C227 /* read_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = read_config.h; sourceTree = "<group>"; };
+		5DE4F80F2D872C830074C227 /* scapi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scapi.h; sourceTree = "<group>"; };
+		5DE4F8102D872C830074C227 /* snmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp.h; sourceTree = "<group>"; };
+		5DE4F8112D872C830074C227 /* snmp_agent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_agent.h; sourceTree = "<group>"; };
+		5DE4F8122D872C830074C227 /* snmp_alarm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_alarm.h; sourceTree = "<group>"; };
+		5DE4F8132D872C830074C227 /* snmp_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_api.h; sourceTree = "<group>"; };
+		5DE4F8142D872C830074C227 /* snmp_client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_client.h; sourceTree = "<group>"; };
+		5DE4F8152D872C830074C227 /* snmp_debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_debug.h; sourceTree = "<group>"; };
+		5DE4F8162D872C830074C227 /* snmp_impl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_impl.h; sourceTree = "<group>"; };
+		5DE4F8172D872C830074C227 /* snmp_logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_logging.h; sourceTree = "<group>"; };
+		5DE4F8182D872C830074C227 /* snmp_parse_args.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_parse_args.h; sourceTree = "<group>"; };
+		5DE4F8192D872C830074C227 /* snmp_vars.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmp_vars.h; sourceTree = "<group>"; };
+		5DE4F81A2D872C830074C227 /* snmp-tc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "snmp-tc.h"; sourceTree = "<group>"; };
+		5DE4F81B2D872C830074C227 /* snmpusm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpusm.h; sourceTree = "<group>"; };
+		5DE4F81C2D872C830074C227 /* snmpv3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snmpv3.h; sourceTree = "<group>"; };
+		5DE4F81D2D872C830074C227 /* struct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = struct.h; sourceTree = "<group>"; };
+		5DE4F81E2D872C830074C227 /* system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = system.h; sourceTree = "<group>"; };
+		5DE4F81F2D872C830074C227 /* tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tools.h; sourceTree = "<group>"; };
+		5DE4F8202D872C830074C227 /* transform_oids.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = transform_oids.h; sourceTree = "<group>"; };
+		5DE4F8212D872C830074C227 /* ucd-snmp-agent-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ucd-snmp-agent-includes.h"; sourceTree = "<group>"; };
+		5DE4F8222D872C830074C227 /* ucd-snmp-config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ucd-snmp-config.h"; sourceTree = "<group>"; };
+		5DE4F8232D872C830074C227 /* ucd-snmp-includes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ucd-snmp-includes.h"; sourceTree = "<group>"; };
+		5DE4F8242D872C830074C227 /* util_funcs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = util_funcs.h; sourceTree = "<group>"; };
+		5DE4F8252D872C830074C227 /* var_struct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = var_struct.h; sourceTree = "<group>"; };
+		5DE4F8262D872C830074C227 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		5DE8DC41295074BB00FAE74D /* Graham.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graham.swift; sourceTree = "<group>"; };
 		5DE9CE94214FE99B006F3BC0 /* leftNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = leftNavController.swift; sourceTree = "<group>"; };
 		5DE9CE96214FEA5A006F3BC0 /* RightNavController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightNavController.swift; sourceTree = "<group>"; };
@@ -349,6 +611,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D0571772D873049009B4FA1 /* libnetsnmp.a in Frameworks */,
 				1F8BEB4AC6BAFB4796A9BA9D /* libPods-iOS tools.a in Frameworks */,
 				5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
 				5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */,
@@ -364,6 +627,7 @@
 		5D0A7E0C2850FC9C00CCCF0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5D0571762D873049009B4FA1 /* libnetsnmp.a */,
 				6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */,
 			);
 			name = Frameworks;
@@ -393,6 +657,8 @@
 		5D1351ED208538DB00E4A76D /* iOS tools */ = {
 			isa = PBXGroup;
 			children = (
+				5D22C6C42D872A8700CDF30E /* include */,
+				5D22C6C32D872A2000CDF30E /* libnetsnmp */,
 				5DC43CFE2CAB493500B90FAA /* infos.cgi */,
 				5DDAE2A72C0A2A79008744E1 /* Models.md */,
 				5D0B4F7829ABB5DD00F65C68 /* iOS tools.entitlements */,
@@ -461,6 +727,24 @@
 				5D7289F02CC5728F00DD4B8A /* OrientationView.swift */,
 			);
 			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		5D22C6C32D872A2000CDF30E /* libnetsnmp */ = {
+			isa = PBXGroup;
+			children = (
+				5D0571782D873072009B4FA1 /* libnetsnmp.a */,
+			);
+			path = libnetsnmp;
+			sourceTree = "<group>";
+		};
+		5D22C6C42D872A8700CDF30E /* include */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F8272D872C830074C227 /* ucd-snmp */,
+				5DE4F7FA2D872C700074C227 /* net-snmp */,
+				5D22C6C52D872AA600CDF30E /* Bridging-Header.h */,
+			);
+			path = include;
 			sourceTree = "<group>";
 		};
 		5D2DFC3529057CE10080A9EA /* Assets */ = {
@@ -700,6 +984,325 @@
 			path = Interman;
 			sourceTree = "<group>";
 		};
+		5DE4F71F2D872C700074C227 /* hardware */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F71B2D872C700074C227 /* cpu.h */,
+				5DE4F71C2D872C700074C227 /* fsys.h */,
+				5DE4F71D2D872C700074C227 /* memory.h */,
+				5DE4F71E2D872C700074C227 /* sensors.h */,
+			);
+			path = hardware;
+			sourceTree = "<group>";
+		};
+		5DE4F74F2D872C700074C227 /* agent */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F71F2D872C700074C227 /* hardware */,
+				5DE4F7202D872C700074C227 /* agent_callbacks.h */,
+				5DE4F7212D872C700074C227 /* agent_handler.h */,
+				5DE4F7222D872C700074C227 /* agent_index.h */,
+				5DE4F7232D872C700074C227 /* agent_module_config.h */,
+				5DE4F7242D872C700074C227 /* agent_read_config.h */,
+				5DE4F7252D872C700074C227 /* agent_registry.h */,
+				5DE4F7262D872C700074C227 /* agent_sysORTable.h */,
+				5DE4F7272D872C700074C227 /* agent_trap.h */,
+				5DE4F7282D872C700074C227 /* all_helpers.h */,
+				5DE4F7292D872C700074C227 /* auto_nlist.h */,
+				5DE4F72A2D872C700074C227 /* baby_steps.h */,
+				5DE4F72B2D872C700074C227 /* bulk_to_next.h */,
+				5DE4F72C2D872C700074C227 /* cache_handler.h */,
+				5DE4F72D2D872C700074C227 /* debug_handler.h */,
+				5DE4F72E2D872C700074C227 /* ds_agent.h */,
+				5DE4F72F2D872C700074C227 /* instance.h */,
+				5DE4F7302D872C700074C227 /* mfd.h */,
+				5DE4F7312D872C700074C227 /* mib_module_config.h */,
+				5DE4F7322D872C700074C227 /* mib_modules.h */,
+				5DE4F7332D872C700074C227 /* mode_end_call.h */,
+				5DE4F7342D872C700074C227 /* multiplexer.h */,
+				5DE4F7352D872C700074C227 /* net-snmp-agent-includes.h */,
+				5DE4F7362D872C700074C227 /* netsnmp_close_fds.h */,
+				5DE4F7372D872C700074C227 /* null.h */,
+				5DE4F7382D872C700074C227 /* object_monitor.h */,
+				5DE4F7392D872C700074C227 /* old_api.h */,
+				5DE4F73A2D872C700074C227 /* read_only.h */,
+				5DE4F73B2D872C700074C227 /* row_merge.h */,
+				5DE4F73C2D872C700074C227 /* scalar.h */,
+				5DE4F73D2D872C700074C227 /* scalar_group.h */,
+				5DE4F73E2D872C700074C227 /* serialize.h */,
+				5DE4F73F2D872C700074C227 /* set_helper.h */,
+				5DE4F7402D872C700074C227 /* snmp_agent.h */,
+				5DE4F7412D872C700074C227 /* snmp_get_statistic.h */,
+				5DE4F7422D872C700074C227 /* snmp_vars.h */,
+				5DE4F7432D872C700074C227 /* stash_cache.h */,
+				5DE4F7442D872C700074C227 /* stash_to_next.h */,
+				5DE4F7452D872C700074C227 /* sysORTable.h */,
+				5DE4F7462D872C700074C227 /* table.h */,
+				5DE4F7472D872C700074C227 /* table_array.h */,
+				5DE4F7482D872C700074C227 /* table_container.h */,
+				5DE4F7492D872C700074C227 /* table_data.h */,
+				5DE4F74A2D872C700074C227 /* table_dataset.h */,
+				5DE4F74B2D872C700074C227 /* table_iterator.h */,
+				5DE4F74C2D872C700074C227 /* table_tdata.h */,
+				5DE4F74D2D872C700074C227 /* var_struct.h */,
+				5DE4F74E2D872C700074C227 /* watcher.h */,
+			);
+			path = agent;
+			sourceTree = "<group>";
+		};
+		5DE4F75E2D872C700074C227 /* data_access */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F7502D872C700074C227 /* arp.h */,
+				5DE4F7512D872C700074C227 /* defaultrouter.h */,
+				5DE4F7522D872C700074C227 /* interface.h */,
+				5DE4F7532D872C700074C227 /* ip_scalars.h */,
+				5DE4F7542D872C700074C227 /* ipaddress.h */,
+				5DE4F7552D872C700074C227 /* ipstats.h */,
+				5DE4F7562D872C700074C227 /* net-snmp-data-access-includes.h */,
+				5DE4F7572D872C700074C227 /* route.h */,
+				5DE4F7582D872C700074C227 /* scopezone.h */,
+				5DE4F7592D872C700074C227 /* swinst.h */,
+				5DE4F75A2D872C700074C227 /* swrun.h */,
+				5DE4F75B2D872C700074C227 /* systemstats.h */,
+				5DE4F75C2D872C700074C227 /* tcpConn.h */,
+				5DE4F75D2D872C700074C227 /* udp_endpoint.h */,
+			);
+			path = data_access;
+			sourceTree = "<group>";
+		};
+		5DE4F7B62D872C700074C227 /* library */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F75F2D872C700074C227 /* asn1.h */,
+				5DE4F7602D872C700074C227 /* callback.h */,
+				5DE4F7612D872C700074C227 /* cert_util.h */,
+				5DE4F7622D872C700074C227 /* check_varbind.h */,
+				5DE4F7632D872C700074C227 /* container.h */,
+				5DE4F7642D872C700074C227 /* container_binary_array.h */,
+				5DE4F7652D872C700074C227 /* container_iterator.h */,
+				5DE4F7662D872C700074C227 /* container_list_ssll.h */,
+				5DE4F7672D872C700074C227 /* container_null.h */,
+				5DE4F7682D872C700074C227 /* data_list.h */,
+				5DE4F7692D872C700074C227 /* default_store.h */,
+				5DE4F76A2D872C700074C227 /* dir_utils.h */,
+				5DE4F76B2D872C700074C227 /* fd_event_manager.h */,
+				5DE4F76C2D872C700074C227 /* file_utils.h */,
+				5DE4F76D2D872C700074C227 /* getopt.h */,
+				5DE4F76E2D872C700074C227 /* int64.h */,
+				5DE4F76F2D872C700074C227 /* keytools.h */,
+				5DE4F7702D872C700074C227 /* large_fd_set.h */,
+				5DE4F7712D872C700074C227 /* lcd_time.h */,
+				5DE4F7722D872C700074C227 /* libsnmp.h */,
+				5DE4F7732D872C700074C227 /* md5.h */,
+				5DE4F7742D872C700074C227 /* mib.h */,
+				5DE4F7752D872C700074C227 /* mt_support.h */,
+				5DE4F7762D872C700074C227 /* netsnmp-attribute-format.h */,
+				5DE4F7772D872C700074C227 /* oid.h */,
+				5DE4F7782D872C700074C227 /* oid_stash.h */,
+				5DE4F7792D872C700074C227 /* openssl_aes.h */,
+				5DE4F77A2D872C700074C227 /* openssl_config.h */,
+				5DE4F77B2D872C700074C227 /* openssl_des.h */,
+				5DE4F77C2D872C700074C227 /* openssl_md5.h */,
+				5DE4F77D2D872C700074C227 /* openssl_sha.h */,
+				5DE4F77E2D872C700074C227 /* parse.h */,
+				5DE4F77F2D872C700074C227 /* read_config.h */,
+				5DE4F7812D872C700074C227 /* scapi.h */,
+				5DE4F7822D872C700074C227 /* sd-daemon.h */,
+				5DE4F7832D872C700074C227 /* snmp.h */,
+				5DE4F7842D872C700074C227 /* snmp_alarm.h */,
+				5DE4F7852D872C700074C227 /* snmp_api.h */,
+				5DE4F7862D872C700074C227 /* snmp_assert.h */,
+				5DE4F7872D872C700074C227 /* snmp_client.h */,
+				5DE4F7882D872C700074C227 /* snmp_debug.h */,
+				5DE4F7892D872C700074C227 /* snmp_enum.h */,
+				5DE4F78A2D872C700074C227 /* snmp_impl.h */,
+				5DE4F78B2D872C700074C227 /* snmp_logging.h */,
+				5DE4F78C2D872C700074C227 /* snmp_openssl.h */,
+				5DE4F78D2D872C700074C227 /* snmp_parse_args.h */,
+				5DE4F78E2D872C700074C227 /* snmp_secmod.h */,
+				5DE4F78F2D872C700074C227 /* snmp_service.h */,
+				5DE4F7902D872C700074C227 /* snmp_transport.h */,
+				5DE4F7912D872C700074C227 /* snmp-tc.h */,
+				5DE4F7922D872C700074C227 /* snmpAAL5PVCDomain.h */,
+				5DE4F7932D872C700074C227 /* snmpAliasDomain.h */,
+				5DE4F7942D872C700074C227 /* snmpCallbackDomain.h */,
+				5DE4F7952D872C700074C227 /* snmpDTLSUDPDomain.h */,
+				5DE4F7962D872C700074C227 /* snmpIPv4BaseDomain.h */,
+				5DE4F7972D872C700074C227 /* snmpIPv6BaseDomain.h */,
+				5DE4F7982D872C700074C227 /* snmpIPXDomain.h */,
+				5DE4F7992D872C700074C227 /* snmpksm.h */,
+				5DE4F79A2D872C700074C227 /* snmpSocketBaseDomain.h */,
+				5DE4F79B2D872C700074C227 /* snmpSSHDomain.h */,
+				5DE4F79C2D872C700074C227 /* snmpSTDDomain.h */,
+				5DE4F79D2D872C700074C227 /* snmpTCPBaseDomain.h */,
+				5DE4F79E2D872C700074C227 /* snmpTCPDomain.h */,
+				5DE4F79F2D872C700074C227 /* snmpTCPIPv6Domain.h */,
+				5DE4F7A02D872C700074C227 /* snmpTLSBaseDomain.h */,
+				5DE4F7A12D872C700074C227 /* snmpTLSTCPDomain.h */,
+				5DE4F7A22D872C700074C227 /* snmptsm.h */,
+				5DE4F7A32D872C700074C227 /* snmpUDPBaseDomain.h */,
+				5DE4F7A42D872C700074C227 /* snmpUDPDomain.h */,
+				5DE4F7A52D872C700074C227 /* snmpUDPIPv4BaseDomain.h */,
+				5DE4F7A62D872C700074C227 /* snmpUDPIPv6Domain.h */,
+				5DE4F7A72D872C700074C227 /* snmpUDPsharedDomain.h */,
+				5DE4F7A82D872C700074C227 /* snmpUnixDomain.h */,
+				5DE4F7A92D872C700074C227 /* snmpusm.h */,
+				5DE4F7AA2D872C700074C227 /* snmpv3.h */,
+				5DE4F7AB2D872C700074C227 /* snmpv3-security-includes.h */,
+				5DE4F7AC2D872C700074C227 /* system.h */,
+				5DE4F7AD2D872C700074C227 /* testing.h */,
+				5DE4F7AE2D872C700074C227 /* text_utils.h */,
+				5DE4F7AF2D872C700074C227 /* tools.h */,
+				5DE4F7B02D872C700074C227 /* transform_oids.h */,
+				5DE4F7B12D872C700074C227 /* types.h */,
+				5DE4F7B22D872C700074C227 /* ucd_compat.h */,
+				5DE4F7B32D872C700074C227 /* vacm.h */,
+				5DE4F7B42D872C700074C227 /* winpipe.h */,
+				5DE4F7B52D872C700074C227 /* winservice.h */,
+			);
+			path = library;
+			sourceTree = "<group>";
+		};
+		5DE4F7B82D872C700074C227 /* machine */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F7B72D872C700074C227 /* generic.h */,
+			);
+			path = machine;
+			sourceTree = "<group>";
+		};
+		5DE4F7E92D872C700074C227 /* system */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F7B92D872C700074C227 /* aix.h */,
+				5DE4F7BA2D872C700074C227 /* bsd.h */,
+				5DE4F7BB2D872C700074C227 /* bsdi.h */,
+				5DE4F7BC2D872C700074C227 /* bsdi3.h */,
+				5DE4F7BD2D872C700074C227 /* bsdi4.h */,
+				5DE4F7BE2D872C700074C227 /* cygwin.h */,
+				5DE4F7BF2D872C700074C227 /* darwin.h */,
+				5DE4F7C02D872C700074C227 /* dragonfly.h */,
+				5DE4F7C12D872C700074C227 /* dynix.h */,
+				5DE4F7C22D872C700074C227 /* freebsd.h */,
+				5DE4F7C32D872C700074C227 /* freebsd2.h */,
+				5DE4F7C42D872C700074C227 /* freebsd3.h */,
+				5DE4F7C52D872C700074C227 /* freebsd4.h */,
+				5DE4F7C62D872C700074C227 /* freebsd5.h */,
+				5DE4F7C72D872C700074C227 /* freebsd6.h */,
+				5DE4F7C82D872C700074C227 /* freebsd7.h */,
+				5DE4F7C92D872C700074C227 /* freebsd8.h */,
+				5DE4F7CA2D872C700074C227 /* freebsd9.h */,
+				5DE4F7CB2D872C700074C227 /* freebsd10.h */,
+				5DE4F7CC2D872C700074C227 /* freebsd11.h */,
+				5DE4F7CD2D872C700074C227 /* freebsd12.h */,
+				5DE4F7CE2D872C700074C227 /* freebsd13.h */,
+				5DE4F7CF2D872C700074C227 /* freebsd14.h */,
+				5DE4F7D02D872C700074C227 /* generic.h */,
+				5DE4F7D12D872C700074C227 /* hpux.h */,
+				5DE4F7D22D872C700074C227 /* irix.h */,
+				5DE4F7D32D872C700074C227 /* kfreebsd.h */,
+				5DE4F7D42D872C700074C227 /* linux.h */,
+				5DE4F7D52D872C700074C227 /* mingw32.h */,
+				5DE4F7D62D872C700074C227 /* mingw32msvc.h */,
+				5DE4F7D72D872C700074C227 /* mips.h */,
+				5DE4F7D82D872C700074C227 /* netbsd.h */,
+				5DE4F7D92D872C700074C227 /* nto-qnx6.h */,
+				5DE4F7DA2D872C700074C227 /* openbsd.h */,
+				5DE4F7DB2D872C700074C227 /* openbsd4.h */,
+				5DE4F7DC2D872C700074C227 /* openbsd5.h */,
+				5DE4F7DD2D872C700074C227 /* openbsd6.h */,
+				5DE4F7DE2D872C700074C227 /* openbsd7.h */,
+				5DE4F7DF2D872C700074C227 /* osf5.h */,
+				5DE4F7E02D872C700074C227 /* solaris.h */,
+				5DE4F7E12D872C700074C227 /* solaris2.3.h */,
+				5DE4F7E22D872C700074C227 /* solaris2.4.h */,
+				5DE4F7E32D872C700074C227 /* solaris2.5.h */,
+				5DE4F7E42D872C700074C227 /* solaris2.6.h */,
+				5DE4F7E52D872C700074C227 /* sunos.h */,
+				5DE4F7E62D872C700074C227 /* svr5.h */,
+				5DE4F7E72D872C700074C227 /* sysv.h */,
+				5DE4F7E82D872C700074C227 /* ultrix4.h */,
+			);
+			path = system;
+			sourceTree = "<group>";
+		};
+		5DE4F7FA2D872C700074C227 /* net-snmp */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F74F2D872C700074C227 /* agent */,
+				5DE4F75E2D872C700074C227 /* data_access */,
+				5DE4F7B62D872C700074C227 /* library */,
+				5DE4F7B82D872C700074C227 /* machine */,
+				5DE4F7E92D872C700074C227 /* system */,
+				5DE4F7EA2D872C700074C227 /* config_api.h */,
+				5DE4F7EB2D872C700074C227 /* definitions.h */,
+				5DE4F7EC2D872C700074C227 /* mib_api.h */,
+				5DE4F7ED2D872C700074C227 /* net-snmp-config.h */,
+				5DE4F7EE2D872C700074C227 /* net-snmp-config.h.in */,
+				5DE4F7EF2D872C700074C227 /* net-snmp-features.h */,
+				5DE4F7F02D872C700074C227 /* net-snmp-includes.h */,
+				5DE4F7F12D872C700074C227 /* openssl_md5.h */,
+				5DE4F7F22D872C700074C227 /* output_api.h */,
+				5DE4F7F32D872C700074C227 /* pdu_api.h */,
+				5DE4F7F42D872C700074C227 /* session_api.h */,
+				5DE4F7F52D872C700074C227 /* snmpv3_api.h */,
+				5DE4F7F62D872C700074C227 /* types.h */,
+				5DE4F7F72D872C700074C227 /* utilities.h */,
+				5DE4F7F82D872C700074C227 /* varbind_api.h */,
+				5DE4F7F92D872C700074C227 /* version.h */,
+			);
+			path = "net-snmp";
+			sourceTree = "<group>";
+		};
+		5DE4F8272D872C830074C227 /* ucd-snmp */ = {
+			isa = PBXGroup;
+			children = (
+				5DE4F7FD2D872C830074C227 /* agent_index.h */,
+				5DE4F7FE2D872C830074C227 /* agent_read_config.h */,
+				5DE4F7FF2D872C830074C227 /* agent_registry.h */,
+				5DE4F8002D872C830074C227 /* agent_trap.h */,
+				5DE4F8012D872C830074C227 /* asn1.h */,
+				5DE4F8022D872C830074C227 /* auto_nlist.h */,
+				5DE4F8032D872C830074C227 /* callback.h */,
+				5DE4F8042D872C830074C227 /* default_store.h */,
+				5DE4F8052D872C830074C227 /* ds_agent.h */,
+				5DE4F8062D872C830074C227 /* header_complex.h */,
+				5DE4F8072D872C830074C227 /* int64.h */,
+				5DE4F8082D872C830074C227 /* keytools.h */,
+				5DE4F8092D872C830074C227 /* mib.h */,
+				5DE4F80A2D872C830074C227 /* mib_module_config.h */,
+				5DE4F80B2D872C830074C227 /* mibincl.h */,
+				5DE4F80C2D872C830074C227 /* parse.h */,
+				5DE4F80D2D872C830074C227 /* read_config.h */,
+				5DE4F80F2D872C830074C227 /* scapi.h */,
+				5DE4F8102D872C830074C227 /* snmp.h */,
+				5DE4F8112D872C830074C227 /* snmp_agent.h */,
+				5DE4F8122D872C830074C227 /* snmp_alarm.h */,
+				5DE4F8132D872C830074C227 /* snmp_api.h */,
+				5DE4F8142D872C830074C227 /* snmp_client.h */,
+				5DE4F8152D872C830074C227 /* snmp_debug.h */,
+				5DE4F8162D872C830074C227 /* snmp_impl.h */,
+				5DE4F8172D872C830074C227 /* snmp_logging.h */,
+				5DE4F8182D872C830074C227 /* snmp_parse_args.h */,
+				5DE4F8192D872C830074C227 /* snmp_vars.h */,
+				5DE4F81A2D872C830074C227 /* snmp-tc.h */,
+				5DE4F81B2D872C830074C227 /* snmpusm.h */,
+				5DE4F81C2D872C830074C227 /* snmpv3.h */,
+				5DE4F81D2D872C830074C227 /* struct.h */,
+				5DE4F81E2D872C830074C227 /* system.h */,
+				5DE4F81F2D872C830074C227 /* tools.h */,
+				5DE4F8202D872C830074C227 /* transform_oids.h */,
+				5DE4F8212D872C830074C227 /* ucd-snmp-agent-includes.h */,
+				5DE4F8222D872C830074C227 /* ucd-snmp-config.h */,
+				5DE4F8232D872C830074C227 /* ucd-snmp-includes.h */,
+				5DE4F8242D872C830074C227 /* util_funcs.h */,
+				5DE4F8252D872C830074C227 /* var_struct.h */,
+				5DE4F8262D872C830074C227 /* version.h */,
+			);
+			path = "ucd-snmp";
+			sourceTree = "<group>";
+		};
 		5DF214FF211B4FCE002B7603 /* Networks */ = {
 			isa = PBXGroup;
 			children = (
@@ -928,6 +1531,7 @@
 				5D536A482CB5990200CB7474 /* design-all.psd in Resources */,
 				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
+				5DE4F7FC2D872C700074C227 /* net-snmp-config.h.in in Resources */,
 				5D463FBC2A3C4F3100DA77C4 /* Repère.scn in Resources */,
 				5D536A542CB6C30500CB7474 /* design-manual-6.png in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
@@ -1236,6 +1840,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
+				);
 				MARKETING_VERSION = 4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1269,6 +1879,12 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
 				);
 				MARKETING_VERSION = 4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
