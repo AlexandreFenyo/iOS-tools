@@ -103,7 +103,7 @@ struct StepByStepSwiftUIView: View {
             HStack {
                 Spacer()
                 
-                Text("WiFi 3D Scan HeatMap Network Tools PRO")
+                Text("WiFi Heatmap & Network Tools")
                     .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding(.vertical)
