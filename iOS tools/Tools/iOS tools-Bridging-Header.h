@@ -4,6 +4,12 @@
 
 extern void init_snmp(const char *);
 extern int add_mibdir(const char *);
+extern int alex_debug(char *);
+extern int alex_chdir(char *);
+extern void alex_list_dir(void);
+extern void alex_getcwd(void);
+extern void alex_setsnmpconfpath(char *);
+extern void alex_setsnmpmibdir(char *);
 
 int localChargenClientOpen();
 int localChargenClientClose();

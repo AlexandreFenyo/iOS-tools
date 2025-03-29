@@ -41,7 +41,8 @@ class FileBrowsing {
     func listDirectory(_ path: String) throws -> [String] {
         var filename_list = [String]()
         if let documents_directory {
-            let fileURLs = try file_manager.contentsOfDirectory(at: documents_directory, includingPropertiesForKeys: nil)
+            let path_directory = documents_directory.appendingPathComponent(path)
+            let fileURLs = try file_manager.contentsOfDirectory(at: path_directory, includingPropertiesForKeys: nil)
             for fileURL in fileURLs {
                 print("Fichier trouvé : \(fileURL.absoluteString)")
                 filename_list.append(fileURL.absoluteString)
@@ -125,6 +126,33 @@ final class GenericTools : AutoTrace {
         }
         return version
     }()
+    
+    /*
+     Invoquer une fonction C avec une chaîne de caractères
+     Exemple d'utilisation :
+     if let pointer = stringToUnsafeMutablePointer("Hello, World!") {
+         // Utiliser le pointeur
+         print(String(cString: pointer)) // Affiche "Hello, World!"
+         // Libérer la mémoire allouée
+         pointer.deallocate()
+     }*/
+    static func stringToUnsafeMutablePointer(_ string: String) -> UnsafeMutablePointer<CChar>? {
+        // Convertir la String en C String (CString)
+        let cString = string.cString(using: .utf8)
+        
+        // Vérifier si la conversion a réussi
+        guard let cStringArray = cString else {
+            return nil
+        }
+        
+        // Allouer de la mémoire pour le UnsafeMutablePointer
+        let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: cStringArray.count)
+        
+        // Copier les données dans le pointeur
+        pointer.initialize(from: cStringArray, count: cStringArray.count)
+        
+        return pointer
+    }
     
     static func convertDoubleToInt(_ doubleValue: Double) -> Int? {
         if doubleValue.isFinite {
