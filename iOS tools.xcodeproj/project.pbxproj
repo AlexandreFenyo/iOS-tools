@@ -34,7 +34,6 @@
 		5D2DFC342902DBBD0080A9EA /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5D2DFC332902DBBD0080A9EA /* Settings.bundle */; };
 		5D2E6D742CDB7E1F00372A11 /* MyTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2E6D732CDB7E1F00372A11 /* MyTabBarController.swift */; };
 		5D2F34F02CC977ED006529DD /* StepByStepHeatMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F34EF2CC977ED006529DD /* StepByStepHeatMapView.swift */; };
-		5D2F34F22CD04217006529DD /* press4.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D2F34F12CD04217006529DD /* press4.psd */; };
 		5D2FFB392B5437EC006D1F57 /* PersistentTraces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB382B5437EC006D1F57 /* PersistentTraces.swift */; };
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
 		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
@@ -53,11 +52,7 @@
 		5D524C032BC053CE00B522E1 /* iOSToolsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C022BC053CE00B522E1 /* iOSToolsMacros */; };
 		5D524C062BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D524C052BC055EF00B522E1 /* SwiftAdvancedAtomicsSwiftPackage */; };
 		5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A412CB598E900CB7474 /* design-auto-3.png */; };
-		5D536A482CB5990200CB7474 /* design-all.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A472CB5990200CB7474 /* design-all.psd */; };
 		5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A492CB59AC100CB7474 /* design-doc-5.png */; };
-		5D536A4E2CB59C0900CB7474 /* design-manual-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A4D2CB59C0900CB7474 /* design-manual-5.psd */; };
-		5D536A502CB59C1200CB7474 /* design-doc-5.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A4F2CB59C1200CB7474 /* design-doc-5.psd */; };
-		5D536A522CB59C1C00CB7474 /* design-auto-3.psd in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A512CB59C1C00CB7474 /* design-auto-3.psd */; };
 		5D536A542CB6C30500CB7474 /* design-manual-6.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D536A532CB6C30500CB7474 /* design-manual-6.png */; };
 		5D551ED82BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D551ED72BBE1EED00201638 /* SwiftAdvancedAtomicsSwiftPackage */; };
 		5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D636441213D8A7500BFEB0F /* TCPPortBrowser.swift */; };
@@ -1765,11 +1760,9 @@
 				5D909D7B2D8FEE2100C7553F /* IPV6-TCP-MIB.txt in Resources */,
 				5D909D7C2D8FEE2100C7553F /* RMON-MIB.txt in Resources */,
 				5D909D7D2D8FEE2100C7553F /* UDP-MIB.txt in Resources */,
-				5D536A502CB59C1200CB7474 /* design-doc-5.psd in Resources */,
 				5D0DE45D2A9BA99800892028 /* Interman 3D Scene.scn in Resources */,
 				5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */,
 				5D65EE4D296381780099871C /* app-icon-58.png in Resources */,
-				5D536A522CB59C1C00CB7474 /* design-auto-3.psd in Resources */,
 				5D82ACE6297D46E30021E492 /* docs-ports-fr.png in Resources */,
 				5D1CBC4E2A63FE33001F3B8D /* laptop2.scn in Resources */,
 				5D38681020963915009FE239 /* config.plist in Resources */,
@@ -1790,7 +1783,6 @@
 				5D536A4A2CB59AC100CB7474 /* design-doc-5.png in Resources */,
 				5D82ACD2297D46B00021E492 /* docs-actions-2-fr.png in Resources */,
 				5D65EE51296381780099871C /* app-icon-1024.png in Resources */,
-				5D2F34F22CD04217006529DD /* press4.psd in Resources */,
 				5D536A422CB598E900CB7474 /* design-auto-3.png in Resources */,
 				5D039EC629B8A4CC00A33898 /* Appareils.png in Resources */,
 				5D86321128E9D7D4000B7E2D /* tcpports.txt in Resources */,
@@ -1806,7 +1798,6 @@
 				5D1CBC442A63F107001F3B8D /* ovh.scn in Resources */,
 				5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */,
 				5DE4ED92290586740000B30A /* docs-chart.png in Resources */,
-				5D536A482CB5990200CB7474 /* design-all.psd in Resources */,
 				5D1CBC4A2A63FAF4001F3B8D /* googlehome.scn in Resources */,
 				5D82ACDE297D46D50021E492 /* docs-chart-fr.png in Resources */,
 				5DE4F7FC2D872C700074C227 /* net-snmp-config.h.in in Resources */,
@@ -1814,7 +1805,6 @@
 				5D536A542CB6C30500CB7474 /* design-manual-6.png in Resources */,
 				5D16E60729A77124000A46E4 /* docs-action-bar.png in Resources */,
 				5D65EE55296381780099871C /* app-icon-87.png in Resources */,
-				5D536A4E2CB59C0900CB7474 /* design-manual-5.psd in Resources */,
 				5D1CBC462A63F53A001F3B8D /* macmini.scn in Resources */,
 				5DEDFB6A29C6E65F00052FB7 /* Interman 3D Standard Component.scn in Resources */,
 			);
