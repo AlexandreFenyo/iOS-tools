@@ -161,6 +161,8 @@
 		5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DA794142D80C80C006900F3 /* SwiftUIViewSharedTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */; };
+		5DADCF212DA2B75E00846627 /* SnmpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DADCF202DA2B75E00846627 /* SnmpViewController.swift */; };
+		5DADCF232DA2B79300846627 /* SnmpSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DADCF222DA2B79300846627 /* SnmpSwiftUIView.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
 		5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */ = {isa = PBXBuildFile; fileRef = 5DC43CFE2CAB493500B90FAA /* infos.cgi */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
@@ -411,6 +413,8 @@
 		5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepSwiftUIView.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewSharedTools.swift; sourceTree = "<group>"; };
+		5DADCF202DA2B75E00846627 /* SnmpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnmpViewController.swift; sourceTree = "<group>"; };
+		5DADCF222DA2B79300846627 /* SnmpSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnmpSwiftUIView.swift; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
@@ -854,6 +858,8 @@
 				5DE22F8529C5C782002D9BEE /* Interman3DSwiftUIView.swift */,
 				5DE22F7B29BDF2CA002D9BEE /* IntermanViewController.swift */,
 				5D7289F02CC5728F00DD4B8A /* OrientationView.swift */,
+				5DADCF202DA2B75E00846627 /* SnmpViewController.swift */,
+				5DADCF222DA2B79300846627 /* SnmpSwiftUIView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1861,9 +1867,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS tools/Pods-iOS tools-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS tools/Pods-iOS tools-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1879,8 +1889,10 @@
 			files = (
 				5DF73B4529812C6100438F65 /* NetworkServiceListener.swift in Sources */,
 				5DF2151B212D8B62002B7603 /* localFloodClient.c in Sources */,
+				5DADCF212DA2B75E00846627 /* SnmpViewController.swift in Sources */,
 				5D3A7E572138921A00060C92 /* Defaults.swift in Sources */,
 				5D1F12432728002500656D0D /* TracesSwiftUIView.swift in Sources */,
+				5DADCF232DA2B79300846627 /* SnmpSwiftUIView.swift in Sources */,
 				5D25C8462CB029F2008D858D /* WebContent.swift in Sources */,
 				5DC62F7F290AF54D00C4B58E /* ImagePicker.swift in Sources */,
 				5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */,
