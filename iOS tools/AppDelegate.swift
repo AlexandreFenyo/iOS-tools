@@ -79,13 +79,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Initialize net-snmp library
 
-        /*
-        print("AVANT add_mibdir")
-        var foo = add_mibdir(".")
-        print("foo: \(foo)")
-        print("APRES add_mibdir")
-         */
-
         // $HOME=/var/mobile/Containers/Data/Application/<UUID_de_l_application>
         // contient :
         // - Documents : accessibles via l'app Fichiers
@@ -93,15 +86,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // homedir: /private/var/mobile/Containers/Data/Application/A9640F58-D593-402A-A647-8830A667096E
         let homedir = ProcessInfo.processInfo.environment["HOME"]!
-        // Pour faire un chdir dans $HOME/Documents/snmp :
-        // FileManager.default.changeCurrentDirectoryPath("\(homedir)/Documents/snmp")
-
-//        try! FileManager.default.createDirectory(at: URL(fileURLWithPath: "\(homedir)/toto"), withIntermediateDirectories: true, attributes: nil)
 
         // bundledir: /private/var/containers/Bundle/Application/DB28E2B7-DA7C-4BA1-9871-13CB22577CAB/iOS tools.app
         let bundledir = Bundle.main.path(forResource: "BRIDGE-MIB", ofType: "txt")!.replacingOccurrences(of: "/BRIDGE-MIB.txt", with: "")
-        // Pour faire un chdir dans le répertoire source des fichiers MIB :
-        // FileManager.default.changeCurrentDirectoryPath(bundledir)
         
         // documentsurl: $HOME/Documents
         if let documentsurl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -112,7 +99,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Créer le fichier $HOME/Documents/snmp/snmp.conf
             let snmpconfurl = snmpurl.appendingPathComponent("snmp.conf")
             let content = "mibdirs \"\(bundledir)\"\n"
-//            let content = "mibdirs /toto\n"
             try? content.write(to: snmpconfurl, atomically: true, encoding: .utf8)
          }
 
@@ -130,47 +116,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             alex_setsnmpmibdir(pointer)
             pointer.deallocate()
         }
-
         
-        /*
-//        try! FileManager.default.createSymbolicLink(atPath: "/tmp/toto", withDestinationPath: "/tmp/titi")
-
-        var _ret = FileManager.default.changeCurrentDirectoryPath("/Library")
-        print("XXXXX: change cur dir : \(_ret)")
-
-        alex_getcwd()
-        
-        var retval: Int = 1
-        var str = "."
-        if let pointer = GenericTools.stringToUnsafeMutablePointer(str) {
-//            retval = Int(alex_chdir(pointer))
-            pointer.deallocate()
-        }
-//        print("XXXXX: retval = \(retval)")
-        
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("Erreur : Impossible de trouver le répertoire Documents.")
-            return false
-        }
-        let appDirectoryName = "Toto" //bundleDisplayName
-        let appDirectoryURL = documentsDirectory.appendingPathComponent(appDirectoryName)
-        do {
-            try FileManager.default.createDirectory(at: appDirectoryURL, withIntermediateDirectories: true, attributes: nil)
-            print("Répertoire créé à : \(appDirectoryURL.path)")
-        } catch {
-            print("Erreur lors de la création du répertoire : \(error.localizedDescription)")
-        }
-        str = appDirectoryURL.path
-        _ret = FileManager.default.changeCurrentDirectoryPath(str)
-        print("XXXXX: change cur dir : \(_ret)")
-
-        alex_list_dir()
-         */
-        
-        // $HOME=Optional("/private/var/mobile/Containers/Data/Application/359C926E-048F-4549-95E3-B1F5414D3D35")
-        // let home = ProcessInfo.processInfo.environment["HOME"]
-        // print("$HOME=\(home)")
-        
+        /* A REMETTRE : fonctionne
         print("AVANT init")
         alex_rollingbuf_init();
         Task.detached {
@@ -183,12 +130,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let len = Int(alex_rollingbuf_poplength())
             if len > 0 {
                 print("XXXXX: POP len: \(len)")
-/*                let str = "\(homedir)/Documents/snmp"
-                if let pointer = GenericTools.stringToUnsafeMutablePointer(str) {
-                    alex_setsnmpconfpath(pointer)
-                    pointer.deallocate()
-                }*/
-
                 while (true) {
                     let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
                     let foo = alex_rollingbuf_pop(pointer)
@@ -199,36 +140,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
-
+*/
         
-//        init_snmp("snmp")
+        // inutile si on s'appuie sur des fonctions qui font tout dans la partie C de net-snmp
+        //        init_snmp("snmp")
         print("APRES init")
 
-/*
-        try? FileBrowsing.shared.listDirectory("/mibs")
-        // Obtenir le chemin du répertoire de documents
-         let fileManager = FileManager.default
-         if let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
-             
-             // Créer le chemin du répertoire
-             let snmpDirectory = documentsDirectory.appendingPathComponent("/mibs")
-             do {
-                 // Créer le répertoire .snmp/mibs
-                 try fileManager.createDirectory(at: snmpDirectory, withIntermediateDirectories: true, attributes: nil)
-                 // Chemin du fichier txt
-                 let filePath = snmpDirectory.appendingPathComponent("SNMPv2-MIB.txt")
-                 // Contenu du fichier
-                 let content = "Ceci est le contenu du fichier"
-                 // Écrire le contenu dans le fichier
-                 try content.write(to: filePath, atomically: true, encoding: .utf8)
-                 print("Répertoire et fichier créés avec succès.")
-             } catch {
-                 print("Erreur lors de la création du répertoire ou du fichier : \(error)")
-             }
-         }
-        
-        exit(0);
-        */
+        /* FIN SNMP */
         
         // Set a minimal window size on Mac Catalyst
         if ProcessInfo.processInfo.isMacCatalystApp {
