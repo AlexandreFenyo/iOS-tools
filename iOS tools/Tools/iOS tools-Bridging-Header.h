@@ -2,6 +2,8 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
+extern void alex_walk(void);
+
 extern void init_snmp(const char *);
 extern int add_mibdir(const char *);
 extern int alex_debug(char *);
@@ -10,6 +12,10 @@ extern void alex_list_dir(void);
 extern void alex_getcwd(void);
 extern void alex_setsnmpconfpath(char *);
 extern void alex_setsnmpmibdir(char *);
+extern void alex_rollingbuf_init(void);
+extern void alex_rollingbuf_close(void);
+extern int alex_rollingbuf_poplength(void);
+extern int alex_rollingbuf_pop(char *target);
 
 int localChargenClientOpen();
 int localChargenClientClose();

@@ -153,7 +153,7 @@ final class GenericTools : AutoTrace {
         
         return pointer
     }
-    
+
     static func convertDoubleToInt(_ doubleValue: Double) -> Int? {
         if doubleValue.isFinite {
             return Int(doubleValue)

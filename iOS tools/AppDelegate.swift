@@ -172,8 +172,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // print("$HOME=\(home)")
         
         print("AVANT init")
-//        add_mibdir(str)
-        init_snmp("snmp")
+        alex_rollingbuf_init();
+        Task.detached {
+            alex_walk()
+            alex_rollingbuf_close()
+        }
+
+        Task.detached {
+            sleep(1)
+            let len = Int(alex_rollingbuf_poplength())
+            if len > 0 {
+                print("XXXXX: POP len: \(len)")
+/*                let str = "\(homedir)/Documents/snmp"
+                if let pointer = GenericTools.stringToUnsafeMutablePointer(str) {
+                    alex_setsnmpconfpath(pointer)
+                    pointer.deallocate()
+                }*/
+
+                while (true) {
+                    let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
+                    let foo = alex_rollingbuf_pop(pointer)
+                    print("XXXXX: pop retval: \(foo)")
+                    print("XXXXX: POP data: \(String(cString: pointer))")
+                    pointer.deallocate()
+                    sleep(1)
+                }
+            }
+        }
+
+        
+//        init_snmp("snmp")
         print("APRES init")
 
 /*
