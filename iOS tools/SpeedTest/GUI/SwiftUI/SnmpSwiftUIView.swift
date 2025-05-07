@@ -11,13 +11,13 @@ import StoreKit
 
 public class SnmpViewModel : ObservableObject {
     static let shared = SnmpViewModel()
-
+    
     /*
-    private let log_level_to_string: [LogLevel: String] = [
-        LogLevel.INFO: "INFO",
-        LogLevel.DEBUG: "DEBUG",
-        LogLevel.ALL: "ALL"
-    ]*/
+     private let log_level_to_string: [LogLevel: String] = [
+     LogLevel.INFO: "INFO",
+     LogLevel.DEBUG: "DEBUG",
+     LogLevel.ALL: "ALL"
+     ]*/
     
     private let df: DateFormatter = {
         let df = DateFormatter()
@@ -32,8 +32,8 @@ public class SnmpViewModel : ObservableObject {
         var arr = [String]()
         arr.append("")
         for i in 1...200 {
-//                arr.append("Speed Test - Traces zfeiopjf oifj o jefozi jeofjioj ei jozefij ezoi jezo ijezo ijezoi ejzfo jzeo jzefi oezfj ziefo jzeo ijzef oizejfoize jfezo ijzefo ijzef ozefj zieo jezio jzeoi jzeofi jezo ijzeoi jzeoi jzeoi jezo ijzeo ijzeo ijzeio jzeio j \(i)")
-//                arr.append("Speed Test - Traces \(i)")
+            //                arr.append("Speed Test - Traces zfeiopjf oifj o jefozi jeofjioj ei jozefij ezoi jezo ijezo ijezoi ejzfo jzeo jzefi oezfj ziefo jzeo ijzef oizejfoize jfezo ijzefo ijzef ozefj zieo jezio jzeoi jzeofi jezo ijzeoi jzeoi jzeoi jezo ijzeo ijzeo ijzeio jzeio j \(i)")
+            //                arr.append("Speed Test - Traces \(i)")
         }
         return arr
     }()
@@ -42,29 +42,29 @@ public class SnmpViewModel : ObservableObject {
         traces = [ "" ]
         Traces.deleteMessages()
     }
-
-    /*
-    public func append(_ str: String, level _level: LogLevel = .ALL, date _date: Date? = nil) {
-        if _level.rawValue <= level.rawValue {
-            let level = log_level_to_string[_level]!
-            traces.append(df.string(from: _date ?? Date()) + " [" + level + "]: " + str)
-        }
-    }*/
     
-//    @Published private(set) var level: LogLevel = .ALL
-//    public func setLevel(_ val: LogLevel) { level = val }
+    /*
+     public func append(_ str: String, level _level: LogLevel = .ALL, date _date: Date? = nil) {
+     if _level.rawValue <= level.rawValue {
+     let level = log_level_to_string[_level]!
+     traces.append(df.string(from: _date ?? Date()) + " [" + level + "]: " + str)
+     }
+     }*/
+    
+    //    @Published private(set) var level: LogLevel = .ALL
+    //    public func setLevel(_ val: LogLevel) { level = val }
 }
 
 /*
-public enum LogLevel : Int {
-    case INFO = 0
-    case DEBUG
-    case ALL
-}*/
+ public enum LogLevel : Int {
+ case INFO = 0
+ case DEBUG
+ case ALL
+ }*/
 
 struct SnmpSwiftUIView: View {
     @ObservedObject var model = SnmpViewModel.shared
-
+    
     @State public var locked = true
     @Namespace var topID
     @Namespace var bottomID
@@ -79,15 +79,40 @@ struct SnmpSwiftUIView: View {
     
     @State private var timer: Timer?
     
+    func getOIDNode() -> OIDNodeDisplayable {
+        
+        return OIDNodeDisplayable(type: .root, val: "")
+        
+        let filepath = Bundle.main.path(forResource: "snmpwalk", ofType: "txt")!
+        
+        var cnt = 0
+        let oid_root: OIDNode = OIDNode(type: .root, val: "")
+        if let fileHandle = FileHandle(forReadingAtPath: filepath) {
+            let fileData = fileHandle.readDataToEndOfFile()
+            if let fileContent = String(data: fileData, encoding: .isoLatin1) {
+                fileContent.enumerateLines { line, _ in
+                    print(line)
+                    cnt += 1
+                    oid_root.mergeSingleOID(OIDNode.parse(line))
+                    /*
+                     if cnt == 1200 /* pb à 907 */ {
+                     print("FIN")
+                     oid.dumpTree()
+                     exit(0)
+                     }*/
+                }
+            }
+            fileHandle.closeFile()
+        } else {
+            print("Le fichier n'existe pas à l'emplacement spécifié.")
+        }
+        
+        let oid_root_displayable = oid_root.getDisplayable()
+        oid_root_displayable.val = "SNMP OID Tree"
+        return oid_root_displayable
+    }
+    
     var body: some View {
-        Text("Salut")
+        SNMPTreeView(rootNode: getOIDNode())
     }
 }
-
-struct SnmpSwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        SnmpSwiftUIView()
-    }
-}
-
-

@@ -276,7 +276,7 @@ struct DetailSwiftUIView: View {
                     } label: {
                         Label(selected_delay, systemImage: "clock")
                             .font(first_line_font)
-                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .foregroundColor(Color(COLORS.standard_background)).opacity(0.8)
                             .padding(2)
                             .background(Color(COLORS.right_pannel_bg).lighter())
                             .cornerRadius(10.0)

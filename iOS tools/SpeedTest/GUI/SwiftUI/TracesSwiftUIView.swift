@@ -240,11 +240,3 @@ struct TracesSwiftUIView: View {
         }
     }
 }
-
-struct TracesSwiftUIView_Previews: PreviewProvider {
-    static var previews: some View {
-        TracesSwiftUIView()
-    }
-}
-
-

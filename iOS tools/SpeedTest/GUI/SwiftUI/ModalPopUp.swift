@@ -56,7 +56,7 @@ struct ModalPopPupShell<Content: View>: View {
     let title: String
     let dismiss: String
     // Note: this is the size of the components added by ModalPopUp. The height of the popup is derivated from this value.
-    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : (UIDevice.current.userInterfaceIdiom == .pad ? 320 : 400)
+    let other_components_height: CGFloat = UIDevice.current.userInterfaceIdiom == .phone ? 300 : (UIDevice.current.userInterfaceIdiom == .pad ? 500 : 500)
 
     init(
         action: @escaping () -> Void,

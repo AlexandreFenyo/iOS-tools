@@ -214,7 +214,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // May be useful for debugging:
         // Select the Network tab as the default one, to debug faster
         // tabBarController.selectedIndex = 1
-        
+
+        // May be useful for debugging:
+        // Select the SNMP tab as the default one, to debug faster
+        if debug_snmp { tabBarController.selectedIndex = 3 }
+
         self.masterViewController = masterViewController
         
         self.masterViewController!.detail_view_controller = detailViewController

@@ -183,7 +183,7 @@ struct StepByStepSwiftUIView: View {
                     NSLocalizedString("OPEN ADVANCED INTERFACE", comment: "OPEN ADVANCED INTERFACE"),
                     {
                         Text("")
-                        Text("You will be able to come back later to the home window simply by clicking on the following icon:")
+                        Text("You will be able to come back later to the home window simply by clicking on the following icon:").padding()
                         
                         Image(systemName: "house")
                             .scaleEffect(2)
