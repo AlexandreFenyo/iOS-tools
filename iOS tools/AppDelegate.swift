@@ -77,76 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Called once at app start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Initialize net-snmp library
-
-        // $HOME=/var/mobile/Containers/Data/Application/<UUID_de_l_application>
-        // contient :
-        // - Documents : accessibles via l'app Fichiers
-        // - Library : pour l'app, en lecture/écriture
-        
-        // homedir: /private/var/mobile/Containers/Data/Application/A9640F58-D593-402A-A647-8830A667096E
-        let homedir = ProcessInfo.processInfo.environment["HOME"]!
-
-        // bundledir: /private/var/containers/Bundle/Application/DB28E2B7-DA7C-4BA1-9871-13CB22577CAB/iOS tools.app
-        let bundledir = Bundle.main.path(forResource: "BRIDGE-MIB", ofType: "txt")!.replacingOccurrences(of: "/BRIDGE-MIB.txt", with: "")
-        
-        // documentsurl: $HOME/Documents
-        if let documentsurl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            // snmpurl: $HOME/Documents/snmp
-            let snmpurl = documentsurl.appendingPathComponent("snmp")
-            // Créer le répertoire $HOME/Documents/snmp
-            try? FileManager.default.createDirectory(at: snmpurl, withIntermediateDirectories: true, attributes: nil)
-            // Créer le fichier $HOME/Documents/snmp/snmp.conf
-            let snmpconfurl = snmpurl.appendingPathComponent("snmp.conf")
-            let content = "mibdirs \"\(bundledir)\"\n"
-            try? content.write(to: snmpconfurl, atomically: true, encoding: .utf8)
-         }
-
-        // Créer un lien symbolique nommé snmp.txt et pointant vers snmp.conf, pour pouvoir facilement voir le contenu depuis l'IHM d'un iPhone/iPad
-        try? FileManager.default.linkItem(at: URL(fileURLWithPath: "\(homedir)/Documents/snmp/snmp.conf"), to: URL(fileURLWithPath: "\(homedir)/Documents/snmp/snmp.txt"))
-
-        let str = "\(homedir)/Documents/snmp"
-        if let pointer = GenericTools.stringToUnsafeMutablePointer(str) {
-            alex_setsnmpconfpath(pointer)
-            pointer.deallocate()
-        }
-
-        let str2 = bundledir
-        if let pointer = GenericTools.stringToUnsafeMutablePointer(str2) {
-            alex_setsnmpmibdir(pointer)
-            pointer.deallocate()
-        }
-        
-        /* A REMETTRE : fonctionne
-        print("AVANT init")
-        alex_rollingbuf_init();
-        Task.detached {
-            alex_walk()
-            alex_rollingbuf_close()
-        }
-
-        Task.detached {
-            sleep(1)
-            let len = Int(alex_rollingbuf_poplength())
-            if len > 0 {
-                print("XXXXX: POP len: \(len)")
-                while (true) {
-                    let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
-                    let foo = alex_rollingbuf_pop(pointer)
-                    print("XXXXX: pop retval: \(foo)")
-                    print("XXXXX: POP data: \(String(cString: pointer))")
-                    pointer.deallocate()
-                    sleep(1)
-                }
-            }
-        }
-*/
-        
-        // inutile si on s'appuie sur des fonctions qui font tout dans la partie C de net-snmp
-        //        init_snmp("snmp")
-        print("APRES init")
-
-        /* FIN SNMP */
+        SNMPManager.manager.initLibSNMP()
         
         // Set a minimal window size on Mac Catalyst
         if ProcessInfo.processInfo.isMacCatalystApp {
