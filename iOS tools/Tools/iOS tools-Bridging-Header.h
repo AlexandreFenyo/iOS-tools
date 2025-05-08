@@ -16,6 +16,7 @@ extern void alex_rollingbuf_init(void);
 extern void alex_rollingbuf_close(void);
 extern int alex_rollingbuf_poplength(void);
 extern int alex_rollingbuf_pop(char *target);
+extern int alex_rollingbuf_isempty(void);
 
 int localChargenClientOpen();
 int localChargenClientClose();

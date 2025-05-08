@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WebKit
+import iOSToolsMacros
 
 let debug_snmp = true
 
@@ -193,10 +194,39 @@ struct SNMPTreeView: View {
             }.padding(20)
 
             HStack {
-                Button("Reload") {
-                    withAnimation {
-                        rootNode.children?.removeAll()
+                Button("Explore SNMP") {
+                    do {
+                        try SNMPManager.manager.walk()
+                    } catch {
+                        #fatalError("Explore SNMP Error: \(error)")
                     }
+                    
+                    /*
+                    alex_rollingbuf_init();
+                    Task.detached {
+                        alex_walk()
+                        alex_rollingbuf_close()
+                    }
+
+                    Task.detached {
+                        sleep(1)
+                        let len = Int(alex_rollingbuf_poplength())
+                        if len > 0 {
+                            print("XXXXX: POP len: \(len)")
+                            while (true) {
+                                let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
+                                let foo = alex_rollingbuf_pop(pointer)
+                                print("XXXXX: pop retval: \(foo)")
+                                print("XXXXX: POP data: \(String(cString: pointer))")
+                                pointer.deallocate()
+                                usleep(useconds_t(200000))
+//                                sleep(UInt32(0.2))
+                            }
+                        }
+                    }
+                    
+                    */
+
                 }.border(.black)
             }
             List {
