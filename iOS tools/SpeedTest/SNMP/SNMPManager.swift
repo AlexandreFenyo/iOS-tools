@@ -69,8 +69,6 @@ class SNMPManager {
             alex_setsnmpmibdir(pointer)
             pointer.deallocate()
         }
-        
-
     }
     
     private func setState(_ state: SNMPManagerState) {
@@ -84,7 +82,7 @@ class SNMPManager {
         return state
     }
     
-    func walk() throws(SNMPManagerError) {
+    func walk(onEnd: @escaping (OIDNode) -> Void) throws(SNMPManagerError) {
         if state != .available {
             throw SNMPManagerError.notAvailable
         }
@@ -99,6 +97,7 @@ class SNMPManager {
 
         // Launch a background thread that continuously pulls the results from the static length buffer used by alex_walk()
         Task.detached {
+            let oid_root = OIDNode(type: .root, val: "")
             while await self.getState() != .pull_finished {
                 let len = Int(alex_rollingbuf_poplength())
                 if len == -1 {
@@ -110,14 +109,16 @@ class SNMPManager {
                     if ret == -1 {
                         #fatalError("walk: alex_rollingbuf_pop: \(ret)")
                     } else {
-                        let str = String(cString: pointer)
-                        // print("RECUP: \(str)")
+                        print(String(cString: pointer))
+                        oid_root.mergeSingleOID(OIDNode.parse(String(cString: pointer)))
                     }
                     pointer.deallocate()
                 }
             }
-            print("FINISHED !")
+            await MainActor.run {
+                onEnd(oid_root)
+            }
+            await self.setState(.available)
         }
-        
     }
 }

@@ -136,10 +136,11 @@ struct OIDTreeView: View {
 }
 
 struct SNMPTreeView: View {
-   @StateObject var rootNode: OIDNodeDisplayable
+    @StateObject var rootNode: OIDNodeDisplayable
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    
+    @State private var is_manager_available: Bool = true
+ 
     var body: some View {
         VStack {
             HStack {
@@ -171,6 +172,7 @@ struct SNMPTreeView: View {
                 }, label: {
                     Image(systemName: "delete.left")
                 })
+                .disabled(highlight.isEmpty)
 
                 Spacer(minLength: 40)
 
@@ -196,38 +198,24 @@ struct SNMPTreeView: View {
             HStack {
                 Button("Explore SNMP") {
                     do {
-                        try SNMPManager.manager.walk()
+                        is_manager_available = false
+                        try SNMPManager.manager.walk() { oid_root in
+                            let oid_root_displayable = oid_root.getDisplayable()
+                            withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                rootNode.type = oid_root_displayable.type
+                                rootNode.val = oid_root_displayable.val
+                                rootNode.children = oid_root_displayable.children
+                                rootNode.children_backup = oid_root_displayable.children_backup
+                                rootNode.subnodes = oid_root_displayable.subnodes
+                                is_manager_available = true
+                            }
+                        }
                     } catch {
                         #fatalError("Explore SNMP Error: \(error)")
                     }
-                    
-                    /*
-                    alex_rollingbuf_init();
-                    Task.detached {
-                        alex_walk()
-                        alex_rollingbuf_close()
-                    }
-
-                    Task.detached {
-                        sleep(1)
-                        let len = Int(alex_rollingbuf_poplength())
-                        if len > 0 {
-                            print("XXXXX: POP len: \(len)")
-                            while (true) {
-                                let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
-                                let foo = alex_rollingbuf_pop(pointer)
-                                print("XXXXX: pop retval: \(foo)")
-                                print("XXXXX: POP data: \(String(cString: pointer))")
-                                pointer.deallocate()
-                                usleep(useconds_t(200000))
-//                                sleep(UInt32(0.2))
-                            }
-                        }
-                    }
-                    
-                    */
-
-                }.border(.black)
+                }
+                .disabled(!is_manager_available)
+                .border(.black)
             }
             List {
                 OIDTreeView(node: rootNode, highlight: $highlight)
