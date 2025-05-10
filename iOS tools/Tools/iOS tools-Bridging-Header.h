@@ -5,7 +5,7 @@
 extern void alex_walk(void);
 
 extern void init_snmp(const char *);
-extern int add_mibdir(const char *);
+extern int add_mibdir(const char *); // TODO: voir s'il faut mettre des const ci-dessous
 extern int alex_debug(char *);
 extern int alex_chdir(char *);
 extern void alex_list_dir(void);
@@ -17,6 +17,10 @@ extern void alex_rollingbuf_close(void);
 extern int alex_rollingbuf_poplength(void);
 extern int alex_rollingbuf_pop(char *target);
 extern int alex_rollingbuf_isempty(void);
+extern void alex_set_av(int, char *);
+extern void alex_set_av_count(int);
+extern void alex_translate(char *);
+extern void alex_get_translation(char *);
 
 int localChargenClientOpen();
 int localChargenClientClose();

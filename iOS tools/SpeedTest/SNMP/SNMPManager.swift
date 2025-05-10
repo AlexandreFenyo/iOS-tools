@@ -11,6 +11,7 @@ import iOSToolsMacros
 
 enum SNMPManagerError: Error {
     case notAvailable
+    case invalidRange
 }
 
 fileprivate enum SNMPManagerState: Int {
@@ -25,8 +26,19 @@ fileprivate enum SNMPManagerState: Int {
 class SNMPManager {
     static let manager = SNMPManager()
     private var state: SNMPManagerState = .available
-    
-    init() {
+    private var is_option_output_X_called = false
+
+    func getWalkCommandeLine() -> [String] {
+        var str_array = [ "snmpwalk" ]
+        
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX");
+            is_option_output_X_called = true;
+        }
+        str_array.append(contentsOf: [ "-v2c", "-c", "public", "192.168.0.254", "IF-MIB::ifInOctets" ]);
+
+        return str_array;
     }
 
     func initLibSNMP() {
@@ -81,6 +93,54 @@ class SNMPManager {
         }
         return state
     }
+
+    // Must be in sync with alex_walk.c
+    let ALEX_AV_TAB_LEN = 32
+    let ALEX_AV_STR_LEN = 1024
+    let ALEX_TRANSLATE_IN_LEN = 1024
+    let ALEX_TRANSLATE_OUT_LEN = 8192
+
+    func pushArray(_ str_array: [String]) throws(SNMPManagerError) {
+        if str_array.count > ALEX_AV_TAB_LEN {
+            #fatalError("pushArray: str_array.count too large")
+            throw SNMPManagerError.invalidRange
+        }
+        alex_set_av_count(0);
+        for i in 0..<str_array.count {
+            if str_array[i].count > ALEX_AV_STR_LEN - 1 {
+                #fatalError("pushArray: string length too large")
+                throw SNMPManagerError.invalidRange
+            }
+            if let pointer = GenericTools.stringToUnsafeMutablePointer(str_array[i]) {
+                alex_setsnmpconfpath(pointer)
+                alex_set_av(Int32(i), pointer)
+                pointer.deallocate()
+            } else {
+                #fatalError("pushArray: can not push argument")
+            }
+        }
+        alex_set_av_count(Int32(str_array.count));
+    }
+    
+    func translate(_ str: String) throws(SNMPManagerError) -> String {
+        if state != .available {
+            throw SNMPManagerError.notAvailable
+        }
+
+        if let pointer = GenericTools.stringToUnsafeMutablePointer("IF-MIB::ifNumber") {
+            alex_translate(pointer)
+            pointer.deallocate()
+        } else {
+            #fatalError("alex_translate")
+            return ""
+        }
+
+        let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: ALEX_TRANSLATE_OUT_LEN)
+        alex_get_translation(pointer)
+        let translation = String(cString: pointer)
+        pointer.deallocate()
+        return translation
+    }
     
     func walk(onEnd: @escaping (OIDNode) -> Void) throws(SNMPManagerError) {
         if state != .available {
@@ -109,7 +169,6 @@ class SNMPManager {
                     if ret == -1 {
                         #fatalError("walk: alex_rollingbuf_pop: \(ret)")
                     } else {
-                        print(String(cString: pointer))
                         oid_root.mergeSingleOID(OIDNode.parse(String(cString: pointer)))
                     }
                     pointer.deallocate()

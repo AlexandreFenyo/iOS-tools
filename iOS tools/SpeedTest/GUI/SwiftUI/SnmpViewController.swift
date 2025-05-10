@@ -11,8 +11,8 @@ import SwiftUI
 class SnmpViewController : UIViewController {
     private lazy var hostingViewController = makeHostingController()
 
-    private func makeHostingController() -> UIHostingController<SnmpSwiftUIView> {
-        let hostingController = UIHostingController(rootView: SnmpSwiftUIView())
+    private func makeHostingController() -> UIHostingController<SNMPTreeView> {
+        let hostingController = UIHostingController(rootView: SNMPTreeView())
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         return hostingController
     }

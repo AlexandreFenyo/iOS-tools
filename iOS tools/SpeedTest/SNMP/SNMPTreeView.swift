@@ -136,7 +136,7 @@ struct OIDTreeView: View {
 }
 
 struct SNMPTreeView: View {
-    @StateObject var rootNode: OIDNodeDisplayable
+    @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var is_manager_available: Bool = true
@@ -196,8 +196,22 @@ struct SNMPTreeView: View {
             }.padding(20)
 
             HStack {
-                Button("Explore SNMP") {
+                Button("translate") {
                     do {
+                        let foo = try SNMPManager.manager.translate("IF-MIB::ifNumber")
+                        print(foo)
+                    } catch {
+                        #fatalError("Translate SNMP Error: \(error)")
+                    }
+                }
+
+                Button("Explore SNMP") {
+//                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
+                    let str_array = SNMPManager.manager.getWalkCommandeLine()
+                    
+                    do {
+                        try SNMPManager.manager.pushArray(str_array)
+
                         is_manager_available = false
                         try SNMPManager.manager.walk() { oid_root in
                             let oid_root_displayable = oid_root.getDisplayable()
@@ -216,6 +230,8 @@ struct SNMPTreeView: View {
                 }
                 .disabled(!is_manager_available)
                 .border(.black)
+                
+                
             }
             List {
                 OIDTreeView(node: rootNode, highlight: $highlight)
