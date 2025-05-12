@@ -66,7 +66,7 @@ class StepByStepPhotoController: NSObject {
     public func popUp(_ title: String, _ message: String, _ ok: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: ok, style: .default) {_ in
-            SKStoreReviewController.requestReview()
+            if !disable_request_reviews { SKStoreReviewController.requestReview() }
         }
         alert.addAction(action)
         self.step_by_step_view_controller?.present(alert, animated: true)

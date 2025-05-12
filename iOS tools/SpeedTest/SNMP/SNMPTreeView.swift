@@ -9,7 +9,8 @@ import SwiftUI
 import WebKit
 import iOSToolsMacros
 
-let debug_snmp = true
+let debug_snmp = false
+let disable_request_reviews = true
 
 // https://developer.apple.com/documentation/swiftui/outlinegroup
 // fenyo@mac ~ % snmpwalk -v2c -OT -OX -c public 192.168.0.254 > /tmp/snmpwalk.res
@@ -135,14 +136,52 @@ struct OIDTreeView: View {
     }
 }
 
+struct SNMPTargetView: View {
+    @ObservedObject var target: SNMPTarget
+
+    private var numberFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        formatter.minimum = 0
+        formatter.maximum = NSNumber(value: UInt16.max)
+        return formatter
+    }
+
+    var body: some View {
+        TextField("hostname", text: $target.host)
+        TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
+            .onChange(of: target.port) { newValue in
+                // Filtrer les caractères non numériques
+                let filtered = String(newValue).filter { "0123456789".contains($0) }
+                if filtered != String(newValue) {
+                    target.port = UInt16(filtered) ?? 0
+                }
+            }
+    }
+}
+
 struct SNMPTreeView: View {
     @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var is_manager_available: Bool = true
+    
+    @StateObject private var target = SNMPTarget()
  
     var body: some View {
         VStack {
+            SNMPTargetView(target: target)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            Button {
+                print("target.host: \(target.host)")
+                print("target.port: \(target.port)")
+                target.host = "1.2.3.4"
+            } label: {
+                Text("TEST")
+            }
+
+            
             HStack {
                 if #available(iOS 17.0, *) {
                     Image(systemName: "magnifyingglass")
@@ -207,7 +246,7 @@ struct SNMPTreeView: View {
 
                 Button("Explore SNMP") {
 //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
-                    let str_array = SNMPManager.manager.getWalkCommandeLine()
+                    let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
                     
                     do {
                         try SNMPManager.manager.pushArray(str_array)

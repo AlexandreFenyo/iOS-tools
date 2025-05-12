@@ -22,13 +22,63 @@ fileprivate enum SNMPManagerState: Int {
     case pull_finished
 }
 
+class SNMPTarget: ObservableObject {
+    typealias SNMPv1Credentials = String
+    typealias SNMPv2Credentials = String
+    class SNMPv3Credentials: ObservableObject {
+        enum AuthProto {
+            case MD5(String)
+            case SHA1(String)
+        }
+        @Published var auth_proto: AuthProto = .SHA1("public")
+
+        enum PrivacyProto {
+            case DES(String)
+            case AES(String)
+        }
+        @Published var privacy_proto: PrivacyProto = .AES("public")
+
+        enum SecurityLevel {
+            case noAuthNoPriv
+            case authNoPriv(AuthProto)
+            case authPriv(AuthProto, PrivacyProto)
+        }
+        @Published var security_level: SecurityLevel = .noAuthNoPriv
+
+        @Published var security_engine: String?
+        @Published var context_engine: String?
+    }
+
+    @Published var host: String = ""
+    @Published var port: UInt16 = 161
+
+    enum IPProto {
+        case TCP
+        case UDP
+    }
+    @Published var ip_proto: IPProto = .UDP
+    
+    enum IPVersion {
+        case IPv4
+        case IPv6
+    }
+    @Published var ip_version: IPVersion = .IPv4
+    
+    enum Credentials {
+        case v1(SNMPv1Credentials)
+        case v2c(SNMPv2Credentials)
+        case v3(SNMPv3Credentials)
+    }
+    @Published var credentials: Credentials = .v2c("public")
+}
+
 @MainActor
 class SNMPManager {
     static let manager = SNMPManager()
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
 
-    func getWalkCommandeLine() -> [String] {
+    func getWalkCommandeLine(host: String) -> [String] {
         var str_array = [ "snmpwalk" ]
         
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
@@ -36,7 +86,7 @@ class SNMPManager {
             str_array.append("-OX");
             is_option_output_X_called = true;
         }
-        str_array.append(contentsOf: [ "-v2c", "-c", "public", "192.168.0.254", "IF-MIB::ifInOctets" ]);
+        str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
 
         return str_array;
     }
