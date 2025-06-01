@@ -17,19 +17,10 @@ class SnmpViewController : UIViewController {
         return hostingController
     }
 
-    /*
-    public func addTrace(_ content: String, level: LogLevel = .ALL, date: Date? = nil) {
-        if Thread.current.isMainThread == false {
-            print("warning: addTrace not called from main thread")
-        }
-        hostingViewController.rootView.model.append(content, level: level, date: date)
-    }
-     */
-
     // For this to work, we must set "View controller-based status bar appearance" to true in Plist
     // See also "Status bar is initially hidden" in Plist
     override var prefersStatusBarHidden: Bool {
-        return true
+        return false
     }
 
     override func viewDidLoad() {

@@ -9,7 +9,7 @@ import SwiftUI
 import WebKit
 import iOSToolsMacros
 
-let debug_snmp = false
+let debug_snmp = true
 let disable_request_reviews = true
 
 // https://developer.apple.com/documentation/swiftui/outlinegroup
@@ -138,6 +138,7 @@ struct OIDTreeView: View {
 
 struct SNMPTargetView: View {
     @ObservedObject var target: SNMPTarget
+    @State private var isExpanded = true
 
     private var numberFormatter: NumberFormatter {
         let formatter = NumberFormatter()
@@ -148,15 +149,41 @@ struct SNMPTargetView: View {
     }
 
     var body: some View {
-        TextField("hostname", text: $target.host)
-        TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
-            .onChange(of: target.port) { newValue in
-                // Filtrer les caractères non numériques
-                let filtered = String(newValue).filter { "0123456789".contains($0) }
-                if filtered != String(newValue) {
-                    target.port = UInt16(filtered) ?? 0
-                }
+        VStack {
+            HStack {
+                Text("target (SNMP agent)")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                Spacer()
+                Button(action: {
+                    withAnimation(Animation.easeInOut(duration: 0.5)) {
+                        isExpanded.toggle()
+                    }
+                }, label: {
+                    Image(systemName: isExpanded ? "arrow.up.left.and.arrow.down.right" : "arrow.down.right.and.arrow.up.left")
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 10)
+                })
             }
+            
+            if !isExpanded {
+                TextField("hostname", text: $target.host)
+                    .padding(.horizontal, 10)
+                TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
+                    .onChange(of: target.port) { newValue in
+                        // Filtrer les caractères non numériques
+                        let filtered = String(newValue).filter { "0123456789".contains($0) }
+                        if filtered != String(newValue) {
+                            target.port = UInt16(filtered) ?? 0
+                        }
+                    }.padding(.horizontal, 10)
+                    .padding(.bottom, 10)
+            }
+
+        }
+        .background((Color(COLORS.toolbar_background)))
+        .cornerRadius(10)
     }
 }
 
@@ -275,6 +302,6 @@ struct SNMPTreeView: View {
             List {
                 OIDTreeView(node: rootNode, highlight: $highlight)
             }
-        }
+        }.background(Color(COLORS.right_pannel_bg))
     }
 }
