@@ -140,6 +140,12 @@ struct SNMPTargetView: View {
     @ObservedObject var target: SNMPTarget
     @State private var isExpanded = true
 
+    enum SNMPProto: String, CaseIterable, Identifiable {
+        case SNMPv1, SNMPv2c, SNMPv3
+        var id: Self { self }
+    }
+    @State private var SNMP_protocol = SNMPProto.SNMPv2c
+    
     private var numberFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
@@ -161,24 +167,36 @@ struct SNMPTargetView: View {
                         isExpanded.toggle()
                     }
                 }, label: {
-                    Image(systemName: isExpanded ? "arrow.up.left.and.arrow.down.right" : "arrow.down.right.and.arrow.up.left")
+                    Image(systemName: isExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                         .padding(.horizontal, 10)
                         .padding(.vertical, 10)
                 })
             }
             
-            if !isExpanded {
+            if isExpanded {
                 TextField("hostname", text: $target.host)
                     .padding(.horizontal, 10)
-                TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
-                    .onChange(of: target.port) { newValue in
-                        // Filtrer les caractères non numériques
-                        let filtered = String(newValue).filter { "0123456789".contains($0) }
-                        if filtered != String(newValue) {
-                            target.port = UInt16(filtered) ?? 0
-                        }
-                    }.padding(.horizontal, 10)
-                    .padding(.bottom, 10)
+                
+                
+                HStack {
+                    
+                    TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
+                        .onChange(of: target.port) { newValue in
+                            // Filtrer les caractères non numériques
+                            let filtered = String(newValue).filter { "0123456789".contains($0) }
+                            if filtered != String(newValue) {
+                                target.port = UInt16(filtered) ?? 0
+                            }
+                        }.padding(.horizontal, 10)
+                        .padding(.bottom, 10)
+                    
+                    Picker("Couleur", selection: $SNMP_protocol) {
+                        Text("SNMPv1").tag(SNMPProto.SNMPv1)
+                        Text("SNMPv2c").tag(SNMPProto.SNMPv2c)
+                        Text("SNMPv3").tag(SNMPProto.SNMPv3)
+                    }
+                }
+                
             }
 
         }
