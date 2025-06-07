@@ -138,14 +138,37 @@ struct OIDTreeView: View {
 
 struct SNMPTargetView: View {
     @ObservedObject var target: SNMPTarget
-    @State private var isExpanded = true
+    @Binding var isTargetExpanded: Bool
 
     enum SNMPProto: String, CaseIterable, Identifiable {
         case SNMPv1, SNMPv2c, SNMPv3
         var id: Self { self }
     }
     @State private var SNMP_protocol = SNMPProto.SNMPv2c
-    
+
+    enum SNMPTransportProto: String, CaseIterable, Identifiable {
+        case TCP, UDP
+        var id: Self { self }
+    }
+    @State private var SNMP_transport_protocol = SNMPTransportProto.TCP
+
+    enum SNMPNetworkProto: String, CaseIterable, Identifiable {
+        case IPv4, IPv6
+        var id: Self { self }
+    }
+    @State private var SNMP_network_protocol = SNMPNetworkProto.IPv4
+
+    enum SNMPSecLevel: String, CaseIterable, Identifiable {
+        case noAuthNoPriv, authNoPriv, authPriv
+        var id: Self { self }
+    }
+    @State private var SNMP_sec_level = SNMPSecLevel.authNoPriv
+
+    @State private var SNMP_auth_secret = ""
+    @State private var SNMP_priv_secret = ""
+
+    @State private var SNMP_community = ""
+
     private var numberFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
@@ -161,44 +184,89 @@ struct SNMPTargetView: View {
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
+
                 Spacer()
+
                 Button(action: {
                     withAnimation(Animation.easeInOut(duration: 0.5)) {
-                        isExpanded.toggle()
+                        isTargetExpanded.toggle()
                     }
                 }, label: {
-                    Image(systemName: isExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                    Image(systemName: isTargetExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
                         .padding(.horizontal, 10)
                         .padding(.vertical, 10)
                 })
             }
             
-            if isExpanded {
+            if isTargetExpanded {
                 TextField("hostname", text: $target.host)
+                    .font(.subheadline)
                     .padding(.horizontal, 10)
                 
-                
                 HStack {
-                    
                     TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
+                        .font(.subheadline)
                         .onChange(of: target.port) { newValue in
                             // Filtrer les caractères non numériques
                             let filtered = String(newValue).filter { "0123456789".contains($0) }
                             if filtered != String(newValue) {
                                 target.port = UInt16(filtered) ?? 0
                             }
-                        }.padding(.horizontal, 10)
-                        .padding(.bottom, 10)
+                        }
+                        .padding(.horizontal, 10)
                     
-                    Picker("Couleur", selection: $SNMP_protocol) {
+                    Picker("SNMP protocol", selection: $SNMP_protocol) {
                         Text("SNMPv1").tag(SNMPProto.SNMPv1)
                         Text("SNMPv2c").tag(SNMPProto.SNMPv2c)
                         Text("SNMPv3").tag(SNMPProto.SNMPv3)
                     }
                 }
-                
-            }
 
+                HStack {
+                    if SNMP_protocol != .SNMPv3 {
+                        TextField("community", text: $SNMP_community)
+                            .font(.subheadline)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
+                    } else {
+                        Picker("SNMP sec level", selection: $SNMP_sec_level) {
+                            Text("NoAuth/NoPriv").tag(SNMPSecLevel.noAuthNoPriv)
+                            Text("Auth/NoPriv").tag(SNMPSecLevel.authNoPriv)
+                            Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
+                        }
+                        Spacer()
+
+                    }
+
+                    Picker("SNMP transport protocol", selection: $SNMP_transport_protocol) {
+                        Text("UDP").tag(SNMPTransportProto.UDP)
+                        Text("TCP").tag(SNMPTransportProto.TCP)
+                    }
+
+                    Picker("SNMP network protocol", selection: $SNMP_network_protocol) {
+                        Text("IPv4").tag(SNMPNetworkProto.IPv4)
+                        Text("IPv6").tag(SNMPNetworkProto.IPv6)
+                    }
+               }
+                
+                if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authNoPriv {
+                    TextField("authentication secret", text: $SNMP_auth_secret)
+                        .font(.subheadline)
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 10)
+                }
+
+                if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authPriv {
+                    TextField("authentication secret", text: $SNMP_auth_secret)
+                        .font(.subheadline)
+                        .padding(.horizontal, 10)
+
+                    TextField("privacy secret", text: $SNMP_priv_secret)
+                        .font(.subheadline)
+                        .padding(.horizontal, 10)
+                        .padding(.bottom, 10)
+                }
+            }
         }
         .background((Color(COLORS.toolbar_background)))
         .cornerRadius(10)
@@ -210,22 +278,100 @@ struct SNMPTreeView: View {
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var is_manager_available: Bool = true
+    @State private var isTargetExpanded = true
     
     @StateObject private var target = SNMPTarget()
  
     var body: some View {
         VStack {
-            SNMPTargetView(target: target)
+            SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-            Button {
-                print("target.host: \(target.host)")
-                print("target.port: \(target.port)")
-                target.host = "1.2.3.4"
-            } label: {
-                Text("TEST")
+                .padding(.leading, 15)
+                .padding(.trailing, 15)
+
+            if isTargetExpanded == true {
+                HStack {
+                    /*
+                     Button("translate") {
+                     do {
+                     let foo = try SNMPManager.manager.translate("IF-MIB::ifNumber")
+                     print(foo)
+                     } catch {
+                     #fatalError("Translate SNMP Error: \(error)")
+                     }
+                     }*/
+                    
+                    Button(action: {
+                        //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
+                        let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
+                        
+                        do {
+                            try SNMPManager.manager.pushArray(str_array)
+                            
+                            is_manager_available = false
+                            try SNMPManager.manager.walk() { oid_root in
+                                let oid_root_displayable = oid_root.getDisplayable()
+                                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                    rootNode.type = oid_root_displayable.type
+                                    rootNode.val = oid_root_displayable.val
+                                    rootNode.children = oid_root_displayable.children
+                                    rootNode.children_backup = oid_root_displayable.children_backup
+                                    rootNode.subnodes = oid_root_displayable.subnodes
+                                    is_manager_available = true
+                                }
+                            }
+                        } catch {
+                            #fatalError("Explore SNMP Error: \(error)")
+                        }
+                    })
+                    {
+                        Image(systemName: "list.dash.header.rectangle")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(Color(COLORS.standard_background))
+                        Text("run full scan")
+                            .font(.custom("Arial Narrow", size: 14))
+                            .foregroundColor(Color(COLORS.standard_background))
+                    }
+                    .disabled(!is_manager_available)
+                    .opacity(is_manager_available ? 1.0 : 0.5)
+                    .padding(.top, 5)
+                    .padding(.bottom, 5)
+                    .padding(.trailing, 15)
+                    .padding(.leading, 15)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public",
+                    })
+                    {
+                        Image(systemName: "chart.xyaxis.line")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(Color(COLORS.standard_background))
+                        Text("scan interfaces speed")
+                            .font(.custom("Arial Narrow", size: 14))
+                            .foregroundColor(Color(COLORS.standard_background))
+                    }
+                    .disabled(!is_manager_available)
+                    .opacity(is_manager_available ? 1.0 : 0.5)
+                    .padding(.top, 5)
+                    .padding(.bottom, 5)
+                    .padding(.trailing, 15)
+                    .padding(.leading, 15)
+                }
+                .background(Color(COLORS.toolbar_background)).opacity(0.9)
+                .cornerRadius(10)
+                .padding(.leading, 15)
+                .padding(.trailing, 15)
+                .padding(.bottom, 10)
             }
 
+            if !is_manager_available {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .scaleEffect(1.5)
+                    .padding(.bottom, 15)
+            }
             
             HStack {
                 if #available(iOS 17.0, *) {
@@ -234,10 +380,10 @@ struct SNMPTreeView: View {
                         .autocorrectionDisabled(true)
                         .focused($isTextFieldFocused)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: highlight) { _, newValue in
-                        rootNode.expandAll()
-                        _ = rootNode.filter(newValue)
-                    }
+                        .onChange(of: highlight) { _, newValue in
+                            rootNode.expandAll()
+                            _ = rootNode.filter(newValue)
+                        }
                 } else {
                     Image(systemName: "magnifyingglass")
                     TextField("Saisissez un filtre ici...", text: $highlight)
@@ -257,9 +403,9 @@ struct SNMPTreeView: View {
                     Image(systemName: "delete.left")
                 })
                 .disabled(highlight.isEmpty)
-
+                
                 Spacer(minLength: 40)
-
+                
                 Button(action: {
                     withAnimation(Animation.easeInOut(duration: 0.5)) {
                         rootNode.expandAll()
@@ -277,49 +423,17 @@ struct SNMPTreeView: View {
                     Image(systemName: "arrow.down.right.and.arrow.up.left")
                 })
                 
-            }.padding(20)
-
-            HStack {
-                Button("translate") {
-                    do {
-                        let foo = try SNMPManager.manager.translate("IF-MIB::ifNumber")
-                        print(foo)
-                    } catch {
-                        #fatalError("Translate SNMP Error: \(error)")
-                    }
-                }
-
-                Button("Explore SNMP") {
-//                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
-                    let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
-                    
-                    do {
-                        try SNMPManager.manager.pushArray(str_array)
-
-                        is_manager_available = false
-                        try SNMPManager.manager.walk() { oid_root in
-                            let oid_root_displayable = oid_root.getDisplayable()
-                            withAnimation(Animation.easeInOut(duration: 0.5)) {
-                                rootNode.type = oid_root_displayable.type
-                                rootNode.val = oid_root_displayable.val
-                                rootNode.children = oid_root_displayable.children
-                                rootNode.children_backup = oid_root_displayable.children_backup
-                                rootNode.subnodes = oid_root_displayable.subnodes
-                                is_manager_available = true
-                            }
-                        }
-                    } catch {
-                        #fatalError("Explore SNMP Error: \(error)")
-                    }
-                }
-                .disabled(!is_manager_available)
-                .border(.black)
-                
-                
             }
+            .padding(.leading, 20)
+            .padding(.trailing, 20)
+            .padding(.bottom, 5)
+            
             List {
                 OIDTreeView(node: rootNode, highlight: $highlight)
             }
-        }.background(Color(COLORS.right_pannel_bg))
+            .scrollContentBackground(.hidden)
+            .background(Color(COLORS.right_pannel_bg))
+        }
+        .background(Color(COLORS.right_pannel_bg))
     }
 }
