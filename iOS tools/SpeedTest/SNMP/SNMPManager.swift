@@ -23,20 +23,18 @@ fileprivate enum SNMPManagerState: Int {
 }
 
 class SNMPTarget: ObservableObject {
-    typealias SNMPv1Credentials = String
-    typealias SNMPv2Credentials = String
+    typealias SNMPv1v2cCredentials = String
+
     class SNMPv3Credentials: ObservableObject {
         enum AuthProto {
             case MD5(String)
             case SHA1(String)
         }
-        @Published var auth_proto: AuthProto = .SHA1("public")
 
         enum PrivacyProto {
             case DES(String)
             case AES(String)
         }
-        @Published var privacy_proto: PrivacyProto = .AES("public")
 
         enum SecurityLevel {
             case noAuthNoPriv
@@ -65,8 +63,8 @@ class SNMPTarget: ObservableObject {
     @Published var ip_version: IPVersion = .IPv4
     
     enum Credentials {
-        case v1(SNMPv1Credentials)
-        case v2c(SNMPv2Credentials)
+        case v1(SNMPv1v2cCredentials)
+        case v2c(SNMPv1v2cCredentials)
         case v3(SNMPv3Credentials)
     }
     @Published var credentials: Credentials = .v2c("public")
@@ -87,6 +85,19 @@ class SNMPManager {
             is_option_output_X_called = true;
         }
         str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
+
+        return str_array;
+    }
+
+    func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
+        var str_array = [ "snmpwalk" ]
+
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX");
+            is_option_output_X_called = true;
+        }
+//        str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
 
         return str_array;
     }
