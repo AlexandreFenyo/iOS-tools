@@ -76,6 +76,7 @@ class SNMPManager {
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
 
+    /*
     func getWalkCommandeLine(host: String) -> [String] {
         var str_array = [ "snmpwalk" ]
         
@@ -88,17 +89,65 @@ class SNMPManager {
 
         return str_array;
     }
+     */
 
     func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
-        var str_array = [ "snmpwalk" ]
+        var str_array = ["snmpwalk"]
 
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
         if is_option_output_X_called == false {
             str_array.append("-OX");
             is_option_output_X_called = true;
         }
-//        str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
+//        str_array.append(contentsOf: [ "-v2c", "-c", "public", target.host/*, "IF-MIB::ifInOctets"*/ ]);
 
+        switch target.credentials {
+        case .v1(let community):
+            str_array.append(contentsOf: ["-v1", "-c", community])
+        case .v2c(let community):
+            str_array.append(contentsOf: ["-v2c", "-c", community])
+        case .v3(let v3cred):
+            switch v3cred.security_level {
+            case .noAuthNoPriv:
+                str_array.append(contentsOf: ["-v3", "-l", "noAuthNoPriv"])
+            case .authNoPriv(let auth_proto):
+                switch auth_proto {
+                case .MD5(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authNoPriv", "-a", "MD5", "-A", str])
+                case .SHA1(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authNoPriv", "-a", "SHA1", "-A", str])
+                }
+            case .authPriv(let auth_proto, let priv_proto):
+                switch auth_proto {
+                case .MD5(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authPriv", "-a", "MD5", "-A", str])
+                case .SHA1(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authPriv", "-a", "SHA1", "-A", str])
+                }
+                switch priv_proto {
+                case .DES(let str):
+                    str_array.append(contentsOf: ["-x", "DES", "-X", str])
+                case .AES(let str):
+                    str_array.append(contentsOf: ["-x", "AES", "-X", str])
+                }
+            }
+        }
+        
+        var agent_string = target.ip_proto == .UDP ? "udp" : "tcp"
+
+        if target.ip_version == .IPv6 {
+            agent_string.append("6")
+        }
+        
+        agent_string.append(":")
+        agent_string.append(target.host)
+        agent_string.append(":")
+        agent_string.append(String(target.port))
+
+        str_array.append(contentsOf: [agent_string]);
+
+        print("XXXXX: \(str_array)")
+        
         return str_array;
     }
 

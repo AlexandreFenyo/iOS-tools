@@ -468,7 +468,7 @@ struct SNMPTreeView: View {
                     Button(action: {
                         //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
 
-                        //                        let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
+                        // let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
                         let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                         
                         do {
