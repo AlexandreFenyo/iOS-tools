@@ -98,6 +98,9 @@ struct OIDTreeView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.trailing)
+
+                            Image(systemName: "questionmark.circle")
+                                .foregroundColor(.orange)
                         } else {
                             HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                                 .font(.subheadline)
@@ -107,6 +110,9 @@ struct OIDTreeView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.red)
                                 .multilineTextAlignment(.trailing)
+
+                            Image(systemName: "questionmark.circle")
+                                .foregroundColor(.orange)
                         }
                     }
                 }
@@ -130,6 +136,10 @@ struct OIDTreeView: View {
                     HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                         .font(.headline)
                         .foregroundColor(.primary)
+
+                    Image(systemName: "questionmark.circle")
+                        .foregroundColor(.orange)
+
                 }
             }
         }
