@@ -23,8 +23,8 @@ fileprivate enum SNMPManagerState: Int {
 }
 
 class SNMPTarget: ObservableObject {
-    typealias SNMPv1Credentials = String
-    typealias SNMPv2Credentials = String
+    typealias SNMPv1v2cCredentials = String
+
     class SNMPv3Credentials: ObservableObject {
         enum AuthProto {
             case MD5(String)
@@ -63,8 +63,8 @@ class SNMPTarget: ObservableObject {
     @Published var ip_version: IPVersion = .IPv4
     
     enum Credentials {
-        case v1(SNMPv1Credentials)
-        case v2c(SNMPv2Credentials)
+        case v1(SNMPv1v2cCredentials)
+        case v2c(SNMPv1v2cCredentials)
         case v3(SNMPv3Credentials)
     }
     @Published var credentials: Credentials = .v2c("public")

@@ -245,9 +245,9 @@ struct SNMPTargetView: View {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
                             case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(.MD5(SNMP_auth_secret))
+                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
                             case .authPriv:
-                                v3cred.security_level = .authPriv(.MD5(SNMP_auth_secret), .AES((SNMP_priv_secret)))
+                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
                             }
                             target.credentials = .v3(v3cred)
                         }
@@ -260,38 +260,88 @@ struct SNMPTargetView: View {
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
+                            .onChange(of: SNMP_community) { newValue in
+                                switch target.credentials {
+                                    case .v1(_):
+                                    target.credentials = .v1(newValue)
+                                    case .v2c(_):
+                                    target.credentials = .v2c(newValue)
+                                case .v3(_):
+                                    break
+                                }
+                            }
                     } else {
                         Picker("SNMP sec level", selection: $SNMP_sec_level) {
                             Text("NoAuth/NoPriv").tag(SNMPSecLevel.noAuthNoPriv)
                             Text("Auth/NoPriv").tag(SNMPSecLevel.authNoPriv)
                             Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
+                        }.onChange(of: SNMP_sec_level) { newValue in
+                            let v3cred = SNMPTarget.SNMPv3Credentials()
+                            switch newValue {
+                            case .noAuthNoPriv:
+                                v3cred.security_level = .noAuthNoPriv
+                            case .authNoPriv:
+                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
+                            case .authPriv:
+                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                            }
+                            target.credentials = .v3(v3cred)
                         }
+                        
                         Spacer()
                     }
 
                     Picker("SNMP transport protocol", selection: $SNMP_transport_protocol) {
                         Text("UDP").tag(SNMPTransportProto.UDP)
                         Text("TCP").tag(SNMPTransportProto.TCP)
+                    }.onChange(of: SNMP_transport_protocol) { newValue in
+                        target.ip_proto = newValue == .UDP ? .UDP : .TCP
                     }
 
                     Picker("SNMP network protocol", selection: $SNMP_network_protocol) {
                         Text("IPv4").tag(SNMPNetworkProto.IPv4)
                         Text("IPv6").tag(SNMPNetworkProto.IPv6)
+                    }.onChange(of: SNMP_network_protocol) { newValue in
+                        target.ip_version = newValue == .IPv4 ? .IPv4 : .IPv6
                     }
                }
-                
+
                 if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authNoPriv {
                     HStack {
                         TextField("authentication secret", text: $SNMP_auth_secret)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
+                            .onChange(of: SNMP_auth_secret) { newValue in
+                                let v3cred = SNMPTarget.SNMPv3Credentials()
+                                switch SNMP_sec_level {
+                                case .noAuthNoPriv:
+                                    v3cred.security_level = .noAuthNoPriv
+                                case .authNoPriv:
+                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue))
+                                case .authPriv:
+                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                                }
+                                target.credentials = .v3(v3cred)
+                            }
                         
                         Picker("v3 auth proto", selection: $v3_auth_proto) {
                             Text("MD5").tag(V3AuthProto.MD5)
                             Text("SHA1").tag(V3AuthProto.SHA1)
                         }
                         .padding(.bottom, 10)
+                        .onChange(of: v3_auth_proto) { newValue in
+                            let v3cred = SNMPTarget.SNMPv3Credentials()
+                            switch SNMP_sec_level {
+                            case .noAuthNoPriv:
+                                v3cred.security_level = .noAuthNoPriv
+                            case .authNoPriv:
+                                v3cred.security_level = .authNoPriv(newValue == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
+                            case .authPriv:
+                                v3cred.security_level = .authPriv(newValue == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                            }
+                            target.credentials = .v3(v3cred)
+                        }
                     }
                 }
 
