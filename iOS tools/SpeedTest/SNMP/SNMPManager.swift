@@ -30,13 +30,11 @@ class SNMPTarget: ObservableObject {
             case MD5(String)
             case SHA1(String)
         }
-        @Published var auth_proto: AuthProto = .SHA1("public")
 
         enum PrivacyProto {
             case DES(String)
             case AES(String)
         }
-        @Published var privacy_proto: PrivacyProto = .AES("public")
 
         enum SecurityLevel {
             case noAuthNoPriv
@@ -87,6 +85,19 @@ class SNMPManager {
             is_option_output_X_called = true;
         }
         str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
+
+        return str_array;
+    }
+
+    func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
+        var str_array = [ "snmpwalk" ]
+
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX");
+            is_option_output_X_called = true;
+        }
+//        str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
 
         return str_array;
     }

@@ -169,6 +169,18 @@ struct SNMPTargetView: View {
 
     @State private var SNMP_community = ""
 
+    enum V3AuthProto {
+        case MD5
+        case SHA1
+    }
+    @State private var v3_auth_proto = V3AuthProto.MD5
+
+    enum V3PrivacyProto {
+        case DES
+        case AES
+    }
+    @State private var v3_privacy_proto = V3PrivacyProto.DES
+
     private var numberFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .none
@@ -219,6 +231,26 @@ struct SNMPTargetView: View {
                         Text("SNMPv1").tag(SNMPProto.SNMPv1)
                         Text("SNMPv2c").tag(SNMPProto.SNMPv2c)
                         Text("SNMPv3").tag(SNMPProto.SNMPv3)
+                    }.onChange(of: SNMP_protocol) { newValue in
+                        switch newValue {
+                        case .SNMPv1:
+                            target.credentials = .v1(SNMP_community)
+
+                        case .SNMPv2c:
+                            target.credentials = .v2c(SNMP_community)
+
+                        case .SNMPv3:
+                            let v3cred = SNMPTarget.SNMPv3Credentials()
+                            switch SNMP_sec_level {
+                            case .noAuthNoPriv:
+                                v3cred.security_level = .noAuthNoPriv
+                            case .authNoPriv:
+                                v3cred.security_level = .authNoPriv(.MD5(SNMP_auth_secret))
+                            case .authPriv:
+                                v3cred.security_level = .authPriv(.MD5(SNMP_auth_secret), .AES((SNMP_priv_secret)))
+                            }
+                            target.credentials = .v3(v3cred)
+                        }
                     }
                 }
 
@@ -235,7 +267,6 @@ struct SNMPTargetView: View {
                             Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
                         }
                         Spacer()
-
                     }
 
                     Picker("SNMP transport protocol", selection: $SNMP_transport_protocol) {
@@ -250,21 +281,45 @@ struct SNMPTargetView: View {
                }
                 
                 if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authNoPriv {
-                    TextField("authentication secret", text: $SNMP_auth_secret)
-                        .font(.subheadline)
-                        .padding(.horizontal, 10)
+                    HStack {
+                        TextField("authentication secret", text: $SNMP_auth_secret)
+                            .font(.subheadline)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
+                        
+                        Picker("v3 auth proto", selection: $v3_auth_proto) {
+                            Text("MD5").tag(V3AuthProto.MD5)
+                            Text("SHA1").tag(V3AuthProto.SHA1)
+                        }
                         .padding(.bottom, 10)
+                    }
                 }
 
                 if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authPriv {
-                    TextField("authentication secret", text: $SNMP_auth_secret)
-                        .font(.subheadline)
-                        .padding(.horizontal, 10)
-
-                    TextField("privacy secret", text: $SNMP_priv_secret)
-                        .font(.subheadline)
-                        .padding(.horizontal, 10)
+                    HStack {
+                        TextField("authentication secret", text: $SNMP_auth_secret)
+                            .font(.subheadline)
+                            .padding(.horizontal, 10)
+                        
+                        Picker("v3 auth algo", selection: $v3_auth_proto) {
+                            Text("MD5").tag(V3AuthProto.MD5)
+                            Text("SHA1").tag(V3AuthProto.SHA1)
+                        }
                         .padding(.bottom, 10)
+                    }
+
+                    HStack {
+                        TextField("privacy secret", text: $SNMP_priv_secret)
+                            .font(.subheadline)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
+                        
+                        Picker("v3 privacy algo", selection: $v3_privacy_proto) {
+                            Text("DES").tag(V3PrivacyProto.DES)
+                            Text("AES").tag(V3PrivacyProto.AES)
+                        }
+                        .padding(.bottom, 10)
+                    }
                 }
             }
         }
@@ -303,7 +358,9 @@ struct SNMPTreeView: View {
                     
                     Button(action: {
                         //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
-                        let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
+
+                        //                        let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
+                        let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                         
                         do {
                             try SNMPManager.manager.pushArray(str_array)
