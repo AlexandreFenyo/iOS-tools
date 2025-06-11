@@ -350,12 +350,26 @@ struct SNMPTargetView: View {
                         TextField("authentication secret", text: $SNMP_auth_secret)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
+                        CONTIUNUER ICI
+                        
                         
                         Picker("v3 auth algo", selection: $v3_auth_proto) {
                             Text("MD5").tag(V3AuthProto.MD5)
                             Text("SHA1").tag(V3AuthProto.SHA1)
                         }
                         .padding(.bottom, 10)
+                        .onChange(of: SNMP_auth_secret) { newValue in
+                            let v3cred = SNMPTarget.SNMPv3Credentials()
+                            switch SNMP_sec_level {
+                            case .noAuthNoPriv:
+                                v3cred.security_level = .noAuthNoPriv
+                            case .authNoPriv:
+                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue))
+                            case .authPriv:
+                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                            }
+                            target.credentials = .v3(v3cred)
+                        }
                     }
 
                     HStack {
@@ -363,12 +377,27 @@ struct SNMPTargetView: View {
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
+                        CONTINUER ICI
                         
                         Picker("v3 privacy algo", selection: $v3_privacy_proto) {
                             Text("DES").tag(V3PrivacyProto.DES)
                             Text("AES").tag(V3PrivacyProto.AES)
                         }
                         .padding(.bottom, 10)
+                        COPNTINNUER ICI
+                        
+                        avec ce templace :
+                        let v3cred = SNMPTarget.SNMPv3Credentials()
+                        switch SNMP_sec_level {
+                        case .noAuthNoPriv:
+                            v3cred.security_level = .noAuthNoPriv
+                        case .authNoPriv:
+                            v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
+                        case .authPriv:
+                            v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                        }
+                        target.credentials = .v3(v3cred)
+                        
                     }
                 }
             }
