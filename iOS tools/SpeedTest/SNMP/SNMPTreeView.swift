@@ -192,14 +192,6 @@ struct SNMPTargetView: View {
     }
     @State private var v3_privacy_proto = V3PrivacyProto.DES
 
-    private var numberFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .none
-        formatter.minimum = 0
-        formatter.maximum = NSNumber(value: UInt16.max)
-        return formatter
-    }
-
     var body: some View {
         VStack {
             HStack {
@@ -233,15 +225,9 @@ struct SNMPTargetView: View {
                     }
                 
                 HStack {
-                    TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
+                    TextField("port (161)", text: $target.port)
+                        .keyboardType(.numberPad)
                         .font(.subheadline)
-                        .onChange(of: target.port) { newValue in
-                            // Filtrer les caractères non numériques
-                            let filtered = String(newValue).filter { "0123456789".contains($0) }
-                            if filtered != String(newValue) {
-                                target.port = UInt16(filtered) ?? 0
-                            }
-                        }
                         .padding(.horizontal, 10)
                     
                     Picker("SNMP protocol", selection: $SNMP_protocol) {
@@ -274,7 +260,7 @@ struct SNMPTargetView: View {
 
                 HStack {
                     if SNMP_protocol != .SNMPv3 {
-                        TextField("community", text: $SNMP_community)
+                        TextField("community (public)", text: $SNMP_community)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)

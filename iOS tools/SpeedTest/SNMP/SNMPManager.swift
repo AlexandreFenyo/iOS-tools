@@ -47,7 +47,7 @@ class SNMPTarget: ObservableObject {
     }
 
     @Published var host: String = ""
-    @Published var port: UInt16 = 161
+    @Published var port: String = ""
 
     enum IPProto {
         case TCP
@@ -153,7 +153,7 @@ class SNMPManager {
         agent_string.append(":")
         agent_string.append(target.host)
         agent_string.append(":")
-        agent_string.append(String(target.port))
+        agent_string.append(String(target.port == "" ? "161" : target.port))
 
         str_array.append(contentsOf: [agent_string]);
 
