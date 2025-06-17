@@ -225,6 +225,12 @@ struct SNMPTargetView: View {
                 TextField("hostname", text: $target.host)
                     .font(.subheadline)
                     .padding(.horizontal, 10)
+                    .onAppear {
+                        if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
+                            target.host = str
+                            SNMPManager.manager.setCurrentSelectedIP(nil)
+                        }
+                    }
                 
                 HStack {
                     TextField("port", value: $target.port, formatter: numberFormatter).keyboardType(.numberPad)
@@ -477,7 +483,7 @@ struct SNMPTreeView: View {
     @State private var isTargetExpanded = true
     
     @StateObject private var target = SNMPTarget()
- 
+
     var body: some View {
         VStack {
             SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)

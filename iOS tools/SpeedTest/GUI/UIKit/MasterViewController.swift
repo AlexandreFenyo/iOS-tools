@@ -681,7 +681,8 @@ view.backgroundColor = .red
     // Called by MasterIPViewController when an address is selected
     func addressSelected(address: IPAddress) {
         detail_view_controller?.scrollToTop()
-  
+
+        SNMPManager.manager.setCurrentSelectedIP(address)
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (no effect on iPad), make the detail view controller visible

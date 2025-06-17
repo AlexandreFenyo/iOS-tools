@@ -72,6 +72,9 @@ class SNMPTarget: ObservableObject {
 @MainActor
 class SNMPManager {
     static let manager = SNMPManager()
+
+    private var current_selected_IP: IPAddress?
+    
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
 
@@ -89,6 +92,14 @@ class SNMPManager {
         return str_array;
     }
      */
+    
+    func setCurrentSelectedIP(_ ip: IPAddress?) {
+        current_selected_IP = ip
+    }
+
+    func getCurrentSelectedIP() -> IPAddress? {
+        return current_selected_IP
+    }
 
     func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
         var str_array = ["snmpwalk"]
