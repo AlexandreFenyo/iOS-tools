@@ -474,7 +474,7 @@ struct StepHeatMap: View {
         StepByStepHeatMapView(step_by_step_view_controller!)
             .onAppear {
                 Task {
-                    await step_by_step_view_controller?.master_view_controller?.chargenTCP(IPv4Address("146.59.154.26")!)
+                    await step_by_step_view_controller?.master_view_controller?.chargenTCP(IPv4Address("51.75.31.39")!)
                 }
                 
                 if let image_name {

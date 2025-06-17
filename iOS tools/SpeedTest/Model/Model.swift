@@ -1146,8 +1146,8 @@ class DBMaster {
         
         var node = Node()
         node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
-        node.v4_addresses.insert(IPv4Address("146.59.154.26")!)
-        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::94ad")!)
+        node.v4_addresses.insert(IPv4Address("51.75.31.39")!)
+        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::9001")!)
         node.types = [ .chargen, .internet ]
         _ = addNode(node, demo_mode: true)
 

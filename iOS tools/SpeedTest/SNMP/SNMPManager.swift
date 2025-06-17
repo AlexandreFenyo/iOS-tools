@@ -26,6 +26,8 @@ class SNMPTarget: ObservableObject {
     typealias SNMPv1v2cCredentials = String
 
     class SNMPv3Credentials: ObservableObject {
+        @Published var username: String = ""
+
         enum AuthProto {
             case MD5(String)
             case SHA1(String)
@@ -42,9 +44,6 @@ class SNMPTarget: ObservableObject {
             case authPriv(AuthProto, PrivacyProto)
         }
         @Published var security_level: SecurityLevel = .noAuthNoPriv
-
-        @Published var security_engine: String?
-        @Published var context_engine: String?
     }
 
     @Published var host: String = ""
@@ -107,6 +106,7 @@ class SNMPManager {
         case .v2c(let community):
             str_array.append(contentsOf: ["-v2c", "-c", community])
         case .v3(let v3cred):
+            str_array.append(contentsOf: ["-u", v3cred.username])
             switch v3cred.security_level {
             case .noAuthNoPriv:
                 str_array.append(contentsOf: ["-v3", "-l", "noAuthNoPriv"])

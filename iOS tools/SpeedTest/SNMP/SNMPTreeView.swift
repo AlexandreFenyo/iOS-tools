@@ -174,6 +174,7 @@ struct SNMPTargetView: View {
     }
     @State private var SNMP_sec_level = SNMPSecLevel.authNoPriv
 
+    @State private var SNMP_username = ""
     @State private var SNMP_auth_secret = ""
     @State private var SNMP_priv_secret = ""
 
@@ -251,6 +252,7 @@ struct SNMPTargetView: View {
 
                         case .SNMPv3:
                             let v3cred = SNMPTarget.SNMPv3Credentials()
+                            v3cred.username = SNMP_username
                             switch SNMP_sec_level {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
@@ -287,6 +289,7 @@ struct SNMPTargetView: View {
                             Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
                         }.onChange(of: SNMP_sec_level) { newValue in
                             let v3cred = SNMPTarget.SNMPv3Credentials()
+                            v3cred.username = SNMP_username
                             switch newValue {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
@@ -316,6 +319,29 @@ struct SNMPTargetView: View {
                     }
                }
 
+                if SNMP_protocol == .SNMPv3 {
+                    HStack {
+                        TextField("username", text: $SNMP_username)
+                            .font(.subheadline)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, SNMP_sec_level == .noAuthNoPriv ? 10 : 0)
+                            .onChange(of: SNMP_auth_secret) { newValue in
+                                let v3cred = SNMPTarget.SNMPv3Credentials()
+                                v3cred.username = SNMP_username
+                                v3cred.username = newValue
+                                switch SNMP_sec_level {
+                                case .noAuthNoPriv:
+                                    v3cred.security_level = .noAuthNoPriv
+                                case .authNoPriv:
+                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
+                                case .authPriv:
+                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
+                                }
+                                target.credentials = .v3(v3cred)
+                            }
+                    }
+                }
+                
                 if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authNoPriv {
                     HStack {
                         TextField("authentication secret", text: $SNMP_auth_secret)
@@ -324,6 +350,7 @@ struct SNMPTargetView: View {
                             .padding(.bottom, 10)
                             .onChange(of: SNMP_auth_secret) { newValue in
                                 let v3cred = SNMPTarget.SNMPv3Credentials()
+                                v3cred.username = SNMP_username
                                 switch SNMP_sec_level {
                                 case .noAuthNoPriv:
                                     v3cred.security_level = .noAuthNoPriv
@@ -342,6 +369,7 @@ struct SNMPTargetView: View {
                         .padding(.bottom, 10)
                         .onChange(of: v3_auth_proto) { newValue in
                             let v3cred = SNMPTarget.SNMPv3Credentials()
+                            v3cred.username = SNMP_username
                             switch SNMP_sec_level {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
@@ -362,6 +390,7 @@ struct SNMPTargetView: View {
                             .padding(.horizontal, 10)
                             .onChange(of: SNMP_auth_secret) { newValue in
                                 let v3cred = SNMPTarget.SNMPv3Credentials()
+                                v3cred.username = SNMP_username
                                 switch SNMP_sec_level {
                                 case .noAuthNoPriv:
                                     v3cred.security_level = .noAuthNoPriv
@@ -381,6 +410,7 @@ struct SNMPTargetView: View {
                         .padding(.bottom, 10)
                         .onChange(of: SNMP_auth_secret) { newValue in
                             let v3cred = SNMPTarget.SNMPv3Credentials()
+                            v3cred.username = SNMP_username
                             switch SNMP_sec_level {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
@@ -400,6 +430,7 @@ struct SNMPTargetView: View {
                             .padding(.bottom, 10)
                             .onChange(of: SNMP_priv_secret) { newValue in
                                 let v3cred = SNMPTarget.SNMPv3Credentials()
+                                v3cred.username = SNMP_username
                                 switch SNMP_sec_level {
                                 case .noAuthNoPriv:
                                     v3cred.security_level = .noAuthNoPriv
@@ -418,6 +449,7 @@ struct SNMPTargetView: View {
                         .padding(.bottom, 10)
                         .onChange(of: v3_privacy_proto) { newValue in
                             let v3cred = SNMPTarget.SNMPv3Credentials()
+                            v3cred.username = SNMP_username
                             switch SNMP_sec_level {
                             case .noAuthNoPriv:
                                 v3cred.security_level = .noAuthNoPriv
