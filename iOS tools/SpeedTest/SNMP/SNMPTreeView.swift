@@ -467,7 +467,10 @@ struct SNMPTreeView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var is_manager_available: Bool = true
     @State private var isTargetExpanded = true
-    
+
+    @State private var showAlert = false
+    @State private var alert = ""
+
     @StateObject private var target = SNMPTarget()
 
     var body: some View {
@@ -476,6 +479,11 @@ struct SNMPTreeView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 15)
                 .padding(.trailing, 15)
+                .alert("SNMP Warning", isPresented: $showAlert, actions: {
+                            Button("OK", role: .cancel) { }
+                        }, message: {
+                            Text(alert)
+                        })
 
             if isTargetExpanded == true {
                 HStack {
@@ -499,7 +507,12 @@ struct SNMPTreeView: View {
                             try SNMPManager.manager.pushArray(str_array)
                             
                             is_manager_available = false
-                            try SNMPManager.manager.walk() { oid_root in
+                            try SNMPManager.manager.walk() { oid_root, errbuf in
+                                print("XXXXX: \(errbuf)")
+                                if !errbuf.isEmpty {
+                                    alert = errbuf
+                                    showAlert = true
+                                }
                                 let oid_root_displayable = oid_root.getDisplayable()
                                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                                     rootNode.type = oid_root_displayable.type

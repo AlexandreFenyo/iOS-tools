@@ -12,6 +12,7 @@ extern void alex_list_dir(void);
 extern void alex_getcwd(void);
 extern void alex_setsnmpconfpath(char *);
 extern void alex_setsnmpmibdir(char *);
+
 extern void alex_rollingbuf_init(void);
 extern void alex_rollingbuf_close(void);
 extern int alex_rollingbuf_poplength(void);
@@ -21,6 +22,8 @@ extern void alex_set_av(int, char *);
 extern void alex_set_av_count(int);
 extern void alex_translate(char *);
 extern void alex_get_translation(char *);
+extern void alex_errbuf_clear(void);
+extern void alex_errbuf_get(char *target);
 
 int localChargenClientOpen();
 int localChargenClientClose();

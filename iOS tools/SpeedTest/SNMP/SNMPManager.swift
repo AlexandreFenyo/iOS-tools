@@ -53,7 +53,7 @@ class SNMPTarget: ObservableObject {
         case TCP
         case UDP
     }
-    @Published var ip_proto: IPProto = .UDP
+    @Published var ip_proto: IPProto = .TCP
     
     enum IPVersion {
         case IPv4
@@ -218,6 +218,7 @@ class SNMPManager {
     // Must be in sync with alex_walk.c
     let ALEX_AV_TAB_LEN = 32
     let ALEX_AV_STR_LEN = 1024
+    let ALEX_ERRBUF_LEN = 4096
     let ALEX_TRANSLATE_IN_LEN = 1024
     let ALEX_TRANSLATE_OUT_LEN = 8192
 
@@ -263,7 +264,7 @@ class SNMPManager {
         return translation
     }
     
-    func walk(onEnd: @escaping (OIDNode) -> Void) throws(SNMPManagerError) {
+    func walk(onEnd: @escaping (OIDNode, String) -> Void) throws(SNMPManagerError) {
         if state != .available {
             throw SNMPManagerError.notAvailable
         }
@@ -272,6 +273,7 @@ class SNMPManager {
 
         // Launch a background thread that runs snmpwalk
         Task.detached {
+            alex_errbuf_clear()
             alex_walk()
             await self.setState(.walk_finished)
         }
@@ -296,7 +298,11 @@ class SNMPManager {
                 }
             }
             await MainActor.run {
-                onEnd(oid_root)
+                let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: self.ALEX_ERRBUF_LEN + 1)
+                alex_errbuf_get(pointer)
+                let errbuf = String(cString: pointer)
+                pointer.deallocate()
+                onEnd(oid_root, errbuf)
             }
             await self.setState(.available)
         }
