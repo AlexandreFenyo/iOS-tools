@@ -53,7 +53,7 @@ class SNMPTarget: ObservableObject {
         case TCP
         case UDP
     }
-    @Published var ip_proto: IPProto = .TCP
+    @Published var ip_proto: IPProto = .UDP
     
     enum IPVersion {
         case IPv4
@@ -102,7 +102,7 @@ class SNMPManager {
     }
 
     func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
-        var str_array = ["snmpwalk"]
+        var str_array = ["snmpwalk", "-r3", "-t1"]
 
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
         if is_option_output_X_called == false {

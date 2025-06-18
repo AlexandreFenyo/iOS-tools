@@ -160,7 +160,7 @@ struct SNMPTargetView: View {
         case TCP, UDP
         var id: Self { self }
     }
-    @State private var SNMP_transport_protocol = SNMPTransportProto.TCP
+    @State private var SNMP_transport_protocol = SNMPTransportProto.UDP
 
     enum SNMPNetworkProto: String, CaseIterable, Identifiable {
         case IPv4, IPv6
