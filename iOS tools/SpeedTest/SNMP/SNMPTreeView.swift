@@ -539,8 +539,8 @@ struct SNMPTreeView: View {
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
-                    .disabled(!is_manager_available)
-                    .opacity(is_manager_available ? 1.0 : 0.5)
+                    .disabled(!is_manager_available || target.host.isEmpty)
+                    .opacity((is_manager_available && !target.host.isEmpty) ? 1.0 : 0.5)
                     .padding(.top, 5)
                     .padding(.bottom, 5)
                     .padding(.trailing, 15)
@@ -549,7 +549,7 @@ struct SNMPTreeView: View {
                     Spacer()
                     
                     Button(action: {
-                        //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public",
+
                     })
                     {
                         Image(systemName: "chart.xyaxis.line")
@@ -559,8 +559,8 @@ struct SNMPTreeView: View {
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
-                    .disabled(!is_manager_available)
-                    .opacity(is_manager_available ? 1.0 : 0.5)
+                    .disabled(!is_manager_available || target.host.isEmpty)
+                    .opacity((is_manager_available && !target.host.isEmpty) ? 1.0 : 0.5)
                     .padding(.top, 5)
                     .padding(.bottom, 5)
                     .padding(.trailing, 15)
