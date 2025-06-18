@@ -102,6 +102,7 @@ class SNMPManager {
     }
 
     func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
+        // 3 retries, 1 sec each - only for UDP. For TCP: ~75s timeout at connect() time (no way to change it in iOS)
         var str_array = ["snmpwalk", "-r3", "-t1"]
 
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
@@ -157,8 +158,6 @@ class SNMPManager {
 
         str_array.append(contentsOf: [agent_string]);
 
-        print("XXXXX: \(str_array)")
-        
         return str_array;
     }
 

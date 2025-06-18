@@ -498,9 +498,7 @@ struct SNMPTreeView: View {
                      }*/
                     
                     Button(action: {
-                        //                    let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
-
-                        // let str_array = SNMPManager.manager.getWalkCommandeLine(host: target.host)
+                        // let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
                         let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                         
                         do {
@@ -508,10 +506,16 @@ struct SNMPTreeView: View {
                             
                             is_manager_available = false
                             try SNMPManager.manager.walk() { oid_root, errbuf in
-                                print("XXXXX: \(errbuf)")
                                 if !errbuf.isEmpty {
-                                    alert = errbuf
-                                    showAlert = true
+                                    if errbuf.starts(with: "Timeout: No Response from udp:") {
+                                        if oid_root.children.count == 0 {
+                                            alert = errbuf
+                                            showAlert = true
+                                        }
+                                    } else {
+                                        alert = errbuf
+                                        showAlert = true
+                                    }
                                 }
                                 let oid_root_displayable = oid_root.getDisplayable()
                                 withAnimation(Animation.easeInOut(duration: 0.5)) {
