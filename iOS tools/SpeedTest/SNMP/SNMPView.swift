@@ -232,6 +232,20 @@ struct SNMPTargetView: View {
     }
     @State private var v3_privacy_proto = V3PrivacyProto.DES
     
+    private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
+        let v3cred = SNMPTarget.SNMPv3Credentials()
+        v3cred.username = username ?? SNMP_username
+        switch level ?? SNMP_sec_level {
+        case .noAuthNoPriv:
+            v3cred.security_level = .noAuthNoPriv
+        case .authNoPriv:
+            v3cred.security_level = .authNoPriv(auth_proto ?? v3_auth_proto == .MD5 ? .MD5(auth_secret ?? SNMP_auth_secret) : .SHA1(auth_secret ?? SNMP_auth_secret))
+        case .authPriv:
+            v3cred.security_level = .authPriv(auth_proto ?? v3_auth_proto == .MD5 ? .MD5(auth_secret ?? SNMP_auth_secret) : .SHA1(auth_secret ?? SNMP_auth_secret), priv_proto ?? v3_privacy_proto == .DES ? .DES(priv_secret ?? SNMP_priv_secret) : .AES(priv_secret ?? SNMP_priv_secret))
+        }
+        target.credentials = .v3(v3cred)
+    }
+    
     var body: some View {
         VStack {
             HStack {
@@ -283,17 +297,7 @@ struct SNMPTargetView: View {
                             target.credentials = .v2c(SNMP_community)
                             
                         case .SNMPv3:
-                            let v3cred = SNMPTarget.SNMPv3Credentials()
-                            v3cred.username = SNMP_username
-                            switch SNMP_sec_level {
-                            case .noAuthNoPriv:
-                                v3cred.security_level = .noAuthNoPriv
-                            case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                            case .authPriv:
-                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                            }
-                            target.credentials = .v3(v3cred)
+                            updateTargetV3Cred()
                         }
                     }
                 }
@@ -320,17 +324,7 @@ struct SNMPTargetView: View {
                             Text("Auth/NoPriv").tag(SNMPSecLevel.authNoPriv)
                             Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
                         }.onChange(of: SNMP_sec_level) { newValue in
-                            let v3cred = SNMPTarget.SNMPv3Credentials()
-                            v3cred.username = SNMP_username
-                            switch newValue {
-                            case .noAuthNoPriv:
-                                v3cred.security_level = .noAuthNoPriv
-                            case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                            case .authPriv:
-                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                            }
-                            target.credentials = .v3(v3cred)
+                            updateTargetV3Cred(level: newValue)
                         }
                         
                         Spacer()
@@ -357,19 +351,8 @@ struct SNMPTargetView: View {
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, SNMP_sec_level == .noAuthNoPriv ? 10 : 0)
-                            .onChange(of: SNMP_auth_secret) { newValue in
-                                let v3cred = SNMPTarget.SNMPv3Credentials()
-                                v3cred.username = SNMP_username
-                                v3cred.username = newValue
-                                switch SNMP_sec_level {
-                                case .noAuthNoPriv:
-                                    v3cred.security_level = .noAuthNoPriv
-                                case .authNoPriv:
-                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                                case .authPriv:
-                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                                }
-                                target.credentials = .v3(v3cred)
+                            .onChange(of: SNMP_username) { newValue in
+                                updateTargetV3Cred(username: newValue)
                             }
                     }
                 }
@@ -381,17 +364,7 @@ struct SNMPTargetView: View {
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
                             .onChange(of: SNMP_auth_secret) { newValue in
-                                let v3cred = SNMPTarget.SNMPv3Credentials()
-                                v3cred.username = SNMP_username
-                                switch SNMP_sec_level {
-                                case .noAuthNoPriv:
-                                    v3cred.security_level = .noAuthNoPriv
-                                case .authNoPriv:
-                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue))
-                                case .authPriv:
-                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                                }
-                                target.credentials = .v3(v3cred)
+                                updateTargetV3Cred(auth_secret: newValue)
                             }
                         
                         Picker("v3 auth proto", selection: $v3_auth_proto) {
@@ -400,17 +373,7 @@ struct SNMPTargetView: View {
                         }
                         .padding(.bottom, 10)
                         .onChange(of: v3_auth_proto) { newValue in
-                            let v3cred = SNMPTarget.SNMPv3Credentials()
-                            v3cred.username = SNMP_username
-                            switch SNMP_sec_level {
-                            case .noAuthNoPriv:
-                                v3cred.security_level = .noAuthNoPriv
-                            case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(newValue == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                            case .authPriv:
-                                v3cred.security_level = .authPriv(newValue == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                            }
-                            target.credentials = .v3(v3cred)
+                            updateTargetV3Cred(auth_proto: newValue)
                         }
                     }
                 }
@@ -421,37 +384,16 @@ struct SNMPTargetView: View {
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .onChange(of: SNMP_auth_secret) { newValue in
-                                let v3cred = SNMPTarget.SNMPv3Credentials()
-                                v3cred.username = SNMP_username
-                                switch SNMP_sec_level {
-                                case .noAuthNoPriv:
-                                    v3cred.security_level = .noAuthNoPriv
-                                case .authNoPriv:
-                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue))
-                                case .authPriv:
-                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                                }
-                                target.credentials = .v3(v3cred)
+                                updateTargetV3Cred(auth_secret: newValue)
                             }
-                        
                         
                         Picker("v3 auth algo", selection: $v3_auth_proto) {
                             Text("MD5").tag(V3AuthProto.MD5)
                             Text("SHA1").tag(V3AuthProto.SHA1)
                         }
                         .padding(.bottom, 10)
-                        .onChange(of: SNMP_auth_secret) { newValue in
-                            let v3cred = SNMPTarget.SNMPv3Credentials()
-                            v3cred.username = SNMP_username
-                            switch SNMP_sec_level {
-                            case .noAuthNoPriv:
-                                v3cred.security_level = .noAuthNoPriv
-                            case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue))
-                            case .authPriv:
-                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(newValue) : .SHA1(newValue), v3_privacy_proto == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                            }
-                            target.credentials = .v3(v3cred)
+                        .onChange(of: v3_auth_proto) { newValue in
+                            updateTargetV3Cred(auth_proto: newValue)
                         }
                     }
                     
@@ -461,17 +403,7 @@ struct SNMPTargetView: View {
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
                             .onChange(of: SNMP_priv_secret) { newValue in
-                                let v3cred = SNMPTarget.SNMPv3Credentials()
-                                v3cred.username = SNMP_username
-                                switch SNMP_sec_level {
-                                case .noAuthNoPriv:
-                                    v3cred.security_level = .noAuthNoPriv
-                                case .authNoPriv:
-                                    v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                                case .authPriv:
-                                    v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), v3_privacy_proto == .DES ? .DES(newValue) : .AES(newValue))
-                                }
-                                target.credentials = .v3(v3cred)
+                                updateTargetV3Cred(priv_secret: newValue)
                             }
                         
                         Picker("v3 privacy algo", selection: $v3_privacy_proto) {
@@ -480,17 +412,7 @@ struct SNMPTargetView: View {
                         }
                         .padding(.bottom, 10)
                         .onChange(of: v3_privacy_proto) { newValue in
-                            let v3cred = SNMPTarget.SNMPv3Credentials()
-                            v3cred.username = SNMP_username
-                            switch SNMP_sec_level {
-                            case .noAuthNoPriv:
-                                v3cred.security_level = .noAuthNoPriv
-                            case .authNoPriv:
-                                v3cred.security_level = .authNoPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret))
-                            case .authPriv:
-                                v3cred.security_level = .authPriv(v3_auth_proto == .MD5 ? .MD5(SNMP_auth_secret) : .SHA1(SNMP_auth_secret), newValue == .DES ? .DES(SNMP_priv_secret) : .AES(SNMP_priv_secret))
-                            }
-                            target.credentials = .v3(v3cred)
+                            updateTargetV3Cred(priv_proto: newValue)
                         }
                     }
                 }
@@ -498,6 +420,27 @@ struct SNMPTargetView: View {
         }
         .background((Color(COLORS.toolbar_background)))
         .cornerRadius(10)
+    }
+}
+
+struct CommonButtonModifier: ViewModifier {
+    let isManagerAvailable: Bool
+    let isHostEmpty: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .disabled(!isManagerAvailable || isHostEmpty)
+            .opacity((isManagerAvailable && !isHostEmpty) ? 1.0 : 0.5)
+            .padding(.top, 5)
+            .padding(.bottom, 5)
+            .padding(.trailing, 15)
+            .padding(.leading, 15)
+    }
+}
+
+extension View {
+    func commonButtonStyle(isManagerAvailable: Bool, isHostEmpty: Bool) -> some View {
+        self.modifier(CommonButtonModifier(isManagerAvailable: isManagerAvailable, isHostEmpty: isHostEmpty))
     }
 }
 
@@ -521,6 +464,38 @@ struct SNMPView: View {
         show_info = true
     }
     
+    func walk(_ str_array: [String]) {
+        do {
+            try SNMPManager.manager.pushArray(str_array)
+            
+            is_manager_available = false
+            try SNMPManager.manager.walk() { oid_root, errbuf in
+                if !errbuf.isEmpty {
+                    if errbuf.starts(with: "Timeout: No Response from udp:") {
+                        if oid_root.children.count == 0 {
+                            alert = errbuf
+                            show_alert = true
+                        }
+                    } else {
+                        alert = errbuf
+                        show_alert = true
+                    }
+                }
+                let oid_root_displayable = oid_root.getDisplayable()
+                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                    rootNode.type = oid_root_displayable.type
+                    rootNode.val = oid_root_displayable.val
+                    rootNode.children = oid_root_displayable.children
+                    rootNode.children_backup = oid_root_displayable.children_backup
+                    rootNode.subnodes = oid_root_displayable.subnodes
+                    is_manager_available = true
+                }
+            }
+        } catch {
+            #fatalError("Explore SNMP Error: \(error)")
+        }
+    }
+    
     var body: some View {
         VStack {
             SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
@@ -540,69 +515,43 @@ struct SNMPView: View {
             
             if isTargetExpanded == true {
                 HStack {
-                    /*
-                     Button("translate") {
-                     do {
-                     let foo = try SNMPManager.manager.translate("IF-MIB::ifNumber")
-                     print(foo)
-                     } catch {
-                     #fatalError("Translate SNMP Error: \(error)")
-                     }
-                     }*/
-                    
                     Button(action: {
-                        // let str_array = [ "snmpwalk", "-r3", "-t1", "-OX", "-OT", "-v2c", "-c", "public", "192.168.0.254"/*, "1.3.6.1.2.1.1.1"*/, "IF-MIB::ifInOctets" ]
                         let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                        
-                        do {
-                            try SNMPManager.manager.pushArray(str_array)
-                            
-                            is_manager_available = false
-                            try SNMPManager.manager.walk() { oid_root, errbuf in
-                                if !errbuf.isEmpty {
-                                    if errbuf.starts(with: "Timeout: No Response from udp:") {
-                                        if oid_root.children.count == 0 {
-                                            alert = errbuf
-                                            show_alert = true
-                                        }
-                                    } else {
-                                        alert = errbuf
-                                        show_alert = true
-                                    }
-                                }
-                                let oid_root_displayable = oid_root.getDisplayable()
-                                withAnimation(Animation.easeInOut(duration: 0.5)) {
-                                    rootNode.type = oid_root_displayable.type
-                                    rootNode.val = oid_root_displayable.val
-                                    rootNode.children = oid_root_displayable.children
-                                    rootNode.children_backup = oid_root_displayable.children_backup
-                                    rootNode.subnodes = oid_root_displayable.subnodes
-                                    is_manager_available = true
-                                }
-                            }
-                        } catch {
-                            #fatalError("Explore SNMP Error: \(error)")
-                        }
+                        walk(str_array)
                     })
                     {
-                        Image(systemName: "list.dash.header.rectangle")
+                        Image(systemName: "list.bullet.rectangle.fill")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(Color(COLORS.standard_background))
                         Text("run full scan")
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
-                    .disabled(!is_manager_available || target.host.isEmpty)
-                    .opacity((is_manager_available && !target.host.isEmpty) ? 1.0 : 0.5)
-                    .padding(.top, 5)
-                    .padding(.bottom, 5)
-                    .padding(.trailing, 15)
-                    .padding(.leading, 15)
-                    
+                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+
                     Spacer()
                     
                     Button(action: {
-                        
+                        var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                        str_array.append(".1.3.6.1.2.1.1")
+                        walk(str_array)
+                    })
+                    {
+                        Image(systemName: "list.dash.header.rectangle")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(Color(COLORS.standard_background))
+                        Text("run simple scan")
+                            .font(.custom("Arial Narrow", size: 14))
+                            .foregroundColor(Color(COLORS.standard_background))
+                    }
+                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+
+                    Spacer()
+                    
+                    Button(action: {
+                        var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                        str_array.append(".1.3.6.1.2.1.2")
+                        walk(str_array)
                     })
                     {
                         Image(systemName: "chart.xyaxis.line")
@@ -612,12 +561,7 @@ struct SNMPView: View {
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
-                    .disabled(!is_manager_available || target.host.isEmpty)
-                    .opacity((is_manager_available && !target.host.isEmpty) ? 1.0 : 0.5)
-                    .padding(.top, 5)
-                    .padding(.bottom, 5)
-                    .padding(.trailing, 15)
-                    .padding(.leading, 15)
+                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
                 }
                 .background(Color(COLORS.toolbar_background)).opacity(0.9)
                 .cornerRadius(10)
