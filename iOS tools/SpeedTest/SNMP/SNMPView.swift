@@ -34,12 +34,12 @@ struct HighlightedTextView: View {
     let highlight: String
     let highlightColor: Color = .blue
     let highlightBackgroundColor: Color = .yellow
-
+    
     init(_ fullText: String, highlight: String) {
         self.fullText = fullText
         self.highlight = highlight
     }
-
+    
     var body: some View {
         let lowercasedFullText = fullText.lowercased()
         let lowercasedHighlight = highlight.lowercased()
@@ -52,14 +52,14 @@ struct HighlightedTextView: View {
         for range in ranges {
             let beforeRange = fullText[currentIndex..<range.lowerBound]
             let highlightedRange = fullText[range]
-
+            
             var foo = AttributedString(String(highlightedRange))
             foo.backgroundColor = highlightBackgroundColor
             
             highlightedText = highlightedText
-                + Text(String(beforeRange))
-                + Text(foo).foregroundColor(highlightColor)
-
+            + Text(String(beforeRange))
+            + Text(foo).foregroundColor(highlightColor)
+            
             currentIndex = range.upperBound
         }
         
@@ -72,7 +72,9 @@ struct HighlightedTextView: View {
 struct OIDTreeView: View {
     @ObservedObject var node: OIDNodeDisplayable
     @Binding var highlight: String
-
+    
+    var show_info_cb: (String) -> Void
+    
     var body: some View {
         if node.children == nil || node.children?.isEmpty == true {
             // no child
@@ -98,9 +100,13 @@ struct OIDTreeView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.trailing)
-
-                            Image(systemName: "questionmark.circle")
-                                .foregroundColor(.orange)
+                            
+                            /*
+                             Image(systemName: "questionmark.circle")
+                             .foregroundColor(.orange)
+                             .onTapGesture {
+                             }
+                             */
                         } else {
                             HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                                 .font(.subheadline)
@@ -110,9 +116,42 @@ struct OIDTreeView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.red)
                                 .multilineTextAlignment(.trailing)
-
-                            Image(systemName: "questionmark.circle")
-                                .foregroundColor(.orange)
+                            
+                            if !node.line.isEmpty {
+                                Image(systemName: "questionmark.circle")
+                                    .foregroundColor(.orange)
+                                    .onTapGesture {
+                                        if let foo = node.line.components(separatedBy: " = ").first {
+                                            /*
+                                             if let description = try? SNMPManager.manager.translate(foo) {
+                                             print("XXXXX: description: \(description)")
+                                             }
+                                             */
+                                            
+                                            if let bar = foo.components(separatedBy: "[").first {
+                                                Task {
+                                                    do {
+                                                        // We call the following web service:
+                                                        // vps-225bc1f7# cat snmptranslate.cgi
+                                                        // #!/bin/zsh
+                                                        // echo Content-type: text/html
+                                                        // echo
+                                                        // OID=`echo $QUERY_STRING | sed 's/[^0-9a-zA-Z.:-]//g'`
+                                                        // snmptranslate -mall -Td $OID 2> /dev/null
+                                                        let data = try await URLSession.shared.data(from: URL(string: "http://ovh.fenyo.net/cgi-bin/snmptranslate.cgi?\(bar)")!).0
+                                                        if let str = String(data: data, encoding: .utf8) {
+                                                            show_info_cb(str)
+                                                        } else {
+                                                            #fatalError("snmptranslate encoding error")
+                                                        }
+                                                    } catch {
+                                                        #fatalError("snmptranslate: \(error)")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                            }
                         }
                     }
                 }
@@ -126,7 +165,7 @@ struct OIDTreeView: View {
             DisclosureGroup(isExpanded: $node.isExpanded, content: {
                 if let children = node.children {
                     ForEach(children) { child in
-                        OIDTreeView(node: child, highlight: $highlight)
+                        OIDTreeView(node: child, highlight: $highlight, show_info_cb: show_info_cb)
                     }
                 }
             }) {
@@ -136,10 +175,11 @@ struct OIDTreeView: View {
                     HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                         .font(.headline)
                         .foregroundColor(.primary)
-
-                    Image(systemName: "questionmark.circle")
-                        .foregroundColor(.orange)
-
+                    
+                    /*
+                     Image(systemName: "questionmark.circle")
+                     .foregroundColor(.orange)
+                     */
                 }
             }
         }
@@ -149,49 +189,49 @@ struct OIDTreeView: View {
 struct SNMPTargetView: View {
     @ObservedObject var target: SNMPTarget
     @Binding var isTargetExpanded: Bool
-
+    
     enum SNMPProto: String, CaseIterable, Identifiable {
         case SNMPv1, SNMPv2c, SNMPv3
         var id: Self { self }
     }
     @State private var SNMP_protocol = SNMPProto.SNMPv2c
-
+    
     enum SNMPTransportProto: String, CaseIterable, Identifiable {
         case TCP, UDP
         var id: Self { self }
     }
     @State private var SNMP_transport_protocol = SNMPTransportProto.UDP
-
+    
     enum SNMPNetworkProto: String, CaseIterable, Identifiable {
         case IPv4, IPv6
         var id: Self { self }
     }
     @State private var SNMP_network_protocol = SNMPNetworkProto.IPv4
-
+    
     enum SNMPSecLevel: String, CaseIterable, Identifiable {
         case noAuthNoPriv, authNoPriv, authPriv
         var id: Self { self }
     }
     @State private var SNMP_sec_level = SNMPSecLevel.authNoPriv
-
+    
     @State private var SNMP_username = ""
     @State private var SNMP_auth_secret = ""
     @State private var SNMP_priv_secret = ""
-
+    
     @State private var SNMP_community = ""
-
+    
     enum V3AuthProto {
         case MD5
         case SHA1
     }
     @State private var v3_auth_proto = V3AuthProto.MD5
-
+    
     enum V3PrivacyProto {
         case DES
         case AES
     }
     @State private var v3_privacy_proto = V3PrivacyProto.DES
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -199,9 +239,9 @@ struct SNMPTargetView: View {
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
-
+                
                 Spacer()
-
+                
                 Button(action: {
                     withAnimation(Animation.easeInOut(duration: 0.5)) {
                         isTargetExpanded.toggle()
@@ -238,10 +278,10 @@ struct SNMPTargetView: View {
                         switch newValue {
                         case .SNMPv1:
                             target.credentials = .v1(SNMP_community)
-
+                            
                         case .SNMPv2c:
                             target.credentials = .v2c(SNMP_community)
-
+                            
                         case .SNMPv3:
                             let v3cred = SNMPTarget.SNMPv3Credentials()
                             v3cred.username = SNMP_username
@@ -257,7 +297,7 @@ struct SNMPTargetView: View {
                         }
                     }
                 }
-
+                
                 HStack {
                     if SNMP_protocol != .SNMPv3 {
                         TextField("community (public)", text: $SNMP_community)
@@ -266,9 +306,9 @@ struct SNMPTargetView: View {
                             .padding(.bottom, 10)
                             .onChange(of: SNMP_community) { newValue in
                                 switch target.credentials {
-                                    case .v1(_):
+                                case .v1(_):
                                     target.credentials = .v1(newValue)
-                                    case .v2c(_):
+                                case .v2c(_):
                                     target.credentials = .v2c(newValue)
                                 case .v3(_):
                                     break
@@ -295,22 +335,22 @@ struct SNMPTargetView: View {
                         
                         Spacer()
                     }
-
+                    
                     Picker("SNMP transport protocol", selection: $SNMP_transport_protocol) {
                         Text("UDP").tag(SNMPTransportProto.UDP)
                         Text("TCP").tag(SNMPTransportProto.TCP)
                     }.onChange(of: SNMP_transport_protocol) { newValue in
                         target.ip_proto = newValue == .UDP ? .UDP : .TCP
                     }
-
+                    
                     Picker("SNMP network protocol", selection: $SNMP_network_protocol) {
                         Text("IPv4").tag(SNMPNetworkProto.IPv4)
                         Text("IPv6").tag(SNMPNetworkProto.IPv6)
                     }.onChange(of: SNMP_network_protocol) { newValue in
                         target.ip_version = newValue == .IPv4 ? .IPv4 : .IPv6
                     }
-               }
-
+                }
+                
                 if SNMP_protocol == .SNMPv3 {
                     HStack {
                         TextField("username", text: $SNMP_username)
@@ -374,7 +414,7 @@ struct SNMPTargetView: View {
                         }
                     }
                 }
-
+                
                 if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authPriv {
                     HStack {
                         TextField("authentication secret", text: $SNMP_auth_secret)
@@ -414,7 +454,7 @@ struct SNMPTargetView: View {
                             target.credentials = .v3(v3cred)
                         }
                     }
-
+                    
                     HStack {
                         TextField("privacy secret", text: $SNMP_priv_secret)
                             .font(.subheadline)
@@ -461,30 +501,43 @@ struct SNMPTargetView: View {
     }
 }
 
-struct SNMPTreeView: View {
+struct SNMPView: View {
     @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
     @State private var is_manager_available: Bool = true
     @State private var isTargetExpanded = true
-
-    @State private var showAlert = false
+    
+    @State private var show_alert = false
     @State private var alert = ""
-
+    
+    @State private var show_info = false
+    @State private var info = ""
+    
     @StateObject private var target = SNMPTarget()
-
+    
+    func showInfo(info: String) {
+        self.info = info
+        show_info = true
+    }
+    
     var body: some View {
         VStack {
             SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding(.leading, 15)
                 .padding(.trailing, 15)
-                .alert("SNMP Warning", isPresented: $showAlert, actions: {
-                            Button("OK", role: .cancel) { }
-                        }, message: {
-                            Text(alert)
-                        })
-
+                .alert("SNMP Warning", isPresented: $show_alert, actions: {
+                    Button("OK", role: .cancel) { }
+                }, message: {
+                    Text(alert)
+                })
+                .alert("SNMP", isPresented: $show_info, actions: {
+                    Button("OK", role: .cancel) { }
+                }, message: {
+                    Text(info)
+                })
+            
             if isTargetExpanded == true {
                 HStack {
                     /*
@@ -510,11 +563,11 @@ struct SNMPTreeView: View {
                                     if errbuf.starts(with: "Timeout: No Response from udp:") {
                                         if oid_root.children.count == 0 {
                                             alert = errbuf
-                                            showAlert = true
+                                            show_alert = true
                                         }
                                     } else {
                                         alert = errbuf
-                                        showAlert = true
+                                        show_alert = true
                                     }
                                 }
                                 let oid_root_displayable = oid_root.getDisplayable()
@@ -549,7 +602,7 @@ struct SNMPTreeView: View {
                     Spacer()
                     
                     Button(action: {
-
+                        
                     })
                     {
                         Image(systemName: "chart.xyaxis.line")
@@ -572,7 +625,7 @@ struct SNMPTreeView: View {
                 .padding(.trailing, 15)
                 .padding(.bottom, 10)
             }
-
+            
             if !is_manager_available {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
@@ -636,7 +689,7 @@ struct SNMPTreeView: View {
             .padding(.bottom, 5)
             
             List {
-                OIDTreeView(node: rootNode, highlight: $highlight)
+                OIDTreeView(node: rootNode, highlight: $highlight, show_info_cb: showInfo)
             }
             .scrollContentBackground(.hidden)
             .background(Color(COLORS.right_pannel_bg))

@@ -248,7 +248,7 @@ class SNMPManager {
             throw SNMPManagerError.notAvailable
         }
 
-        if let pointer = GenericTools.stringToUnsafeMutablePointer("IF-MIB::ifNumber") {
+        if let pointer = GenericTools.stringToUnsafeMutablePointer(str /*"IF-MIB::ifNumber"*/) {
             alex_translate(pointer)
             pointer.deallocate()
         } else {
