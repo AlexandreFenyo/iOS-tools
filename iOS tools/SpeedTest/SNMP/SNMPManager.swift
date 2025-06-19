@@ -22,6 +22,33 @@ fileprivate enum SNMPManagerState: Int {
     case pull_finished
 }
 
+enum SNMPProto: String {
+    case SNMPv1, SNMPv2c, SNMPv3
+}
+
+enum SNMPTransportProto: String {
+    case TCP, UDP
+    static let `default` = SNMPTransportProto.UDP
+}
+
+enum SNMPNetworkProto: String {
+    case IPv4, IPv6
+    static let `default` = SNMPNetworkProto.IPv4
+}
+
+enum V3AuthProto {
+    case MD5, SHA1
+}
+
+enum V3PrivacyProto {
+    case DES, AES
+}
+
+enum SNMPSecLevel: String {
+    case noAuthNoPriv, authNoPriv, authPriv
+    static let `default` = SNMPSecLevel.noAuthNoPriv
+}
+
 class SNMPTarget: ObservableObject {
     typealias SNMPv1v2cCredentials = String
 
@@ -42,24 +69,17 @@ class SNMPTarget: ObservableObject {
             case noAuthNoPriv
             case authNoPriv(AuthProto)
             case authPriv(AuthProto, PrivacyProto)
+            static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
         }
-        @Published var security_level: SecurityLevel = .noAuthNoPriv
+        @Published var security_level: SecurityLevel = .`default`
     }
 
     @Published var host: String = ""
     @Published var port: String = ""
 
-    enum IPProto {
-        case TCP
-        case UDP
-    }
-    @Published var ip_proto: IPProto = .UDP
+    @Published var transport_proto: SNMPTransportProto = .`default`
     
-    enum IPVersion {
-        case IPv4
-        case IPv6
-    }
-    @Published var ip_version: IPVersion = .IPv4
+    @Published var ip_version: SNMPNetworkProto = .`default`
     
     enum Credentials {
         case v1(SNMPv1v2cCredentials)
@@ -78,21 +98,6 @@ class SNMPManager {
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
 
-    /*
-    func getWalkCommandeLine(host: String) -> [String] {
-        var str_array = [ "snmpwalk" ]
-        
-        // Call '-OX' only once since it is an option that is toggled in net-snmp.
-        if is_option_output_X_called == false {
-            str_array.append("-OX");
-            is_option_output_X_called = true;
-        }
-        str_array.append(contentsOf: [ "-v2c", "-c", "public", host/*, "IF-MIB::ifInOctets"*/ ]);
-
-        return str_array;
-    }
-     */
-    
     func setCurrentSelectedIP(_ ip: IPAddress?) {
         current_selected_IP = ip
     }
@@ -145,7 +150,7 @@ class SNMPManager {
             }
         }
         
-        var agent_string = target.ip_proto == .UDP ? "udp" : "tcp"
+        var agent_string = target.transport_proto == .UDP ? "udp" : "tcp"
 
         if target.ip_version == .IPv6 {
             agent_string.append("6")

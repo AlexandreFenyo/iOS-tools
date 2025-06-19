@@ -190,46 +190,17 @@ struct SNMPTargetView: View {
     @ObservedObject var target: SNMPTarget
     @Binding var isTargetExpanded: Bool
     
-    enum SNMPProto: String, CaseIterable, Identifiable {
-        case SNMPv1, SNMPv2c, SNMPv3
-        var id: Self { self }
-    }
     @State private var SNMP_protocol = SNMPProto.SNMPv2c
-    
-    enum SNMPTransportProto: String, CaseIterable, Identifiable {
-        case TCP, UDP
-        var id: Self { self }
-    }
-    @State private var SNMP_transport_protocol = SNMPTransportProto.UDP
-    
-    enum SNMPNetworkProto: String, CaseIterable, Identifiable {
-        case IPv4, IPv6
-        var id: Self { self }
-    }
-    @State private var SNMP_network_protocol = SNMPNetworkProto.IPv4
-    
-    enum SNMPSecLevel: String, CaseIterable, Identifiable {
-        case noAuthNoPriv, authNoPriv, authPriv
-        var id: Self { self }
-    }
-    @State private var SNMP_sec_level = SNMPSecLevel.authNoPriv
+    @State private var SNMP_transport_protocol = SNMPTransportProto.`default`
+    @State private var SNMP_network_protocol = SNMPNetworkProto.`default`
+    @State private var SNMP_sec_level = SNMPSecLevel.`default`
     
     @State private var SNMP_username = ""
     @State private var SNMP_auth_secret = ""
     @State private var SNMP_priv_secret = ""
-    
     @State private var SNMP_community = ""
     
-    enum V3AuthProto {
-        case MD5
-        case SHA1
-    }
     @State private var v3_auth_proto = V3AuthProto.MD5
-    
-    enum V3PrivacyProto {
-        case DES
-        case AES
-    }
     @State private var v3_privacy_proto = V3PrivacyProto.DES
     
     private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
@@ -334,7 +305,7 @@ struct SNMPTargetView: View {
                         Text("UDP").tag(SNMPTransportProto.UDP)
                         Text("TCP").tag(SNMPTransportProto.TCP)
                     }.onChange(of: SNMP_transport_protocol) { newValue in
-                        target.ip_proto = newValue == .UDP ? .UDP : .TCP
+                        target.transport_proto = newValue == .UDP ? .UDP : .TCP
                     }
                     
                     Picker("SNMP network protocol", selection: $SNMP_network_protocol) {
@@ -540,7 +511,7 @@ struct SNMPView: View {
                         Image(systemName: "list.dash.header.rectangle")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(Color(COLORS.standard_background))
-                        Text("run simple scan")
+                        Text("run fast scan")
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
