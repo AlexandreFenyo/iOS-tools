@@ -122,12 +122,6 @@ struct OIDTreeView: View {
                                     .foregroundColor(.orange)
                                     .onTapGesture {
                                         if let foo = node.line.components(separatedBy: " = ").first {
-                                            /*
-                                             if let description = try? SNMPManager.manager.translate(foo) {
-                                             print("XXXXX: description: \(description)")
-                                             }
-                                             */
-                                            
                                             if let bar = foo.components(separatedBy: "[").first {
                                                 Task {
                                                     do {
