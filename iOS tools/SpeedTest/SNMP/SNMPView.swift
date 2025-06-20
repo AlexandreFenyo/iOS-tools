@@ -131,7 +131,18 @@ struct OIDTreeView: View {
                                                         // echo Content-type: text/html
                                                         // echo
                                                         // OID=`echo $QUERY_STRING | sed 's/[^0-9a-zA-Z.:-]//g'`
-                                                        // snmptranslate -mall -Td $OID 2> /dev/null
+                                                        // snmptranslate -mall -Td $OID 2> /dev/null | read -d '' RESP
+                                                        // echo $RESP | sed -n 1p | read XOID
+                                                        // echo $RESP | grep '  -- FROM' | head -1 | sed 's/  -- FROM[ \t]*//' | sed 's/"/\\\\"/g' | read MIB
+                                                        // echo $RESP | grep '  -- TEXTUAL CONVENTION' | head -1 | sed -E 's/  -- TEXTUAL CONVENTION[\t ]*//' | sed 's/"/\\\\"/g' | read TXT
+                                                        // echo $RESP | grep '  SYNTAX' | head -1 | sed -E 's/  SYNTAX[\t ]*//' | sed 's/"/\\\\"/g' | read SYNTAX
+                                                        // echo $RESP | grep '  DISPLAY-HINT' | head -1 | sed -E 's/  DISPLAY-HINT[\t ]*//' | sed 's/"/\\\\"/g' | read HINT
+                                                        // echo $RESP | grep '  MAX-ACCESS' | head -1 | sed -E 's/  MAX-ACCESS[\t ]*//' | sed 's/"/\\\\"/g' | read ACCESS
+                                                        // echo $RESP | grep '  STATUS' | head -1 | sed -E 's/  STATUS[\t ]*//' | sed 's/"/\\\\"/g' | read STATUS
+                                                        // echo $RESP | grep '::= ' | head -1 | sed -E 's/::= //' | sed 's/"/\\\\"/g' | read LINE
+                                                        // echo `echo $RESP | sed '0,/DESCRIPTION/ { /DESCRIPTION/!d }' | egrep -v '^::= '` | sed 's/^DESCRIPTION *//' | sed 's/^"//' | sed 's/"$//' | sed 's/"/\\\\"/g' | read DESCRIPTION
+                                                        // echo "{ \"oid\": \"$XOID\", \"mib\": \"$MIB\", \"conv\": \"$TXT\", \"syntax\": \"$SYNTAX\", \"hint\": \"$HINT\", \"access\": \"$ACCESS\", \"status\": \"$STATUS\", \"line\": \"$LINE\", \"description\": \"$DESCRIPTION\" }"
+                                                        // exit 0
                                                         let data = try await URLSession.shared.data(from: URL(string: "http://ovh.fenyo.net/cgi-bin/snmptranslate.cgi?\(bar)")!).0
                                                         if let str = String(data: data, encoding: .utf8) {
                                                             show_info_cb(str)
@@ -391,7 +402,7 @@ struct SNMPTargetView: View {
 struct CommonButtonModifier: ViewModifier {
     let isManagerAvailable: Bool
     let isHostEmpty: Bool
-
+    
     func body(content: Content) -> some View {
         content
             .disabled(!isManagerAvailable || isHostEmpty)
@@ -409,6 +420,101 @@ extension View {
     }
 }
 
+struct OIDInfoView: View {
+    @State var name: String
+    @State var value: String
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text("\(name)")
+                    .font(.subheadline)
+                Spacer()
+            }
+            HStack {
+                Text("\(value)")
+                    .font(.headline)
+                Spacer()
+            }
+        }.padding(10)
+            .background(name != "description" ? Color(COLORS.toolbar_background) : Color(COLORS.toolbar_background.withAlphaComponent(0.5)))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(Color.black, lineWidth: 2)
+                    .shadow(color: .gray, radius: 4, x: 2, y: 2)
+            )
+    }
+}
+
+struct CustomPopupView: View {
+    @Binding var show_popup: Bool
+    @Binding var oid_info: OIDInfos?
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Image("Icon")
+                .resizable()
+                .frame(width: 80, height: 80)
+                .cornerRadius(20)
+                .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
+            
+            Text("SNMP Object Identifier Help")
+                .font(.headline)
+            
+            if let oid_info {
+                OIDInfoView(name: "object identifier (symbolic format)", value: oid_info.oid)
+                if let value = oid_info.line {
+                    OIDInfoView(name: "object identifier (numeric format)", value: value)
+                }
+                OIDInfoView(name: "MIB module(s) on which the object is defined", value: oid_info.mib)
+                /*
+                 if let value = oid_info.conv {
+                 OIDInfoView(name: "textual convention", value: value)
+                 }
+                 if let value = oid_info.hint {
+                 OIDInfoView(name: "display hint", value: value)
+                 }
+                 */
+                if let value = oid_info.syntax {
+                    OIDInfoView(name: "value syntax", value: value)
+                }
+                if let value = oid_info.status {
+                    OIDInfoView(name: "status (current, obsolete or deprecated)", value: value)
+                }
+                if let value = oid_info.access {
+                    OIDInfoView(name: "access mode (read-only, read-write or not-accessible)", value: value)
+                }
+                if let value = oid_info.description {
+                    OIDInfoView(name: "description", value: value)
+                }
+            } else {
+                Text("Error: no description received")
+            }
+            
+            Button(action: {
+                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                    show_popup = false
+                }
+            }, label: {
+                Spacer()
+                Text("OK")
+                    .foregroundColor(Color.black.lighter().lighter())
+                Spacer()
+            })
+            .padding()
+            .background(Color.gray.lighter().lighter().lighter())
+            .cornerRadius(8)
+            
+        }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(radius: 8)
+        .frame(maxWidth: 600)
+    }
+}
+
 struct SNMPView: View {
     @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
@@ -419,14 +525,31 @@ struct SNMPView: View {
     @State private var show_alert = false
     @State private var alert = ""
     
-    @State private var show_info = false
-    @State private var info = ""
+    @State private var show_popup = false
+    @State private var oid_info: OIDInfos?
     
     @StateObject private var target = SNMPTarget()
     
     func showInfo(info: String) {
-        self.info = info
-        show_info = true
+        if let jsonData = info.data(using: .utf8) {
+            let decoder = JSONDecoder()
+            do {
+                oid_info = try decoder.decode(OIDInfos.self, from: jsonData)
+                
+                print("oid: \(String(describing: oid_info?.oid))")
+                print("mib: \(String(describing: oid_info?.mib))")
+                print("textual_convention: \(String(describing: oid_info?.conv))")
+                print("syntax: \(String(describing: oid_info?.syntax))")
+                print("display_hint: \(String(describing: oid_info?.hint))")
+                print("status: \(String(describing: oid_info?.status))")
+                print("line: \(String(describing: oid_info?.line))")
+                print("description: \(String(describing: oid_info?.description))")
+            } catch {
+                #fatalError("JSON parser error: \(error.localizedDescription)")
+            }
+        }
+        
+        show_popup = true
     }
     
     func walk(_ str_array: [String]) {
@@ -462,147 +585,161 @@ struct SNMPView: View {
     }
     
     var body: some View {
-        VStack {
-            SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.leading, 15)
-                .padding(.trailing, 15)
-                .alert("SNMP Warning", isPresented: $show_alert, actions: {
-                    Button("OK", role: .cancel) { }
-                }, message: {
-                    Text(alert)
-                })
-                .alert("SNMP", isPresented: $show_info, actions: {
-                    Button("OK", role: .cancel) { }
-                }, message: {
-                    Text(info)
-                })
-            
-            if isTargetExpanded == true {
+        ZStack {
+            VStack {
+                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.leading, 15)
+                    .padding(.trailing, 15)
+                    .alert("SNMP Warning", isPresented: $show_alert, actions: {
+                        Button("OK", role: .cancel) { }
+                    }, message: {
+                        Text(alert)
+                    })
+                
+                if isTargetExpanded == true {
+                    HStack {
+                        Button(action: {
+                            var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                            str_array.append(".1.3.6.1.2.1.1")
+                            walk(str_array)
+                        })
+                        {
+                            Image(systemName: "list.dash.header.rectangle")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(Color(COLORS.standard_background))
+                            Text("run fast scan")
+                                .font(.custom("Arial Narrow", size: 14))
+                                .foregroundColor(Color(COLORS.standard_background))
+                        }
+                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                            walk(str_array)
+                        })
+                        {
+                            Image(systemName: "list.bullet.rectangle.fill")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(Color(COLORS.standard_background))
+                            Text("run full scan")
+                                .font(.custom("Arial Narrow", size: 14))
+                                .foregroundColor(Color(COLORS.standard_background))
+                        }
+                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                            str_array.append(".1.3.6.1.2.1.2")
+                            walk(str_array)
+                        })
+                        {
+                            Image(systemName: "chart.xyaxis.line")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(Color(COLORS.standard_background))
+                            Text("scan interfaces speed")
+                                .font(.custom("Arial Narrow", size: 14))
+                                .foregroundColor(Color(COLORS.standard_background))
+                        }
+                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+                    }
+                    .background(Color(COLORS.toolbar_background)).opacity(0.9)
+                    .cornerRadius(10)
+                    .padding(.leading, 15)
+                    .padding(.trailing, 15)
+                    .padding(.bottom, 10)
+                }
+                
+                if !is_manager_available {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .scaleEffect(1.5)
+                        .padding(.bottom, 15)
+                }
+                
                 HStack {
-                    Button(action: {
-                        var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                        str_array.append(".1.3.6.1.2.1.1")
-                        walk(str_array)
-                    })
-                    {
-                        Image(systemName: "list.dash.header.rectangle")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color(COLORS.standard_background))
-                        Text("run fast scan")
-                            .font(.custom("Arial Narrow", size: 14))
-                            .foregroundColor(Color(COLORS.standard_background))
+                    if #available(iOS 17.0, *) {
+                        Image(systemName: "magnifyingglass")
+                        TextField("Saisissez un filtre ici...", text: $highlight)
+                            .autocorrectionDisabled(true)
+                            .focused($isTextFieldFocused)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: highlight) { _, newValue in
+                                rootNode.expandAll()
+                                _ = rootNode.filter(newValue)
+                            }
+                    } else {
+                        Image(systemName: "magnifyingglass")
+                        TextField("Saisissez un filtre ici...", text: $highlight)
+                            .autocorrectionDisabled(true)
+                            .focused($isTextFieldFocused)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onChange(of: highlight) { newValue in
+                                rootNode.expandAll()
+                                _ = rootNode.filter(newValue)
+                            }
                     }
-                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-
-                    Spacer()
                     
                     Button(action: {
-                        let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                        walk(str_array)
+                        isTextFieldFocused = false
+                        highlight = ""
+                    }, label: {
+                        Image(systemName: "delete.left")
                     })
-                    {
-                        Image(systemName: "list.bullet.rectangle.fill")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color(COLORS.standard_background))
-                        Text("run full scan")
-                            .font(.custom("Arial Narrow", size: 14))
-                            .foregroundColor(Color(COLORS.standard_background))
-                    }
-                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-
-                    Spacer()
+                    .disabled(highlight.isEmpty)
+                    
+                    Spacer(minLength: 40)
                     
                     Button(action: {
-                        var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                        str_array.append(".1.3.6.1.2.1.2")
-                        walk(str_array)
+                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                            rootNode.expandAll()
+                        }
+                    }, label: {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
                     })
-                    {
-                        Image(systemName: "chart.xyaxis.line")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color(COLORS.standard_background))
-                        Text("scan interfaces speed")
-                            .font(.custom("Arial Narrow", size: 14))
-                            .foregroundColor(Color(COLORS.standard_background))
-                    }
-                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-                }
-                .background(Color(COLORS.toolbar_background)).opacity(0.9)
-                .cornerRadius(10)
-                .padding(.leading, 15)
-                .padding(.trailing, 15)
-                .padding(.bottom, 10)
-            }
-            
-            if !is_manager_available {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(1.5)
-                    .padding(.bottom, 15)
-            }
-            
-            HStack {
-                if #available(iOS 17.0, *) {
-                    Image(systemName: "magnifyingglass")
-                    TextField("Saisissez un filtre ici...", text: $highlight)
-                        .autocorrectionDisabled(true)
-                        .focused($isTextFieldFocused)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onChange(of: highlight) { _, newValue in
-                            rootNode.expandAll()
-                            _ = rootNode.filter(newValue)
+                    
+                    Button(action: {
+                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                            rootNode.collapseAll()
+                            //                        rootNode.isExpanded = true
                         }
-                } else {
-                    Image(systemName: "magnifyingglass")
-                    TextField("Saisissez un filtre ici...", text: $highlight)
-                        .autocorrectionDisabled(true)
-                        .focused($isTextFieldFocused)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .onChange(of: highlight) { newValue in
-                            rootNode.expandAll()
-                            _ = rootNode.filter(newValue)
-                        }
+                    }, label: {
+                        Image(systemName: "arrow.down.right.and.arrow.up.left")
+                    })
+                    
                 }
+                .padding(.leading, 20)
+                .padding(.trailing, 20)
+                .padding(.bottom, 5)
                 
-                Button(action: {
-                    isTextFieldFocused = false
-                    highlight = ""
-                }, label: {
-                    Image(systemName: "delete.left")
-                })
-                .disabled(highlight.isEmpty)
-                
-                Spacer(minLength: 40)
-                
-                Button(action: {
-                    withAnimation(Animation.easeInOut(duration: 0.5)) {
-                        rootNode.expandAll()
-                    }
-                }, label: {
-                    Image(systemName: "arrow.up.left.and.arrow.down.right")
-                })
-                
-                Button(action: {
-                    withAnimation(Animation.easeInOut(duration: 0.5)) {
-                        rootNode.collapseAll()
-//                        rootNode.isExpanded = true
-                    }
-                }, label: {
-                    Image(systemName: "arrow.down.right.and.arrow.up.left")
-                })
-                
+                List {
+                    OIDTreeView(node: rootNode, highlight: $highlight, show_info_cb: showInfo)
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color(COLORS.right_pannel_bg))
             }
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            .padding(.bottom, 5)
-            
-            List {
-                OIDTreeView(node: rootNode, highlight: $highlight, show_info_cb: showInfo)
-            }
-            .scrollContentBackground(.hidden)
             .background(Color(COLORS.right_pannel_bg))
+            
+            
+            if show_popup {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation {
+                            show_popup = false
+                        }
+                    }
+                
+                CustomPopupView(show_popup: $show_popup, oid_info: $oid_info)
+                    .transition(.scale)
+            }
         }
-        .background(Color(COLORS.right_pannel_bg))
+        .animation(.easeInOut, value: show_popup)
+        
+        
     }
 }

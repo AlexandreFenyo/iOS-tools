@@ -14,6 +14,18 @@ enum SNMPManagerError: Error {
     case invalidRange
 }
 
+struct OIDInfos: Decodable {
+    let oid: String
+    let mib: String
+    let conv: String?
+    let syntax: String?
+    let hint: String?
+    let status: String?
+    let access: String?
+    let description: String?
+    let line: String?
+}
+
 fileprivate enum SNMPManagerState: Int {
     case available = 0
     case walking
@@ -74,7 +86,9 @@ class SNMPTarget: ObservableObject {
         @Published var security_level: SecurityLevel = .`default`
     }
 
-    @Published var host: String = ""
+// REMETTRE :    @Published var host: String = ""
+    @Published var host: String = "192.168.0.254"
+
     @Published var port: String = ""
 
     @Published var transport_proto: SNMPTransportProto = .`default`
