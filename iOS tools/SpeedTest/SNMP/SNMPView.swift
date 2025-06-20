@@ -440,9 +440,9 @@ struct OIDInfoView: View {
             .background(name != "description" ? Color(COLORS.toolbar_background) : Color(COLORS.toolbar_background.withAlphaComponent(0.5)))
             .cornerRadius(10)
             .overlay(
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.black, lineWidth: 2)
-                    .shadow(color: .gray, radius: 4, x: 2, y: 2)
+                    .shadow(color: .gray, radius: 10, x: 2, y: 2)
             )
     }
 }
