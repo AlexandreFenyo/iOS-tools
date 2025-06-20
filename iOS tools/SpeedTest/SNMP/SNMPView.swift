@@ -481,22 +481,6 @@ struct SNMPView: View {
             if isTargetExpanded == true {
                 HStack {
                     Button(action: {
-                        let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                        walk(str_array)
-                    })
-                    {
-                        Image(systemName: "list.bullet.rectangle.fill")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color(COLORS.standard_background))
-                        Text("run full scan")
-                            .font(.custom("Arial Narrow", size: 14))
-                            .foregroundColor(Color(COLORS.standard_background))
-                    }
-                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-
-                    Spacer()
-                    
-                    Button(action: {
                         var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                         str_array.append(".1.3.6.1.2.1.1")
                         walk(str_array)
@@ -506,6 +490,22 @@ struct SNMPView: View {
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(Color(COLORS.standard_background))
                         Text("run fast scan")
+                            .font(.custom("Arial Narrow", size: 14))
+                            .foregroundColor(Color(COLORS.standard_background))
+                    }
+                    .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+
+                    Spacer()
+                    
+                    Button(action: {
+                        let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                        walk(str_array)
+                    })
+                    {
+                        Image(systemName: "list.bullet.rectangle.fill")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(Color(COLORS.standard_background))
+                        Text("run full scan")
                             .font(.custom("Arial Narrow", size: 14))
                             .foregroundColor(Color(COLORS.standard_background))
                     }
@@ -586,7 +586,7 @@ struct SNMPView: View {
                 Button(action: {
                     withAnimation(Animation.easeInOut(duration: 0.5)) {
                         rootNode.collapseAll()
-                        rootNode.isExpanded = true
+//                        rootNode.isExpanded = true
                     }
                 }, label: {
                     Image(systemName: "arrow.down.right.and.arrow.up.left")
