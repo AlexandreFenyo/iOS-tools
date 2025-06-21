@@ -452,66 +452,80 @@ struct CustomPopupView: View {
     @Binding var oid_info: OIDInfos?
     
     var body: some View {
-        VStack(spacing: 16) {
-            Image("Icon")
-                .resizable()
-                .frame(width: 80, height: 80)
-                .cornerRadius(20)
-                .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
-            
-            Text("SNMP Object Identifier Help")
-                .font(.headline)
-            
-            if let oid_info {
-                OIDInfoView(name: "object identifier (symbolic format)", value: oid_info.oid)
-                if let value = oid_info.line {
-                    OIDInfoView(name: "object identifier (numeric format)", value: value)
+        
+        GeometryReader { geometry in
+            let maxWidth: CGFloat = geometry.size.width * 3 / 4
+
+            HStack {
+                Spacer()
+                VStack(spacing: 16) {
+                    Image("Icon")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(20)
+                        .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 5)
+                    
+                    ScrollView {
+                        VStack {
+                            Text("SNMP Object Identifier Help")
+                                .font(.headline)
+                            
+                            if let oid_info {
+                                OIDInfoView(name: "object identifier (symbolic format)", value: oid_info.oid)
+                                if let value = oid_info.line {
+                                    OIDInfoView(name: "object identifier (numeric format)", value: value)
+                                }
+                                OIDInfoView(name: "MIB module(s) on which the object is defined", value: oid_info.mib)
+                                /*
+                                 if let value = oid_info.conv {
+                                 OIDInfoView(name: "textual convention", value: value)
+                                 }
+                                 if let value = oid_info.hint {
+                                 OIDInfoView(name: "display hint", value: value)
+                                 }
+                                 */
+                                if let value = oid_info.syntax {
+                                    OIDInfoView(name: "value syntax", value: value)
+                                }
+                                if let value = oid_info.status {
+                                    OIDInfoView(name: "status (current, obsolete or deprecated)", value: value)
+                                }
+                                if let value = oid_info.access {
+                                    OIDInfoView(name: "access mode (read-only, read-write or not-accessible)", value: value)
+                                }
+                                if let value = oid_info.description {
+                                    OIDInfoView(name: "description", value: value)
+                                        .padding(.bottom, 10)
+                                }
+                            } else {
+                                Text("Error: no description received")
+                            }
+                        }.padding(.horizontal)
+                            .frame(maxWidth: maxWidth)
+                    }
+                    
+                    Button(action: {
+                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                            show_popup = false
+                        }
+                    }, label: {
+                        Text("OK")
+                            .font(.headline)
+                            .foregroundColor(Color.black.lighter().lighter())
+                    })
+                    .padding()
+                    .frame(maxWidth: maxWidth)
+                    .background(Color.gray.lighter().lighter().lighter())
+                    .cornerRadius(8)
                 }
-                OIDInfoView(name: "MIB module(s) on which the object is defined", value: oid_info.mib)
-                /*
-                 if let value = oid_info.conv {
-                 OIDInfoView(name: "textual convention", value: value)
-                 }
-                 if let value = oid_info.hint {
-                 OIDInfoView(name: "display hint", value: value)
-                 }
-                 */
-                if let value = oid_info.syntax {
-                    OIDInfoView(name: "value syntax", value: value)
-                }
-                if let value = oid_info.status {
-                    OIDInfoView(name: "status (current, obsolete or deprecated)", value: value)
-                }
-                if let value = oid_info.access {
-                    OIDInfoView(name: "access mode (read-only, read-write or not-accessible)", value: value)
-                }
-                if let value = oid_info.description {
-                    OIDInfoView(name: "description", value: value)
-                }
-            } else {
-                Text("Error: no description received")
+                .padding()
+                .background(Color.gray.lighter().lighter().lighter().lighter().lighter())
+                .cornerRadius(12)
+                .shadow(radius: 8)
+                Spacer()
             }
-            
-            Button(action: {
-                withAnimation(Animation.easeInOut(duration: 0.5)) {
-                    show_popup = false
-                }
-            }, label: {
-                Spacer()
-                Text("OK")
-                    .foregroundColor(Color.black.lighter().lighter())
-                Spacer()
-            })
-            .padding()
-            .background(Color.gray.lighter().lighter().lighter())
-            .cornerRadius(8)
-            
+            .padding(10)
         }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(12)
-        .shadow(radius: 8)
-        .frame(maxWidth: 600)
     }
 }
 
@@ -733,9 +747,8 @@ struct SNMPView: View {
                             show_popup = false
                         }
                     }
-                
-                CustomPopupView(show_popup: $show_popup, oid_info: $oid_info)
-                    .transition(.scale)
+                    CustomPopupView(show_popup: $show_popup, oid_info: $oid_info)
+                        .transition(.scale)
             }
         }
         .animation(.easeInOut, value: show_popup)
