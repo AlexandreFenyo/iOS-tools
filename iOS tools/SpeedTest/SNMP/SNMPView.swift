@@ -549,7 +549,7 @@ struct SNMPView: View {
             let decoder = JSONDecoder()
             do {
                 oid_info = try decoder.decode(OIDInfos.self, from: jsonData)
-                
+                /*
                 print("oid: \(String(describing: oid_info?.oid))")
                 print("mib: \(String(describing: oid_info?.mib))")
                 print("textual_convention: \(String(describing: oid_info?.conv))")
@@ -558,6 +558,7 @@ struct SNMPView: View {
                 print("status: \(String(describing: oid_info?.status))")
                 print("line: \(String(describing: oid_info?.line))")
                 print("description: \(String(describing: oid_info?.description))")
+                */
             } catch {
                 #fatalError("JSON parser error: \(error.localizedDescription)")
             }
