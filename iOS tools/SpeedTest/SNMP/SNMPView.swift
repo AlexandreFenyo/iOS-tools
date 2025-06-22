@@ -529,13 +529,37 @@ struct CustomPopupView: View {
     }
 }
 
+class SNMPAvailability: ObservableObject {
+    static var shared = SNMPAvailability()
+    @Published fileprivate var available = true
+    
+    func setAvailability(_ available: Bool) {
+        // SNMPAvailability would stop the app, we use #fatalError instead
+        // SNMPAvailability(condition: .onQueue(.main))
+        if !Thread.isMainThread {
+            #fatalError("SNMPAvailability: bad thread")
+        }
+        
+        self.available = available
+    }
+    
+    func getAvailability() -> Bool {
+        // SNMPAvailability would stop the app, we use #fatalError instead
+        // SNMPAvailability(condition: .onQueue(.main))
+        if !Thread.isMainThread {
+            #fatalError("SNMPAvailability: bad thread")
+        }
+
+        return available
+    }
+}
+
 struct SNMPView: View {
     @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
-    @State private var is_manager_available: Bool = true
     @State private var isTargetExpanded = true
-    
+    @StateObject private var is_manager_available_obj = SNMPAvailability.shared
     @State private var show_alert = false
     @State private var alert = ""
     
@@ -570,8 +594,7 @@ struct SNMPView: View {
     func walk(_ str_array: [String]) {
         do {
             try SNMPManager.manager.pushArray(str_array)
-            
-            is_manager_available = false
+            is_manager_available_obj.setAvailability(false)
             try SNMPManager.manager.walk() { oid_root, errbuf in
                 if !errbuf.isEmpty {
                     if errbuf.starts(with: "Timeout: No Response from udp:") {
@@ -591,7 +614,7 @@ struct SNMPView: View {
                     rootNode.children = oid_root_displayable.children
                     rootNode.children_backup = oid_root_displayable.children_backup
                     rootNode.subnodes = oid_root_displayable.subnodes
-                    is_manager_available = true
+                    is_manager_available_obj.setAvailability(true)
                 }
             }
         } catch {
@@ -627,8 +650,8 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-                        
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
+
                         Spacer()
                         
                         Button(action: {
@@ -643,8 +666,8 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
-                        
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
+
                         Spacer()
                         
                         Button(action: {
@@ -660,7 +683,7 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available, isHostEmpty: target.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
                     }
                     .background(Color(COLORS.toolbar_background)).opacity(0.9)
                     .cornerRadius(10)
@@ -669,7 +692,7 @@ struct SNMPView: View {
                     .padding(.bottom, 10)
                 }
                 
-                if !is_manager_available {
+                if !is_manager_available_obj.available {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(1.5)

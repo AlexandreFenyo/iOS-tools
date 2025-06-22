@@ -148,6 +148,32 @@ public class SockAddr6 : SockAddr {
     }
 }
 
+public final class IPv4AddressSendable: Sendable {
+    let inaddr: Data
+    
+    fileprivate init(_ inaddr: Data) {
+        self.inaddr = inaddr
+    }
+
+    func toAddress() -> IPv4Address {
+        return IPv4Address(inaddr)
+    }
+}
+
+public final class IPv6AddressSendable: Sendable {
+    private let inaddr: Data
+    private let scope: UInt32
+
+    fileprivate init(_ inaddr: Data, scope: UInt32) {
+        self.inaddr = inaddr
+        self.scope = scope
+    }
+    
+    func toAddress() -> IPv6Address {
+        return IPv6Address(inaddr, scope: scope)
+    }
+}
+
 public class IPAddress : Hashable {
     fileprivate let inaddr: Data
 
@@ -293,6 +319,10 @@ public class IPv4Address : IPAddress, Comparable {
         hasher.combine(inaddr)
     }
 
+    func toSendable() -> IPv4AddressSendable {
+        return IPv4AddressSendable(inaddr)
+    }
+    
     public convenience init?(_ address: String) {
         var data = Data(count: MemoryLayout<in_addr>.size)
         let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) -> Int32 in address.withCString { inet_aton($0, bytes.bindMemory(to: in_addr.self).baseAddress) } }
@@ -394,7 +424,11 @@ public class IPv6Address : IPAddress, Comparable {
     static private let _ipv6_e000 = IPv6Address("e000::")!
     static private let _ipv6_fe80 = IPv6Address("fe80::")!
     static private let _ipv6_2000 = IPv6Address("2000::")!
-    
+
+    func toSendable() -> IPv6AddressSendable {
+        return IPv6AddressSendable(inaddr, scope: scope)
+    }
+
     public func getScope() -> UInt32 {
         return scope
     }

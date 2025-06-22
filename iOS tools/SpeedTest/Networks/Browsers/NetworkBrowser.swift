@@ -79,6 +79,10 @@ class NetworkBrowser {
     }
     
     private func manageAnswer(from: IPAddress) async {
+        Task.detached { @MainActor in
+            SNMPManager.manager.addIpToCheck(from)
+        }
+
         let node = Node()
         switch from.getFamily() {
         case AF_INET:

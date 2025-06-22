@@ -26,7 +26,7 @@ struct OIDInfos: Decodable {
     let line: String?
 }
 
-fileprivate enum SNMPManagerState: Int {
+enum SNMPManagerState: Int {
     case available = 0
     case walking
     // Finished state when data pulled by the manager have not been retrieved from it
@@ -106,20 +106,102 @@ class SNMPTarget: ObservableObject {
 @MainActor
 class SNMPManager {
     static let manager = SNMPManager()
-
+    
     private var current_selected_IP: IPAddress?
     
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
-
+    
+    private var IP_to_check = [IPAddress]()
+    
+    init() {
+        // Create background thread
+        Task.detached {
+            while (true) {
+                let task = Task<IPAddress?, Never>{ @MainActor in
+                    if SNMPAvailability.shared.getAvailability() == false || self.IP_to_check.isEmpty {
+                        return nil
+                    }
+                    SNMPAvailability.shared.setAvailability(false)
+                    return self.IP_to_check.removeFirst()
+                }
+                
+                if let ip_address = await task.value {
+                    if let str_array = await SNMPManager.manager.getPingCommandeLineFromTarget(address: ip_address) {
+                        Task { @MainActor in
+                            do {
+                                try SNMPManager.manager.pushArray(str_array)
+                                try SNMPManager.manager.walk() { oid_root, errbuf in
+                                    if oid_root.children.count != 0 {
+                                        print("XXXXX: \(ip_address) OK!")
+                                    } else {
+                                        print("XXXXX: \(ip_address) BAD")
+                                    }
+                                    SNMPAvailability.shared.setAvailability(true)
+                                }
+                            } catch {
+                                #fatalError("Explore SNMP Error: \(error)")
+                            }
+                        }
+                    }
+                } else {
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                }
+            }
+        }
+    }
+    
+    func addIpToCheck(_ ip: IPAddress) {
+        if !IP_to_check.contains(ip) {
+            IP_to_check.append(ip)
+        }
+    }
+    
+    func flushIpToCheck() {
+        IP_to_check = [IPAddress]()
+    }
+    
     func setCurrentSelectedIP(_ ip: IPAddress?) {
         current_selected_IP = ip
     }
-
+    
     func getCurrentSelectedIP() -> IPAddress? {
         return current_selected_IP
     }
+    
+    func getPingCommandeLineFromTarget(address: IPAddress) -> [String]? {
+        // no retries, 1 sec timeout - only for UDP
+        var str_array = ["snmpwalk", "-r1", "-t1"]
+        
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX");
+            is_option_output_X_called = true;
+        }
 
+        str_array.append(contentsOf: [ "-v2c", "-c", "public"]);
+
+        if address.getFamily() == AF_INET {
+            if let addr_as_string = (address as? IPv4Address)?.toNumericString() {
+                str_array.append("udp:\(addr_as_string)")
+            } else {
+                #fatalError("getPingCommandeLineFromTarget: can not get IPv4 address as string")
+                return nil
+            }
+        } else {
+            if let addr_as_string = (address as? IPv6Address)?.toNumericString() {
+                str_array.append("udp6:\(addr_as_string)")
+            } else {
+                #fatalError("getPingCommandeLineFromTarget: can not get IPv6 address as string")
+                return nil
+            }
+        }
+
+        str_array.append(".1.3.6.1.2.1.1.1")
+
+        return str_array
+    }
+    
     func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
         // 3 retries, 1 sec each - only for UDP. For TCP: ~75s timeout at connect() time (no way to change it in iOS)
         var str_array = ["snmpwalk", "-r3", "-t1"]
@@ -175,9 +257,9 @@ class SNMPManager {
         agent_string.append(":")
         agent_string.append(String(target.port == "" ? "161" : target.port))
 
-        str_array.append(contentsOf: [agent_string]);
+        str_array.append(contentsOf: [agent_string])
 
-        return str_array;
+        return str_array
     }
 
     func initLibSNMP() {
@@ -286,7 +368,7 @@ class SNMPManager {
         if state != .available {
             throw SNMPManagerError.notAvailable
         }
-        state = .walking
+        setState(.walking)
         alex_rollingbuf_init();
 
         // Launch a background thread that runs snmpwalk
