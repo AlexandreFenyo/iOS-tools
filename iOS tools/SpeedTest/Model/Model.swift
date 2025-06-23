@@ -732,6 +732,8 @@ class DBMaster {
                 if let s = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size)) {
                     let addr = s.getIPAddress() as! IPv4Address
                     gw.v4_addresses.insert(addr)
+                    // We only add IPv4 gateway IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
+                    SNMPManager.manager.addIpToCheck(addr)
                 }
             }
             idx += 1
@@ -774,6 +776,8 @@ class DBMaster {
                     let address = my_sock_addr.getIPAddress() as! IPv4Address
                     node.v4_addresses.insert(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
+                    // We only add IPv4 local IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
+                    SNMPManager.manager.addIpToCheck(address)
 
                 case AF_INET6:
                     let address = my_sock_addr.getIPAddress() as! IPv6Address
@@ -1150,6 +1154,7 @@ class DBMaster {
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::9001")!)
         node.types = [ .chargen, .internet ]
         _ = addNode(node, demo_mode: true)
+        SNMPManager.manager.addIpToCheck(IPv4Address("51.75.31.39")!)
 
         node = Node()
         node.mcast_dns_names.insert(FQDN("dns", "google"))
@@ -1174,8 +1179,10 @@ class DBMaster {
             node.dns_names.insert(DomainName(target_name)!)
             if isIPv4(target_ip) {
                 node.v4_addresses.insert(IPv4Address(target_ip)!)
+                SNMPManager.manager.addIpToCheck(IPv4Address(target_ip)!)
             } else if isIPv6(target_ip) {
                 node.v6_addresses.insert(IPv6Address(target_ip)!)
+                SNMPManager.manager.addIpToCheck(IPv6Address(target_ip)!)
             }
             if Int(node_type_str) != NodeType.localhost.rawValue {
                 node.types = [ node_type ]

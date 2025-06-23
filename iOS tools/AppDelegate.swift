@@ -151,6 +151,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if debug_snmp { tabBarController.selectedIndex = 3 }
 
         self.masterViewController = masterViewController
+
+        SNMPManager.manager.setDeviceManager(masterViewController)
         
         self.masterViewController!.detail_view_controller = detailViewController
         self.masterViewController!.detail_navigation_controller = rightNavController

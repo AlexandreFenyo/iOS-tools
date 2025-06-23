@@ -113,7 +113,8 @@ class SNMPManager {
     private var is_option_output_X_called = false
     
     private var IP_to_check = [IPAddress]()
-    
+    private var device_manager: DeviceManager?
+
     init() {
         // Create background thread
         Task.detached {
@@ -141,9 +142,23 @@ class SNMPManager {
                                 try SNMPManager.manager.pushArray(str_array)
                                 try SNMPManager.manager.walk() { oid_root, errbuf in
                                     if oid_root.children.count != 0 {
-                                        print("XXXXX: \(ip_address) OK!")
+                                        print("XXXXX: \(ip_address.toNumericString()) OK!")
+
+
+                                        let node = Node()
+                                        if ip_address.getFamily() == AF_INET { node.addV4Address(ip_address as! IPv4Address) }
+                                        else { node.addV6Address(ip_address as! IPv6Address) }
+                                        node.addUdpPort(161)
+                                        Task {
+                                            self.device_manager?.setInformation(ip_address.toNumericString() ?? "addr is nil" + ": port 161")
+                                            self.device_manager?.addNode(node)
+                                        }
+                                        
+                                        
+                                        
+
                                     } else {
-                                        print("XXXXX: \(ip_address) BAD")
+                                        print("XXXXX: \(ip_address.toNumericString()) BAD")
                                     }
                                     SNMPAvailability.shared.setAvailability(true)
                                 }
@@ -161,6 +176,7 @@ class SNMPManager {
     
     func addIpToCheck(_ ip: IPAddress) {
         if !IP_to_check.contains(ip) {
+            print("XXXXX: IP to check: \(ip.toNumericString() ?? "addr is nil")")
             IP_to_check.append(ip)
         }
     }
@@ -272,6 +288,10 @@ class SNMPManager {
         str_array.append(contentsOf: [agent_string])
 
         return str_array
+    }
+
+    func setDeviceManager(_ device_manager: DeviceManager) {
+        self.device_manager = device_manager
     }
 
     func initLibSNMP() {
