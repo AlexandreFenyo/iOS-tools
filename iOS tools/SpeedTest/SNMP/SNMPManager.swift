@@ -122,7 +122,15 @@ class SNMPManager {
                     if SNMPAvailability.shared.getAvailability() == false || self.IP_to_check.isEmpty {
                         return nil
                     }
-                    SNMPAvailability.shared.setAvailability(false)
+                    let msg: String
+                    if let addr = self.IP_to_check.first?.toNumericString() {
+                        msg = "Checking SNMP agent on \(addr)"
+                    } else {
+                        // Should never happen
+                        #fatalError("Checking SNMP agent on unknown address")
+                        msg = "Checking SNMP agent on unknown address"
+                    }
+                    SNMPAvailability.shared.setAvailability(false, message: msg)
                     return self.IP_to_check.removeFirst()
                 }
                 
@@ -159,6 +167,10 @@ class SNMPManager {
     
     func flushIpToCheck() {
         IP_to_check = [IPAddress]()
+    }
+    
+    func isIPToCheckEmpty() -> Bool {
+        return IP_to_check.isEmpty
     }
     
     func setCurrentSelectedIP(_ ip: IPAddress?) {

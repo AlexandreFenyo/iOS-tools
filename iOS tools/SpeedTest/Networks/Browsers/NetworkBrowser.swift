@@ -314,7 +314,6 @@ class NetworkBrowser {
                         try? await Task.sleep(nanoseconds: 250_000_000)
                     }
                     
-                    
                     // Wait .5 sec between the last multicast packet sent and toggling the finished flag
                     try? await Task.sleep(nanoseconds: 500_000_000)
                     await MainActor.run {

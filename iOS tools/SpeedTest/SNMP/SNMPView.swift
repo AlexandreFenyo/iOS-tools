@@ -532,25 +532,35 @@ struct CustomPopupView: View {
 class SNMPAvailability: ObservableObject {
     static var shared = SNMPAvailability()
     @Published fileprivate var available = true
+    @Published private var message: String?
     
-    func setAvailability(_ available: Bool) {
-        // SNMPAvailability would stop the app, we use #fatalError instead
-        // SNMPAvailability(condition: .onQueue(.main))
+    func setAvailability(_ available: Bool, message: String? = nil) {
+        // SNMPAvailability(condition: .onQueue(.main)) would stop the app, we use #fatalError instead
         if !Thread.isMainThread {
-            #fatalError("SNMPAvailability: bad thread")
+            #fatalError("SNMPAvailability: setAvailability: bad thread")
         }
-        
-        self.available = available
+        withAnimation(Animation.easeInOut(duration: 0.5)) {
+            self.available = available
+            self.message = message
+        }
     }
     
     func getAvailability() -> Bool {
-        // SNMPAvailability would stop the app, we use #fatalError instead
-        // SNMPAvailability(condition: .onQueue(.main))
+        // SNMPAvailability(condition: .onQueue(.main)) would stop the app, we use #fatalError instead
         if !Thread.isMainThread {
-            #fatalError("SNMPAvailability: bad thread")
+            #fatalError("SNMPAvailability: getAvailability: bad thread")
+        }
+        
+        return available
+    }
+
+    func getMessage() -> String? {
+        // SNMPAvailability(condition: .onQueue(.main)) would stop the app, we use #fatalError instead
+        if !Thread.isMainThread {
+            #fatalError("SNMPAvailability: getMessage: bad thread")
         }
 
-        return available
+        return message
     }
 }
 
@@ -591,10 +601,10 @@ struct SNMPView: View {
         show_popup = true
     }
     
-    func walk(_ str_array: [String]) {
+    func walk(_ str_array: [String], message: String? = nil) {
         do {
             try SNMPManager.manager.pushArray(str_array)
-            is_manager_available_obj.setAvailability(false)
+            is_manager_available_obj.setAvailability(false, message: message)
             try SNMPManager.manager.walk() { oid_root, errbuf in
                 if !errbuf.isEmpty {
                     if errbuf.starts(with: "Timeout: No Response from udp:") {
@@ -640,7 +650,7 @@ struct SNMPView: View {
                         Button(action: {
                             var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                             str_array.append(".1.3.6.1.2.1.1")
-                            walk(str_array)
+                            walk(str_array, message: "SNMP walk for \(target.host)")
                         })
                         {
                             Image(systemName: "list.dash.header.rectangle")
@@ -656,7 +666,7 @@ struct SNMPView: View {
                         
                         Button(action: {
                             let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                            walk(str_array)
+                            walk(str_array, message: "SNMP walk for \(target.host)")
                         })
                         {
                             Image(systemName: "list.bullet.rectangle.fill")
@@ -673,7 +683,7 @@ struct SNMPView: View {
                         Button(action: {
                             var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
                             str_array.append(".1.3.6.1.2.1.2")
-                            walk(str_array)
+                            walk(str_array, message: "SNMP walk for \(target.host)")
                         })
                         {
                             Image(systemName: "chart.xyaxis.line")
@@ -697,6 +707,13 @@ struct SNMPView: View {
                         .progressViewStyle(CircularProgressViewStyle())
                         .scaleEffect(1.5)
                         .padding(.bottom, 15)
+                    
+                    if let msg = SNMPAvailability.shared.getMessage() {
+                        Text(msg)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 10)
+                    }
                 }
                 
                 HStack {

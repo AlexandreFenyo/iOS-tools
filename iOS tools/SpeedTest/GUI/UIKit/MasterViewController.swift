@@ -207,6 +207,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         browser_network = nb
         await nb.browseAsync() {
+            // Wait for hosts discovered during the browse process to have been tested for an SNMP agent, or for the stop button to be pressed (since pressing the stop button will flush the SNMP discovered hosts list)
+            var is_ip_to_check_empty: Bool
+            repeat {
+                is_ip_to_check_empty = await MainActor.run {
+                    SNMPManager.manager.isIPToCheckEmpty()
+                }
+                if is_ip_to_check_empty == false {
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                }
+            } while is_ip_to_check_empty == false
+            
             await self.stopBrowsingAsync(.OTHER_ACTION)
         }
     }
@@ -394,6 +405,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         await stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+
+        SNMPManager.manager.flushIpToCheck()
     }
     
     @IBAction func stop_pressed(_ sender: Any) {
