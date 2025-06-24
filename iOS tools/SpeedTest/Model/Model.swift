@@ -13,11 +13,11 @@ import iOSToolsMacros
 typealias PortMapper = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]
 
 enum SectionType: Int, CaseIterable {
-    case localhost = 0, ios, chargen_discard, gateway, internet, other
+    case localhost = 0, ios, chargen_discard, snmp, gateway, internet, other
 }
 
 enum NodeType: Int, CaseIterable {
-    case localhost = 0, ios, chargen, discard, gateway, internet
+    case localhost = 0, ios, chargen, discard, snmp, gateway, internet
 }
 
 enum IPProtocol: Int, CaseIterable, CustomStringConvertible {
@@ -311,8 +311,8 @@ class Node : Hashable {
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
         if types.contains(.gateway) { section_types.insert(.gateway) }
         if types.contains(.internet) { section_types.insert(.internet) }
-        
-        if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) { section_types.insert(.other) }
+        if types.contains(.snmp) { section_types.insert(.snmp) }
+        if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) && !types.contains(.snmp) { section_types.insert(.other) }
         
         return section_types
     }
@@ -1205,6 +1205,7 @@ class DBMaster {
             .localhost: ModelSection("Localhost", "Localhost", "this host"),
             .ios: ModelSection("iOS devices", "iOS devices", "other devices running this app"),
             .chargen_discard: ModelSection("Chargen Discard services", "Chargen Discard services", "other devices running these services"),
+            .snmp: ModelSection("SNMP agents", "SNMP agents", "Devices running some SNMP agent"),
             .gateway: ModelSection("Local gateway", "Local gateway", "local router"),
             .internet: ModelSection("Internet", "Internet", "remote hosts on the Internet"),
             .other: ModelSection("Other hosts", "Other hosts", "any host")

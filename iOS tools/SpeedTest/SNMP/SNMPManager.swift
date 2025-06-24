@@ -149,6 +149,7 @@ class SNMPManager {
                                         if ip_address.getFamily() == AF_INET { node.addV4Address(ip_address as! IPv4Address) }
                                         else { node.addV6Address(ip_address as! IPv6Address) }
                                         node.addUdpPort(161)
+                                        node.setTypes([ .snmp ])
                                         Task {
                                             self.device_manager?.setInformation(ip_address.toNumericString() ?? "addr is nil" + ": port 161")
                                             self.device_manager?.addNode(node)
@@ -218,7 +219,7 @@ class SNMPManager {
             }
         } else {
             if let addr_as_string = (address as? IPv6Address)?.toNumericString() {
-                str_array.append("udp6:\(addr_as_string)")
+                str_array.append("udp6:[\(addr_as_string)]")
             } else {
                 #fatalError("getPingCommandeLineFromTarget: can not get IPv6 address as string")
                 return nil
@@ -273,19 +274,22 @@ class SNMPManager {
                 }
             }
         }
-        
-        var agent_string = target.transport_proto == .UDP ? "udp" : "tcp"
 
-        if target.ip_version == .IPv6 {
-            agent_string.append("6")
+        if target.host.contains(":") {
+            // The target host is an IPv6 address
+            var agent_string = target.transport_proto == .UDP ? "udp6" : "tcp6"
+            agent_string.append(":[\(target.host)]:")
+            agent_string.append(String(target.port == "" ? "161" : target.port))
+            str_array.append(contentsOf: [agent_string])
+        } else {
+            var agent_string = target.transport_proto == .UDP ? "udp" : "tcp"
+            if target.ip_version == .IPv6 {
+                agent_string.append("6")
+            }
+            agent_string.append(":[\(target.host)]:")
+            agent_string.append(String(target.port == "" ? "161" : target.port))
+            str_array.append(contentsOf: [agent_string])
         }
-        
-        agent_string.append(":")
-        agent_string.append(target.host)
-        agent_string.append(":")
-        agent_string.append(String(target.port == "" ? "161" : target.port))
-
-        str_array.append(contentsOf: [agent_string])
 
         return str_array
     }
