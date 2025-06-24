@@ -776,8 +776,9 @@ class DBMaster {
                     let address = my_sock_addr.getIPAddress() as! IPv4Address
                     node.v4_addresses.insert(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
+                    // Do not check local IP adresses, for the SNMP module to be more available
                     // We only add IPv4 local IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
-                    SNMPManager.manager.addIpToCheck(address)
+                    // SNMPManager.manager.addIpToCheck(address)
 
                 case AF_INET6:
                     let address = my_sock_addr.getIPAddress() as! IPv6Address

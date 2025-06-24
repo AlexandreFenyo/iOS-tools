@@ -238,7 +238,8 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                     case AF_INET6:
                         node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
                         if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
-                        SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv6Address)
+                        // Do not check IPv6 addresses: they often have an IPv4 address too, not checking them let the SNMP module being more available
+                        // SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv6Address)
 
                     default:
                         #fatalError("can not be here")
