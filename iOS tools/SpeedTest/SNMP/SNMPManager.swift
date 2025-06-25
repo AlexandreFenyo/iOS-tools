@@ -315,7 +315,7 @@ class SNMPManager {
                 }
                 
                 if let ip_address = await task.value {
-                    if let str_array = await SNMPManager.manager.getPingCommandeLineFromTarget(address: ip_address) {
+                    if let str_array = await SNMPManager.manager.getPingCommandLineFromTarget(address: ip_address) {
                         Task { @MainActor in
                             do {
                                 try SNMPManager.manager.pushArray(str_array)
@@ -383,14 +383,14 @@ class SNMPManager {
         return current_selected_target
     }
 
-    func getPingCommandeLineFromTarget(address: IPAddress) -> [String]? {
+    func getPingCommandLineFromTarget(address: IPAddress) -> [String]? {
         // no retries, 1 sec timeout - only for UDP
         var str_array = ["snmpwalk", "-r1", "-t1"]
         
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
         if is_option_output_X_called == false {
-            str_array.append("-OX");
-            is_option_output_X_called = true;
+            str_array.append("-OX")
+            is_option_output_X_called = true
         }
 
         str_array.append(contentsOf: [ "-v2c", "-c", "public"]);
@@ -416,7 +416,7 @@ class SNMPManager {
         return str_array
     }
     
-    func getWalkCommandeLineFromTarget(target: SNMPTarget) -> [String] {
+    func getWalkCommandLineFromTarget(target: SNMPTarget) -> [String] {
         // 3 retries, 1 sec each - only for UDP. For TCP: ~75s timeout at connect() time (no way to change it in iOS)
         var str_array = ["snmpwalk", "-r3", "-t1"]
 
@@ -429,9 +429,9 @@ class SNMPManager {
 
         switch target.credentials {
         case .v1(let community):
-            str_array.append(contentsOf: ["-v1", "-c", community])
+            str_array.append(contentsOf: ["-v1", "-c", community.isEmpty ? "public" : community])
         case .v2c(let community):
-            str_array.append(contentsOf: ["-v2c", "-c", community])
+            str_array.append(contentsOf: ["-v2c", "-c", community.isEmpty ? "public" : community])
         case .v3(let v3cred):
             str_array.append(contentsOf: ["-u", v3cred.username])
             switch v3cred.security_level {

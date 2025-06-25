@@ -718,9 +718,9 @@ struct SNMPView: View {
                 if isTargetExpanded == true {
                     HStack {
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
                             str_array.append(".1.3.6.1.2.1.1")
-                            walk(str_array, message: "SNMP walk for \(target.host)")
+                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "list.dash.header.rectangle")
@@ -735,8 +735,8 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
-                            let str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
-                            walk(str_array, message: "SNMP walk for \(target.host)")
+                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
+                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "list.bullet.rectangle.fill")
@@ -751,9 +751,9 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandeLineFromTarget(target: target)
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
                             str_array.append(".1.3.6.1.2.1.2")
-                            walk(str_array, message: "SNMP walk for \(target.host)")
+                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "chart.xyaxis.line")
