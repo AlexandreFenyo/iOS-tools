@@ -158,7 +158,7 @@ class OIDNodeDisplayable: Identifiable, ObservableObject {
         
         switch type {
         case .root:
-            description = "SNMP OID Tree"
+            description = "SNMP-OID-Tree"
         case .mib, .name, .number:
             description = val
         case .key:

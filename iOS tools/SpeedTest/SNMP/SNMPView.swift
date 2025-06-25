@@ -207,6 +207,8 @@ struct SNMPTargetView: View {
     
     @State private var v3_auth_proto = V3AuthProto.MD5
     @State private var v3_privacy_proto = V3PrivacyProto.DES
+
+    let adding_host: Bool
     
     private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
         let v3cred = SNMPTarget.SNMPv3Credentials()
@@ -225,34 +227,98 @@ struct SNMPTargetView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("target (SNMP agent)")
+                Text(adding_host ? "SNMP agent configuration" : "target (SNMP agent)")
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                 
                 Spacer()
                 
-                Button(action: {
-                    withAnimation(Animation.easeInOut(duration: 0.5)) {
-                        isTargetExpanded.toggle()
-                    }
-                }, label: {
-                    Image(systemName: isTargetExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 10)
-                })
+                if !adding_host {
+                    Button(action: {
+                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                            isTargetExpanded.toggle()
+                        }
+                    }, label: {
+                        Image(systemName: isTargetExpanded ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right")
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 10)
+                    })
+                }
             }
             
             if isTargetExpanded {
-                TextField("hostname", text: $target.host)
-                    .font(.subheadline)
-                    .padding(.horizontal, 10)
-                    .onAppear {
-                        if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
-                            target.host = str
-                            SNMPManager.manager.setCurrentSelectedIP(nil)
+                if !adding_host {
+                    TextField("hostname", text: $target.host)
+                        .font(.subheadline)
+                        .padding(.horizontal, 10)
+                        .onAppear {
+                            if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
+                                target.host = str
+                            }
+                            
+                            if let current_selected_target = SNMPManager.manager.getCurrentSelectedTarget() {
+                                target.port = current_selected_target.port
+                                target.transport_proto = current_selected_target.transport_proto
+                                target.ip_version = current_selected_target.ip_version
+                                target.credentials = current_selected_target.credentials
+                                
+                                SNMP_transport_protocol = current_selected_target.transport_proto
+                                SNMP_network_protocol = current_selected_target.ip_version
+                                
+                                switch target.credentials {
+                                case .v1(let community):
+                                    SNMP_protocol = .SNMPv1
+                                    SNMP_community = community
+                                    target.credentials = .v1(community)
+                                    SNMP_sec_level = .noAuthNoPriv
+                                case .v2c(let community):
+                                    SNMP_protocol = .SNMPv2c
+                                    SNMP_community = community
+                                    target.credentials = .v2c(community)
+                                    SNMP_sec_level = .noAuthNoPriv
+                                case .v3(let v3cred):
+                                    SNMP_protocol = .SNMPv3
+                                    SNMP_username = v3cred.username
+                                    SNMP_community = ""
+                                    switch v3cred.security_level {
+                                    case .noAuthNoPriv:
+                                        SNMP_sec_level = .noAuthNoPriv
+                                    case .authNoPriv(let auth_proto):
+                                        SNMP_sec_level = .authNoPriv
+                                        switch auth_proto {
+                                        case .MD5(let secret):
+                                            SNMP_auth_secret = secret
+                                            v3_auth_proto = .MD5
+                                        case .SHA1(let secret):
+                                            SNMP_auth_secret = secret
+                                            v3_auth_proto = .SHA1
+                                        }
+                                    case .authPriv(let auth_proto, let privacy_proto):
+                                        SNMP_sec_level = .authPriv
+                                        switch auth_proto {
+                                        case .MD5(let secret):
+                                            SNMP_auth_secret = secret
+                                            v3_auth_proto = .MD5
+                                        case .SHA1(let secret):
+                                            SNMP_auth_secret = secret
+                                            v3_auth_proto = .SHA1
+                                        }
+                                        switch privacy_proto {
+                                        case .DES(let secret):
+                                            SNMP_priv_secret = secret
+                                            v3_privacy_proto = .DES
+                                        case .AES(let secret):
+                                            SNMP_priv_secret = secret
+                                            v3_privacy_proto = .AES
+                                        }
+                                    }
+                                }
+                            }
+                            SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
                         }
-                    }
+                    
+                }
                 
                 HStack {
                     TextField("port (161)", text: $target.port)
@@ -625,6 +691,10 @@ struct SNMPView: View {
                     rootNode.children_backup = oid_root_displayable.children_backup
                     rootNode.subnodes = oid_root_displayable.subnodes
                     is_manager_available_obj.setAvailability(true)
+
+                    rootNode.expandAll()
+                    _ = rootNode.filter(highlight)
+
                 }
             }
         } catch {
@@ -635,7 +705,7 @@ struct SNMPView: View {
     var body: some View {
         ZStack {
             VStack {
-                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded)
+                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded, adding_host: false)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.leading, 15)
                     .padding(.trailing, 15)
@@ -656,7 +726,7 @@ struct SNMPView: View {
                             Image(systemName: "list.dash.header.rectangle")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(Color(COLORS.standard_background))
-                            Text("run fast scan")
+                            Text("fast scan")
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
@@ -672,7 +742,7 @@ struct SNMPView: View {
                             Image(systemName: "list.bullet.rectangle.fill")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(Color(COLORS.standard_background))
-                            Text("run full scan")
+                            Text("full scan")
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
@@ -717,8 +787,8 @@ struct SNMPView: View {
                 }
                 
                 HStack {
+                    Image(systemName: "magnifyingglass")
                     if #available(iOS 17.0, *) {
-                        Image(systemName: "magnifyingglass")
                         TextField("Saisissez un filtre ici...", text: $highlight)
                             .autocorrectionDisabled(true)
                             .focused($isTextFieldFocused)
@@ -728,7 +798,6 @@ struct SNMPView: View {
                                 _ = rootNode.filter(newValue)
                             }
                     } else {
-                        Image(systemName: "magnifyingglass")
                         TextField("Saisissez un filtre ici...", text: $highlight)
                             .autocorrectionDisabled(true)
                             .focused($isTextFieldFocused)

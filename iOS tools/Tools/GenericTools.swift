@@ -271,6 +271,18 @@ final class GenericTools : AutoTrace {
 */
     }
 
+    // Copier une une classe qui se conforme à Codable
+    static func copyCodableClass<T: Codable>(_ object: T) -> T? {
+        do {
+            let data = try JSONEncoder().encode(object)
+            let copy = try JSONDecoder().decode(T.self, from: data)
+            return copy
+        } catch {
+            print("Copy error: \(error)")
+            return nil
+        }
+    }
+    
     // Espace insécable
     public static func insec() -> String {
         let arr: [UInt8] = [ 0xC2, 0xA0 ]

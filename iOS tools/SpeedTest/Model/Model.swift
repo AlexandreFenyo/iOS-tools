@@ -24,12 +24,13 @@ enum IPProtocol: Int, CaseIterable, CustomStringConvertible {
     var description: String {
         return rawValue == 0 ? "TCP" : "UDP"
     }
-    
     case TCP, UDP
 }
+
 typealias PortNumber = UInt16
 typealias ServiceName = String
 typealias BonjourServiceName = String
+
 struct Port : Hashable, CustomStringConvertible {
     var description: String {
         return "\(ip_protocol)/\(port_number)"
@@ -176,6 +177,7 @@ class Node : Hashable {
         hasher.combine(udp_ports)
         hasher.combine(types)
         hasher.combine(services)
+        hasher.combine(snmp_target)
     }
     
     //    private var is_in_model = false
@@ -190,7 +192,8 @@ class Node : Hashable {
     fileprivate var udp_ports = Set<UInt16>()
     fileprivate var types = Set<NodeType>()
     fileprivate var services = Set<BonjourServiceInfo>()
-    
+    fileprivate var snmp_target: SNMPTarget?
+
     func isLocalHost() -> Bool {
         return types.contains(.localhost)
     }
@@ -240,6 +243,10 @@ class Node : Hashable {
         return udp_ports
     }
     
+    func getSNMPTarget() -> SNMPTarget? {
+        return snmp_target
+    }
+    
     func setTypes(_ types: Set<NodeType>) {
         self.types = types
     }
@@ -279,7 +286,11 @@ class Node : Hashable {
     func addUdpPort(_ port: UInt16) {
         udp_ports.insert(port)
     }
-    
+
+    func setSNMPTarget(_ snmp_target: SNMPTarget) {
+        self.snmp_target = snmp_target
+    }
+
     init() { }
     
     private var adresses: Set<IPAddress> {
@@ -334,6 +345,12 @@ class Node : Hashable {
         _ = node.services.map({ node_name_to_service_info[$0.name] = $0 })
         name_to_service_info.merge(node_name_to_service_info) { (_, new) in new }
         services = Set(name_to_service_info.map { $0.value })
+
+        if node.snmp_target != nil {
+            snmp_target = node.snmp_target
+        }
+        
+        
     }
     
     func isSimilar(with: Node) -> Bool {
@@ -349,7 +366,7 @@ class Node : Hashable {
     }
     
     static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services && lhs.snmp_target == rhs.snmp_target
     }
     
     func dump() -> String {
@@ -1171,12 +1188,35 @@ class DBMaster {
         node.types = [ .internet ]
         _ = addNode(node, demo_mode: true)
 
+        // Add previously saved persistent nodes
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 2)
+            let str_fields = str.split(separator: ";", maxSplits: 3)
             let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
+            let node_target_b64 = str_fields.count > 3 ? String(str_fields[3]) : nil
             let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
             let node = Node()
+
+            if let node_target_b64 {
+                do {
+                    let base64String = node_target_b64
+                    if let jsonData = Data(base64Encoded: base64String) {
+
+                        if let decodedString = String(data: jsonData, encoding: .utf8) {
+                               print("Contenu décodé :\n\(decodedString)")
+                           } else {
+                               print("Impossible de convertir les données en chaîne UTF-8")
+                           }
+                        
+                        let decoder = JSONDecoder()
+                        node.snmp_target = try decoder.decode(SNMPTarget.self, from: jsonData)
+                    } else {
+                        #fatalError("Invalid JSON: not an SNMPTarget")
+                    }
+                } catch {
+                    #fatalError("Decoding error : \(error)")
+                }
+            }
             node.dns_names.insert(DomainName(target_name)!)
             if isIPv4(target_ip) {
                 node.v4_addresses.insert(IPv4Address(target_ip)!)

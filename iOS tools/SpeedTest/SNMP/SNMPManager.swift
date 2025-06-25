@@ -34,73 +34,251 @@ enum SNMPManagerState: Int {
     case pull_finished
 }
 
-enum SNMPProto: String {
+enum SNMPProto: String, Codable {
     case SNMPv1, SNMPv2c, SNMPv3
 }
 
-enum SNMPTransportProto: String {
+enum SNMPTransportProto: String, Codable {
     case TCP, UDP
     static let `default` = SNMPTransportProto.UDP
 }
 
-enum SNMPNetworkProto: String {
+enum SNMPNetworkProto: String, Codable {
     case IPv4, IPv6
     static let `default` = SNMPNetworkProto.IPv4
 }
 
-enum V3AuthProto {
+enum V3AuthProto: Codable {
     case MD5, SHA1
 }
 
-enum V3PrivacyProto {
+enum V3PrivacyProto: Codable {
     case DES, AES
 }
 
-enum SNMPSecLevel: String {
+enum SNMPSecLevel: String, Codable {
     case noAuthNoPriv, authNoPriv, authPriv
     static let `default` = SNMPSecLevel.noAuthNoPriv
 }
 
-class SNMPTarget: ObservableObject {
+class SNMPTarget: ObservableObject, Codable, Hashable {
     typealias SNMPv1v2cCredentials = String
 
-    class SNMPv3Credentials: ObservableObject {
-        @Published var username: String = ""
+    init() { }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(host)
+        hasher.combine(port)
+        hasher.combine(transport_proto)
+        hasher.combine(ip_version)
+        hasher.combine(credentials)
+    }
 
-        enum AuthProto {
+    static func == (lhs: SNMPTarget, rhs: SNMPTarget) -> Bool {
+        return lhs.host == rhs.host && lhs.port == rhs.port && lhs.transport_proto == rhs.transport_proto && lhs.ip_version == rhs.ip_version && lhs.credentials == rhs.credentials
+    }
+    
+    enum CodingKeysTypeValue: CodingKey { case type, value }
+    enum CodingKeysAuthPriv: CodingKey { case caseName, authProto, privacyProto }
+    enum CodingKeys: String, CodingKey { case host, port, transport_proto, ip_version, credentials }
+
+    class SNMPv3Credentials: ObservableObject, Codable, Hashable {
+        init() { }
+
+        static func == (lhs: SNMPTarget.SNMPv3Credentials, rhs: SNMPTarget.SNMPv3Credentials) -> Bool {
+            return true
+        }
+        
+        @Published var username: String = ""
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(username)
+            hasher.combine(security_level)
+        }
+
+        enum AuthProto: Codable, Hashable {
             case MD5(String)
             case SHA1(String)
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+                switch self {
+                case .MD5(let val):
+                    try container.encode("MD5", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                case .SHA1(let val):
+                    try container.encode("SHA1", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+                let type = try container.decode(String.self, forKey: .type)
+                let value = try container.decode(String.self, forKey: .value)
+                switch type {
+                case "MD5": self = .MD5(value)
+                case "SHA1": self = .SHA1(value)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid AuthProto type")
+                }
+            }
         }
-
-        enum PrivacyProto {
+        
+        enum PrivacyProto: Codable, Hashable {
             case DES(String)
             case AES(String)
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+                switch self {
+                case .DES(let val):
+                    try container.encode("DES", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                case .AES(let val):
+                    try container.encode("AES", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+                let type = try container.decode(String.self, forKey: .type)
+                let value = try container.decode(String.self, forKey: .value)
+                switch type {
+                case "DES": self = .DES(value)
+                case "AES": self = .AES(value)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid PrivacyProto type")
+                }
+            }
         }
-
-        enum SecurityLevel {
+        
+        enum SecurityLevel: Codable, Hashable {
             case noAuthNoPriv
             case authNoPriv(AuthProto)
             case authPriv(AuthProto, PrivacyProto)
             static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
+
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysAuthPriv.self)
+                
+                switch self {
+                case .noAuthNoPriv:
+                    try container.encode("noAuthNoPriv", forKey: .caseName)
+                case .authNoPriv(let authProto):
+                    try container.encode("authNoPriv", forKey: .caseName)
+                    try container.encode(authProto, forKey: .authProto)
+                case .authPriv(let authProto, let privacyProto):
+                    try container.encode("authPriv", forKey: .caseName)
+                    try container.encode(authProto, forKey: .authProto)
+                    try container.encode(privacyProto, forKey: .privacyProto)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysAuthPriv.self)
+                let caseName = try container.decode(String.self, forKey: .caseName)
+                
+                switch caseName {
+                case "noAuthNoPriv":
+                    self = .noAuthNoPriv
+                case "authNoPriv":
+                    let authProto = try container.decode(AuthProto.self, forKey: .authProto)
+                    self = .authNoPriv(authProto)
+                case "authPriv":
+                    let authProto = try container.decode(AuthProto.self, forKey: .authProto)
+                    let privacyProto = try container.decode(PrivacyProto.self, forKey: .privacyProto)
+                    self = .authPriv(authProto, privacyProto)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .caseName, in: container, debugDescription: "Invalid SecurityLevel case")
+                }
+            }
         }
+        
         @Published var security_level: SecurityLevel = .`default`
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+            try container.encode(username, forKey: .type)
+            try container.encode(security_level, forKey: .value)
+        }
+        
+        required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+            username = try container.decode(String.self, forKey: .type)
+            security_level = try container.decode(SecurityLevel.self, forKey: .value)
+        }
     }
-
-// REMETTRE :    @Published var host: String = ""
-    @Published var host: String = "192.168.0.254"
-
-    @Published var port: String = ""
-
-    @Published var transport_proto: SNMPTransportProto = .`default`
     
+    // REMETTRE :    @Published var host: String = ""
+    @Published var host: String = "192.168.0.254"
+    @Published var port: String = ""
+    @Published var transport_proto: SNMPTransportProto = .`default`
     @Published var ip_version: SNMPNetworkProto = .`default`
     
-    enum Credentials {
+    enum Credentials: Codable, Hashable {
+        static func == (lhs: SNMPTarget.Credentials, rhs: SNMPTarget.Credentials) -> Bool {
+            return true
+        }
+        
         case v1(SNMPv1v2cCredentials)
         case v2c(SNMPv1v2cCredentials)
         case v3(SNMPv3Credentials)
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: SNMPTarget.CodingKeysTypeValue.self)
+            switch self {
+            case .v1(let str):
+                try container.encode("v1", forKey: .type)
+                try container.encode(str, forKey: .value)
+            case .v2c(let str):
+                try container.encode("v2c", forKey: .type)
+                try container.encode(str, forKey: .value)
+            case .v3(let creds):
+                try container.encode("v3", forKey: .type)
+                try container.encode(creds, forKey: .value)
+            }
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+            let type = try container.decode(String.self, forKey: .type)
+            
+            switch type {
+            case "v1":
+                let value = try container.decode(SNMPv1v2cCredentials.self, forKey: .value)
+                self = .v1(value)
+            case "v2c":
+                let value = try container.decode(SNMPv1v2cCredentials.self, forKey: .value)
+                self = .v2c(value)
+            case "v3":
+                let creds = try container.decode(SNMPv3Credentials.self, forKey: .value)
+                self = .v3(creds)
+            default:
+                throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid Credentials type")
+            }
+        }
     }
     @Published var credentials: Credentials = .v2c("public")
+
+    func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(host, forKey: .host)
+            try container.encode(port, forKey: .port)
+            try container.encode(transport_proto, forKey: .transport_proto)
+            try container.encode(ip_version, forKey: .ip_version)
+            try container.encode(credentials, forKey: .credentials)
+        }
+
+        required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            host = try container.decode(String.self, forKey: .host)
+            port = try container.decode(String.self, forKey: .port)
+            transport_proto = try container.decode(SNMPTransportProto.self, forKey: .transport_proto)
+            ip_version = try container.decode(SNMPNetworkProto.self, forKey: .ip_version)
+            credentials = try container.decode(Credentials.self, forKey: .credentials)
+        }
 }
 
 @MainActor
@@ -108,7 +286,8 @@ class SNMPManager {
     static let manager = SNMPManager()
     
     private var current_selected_IP: IPAddress?
-    
+    private var current_selected_target: SNMPTarget?
+
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
     
@@ -190,14 +369,20 @@ class SNMPManager {
         return IP_to_check.isEmpty
     }
     
-    func setCurrentSelectedIP(_ ip: IPAddress?) {
+    func setCurrentSelectedIP(_ ip: IPAddress?, target: SNMPTarget?) {
         current_selected_IP = ip
+        current_selected_target = target
+        print("XXXXX: SET current_target: \(target?.credentials)")
     }
     
     func getCurrentSelectedIP() -> IPAddress? {
         return current_selected_IP
     }
-    
+
+    func getCurrentSelectedTarget() -> SNMPTarget? {
+        return current_selected_target
+    }
+
     func getPingCommandeLineFromTarget(address: IPAddress) -> [String]? {
         // no retries, 1 sec timeout - only for UDP
         var str_array = ["snmpwalk", "-r1", "-t1"]
@@ -282,11 +467,12 @@ class SNMPManager {
             agent_string.append(String(target.port == "" ? "161" : target.port))
             str_array.append(contentsOf: [agent_string])
         } else {
+            // The target host is an IPv4 address or a DNS name
             var agent_string = target.transport_proto == .UDP ? "udp" : "tcp"
             if target.ip_version == .IPv6 {
                 agent_string.append("6")
             }
-            agent_string.append(":[\(target.host)]:")
+            agent_string.append(":\(target.host):")
             agent_string.append(String(target.port == "" ? "161" : target.port))
             str_array.append(contentsOf: [agent_string])
         }

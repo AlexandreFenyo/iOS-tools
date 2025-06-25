@@ -692,10 +692,11 @@ view.backgroundColor = .red
     }
 
     // Called by MasterIPViewController when an address is selected
-    func addressSelected(address: IPAddress) {
+    func addressSelected(address: IPAddress, node: Node) {
         detail_view_controller?.scrollToTop()
 
-        SNMPManager.manager.setCurrentSelectedIP(address)
+        SNMPManager.manager.setCurrentSelectedIP(address, target: node.getSNMPTarget())
+        
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (no effect on iPad), make the detail view controller visible
@@ -1323,7 +1324,7 @@ view.backgroundColor = .red
         var new_persistent_node_list = [String]()
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 2)
+            let str_fields = str.split(separator: ";", maxSplits: 3)
             let target_name = String(str_fields[0])
             if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
                 new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)

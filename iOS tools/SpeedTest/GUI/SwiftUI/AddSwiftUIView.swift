@@ -8,12 +8,13 @@
 
 import SwiftUI
 import SpriteKit
+import iOSToolsMacros
 
 @MainActor
 struct AddSwiftUIView: View {
     weak var add_view_controller: AddViewController?
 
-    @State private var scope: NodeType = .internet
+    @State private var scope: NodeType = .chargen
     @State private var foo = 0
 
     @State private var isPermanent = true
@@ -21,6 +22,9 @@ struct AddSwiftUIView: View {
     @State private var target_name: String = ""
     @State private var target_ip: String = ""
     
+    @State private var isTargetExpanded = true
+    @StateObject private var target = SNMPTarget()
+
     private func validateHostname(_ name: String) -> String? {
         var new_name = name.lowercased()
         var new_name2 = ""
@@ -55,6 +59,7 @@ struct AddSwiftUIView: View {
          */
         
         VStack {
+
             HStack {
                 Spacer()
                 Text("Add new target or new IP to existing target")
@@ -62,21 +67,27 @@ struct AddSwiftUIView: View {
                     .padding()
                 Spacer()
             }.background(Color(COLORS.toolbar_background))
+
+            Spacer()
             
             VStack {
                 Form {
                     Section(header: Text("New node properties")) {
                         Picker("Section", selection: $scope) {
-                            Text("iOS device").tag(NodeType.ios).disabled(false)
-                            Text("Chargen Discard").tag(NodeType.chargen)
-                            Text("Local gateway").tag(NodeType.gateway)
-                            Text("Internet").tag(NodeType.internet)
+//                            Text("iOS device").tag(NodeType.ios).disabled(false)
+//                            Text("Chargen Discard").tag(NodeType.chargen)
+                            Text("Chargen").tag(NodeType.chargen).disabled(false)
+//                            Text("Local gateway").tag(NodeType.gateway)
+//                            Text("Internet").tag(NodeType.internet)
+                            Text("SNMP").tag(NodeType.snmp)
                             Text("Other host").tag(NodeType.localhost)
                         }.pickerStyle(.segmented)
 
+                        /*
                         Toggle(isOn: $isPermanent) {
                             Text("Add permanently")
                         }
+                         */
                         
                         TextField("Target name", text: $target_name)
                             .onChange(of: target_name) { new_value in
@@ -106,6 +117,7 @@ struct AddSwiftUIView: View {
                             }
                         }
 
+                        /*
                         Button("Resolve target IPv6 from target name") {
                             target_ip = ""
                             Task.detached { @MainActor in
@@ -113,6 +125,7 @@ struct AddSwiftUIView: View {
                                 if isIPv6(numAddress ?? "") { target_ip = numAddress! }
                             }
                         }
+                         */
                     }
 
                     Button("Add this new target") {
@@ -130,13 +143,30 @@ struct AddSwiftUIView: View {
                         if scope != .localhost {
                             node.setTypes([ scope ])
                         }
+                        
+                        if scope == .snmp {
+                            node.setSNMPTarget(target)
+                        }
+                        
                         add_view_controller?.master_view_controller!.addNode(node)
 
                         if isPermanent {
+                            let base64String: String
+                            do {
+                                let encoder = JSONEncoder()
+                                let jsonData = try encoder.encode(target)
+                                base64String = jsonData.base64EncodedString()
+                                print(base64String)
+                            } catch {
+                                #fatalError("Base64/JSON encoding failed")
+                                add_view_controller?.dismiss(animated: true)
+                                base64String = ""
+                            }
+                            
                             var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
                             let str = target_name + ";" + target_ip
-                            if Array().firstIndex(of: str) == nil {
-                                config.append(target_name + ";" + target_ip + ";" + String(scope.rawValue))
+                            if !config.contains(str) {
+                                config.append(target_name + ";" + target_ip + ";" + String(scope.rawValue) + ";" + base64String)
                             }
                             UserDefaults.standard.set(config, forKey: "nodes")
                         }
@@ -160,6 +190,14 @@ struct AddSwiftUIView: View {
                         add_view_controller?.dismiss(animated: true)
                     }
                 }
+                
+                if scope == .snmp {
+                    SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded, adding_host: true)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.leading, 15)
+                        .padding(.trailing, 15)
+                }
+               
             }.cornerRadius(15).padding(10)
           
         }.background(Color(COLORS.right_pannel_bg))
