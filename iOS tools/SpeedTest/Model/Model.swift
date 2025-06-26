@@ -194,6 +194,10 @@ class Node : Hashable {
     fileprivate var services = Set<BonjourServiceInfo>()
     fileprivate var snmp_target: SNMPTarget?
 
+    func getName() -> String {
+        return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() }).first ?? "no name"
+    }
+
     func isLocalHost() -> Bool {
         return types.contains(.localhost)
     }
@@ -202,7 +206,7 @@ class Node : Hashable {
     private func getTypes() -> Set<NodeType> {
         return types
     }
-    
+
     // BonjourServiceInfo is a class with constant attributes (each declared as a let String), therefore no need to copy the Set elements to be sure they are not updated
     func getServices() -> Set<BonjourServiceInfo> {
         return services
@@ -349,8 +353,6 @@ class Node : Hashable {
         if node.snmp_target != nil {
             snmp_target = node.snmp_target
         }
-        
-        
     }
     
     func isSimilar(with: Node) -> Bool {

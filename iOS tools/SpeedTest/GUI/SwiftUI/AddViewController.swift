@@ -18,11 +18,25 @@ class AddViewController: UIViewController {
     
     //    @IBOutlet weak var view1: SKView!
     //    @IBOutlet weak var view2: UIView!
-    
+
     private lazy var hosting_view_controller = makeHostingController()
+
+    private let isEdit: Bool
+    private let node: Node?
+
+    init(master_view_controller: MasterViewController? = nil, isEdit: Bool, node: Node? = nil) {
+        self.master_view_controller = master_view_controller
+        self.isEdit = isEdit
+        self.node = node
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self))
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

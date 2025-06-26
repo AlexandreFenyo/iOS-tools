@@ -361,7 +361,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     @IBAction func add_pressed(_ sender: Any) {
-        let add_view_controller = AddViewController()
+        let add_view_controller = AddViewController(isEdit: false)
         add_view_controller.master_view_controller = self
         present(add_view_controller, animated: true)
     }
@@ -1255,7 +1255,7 @@ view.backgroundColor = .red
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = (node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }).first ?? "no name"
+        cell.name.text = node.getName()
         
         if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
             // 1st choice: public (not autoconfig) && unicast
@@ -1315,7 +1315,52 @@ view.backgroundColor = .red
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !getNode(indexPath: indexPath).isLocalHost()
     }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let editAction = UIContextualAction(style: .destructive, title: "Edit") { [weak self] (action, view, completionHandler) in
+            if let node = self?.getNode(indexPath: indexPath) {
+                let add_view_controller = AddViewController(isEdit: true, node: node)
+                add_view_controller.master_view_controller = self
+                self?.present(add_view_controller, animated: true)
+                
+            } else {
+                #fatalError("editAction: node not found")
+            }
+            completionHandler(true)
+        }
+        // Edit button color
+        editAction.backgroundColor = .blue
 
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (action, view, completionHandler) in
+            if let node = self?.getNode(indexPath: indexPath) {
+                var new_persistent_node_list = [String]()
+                let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+                for str in config {
+                    let str_fields = str.split(separator: ";", maxSplits: 3)
+                    let target_name = String(str_fields[0])
+                    if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
+                        new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+                    }
+                }
+                UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
+                
+                tableView.beginUpdates()
+                let index_paths_removed = DBMaster.shared.removeNode(node)
+                tableView.deleteRows(at: index_paths_removed, with: .automatic)
+                tableView.endUpdates()
+            } else {
+                #fatalError("deleteAction: node not found")
+            }
+            completionHandler(true)
+        }
+        // Delete button color
+        deleteAction.backgroundColor = .red
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return configuration
+    }
+    
+/* Before using trailingSwipeActionsConfigurationForRowAt, the following code was working to let a row being deleted with a swipe
     // Delete every rows corresponding to a node
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete { #fatalError("editingStyle invalid") }
@@ -1337,7 +1382,8 @@ view.backgroundColor = .red
         tableView.deleteRows(at: index_paths_removed, with: .automatic)
         tableView.endUpdates()
     }
-
+    */
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

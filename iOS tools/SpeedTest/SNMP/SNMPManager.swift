@@ -321,9 +321,6 @@ class SNMPManager {
                                 try SNMPManager.manager.pushArray(str_array)
                                 try SNMPManager.manager.walk() { oid_root, errbuf in
                                     if oid_root.children.count != 0 {
-                                        print("XXXXX: \(ip_address.toNumericString()) OK!")
-
-
                                         let node = Node()
                                         if ip_address.getFamily() == AF_INET { node.addV4Address(ip_address as! IPv4Address) }
                                         else { node.addV6Address(ip_address as! IPv6Address) }
@@ -333,12 +330,6 @@ class SNMPManager {
                                             self.device_manager?.setInformation(ip_address.toNumericString() ?? "addr is nil" + ": port 161")
                                             self.device_manager?.addNode(node)
                                         }
-                                        
-                                        
-                                        
-
-                                    } else {
-                                        print("XXXXX: \(ip_address.toNumericString()) BAD")
                                     }
                                     SNMPAvailability.shared.setAvailability(true)
                                 }
@@ -356,7 +347,6 @@ class SNMPManager {
     
     func addIpToCheck(_ ip: IPAddress) {
         if !IP_to_check.contains(ip) {
-            print("XXXXX: IP to check: \(ip.toNumericString() ?? "addr is nil")")
             IP_to_check.append(ip)
         }
     }
@@ -372,7 +362,6 @@ class SNMPManager {
     func setCurrentSelectedIP(_ ip: IPAddress?, target: SNMPTarget?) {
         current_selected_IP = ip
         current_selected_target = target
-        print("XXXXX: SET current_target: \(target?.credentials)")
     }
     
     func getCurrentSelectedIP() -> IPAddress? {
@@ -386,7 +375,7 @@ class SNMPManager {
     func getPingCommandLineFromTarget(address: IPAddress) -> [String]? {
         // no retries, 1 sec timeout - only for UDP
         var str_array = ["snmpwalk", "-r1", "-t1"]
-        
+
         // Call '-OX' only once since it is an option that is toggled in net-snmp.
         if is_option_output_X_called == false {
             str_array.append("-OX")
@@ -412,7 +401,6 @@ class SNMPManager {
         }
 
         str_array.append(".1.3.6.1.2.1.1.1")
-
         return str_array
     }
     

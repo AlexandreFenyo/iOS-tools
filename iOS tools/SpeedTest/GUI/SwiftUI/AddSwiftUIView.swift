@@ -13,6 +13,8 @@ import iOSToolsMacros
 @MainActor
 struct AddSwiftUIView: View {
     weak var add_view_controller: AddViewController?
+    var isEdit: Bool
+    var node: Node?
 
     @State private var scope: NodeType = .chargen
     @State private var foo = 0
@@ -21,7 +23,7 @@ struct AddSwiftUIView: View {
 
     @State private var target_name: String = ""
     @State private var target_ip: String = ""
-    
+
     @State private var isTargetExpanded = true
     @StateObject private var target = SNMPTarget()
 
@@ -59,10 +61,16 @@ struct AddSwiftUIView: View {
          */
         
         VStack {
-
             HStack {
                 Spacer()
-                Text("Add new target or new IP to existing target")
+                
+                if let node {
+                    Text(node.getName())
+                }
+                
+                
+                
+                Text(isEdit ? "Edit target" : "Add new target or new IP to existing target")
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding()
                 Spacer()
@@ -72,7 +80,7 @@ struct AddSwiftUIView: View {
             
             VStack {
                 Form {
-                    Section(header: Text("New node properties")) {
+                    Section(header: Text(isEdit ? "Node properties" : "New node properties")) {
                         Picker("Section", selection: $scope) {
 //                            Text("iOS device").tag(NodeType.ios).disabled(false)
 //                            Text("Chargen Discard").tag(NodeType.chargen)
