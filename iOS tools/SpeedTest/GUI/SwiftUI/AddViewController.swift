@@ -24,6 +24,7 @@ class AddViewController: UIViewController {
     private let isEdit: Bool
     private let node: Node?
 
+    // If isEdit is not nil, therefore node must not be nil: we edit this node
     init(master_view_controller: MasterViewController? = nil, isEdit: Bool, node: Node? = nil) {
         self.master_view_controller = master_view_controller
         self.isEdit = isEdit
@@ -36,7 +37,7 @@ class AddViewController: UIViewController {
     }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node))
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node()))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

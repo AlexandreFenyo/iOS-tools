@@ -86,7 +86,10 @@ class HostPart : DomainPart {
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-class DomainName : Hashable, Comparable {
+// its String representation does not contain any trailing or leading "."
+class DomainName : Hashable, Comparable, LosslessStringConvertible {
+    var description: String
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
@@ -97,11 +100,18 @@ class DomainName : Hashable, Comparable {
     
     init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
-        if let domain_part = domain_part { self.domain_part = domain_part }
-        else { self.domain_part = nil }
+        if let domain_part = domain_part {
+            self.domain_part = domain_part
+            description = host_part.toString() + "." + domain_part.toString()
+        }
+        else {
+            self.domain_part = nil
+            description = host_part.toString()
+        }
     }
     
-    init?(_ name: String) {
+    required init?(_ name: String) {
+        description = name
         if let idx = name.firstIndex(of: ".") {
             if idx == name.indices.first || idx == name.indices.last { return nil }
             host_part = HostPart(String(name.prefix(upTo: idx)))
@@ -113,11 +123,7 @@ class DomainName : Hashable, Comparable {
     }
     
     func toString() -> String {
-        if let domain_part = domain_part {
-            return host_part.toString() + "." + domain_part.toString()
-        } else {
-            return host_part.toString()
-        }
+        return description
     }
     
     func isFQDN() -> Bool {
@@ -138,6 +144,10 @@ class DomainName : Hashable, Comparable {
 class FQDN : DomainName {
     init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
+    }
+    
+    required init?(_ name: String) {
+        super.init(name)
     }
 }
 
@@ -166,7 +176,7 @@ class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-class Node : Hashable {
+class Node: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
@@ -193,7 +203,7 @@ class Node : Hashable {
     fileprivate var types = Set<NodeType>()
     fileprivate var services = Set<BonjourServiceInfo>()
     fileprivate var snmp_target: SNMPTarget?
-
+    
     func getName() -> String {
         return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() }).first ?? "no name"
     }

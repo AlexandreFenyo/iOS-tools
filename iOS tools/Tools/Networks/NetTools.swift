@@ -314,7 +314,11 @@ public class IPAddress : Hashable {
     }
 }
 
-public class IPv4Address : IPAddress, Comparable {
+public class IPv4Address : IPAddress, Comparable, LosslessStringConvertible {
+    public var description: String {
+        return "\(bytes()[0]).\(bytes()[1]).\(bytes()[2]).\(bytes()[3])"
+    }
+
     public override func hash(into hasher: inout Hasher) {
         hasher.combine(inaddr)
     }
@@ -322,16 +326,20 @@ public class IPv4Address : IPAddress, Comparable {
     func toSendable() -> IPv4AddressSendable {
         return IPv4AddressSendable(inaddr)
     }
+
+    override init(_ inaddr: Data) {
+        super.init(inaddr)
+    }
     
-    public convenience init?(_ address: String) {
+    required public init?(_ address: String) {
         var data = Data(count: MemoryLayout<in_addr>.size)
         let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) -> Int32 in address.withCString { inet_aton($0, bytes.bindMemory(to: in_addr.self).baseAddress) } }
         if ret != 1 { return nil }
-        self.init(data)
+        super.init(data)
     }
 
-    public convenience init(mask_len: UInt8) {
-        self.init(mask_len: mask_len, data_size: MemoryLayout<in_addr>.size)
+    public init(mask_len: UInt8) {
+        super.init(mask_len: mask_len, data_size: MemoryLayout<in_addr>.size)
     }
 
     public override func getFamily() -> Int32 {
@@ -413,7 +421,12 @@ public class IPv4Address : IPAddress, Comparable {
     }
 }
 
-public class IPv6Address : IPAddress, Comparable {
+// Note : compliant to LosslessStringConvertible only for addresses with no scope (this includes global IPv6 addresses)
+public class IPv6Address : IPAddress, Comparable, LosslessStringConvertible {
+    public var description: String {
+        return bytes().map { String(format: "%02x", $0) }.joined(separator: ":")
+    }
+    
     // scope zone index
     private let scope: UInt32
 
@@ -427,6 +440,30 @@ public class IPv6Address : IPAddress, Comparable {
 
     func toSendable() -> IPv6AddressSendable {
         return IPv6AddressSendable(inaddr, scope: scope)
+    }
+
+    public init(_ inaddr: Data, scope: UInt32) {
+        var in6_addr = IPv6Address.filterScope(inaddr).addr
+        let _inaddr = NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data
+        self.scope = scope
+        super.init(_inaddr)
+    }
+
+    public init(mask_len: UInt8) {
+        scope = 0
+        super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
+    }
+
+    required public convenience init?(_ address: String) {
+        var data = Data(count: MemoryLayout<in6_addr>.size)
+        let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) -> Int32 in address.withCString { inet_pton(AF_INET6, $0, bytes.bindMemory(to: in_addr.self).baseAddress) } }
+        if ret != 1 { return nil }
+        let addr_and_scope = IPv6Address.filterScope(data)
+        self.init(IPv6Address.getData(addr_and_scope.addr), scope: addr_and_scope.scope)
+    }
+    
+    func bytes() -> [UInt8] {
+        return inaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> [UInt8] in [ bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15] ] }
     }
 
     public func getScope() -> UInt32 {
@@ -478,28 +515,8 @@ public class IPv6Address : IPAddress, Comparable {
         return retval
     }
 
-    public init(_ inaddr: Data, scope: UInt32) {
-        var in6_addr = IPv6Address.filterScope(inaddr).addr
-        let _inaddr = NSData(bytes: &in6_addr, length: MemoryLayout<in6_addr>.size) as Data
-        self.scope = scope
-        super.init(_inaddr)
-    }
-
-    public init(mask_len: UInt8) {
-        scope = 0
-        super.init(mask_len: mask_len, data_size: MemoryLayout<in6_addr>.size)
-    }
-
     public func changeScope(scope: UInt32) -> IPv6Address {
         return IPv6Address(inaddr, scope: scope)
-    }
-    
-    public convenience init?(_ address: String) {
-        var data = Data(count: MemoryLayout<in6_addr>.size)
-        let ret = data.withUnsafeMutableBytes { (bytes : UnsafeMutableRawBufferPointer) -> Int32 in address.withCString { inet_pton(AF_INET6, $0, bytes.bindMemory(to: in_addr.self).baseAddress) } }
-        if ret != 1 { return nil }
-        let addr_and_scope = IPv6Address.filterScope(data)
-        self.init(IPv6Address.getData(addr_and_scope.addr), scope: addr_and_scope.scope)
     }
 
     public override func getFamily() -> Int32 {

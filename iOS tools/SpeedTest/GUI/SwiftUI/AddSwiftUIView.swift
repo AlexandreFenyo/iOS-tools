@@ -10,23 +10,63 @@ import SwiftUI
 import SpriteKit
 import iOSToolsMacros
 
+struct NodePartView<T: Hashable & LosslessStringConvertible>: View {
+//    @ObservedObject fileprivate var node: Node
+    var title: String
+    
+    init(node: Node, _ title: String) {
+//        self.node = node
+        self.title = title
+    }
+    
+    var body: some View {
+        Text("\(title):")
+
+    }
+}
+
+
+struct NodeView: View {
+//    @ObservedObject fileprivate var node: Node
+
+    var body: some View {
+        
+/*
+        Button("TEST") {
+            print("click2")
+            node.addName("SALUT")
+//            node.addV4Address(IPv4Address("1.2.3.4")!)
+        }
+ */
+        
+//        NodePartView<String>(node: node, "names")
+//        NodePartView<FQDN>(node: node, "multicast DNS names")
+  //      NodePartView<DomainName>(node: $node, "DNS names", node.getDnsNames())
+    //    NodePartView<IPv4Address>(node: $node, "IPv4 addresses", node.getV4Addresses())
+      //  NodePartView<IPv6Address>(node: $node, "IPv6 addresses", node.getV6Addresses())
+
+        
+    }
+}
+
 @MainActor
 struct AddSwiftUIView: View {
     weak var add_view_controller: AddViewController?
+
     var isEdit: Bool
-    var node: Node?
-
+    @State var node: Node
+    
     @State private var scope: NodeType = .chargen
-    @State private var foo = 0
-
+    @State private var new_scope: NodeType = .chargen
+    
     @State private var isPermanent = true
-
+    
     @State private var target_name: String = ""
     @State private var target_ip: String = ""
-
+    
     @State private var isTargetExpanded = true
     @StateObject private var target = SNMPTarget()
-
+    
     private func validateHostname(_ name: String) -> String? {
         var new_name = name.lowercased()
         var new_name2 = ""
@@ -38,7 +78,7 @@ struct AddSwiftUIView: View {
         new_name = new_name2
         return new_name
     }
-
+    
     private func validateIP(_ name: String) -> String? {
         let new_name = name.lowercased()
         var new_name2 = ""
@@ -49,17 +89,60 @@ struct AddSwiftUIView: View {
         }
         return new_name2
     }
-
+    
     var body: some View {
-        /* SANS FORM :
-         ScrollView {
-         VStack {
-         }
-         }.background(Color(COLORS.right_pannel_scroll_bg))
-         .cornerRadius(15).padding(10)
-         }.background(Color(COLORS.right_pannel_bg))
-         */
-        
+        ScrollView {
+            
+            VStack {
+                Text(isEdit ? "Edit target" : "Add new target or new IP to existing target")
+                    .padding()
+                
+                
+                Picker("Section", selection: $scope) {
+                    //                            Text("iOS device").tag(NodeType.ios).disabled(false)
+                    //                            Text("Chargen Discard").tag(NodeType.chargen)
+                    Text("Chargen").tag(NodeType.chargen).disabled(false)
+                    //                            Text("Local gateway").tag(NodeType.gateway)
+                    //                            Text("Internet").tag(NodeType.internet)
+                    Text("SNMP").tag(NodeType.snmp)
+                    Text("Other host").tag(NodeType.localhost)
+                }.pickerStyle(.segmented)
+
+                    .onChange(of: scope) { newValue in
+                        withAnimation(Animation.easeInOut(duration: 0.5)) {
+                            new_scope = newValue
+                        }
+                    }
+
+                .padding()
+                
+            }.frame(maxWidth: .infinity)
+            
+            
+//            NodeView(node: node)
+            
+            
+            
+            if new_scope == .snmp {
+                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded, adding_host: true)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.leading, 15)
+                    .padding(.trailing, 15)
+            }
+
+            
+            
+        }.background(Color(COLORS.right_pannel_scroll_bg))
+            .cornerRadius(15).padding(10)
+
+
+    
+    
+    
+    
+    /*
+    
+    
         VStack {
             HStack {
                 Spacer()
@@ -209,5 +292,13 @@ struct AddSwiftUIView: View {
             }.cornerRadius(15).padding(10)
           
         }.background(Color(COLORS.right_pannel_bg))
+    
+    
+    
+    */
+    
+    
+    
+    
     }
 }
