@@ -1310,10 +1310,57 @@ view.backgroundColor = .red
             await stopBrowsing(.OTHER_ACTION)
         }
     }
-
+    
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !getNode(indexPath: indexPath).isLocalHost()
+    }
+    
+    // Local gateway and Internet rows can not be removed
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if getNode(indexPath: indexPath).isLocalHost() {
+            return nil
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            let editAction = UIAction(title: "Edit",
+                                      image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"),
+                                      attributes: .destructive) { _ in
+                if let node = self?.getNode(indexPath: indexPath) {
+                    let add_view_controller = AddViewController(isEdit: true, node: node)
+                    add_view_controller.master_view_controller = self
+                    self?.present(add_view_controller, animated: true)
+                }
+            }
+            
+            let deleteAction = UIAction(title: "Delete",
+                                        image: UIImage(systemName: "trash"),
+                                        attributes: .destructive) { _ in
+                // code de suppression
+                
+                if let node = self?.getNode(indexPath: indexPath) {
+                    var new_persistent_node_list = [String]()
+                    let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+                    for str in config {
+                        let str_fields = str.split(separator: ";", maxSplits: 3)
+                        let target_name = String(str_fields[0])
+                        if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
+                            new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+                        }
+                    }
+                    UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
+                    
+                    tableView.beginUpdates()
+                    let index_paths_removed = DBMaster.shared.removeNode(node)
+                    tableView.deleteRows(at: index_paths_removed, with: .automatic)
+                    tableView.endUpdates()
+                } else {
+                    #fatalError("deleteAction: node not found")
+                }
+            }
+            
+            return UIMenu(title: "", children: [editAction, deleteAction])
+        }
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
