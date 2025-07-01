@@ -28,7 +28,20 @@ class AddViewController: UIViewController {
     init(master_view_controller: MasterViewController? = nil, isEdit: Bool, node: Node? = nil) {
         self.master_view_controller = master_view_controller
         self.isEdit = isEdit
-        self.node = node
+        if let node {
+            let _node = Node()
+            for addr in node.getV4Addresses() {
+                _node.addV4Address(addr)
+            }
+            for addr in node.getV6Addresses() {
+                _node.addV6Address(addr)
+            }
+            _node.setTypes(node.getTypes())
+            self.node = _node
+        } else {
+            self.node = nil
+        }
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -37,7 +50,8 @@ class AddViewController: UIViewController {
     }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node()))
+        
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

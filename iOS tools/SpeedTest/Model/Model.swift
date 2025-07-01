@@ -213,7 +213,7 @@ class Node: Hashable {
     }
     
     // NodeType is an enum, therefore no need to copy the Set elements to be sure they are not updated
-    private func getTypes() -> Set<NodeType> {
+    func getTypes() -> Set<NodeType> {
         return types
     }
 

@@ -6,66 +6,26 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
+// la lecture et sauvegarde sur disque dans Model.swift : UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+
 import SwiftUI
 import SpriteKit
 import iOSToolsMacros
-
-struct NodePartView<T: Hashable & LosslessStringConvertible>: View {
-//    @ObservedObject fileprivate var node: Node
-    var title: String
-    
-    init(node: Node, _ title: String) {
-//        self.node = node
-        self.title = title
-    }
-    
-    var body: some View {
-        Text("\(title):")
-
-    }
-}
-
-
-struct NodeView: View {
-//    @ObservedObject fileprivate var node: Node
-
-    var body: some View {
-        
-/*
-        Button("TEST") {
-            print("click2")
-            node.addName("SALUT")
-//            node.addV4Address(IPv4Address("1.2.3.4")!)
-        }
- */
-        
-//        NodePartView<String>(node: node, "names")
-//        NodePartView<FQDN>(node: node, "multicast DNS names")
-  //      NodePartView<DomainName>(node: $node, "DNS names", node.getDnsNames())
-    //    NodePartView<IPv4Address>(node: $node, "IPv4 addresses", node.getV4Addresses())
-      //  NodePartView<IPv6Address>(node: $node, "IPv6 addresses", node.getV6Addresses())
-
-        
-    }
-}
 
 @MainActor
 struct AddSwiftUIView: View {
     weak var add_view_controller: AddViewController?
 
     var isEdit: Bool
-    @State var node: Node
-    
+    var node: Node
+
     @State private var scope: NodeType = .chargen
     @State private var new_scope: NodeType = .chargen
     
-    @State private var isPermanent = true
-    
-    @State private var target_name: String = ""
-    @State private var target_ip: String = ""
-    
-    @State private var isTargetExpanded = true
     @StateObject private var target = SNMPTarget()
+
+    @State var ipv4_addresses: [IPv4Address]
+    @State var ipv6_addresses: [IPv6Address]
     
     private func validateHostname(_ name: String) -> String? {
         var new_name = name.lowercased()
@@ -94,9 +54,21 @@ struct AddSwiftUIView: View {
         ScrollView {
             
             VStack {
-                Text(isEdit ? "Edit target" : "Add new target or new IP to existing target")
+                Text(isEdit ? "Edit target" : "Add new target")
                     .padding()
                 
+                if isEdit {
+                    Text(node.getName())
+                }
+
+                Button("TEST") {
+                    ipv4_addresses.append(IPv4Address("5.6.7.8")!)
+                }
+                
+/*
+                ForEach (self.node., id: \.self) { tag in
+                }
+  */
                 
                 Picker("Section", selection: $scope) {
                     //                            Text("iOS device").tag(NodeType.ios).disabled(false)
@@ -116,15 +88,43 @@ struct AddSwiftUIView: View {
 
                 .padding()
                 
+                
+                Text("IPv4 addresses:")
+                ForEach (ipv4_addresses, id: \.self) { addr in
+                    Text(addr.description)
+                }
+
+                Text("IPv6 addresses:")
+                ForEach (ipv6_addresses, id: \.self) { addr in
+                    Text(addr.description)
+                }
+                
+                HStack {
+                    Button("OK") {
+                        node.addV4Address(IPv4Address("2.3.5.6")!)
+                        add_view_controller?.master_view_controller?.reloadData()
+                        add_view_controller?.dismiss(animated: true)
+                    }
+                    
+                    Button("Cancel") {
+                        add_view_controller?.dismiss(animated: true)
+                    }
+                }
+
+                
+                
+                
+                
+                
+                
             }.frame(maxWidth: .infinity)
             
             
-//            NodeView(node: node)
             
             
             
             if new_scope == .snmp {
-                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded, adding_host: true)
+                SNMPTargetView(target: target, isTargetExpanded: Binding<Bool>(get: { true }, set: { _ in }), adding_host: true)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.leading, 15)
                     .padding(.trailing, 15)

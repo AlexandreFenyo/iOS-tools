@@ -624,7 +624,7 @@ view.backgroundColor = .red
     }
     
     // Reload data without deselecting the selected cell
-    private func reloadData() {
+    func reloadData() {
         let foo = tableView.indexPathForSelectedRow
         tableView.reloadData()
         tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
