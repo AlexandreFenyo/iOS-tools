@@ -30,6 +30,9 @@ class AddViewController: UIViewController {
         self.isEdit = isEdit
         if let node {
             let _node = Node()
+            if let target = node.getSNMPTarget() {
+                _node.setSNMPTarget(target)
+            }
             for name in node.getNames() {
                 _node.addName(name)
             }

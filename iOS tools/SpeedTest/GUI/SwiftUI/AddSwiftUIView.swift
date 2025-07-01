@@ -285,6 +285,15 @@ struct AddSwiftUIView: View {
                             .autocorrectionDisabled(true)
                             .padding(.leading, 15)
                             .padding(.trailing, 15)
+                            .onAppear {
+                                if let target = node.getSNMPTarget() {
+                                    self.target.host = target.host
+                                    self.target.port = target.port
+                                    self.target.transport_proto = target.transport_proto
+                                    self.target.ip_version = target.ip_version
+                                    self.target.credentials = target.credentials
+                                }
+                            }
                     }
                     
                     HStack {
@@ -323,7 +332,7 @@ struct AddSwiftUIView: View {
                             
                             add_view_controller?.dismiss(animated: true)
                         }
-                        .disabled(isEdit == false && new_name.isEmpty)
+                        .disabled((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty))
                         .padding(10)
                         .font(.headline)
                         .background(Color.white)
