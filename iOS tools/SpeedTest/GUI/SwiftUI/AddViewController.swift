@@ -30,6 +30,12 @@ class AddViewController: UIViewController {
         self.isEdit = isEdit
         if let node {
             let _node = Node()
+            for mcastname in node.getMcastDnsNames() {
+                _node.addMcastFQDN(mcastname)
+            }
+            for dnsname in node.getDnsNames() {
+                _node.addDnsName(dnsname)
+            }
             for addr in node.getV4Addresses() {
                 _node.addV4Address(addr)
             }
