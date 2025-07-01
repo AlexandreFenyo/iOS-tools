@@ -30,6 +30,9 @@ class AddViewController: UIViewController {
         self.isEdit = isEdit
         if let node {
             let _node = Node()
+            for name in node.getNames() {
+                _node.addName(name)
+            }
             for mcastname in node.getMcastDnsNames() {
                 _node.addMcastFQDN(mcastname)
             }

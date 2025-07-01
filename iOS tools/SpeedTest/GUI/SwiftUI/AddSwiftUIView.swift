@@ -19,15 +19,20 @@ struct AddSwiftUIView: View {
     var isEdit: Bool
     var node: Node
     
-    @State private var scope: NodeType = .chargen
-    @State private var new_scope: NodeType = .chargen
+    @State private var scope: NodeType = .snmp
+    @State private var new_scope: NodeType = .snmp
     
     @StateObject private var target = SNMPTarget()
     
     @State var ipv4_addresses: [IPv4Address]
     @State var ipv6_addresses: [IPv6Address]
-
-    @State private var new_ip = ""
+    
+    @State private var new_ipv4 = ""
+    @State private var new_ipv6 = ""
+    @State private var new_name = ""
+    
+    @State private var showAlert = false
+    @State private var msgAlert = ""
 
     private func validateHostname(_ name: String) -> String? {
         var new_name = name.lowercased()
@@ -79,6 +84,34 @@ struct AddSwiftUIView: View {
                             }
                         }
                         .padding()
+                    if !isEdit {
+                        VStack {
+                            HStack {
+                                Text("Name")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                    .padding(.leading, 5)
+                                    .padding(.trailing, 5)
+                                    .padding(.bottom, 5)
+                            }
+                            HStack {
+                                HStack {
+                                    TextField("new name", text: $new_name)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                                        .autocorrectionDisabled(true)
+                                        .padding(.horizontal, 5)
+                                }
+                                .padding(.leading, 5)
+                                .padding(.trailing, 5)
+                                .padding(.bottom, 10)
+                            }
+                            
+                        }
+                        .background(Color(COLORS.toolbar_background)).opacity(0.9)
+                        .cornerRadius(10)
+                        .padding(.leading, 15)
+                        .padding(.trailing, 15)
+                    }
                     
                     VStack {
                         HStack {
@@ -105,7 +138,7 @@ struct AddSwiftUIView: View {
                                 .padding(.leading, 5)
                                 .padding(.trailing, 5)
                                 .padding(.bottom, 5)
-
+                                
                                 HStack {
                                     Button(action: {
                                         withAnimation(Animation.easeInOut(duration: 0.5)) {
@@ -120,13 +153,14 @@ struct AddSwiftUIView: View {
                                 .padding(.leading, 5)
                                 .padding(.trailing, 5)
                                 .padding(.bottom, 5)
-
+                                
                             }.background(.red.opacity(0.1))
                         }
                         HStack {
                             HStack {
-                                TextField("new IPv4 address", text: $new_ip)
+                                TextField("new IPv4 address", text: $new_ipv4)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .autocorrectionDisabled(true)
                                     .padding(.horizontal, 5)
                                 Spacer()
                             }
@@ -135,10 +169,18 @@ struct AddSwiftUIView: View {
                             .padding(.bottom, 10)
                             HStack {
                                 Button(action: {
-                                    if let foo = IPv4Address(new_ip) {
-                                        ipv4_addresses.append(foo)
+                                    msgAlert = "\(new_ipv4): must be a private, autoconfig or unicast IPv4 address"
+                                    if let foo = IPv4Address(new_ipv4) {
+                                        // See tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell for selection algorithm (section 'Multicast IPv4 addresses are not selected')
+                                        if foo.isPrivate() || foo.isAutoConfig() || foo.isUnicast() {
+                                            ipv4_addresses.append(foo)
+                                        } else {
+                                            showAlert = true
+                                        }
+                                    } else {
+                                        showAlert = true
                                     }
-                                    new_ip = ""
+                                    new_ipv4 = ""
                                 }) {
                                     Image(systemName: "plus")
                                 }
@@ -147,7 +189,6 @@ struct AddSwiftUIView: View {
                             .padding(.trailing, 5)
                             .padding(.bottom, 10)
                         }
-                        
                     }
                     .background(Color(COLORS.toolbar_background)).opacity(0.9)
                     .cornerRadius(10)
@@ -179,7 +220,7 @@ struct AddSwiftUIView: View {
                                 .padding(.leading, 5)
                                 .padding(.trailing, 5)
                                 .padding(.bottom, 5)
-
+                                
                                 HStack {
                                     Button(action: {
                                         withAnimation(Animation.easeInOut(duration: 0.5)) {
@@ -194,13 +235,14 @@ struct AddSwiftUIView: View {
                                 .padding(.leading, 5)
                                 .padding(.trailing, 5)
                                 .padding(.bottom, 5)
-
+                                
                             }.background(.red.opacity(0.1))
                         }
                         HStack {
                             HStack {
-                                TextField("new IPv6 address", text: $new_ip)
+                                TextField("new IPv6 address", text: $new_ipv6)
                                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .autocorrectionDisabled(true)
                                     .padding(.horizontal, 5)
                                 Spacer()
                             }
@@ -209,10 +251,19 @@ struct AddSwiftUIView: View {
                             .padding(.bottom, 10)
                             HStack {
                                 Button(action: {
-                                    if let foo = IPv6Address(new_ip) {
-                                        ipv6_addresses.append(foo)
+                                    if let foo = IPv6Address(new_ipv6) {
+                                        msgAlert = "\(new_ipv6): must be a unicast public, ULA or LLA IPv6 address"
+
+                                        // See tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell for selection algorithm (section 'Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.')
+                                        if foo.isUnicastPublic() || foo.isULA() || foo.isLLA()  {
+                                         ipv6_addresses.append(foo)
+                                        } else {
+                                            showAlert = true
+                                        }
+                                    } else {
+                                        showAlert = true
                                     }
-                                    new_ip = ""
+                                    new_ipv6 = ""
                                 }) {
                                     Image(systemName: "plus")
                                 }
@@ -231,40 +282,79 @@ struct AddSwiftUIView: View {
                     if new_scope == .snmp {
                         SNMPTargetView(target: target, isTargetExpanded: Binding<Bool>(get: { true }, set: { _ in }), adding_host: true)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .autocorrectionDisabled(true)
                             .padding(.leading, 15)
                             .padding(.trailing, 15)
                     }
                     
+                    HStack {
+                        Button("OK") {
+                            if scope == .snmp {
+                                node.addType(.snmp)
+                                node.setSNMPTarget(target)
+                            }
+                            
+                            if scope == .chargen {
+                                node.addType(.chargen)
+                            }
+                            
+                            if scope == .internet {
+                                node.addType(.internet)
+                            }
+                            
+                            if !new_name.isEmpty {
+                                node.addName(new_name)
+                            }
+                            
+                            node.clearV4Addresses()
+                            for addr in ipv4_addresses {
+                                node.addV4Address(addr)
+                            }
+                            
+                            node.clearV6Addresses()
+                            for addr in ipv6_addresses {
+                                node.addV6Address(addr)
+                            }
+                            
+                            add_view_controller?.master_view_controller!.addNode(node)
+                            
+                            // inutile car aussi fait dans dismiss()
+                            add_view_controller?.master_view_controller?.reloadData()
+                            
+                            add_view_controller?.dismiss(animated: true)
+                        }
+                        .disabled(isEdit == false && new_name.isEmpty)
+                        .padding(10)
+                        .font(.headline)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .padding(15)
+
+                        Spacer()
+
+                        Button("Cancel") {
+                            add_view_controller?.dismiss(animated: true)
+                        }
+                        .padding(10)
+                        .font(.headline)
+                        .background(Color.white)
+                        .cornerRadius(12)
+                        .padding(15)
+                    }
                 }
                 .cornerRadius(15)
                 .padding(10)
                 .background(Color.gray.lighter().lighter().lighter().lighter().lighter())
                 .cornerRadius(12)
+
                 Spacer()
-                
-                HStack {
-                    Button("OK") {
-                        node.addV4Address(IPv4Address("2.3.5.6")!)
-                        add_view_controller?.master_view_controller?.reloadData()
-                        add_view_controller?.dismiss(animated: true)
-                    }
-                    .font(.headline)
-                    .cornerRadius(15).padding(10)
-                    .padding()
-                    .background(Color.gray.lighter().lighter().lighter().lighter().lighter())
-                    .cornerRadius(12)
-                    Spacer()
-                    Button("Cancel") {
-                        add_view_controller?.dismiss(animated: true)
-                    }
-                    .font(.headline)
-                    .cornerRadius(15).padding(10)
-                    .padding()
-                    .background(Color.gray.lighter().lighter().lighter().lighter().lighter())
-                    .cornerRadius(12)
-                }
             }
             .padding(10)
+            .alert("Error", isPresented: $showAlert) {
+                        Button("OK", role: .cancel) {}
+                    } message: {
+                        Text(msgAlert)
+                    }
         }
     }
 }

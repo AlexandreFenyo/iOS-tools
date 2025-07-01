@@ -205,7 +205,7 @@ class Node: Hashable {
     fileprivate var snmp_target: SNMPTarget?
     
     func getName() -> String {
-        return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() }).first ?? "no name"
+        return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() } + getNames()).first ?? "no name"
     }
 
     func isLocalHost() -> Bool {
@@ -277,8 +277,16 @@ class Node: Hashable {
         v4_addresses.insert(address)
     }
     
+    func clearV4Addresses() {
+        v4_addresses.removeAll()
+    }
+    
     func addV6Address(_ address: IPv6Address) {
         v6_addresses.insert(address)
+    }
+    
+    func clearV6Addresses() {
+        v6_addresses.removeAll()
     }
     
     func addName(_ name: String) {
@@ -373,7 +381,9 @@ class Node: Hashable {
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
         
         if !dns_names.intersection(with.dns_names).isEmpty { return true }
-        
+
+        if !names.intersection(with.names).isEmpty { return true }
+
         return false
     }
     

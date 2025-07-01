@@ -1257,6 +1257,7 @@ view.backgroundColor = .red
 
         cell.name.text = node.getName()
         
+        // Multicast IPv4 addresses are not selected
         if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
             // 1st choice: public (not autoconfig) && unicast
             !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
@@ -1269,6 +1270,7 @@ view.backgroundColor = .red
         })).first { cell.detail1.text = best.toNumericString() }
         else { cell.detail1.text = "no IPv4 address" }
 
+        // Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.
         if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
             // 1st choice: unicast public
             address.isUnicastPublic()
