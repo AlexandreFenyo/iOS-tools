@@ -28,10 +28,12 @@ class AddViewController: UIViewController {
     init(master_view_controller: MasterViewController? = nil, isEdit: Bool, node: Node? = nil) {
         self.master_view_controller = master_view_controller
         self.isEdit = isEdit
+
         if let node {
             let _node = Node()
             if let target = node.getSNMPTarget() {
                 _node.setSNMPTarget(target)
+                SNMPManager.manager.setCurrentSelectedTarget(target: target)
             }
             for name in node.getNames() {
                 _node.addName(name)
@@ -62,8 +64,9 @@ class AddViewController: UIViewController {
     }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
+        let target = node?.getSNMPTarget()
         
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), target: target ?? SNMPTarget(), ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

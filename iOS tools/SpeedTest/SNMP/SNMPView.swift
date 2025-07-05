@@ -252,71 +252,7 @@ struct SNMPTargetView: View {
                     TextField("hostname", text: $target.host)
                         .font(.subheadline)
                         .padding(.horizontal, 10)
-                        .onAppear {
-                            if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
-                                target.host = str
-                            }
-                            
-                            if let current_selected_target = SNMPManager.manager.getCurrentSelectedTarget() {
-                                target.port = current_selected_target.port
-                                target.transport_proto = current_selected_target.transport_proto
-                                target.ip_version = current_selected_target.ip_version
-                                target.credentials = current_selected_target.credentials
-                                
-                                SNMP_transport_protocol = current_selected_target.transport_proto
-                                SNMP_network_protocol = current_selected_target.ip_version
-                                
-                                switch target.credentials {
-                                case .v1(let community):
-                                    SNMP_protocol = .SNMPv1
-                                    SNMP_community = community
-                                    target.credentials = .v1(community)
-                                    SNMP_sec_level = .noAuthNoPriv
-                                case .v2c(let community):
-                                    SNMP_protocol = .SNMPv2c
-                                    SNMP_community = community
-                                    target.credentials = .v2c(community)
-                                    SNMP_sec_level = .noAuthNoPriv
-                                case .v3(let v3cred):
-                                    SNMP_protocol = .SNMPv3
-                                    SNMP_username = v3cred.username
-                                    SNMP_community = ""
-                                    switch v3cred.security_level {
-                                    case .noAuthNoPriv:
-                                        SNMP_sec_level = .noAuthNoPriv
-                                    case .authNoPriv(let auth_proto):
-                                        SNMP_sec_level = .authNoPriv
-                                        switch auth_proto {
-                                        case .MD5(let secret):
-                                            SNMP_auth_secret = secret
-                                            v3_auth_proto = .MD5
-                                        case .SHA1(let secret):
-                                            SNMP_auth_secret = secret
-                                            v3_auth_proto = .SHA1
-                                        }
-                                    case .authPriv(let auth_proto, let privacy_proto):
-                                        SNMP_sec_level = .authPriv
-                                        switch auth_proto {
-                                        case .MD5(let secret):
-                                            SNMP_auth_secret = secret
-                                            v3_auth_proto = .MD5
-                                        case .SHA1(let secret):
-                                            SNMP_auth_secret = secret
-                                            v3_auth_proto = .SHA1
-                                        }
-                                        switch privacy_proto {
-                                        case .DES(let secret):
-                                            SNMP_priv_secret = secret
-                                            v3_privacy_proto = .DES
-                                        case .AES(let secret):
-                                            SNMP_priv_secret = secret
-                                            v3_privacy_proto = .AES
-                                        }
-                                    }
-                                }
-                            }
-                            SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
-                        }
+                        
                     
                 }
                 
@@ -462,6 +398,72 @@ struct SNMPTargetView: View {
         }
         .background((Color(COLORS.toolbar_background)))
         .cornerRadius(10)
+        
+        .onAppear {
+            if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
+                target.host = str
+            }
+            
+            if let current_selected_target = SNMPManager.manager.getCurrentSelectedTarget() {
+                target.port = current_selected_target.port
+                target.transport_proto = current_selected_target.transport_proto
+                target.ip_version = current_selected_target.ip_version
+                target.credentials = current_selected_target.credentials
+                
+                SNMP_transport_protocol = current_selected_target.transport_proto
+                SNMP_network_protocol = current_selected_target.ip_version
+                
+                switch target.credentials {
+                case .v1(let community):
+                    SNMP_protocol = .SNMPv1
+                    SNMP_community = community
+                    target.credentials = .v1(community)
+                    SNMP_sec_level = .noAuthNoPriv
+                case .v2c(let community):
+                    SNMP_protocol = .SNMPv2c
+                    SNMP_community = community
+                    target.credentials = .v2c(community)
+                    SNMP_sec_level = .noAuthNoPriv
+                case .v3(let v3cred):
+                    SNMP_protocol = .SNMPv3
+                    SNMP_username = v3cred.username
+                    SNMP_community = ""
+                    switch v3cred.security_level {
+                    case .noAuthNoPriv:
+                        SNMP_sec_level = .noAuthNoPriv
+                    case .authNoPriv(let auth_proto):
+                        SNMP_sec_level = .authNoPriv
+                        switch auth_proto {
+                        case .MD5(let secret):
+                            SNMP_auth_secret = secret
+                            v3_auth_proto = .MD5
+                        case .SHA1(let secret):
+                            SNMP_auth_secret = secret
+                            v3_auth_proto = .SHA1
+                        }
+                    case .authPriv(let auth_proto, let privacy_proto):
+                        SNMP_sec_level = .authPriv
+                        switch auth_proto {
+                        case .MD5(let secret):
+                            SNMP_auth_secret = secret
+                            v3_auth_proto = .MD5
+                        case .SHA1(let secret):
+                            SNMP_auth_secret = secret
+                            v3_auth_proto = .SHA1
+                        }
+                        switch privacy_proto {
+                        case .DES(let secret):
+                            SNMP_priv_secret = secret
+                            v3_privacy_proto = .DES
+                        case .AES(let secret):
+                            SNMP_priv_secret = secret
+                            v3_privacy_proto = .AES
+                        }
+                    }
+                }
+            }
+            SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
+        }
     }
 }
 

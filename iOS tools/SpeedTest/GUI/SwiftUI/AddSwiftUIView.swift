@@ -22,7 +22,7 @@ struct AddSwiftUIView: View {
     @State private var scope: NodeType = .snmp
     @State private var new_scope: NodeType = .snmp
     
-    @StateObject private var target = SNMPTarget()
+    @StateObject var target: SNMPTarget
     
     @State var ipv4_addresses: [IPv4Address]
     @State var ipv6_addresses: [IPv6Address]
@@ -285,15 +285,6 @@ struct AddSwiftUIView: View {
                             .autocorrectionDisabled(true)
                             .padding(.leading, 15)
                             .padding(.trailing, 15)
-                            .onAppear {
-                                if let target = node.getSNMPTarget() {
-                                    self.target.host = target.host
-                                    self.target.port = target.port
-                                    self.target.transport_proto = target.transport_proto
-                                    self.target.ip_version = target.ip_version
-                                    self.target.credentials = target.credentials
-                                }
-                            }
                     }
                     
                     HStack {
@@ -365,5 +356,19 @@ struct AddSwiftUIView: View {
                         Text(msgAlert)
                     }
         }
+        
+        .onAppear {
+            /*
+            if let target = node.getSNMPTarget() {
+                self.target.host = target.host
+                self.target.port = target.port
+                self.target.transport_proto = target.transport_proto
+                self.target.ip_version = target.ip_version
+                self.target.credentials = target.credentials
+            }
+             */
+        }
+
+        
     }
 }

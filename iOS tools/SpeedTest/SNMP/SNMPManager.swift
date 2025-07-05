@@ -368,6 +368,10 @@ class SNMPManager {
         return current_selected_IP
     }
 
+    func setCurrentSelectedTarget(target: SNMPTarget?) {
+        current_selected_target = target
+    }
+
     func getCurrentSelectedTarget() -> SNMPTarget? {
         return current_selected_target
     }
