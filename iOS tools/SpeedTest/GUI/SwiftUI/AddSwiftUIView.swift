@@ -280,7 +280,7 @@ struct AddSwiftUIView: View {
                     .padding(.trailing, 15)
                     
                     if new_scope == .snmp {
-                        SNMPTargetView(target: target, isTargetExpanded: Binding<Bool>(get: { true }, set: { _ in }), adding_host: true)
+                        SNMPTargetView(usage: isEdit ? .edit : .add, target: target, isTargetExpanded: Binding<Bool>(get: { true }, set: { _ in }))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .autocorrectionDisabled(true)
                             .padding(.leading, 15)

@@ -192,6 +192,9 @@ struct OIDTreeView: View {
 }
 
 struct SNMPTargetView: View {
+    enum Usage { case add, edit, view }
+    @State var usage: Usage
+    
     @ObservedObject var target: SNMPTarget
     @Binding var isTargetExpanded: Bool
     
@@ -207,8 +210,6 @@ struct SNMPTargetView: View {
     
     @State private var v3_auth_proto = V3AuthProto.MD5
     @State private var v3_privacy_proto = V3PrivacyProto.DES
-
-    let adding_host: Bool
     
     private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
         let v3cred = SNMPTarget.SNMPv3Credentials()
@@ -227,14 +228,14 @@ struct SNMPTargetView: View {
     var body: some View {
         VStack {
             HStack {
-                Text(adding_host ? "SNMP agent configuration" : "target (SNMP agent)")
+                Text(usage == .view ? "target (SNMP agent)" : "SNMP agent configuration")
                     .font(.subheadline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 10)
                 
                 Spacer()
                 
-                if !adding_host {
+                if usage == .view {
                     Button(action: {
                         withAnimation(Animation.easeInOut(duration: 0.5)) {
                             isTargetExpanded.toggle()
@@ -248,7 +249,7 @@ struct SNMPTargetView: View {
             }
             
             if isTargetExpanded {
-                if !adding_host {
+                if usage == .view {
                     TextField("hostname", text: $target.host)
                         .font(.subheadline)
                         .padding(.horizontal, 10)
@@ -707,7 +708,7 @@ struct SNMPView: View {
     var body: some View {
         ZStack {
             VStack {
-                SNMPTargetView(target: target, isTargetExpanded: $isTargetExpanded, adding_host: false)
+                SNMPTargetView(usage: .view, target: target, isTargetExpanded: $isTargetExpanded)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.leading, 15)
                     .padding(.trailing, 15)
