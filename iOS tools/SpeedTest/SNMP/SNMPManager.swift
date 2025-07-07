@@ -389,7 +389,7 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
             }
         }
     }
-    @Published var credentials: Credentials = .v2c("public")
+    @Published var credentials: Credentials = .v2c("")
 
     func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
