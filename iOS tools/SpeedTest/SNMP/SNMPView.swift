@@ -195,12 +195,14 @@ struct SNMPTargetView: View {
     enum Usage { case add, edit, view }
     @State var usage: Usage
     
-    @ObservedObject var target: SNMPTarget
+    @ObservedObject var target: SNMPTargetSimple
     @Binding var isTargetExpanded: Bool
     
     @State private var SNMP_protocol = SNMPProto.SNMPv2c
     @State private var SNMP_transport_protocol = SNMPTransportProto.`default`
     @State private var SNMP_network_protocol = SNMPNetworkProto.`default`
+    
+    /*
     @State private var SNMP_sec_level = SNMPSecLevel.`default`
     
     @State private var SNMP_username = ""
@@ -210,8 +212,10 @@ struct SNMPTargetView: View {
     
     @State private var v3_auth_proto = V3AuthProto.MD5
     @State private var v3_privacy_proto = V3PrivacyProto.DES
+    */
     
-    private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
+/*
+ private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
         let v3cred = SNMPTarget.SNMPv3Credentials()
         v3cred.username = username ?? SNMP_username
         switch level ?? SNMP_sec_level {
@@ -223,7 +227,7 @@ struct SNMPTargetView: View {
             v3cred.security_level = .authPriv(auth_proto ?? v3_auth_proto == .MD5 ? .MD5(auth_secret ?? SNMP_auth_secret) : .SHA1(auth_secret ?? SNMP_auth_secret), priv_proto ?? v3_privacy_proto == .DES ? .DES(priv_secret ?? SNMP_priv_secret) : .AES(priv_secret ?? SNMP_priv_secret))
         }
         target.credentials = .v3(v3cred)
-    }
+    }*/
     
     var body: some View {
         VStack {
@@ -268,42 +272,29 @@ struct SNMPTargetView: View {
                     }.onChange(of: SNMP_protocol) { newValue in
                         switch newValue {
                         case .SNMPv1:
-                            target.credentials = .v1(SNMP_community)
+                            target.credentials = .v1
                             
                         case .SNMPv2c:
-                            target.credentials = .v2c(SNMP_community)
+                            target.credentials = .v2c
                             
                         case .SNMPv3:
-                            updateTargetV3Cred()
+                            target.credentials = .v3
                         }
                     }
                 }
                 
                 HStack {
                     if SNMP_protocol != .SNMPv3 {
-                        TextField("community (public)", text: $SNMP_community)
+                        TextField("community (public)", text: $target.community)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
-                            .onChange(of: SNMP_community) { newValue in
-                                switch target.credentials {
-                                case .v1(_):
-                                    target.credentials = .v1(newValue)
-                                case .v2c(_):
-                                    target.credentials = .v2c(newValue)
-                                case .v3(_):
-                                    break
-                                }
-                            }
                     } else {
-                        Picker("SNMP sec level", selection: $SNMP_sec_level) {
+                        Picker("SNMP sec level", selection: $target.security_level) {
                             Text("NoAuth/NoPriv").tag(SNMPSecLevel.noAuthNoPriv)
                             Text("Auth/NoPriv").tag(SNMPSecLevel.authNoPriv)
                             Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
-                        }.onChange(of: SNMP_sec_level) { newValue in
-                            updateTargetV3Cred(level: newValue)
                         }
-                        
                         Spacer()
                     }
                     
@@ -324,73 +315,52 @@ struct SNMPTargetView: View {
                 
                 if SNMP_protocol == .SNMPv3 {
                     HStack {
-                        TextField("username", text: $SNMP_username)
+                        TextField("username", text: $target.username)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
-                            .padding(.bottom, SNMP_sec_level == .noAuthNoPriv ? 10 : 0)
-                            .onChange(of: SNMP_username) { newValue in
-                                updateTargetV3Cred(username: newValue)
-                            }
+                            .padding(.bottom, target.security_level == .noAuthNoPriv ? 10 : 0)
                     }
                 }
                 
-                if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authNoPriv {
+                if target.credentials == .v3 && target.security_level == .authNoPriv {
                     HStack {
-                        TextField("authentication secret", text: $SNMP_auth_secret)
+                        TextField("authentication secret", text: $target.authProtoSecret)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
-                            .onChange(of: SNMP_auth_secret) { newValue in
-                                updateTargetV3Cred(auth_secret: newValue)
-                            }
                         
-                        Picker("v3 auth proto", selection: $v3_auth_proto) {
+                        Picker("v3 auth proto", selection: $target.auth_proto) {
                             Text("MD5").tag(V3AuthProto.MD5)
                             Text("SHA1").tag(V3AuthProto.SHA1)
                         }
                         .padding(.bottom, 10)
-                        .onChange(of: v3_auth_proto) { newValue in
-                            updateTargetV3Cred(auth_proto: newValue)
-                        }
                     }
                 }
                 
-                if SNMP_protocol == .SNMPv3 && SNMP_sec_level == .authPriv {
+                if SNMP_protocol == .SNMPv3 && target.security_level == .authPriv {
                     HStack {
-                        TextField("authentication secret", text: $SNMP_auth_secret)
+                        TextField("authentication secret", text: $target.authProtoSecret)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
-                            .onChange(of: SNMP_auth_secret) { newValue in
-                                updateTargetV3Cred(auth_secret: newValue)
-                            }
                         
-                        Picker("v3 auth algo", selection: $v3_auth_proto) {
+                        Picker("v3 auth algo", selection: $target.auth_proto) {
                             Text("MD5").tag(V3AuthProto.MD5)
                             Text("SHA1").tag(V3AuthProto.SHA1)
                         }
                         .padding(.bottom, 10)
-                        .onChange(of: v3_auth_proto) { newValue in
-                            updateTargetV3Cred(auth_proto: newValue)
-                        }
                     }
                     
                     HStack {
-                        TextField("privacy secret", text: $SNMP_priv_secret)
+                        TextField("privacy secret", text: $target.privProtoSecret)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
-                            .onChange(of: SNMP_priv_secret) { newValue in
-                                updateTargetV3Cred(priv_secret: newValue)
-                            }
                         
-                        Picker("v3 privacy algo", selection: $v3_privacy_proto) {
+                        Picker("v3 privacy algo", selection: $target.privacy_proto) {
                             Text("DES").tag(V3PrivacyProto.DES)
                             Text("AES").tag(V3PrivacyProto.AES)
                         }
                         .padding(.bottom, 10)
-                        .onChange(of: v3_privacy_proto) { newValue in
-                            updateTargetV3Cred(priv_proto: newValue)
-                        }
                     }
                 }
             }
@@ -403,53 +373,8 @@ struct SNMPTargetView: View {
                 break
                 
             case .edit:
-                switch target.credentials {
-                case .v1(let community):
-                    SNMP_protocol = .SNMPv1
-                    SNMP_community = community
-                    SNMP_sec_level = .noAuthNoPriv
-                case .v2c(let community):
-                    SNMP_protocol = .SNMPv2c
-                    SNMP_community = community
-                    SNMP_sec_level = .noAuthNoPriv
-                case .v3(let v3cred):
-                    SNMP_protocol = .SNMPv3
-                    SNMP_username = v3cred.username
-                    SNMP_community = ""
-                    switch v3cred.security_level {
-                    case .noAuthNoPriv:
-                        SNMP_sec_level = .noAuthNoPriv
-                    case .authNoPriv(let auth_proto):
-                        SNMP_sec_level = .authNoPriv
-                        switch auth_proto {
-                        case .MD5(let secret):
-                            SNMP_auth_secret = secret
-                            v3_auth_proto = .MD5
-                        case .SHA1(let secret):
-                            SNMP_auth_secret = secret
-                            v3_auth_proto = .SHA1
-                        }
-                    case .authPriv(let auth_proto, let privacy_proto):
-                        SNMP_sec_level = .authPriv
-                        switch auth_proto {
-                        case .MD5(let secret):
-                            SNMP_auth_secret = secret
-                            v3_auth_proto = .MD5
-                        case .SHA1(let secret):
-                            SNMP_auth_secret = secret
-                            v3_auth_proto = .SHA1
-                        }
-                        switch privacy_proto {
-                        case .DES(let secret):
-                            SNMP_priv_secret = secret
-                            v3_privacy_proto = .DES
-                        case .AES(let secret):
-                            SNMP_priv_secret = secret
-                            v3_privacy_proto = .AES
-                        }
-                    }
-                }
-                
+                break
+
             case .view:
                 if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
                     target.host = str
@@ -457,68 +382,6 @@ struct SNMPTargetView: View {
                     target.host = ""
                 }
 
-                if let current_selected_target = SNMPManager.manager.getCurrentSelectedTarget() {
-                    target.port = current_selected_target.port
-                    target.transport_proto = current_selected_target.transport_proto
-                    target.ip_version = current_selected_target.ip_version
-                    target.credentials = current_selected_target.credentials
-                    
-                    switch target.credentials {
-                    case .v1(let community):
-                        SNMP_protocol = .SNMPv1
-                        SNMP_community = community
-                        SNMP_sec_level = .noAuthNoPriv
-                    case .v2c(let community):
-                        SNMP_protocol = .SNMPv2c
-                        SNMP_community = community
-                        SNMP_sec_level = .noAuthNoPriv
-                    case .v3(let v3cred):
-                        SNMP_protocol = .SNMPv3
-                        SNMP_username = v3cred.username
-                        SNMP_community = ""
-                        switch v3cred.security_level {
-                        case .noAuthNoPriv:
-                            SNMP_sec_level = .noAuthNoPriv
-                        case .authNoPriv(let auth_proto):
-                            SNMP_sec_level = .authNoPriv
-                            switch auth_proto {
-                            case .MD5(let secret):
-                                SNMP_auth_secret = secret
-                                v3_auth_proto = .MD5
-                            case .SHA1(let secret):
-                                SNMP_auth_secret = secret
-                                v3_auth_proto = .SHA1
-                            }
-                        case .authPriv(let auth_proto, let privacy_proto):
-                            SNMP_sec_level = .authPriv
-                            switch auth_proto {
-                            case .MD5(let secret):
-                                SNMP_auth_secret = secret
-                                v3_auth_proto = .MD5
-                            case .SHA1(let secret):
-                                SNMP_auth_secret = secret
-                                v3_auth_proto = .SHA1
-                            }
-                            switch privacy_proto {
-                            case .DES(let secret):
-                                SNMP_priv_secret = secret
-                                v3_privacy_proto = .DES
-                            case .AES(let secret):
-                                SNMP_priv_secret = secret
-                                v3_privacy_proto = .AES
-                            }
-                        }
-                    }
-                } else {
-                    target.host = ""
-                    target.port = ""
-                    target.transport_proto = .`default`
-                    target.ip_version = .`default`
-                    target.credentials = .v2c("public")
-                    
-                    SNMP_transport_protocol = .`default`
-                    SNMP_network_protocol = .`default`
-                }
                 SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
             }
         }
@@ -702,7 +565,7 @@ struct SNMPView: View {
     @State private var show_popup = false
     @State private var oid_info: OIDInfos?
     
-    @StateObject private var target = SNMPTarget()
+    @StateObject private var target = SNMPTargetSimple()
     
     func showInfo(info: String) {
         if let jsonData = info.data(using: .utf8) {
@@ -778,7 +641,7 @@ struct SNMPView: View {
                 if isTargetExpanded == true {
                     HStack {
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
                             str_array.append(".1.3.6.1.2.1.1")
                             walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
@@ -795,7 +658,7 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
-                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
+                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
                             walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
@@ -811,7 +674,7 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: target)
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
                             str_array.append(".1.3.6.1.2.1.2")
                             walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })

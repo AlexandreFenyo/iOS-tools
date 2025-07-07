@@ -24,8 +24,8 @@ struct AddSwiftUIView: View {
     @State private var scope: NodeType = .snmp
     @State private var new_scope: NodeType = .snmp
     
-    @StateObject var target: SNMPTarget
-    
+    @StateObject var target: SNMPTargetSimple
+
     @State var ipv4_addresses: [IPv4Address]
     @State var ipv6_addresses: [IPv6Address]
     
@@ -293,7 +293,7 @@ struct AddSwiftUIView: View {
                         Button("OK") {
                             if scope == .snmp {
                                 node.addType(.snmp)
-                                node.setSNMPTarget(target)
+                                node.setSNMPTarget(SNMPTarget(target))
                             }
                             
                             if scope == .chargen {

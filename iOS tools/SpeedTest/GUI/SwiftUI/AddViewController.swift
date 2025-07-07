@@ -62,10 +62,10 @@ class AddViewController: UIViewController {
     }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let target = node?.getSNMPTarget()
+        let target = SNMPTargetSimple(node?.getSNMPTarget() ?? SNMPTarget())
         
         // We send a node and a target since Node is not observable and we want, at least, some parts of the target to be observable
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), target: target ?? SNMPTarget(), ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), target: target, ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

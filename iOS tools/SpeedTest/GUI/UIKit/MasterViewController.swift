@@ -1338,8 +1338,7 @@ view.backgroundColor = .red
             let deleteAction = UIAction(title: "Delete",
                                         image: UIImage(systemName: "trash"),
                                         attributes: .destructive) { _ in
-                // code de suppression
-                
+                // Remove node
                 if let node = self?.getNode(indexPath: indexPath) {
                     var new_persistent_node_list = [String]()
                     let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]

@@ -62,6 +62,8 @@ enum SNMPSecLevel: String, Codable {
 }
 
 class SNMPTargetSimple: ObservableObject {
+    init() { }
+
     @Published var host: String = ""
     @Published var port: String = ""
     @Published var transport_proto: SNMPTransportProto = .`default`
@@ -100,7 +102,7 @@ class SNMPTargetSimple: ObservableObject {
     }
     @Published var security_level: SecurityLevel = .`default`
     
-    init(target: SNMPTarget) {
+    init(_ target: SNMPTarget) {
         host = target.host
         port = target.port
         transport_proto = target.transport_proto
@@ -155,7 +157,7 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
 
     init() { }
     
-    init(target: SNMPTargetSimple) {
+    init(_ target: SNMPTargetSimple) {
         host = target.host
         port = target.port
         transport_proto = target.transport_proto
