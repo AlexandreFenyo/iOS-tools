@@ -17,6 +17,8 @@ struct AddSwiftUIView: View {
     weak var add_view_controller: AddViewController?
     
     var isEdit: Bool
+
+    // Node is not observable
     var node: Node
     
     @State private var scope: NodeType = .snmp
@@ -356,19 +358,5 @@ struct AddSwiftUIView: View {
                         Text(msgAlert)
                     }
         }
-        
-        .onAppear {
-            /*
-            if let target = node.getSNMPTarget() {
-                self.target.host = target.host
-                self.target.port = target.port
-                self.target.transport_proto = target.transport_proto
-                self.target.ip_version = target.ip_version
-                self.target.credentials = target.credentials
-            }
-             */
-        }
-
-        
     }
 }

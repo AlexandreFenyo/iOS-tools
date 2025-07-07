@@ -61,11 +61,143 @@ enum SNMPSecLevel: String, Codable {
     static let `default` = SNMPSecLevel.noAuthNoPriv
 }
 
+class SNMPTargetSimple: ObservableObject {
+    @Published var host: String = ""
+    @Published var port: String = ""
+    @Published var transport_proto: SNMPTransportProto = .`default`
+    @Published var ip_version: SNMPNetworkProto = .`default`
+    
+    enum Credentials {
+        case v1
+        case v2c
+        case v3
+    }
+    @Published var credentials: Credentials = .v2c
+    @Published var community: String = ""
+
+    @Published var username: String = ""
+    
+    @Published var authProtoSecret: String = ""
+    @Published var privProtoSecret: String = ""
+    
+    enum AuthProto {
+        case MD5
+        case SHA1
+    }
+    @Published var auth_proto: AuthProto = .SHA1
+    
+    enum PrivacyProto {
+        case DES
+        case AES
+    }
+    @Published var privacy_proto: PrivacyProto = .AES
+
+    enum SecurityLevel {
+        case noAuthNoPriv
+        case authNoPriv
+        case authPriv
+        static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
+    }
+    @Published var security_level: SecurityLevel = .`default`
+    
+    init(target: SNMPTarget) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        switch target.credentials {
+        case .v1(let community):
+            credentials = .v1
+            self.community = community
+        case .v2c(let community):
+            credentials = .v2c
+            self.community = community
+        case .v3(let v3cred):
+            username = v3cred.username
+            switch v3cred.security_level {
+            case .noAuthNoPriv:
+                security_level = .noAuthNoPriv
+            case .authNoPriv(let auth_proto):
+                security_level = .authNoPriv
+                switch auth_proto {
+                case .MD5(let secret):
+                    self.auth_proto = .MD5
+                    authProtoSecret = secret
+                case .SHA1(let secret):
+                    self.auth_proto = .SHA1
+                    authProtoSecret = secret
+                }
+            case .authPriv(let auth_proto, let privacy_proto):
+                security_level = .authPriv
+                switch auth_proto {
+                case .MD5(let secret):
+                    self.auth_proto = .MD5
+                    authProtoSecret = secret
+                case .SHA1(let secret):
+                    self.auth_proto = .SHA1
+                    authProtoSecret = secret
+                }
+                switch privacy_proto {
+                case .DES(let secret):
+                    self.privacy_proto = .DES
+                    privProtoSecret = secret
+                case .AES(let secret):
+                    self.privacy_proto = .AES
+                    privProtoSecret = secret
+                }
+            }
+        }
+    }
+}
+
 class SNMPTarget: ObservableObject, Codable, Hashable {
     typealias SNMPv1v2cCredentials = String
 
     init() { }
     
+    init(target: SNMPTargetSimple) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        switch target.credentials {
+        case .v1:
+            credentials = .v1(target.community)
+        case .v2c:
+            credentials = .v2c(target.community)
+        case .v3:
+            let v3cred = SNMPv3Credentials()
+            switch target.security_level {
+            case .noAuthNoPriv:
+                v3cred.security_level = .noAuthNoPriv
+            case .authNoPriv:
+                switch target.auth_proto {
+                case .MD5:
+                    v3cred.security_level = .authNoPriv(.MD5(target.authProtoSecret))
+                case .SHA1:
+                    v3cred.security_level = .authNoPriv(.SHA1(target.authProtoSecret))
+                }
+            case .authPriv:
+                switch target.auth_proto {
+                case .MD5:
+                    switch target.privacy_proto {
+                    case .DES:
+                        v3cred.security_level = .authPriv(.MD5(target.authProtoSecret), .DES(target.privProtoSecret))
+                    case .AES:
+                        v3cred.security_level = .authPriv(.MD5(target.authProtoSecret), .AES(target.privProtoSecret))
+                    }
+                case .SHA1:
+                    switch target.privacy_proto {
+                    case .DES:
+                        v3cred.security_level = .authPriv(.SHA1(target.authProtoSecret), .DES(target.privProtoSecret))
+                    case .AES:
+                        v3cred.security_level = .authPriv(.SHA1(target.authProtoSecret), .AES(target.privProtoSecret))
+                    }
+                }
+            }
+        }
+    }
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(host)
         hasher.combine(port)
@@ -211,8 +343,7 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
         }
     }
     
-    // REMETTRE :    @Published var host: String = ""
-    @Published var host: String = "192.168.0.254"
+    @Published var host: String = ""
     @Published var port: String = ""
     @Published var transport_proto: SNMPTransportProto = .`default`
     @Published var ip_version: SNMPNetworkProto = .`default`
