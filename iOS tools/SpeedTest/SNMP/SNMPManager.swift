@@ -111,6 +111,7 @@ class SNMPTargetSimple: ObservableObject {
             credentials = .v2c
             self.community = community
         case .v3(let v3cred):
+            credentials = .v3
             username = v3cred.username
             switch v3cred.security_level {
             case .noAuthNoPriv:
@@ -193,6 +194,7 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
                     }
                 }
             }
+            credentials = .v3(v3cred)
         }
     }
 
