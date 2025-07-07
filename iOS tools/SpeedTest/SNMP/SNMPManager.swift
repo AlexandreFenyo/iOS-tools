@@ -34,10 +34,6 @@ enum SNMPManagerState: Int {
     case pull_finished
 }
 
-enum SNMPProto: String, Codable {
-    case SNMPv1, SNMPv2c, SNMPv3
-}
-
 enum SNMPTransportProto: String, Codable {
     case TCP, UDP
     static let `default` = SNMPTransportProto.UDP

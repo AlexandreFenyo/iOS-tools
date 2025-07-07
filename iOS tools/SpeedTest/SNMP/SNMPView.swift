@@ -100,13 +100,6 @@ struct OIDTreeView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
                                 .multilineTextAlignment(.trailing)
-                            
-                            /*
-                             Image(systemName: "questionmark.circle")
-                             .foregroundColor(.orange)
-                             .onTapGesture {
-                             }
-                             */
                         } else {
                             HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                                 .font(.subheadline)
@@ -180,11 +173,6 @@ struct OIDTreeView: View {
                     HighlightedTextView(node.getDisplayValAndSubValues(), highlight: highlight)
                         .font(.headline)
                         .foregroundColor(.primary)
-                    
-                    /*
-                     Image(systemName: "questionmark.circle")
-                     .foregroundColor(.orange)
-                     */
                 }
             }
         }
@@ -197,37 +185,6 @@ struct SNMPTargetView: View {
     
     @ObservedObject var target: SNMPTargetSimple
     @Binding var isTargetExpanded: Bool
-    
-    @State private var SNMP_protocol = SNMPProto.SNMPv2c
-    @State private var SNMP_transport_protocol = SNMPTransportProto.`default`
-    @State private var SNMP_network_protocol = SNMPNetworkProto.`default`
-    
-    /*
-    @State private var SNMP_sec_level = SNMPSecLevel.`default`
-    
-    @State private var SNMP_username = ""
-    @State private var SNMP_auth_secret = ""
-    @State private var SNMP_priv_secret = ""
-    @State private var SNMP_community = ""
-    
-    @State private var v3_auth_proto = V3AuthProto.MD5
-    @State private var v3_privacy_proto = V3PrivacyProto.DES
-    */
-    
-/*
- private func updateTargetV3Cred(level: SNMPSecLevel? = nil, username: String? = nil, auth_secret: String? = nil, priv_secret: String? = nil, auth_proto: V3AuthProto? = nil, priv_proto: V3PrivacyProto? = nil) {
-        let v3cred = SNMPTarget.SNMPv3Credentials()
-        v3cred.username = username ?? SNMP_username
-        switch level ?? SNMP_sec_level {
-        case .noAuthNoPriv:
-            v3cred.security_level = .noAuthNoPriv
-        case .authNoPriv:
-            v3cred.security_level = .authNoPriv(auth_proto ?? v3_auth_proto == .MD5 ? .MD5(auth_secret ?? SNMP_auth_secret) : .SHA1(auth_secret ?? SNMP_auth_secret))
-        case .authPriv:
-            v3cred.security_level = .authPriv(auth_proto ?? v3_auth_proto == .MD5 ? .MD5(auth_secret ?? SNMP_auth_secret) : .SHA1(auth_secret ?? SNMP_auth_secret), priv_proto ?? v3_privacy_proto == .DES ? .DES(priv_secret ?? SNMP_priv_secret) : .AES(priv_secret ?? SNMP_priv_secret))
-        }
-        target.credentials = .v3(v3cred)
-    }*/
     
     var body: some View {
         VStack {
@@ -265,55 +222,40 @@ struct SNMPTargetView: View {
                         .font(.subheadline)
                         .padding(.horizontal, 10)
                     
-                    Picker("SNMP protocol", selection: $SNMP_protocol) {
-                        Text("SNMPv1").tag(SNMPProto.SNMPv1)
-                        Text("SNMPv2c").tag(SNMPProto.SNMPv2c)
-                        Text("SNMPv3").tag(SNMPProto.SNMPv3)
-                    }.onChange(of: SNMP_protocol) { newValue in
-                        switch newValue {
-                        case .SNMPv1:
-                            target.credentials = .v1
-                            
-                        case .SNMPv2c:
-                            target.credentials = .v2c
-                            
-                        case .SNMPv3:
-                            target.credentials = .v3
-                        }
+                    Picker("SNMP protocol", selection: $target.credentials) {
+                        Text("SNMPv1").tag(SNMPTargetSimple.Credentials.v1)
+                        Text("SNMPv2c").tag(SNMPTargetSimple.Credentials.v2c)
+                        Text("SNMPv3").tag(SNMPTargetSimple.Credentials.v3)
                     }
                 }
                 
                 HStack {
-                    if SNMP_protocol != .SNMPv3 {
+                    if target.credentials != .v3 {
                         TextField("community (public)", text: $target.community)
                             .font(.subheadline)
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
                     } else {
                         Picker("SNMP sec level", selection: $target.security_level) {
-                            Text("NoAuth/NoPriv").tag(SNMPSecLevel.noAuthNoPriv)
-                            Text("Auth/NoPriv").tag(SNMPSecLevel.authNoPriv)
-                            Text("Auth/Priv").tag(SNMPSecLevel.authPriv)
+                            Text("NoAuth/NoPriv").tag(SNMPTargetSimple.SecurityLevel.noAuthNoPriv)
+                            Text("Auth/NoPriv").tag(SNMPTargetSimple.SecurityLevel.authNoPriv)
+                            Text("Auth/Priv").tag(SNMPTargetSimple.SecurityLevel.authPriv)
                         }
                         Spacer()
                     }
                     
-                    Picker("SNMP transport protocol", selection: $SNMP_transport_protocol) {
+                    Picker("SNMP transport protocol", selection: $target.transport_proto) {
                         Text("UDP").tag(SNMPTransportProto.UDP)
                         Text("TCP").tag(SNMPTransportProto.TCP)
-                    }.onChange(of: SNMP_transport_protocol) { newValue in
-                        target.transport_proto = newValue == .UDP ? .UDP : .TCP
                     }
                     
-                    Picker("SNMP network protocol", selection: $SNMP_network_protocol) {
+                    Picker("SNMP network protocol", selection: $target.ip_version) {
                         Text("IPv4").tag(SNMPNetworkProto.IPv4)
                         Text("IPv6").tag(SNMPNetworkProto.IPv6)
-                    }.onChange(of: SNMP_network_protocol) { newValue in
-                        target.ip_version = newValue == .IPv4 ? .IPv4 : .IPv6
                     }
                 }
                 
-                if SNMP_protocol == .SNMPv3 {
+                if target.credentials == .v3 {
                     HStack {
                         TextField("username", text: $target.username)
                             .font(.subheadline)
@@ -337,7 +279,7 @@ struct SNMPTargetView: View {
                     }
                 }
                 
-                if SNMP_protocol == .SNMPv3 && target.security_level == .authPriv {
+                if target.credentials == .v3 && target.security_level == .authPriv {
                     HStack {
                         TextField("authentication secret", text: $target.authProtoSecret)
                             .font(.subheadline)
