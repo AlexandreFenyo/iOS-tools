@@ -309,33 +309,6 @@ struct SNMPTargetView: View {
         }
         .background((Color(COLORS.toolbar_background)))
         .cornerRadius(10)
-        
-        /*
-        .onAppear {
-            switch usage {
-            case .add:
-                break
-                
-            case .edit:
-                break
-
-            case .view:
-                if let str = SNMPManager.manager.getCurrentSelectedIP()?.toNumericString() {
-                    target.host = str
-                } else {
-                    target.host = ""
-                }
-                
-                if let target = SNMPManager.manager.getCurrentSelectedTarget() {
-//                    target = SNMPTargetSimple(target)
-                }
-
-//                SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
-            }
-        }
-         */
-        
-        
     }
 }
 
