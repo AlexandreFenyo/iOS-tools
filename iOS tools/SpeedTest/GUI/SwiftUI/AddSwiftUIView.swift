@@ -6,8 +6,6 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
-// la lecture et sauvegarde sur disque dans Model.swift : UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-
 import SwiftUI
 import SpriteKit
 import iOSToolsMacros
@@ -265,8 +263,6 @@ struct AddSwiftUIView: View {
                     }
                     
                     HStack {
-                        //                         Button((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) "OK") {
-
                         Button(isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
                             if scope == .snmp {
                                 node.addType(.snmp)
@@ -296,9 +292,7 @@ struct AddSwiftUIView: View {
                             }
                             
                             add_view_controller?.master_view_controller!.addNode(node)
-                            
-                            // inutile car aussi fait dans dismiss()
-                            add_view_controller?.master_view_controller?.reloadData()
+                            DBMaster.shared.saveNode(node)
                             
                             add_view_controller?.dismiss(animated: true)
                         }

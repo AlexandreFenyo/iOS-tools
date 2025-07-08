@@ -166,6 +166,7 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
             credentials = .v2c(target.community)
         case .v3:
             let v3cred = SNMPv3Credentials()
+            v3cred.username = target.username
             switch target.security_level {
             case .noAuthNoPriv:
                 v3cred.security_level = .noAuthNoPriv

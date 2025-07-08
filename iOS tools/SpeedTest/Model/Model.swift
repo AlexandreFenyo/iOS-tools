@@ -560,6 +560,106 @@ class DBMaster {
     
     private(set) var networks: Set<IPNetwork>
 
+    func unpersistNode(_ node: Node) {
+        var new_persistent_node_list = [String]()
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for str in config {
+            let str_fields = str.split(separator: ";", maxSplits: 3)
+            let target_name = String(str_fields[0])
+            if !node.getNames().map({ $0 }).contains(target_name) {
+                new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+            }
+        }
+        UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
+    }
+    
+    func saveNode(_ node: Node) {
+        let snmp_target_string: String
+        if let snmp_target = node.getSNMPTarget() {
+            let encoder = JSONEncoder()
+            let jsonData = try? encoder.encode(snmp_target)
+            if let jsonData {
+                snmp_target_string = jsonData.base64EncodedString()
+            } else {
+                snmp_target_string = ""
+            }
+        } else {
+            snmp_target_string = ""
+        }
+        
+        unpersistNode(node)
+        
+        var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        
+        if let name = node.names.first {
+            var type: NodeType
+            if node.types.contains(.snmp) {
+                type = .snmp
+            } else {
+                if node.types.contains(.chargen) || node.types.contains(.discard) {
+                    type = node.types.contains(.chargen) ? .chargen : .discard
+                } else {
+                    type = .internet
+                }
+            }
+            
+            for ip in node.getV4Addresses() {
+                config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
+            }
+            
+            for ip in node.getV6Addresses() {
+                config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
+            }
+            
+            UserDefaults.standard.set(config, forKey: "nodes")
+        } else {
+            #fatalError("saveNode(): error: can not find name")
+        }
+    }
+    
+    func loadNodes() {
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for str in config {
+            let str_fields = str.split(separator: ";", maxSplits: 3)
+            let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
+            let node_target_b64 = str_fields.count > 3 ? String(str_fields[3]) : nil
+            let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
+            let node = Node()
+            if let node_target_b64 {
+                do {
+                    let base64String = node_target_b64
+                    if let jsonData = Data(base64Encoded: base64String) {
+
+                        if let decodedString = String(data: jsonData, encoding: .utf8) {
+                               print("Contenu décodé :\n\(decodedString)")
+                           } else {
+                               print("Impossible de convertir les données en chaîne UTF-8")
+                           }
+                        
+                        let decoder = JSONDecoder()
+                        node.snmp_target = try decoder.decode(SNMPTarget.self, from: jsonData)
+                    } else {
+                        #fatalError("Invalid JSON: not an SNMPTarget")
+                    }
+                } catch {
+                    #fatalError("Decoding error : \(error)")
+                }
+            }
+            node.names.insert(target_name)
+            if isIPv4(target_ip) {
+                node.v4_addresses.insert(IPv4Address(target_ip)!)
+                SNMPManager.manager.addIpToCheck(IPv4Address(target_ip)!)
+            } else if isIPv6(target_ip) {
+                node.v6_addresses.insert(IPv6Address(target_ip)!)
+                SNMPManager.manager.addIpToCheck(IPv6Address(target_ip)!)
+            }
+            if Int(node_type_str) != NodeType.localhost.rawValue {
+                node.types = [ node_type ]
+            }
+            _ = addNode(node, demo_mode: true)
+        }
+    }
+    
     func resetNetworks() {
         networks = Set<IPNetwork>()
     }
@@ -1212,47 +1312,7 @@ class DBMaster {
         _ = addNode(node, demo_mode: true)
 
         // Add previously saved persistent nodes
-        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 3)
-            let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
-            let node_target_b64 = str_fields.count > 3 ? String(str_fields[3]) : nil
-            let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
-            let node = Node()
-
-            if let node_target_b64 {
-                do {
-                    let base64String = node_target_b64
-                    if let jsonData = Data(base64Encoded: base64String) {
-
-                        if let decodedString = String(data: jsonData, encoding: .utf8) {
-                               print("Contenu décodé :\n\(decodedString)")
-                           } else {
-                               print("Impossible de convertir les données en chaîne UTF-8")
-                           }
-                        
-                        let decoder = JSONDecoder()
-                        node.snmp_target = try decoder.decode(SNMPTarget.self, from: jsonData)
-                    } else {
-                        #fatalError("Invalid JSON: not an SNMPTarget")
-                    }
-                } catch {
-                    #fatalError("Decoding error : \(error)")
-                }
-            }
-            node.dns_names.insert(DomainName(target_name)!)
-            if isIPv4(target_ip) {
-                node.v4_addresses.insert(IPv4Address(target_ip)!)
-                SNMPManager.manager.addIpToCheck(IPv4Address(target_ip)!)
-            } else if isIPv6(target_ip) {
-                node.v6_addresses.insert(IPv6Address(target_ip)!)
-                SNMPManager.manager.addIpToCheck(IPv6Address(target_ip)!)
-            }
-            if Int(node_type_str) != NodeType.localhost.rawValue {
-                node.types = [ node_type ]
-            }
-            _ = addNode(node, demo_mode: true)
-        }
+        loadNodes()
     }
 
     func isPublicDefaultService(_ ip: String) -> Bool {
