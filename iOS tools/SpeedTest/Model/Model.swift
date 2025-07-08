@@ -195,7 +195,10 @@ class Node: Hashable {
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
     fileprivate var mcast_dns_names = Set<FQDN>()
     fileprivate var dns_names = Set<DomainName>()
+
+    // Names are not registered in DNS or received by multicast announcements, they come typically from a call to UIDevice.current.name() like "iPhone de Alexandre", or from a user entry (like when adding a new node with the GUI)
     fileprivate var names = Set<String>()
+
     fileprivate var v4_addresses = Set<IPv4Address>()
     fileprivate var v6_addresses = Set<IPv6Address>()
     fileprivate var tcp_ports = Set<UInt16>()
@@ -312,8 +315,6 @@ class Node: Hashable {
     func setSNMPTarget(_ snmp_target: SNMPTarget) {
         self.snmp_target = snmp_target
     }
-
-    init() { }
     
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
@@ -1189,7 +1190,7 @@ class DBMaster {
         }
         
         var node = Node()
-        node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
+        node.dns_names.insert(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
         node.v4_addresses.insert(IPv4Address("51.75.31.39")!)
         node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::9001")!)
         node.types = [ .chargen, .internet ]
@@ -1197,14 +1198,14 @@ class DBMaster {
         SNMPManager.manager.addIpToCheck(IPv4Address("51.75.31.39")!)
 
         node = Node()
-        node.mcast_dns_names.insert(FQDN("dns", "google"))
+        node.dns_names.insert(DomainName(HostPart("dns"), DomainPart("google")))
         for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]
         _ = addNode(node, demo_mode: true)
 
         node = Node()
-        node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
+        node.dns_names.insert(DomainName(HostPart("dns9"), DomainPart("quad9.net")))
         for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
         for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
         node.types = [ .internet ]

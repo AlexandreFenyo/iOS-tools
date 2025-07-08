@@ -36,29 +36,6 @@ struct AddSwiftUIView: View {
     @State private var showAlert = false
     @State private var msgAlert = ""
 
-    private func validateHostname(_ name: String) -> String? {
-        var new_name = name.lowercased()
-        var new_name2 = ""
-        for c in new_name.unicodeScalars {
-            if CharacterSet.letters.contains(c) || CharacterSet.decimalDigits.contains(c) || c.escaped(asASCII: true) == "." {
-                new_name2.append(String(c))
-            }
-        }
-        new_name = new_name2
-        return new_name
-    }
-    
-    private func validateIP(_ name: String) -> String? {
-        let new_name = name.lowercased()
-        var new_name2 = ""
-        for c in new_name {
-            if "abcdef0123456789:.".contains(c) {
-                new_name2.append(c)
-            }
-        }
-        return new_name2
-    }
-    
     var body: some View {
         HStack {
             Spacer()
@@ -79,7 +56,6 @@ struct AddSwiftUIView: View {
                         Text("SNMP").tag(NodeType.snmp)
                         Text("Other host").tag(NodeType.localhost)
                     }.pickerStyle(.segmented)
-                    
                         .onChange(of: scope) { newValue in
                             withAnimation(Animation.easeInOut(duration: 0.5)) {
                                 new_scope = newValue
@@ -253,9 +229,8 @@ struct AddSwiftUIView: View {
                             .padding(.bottom, 10)
                             HStack {
                                 Button(action: {
+                                    msgAlert = "\(new_ipv6): must be a unicast public, ULA or LLA IPv6 address"
                                     if let foo = IPv6Address(new_ipv6) {
-                                        msgAlert = "\(new_ipv6): must be a unicast public, ULA or LLA IPv6 address"
-
                                         // See tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell for selection algorithm (section 'Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.')
                                         if foo.isUnicastPublic() || foo.isULA() || foo.isLLA()  {
                                          ipv6_addresses.append(foo)
@@ -290,7 +265,9 @@ struct AddSwiftUIView: View {
                     }
                     
                     HStack {
-                        Button("OK") {
+                        //                         Button((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) "OK") {
+
+                        Button(isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
                             if scope == .snmp {
                                 node.addType(.snmp)
                                 node.setSNMPTarget(SNMPTarget(target))
