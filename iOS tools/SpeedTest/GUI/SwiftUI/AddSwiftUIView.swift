@@ -264,6 +264,8 @@ struct AddSwiftUIView: View {
                     
                     HStack {
                         Button(isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
+                            add_view_controller?.master_view_controller!.removeNode(node)
+                            
                             if scope == .snmp {
                                 node.addType(.snmp)
                                 node.setSNMPTarget(SNMPTarget(target))

@@ -309,6 +309,8 @@ struct SNMPTargetView: View {
         }
         .background((Color(COLORS.toolbar_background)))
         .cornerRadius(10)
+        
+        /*
         .onAppear {
             switch usage {
             case .add:
@@ -323,10 +325,17 @@ struct SNMPTargetView: View {
                 } else {
                     target.host = ""
                 }
+                
+                if let target = SNMPManager.manager.getCurrentSelectedTarget() {
+//                    target = SNMPTargetSimple(target)
+                }
 
-                SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
+//                SNMPManager.manager.setCurrentSelectedIP(nil, target: nil)
             }
         }
+         */
+        
+        
     }
 }
 
@@ -506,8 +515,8 @@ struct SNMPView: View {
     
     @State private var show_popup = false
     @State private var oid_info: OIDInfos?
-    
-    @StateObject private var target = SNMPTargetSimple()
+
+    @EnvironmentObject var current_selected_target_simple: SNMPTargetSimple
     
     func showInfo(info: String) {
         if let jsonData = info.data(using: .utf8) {
@@ -570,7 +579,7 @@ struct SNMPView: View {
     var body: some View {
         ZStack {
             VStack {
-                SNMPTargetView(usage: .view, target: target, isTargetExpanded: $isTargetExpanded)
+                SNMPTargetView(usage: .view, target: current_selected_target_simple, isTargetExpanded: $isTargetExpanded)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.leading, 15)
                     .padding(.trailing, 15)
@@ -583,9 +592,9 @@ struct SNMPView: View {
                 if isTargetExpanded == true {
                     HStack {
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.1")
-                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "list.dash.header.rectangle")
@@ -595,13 +604,13 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
 
                         Spacer()
                         
                         Button(action: {
-                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
-                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
+                            walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "list.bullet.rectangle.fill")
@@ -611,14 +620,14 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
 
                         Spacer()
                         
                         Button(action: {
-                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(target))
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.2")
-                            walk(str_array, message: "SNMP walk for \(target.host)\(target.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                         })
                         {
                             Image(systemName: "chart.xyaxis.line")
@@ -628,7 +637,7 @@ struct SNMPView: View {
                                 .font(.custom("Arial Narrow", size: 14))
                                 .foregroundColor(Color(COLORS.standard_background))
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: target.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
                     }
                     .background(Color(COLORS.toolbar_background)).opacity(0.9)
                     .cornerRadius(10)

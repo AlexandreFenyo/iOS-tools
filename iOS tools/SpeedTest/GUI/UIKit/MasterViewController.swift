@@ -148,6 +148,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         return DBMaster.shared.getIndexPath(node)
     }
     
+    func removeNode(_ node: Node) {
+        tableView.beginUpdates()
+        let index_paths_removed = DBMaster.shared.removeNode(node)
+        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+        tableView.endUpdates()
+    }
+    
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else {
@@ -695,7 +702,11 @@ view.backgroundColor = .red
     func addressSelected(address: IPAddress, node: Node) {
         detail_view_controller?.scrollToTop()
 
-        SNMPManager.manager.setCurrentSelectedIP(address, target: node.getSNMPTarget())
+        if let snmp_target = node.getSNMPTarget() {
+            let snmp_target_simple = SNMPTargetSimple(snmp_target)
+            let current_selected_target_simple = (UIApplication.shared.delegate as! AppDelegate).current_selected_target_simple
+            current_selected_target_simple.setFrom(snmp_target_simple)
+        }
         
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
@@ -1341,11 +1352,7 @@ view.backgroundColor = .red
                 // Remove node
                 if let node = self?.getNode(indexPath: indexPath) {
                     DBMaster.shared.unpersistNode(node)
-                    
-                    tableView.beginUpdates()
-                    let index_paths_removed = DBMaster.shared.removeNode(node)
-                    tableView.deleteRows(at: index_paths_removed, with: .automatic)
-                    tableView.endUpdates()
+                    self?.removeNode(node)
                 } else {
                     #fatalError("deleteAction: node not found")
                 }
@@ -1373,11 +1380,7 @@ view.backgroundColor = .red
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (action, view, completionHandler) in
             if let node = self?.getNode(indexPath: indexPath) {
                 DBMaster.shared.unpersistNode(node)
-
-                tableView.beginUpdates()
-                let index_paths_removed = DBMaster.shared.removeNode(node)
-                tableView.deleteRows(at: index_paths_removed, with: .automatic)
-                tableView.endUpdates()
+                self?.removeNode(node)
             } else {
                 #fatalError("deleteAction: node not found")
             }

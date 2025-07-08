@@ -22,6 +22,9 @@ let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! B
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
+
+    let current_selected_target_simple = SNMPTargetSimple()
+
     var window: UIWindow?
 
     var persistentContainer: NSPersistentContainer?

@@ -8,6 +8,7 @@
 
 import Foundation
 import iOSToolsMacros
+import SwiftUICore
 
 enum SNMPManagerError: Error {
     case notAvailable
@@ -58,8 +59,6 @@ enum SNMPSecLevel: String, Codable {
 }
 
 class SNMPTargetSimple: ObservableObject {
-    init() { }
-
     @Published var host: String = ""
     @Published var port: String = ""
     @Published var transport_proto: SNMPTransportProto = .`default`
@@ -72,7 +71,7 @@ class SNMPTargetSimple: ObservableObject {
     }
     @Published var credentials: Credentials = .v2c
     @Published var community: String = ""
-
+    
     @Published var username: String = ""
     
     @Published var authProtoSecret: String = ""
@@ -89,7 +88,7 @@ class SNMPTargetSimple: ObservableObject {
         case AES
     }
     @Published var privacy_proto: PrivacyProto = .AES
-
+    
     enum SecurityLevel {
         case noAuthNoPriv
         case authNoPriv
@@ -97,6 +96,8 @@ class SNMPTargetSimple: ObservableObject {
         static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
     }
     @Published var security_level: SecurityLevel = .`default`
+    
+    init() { }
     
     init(_ target: SNMPTarget) {
         host = target.host
@@ -146,6 +147,21 @@ class SNMPTargetSimple: ObservableObject {
                 }
             }
         }
+    }
+
+    func setFrom(_ target: SNMPTargetSimple) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        credentials = target.credentials
+        community = target.community
+        username = target.username
+        authProtoSecret = target.authProtoSecret
+        privProtoSecret = target.privProtoSecret
+        auth_proto = target.auth_proto
+        privacy_proto = target.privacy_proto
+        security_level = target.security_level
     }
 }
 
@@ -417,9 +433,6 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
 class SNMPManager {
     static let manager = SNMPManager()
     
-    private var current_selected_IP: IPAddress?
-    private var current_selected_target: SNMPTarget?
-
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
     
@@ -491,23 +504,6 @@ class SNMPManager {
         return IP_to_check.isEmpty
     }
     
-    func setCurrentSelectedIP(_ ip: IPAddress?, target: SNMPTarget?) {
-        current_selected_IP = ip
-        current_selected_target = target
-    }
-    
-    func getCurrentSelectedIP() -> IPAddress? {
-        return current_selected_IP
-    }
-
-    func setCurrentSelectedTarget(target: SNMPTarget?) {
-        current_selected_target = target
-    }
-
-    func getCurrentSelectedTarget() -> SNMPTarget? {
-        return current_selected_target
-    }
-
     func getPingCommandLineFromTarget(address: IPAddress) -> [String]? {
         // no retries, 1 sec timeout - only for UDP
         var str_array = ["snmpwalk", "-r1", "-t1"]
