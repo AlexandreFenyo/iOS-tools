@@ -702,11 +702,15 @@ view.backgroundColor = .red
     func addressSelected(address: IPAddress, node: Node) {
         detail_view_controller?.scrollToTop()
 
+        let snmp_target_simple: SNMPTargetSimple
         if let snmp_target = node.getSNMPTarget() {
-            let snmp_target_simple = SNMPTargetSimple(snmp_target)
-            let current_selected_target_simple = (UIApplication.shared.delegate as! AppDelegate).current_selected_target_simple
-            current_selected_target_simple.setFrom(snmp_target_simple)
+            snmp_target_simple = SNMPTargetSimple(snmp_target)
+        } else {
+            snmp_target_simple = SNMPTargetSimple()
         }
+        let current_selected_target_simple = (UIApplication.shared.delegate as! AppDelegate).current_selected_target_simple
+        snmp_target_simple.host = address.toNumericString() ?? ""
+        current_selected_target_simple.setFrom(snmp_target_simple)
         
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
