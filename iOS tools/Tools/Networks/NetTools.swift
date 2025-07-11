@@ -174,13 +174,28 @@ public final class IPv6AddressSendable: Sendable {
     }
 }
 
-public class IPAddress : Hashable {
+public class IPAddress : Hashable, Codable {
     fileprivate let inaddr: Data
-
+    
     public func hash(into hasher: inout Hasher) {
         fatalError(#saveTrace("should not be called"))
     }
     
+     enum CodingKeys: CodingKey {
+        case inaddr
+    }
+
+    /*
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(inaddr, forKey: .inaddr)
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.inaddr = try container.decode(Data.self, forKey: .inaddr)
+    }*/
+
     fileprivate init(_ inaddr: Data) {
         self.inaddr = inaddr
     }
@@ -341,7 +356,11 @@ public class IPv4Address : IPAddress, Comparable, LosslessStringConvertible {
     public init(mask_len: UInt8) {
         super.init(mask_len: mask_len, data_size: MemoryLayout<in_addr>.size)
     }
-
+    
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
+    
     public override func getFamily() -> Int32 {
         return AF_INET
     }
@@ -428,7 +447,7 @@ public class IPv6Address : IPAddress, Comparable, LosslessStringConvertible {
     }
     
     // scope zone index
-    private let scope: UInt32
+    private var scope: UInt32
 
     static private let _ipv6_fe00 = IPv6Address("fe00::")!
     static private let _ipv6_fc00 = IPv6Address("fc00::")!
@@ -460,6 +479,14 @@ public class IPv6Address : IPAddress, Comparable, LosslessStringConvertible {
         if ret != 1 { return nil }
         let addr_and_scope = IPv6Address.filterScope(data)
         self.init(IPv6Address.getData(addr_and_scope.addr), scope: addr_and_scope.scope)
+    }
+    
+    enum CodingKeys: String, CodingKey { case scope }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        scope = try container.decode(UInt32.self, forKey: .scope)
+        try super.init(from: decoder)
     }
     
     func bytes() -> [UInt8] {

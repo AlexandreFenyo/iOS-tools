@@ -180,7 +180,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Update nodes and find new nodes
     private func startBrowsing() async {
-        // Supprimer tous les noeuds
+        // Remove every nodes
         await resetToDefaultHosts()
 
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
@@ -462,7 +462,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         // #fatalError("division by zero")
 
         popUp(NSLocalizedString("Target List", comment: "Target List"), NSLocalizedString("Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", comment: "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet."), "OK")
-
         
 //        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
@@ -677,7 +676,6 @@ view.backgroundColor = .red
         detail_view_controller?.setButtonMasterHiddenState(true)
     }
 
-    // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         refreshControl!.endRefreshing()
@@ -1270,7 +1268,7 @@ view.backgroundColor = .red
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = node.getName()
+        cell.name.text = (DBMaster.isSaved(node) ? "💾 " : "") + node.getName()
         
         // Multicast IPv4 addresses are not selected
         if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
@@ -1340,7 +1338,7 @@ view.backgroundColor = .red
         }
         
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            let editAction = UIAction(title: "Edit",
+            let editAction = UIAction(title: NSLocalizedString("Edit", comment: "Edit"),
                                       image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"),
                                       attributes: .destructive) { _ in
                 if let node = self?.getNode(indexPath: indexPath) {
@@ -1350,7 +1348,7 @@ view.backgroundColor = .red
                 }
             }
             
-            let deleteAction = UIAction(title: "Delete",
+            let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: "Delete"),
                                         image: UIImage(systemName: "trash"),
                                         attributes: .destructive) { _ in
                 // Remove node
@@ -1367,7 +1365,7 @@ view.backgroundColor = .red
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let editAction = UIContextualAction(style: .destructive, title: "Edit") { [weak self] (action, view, completionHandler) in
+        let editAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Edit", comment: "Edit")) { [weak self] (action, view, completionHandler) in
             if let node = self?.getNode(indexPath: indexPath) {
                 let add_view_controller = AddViewController(isEdit: true, node: node)
                 add_view_controller.master_view_controller = self
@@ -1381,7 +1379,7 @@ view.backgroundColor = .red
         // Edit button color
         editAction.backgroundColor = .blue
 
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] (action, view, completionHandler) in
+        let deleteAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Delete")) { [weak self] (action, view, completionHandler) in
             if let node = self?.getNode(indexPath: indexPath) {
                 DBMaster.shared.unpersistNode(node)
                 self?.removeNode(node)

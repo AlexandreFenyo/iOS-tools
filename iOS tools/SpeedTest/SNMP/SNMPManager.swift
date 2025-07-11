@@ -409,24 +409,28 @@ class SNMPTarget: ObservableObject, Codable, Hashable {
         }
     }
     @Published var credentials: Credentials = .v2c("")
-
+    
     func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            try container.encode(host, forKey: .host)
-            try container.encode(port, forKey: .port)
-            try container.encode(transport_proto, forKey: .transport_proto)
-            try container.encode(ip_version, forKey: .ip_version)
-            try container.encode(credentials, forKey: .credentials)
-        }
-
-        required init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            host = try container.decode(String.self, forKey: .host)
-            port = try container.decode(String.self, forKey: .port)
-            transport_proto = try container.decode(SNMPTransportProto.self, forKey: .transport_proto)
-            ip_version = try container.decode(SNMPNetworkProto.self, forKey: .ip_version)
-            credentials = try container.decode(Credentials.self, forKey: .credentials)
-        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(host, forKey: .host)
+        try container.encode(port, forKey: .port)
+        try container.encode(transport_proto, forKey: .transport_proto)
+        try container.encode(ip_version, forKey: .ip_version)
+        try container.encode(credentials, forKey: .credentials)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        host = try container.decode(String.self, forKey: .host)
+        port = try container.decode(String.self, forKey: .port)
+        transport_proto = try container.decode(SNMPTransportProto.self, forKey: .transport_proto)
+        ip_version = try container.decode(SNMPNetworkProto.self, forKey: .ip_version)
+        credentials = try container.decode(Credentials.self, forKey: .credentials)
+    }
+    
+    func getCopy() -> SNMPTarget? {
+        return GenericTools.copyCodableClass(self)
+    }
 }
 
 @MainActor

@@ -52,7 +52,7 @@ struct AddSwiftUIView: View {
                     Picker("Section", selection: $scope) {
                         Text("Chargen").tag(NodeType.chargen).disabled(false)
                         Text("SNMP").tag(NodeType.snmp)
-                        Text("Other host").tag(NodeType.localhost)
+                        Text("Internet").tag(NodeType.internet)
                     }.pickerStyle(.segmented)
                         .onChange(of: scope) { newValue in
                             withAnimation(Animation.easeInOut(duration: 0.5)) {
@@ -264,38 +264,41 @@ struct AddSwiftUIView: View {
                     
                     HStack {
                         Button(isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
+                            // Here, node is a copy of the selected Node
+                            // In order to update this displayed node, we need to remove it and add it again. We must not update node before calling removeNode() since it would not be find anymore in the model.
+                            // If the model has been updated and this node modified (for instance because we were browsing the network, or because of the receive of a multicast announcement), it will not be removed. Therefore, old properties will be merged with new properties when calling add_view_controller?.master_view_controller!.addNode(node) later.
+                            // Therefore, we should forbid the model to be updated when this View is displayed.
                             add_view_controller?.master_view_controller!.removeNode(node)
+
+                            // We only update properties that we want to save.
+                            let new_node = Node(names: new_name.isEmpty ? node.getNames() : Set([new_name]), v4_addresses: Set(ipv4_addresses), v6_addresses: Set(ipv6_addresses))
                             
                             if scope == .snmp {
-                                node.addType(.snmp)
-                                node.setSNMPTarget(SNMPTarget(target))
+                                new_node.addType(.snmp)
+                                new_node.setSNMPTarget(SNMPTarget(target))
                             }
-                            
                             if scope == .chargen {
-                                node.addType(.chargen)
+                                new_node.addType(.chargen)
                             }
-                            
                             if scope == .internet {
-                                node.addType(.internet)
+                                new_node.addType(.internet)
                             }
-                            
-                            if !new_name.isEmpty {
-                                node.addName(new_name)
+
+                            // Let the node be persistant after app restart.
+                            DBMaster.shared.saveNode(new_node)
+
+                            // We update properties that we want to be kept in the GUI.
+                            for type in node.getTypes() {
+                                new_node.addType(type)
                             }
-                            
-                            node.clearV4Addresses()
-                            for addr in ipv4_addresses {
-                                node.addV4Address(addr)
-                            }
-                            
-                            node.clearV6Addresses()
-                            for addr in ipv6_addresses {
-                                node.addV6Address(addr)
-                            }
-                            
-                            add_view_controller?.master_view_controller!.addNode(node)
-                            DBMaster.shared.saveNode(node)
-                            
+                            new_node.setTcpPorts(node.getTcpPorts())
+                            new_node.setUdpPorts(node.getUdpPorts())
+                            new_node.setMcastDnsNames(node.getMcastDnsNames())
+                            new_node.setDnsNames(node.getDnsNames())
+                            new_node.setServices(node.getServices())
+  
+                            add_view_controller?.master_view_controller!.addNode(new_node)
+
                             add_view_controller?.dismiss(animated: true)
                         }
                         .disabled((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty))

@@ -27,32 +27,7 @@ class AddViewController: UIViewController {
         self.isEdit = isEdit
 
         // Create a copy of the node since it is already displayed, so it can not be updated directly
-        if let node {
-            let _node = Node()
-            if let target = node.getSNMPTarget() {
-                _node.setSNMPTarget(target)
-//                SNMPManager.manager.setCurrentSelectedTarget(target: target)
-            }
-            for name in node.getNames() {
-                _node.addName(name)
-            }
-            for mcastname in node.getMcastDnsNames() {
-                _node.addMcastFQDN(mcastname)
-            }
-            for dnsname in node.getDnsNames() {
-                _node.addDnsName(dnsname)
-            }
-            for addr in node.getV4Addresses() {
-                _node.addV4Address(addr)
-            }
-            for addr in node.getV6Addresses() {
-                _node.addV6Address(addr)
-            }
-            _node.setTypes(node.getTypes())
-            self.node = _node
-        } else {
-            self.node = nil
-        }
+        self.node = node?.getCopy()
 
         super.init(nibName: nil, bundle: nil)
     }

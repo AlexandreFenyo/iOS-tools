@@ -16,7 +16,7 @@ enum SectionType: Int, CaseIterable {
     case localhost = 0, ios, chargen_discard, snmp, gateway, internet, other
 }
 
-enum NodeType: Int, CaseIterable {
+enum NodeType: Int, CaseIterable, Codable {
     case localhost = 0, ios, chargen, discard, snmp, gateway, internet
 }
 
@@ -42,13 +42,25 @@ struct Port : Hashable, CustomStringConvertible {
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-class DomainPart : Hashable, Comparable {
+class DomainPart : Hashable, Comparable, Codable {
     let name: String
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(name)
     }
 
+    enum CodingKeys: CodingKey { case name }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+    }
+    
     init(_ name: String) {
         if name.isEmpty {
             #fatalError("DomainPart")
@@ -82,12 +94,16 @@ class HostPart : DomainPart {
         }
         super.init(name)
     }
+    
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
 }
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
 // its String representation does not contain any trailing or leading "."
-class DomainName : Hashable, Comparable, LosslessStringConvertible {
+class DomainName : Hashable, Comparable, LosslessStringConvertible, Codable {
     var description: String
     
     func hash(into hasher: inout Hasher) {
@@ -97,6 +113,22 @@ class DomainName : Hashable, Comparable, LosslessStringConvertible {
     
     let host_part: HostPart
     let domain_part: DomainPart?
+    
+    enum CodingKeys: CodingKey { case description, host_part, domain_part }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(description, forKey: .description)
+        try container.encode(host_part, forKey: .host_part)
+        try container.encodeIfPresent(domain_part, forKey: .domain_part)
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        description = try container.decode(String.self, forKey: .description)
+        host_part = try container.decode(HostPart.self, forKey: .host_part)
+        domain_part = try container.decodeIfPresent(DomainPart.self, forKey: .domain_part)
+    }
     
     init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
         self.host_part = host_part
@@ -149,12 +181,16 @@ class FQDN : DomainName {
     required init?(_ name: String) {
         super.init(name)
     }
+    
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
 }
 
-class BonjourServiceInfo : Hashable {
+class BonjourServiceInfo: Hashable, Codable {
     let name: String
     let port: String
-    let attr: [String : String]
+    let attr: [String: String]
     
     init(_ name: String, _ port: String, _ attr: [String: String]) {
         self.name = name
@@ -162,6 +198,24 @@ class BonjourServiceInfo : Hashable {
         self.attr = attr
     }
     
+    enum CodingKeys: String, CodingKey {
+        case name, port, attr
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        port = try container.decode(String.self, forKey: .port)
+        attr = try container.decode([String: String].self, forKey: .attr)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(port, forKey: .port)
+        try container.encode(attr, forKey: .attr)
+    }
+
     static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
         return lhs.name == rhs.name && lhs.port == rhs.port && lhs.attr == rhs.attr
     }
@@ -176,7 +230,7 @@ class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-class Node: Hashable {
+class Node: Hashable, Codable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
@@ -207,6 +261,45 @@ class Node: Hashable {
     fileprivate var services = Set<BonjourServiceInfo>()
     fileprivate var snmp_target: SNMPTarget?
     
+    init(mcast_dns_names: Set<FQDN> = Set<FQDN>(), dns_names: Set<DomainName> = Set<DomainName>(), names: Set<String> = Set<String>(), v4_addresses: Set<IPv4Address> = Set<IPv4Address>(), v6_addresses: Set<IPv6Address> = Set<IPv6Address>(), tcp_ports: Set<UInt16> = Set<UInt16>(), udp_ports: Set<UInt16> = Set<UInt16>(), types: Set<NodeType> = Set<NodeType>(), services: Set<BonjourServiceInfo> = Set<BonjourServiceInfo>(), snmp_target: SNMPTarget? = nil) {
+        self.mcast_dns_names = mcast_dns_names
+        self.dns_names = dns_names
+        self.names = names
+        self.v4_addresses = v4_addresses
+        self.v6_addresses = v6_addresses
+        self.tcp_ports = tcp_ports
+        self.udp_ports = udp_ports
+        self.types = types
+        self.services = services
+        self.snmp_target = snmp_target
+    }
+
+    enum CodingKeys: CodingKey { case mcast_dns_names, dns_names, names, v4_addresses, v6_addresses, tcp_ports, udp_ports, types, services, snmp_target }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(mcast_dns_names, forKey: .mcast_dns_names)
+        try container.encode(dns_names, forKey: .dns_names)
+        try container.encode(names, forKey: .names)
+        try container.encode(v4_addresses, forKey: .v4_addresses)
+        try container.encode(mcast_dns_names, forKey: .mcast_dns_names)
+        try container.encode(v6_addresses, forKey: .v6_addresses)
+        try container.encode(tcp_ports, forKey: .tcp_ports)
+        try container.encode(udp_ports, forKey: .udp_ports)
+        try container.encode(types, forKey: .types)
+        try container.encode(services, forKey: .services)
+        try container.encode(snmp_target, forKey: .snmp_target)
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        mcast_dns_names = try container.decode(Set<FQDN>.self, forKey: .mcast_dns_names)
+    }
+
+    func getCopy() -> Node {
+        return Node(mcast_dns_names: mcast_dns_names, dns_names: dns_names, names: names, v4_addresses: v4_addresses, v6_addresses: v6_addresses, tcp_ports: tcp_ports, udp_ports: udp_ports, types: types, services: services, snmp_target: snmp_target?.getCopy())
+    }
+    
     func getName() -> String {
         return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() } + getNames()).first ?? "no name"
     }
@@ -224,15 +317,27 @@ class Node: Hashable {
     func getServices() -> Set<BonjourServiceInfo> {
         return services
     }
-    
+
+    func setServices(_ services: Set<BonjourServiceInfo>) {
+        self.services = services
+    }
+
     // FQDN is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getMcastDnsNames() -> Set<FQDN> {
         return mcast_dns_names
     }
-    
+
+    func setMcastDnsNames(_ mcast_dns_names: Set<FQDN>) {
+        self.mcast_dns_names = mcast_dns_names
+    }
+
     // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getDnsNames() -> Set<DomainName> {
         return dns_names
+    }
+    
+    func setDnsNames(_ dns_names: Set<DomainName>) {
+        self.dns_names = dns_names
     }
     
     // No need to copy the set elements to be sure they are not updated
@@ -259,7 +364,15 @@ class Node: Hashable {
     func getUdpPorts() -> Set<UInt16> {
         return udp_ports
     }
-    
+
+    func setTcpPorts(_ tcp_ports: Set<UInt16>) {
+        self.tcp_ports = tcp_ports
+    }
+
+    func setUdpPorts(_ udp_ports: Set<UInt16>) {
+        self.udp_ports = udp_ports
+    }
+
     func getSNMPTarget() -> SNMPTarget? {
         return snmp_target
     }
@@ -564,15 +677,54 @@ class DBMaster {
         var new_persistent_node_list = [String]()
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 3)
-            let target_name = String(str_fields[0])
-            if !node.getNames().map({ $0 }).contains(target_name) {
-                new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
+            let (target_name, target_ip) = (String(str_fields[0]), String(str_fields[1]))
+
+            if node.getNames().isEmpty {
+                // The node has no name, we use its IP addresses to find the node inside the configuration
+                if isIPv4(target_ip), let foo = IPv4Address(target_ip) {
+                    if !node.getV4Addresses().contains(foo) {
+                        new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+                    }
+                }
+                if isIPv6(target_ip), let foo = IPv6Address(target_ip) {
+                    if !node.getV6Addresses().contains(foo) {
+                        new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+                    }
+                }
+            } else {
+                // The node has a name, we use it to find the node inside the configuration
+                if !node.getNames().map({ $0 }).contains(target_name) {
+                    new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+                }
             }
         }
         UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
     }
     
+    static func isSaved(_ node: Node) -> Bool {
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for str in config {
+            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
+            let (target_name, target_ip) = (String(str_fields[0]), String(str_fields[1]))
+            if !target_name.isEmpty && node.getNames().contains(target_name) {
+                return true
+            }
+            if isIPv4(target_ip), let foo = IPv4Address(target_ip) {
+                if node.getV4Addresses().contains(foo) {
+                    return true
+                }
+            }
+            if isIPv6(target_ip), let foo = IPv6Address(target_ip) {
+                if node.getV6Addresses().contains(foo) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+//    CONTINUER ICI : pb quand on update mac mini et qu'on l'enleve : il reste au redémarrage
     func saveNode(_ node: Node) {
         let snmp_target_string: String
         if let snmp_target = node.getSNMPTarget() {
@@ -591,36 +743,35 @@ class DBMaster {
         
         var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         
-        if let name = node.names.first {
-            var type: NodeType
-            if node.types.contains(.snmp) {
-                type = .snmp
-            } else {
-                if node.types.contains(.chargen) || node.types.contains(.discard) {
-                    type = node.types.contains(.chargen) ? .chargen : .discard
-                } else {
-                    type = .internet
-                }
-            }
-            
-            for ip in node.getV4Addresses() {
-                config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
-            }
-            
-            for ip in node.getV6Addresses() {
-                config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
-            }
-            
-            UserDefaults.standard.set(config, forKey: "nodes")
+        let name = node.names.first ?? ""
+        
+        var type: NodeType
+        if node.types.contains(.snmp) {
+            type = .snmp
         } else {
-            #fatalError("saveNode(): error: can not find name")
+            if node.types.contains(.chargen) || node.types.contains(.discard) {
+                type = node.types.contains(.chargen) ? .chargen : .discard
+            } else {
+                type = .internet
+            }
         }
+        
+        for ip in node.getV4Addresses() {
+            config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
+        }
+        
+        for ip in node.getV6Addresses() {
+            config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
+        }
+        
+        UserDefaults.standard.set(config, forKey: "nodes")
     }
     
     func loadNodes() {
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 3)
+            print("XXXXX: loadNodes(): [\(str)]")
+            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
             let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
             let node_target_b64 = str_fields.count > 3 ? String(str_fields[3]) : nil
             let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
