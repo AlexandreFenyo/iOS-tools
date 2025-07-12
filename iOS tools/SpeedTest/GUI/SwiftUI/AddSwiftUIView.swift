@@ -270,9 +270,15 @@ struct AddSwiftUIView: View {
                             // Therefore, we should forbid the model to be updated when this View is displayed.
                             add_view_controller?.master_view_controller!.removeNode(node)
 
-                            // We only update properties that we want to save.
-                            let new_node = Node(names: new_name.isEmpty ? node.getNames() : Set([new_name]), v4_addresses: Set(ipv4_addresses), v6_addresses: Set(ipv6_addresses))
-                            
+                            // We only set properties that we want to save.
+                            let new_node = node.getCopy()
+                            if !new_name.isEmpty { node.addName(new_name) }
+                            // Remove TCP port list
+                            new_node.setTcpPorts(Set<UInt16>())
+                            // Remove UDP port list
+                            new_node.setUdpPorts(Set<UInt16>())
+
+                            // Add scope.
                             if scope == .snmp {
                                 new_node.addType(.snmp)
                                 new_node.setSNMPTarget(SNMPTarget(target))
@@ -293,9 +299,6 @@ struct AddSwiftUIView: View {
                             }
                             new_node.setTcpPorts(node.getTcpPorts())
                             new_node.setUdpPorts(node.getUdpPorts())
-                            new_node.setMcastDnsNames(node.getMcastDnsNames())
-                            new_node.setDnsNames(node.getDnsNames())
-                            new_node.setServices(node.getServices())
   
                             add_view_controller?.master_view_controller!.addNode(new_node)
 

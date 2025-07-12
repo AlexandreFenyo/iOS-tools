@@ -282,18 +282,27 @@ class Node: Hashable, Codable {
         try container.encode(dns_names, forKey: .dns_names)
         try container.encode(names, forKey: .names)
         try container.encode(v4_addresses, forKey: .v4_addresses)
-        try container.encode(mcast_dns_names, forKey: .mcast_dns_names)
         try container.encode(v6_addresses, forKey: .v6_addresses)
         try container.encode(tcp_ports, forKey: .tcp_ports)
         try container.encode(udp_ports, forKey: .udp_ports)
         try container.encode(types, forKey: .types)
         try container.encode(services, forKey: .services)
-        try container.encode(snmp_target, forKey: .snmp_target)
+        try container.encodeIfPresent(snmp_target, forKey: .snmp_target)
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         mcast_dns_names = try container.decode(Set<FQDN>.self, forKey: .mcast_dns_names)
+        dns_names = try container.decode(Set<DomainName>.self, forKey: .dns_names)
+        names = try container.decode(Set<String>.self, forKey: .names)
+        v4_addresses = try container.decode(Set<IPv4Address>.self, forKey: .v4_addresses)
+        v6_addresses = try container.decode(Set<IPv6Address>.self, forKey: .v6_addresses)
+        tcp_ports = try container.decode(Set<UInt16>.self, forKey: .tcp_ports)
+        udp_ports = try container.decode(Set<UInt16>.self, forKey: .mcast_dns_names)
+        types = try container.decode(Set<NodeType>.self, forKey: .types)
+        services = try container.decode(Set<BonjourServiceInfo>.self, forKey: .services)
+        snmp_target = try container.decodeIfPresent(SNMPTarget.self, forKey: .snmp_target)
     }
 
     func getCopy() -> Node {
@@ -673,52 +682,45 @@ class DBMaster {
     
     private(set) var networks: Set<IPNetwork>
 
+    // MARK: - Manage user config
+    
     func unpersistNode(_ node: Node) {
         var new_persistent_node_list = [String]()
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
-            let (target_name, target_ip) = (String(str_fields[0]), String(str_fields[1]))
-
-            if node.getNames().isEmpty {
-                // The node has no name, we use its IP addresses to find the node inside the configuration
-                if isIPv4(target_ip), let foo = IPv4Address(target_ip) {
-                    if !node.getV4Addresses().contains(foo) {
-                        new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
+        for current_node_b64 in config {
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    if !node.isSimilar(with: current_node) {
+                        new_persistent_node_list.insert(current_node_b64, at: new_persistent_node_list.endIndex)
                     }
+                } else {
+                    #fatalError("Not in base64")
                 }
-                if isIPv6(target_ip), let foo = IPv6Address(target_ip) {
-                    if !node.getV6Addresses().contains(foo) {
-                        new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
-                    }
-                }
-            } else {
-                // The node has a name, we use it to find the node inside the configuration
-                if !node.getNames().map({ $0 }).contains(target_name) {
-                    new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
-                }
+            } catch {
+                #fatalError("Decoding error: \(error)")
             }
+
         }
         UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
     }
     
     static func isSaved(_ node: Node) -> Bool {
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
-            let (target_name, target_ip) = (String(str_fields[0]), String(str_fields[1]))
-            if !target_name.isEmpty && node.getNames().contains(target_name) {
-                return true
-            }
-            if isIPv4(target_ip), let foo = IPv4Address(target_ip) {
-                if node.getV4Addresses().contains(foo) {
-                    return true
+        for current_node_b64 in config {
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    if node.isSimilar(with: current_node) {
+                        return true
+                    }
+                } else {
+                    #fatalError("Not in base64")
                 }
-            }
-            if isIPv6(target_ip), let foo = IPv6Address(target_ip) {
-                if node.getV6Addresses().contains(foo) {
-                    return true
-                }
+            } catch {
+                #fatalError("Decoding error: \(error)")
             }
         }
         return false
@@ -726,90 +728,204 @@ class DBMaster {
     
 //    CONTINUER ICI : pb quand on update mac mini et qu'on l'enleve : il reste au redémarrage
     func saveNode(_ node: Node) {
-        let snmp_target_string: String
-        if let snmp_target = node.getSNMPTarget() {
-            let encoder = JSONEncoder()
-            let jsonData = try? encoder.encode(snmp_target)
-            if let jsonData {
-                snmp_target_string = jsonData.base64EncodedString()
-            } else {
-                snmp_target_string = ""
-            }
+        // Convert node to base64
+        let encoder = JSONEncoder()
+        let jsonData = try? encoder.encode(node)
+        let node_b64: String
+        if let jsonData {
+            node_b64 = jsonData.base64EncodedString()
         } else {
-            snmp_target_string = ""
+            #fatalError("Can not serialize node")
+            return
         }
-        
+
+        // Remove nodes similar to this node from config
         unpersistNode(node)
-        
+
+        // Add node to base64 config
         var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        
-        let name = node.names.first ?? ""
-        
-        var type: NodeType
-        if node.types.contains(.snmp) {
-            type = .snmp
-        } else {
-            if node.types.contains(.chargen) || node.types.contains(.discard) {
-                type = node.types.contains(.chargen) ? .chargen : .discard
-            } else {
-                type = .internet
-            }
-        }
-        
-        for ip in node.getV4Addresses() {
-            config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
-        }
-        
-        for ip in node.getV6Addresses() {
-            config.insert("\(name);\(ip.toNumericString()!);\(type.rawValue);\(snmp_target_string)", at: config.endIndex)
-        }
-        
+        config.insert(node_b64, at: config.endIndex)
         UserDefaults.standard.set(config, forKey: "nodes")
     }
     
     func loadNodes() {
-        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            print("XXXXX: loadNodes(): [\(str)]")
-            let str_fields = str.split(separator: ";", maxSplits: 3, omittingEmptySubsequences: false)
-            let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
-            let node_target_b64 = str_fields.count > 3 ? String(str_fields[3]) : nil
-            let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
-            let node = Node()
-            if let node_target_b64 {
-                do {
-                    let base64String = node_target_b64
-                    if let jsonData = Data(base64Encoded: base64String) {
+        
+        // tester :
+        // OK NodeType
+        // OK DomainPart
+        // OK DomainName
+        // OK HostPart
+        // OK FQDN
+        // OK BonjourServiceInfo
+        // NOK Node
 
-                        if let decodedString = String(data: jsonData, encoding: .utf8) {
-                               print("Contenu décodé :\n\(decodedString)")
-                           } else {
-                               print("Impossible de convertir les données en chaîne UTF-8")
-                           }
-                        
-                        let decoder = JSONDecoder()
-                        node.snmp_target = try decoder.decode(SNMPTarget.self, from: jsonData)
-                    } else {
-                        #fatalError("Invalid JSON: not an SNMPTarget")
-                    }
-                } catch {
-                    #fatalError("Decoding error : \(error)")
+        /*
+        let foo = NodeType.discard
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(NodeType.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar)")
+       exit(1)
+*/
+        /*
+        let foo = DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_")))
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(DomainName.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar.domain_part)")
+       exit(1)
+*/
+        /*
+        let foo = HostPart("flood")
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(HostPart.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar.name)")
+       exit(1)
+*/
+
+        /*
+        let foo = DomainPart("flood")
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(DomainPart.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar.name)")
+       exit(1)
+*/
+        /*
+        let foo = FQDN("router", "fenyo.net")
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(FQDN.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar)")
+       exit(1)
+*/
+        
+        /*
+        let foo = BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"])
+        let foo_encoder = JSONEncoder()
+        let foo_jsonData = try? foo_encoder.encode(foo)
+        let foo_b64: String
+        if let foo_jsonData {
+            foo_b64 = foo_jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize foo")
+            return
+        }
+        print("foo_b64: \(foo_b64)")
+        let bar = try! JSONDecoder().decode(BonjourServiceInfo.self, from: Data(base64Encoded: foo_b64)!)
+        print("bar: \(bar)")
+       exit(1)
+*/
+        
+        
+/*
+ let node = Node()
+        node.addName("salut")
+        print("node name:", node.names.first ?? "")
+        let encoder = JSONEncoder()
+        let jsonData = try? encoder.encode(node)
+
+        let new_node = try! JSONDecoder().decode(Node.self, from: jsonData!)
+
+        print("new node:", new_node.fullDump())
+        print("new node name:", new_node.names.first ?? "")
+       exit(1)
+*/
+        /*
+        let node = Node()
+        node.addName("salut")
+        print("node name:", node.names.first ?? "")
+        let encoder = JSONEncoder()
+        let jsonData = try? encoder.encode(node)
+
+        print(jsonData?.description ?? "")
+        var hexString = jsonData!.map { String(format: "%c", $0) }.joined(separator: "")
+        print("jsondata: \(hexString)")
+
+        let node_b64: String
+        if let jsonData {
+            node_b64 = jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize node")
+            return
+        }
+        print("node_b64: \(node_b64)")
+        let xxx = Data(base64Encoded: node_b64)
+        hexString = xxx!.map { String(format: "%c", $0) }.joined(separator: "")
+        print("hex: \(hexString)")
+        // OK jusqu'ici
+        
+//        let new_node = try! JSONDecoder().decode(Node.self, from: Data(base64Encoded: node_b64)!)
+        let new_node = try! JSONDecoder().decode(Node.self, from: xxx!)
+
+        print("new node:", new_node.fullDump())
+        print("new node:", new_node.names.first ?? "")
+       exit(1)
+        
+    */
+        
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for current_node_b64 in config {
+            print("XXXXX: loadNodes(): [\(current_node_b64)]")
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    
+                    print("B64:\(current_node_b64) => Node: \(current_node.fullDump())")
+
+                    _ = addNode(current_node, demo_mode: true)
+                } else {
+                    #fatalError("Not in base64")
                 }
+            } catch {
+                #fatalError("Decoding error: \(error)")
             }
-            node.names.insert(target_name)
-            if isIPv4(target_ip) {
-                node.v4_addresses.insert(IPv4Address(target_ip)!)
-                SNMPManager.manager.addIpToCheck(IPv4Address(target_ip)!)
-            } else if isIPv6(target_ip) {
-                node.v6_addresses.insert(IPv6Address(target_ip)!)
-                SNMPManager.manager.addIpToCheck(IPv6Address(target_ip)!)
-            }
-            if Int(node_type_str) != NodeType.localhost.rawValue {
-                node.types = [ node_type ]
-            }
-            _ = addNode(node, demo_mode: true)
         }
     }
+    
+    // MARK:
     
     func resetNetworks() {
         networks = Set<IPNetwork>()
@@ -1381,14 +1497,14 @@ class DBMaster {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
             var node = Node()
 
-            node.mcast_dns_names.insert(FQDN("  router", "fenyo.net"))
+            node.mcast_dns_names.insert(FQDN("router", "fenyo.net"))
             node.v4_addresses.insert(IPv4Address("192.168.0.254")!)
             node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
             node.types = [ .gateway ]
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("   Mac Mini", "local"))
+            node.mcast_dns_names.insert(FQDN("Mac Mini", "local"))
             node.v4_addresses.insert(IPv4Address("192.168.0.42")!)
             node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"]))

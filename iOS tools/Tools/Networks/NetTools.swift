@@ -488,7 +488,13 @@ public class IPv6Address : IPAddress, Comparable, LosslessStringConvertible {
         scope = try container.decode(UInt32.self, forKey: .scope)
         try super.init(from: decoder)
     }
-    
+
+    public override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(scope, forKey: .scope)
+        try super.encode(to: encoder)
+    }
+
     func bytes() -> [UInt8] {
         return inaddr.withUnsafeBytes { (bytes : UnsafeRawBufferPointer) -> [UInt8] in [ bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15] ] }
     }
