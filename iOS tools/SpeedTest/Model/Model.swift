@@ -247,19 +247,19 @@ class Node: Hashable, Codable {
     //    private var is_in_model = false
     
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
-    fileprivate var mcast_dns_names = Set<FQDN>()
-    fileprivate var dns_names = Set<DomainName>()
+    private var mcast_dns_names = Set<FQDN>()
+    private var dns_names = Set<DomainName>()
 
     // Names are not registered in DNS or received by multicast announcements, they come typically from a call to UIDevice.current.name() like "iPhone de Alexandre", or from a user entry (like when adding a new node with the GUI)
-    fileprivate var names = Set<String>()
+    private var names = Set<String>()
 
-    fileprivate var v4_addresses = Set<IPv4Address>()
-    fileprivate var v6_addresses = Set<IPv6Address>()
-    fileprivate var tcp_ports = Set<UInt16>()
-    fileprivate var udp_ports = Set<UInt16>()
-    fileprivate var types = Set<NodeType>()
-    fileprivate var services = Set<BonjourServiceInfo>()
-    fileprivate var snmp_target: SNMPTarget?
+    private var v4_addresses = Set<IPv4Address>()
+    private var v6_addresses = Set<IPv6Address>()
+    private var tcp_ports = Set<UInt16>()
+    private var udp_ports = Set<UInt16>()
+    private var types = Set<NodeType>()
+    private var services = Set<BonjourServiceInfo>()
+    private var snmp_target: SNMPTarget?
     
     init(mcast_dns_names: Set<FQDN> = Set<FQDN>(), dns_names: Set<DomainName> = Set<DomainName>(), names: Set<String> = Set<String>(), v4_addresses: Set<IPv4Address> = Set<IPv4Address>(), v6_addresses: Set<IPv6Address> = Set<IPv6Address>(), tcp_ports: Set<UInt16> = Set<UInt16>(), udp_ports: Set<UInt16> = Set<UInt16>(), types: Set<NodeType> = Set<NodeType>(), services: Set<BonjourServiceInfo> = Set<BonjourServiceInfo>(), snmp_target: SNMPTarget? = nil) {
         self.mcast_dns_names = mcast_dns_names
@@ -340,6 +340,10 @@ class Node: Hashable, Codable {
         self.mcast_dns_names = mcast_dns_names
     }
 
+    func addMcastDnsName(_ fqdn: FQDN) {
+        mcast_dns_names.insert(fqdn)
+    }
+
     // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getDnsNames() -> Set<DomainName> {
         return dns_names
@@ -347,6 +351,10 @@ class Node: Hashable, Codable {
     
     func setDnsNames(_ dns_names: Set<DomainName>) {
         self.dns_names = dns_names
+    }
+    
+    func addDnsName(_ domain_name: DomainName) {
+        dns_names.insert(domain_name)
     }
     
     // No need to copy the set elements to be sure they are not updated
@@ -424,10 +432,6 @@ class Node: Hashable, Codable {
     
     func addName(_ name: String) {
         names.insert(name)
-    }
-    
-    func addDnsName(_ domain_name: DomainName) {
-        dns_names.insert(domain_name)
     }
     
     func addMcastFQDN(_ domain_name: FQDN) {
@@ -842,24 +846,24 @@ class DBMaster {
  */
 
     static func getNode(name: String) -> Node? {
-        shared.nodes.filter { $0.names.contains(name) }.first
+        shared.nodes.filter { $0.getNames().contains(name) }.first
     }
 
     static func getNode(mcast_fqdn: FQDN) -> Node? {
-        shared.nodes.filter { $0.mcast_dns_names.contains(mcast_fqdn) }.first
+        shared.nodes.filter { $0.getMcastDnsNames().contains(mcast_fqdn) }.first
     }
 
     static func getNode(address: IPAddress) -> Node? {
         if address.getFamily() == AF_INET {
             let addr = address as! IPv4Address
-            let nodes = shared.nodes.filter { $0.v4_addresses.contains(addr) }
+            let nodes = shared.nodes.filter { $0.getV4Addresses().contains(addr) }
             if nodes.count > 1 {
                 print("\(#function): Warning: bad number of nodes for one IPv4 address")
             }
             return nodes.first
         } else {
             let addr = address as! IPv6Address
-            let nodes = shared.nodes.filter { $0.v6_addresses.contains(addr) }
+            let nodes = shared.nodes.filter { $0.getV6Addresses().contains(addr) }
             if nodes.count > 1 {
                 print("\(#function): Warning: bad number of nodes for one IPv6 address")
             }
@@ -876,13 +880,13 @@ class DBMaster {
         var udp_ports_count = [PortNumber : UInt]()
 
         for node in shared.nodes {
-            tcp_ports.formUnion(node.tcp_ports)
-            udp_ports.formUnion(node.udp_ports)
-            for n in node.tcp_ports {
+            tcp_ports.formUnion(node.getTcpPorts())
+            udp_ports.formUnion(node.getUdpPorts())
+            for n in node.getTcpPorts() {
                 if !tcp_ports_count.keys.contains(n) { tcp_ports_count[n] = 0 }
                 tcp_ports_count[n]! += 1
             }
-            for n in node.udp_ports {
+            for n in node.getUdpPorts() {
                 if !udp_ports_count.keys.contains(n) { udp_ports_count[n] = 0 }
                 udp_ports_count[n]! += 1
             }
@@ -910,13 +914,13 @@ class DBMaster {
         var udp_ports_count = [PortNumber : UInt]()
 
         for node in shared.nodes {
-            tcp_ports.formUnion(node.tcp_ports)
-            udp_ports.formUnion(node.udp_ports)
-            for n in node.tcp_ports {
+            tcp_ports.formUnion(node.getTcpPorts())
+            udp_ports.formUnion(node.getUdpPorts())
+            for n in node.getTcpPorts() {
                 if !tcp_ports_count.keys.contains(n) { tcp_ports_count[n] = 0 }
                 tcp_ports_count[n]! += 1
             }
-            for n in node.udp_ports {
+            for n in node.getUdpPorts() {
                 if !udp_ports_count.keys.contains(n) { udp_ports_count[n] = 0 }
                 udp_ports_count[n]! += 1
             }
@@ -941,12 +945,12 @@ class DBMaster {
         for node in shared.nodes {
             switch port.ip_protocol {
             case .TCP:
-                if node.tcp_ports.contains(port.port_number) {
+                if node.getTcpPorts().contains(port.port_number) {
                     nodes.insert(node)
                 }
 
             case .UDP:
-                if node.udp_ports.contains(port.port_number) {
+                if node.getUdpPorts().contains(port.port_number) {
                     nodes.insert(node)
                 }
             }
@@ -974,7 +978,7 @@ class DBMaster {
     func getLocalGateways() -> [Node] {
         var gateways = [Node]()
         let gw = Node()
-        gw.types.insert(.gateway)
+        gw.addType(.gateway)
         
         var idx : Int32 = 0, ret : Int32
         repeat {
@@ -985,7 +989,7 @@ class DBMaster {
             if (ret >= 0) {
                 if let s = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size)) {
                     let addr = s.getIPAddress() as! IPv4Address
-                    gw.v4_addresses.insert(addr)
+                    gw.addV4Address(addr)
                     // We only add IPv4 gateway IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
                     SNMPManager.manager.addIpToCheck(addr)
                 }
@@ -1000,12 +1004,12 @@ class DBMaster {
 
             if (ret >= 0) {
                 let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-                gw.v6_addresses.insert(addr)
+                gw.addV6Address(addr)
             }
             idx += 1
         } while ret >= 0
         
-        if !gw.v4_addresses.isEmpty || !gw.v6_addresses.isEmpty {
+        if !gw.getV4Addresses().isEmpty || !gw.getV6Addresses().isEmpty {
             gateways.append(gw)
         }
         
@@ -1018,7 +1022,7 @@ class DBMaster {
     
     func getLocalNode() -> Node {
         let node = Node()
-        node.types = [ .localhost ]
+        node.setTypes([.localhost])
         var idx : Int32 = 0, mask_len : Int32
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
@@ -1028,7 +1032,7 @@ class DBMaster {
                 switch my_sock_addr.getFamily() {
                 case AF_INET:
                     let address = my_sock_addr.getIPAddress() as! IPv4Address
-                    node.v4_addresses.insert(address)
+                    node.addV4Address(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
                     // Do not check local IP adresses, for the SNMP module to be more available
                     // We only add IPv4 local IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
@@ -1036,7 +1040,7 @@ class DBMaster {
 
                 case AF_INET6:
                     let address = my_sock_addr.getIPAddress() as! IPv6Address
-                    node.v6_addresses.insert(address)
+                    node.addV6Address(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
                     
                 default:
@@ -1046,8 +1050,8 @@ class DBMaster {
             idx += 1
         } while mask_len >= 0
 
-        node.names.insert(UIDevice.current.name)
-        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
+        node.addName(UIDevice.current.name)
+        node.addDnsName(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node
     }
     
@@ -1344,85 +1348,85 @@ class DBMaster {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
             var node = Node()
 
-            node.mcast_dns_names.insert(FQDN("router", "fenyo.net"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.254")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
-            node.types = [ .gateway ]
+            node.addMcastFQDN(FQDN("router", "fenyo.net"))
+            node.addV4Address(IPv4Address("192.168.0.254")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
+            node.setTypes([.gateway])
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Mac Mini", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.42")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
+            node.addMcastFQDN(FQDN("Mac Mini", "local"))
+            node.addV4Address(IPv4Address("192.168.0.42")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("iPhone Agnès", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.17")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
+            node.addMcastFQDN(FQDN("iPhone Agnès", "local"))
+            node.addV4Address(IPv4Address("192.168.0.17")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Mac Book", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.172")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
+            node.addMcastFQDN(FQDN("Mac Book", "local"))
+            node.addV4Address(IPv4Address("192.168.0.172")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("iPad Alexandre", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.20")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
+            node.addMcastFQDN(FQDN("iPad Alexandre", "local"))
+            node.addV4Address(IPv4Address("192.168.0.20")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Home Pod", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.125")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
+            node.addMcastFQDN(FQDN("Home Pod", "local"))
+            node.addV4Address(IPv4Address("192.168.0.125")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AudioAccessory"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Apple TV", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.45")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
+            node.addMcastFQDN(FQDN("Apple TV", "local"))
+            node.addV4Address(IPv4Address("192.168.0.45")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AppleTV"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("printer", "fenyo.net"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
+            node.addMcastFQDN(FQDN("printer", "fenyo.net"))
+            node.addV4Address(IPv4Address("192.168.0.12")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
             node.addService(BonjourServiceInfo("_pdl-datastream._tcp.", "515", [:]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Marantz", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.63")!)
+            node.addMcastFQDN(FQDN("Marantz", "local"))
+            node.addV4Address(IPv4Address("192.168.0.63")!)
             node.addService(BonjourServiceInfo("_raop._tcp.", "49152", [:]))
             _ = addNode(node, demo_mode: true)
         }
         
         var node = Node()
-        node.dns_names.insert(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
-        node.v4_addresses.insert(IPv4Address("51.75.31.39")!)
-        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::9001")!)
-        node.types = [ .chargen, .internet ]
+        node.addDnsName(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
+        node.addV4Address(IPv4Address("51.75.31.39")!)
+        node.addV6Address(IPv6Address("2001:41d0:304:200::9001")!)
+        node.setTypes([.chargen, .internet])
         _ = addNode(node, demo_mode: true)
         SNMPManager.manager.addIpToCheck(IPv4Address("51.75.31.39")!)
 
         node = Node()
-        node.dns_names.insert(DomainName(HostPart("dns"), DomainPart("google")))
-        for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
-        for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
-        node.types = [ .internet ]
+        node.addDnsName(DomainName(HostPart("dns"), DomainPart("google")))
+        for addr in ips_v4_google { node.addV4Address(IPv4Address(addr)!) }
+        for addr in ips_v6_google { node.addV6Address(IPv6Address(addr)!) }
+        node.setTypes([.internet])
         _ = addNode(node, demo_mode: true)
 
         node = Node()
-        node.dns_names.insert(DomainName(HostPart("dns9"), DomainPart("quad9.net")))
-        for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
-        for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
-        node.types = [ .internet ]
+        node.addDnsName(DomainName(HostPart("dns9"), DomainPart("quad9.net")))
+        for addr in ips_v4_quad9 { node.addV4Address(IPv4Address(addr)!) }
+        for addr in ips_v6_quad9 { node.addV6Address(IPv6Address(addr)!) }
+        node.setTypes([.internet])
         _ = addNode(node, demo_mode: true)
 
         // Add previously saved persistent nodes
