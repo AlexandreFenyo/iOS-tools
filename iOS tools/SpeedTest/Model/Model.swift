@@ -358,7 +358,15 @@ class Node: Hashable, Codable {
     func getV4Addresses() -> Set<IPv4Address> {
         return v4_addresses
     }
-    
+
+    func setV4Addresses(_ v4_addresses: Set<IPv4Address>) {
+        self.v4_addresses = v4_addresses
+    }
+
+    func setV6Addresses(_ v6_addresses: Set<IPv6Address>) {
+        self.v6_addresses = v6_addresses
+    }
+
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getV6Addresses() -> Set<IPv6Address> {
         return v6_addresses
@@ -726,7 +734,6 @@ class DBMaster {
         return false
     }
     
-//    CONTINUER ICI : pb quand on update mac mini et qu'on l'enleve : il reste au redémarrage
     func saveNode(_ node: Node) {
         // Convert node to base64
         let encoder = JSONEncoder()
@@ -749,172 +756,12 @@ class DBMaster {
     }
     
     func loadNodes() {
-        
-        // tester :
-        // OK NodeType
-        // OK DomainPart
-        // OK DomainName
-        // OK HostPart
-        // OK FQDN
-        // OK BonjourServiceInfo
-        // NOK Node
-
-        /*
-        let foo = NodeType.discard
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(NodeType.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar)")
-       exit(1)
-*/
-        /*
-        let foo = DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_")))
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(DomainName.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar.domain_part)")
-       exit(1)
-*/
-        /*
-        let foo = HostPart("flood")
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(HostPart.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar.name)")
-       exit(1)
-*/
-
-        /*
-        let foo = DomainPart("flood")
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(DomainPart.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar.name)")
-       exit(1)
-*/
-        /*
-        let foo = FQDN("router", "fenyo.net")
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(FQDN.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar)")
-       exit(1)
-*/
-        
-        /*
-        let foo = BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"])
-        let foo_encoder = JSONEncoder()
-        let foo_jsonData = try? foo_encoder.encode(foo)
-        let foo_b64: String
-        if let foo_jsonData {
-            foo_b64 = foo_jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize foo")
-            return
-        }
-        print("foo_b64: \(foo_b64)")
-        let bar = try! JSONDecoder().decode(BonjourServiceInfo.self, from: Data(base64Encoded: foo_b64)!)
-        print("bar: \(bar)")
-       exit(1)
-*/
-        
-        
-/*
- let node = Node()
-        node.addName("salut")
-        print("node name:", node.names.first ?? "")
-        let encoder = JSONEncoder()
-        let jsonData = try? encoder.encode(node)
-
-        let new_node = try! JSONDecoder().decode(Node.self, from: jsonData!)
-
-        print("new node:", new_node.fullDump())
-        print("new node name:", new_node.names.first ?? "")
-       exit(1)
-*/
-        /*
-        let node = Node()
-        node.addName("salut")
-        print("node name:", node.names.first ?? "")
-        let encoder = JSONEncoder()
-        let jsonData = try? encoder.encode(node)
-
-        print(jsonData?.description ?? "")
-        var hexString = jsonData!.map { String(format: "%c", $0) }.joined(separator: "")
-        print("jsondata: \(hexString)")
-
-        let node_b64: String
-        if let jsonData {
-            node_b64 = jsonData.base64EncodedString()
-        } else {
-            #fatalError("Can not serialize node")
-            return
-        }
-        print("node_b64: \(node_b64)")
-        let xxx = Data(base64Encoded: node_b64)
-        hexString = xxx!.map { String(format: "%c", $0) }.joined(separator: "")
-        print("hex: \(hexString)")
-        // OK jusqu'ici
-        
-//        let new_node = try! JSONDecoder().decode(Node.self, from: Data(base64Encoded: node_b64)!)
-        let new_node = try! JSONDecoder().decode(Node.self, from: xxx!)
-
-        print("new node:", new_node.fullDump())
-        print("new node:", new_node.names.first ?? "")
-       exit(1)
-        
-    */
-        
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for current_node_b64 in config {
-            print("XXXXX: loadNodes(): [\(current_node_b64)]")
             do {
                 if let jsonData = Data(base64Encoded: current_node_b64) {
                     let decoder = JSONDecoder()
                     let current_node = try decoder.decode(Node.self, from: jsonData)
-                    
-                    print("B64:\(current_node_b64) => Node: \(current_node.fullDump())")
-
                     _ = addNode(current_node, demo_mode: true)
                 } else {
                     #fatalError("Not in base64")

@@ -267,18 +267,21 @@ struct AddSwiftUIView: View {
                             // Here, node is a copy of the selected Node
                             // In order to update this displayed node, we need to remove it and add it again. We must not update node before calling removeNode() since it would not be find anymore in the model.
                             // If the model has been updated and this node modified (for instance because we were browsing the network, or because of the receive of a multicast announcement), it will not be removed. Therefore, old properties will be merged with new properties when calling add_view_controller?.master_view_controller!.addNode(node) later.
-                            // Therefore, we should forbid the model to be updated when this View is displayed.
+                            // Therefore, we should forbid the model to be updated when this View is displayed => TO-DO-LIST
                             add_view_controller?.master_view_controller!.removeNode(node)
 
                             // We only set properties that we want to save.
                             let new_node = node.getCopy()
-                            if !new_name.isEmpty { node.addName(new_name) }
+                            if !new_name.isEmpty { new_node.addName(new_name) }
+                            new_node.setV4Addresses(Set<IPv4Address>(ipv4_addresses))
+                            new_node.setV6Addresses(Set<IPv6Address>(ipv6_addresses))
+
                             // Remove TCP port list
                             new_node.setTcpPorts(Set<UInt16>())
                             // Remove UDP port list
                             new_node.setUdpPorts(Set<UInt16>())
 
-                            // Add scope.
+                            // Add scope
                             if scope == .snmp {
                                 new_node.addType(.snmp)
                                 new_node.setSNMPTarget(SNMPTarget(target))
