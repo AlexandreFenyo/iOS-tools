@@ -81,6 +81,7 @@ class NetworkBrowser {
     private func manageAnswer(from: IPAddress) async {
         Task.detached { @MainActor in
             SNMPManager.manager.addIpToCheck(from)
+            self.device_manager.addTrace("network browsing: adding \(from.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
         }
 
         let node = Node()

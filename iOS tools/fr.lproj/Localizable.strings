@@ -174,3 +174,4 @@
 "status (current, obsolete or deprecated)" = "statut (current, obsolete or deprecated)";
 "access mode (read-only, read-write or not-accessible)" = "mode d'accès (read-only, read-write ou not-accessible)";
 "Error: no description received" = "Erreur: aucune description reçue";
+"browse this SNMP agent" = "parcourir cet agent SNMP";

@@ -477,7 +477,10 @@ class SNMPAvailability: ObservableObject {
     }
 }
 
+@MainActor
 struct SNMPView: View {
+    let master_view_controller: MasterViewController
+
     @StateObject var rootNode: OIDNodeDisplayable = OIDNodeDisplayable(type: .root, val: "")
     @State private var highlight: String = ""
     @FocusState private var isTextFieldFocused: Bool
@@ -568,6 +571,7 @@ struct SNMPView: View {
                             var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.1")
                             walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            master_view_controller.addTrace("SNMP: simple scan for \(current_selected_target_simple.host)")
                         })
                         {
                             Image(systemName: "list.dash.header.rectangle")
@@ -584,6 +588,7 @@ struct SNMPView: View {
                         Button(action: {
                             let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            master_view_controller.addTrace("SNMP: full scan for \(current_selected_target_simple.host)")
                         })
                         {
                             Image(systemName: "list.bullet.rectangle.fill")
@@ -601,6 +606,7 @@ struct SNMPView: View {
                             var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.2")
                             walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            master_view_controller.addTrace("SNMP: scan interfaces for \(current_selected_target_simple.host)")
                         })
                         {
                             Image(systemName: "chart.xyaxis.line")

@@ -8,13 +8,16 @@
 
 import SwiftUI
 
-class SnmpViewController : UIViewController {
+@MainActor
+class SnmpViewController: UIViewController {
+    weak var master_view_controller: MasterViewController? = nil
+
     private lazy var hostingViewController = makeHostingController()
 
     private func makeHostingController() -> UIHostingController<AnyView> {
         let current_selected_target_simple = (UIApplication.shared.delegate as! AppDelegate).current_selected_target_simple
         
-        let rootView = AnyView(SNMPView().environmentObject(current_selected_target_simple))
+        let rootView = AnyView(SNMPView(master_view_controller: master_view_controller!).environmentObject(current_selected_target_simple))
         
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false

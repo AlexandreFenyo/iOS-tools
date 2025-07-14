@@ -550,7 +550,7 @@ struct DetailSwiftUIView: View {
                                 Button(action: {
                                     self.master_view_controller.tabBarController?.selectedIndex = 3
                                 }) {
-                                    Text("browser this SNMP agent").font(.footnote)
+                                    Text("browse this SNMP agent").font(.footnote)
                                         .frame(maxWidth: .infinity)
                                         .padding(5)
                                         .background(Color(COLORS.standard_background))

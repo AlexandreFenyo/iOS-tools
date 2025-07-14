@@ -295,7 +295,8 @@ struct AddSwiftUIView: View {
 
                             // Let the node be persistant after app restart.
                             DBMaster.shared.saveNode(new_node)
-
+                            add_view_controller?.master_view_controller?.addTrace("Add/Edit node: node saved to persistent storage (\(node.fullDump()))", level: .INFO)
+                            
                             // We update properties that we want to be kept in the GUI.
                             for type in node.getTypes() {
                                 new_node.addType(type)

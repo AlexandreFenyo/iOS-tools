@@ -174,3 +174,4 @@
 "Saisissez un filtre ici..." = "Introduce un filtro...";
 "SNMP-OID-Tree" = "Árbol-OID-de-SNMP";
 "SNMP Object Identifier Help" = "Identificadores OID - Ayuda";
+"browse this SNMP agent" = "Navegar por este agente SNMP";

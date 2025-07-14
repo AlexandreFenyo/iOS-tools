@@ -234,12 +234,15 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                         node.addV4Address(sock_addr.getIPAddress() as! IPv4Address)
                         if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
                         SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv4Address)
+                        self.device_manager.addTrace("NetServiceDidResolveAddress: adding \(sock_addr.getIPAddress()!.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
+
                         
                     case AF_INET6:
                         node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
                         if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
                         // Do not check IPv6 addresses: they often have an IPv4 address too, not checking them let the SNMP module being more available
                         // SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv6Address)
+                        // self.device_manager.addTrace("NetServiceDidResolveAddress: adding \(sock_addr.getIPAddress()!.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
 
                     default:
                         #fatalError("can not be here")

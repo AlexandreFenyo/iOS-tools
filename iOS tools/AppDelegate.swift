@@ -40,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var masterViewController: MasterViewController?
     private var tracesViewController: TracesViewController?
+    private var snmpViewController: SnmpViewController?
     
     // Check that the service is published with: dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
     private func startChargenService() {
@@ -127,7 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
+            let snmpViewController = tabBarController.viewControllers?[3] as? SnmpViewController
             // May be useful for debugging:
             //,
             // let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
@@ -149,10 +151,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Select the Network tab as the default one, to debug faster
         // tabBarController.selectedIndex = 1
 
-        // May be useful for debugging:
-        // Select the SNMP tab as the default one, to debug faster
-        if debug_snmp { tabBarController.selectedIndex = 3 }
-
         self.masterViewController = masterViewController
 
         SNMPManager.manager.setDeviceManager(masterViewController)
@@ -165,8 +163,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         detailViewController.master_view_controller = masterViewController
+        
+        snmpViewController.master_view_controller = masterViewController
+        
         intermanViewController.master_view_controller = masterViewController
         intermanViewController.hostingViewController.rootView.master_view_controller = masterViewController
+
+        // May be useful for debugging:
+        // Select the SNMP tab as the default one, to debug faster
+        if debug_snmp { tabBarController.selectedIndex = 3 }
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }
