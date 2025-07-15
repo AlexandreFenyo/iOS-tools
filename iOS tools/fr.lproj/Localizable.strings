@@ -163,7 +163,7 @@
 "username" = "nom d'utilisateur";
 "authentication secret" = "secret d'authentification";
 "privacy secret" = "secret de confidentialité";
-"Saisissez un filtre ici..." = "Entrez un filtre...";
+"Set a filter..." = "Entrez un filtre...";
 "SNMP-OID-Tree" = "Arbre-d'OID-SNMP";
 "SNMP Object Identifier Help" = "Identificateurs d'OID - Aide";
 

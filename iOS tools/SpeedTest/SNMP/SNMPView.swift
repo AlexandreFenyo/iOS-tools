@@ -492,6 +492,8 @@ struct SNMPView: View {
     @State private var show_popup = false
     @State private var oid_info: OIDInfos?
 
+    @State private var interface_loop = false
+
     @EnvironmentObject var current_selected_target_simple: SNMPTargetSimple
     
     func showInfo(info: String) {
@@ -577,11 +579,13 @@ struct SNMPView: View {
                             Image(systemName: "list.dash.header.rectangle")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(Color(COLORS.standard_background))
-                            Text("fast scan")
-                                .font(.custom("Arial Narrow", size: 14))
-                                .foregroundColor(Color(COLORS.standard_background))
+                            if !interface_loop {
+                                Text("fast scan")
+                                    .font(.custom("Arial Narrow", size: 14))
+                                    .foregroundColor(Color(COLORS.standard_background))
+                            }
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available && !interface_loop, isHostEmpty: current_selected_target_simple.host.isEmpty)
 
                         Spacer()
                         
@@ -594,15 +598,20 @@ struct SNMPView: View {
                             Image(systemName: "list.bullet.rectangle.fill")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(Color(COLORS.standard_background))
-                            Text("full scan")
-                                .font(.custom("Arial Narrow", size: 14))
-                                .foregroundColor(Color(COLORS.standard_background))
+                            if !interface_loop {
+                                Text("full scan")
+                                    .font(.custom("Arial Narrow", size: 14))
+                                    .foregroundColor(Color(COLORS.standard_background))
+                            }
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available && !interface_loop, isHostEmpty: current_selected_target_simple.host.isEmpty)
 
                         Spacer()
                         
                         Button(action: {
+                            withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                interface_loop = true
+                            }
                             var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.2")
                             walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
@@ -612,11 +621,31 @@ struct SNMPView: View {
                             Image(systemName: "chart.xyaxis.line")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(Color(COLORS.standard_background))
-                            Text("scan interfaces speed")
-                                .font(.custom("Arial Narrow", size: 14))
-                                .foregroundColor(Color(COLORS.standard_background))
+                            if !interface_loop {
+                                Text("scan interfaces speed")
+                                    .font(.custom("Arial Narrow", size: 14))
+                                    .foregroundColor(Color(COLORS.standard_background))
+                            }
                         }
-                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available, isHostEmpty: current_selected_target_simple.host.isEmpty)
+                        .commonButtonStyle(isManagerAvailable: is_manager_available_obj.available && !interface_loop, isHostEmpty: current_selected_target_simple.host.isEmpty)
+                        
+                        if interface_loop {
+                            Button(action: {
+                                withAnimation(Animation.easeInOut(duration: 0.5)) {
+                                    interface_loop = false
+                                }
+                                master_view_controller.addTrace("SNMP: stopped interfaces scan")
+                            })
+                            {
+                                Image(systemName: "stop.circle")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(Color(COLORS.standard_background))
+                                Text("stop interfaces scan")
+                                    .font(.custom("Arial Narrow", size: 14))
+                                    .foregroundColor(Color(COLORS.standard_background))
+                            }
+                            .commonButtonStyle(isManagerAvailable: true, isHostEmpty: false)
+                        }
                     }
                     .background(Color(COLORS.toolbar_background)).opacity(0.9)
                     .cornerRadius(10)
@@ -642,7 +671,7 @@ struct SNMPView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                     if #available(iOS 17.0, *) {
-                        TextField("Saisissez un filtre ici...", text: $highlight)
+                        TextField("Set a filter...", text: $highlight)
                             .autocorrectionDisabled(true)
                             .focused($isTextFieldFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -651,7 +680,7 @@ struct SNMPView: View {
                                 _ = rootNode.filter(newValue)
                             }
                     } else {
-                        TextField("Saisissez un filtre ici...", text: $highlight)
+                        TextField("Set a filter...", text: $highlight)
                             .autocorrectionDisabled(true)
                             .focused($isTextFieldFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())

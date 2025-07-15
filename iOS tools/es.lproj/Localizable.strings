@@ -171,7 +171,7 @@
 "username" = "nombre de usuario";
 "authentication secret" = "secreto de autenticación";
 "privacy secret" = "secreto de privacidad";
-"Saisissez un filtre ici..." = "Introduce un filtro...";
+"Set a filter..." = "Introduce un filtro...";
 "SNMP-OID-Tree" = "Árbol-OID-de-SNMP";
 "SNMP Object Identifier Help" = "Identificadores OID - Ayuda";
 "browse this SNMP agent" = "Navegar por este agente SNMP";
