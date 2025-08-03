@@ -445,6 +445,7 @@ class SNMPManager {
 
     init() {
         // Create background thread
+        if debug_snmp { return }
         Task.detached {
             while (true) {
                 let task = Task<IPAddress?, Never>{ @MainActor in
@@ -710,6 +711,7 @@ class SNMPManager {
         return translation
     }
     
+    // onEnd will be called on MainActor
     func walk(onEnd: @escaping (OIDNode, String) -> Void) throws(SNMPManagerError) {
         if state != .available {
             throw SNMPManagerError.notAvailable
@@ -738,11 +740,13 @@ class SNMPManager {
                     if ret == -1 {
                         #fatalError("walk: alex_rollingbuf_pop: \(ret)")
                     } else {
+//                        print("XXXXX: debug oids: \(String(cString: pointer))")
                         oid_root.mergeSingleOID(OIDNode.parse(String(cString: pointer)))
                     }
                     pointer.deallocate()
                 }
             }
+            
             await MainActor.run {
                 let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: self.ALEX_ERRBUF_LEN + 1)
                 alex_errbuf_get(pointer)

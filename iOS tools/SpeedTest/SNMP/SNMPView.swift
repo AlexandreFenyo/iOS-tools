@@ -496,6 +496,8 @@ struct SNMPView: View {
 
     @EnvironmentObject var current_selected_target_simple: SNMPTargetSimple
     
+    var oid_time_series = OIDTimeSeries()
+    
     func showInfo(info: String) {
         if let jsonData = info.data(using: .utf8) {
             let decoder = JSONDecoder()
@@ -519,7 +521,25 @@ struct SNMPView: View {
         show_popup = true
     }
     
-    func walk(_ str_array: [String], message: String? = nil) {
+    private func onEndLoop(_ oid_node: OIDNode?) -> Void {
+        guard let oid_node = oid_node else { return }
+
+        oid_time_series.update(oid_node)
+        
+    }
+    
+    private func doLoop(command: [String], message: String) {
+        walk(command, message: message, onEnd: onEndLoop)
+        Task { @MainActor in
+            while (interface_loop) {
+                walk(command, message: message, onEnd: onEndLoop)
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+            }
+        }
+    }
+    
+    // onEnd will be called on MainActor
+    func walk(_ str_array: [String], message: String? = nil, onEnd: ((OIDNode?) -> Void)? = nil) {
         do {
             try SNMPManager.manager.pushArray(str_array)
             is_manager_available_obj.setAvailability(false, message: message)
@@ -546,7 +566,10 @@ struct SNMPView: View {
 
                     rootNode.expandAll()
                     _ = rootNode.filter(highlight)
-
+                }
+                
+                if let onEnd {
+                    onEnd(oid_root)
                 }
             }
         } catch {
@@ -566,6 +589,14 @@ struct SNMPView: View {
                     }, message: {
                         Text(alert)
                     })
+                    .onChange(of: show_alert) { value in
+                        if value && interface_loop {
+                            // Remove the alert automatically when looping on a SNMP subtree
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                show_alert = false
+                            }
+                        }
+                    }
                 
                 if isTargetExpanded == true {
                     HStack {
@@ -612,9 +643,11 @@ struct SNMPView: View {
                             withAnimation(Animation.easeInOut(duration: 0.5)) {
                                 interface_loop = true
                             }
+                            
                             var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
-                            str_array.append(".1.3.6.1.2.1.2")
-                            walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+                            str_array.append(".1.3.6.1.2.1.2.2")
+                            doLoop(command: str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
+
                             master_view_controller.addTrace("SNMP: scan interfaces for \(current_selected_target_simple.host)")
                         })
                         {
@@ -633,6 +666,8 @@ struct SNMPView: View {
                             Button(action: {
                                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                                     interface_loop = false
+
+
                                 }
                                 master_view_controller.addTrace("SNMP: stopped interfaces scan")
                             })
@@ -730,7 +765,6 @@ struct SNMPView: View {
             }
             .background(Color(COLORS.right_pannel_bg))
             
-            
             if show_popup {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -744,7 +778,10 @@ struct SNMPView: View {
             }
         }
         .animation(.easeInOut, value: show_popup)
-        
-        
+        .onAppear() {
+            if debug_snmp {
+                current_selected_target_simple.host = "192.168.1.164"
+            }
+        }
     }
 }

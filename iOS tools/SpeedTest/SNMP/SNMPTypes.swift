@@ -197,6 +197,38 @@ class OIDNodeDisplayable: Identifiable, ObservableObject {
     }
 }
 
+@MainActor
+class OIDTimeSeries {
+    
+    // Ex.:
+    // IF-MIB::ifOutUcastPkts[1] = Counter32: 38764859
+    func scan(_ line: String) {
+        if let left_bracket_index = line.firstIndex(of: "[") {
+            let param_name = String(line[..<left_bracket_index])
+            let remainder = String(line[line.index(after: left_bracket_index)..<line.endIndex])
+            if let right_bracket_index = remainder.firstIndex(of: "]") {
+                let index_str = String(remainder[..<right_bracket_index])
+                if let index_number = Int(index_str) {
+                    // CONTINUER ICI mais débugger l'arbre d'oid retourné
+                } else {
+                    print("OIDTimeSeries.scan(): not a number: \(index_str)")
+                }
+            } else {
+                print("OIDTimeSeries.scan(): no ']' found after '['")
+            }
+        } else {
+            print("OIDTimeSeries.scan(): no '[' found")
+        }
+    }
+    
+    func update(_ oid: OIDNode) {
+        scan(oid.line)
+        for child in oid.children {
+            update(child)
+        }
+    }
+}
+
 class OIDNode {
     var line: String
     let type: OIDType
