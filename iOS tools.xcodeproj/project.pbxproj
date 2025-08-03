@@ -1233,7 +1233,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Heatmap & Network Tools";
+				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Network Tools & Maps";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1267,7 +1267,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Heatmap & Network Tools";
+				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Network Tools & Maps";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
