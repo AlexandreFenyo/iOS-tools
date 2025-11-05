@@ -177,13 +177,13 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
             if self.clients.count != 0 {
                 let myTabBarController = self.ref_master_view_controller?.navigationController?.tabBarController as! MyTabBarController
 
-                myTabBarController.getTabBar().barTintColor = .red
-                myTabBarController.getTabBar().backgroundColor = .red
+                myTabBarController.tabBar.barTintColor = .red
+                myTabBarController.tabBar.backgroundColor = .red
 
                 Timer.scheduledTimer(withTimeInterval: TimeInterval(0.5), repeats: false) {_ in
                     
-                    myTabBarController.getTabBar().barTintColor = COLORS.tabbar_bg
-                    myTabBarController.getTabBar().backgroundColor = COLORS.tabbar_bg
+                    myTabBarController.tabBar.barTintColor = COLORS.tabbar_bg
+                    myTabBarController.tabBar.backgroundColor = COLORS.tabbar_bg
                 }
             }
         }

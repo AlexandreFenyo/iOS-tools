@@ -9,7 +9,7 @@ import SwiftUI
 import WebKit
 import iOSToolsMacros
 
-let debug_snmp = true
+let debug_snmp = false
 let disable_request_reviews = true
 
 // https://developer.apple.com/documentation/swiftui/outlinegroup

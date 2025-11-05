@@ -34,6 +34,8 @@
         <string>APPL</string>
         <key>LSRequiresIPhoneOS</key>
         <true/>
+        <key>UIDesignRequiresCompatibility</key>
+        <true/>
         <key>NSBonjourServices</key>
         <array>
             <string>_speedtestchargen._tcp</string>
