@@ -121,11 +121,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         InitTCPPort2Service()
         
+        // debug : voir note debug iOS 26
         guard
             let tabBarController = window?.rootViewController as? MyTabBarController,
             let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
             let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
-            let masterViewController = leftNavController.topViewController as? MasterViewController,
+//            let masterViewController = leftNavController.topViewController as? MasterViewController,
+            let navigationController = leftNavController.children.first as? UINavigationController,
+            let masterViewController = leftNavController.children.first!.children.first as? MasterViewController,
             let rightNavController = splitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
             let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
