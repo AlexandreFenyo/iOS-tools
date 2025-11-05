@@ -8,7 +8,7 @@
 
 import Foundation
 import iOSToolsMacros
-import SwiftUICore
+import SwiftUI
 
 enum SNMPManagerError: Error {
     case notAvailable
