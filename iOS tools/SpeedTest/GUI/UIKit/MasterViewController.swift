@@ -517,11 +517,15 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     override func viewWillAppear(_ animated: Bool) {
         // Astuce personnelle :
-        // Sur iPhone, quand on démarre l'app et qu'on clique sur un noeud pour aller jusqu'au graphique des RTT, puis qu'on revient en arrière d'un cran pour voir la liste des IPs, le fond de la toolbar n'est plus transparent. C'est dû à un bug d'iOS qui recrée une subview de la toolmar de type _UIBarBackground. Pour détecter ce cas, il suffit de décompter le nombre de subviews. Si on est dans ce cas, on cache alors cette subview, car l'enlever n'a pas d'effet visuel.
-        // si on liste les subviews de toolbar, on s'aperçoit
-        let toolbar = self.navigationController?.toolbar
-        if toolbar?.subviews.count == 3 {
-            toolbar?.subviews.first?.isHidden = true
+        // Sur iPhone, quand on démarre l'app et qu'on clique sur un noeud pour aller jusqu'au graphique des RTT, puis qu'on revient en arrière d'un cran pour voir la liste des IPs, le fond de la toolbar n'est plus transparent. C'est dû à un bug d'iOS qui recrée une subview de la toolbar de type _UIBarBackground.
+        // Avec UIToolbarAppearance (iOS 26+), ce bug ne devrait plus se produire. Le check ci-dessous
+        // recherche la subview par son nom de classe plutôt que par son index (plus robuste).
+        if let toolbar = self.navigationController?.toolbar {
+            for subview in toolbar.subviews {
+                if NSStringFromClass(type(of: subview)).contains("BarBackground") {
+                    subview.isHidden = true
+                }
+            }
         }
         
         super.viewWillAppear(animated)
@@ -563,8 +567,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Couleur des boutons en bas (reload par ex.)
         navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
 
-        // TESTING c'était commenté
-view.backgroundColor = .red
+        // view.backgroundColor = .red  // TESTING
         // Uncomment the following line to preserve selection between presentations
 // TESTING
         self.clearsSelectionOnViewWillAppear = false
@@ -1206,6 +1209,7 @@ view.backgroundColor = .red
 
     override func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
     }
+
 
     // MARK: - Table view headers
 

@@ -26,6 +26,29 @@ class LeftNavController : UINavigationController {
         masterIPViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        let h = toolbar.bounds.height
+        guard h > 0 else { return }
+
+        // Fond uni de la toolbar (remplace le rendu CALayer de _UIBarBackground qui,
+        // en iOS 26, s'affiche en 75 pt alors que le contenu est à 50 pt)
+        toolbar.backgroundColor = COLORS.toolbar_bg
+        toolbar.layer.cornerRadius = h / 2
+        toolbar.clipsToBounds = true
+
+        // Cacher _UIBarBackground : en iOS 26 il utilise un rendu CALayer (glass effect)
+        // indépendant de backgroundColor, qui recouvre toolbar.backgroundColor et dont
+        // le centre visuel est décalé (75 pt vs 50 pt). iOS peut le recréer après chaque
+        // passe de layout, d'où ce masquage systématique ici.
+        for sv in toolbar.subviews {
+            if NSStringFromClass(type(of: sv)).contains("BarBackground") {
+                sv.isHidden = true
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,47 +56,32 @@ class LeftNavController : UINavigationController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapScrollView(_:)))
         navigationBar.addGestureRecognizer(tapGestureRecognizer)
         
-        // Manage the toolbar background
-        let h = toolbar.bounds.height
-        let margin : CGFloat = 5
-        let d = h - 2 * margin
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: h, height: h))
-        let image1 = renderer.image { (context) in
-            // n'a pas d'effet apparemmment
-//            UIColor.darkGray.setStroke()
-
-            COLORS.toolbar_bg.setFill()
-            context.cgContext.fillEllipse(in: CGRect(x: margin, y: margin, width: d, height: d))
-        }
-        let image = image1.resizableImage(withCapInsets: UIEdgeInsets(top: h / 2, left: h / 2, bottom: h / 2, right: h / 2))
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleToFill
-        toolbar.addSubview(imageView)
-        toolbar.sendSubviewToBack(imageView)
-
-        // Manage constraints for auto resizing
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        toolbar.addConstraints(
-            [
-                NSLayoutConstraint(item: toolbar!, attribute: .leading, relatedBy: .equal, toItem: imageView, attribute: .leading, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: toolbar!, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .top, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: toolbar!, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailing, multiplier: 1.0, constant: 0),
-                NSLayoutConstraint(item: toolbar!, attribute: .bottom, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant: 0)
-            ])
-        
-        // Make the toolbar background transparent
-        toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        // Remove the top border of the toolbar
-        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        // Rendre le fond système de la toolbar transparent via UIToolbarAppearance.
+        // On ne passe PAS par backgroundImage ici : cette propriété est rendue dans
+        // _UIBarBackground dont le frame dépasse de 25pt les bounds de la toolbar en iOS 26
+        // (pour couvrir la safe area), ce qui décale le fond par rapport aux icônes.
+        // Le fond personnalisé est créé dans viewDidLayoutSubviews avec les bounds réels.
+        let toolbarAppearance = UIToolbarAppearance()
+        toolbarAppearance.configureWithTransparentBackground()
+        toolbar.standardAppearance = toolbarAppearance
+        toolbar.compactAppearance = toolbarAppearance
+        toolbar.scrollEdgeAppearance = toolbarAppearance
+        toolbar.compactScrollEdgeAppearance = toolbarAppearance
         
         // Manage the navigation bar behaviour
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
+        // En iOS 26 (Liquid Glass), scrollEdgeAppearance doit être un objet distinct avec
+        // configureWithOpaqueBackground() pour éviter que le fond soit transparent quand la
+        // liste est en position haute (scroll edge).
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-
         appearance.backgroundColor = COLORS.leftpannel_topbar_bg
-
         navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+
+        let scrollEdgeAppearance = UINavigationBarAppearance()
+        scrollEdgeAppearance.configureWithOpaqueBackground()
+        scrollEdgeAppearance.backgroundColor = COLORS.leftpannel_topbar_bg
+        navigationBar.scrollEdgeAppearance = scrollEdgeAppearance
+        navigationBar.compactScrollEdgeAppearance = scrollEdgeAppearance
     }
 }
