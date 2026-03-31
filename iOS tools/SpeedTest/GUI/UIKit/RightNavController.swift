@@ -51,5 +51,9 @@ class RightNavController : UINavigationController {
         appearance.backgroundColor = COLORS.rightpannel_topbar_bg
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+
+        // On iOS 26, the secondary column covers the full screen behind the primary column.
+        // Its default systemBackgroundColor (white) shows through the margins around the primary column.
+        view.backgroundColor = COLORS.right_pannel_bg
     }
 }

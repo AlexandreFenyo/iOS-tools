@@ -335,7 +335,7 @@ public enum COLORS {
     
     // Left pannel
     // Fond de la top bar du left pannel
-    static let leftpannel_topbar_bg = global_background
+    static let leftpannel_topbar_bg = UIC_RGB(187, 167, 62)
     // Barre du haut du left pannel
     static let leftpannel_topbar_buttons = standard_background
     // Icones de la tool bar

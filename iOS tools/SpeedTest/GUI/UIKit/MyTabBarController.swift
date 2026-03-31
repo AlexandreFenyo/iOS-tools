@@ -12,16 +12,22 @@ class MyTabBarController: UITabBarController {
     // Active for iPads running iOS 18+ where the traditional tab bar has been removed by Apple
     lazy var alternateTabBarActive: Bool = {
     #if compiler(>=6.0) // Compiler flag for Xcode >= 16
-        if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+        if #available(iOS 26.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+            // iOS 26+ has a redesigned tab bar at the top; hide the legacy bottom tab bar
+            self.tabBar.isHidden = true
+            self.tabBar.alpha = 0
+            self.tabBar.frame = .zero
+            return false
+        } else if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
             self.isTabBarHidden = true
             return true
         }
     #endif
         return false
     }()
-    
+
     var tabBarHeightConstraint: NSLayoutConstraint?
-    
+
     lazy var alternateTabBar: UITabBar = {
         UITabBar()
     }()
@@ -29,16 +35,16 @@ class MyTabBarController: UITabBarController {
     func getTabBar() -> UITabBar {
         return alternateTabBarActive ? alternateTabBar : tabBar
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         if self.alternateTabBarActive {
             self.tabBar.isHidden = true
-            
+
             self.alternateTabBar.items = self.tabBar.items
             self.alternateTabBar.selectedItem = self.tabBar.selectedItem
-            
+
             if UIDevice.current.userInterfaceIdiom == .pad {
                 // Add Custom Tabbar
                 let tabbar = self.alternateTabBar
@@ -59,21 +65,21 @@ class MyTabBarController: UITabBarController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
+
         if self.alternateTabBarActive {
             self.alternateTabBar.items = self.tabBar.items
             self.alternateTabBar.selectedItem = self.tabBar.selectedItem
         }
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
+
         if self.alternateTabBarActive {
             // Adjust height constraint
             let height = self.alternateTabBar.intrinsicContentSize.height
             self.tabBarHeightConstraint?.constant = height
-            
+
             // Set insets for child view controllers
             let bottomInset = self.alternateTabBar.frame.size.height-self.view.safeAreaInsets.bottom
             self.viewControllers?.forEach { $0.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0) }

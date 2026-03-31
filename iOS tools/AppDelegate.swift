@@ -118,42 +118,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         guard
             let tabBarController = window?.rootViewController as? MyTabBarController,
-            let splitViewController = tabBarController.viewControllers?.first as? SplitViewController,
-            let leftNavController = splitViewController.viewControllers.first as? LeftNavController,
+            let storyboardSplitViewController = tabBarController.viewControllers?.first as? SplitViewController,
+            let leftNavController = storyboardSplitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
-            let rightNavController = splitViewController.viewControllers.last as? RightNavController,
+            let rightNavController = storyboardSplitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
             let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController
-            // May be useful for debugging:
-            //,
-            // let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
-            // let devices = masterViewController.devices[.localGateway]
         else { fatalError(#saveTrace("application")) }
 
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
         else { fatalError(#saveTrace("application / intermanViewController")) }
 
-        // May be useful for debugging:
-        // Set the first device displayed in the detail view controller:
-        // detailViewController.device = devices.first
-        
-        // May be useful for debugging:
-        // Suppress the third view controller (Traces) to get a MVP (Minimum Viable Product)
-        // tabBarController.viewControllers?.remove(at: 2)
+        // On iOS 26+ iPad, classic-style UISplitViewController (from storyboard) no longer adds child views
+        // to the visual hierarchy. Replace it with a column-style split view controller.
+        // On iPhone, the classic split view controller works fine with collapse.
+        let splitViewController: UISplitViewController
+        if #available(iOS 26.0, *) {
+            let columnSplit = UISplitViewController(style: .doubleColumn)
+            columnSplit.preferredDisplayMode = .oneBesideSecondary
+            columnSplit.preferredPrimaryColumnWidthFraction = 0.3
+            columnSplit.setViewController(leftNavController, for: .primary)
+            columnSplit.setViewController(rightNavController, for: .secondary)
+            // Preserve the tab bar item from the storyboard
+            columnSplit.tabBarItem = storyboardSplitViewController.tabBarItem
+            // Set background color to match the right panel, avoiding white gaps
+            columnSplit.view.backgroundColor = COLORS.right_pannel_bg
+            // Replace in the tab bar controller
+            var vcs = tabBarController.viewControllers!
+            vcs[0] = columnSplit
+            tabBarController.viewControllers = vcs
+            splitViewController = columnSplit
+            // Also color the tab bar controller's view and window background
+            tabBarController.view.backgroundColor = COLORS.right_pannel_bg
+            window?.backgroundColor = COLORS.right_pannel_bg
+        } else {
+            splitViewController = storyboardSplitViewController
+        }
 
         // May be useful for debugging:
         // Select the Network tab as the default one, to debug faster
         // tabBarController.selectedIndex = 1
-        
+
         self.masterViewController = masterViewController
-        
+
         self.masterViewController!.detail_view_controller = detailViewController
         self.masterViewController!.detail_navigation_controller = rightNavController
         self.masterViewController!.split_view_controller = splitViewController
         self.masterViewController!.traces_view_controller = tracesViewController
         self.masterViewController!.interman_view_controller = intermanViewController
 
-        detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        // On iOS 26+ with column-style split view, the display mode toggle is built-in;
+        // the legacy displayModeButtonItem renders as an empty button with a yellow background.
+        if #available(iOS 26.0, *) {
+            // Do not add the legacy button
+        } else {
+            detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        }
         detailViewController.master_view_controller = masterViewController
         intermanViewController.master_view_controller = masterViewController
         intermanViewController.hostingViewController.rootView.master_view_controller = masterViewController
@@ -220,9 +240,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          browser.start(queue: .main)
          */
         
+        // Launch the step-by-step process from the root view controller for iOS 26+ compatibility
+        DispatchQueue.main.async {
+            let step_by_step_view_controller = StepByStepViewController()
+            step_by_step_view_controller.master_view_controller = masterViewController
+            step_by_step_view_controller.modalPresentationStyle = .fullScreen
+            step_by_step_view_controller.isModalInPresentation = true
+            tabBarController.present(step_by_step_view_controller, animated: true)
+        }
+
         return true
     }
-    
+
     // Tester ce qui se passe si le bg vient d'un appel tél reçu
     
     func applicationWillResignActive(_ application: UIApplication) {

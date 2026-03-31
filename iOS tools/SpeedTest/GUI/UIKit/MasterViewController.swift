@@ -114,7 +114,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     var detail_view_controller: DetailViewController?
     var detail_navigation_controller: UINavigationController?
-    var split_view_controller: SplitViewController?
+    var split_view_controller: UISplitViewController?
     var traces_view_controller: TracesViewController?
     var master_ip_view_controller: MasterIPViewController?
     var interman_view_controller: IntermanViewController?
@@ -123,6 +123,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     // public weak var browser_discard : ServiceBrowser?
     var browser_app: ServiceBrowser?
     var browsers = [ ServiceBrowser ]()
+    private var hasLaunchedStepByStep = false
     
     private var browser_network: NetworkBrowser?
     private var browser_tcp: TCPPortBrowser?
@@ -527,7 +528,6 @@ class MasterViewController: UITableViewController, DeviceManager {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        print("MasterViewController.viewDidLoad() called")
 
         Traces.getMessages { (messages: [XTrace]?) in
             guard let messages else { return }
@@ -544,10 +544,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Couleur des boutons en bas (reload par ex.)
         navigationController?.toolbar.tintColor = COLORS.leftpannel_bottombar_buttons
 
-        // TESTING c'était commenté
-view.backgroundColor = .red
         // Uncomment the following line to preserve selection between presentations
-// TESTING
         self.clearsSelectionOnViewWillAppear = false
 
         // Display an Edit button in the navigation bar for this view controller.
@@ -573,12 +570,6 @@ view.backgroundColor = .red
          self.browser_app?.search()
         for browser in self.browsers { browser.search() }
 
-        // Launch the step-by-step process
-        let step_by_step_view_controller = StepByStepViewController()
-        step_by_step_view_controller.master_view_controller = self
-        step_by_step_view_controller.modalPresentationStyle = .fullScreen
-        step_by_step_view_controller.isModalInPresentation = true
-        present(step_by_step_view_controller, animated: true)
     }
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -617,8 +608,9 @@ view.backgroundColor = .red
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         reloadData()
-        
+
         updateLocalNodeAndGateways()
 
         navigationController!.tabBarController?.tabBar.barTintColor = COLORS.tabbar_bg

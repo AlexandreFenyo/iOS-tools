@@ -17,6 +17,9 @@ class LeftNavController : UINavigationController {
     let r : CGFloat = 20
 //    var rv : RoundedCornerView? // SUPPRIME POUR LE MVP
 
+    // Custom toolbar view for iOS 26+ where the built-in toolbar is broken in column-style UISplitViewController
+    private var customToolbarView: UIView?
+
     @objc
     func tapScrollView(_ sender: UITapGestureRecognizer) {
         let topRow = IndexPath(row: 0, section: 0)
@@ -25,23 +28,38 @@ class LeftNavController : UINavigationController {
         let masterIPViewController = topViewController as? MasterIPViewController
         masterIPViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Scroll to top when touching the top of screen
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapScrollView(_:)))
         navigationBar.addGestureRecognizer(tapGestureRecognizer)
-        
+
+        if #available(iOS 26.0, *) {
+            setupiOS26Toolbar()
+        } else {
+            setupLegacyToolbar()
+        }
+
+        // Manage the navigation bar behaviour
+        // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+
+        appearance.backgroundColor = COLORS.leftpannel_topbar_bg
+
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+    }
+
+    private func setupLegacyToolbar() {
         // Manage the toolbar background
         let h = toolbar.bounds.height
         let margin : CGFloat = 5
         let d = h - 2 * margin
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: h, height: h))
         let image1 = renderer.image { (context) in
-            // n'a pas d'effet apparemmment
-//            UIColor.darkGray.setStroke()
-
             COLORS.toolbar_bg.setFill()
             context.cgContext.fillEllipse(in: CGRect(x: margin, y: margin, width: d, height: d))
         }
@@ -60,20 +78,95 @@ class LeftNavController : UINavigationController {
                 NSLayoutConstraint(item: toolbar!, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailing, multiplier: 1.0, constant: 0),
                 NSLayoutConstraint(item: toolbar!, attribute: .bottom, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant: 0)
             ])
-        
+
         // Make the toolbar background transparent
         toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         // Remove the top border of the toolbar
         toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        
-        // Manage the navigation bar behaviour
-        // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
+    }
 
-        appearance.backgroundColor = COLORS.leftpannel_topbar_bg
+    @available(iOS 26.0, *)
+    private func setupiOS26Toolbar() {
+        // Hide the broken built-in toolbar
+        setToolbarHidden(true, animated: false)
 
-        navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+        // Create a plain UIView with buttons instead of UIToolbar to avoid Liquid Glass styling
+        let container = UIView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.backgroundColor = COLORS.toolbar_bg
+
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
+        stackView.spacing = 4
+
+        // Find toolbar items: try topViewController first, then search through all child VCs
+        let items: [UIBarButtonItem] = topViewController?.toolbarItems
+            ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
+            ?? []
+        if !items.isEmpty {
+            for barItem in items {
+                let button = UIButton(type: .system)
+                button.setImage(barItem.image, for: .normal)
+                button.tintColor = COLORS.leftpannel_bottombar_buttons
+                button.isEnabled = barItem.isEnabled
+                if let target = barItem.target, let action = barItem.action {
+                    button.addTarget(target, action: action, for: .touchUpInside)
+                }
+                button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+                button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+                stackView.addArrangedSubview(button)
+            }
+        }
+
+        container.addSubview(stackView)
+        view.addSubview(container)
+        view.bringSubviewToFront(container)
+        NSLayoutConstraint.activate([
+            container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            container.heightAnchor.constraint(equalToConstant: 44),
+            stackView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
+            stackView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
+            stackView.topAnchor.constraint(equalTo: container.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+        ])
+        customToolbarView = container
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // Ensure custom toolbar stays on top of FloatingBarContainerView
+        if let customToolbarView {
+            view.bringSubviewToFront(customToolbarView)
+        }
+
+        // Keep custom toolbar buttons in sync with the current top view controller's toolbar items
+        if let customToolbarView, let stackView = customToolbarView.subviews.first as? UIStackView {
+            let currentItems: [UIBarButtonItem] = topViewController?.toolbarItems
+                ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
+                ?? []
+            if stackView.arrangedSubviews.count != currentItems.count, !currentItems.isEmpty {
+                // Remove old buttons
+                stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+                // Recreate buttons from current toolbar items
+                for barItem in currentItems {
+                    let button = UIButton(type: .system)
+                    button.setImage(barItem.image, for: .normal)
+                    button.tintColor = COLORS.leftpannel_bottombar_buttons
+                    button.isEnabled = barItem.isEnabled
+                    if let target = barItem.target, let action = barItem.action {
+                        button.addTarget(target, action: action, for: .touchUpInside)
+                    }
+                    button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+                    button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+                    stackView.addArrangedSubview(button)
+                }
+            }
+        }
     }
 }
