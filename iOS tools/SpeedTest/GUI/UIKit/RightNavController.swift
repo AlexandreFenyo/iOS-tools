@@ -19,6 +19,7 @@ class RightNavController : UINavigationController {
         detail_view_controller?.scrollToTop()
     }
 
+    // A partir de iOS 26, si dans Info.plist on ne positionne pas UIDesignRequiresCompatibility à YES, viewDidLoad n'est jamais appelée et on ne voit donc pas le RightNavController
     override func viewDidLoad() {
         super.viewDidLoad()
 

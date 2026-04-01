@@ -116,6 +116,8 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var measurement_value_next: Double = 0
     @Published private(set) var average_last_update = Date()
 
+    @Published private(set) var is_snmp_manager: Bool = false
+
     public func setCurrentMeasurementUnit(_ str: String) {
         text_current_measurement_unit = str
         if (str.isEmpty) {
@@ -180,6 +182,8 @@ public class DetailViewModel : ObservableObject {
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
+        is_snmp_manager = node.getTypes().contains(.snmp)
+        
         text_addresses = node.getV4Addresses().compactMap { $0.toNumericString() ?? nil } + node.getV6Addresses().compactMap { $0.toNumericString() ?? nil }
         
         let _text_names = node.getNames().map { $0 } + node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }
@@ -276,7 +280,7 @@ struct DetailSwiftUIView: View {
                     } label: {
                         Label(selected_delay, systemImage: "clock")
                             .font(first_line_font)
-                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.8)
+                            .foregroundColor(Color(COLORS.standard_background)).opacity(0.8)
                             .padding(2)
                             .background(Color(COLORS.right_pannel_bg).lighter())
                             .cornerRadius(10.0)
@@ -541,6 +545,21 @@ struct DetailSwiftUIView: View {
                         }
                         
                         VStack {
+                            if model.is_snmp_manager {
+                                Spacer()
+                                Button(action: {
+                                    self.master_view_controller.tabBarController?.selectedIndex = 3
+                                }) {
+                                    Text("browse this SNMP agent").font(.footnote)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(5)
+                                        .background(Color(COLORS.standard_background))
+                                        .foregroundColor(Color.white)
+                                        .cornerRadius(10)
+                                }
+                                Spacer()
+                            }
+                            
                             if !model.text_names.isEmpty {
                                 HStack {
                                     VStack { Divider() }

@@ -22,6 +22,9 @@ let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! B
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
+
+    let current_selected_target_simple = SNMPTargetSimple()
+
     var window: UIWindow?
 
     var persistentContainer: NSPersistentContainer?
@@ -37,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var masterViewController: MasterViewController?
     private var tracesViewController: TracesViewController?
+    private var snmpViewController: SnmpViewController?
     
     // Check that the service is published with: dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
     private func startChargenService() {
@@ -77,7 +81,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Called once at app start
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
+        SNMPManager.manager.initLibSNMP()
+        
         // Set a minimal window size on Mac Catalyst
         if ProcessInfo.processInfo.isMacCatalystApp {
             if let windowScene = window?.windowScene {
@@ -123,7 +128,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = storyboardSplitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController
+            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
+            let snmpViewController = tabBarController.viewControllers?[3] as? SnmpViewController
         else { fatalError(#saveTrace("application")) }
 
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
@@ -132,11 +138,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set up cross-references between controllers BEFORE creating the column split,
         // because setViewController() may trigger view loading which requires master_view_controller.
         self.masterViewController = masterViewController
+
+        SNMPManager.manager.setDeviceManager(masterViewController)
+
         self.masterViewController!.detail_view_controller = detailViewController
         self.masterViewController!.detail_navigation_controller = rightNavController
         self.masterViewController!.traces_view_controller = tracesViewController
         self.masterViewController!.interman_view_controller = intermanViewController
         detailViewController.master_view_controller = masterViewController
+
+        snmpViewController.master_view_controller = masterViewController
 
         // On iOS 26+ iPad, classic-style UISplitViewController (from storyboard) no longer adds child views
         // to the visual hierarchy. Replace it with a column-style split view controller.
@@ -175,6 +186,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         intermanViewController.master_view_controller = masterViewController
         intermanViewController.hostingViewController.rootView.master_view_controller = masterViewController
+
+        // May be useful for debugging:
+        // Select the SNMP tab as the default one, to debug faster
+        if debug_snmp { tabBarController.selectedIndex = 3 }
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }

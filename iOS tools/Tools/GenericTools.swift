@@ -27,6 +27,31 @@ import SpriteKit
 // Useful declaration to get definitions of Swift (right-click / "Jump to definition")
 import Swift
 
+class FileBrowsing {
+    static let shared = FileBrowsing()
+    
+    let file_manager = FileManager.default
+    let documents_directory: URL?
+    
+    init() {
+        documents_directory = file_manager.urls(for: .documentDirectory, in: .userDomainMask).first
+     //   file_manager.urls(for: ., in: .userDomainMask).first
+    }
+    
+    func listDirectory(_ path: String) throws -> [String] {
+        var filename_list = [String]()
+        if let documents_directory {
+            let path_directory = documents_directory.appendingPathComponent(path)
+            let fileURLs = try file_manager.contentsOfDirectory(at: path_directory, includingPropertiesForKeys: nil)
+            for fileURL in fileURLs {
+                print("Fichier trouvé : \(fileURL.absoluteString)")
+                filename_list.append(fileURL.absoluteString)
+            }
+        }
+        return filename_list
+    }
+}
+
 class MyMemoryTracker {
     public var description: String
     public init(_ description: String) {
@@ -102,6 +127,33 @@ final class GenericTools : AutoTrace {
         return version
     }()
     
+    /*
+     Invoquer une fonction C avec une chaîne de caractères
+     Exemple d'utilisation :
+     if let pointer = stringToUnsafeMutablePointer("Hello, World!") {
+         // Utiliser le pointeur
+         print(String(cString: pointer)) // Affiche "Hello, World!"
+         // Libérer la mémoire allouée
+         pointer.deallocate()
+     }*/
+    static func stringToUnsafeMutablePointer(_ string: String) -> UnsafeMutablePointer<CChar>? {
+        // Convertir la String en C String (CString)
+        let cString = string.cString(using: .utf8)
+        
+        // Vérifier si la conversion a réussi
+        guard let cStringArray = cString else {
+            return nil
+        }
+        
+        // Allouer de la mémoire pour le UnsafeMutablePointer
+        let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: cStringArray.count)
+        
+        // Copier les données dans le pointeur
+        pointer.initialize(from: cStringArray, count: cStringArray.count)
+        
+        return pointer
+    }
+
     static func convertDoubleToInt(_ doubleValue: Double) -> Int? {
         if doubleValue.isFinite {
             return Int(doubleValue)
@@ -219,6 +271,18 @@ final class GenericTools : AutoTrace {
 */
     }
 
+    // Copier une une classe qui se conforme à Codable
+    static func copyCodableClass<T: Codable>(_ object: T) -> T? {
+        do {
+            let data = try JSONEncoder().encode(object)
+            let copy = try JSONDecoder().decode(T.self, from: data)
+            return copy
+        } catch {
+            print("Copy error: \(error)")
+            return nil
+        }
+    }
+    
     // Espace insécable
     public static func insec() -> String {
         let arr: [UInt8] = [ 0xC2, 0xA0 ]

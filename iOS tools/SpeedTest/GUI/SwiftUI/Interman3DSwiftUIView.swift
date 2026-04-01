@@ -1126,7 +1126,9 @@ struct Interman3DSwiftUIView: View {
             .onAppear() {
                 Task { @MainActor in
                     try await Task.sleep(nanoseconds: 5_000_000_000)
-                    if let windowScene = UIApplication.shared.windows.first?.windowScene { SKStoreReviewController.requestReview(in: windowScene) }
+                    if let windowScene = UIApplication.shared.windows.first?.windowScene {
+                        if !disable_request_reviews { SKStoreReviewController.requestReview(in: windowScene) }
+                    }
                 }
             }
     }

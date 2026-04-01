@@ -689,7 +689,7 @@ class B3DHost: B3D {
             return
         }
 
-        if host.getMcastDnsNames().contains(FQDN("flood", "eowyn.eu.org")) {
+        if host.getDnsNames().contains(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org"))) {
             updateModel(ComponentTemplates.ovh)
             return
         }
