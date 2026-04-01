@@ -19,6 +19,9 @@ class LeftNavController : UINavigationController {
 
     // Custom toolbar view for iOS 26+ where the built-in toolbar is broken in column-style UISplitViewController
     private var customToolbarView: UIView?
+    // Mapping from original UIBarButtonItems to custom UIButtons for property sync
+    private var barItemToButton: [(UIBarButtonItem, UIButton)] = []
+    private var syncTimer: Timer?
 
     @objc
     func tapScrollView(_ sender: UITapGestureRecognizer) {
@@ -106,19 +109,24 @@ class LeftNavController : UINavigationController {
         let items: [UIBarButtonItem] = topViewController?.toolbarItems
             ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
             ?? []
-        if !items.isEmpty {
-            for barItem in items {
-                let button = UIButton(type: .system)
-                button.setImage(barItem.image, for: .normal)
-                button.tintColor = COLORS.leftpannel_bottombar_buttons
-                button.isEnabled = barItem.isEnabled
-                if let target = barItem.target, let action = barItem.action {
-                    button.addTarget(target, action: action, for: .touchUpInside)
-                }
-                button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-                button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-                stackView.addArrangedSubview(button)
+        barItemToButton.removeAll()
+        for barItem in items {
+            let button = UIButton(type: .system)
+            button.setImage(barItem.image, for: .normal)
+            button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
+            button.isEnabled = barItem.isEnabled
+            if let target = barItem.target, let action = barItem.action {
+                button.addTarget(target, action: action, for: .touchUpInside)
             }
+            button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+            stackView.addArrangedSubview(button)
+            barItemToButton.append((barItem, button))
+        }
+
+        // Start a timer to sync dynamic properties (enabled, tintColor) from bar items to buttons
+        syncTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+            self?.syncBarItemProperties()
         }
 
         container.addSubview(stackView)
@@ -127,7 +135,7 @@ class LeftNavController : UINavigationController {
         NSLayoutConstraint.activate([
             container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            container.bottomAnchor.constraint(equalTo: UIDevice.current.userInterfaceIdiom == .pad ? view.bottomAnchor : view.safeAreaLayoutGuide.bottomAnchor),
             container.heightAnchor.constraint(equalToConstant: 44),
             stackView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
             stackView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
@@ -137,27 +145,40 @@ class LeftNavController : UINavigationController {
         customToolbarView = container
     }
 
+    private func syncBarItemProperties() {
+        for (barItem, button) in barItemToButton {
+            button.isEnabled = barItem.isEnabled
+            button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
+            if button.image(for: .normal) != barItem.image {
+                button.setImage(barItem.image, for: .normal)
+            }
+        }
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         // Ensure custom toolbar stays on top of FloatingBarContainerView
         if let customToolbarView {
             view.bringSubviewToFront(customToolbarView)
+
+            // Hide custom toolbar when the detail view is showing (compact/iPhone mode)
+            let topHasItems = topViewController?.toolbarItems?.isEmpty == false
+            customToolbarView.isHidden = !topHasItems
         }
 
-        // Keep custom toolbar buttons in sync with the current top view controller's toolbar items
-        if let customToolbarView, let stackView = customToolbarView.subviews.first as? UIStackView {
+        // Rebuild custom toolbar buttons if the toolbar items count changed
+        if let customToolbarView, !customToolbarView.isHidden, let stackView = customToolbarView.subviews.first as? UIStackView {
             let currentItems: [UIBarButtonItem] = topViewController?.toolbarItems
                 ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
                 ?? []
             if stackView.arrangedSubviews.count != currentItems.count, !currentItems.isEmpty {
-                // Remove old buttons
                 stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-                // Recreate buttons from current toolbar items
+                barItemToButton.removeAll()
                 for barItem in currentItems {
                     let button = UIButton(type: .system)
                     button.setImage(barItem.image, for: .normal)
-                    button.tintColor = COLORS.leftpannel_bottombar_buttons
+                    button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
                     button.isEnabled = barItem.isEnabled
                     if let target = barItem.target, let action = barItem.action {
                         button.addTarget(target, action: action, for: .touchUpInside)
@@ -165,6 +186,7 @@ class LeftNavController : UINavigationController {
                     button.widthAnchor.constraint(equalToConstant: 36).isActive = true
                     button.heightAnchor.constraint(equalToConstant: 36).isActive = true
                     stackView.addArrangedSubview(button)
+                    barItemToButton.append((barItem, button))
                 }
             }
         }

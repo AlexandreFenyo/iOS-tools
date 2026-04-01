@@ -129,6 +129,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
         else { fatalError(#saveTrace("application / intermanViewController")) }
 
+        // Set up cross-references between controllers BEFORE creating the column split,
+        // because setViewController() may trigger view loading which requires master_view_controller.
+        self.masterViewController = masterViewController
+        self.masterViewController!.detail_view_controller = detailViewController
+        self.masterViewController!.detail_navigation_controller = rightNavController
+        self.masterViewController!.traces_view_controller = tracesViewController
+        self.masterViewController!.interman_view_controller = intermanViewController
+        detailViewController.master_view_controller = masterViewController
+
         // On iOS 26+ iPad, classic-style UISplitViewController (from storyboard) no longer adds child views
         // to the visual hierarchy. Replace it with a column-style split view controller.
         // On iPhone, the classic split view controller works fine with collapse.
@@ -155,17 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             splitViewController = storyboardSplitViewController
         }
 
-        // May be useful for debugging:
-        // Select the Network tab as the default one, to debug faster
-        // tabBarController.selectedIndex = 1
-
-        self.masterViewController = masterViewController
-
-        self.masterViewController!.detail_view_controller = detailViewController
-        self.masterViewController!.detail_navigation_controller = rightNavController
         self.masterViewController!.split_view_controller = splitViewController
-        self.masterViewController!.traces_view_controller = tracesViewController
-        self.masterViewController!.interman_view_controller = intermanViewController
 
         // On iOS 26+ with column-style split view, the display mode toggle is built-in;
         // the legacy displayModeButtonItem renders as an empty button with a yellow background.
@@ -174,7 +173,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         }
-        detailViewController.master_view_controller = masterViewController
         intermanViewController.master_view_controller = masterViewController
         intermanViewController.hostingViewController.rootView.master_view_controller = masterViewController
 
