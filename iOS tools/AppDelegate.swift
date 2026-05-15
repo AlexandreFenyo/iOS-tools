@@ -20,7 +20,7 @@ let isAppResilient = Bundle.main.object(forInfoDictionaryKey: "Resilient") as! B
 // Even if UIResponder and UIApplicationDelete are decorated with @MainActor, explicitely declaring @MainActor here let the Swift compiler check for correctness of accesses and calls to the properties and methods of this class.
 @MainActor
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
     // The app delegate must implement the window property if it wants to use a main storyboard file
     var window: UIWindow?
 
@@ -138,14 +138,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.masterViewController!.interman_view_controller = intermanViewController
         detailViewController.master_view_controller = masterViewController
 
-        // On iOS 26+ iPad, classic-style UISplitViewController (from storyboard) no longer adds child views
-        // to the visual hierarchy. Replace it with a column-style split view controller.
-        // On iPhone, the classic split view controller works fine with collapse.
+        // On iOS 26+, classic-style UISplitViewController (from storyboard) no longer adds child views
+        // to the visual hierarchy. Replace it with a column-style split view controller on all devices.
         let splitViewController: UISplitViewController
         if #available(iOS 26.0, *) {
             let columnSplit = UISplitViewController(style: .doubleColumn)
             columnSplit.preferredDisplayMode = .oneBesideSecondary
             columnSplit.preferredPrimaryColumnWidthFraction = 0.3
+            // On iPhone (compact), show the primary column (target list) first
+            columnSplit.delegate = self
             columnSplit.setViewController(leftNavController, for: .primary)
             columnSplit.setViewController(rightNavController, for: .secondary)
             // Preserve the tab bar item from the storyboard
@@ -169,7 +170,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // On iOS 26+ with column-style split view, the display mode toggle is built-in;
         // the legacy displayModeButtonItem renders as an empty button with a yellow background.
         if #available(iOS 26.0, *) {
-            // Do not add the legacy button
+            // Do not add the legacy button — column-style split view has a built-in toggle
         } else {
             detailViewController.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         }
@@ -316,6 +317,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.persistentContainer = container
             }
         }
+    }
+
+    // MARK: - UISplitViewControllerDelegate
+
+    // On iPhone (compact), show the primary column (target list) when collapsing
+    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+        return .primary
     }
 }
 
