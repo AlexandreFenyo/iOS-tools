@@ -149,6 +149,13 @@ class MasterViewController: UITableViewController, DeviceManager {
         return DBMaster.shared.getIndexPath(node)
     }
     
+    func removeNode(_ node: Node) {
+        tableView.beginUpdates()
+        let index_paths_removed = DBMaster.shared.removeNode(node)
+        tableView.deleteRows(at: index_paths_removed, with: .automatic)
+        tableView.endUpdates()
+    }
+    
     // Get the node corresponding to an indexPath in the table
     private func getNode(indexPath index_path: IndexPath) -> Node {
         guard let type = SectionType(rawValue: index_path.section), let section = DBMaster.shared.sections[type] else {
@@ -174,7 +181,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // Update nodes and find new nodes
     private func startBrowsing() async {
-        // Supprimer tous les noeuds
+        // Remove every nodes
         await resetToDefaultHosts()
 
         // Ce délai pour laisser le temps à l'IHM de se rafraichir de manière fluide, sinon l'animation n'est pas fluide
@@ -208,6 +215,17 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         browser_network = nb
         await nb.browseAsync() {
+            // Wait for hosts discovered during the browse process to have been tested for an SNMP agent, or for the stop button to be pressed (since pressing the stop button will flush the SNMP discovered hosts list)
+            var is_ip_to_check_empty: Bool
+            repeat {
+                is_ip_to_check_empty = await MainActor.run {
+                    SNMPManager.manager.isIPToCheckEmpty()
+                }
+                if is_ip_to_check_empty == false {
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                }
+            } while is_ip_to_check_empty == false
+            
             await self.stopBrowsingAsync(.OTHER_ACTION)
         }
     }
@@ -351,7 +369,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     @IBAction func add_pressed(_ sender: Any) {
-        let add_view_controller = AddViewController()
+        let add_view_controller = AddViewController(isEdit: false)
         add_view_controller.master_view_controller = self
         present(add_view_controller, animated: true)
     }
@@ -395,6 +413,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         await stopBrowsing(.OTHER_ACTION)
         // Scroll to top - will call scrollViewDidEndScrollingAnimation when finished
         tableView.scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+
+        SNMPManager.manager.flushIpToCheck()
     }
     
     @IBAction func stop_pressed(_ sender: Any) {
@@ -443,7 +463,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         // #fatalError("division by zero")
 
         popUp(NSLocalizedString("Target List", comment: "Target List"), NSLocalizedString("Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet.", comment: "Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet."), "OK")
-
         
 //        let node = Node()
 //        node.v4_addresses.insert(IPv4Address("1.2.3.4")!)
@@ -600,7 +619,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
     
     // Reload data without deselecting the selected cell
-    private func reloadData() {
+    func reloadData() {
         let foo = tableView.indexPathForSelectedRow
         tableView.reloadData()
         tableView.selectRow(at: foo, animated: false, scrollPosition: UITableView.ScrollPosition.none)
@@ -631,8 +650,6 @@ class MasterViewController: UITableViewController, DeviceManager {
                 // TESTS à enlever
 //                self.navigationController?.toolbar.backgroundColor = .red
 
-                
-                
                 self.stop_button_toggle.toggle()
                 if self.stop_button.isEnabled {
                     self.stop_button.tintColor = self.stop_button_toggle ? COLORS.leftpannel_bottombar_buttons : COLORS.leftpannel_bottombar_buttons.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()
@@ -649,7 +666,6 @@ class MasterViewController: UITableViewController, DeviceManager {
         detail_view_controller?.setButtonMasterHiddenState(true)
     }
 
-    // Disable other actions while editing
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         refreshControl!.endRefreshing()
@@ -671,9 +687,19 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Called by MasterIPViewController when an address is selected
-    func addressSelected(address: IPAddress) {
+    func addressSelected(address: IPAddress, node: Node) {
         detail_view_controller?.scrollToTop()
-  
+
+        let snmp_target_simple: SNMPTargetSimple
+        if let snmp_target = node.getSNMPTarget() {
+            snmp_target_simple = SNMPTargetSimple(snmp_target)
+        } else {
+            snmp_target_simple = SNMPTargetSimple()
+        }
+        let current_selected_target_simple = (UIApplication.shared.delegate as! AppDelegate).current_selected_target_simple
+        snmp_target_simple.host = address.toNumericString() ?? ""
+        current_selected_target_simple.setFrom(snmp_target_simple)
+        
         detail_view_controller!.addressSelected(address, !stop_button!.isEnabled)
 
         // for iPhone (no effect on iPad), make the detail view controller visible
@@ -710,10 +736,11 @@ class MasterViewController: UITableViewController, DeviceManager {
         for address in resolve_ipv4_addresses {
             // A Task may sometimes be executed on the Main thread, therefore it would block the main thread because of the system call to getnameinfo(). This occurred, this is why we use a DispatchQueue and not a Task here.
             // Task(priority: .background) {
+            let _address = address.toSendable()
+            
             DispatchQueue.global(qos: .background).async {
-                
+                let address = _address.toAddress()
                 guard let name = address.resolveHostName() else { return }
-                
                 Task { @MainActor in
                     // Reverse IPv4 résolue
                     // On ne doit pas modifier un noeud qui est déjà enregistré dans la BDD DBMaster donc on crée un nouveau noeud
@@ -733,8 +760,10 @@ class MasterViewController: UITableViewController, DeviceManager {
         for address in resolve_ipv6_addresses {
             // A Task may sometimes be executed on the Main thread, therefore it would block the main thread because of the system call to getnameinfo(). This occurred, this is why we use a DispatchQueue and not a Task here.
             // Task(priority: .background) {
+            let _address = address.toSendable()
+
             DispatchQueue.global(qos: .background).async {
-                
+                let address = _address.toAddress()
                 guard let name = address.resolveHostName() else { return }
                 Task { @MainActor in
                     // Reverse IPv6 résolue
@@ -761,7 +790,7 @@ class MasterViewController: UITableViewController, DeviceManager {
 //        let (index_paths_removed, index_paths_inserted) = DBMaster.shared.addNode(node)
         _ = DBMaster.shared.addNode(node)
         
-        // Si on faire un refresh et qu'on bascule tout de suite sur onglet Traces, puis qu'on revient un peu après, on a une erreur fatale du type :
+        // Si on fait un refresh et qu'on bascule tout de suite sur onglet Traces, puis qu'on revient un peu après, on a une erreur fatale du type :
         // Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'Invalid update: invalid number of rows in section 5. The number of rows contained in an existing section after the update (38) must be equal to the number of rows contained in that section before the update (19), plus or minus the number of rows inserted or deleted from that section (1 inserted, 0 deleted) and plus or minus the number of rows moved into or out of that section (0 moved in, 0 moved out). Table view: <UITableView: 0x10104b800; frame = (0 0; 359 834); clipsToBounds = YES; autoresize = W+H; gestureRecognizers = <NSArray: 0x283241980>; layer = <CALayer: 0x283c975a0>; contentOffset: {0, -50}; contentSize: {359, 2113.5}; adjustedContentInset: {110, 0, 115, 0}; dataSource: <iOS_tools.MasterViewController: 0x101022c00>>'
         // solution semble-t-il : on remplace le bloc suivant par un simple tableView.reloadData()
         /*
@@ -1229,8 +1258,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         // Not used since the cell style is 'custom' (style set from the storyboard):
         // cell.textLabel!.text = ...
 
-        cell.name.text = (node.getMcastDnsNames().map { $0.toString() } + node.getDnsNames().map { $0.toString() }).first ?? "no name"
+        cell.name.text = (DBMaster.isSaved(node) ? "💾 " : "") + node.getName()
         
+        // Multicast IPv4 addresses are not selected
         if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
             // 1st choice: public (not autoconfig) && unicast
             !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
@@ -1243,6 +1273,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         })).first { cell.detail1.text = best.toNumericString() }
         else { cell.detail1.text = "no IPv4 address" }
 
+        // Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.
         if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
             // 1st choice: unicast public
             address.isUnicastPublic()
@@ -1284,12 +1315,77 @@ class MasterViewController: UITableViewController, DeviceManager {
             await stopBrowsing(.OTHER_ACTION)
         }
     }
-
+    
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return !getNode(indexPath: indexPath).isLocalHost()
     }
+    
+    // Local gateway and Internet rows can not be removed
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if getNode(indexPath: indexPath).isLocalHost() {
+            return nil
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            let editAction = UIAction(title: NSLocalizedString("Edit", comment: "Edit"),
+                                      image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"),
+                                      attributes: .destructive) { _ in
+                if let node = self?.getNode(indexPath: indexPath) {
+                    let add_view_controller = AddViewController(isEdit: true, node: node)
+                    add_view_controller.master_view_controller = self
+                    self?.present(add_view_controller, animated: true)
+                }
+            }
+            
+            let deleteAction = UIAction(title: NSLocalizedString("Delete", comment: "Delete"),
+                                        image: UIImage(systemName: "trash"),
+                                        attributes: .destructive) { _ in
+                // Remove node
+                if let node = self?.getNode(indexPath: indexPath) {
+                    DBMaster.shared.unpersistNode(node)
+                    self?.removeNode(node)
+                } else {
+                    #fatalError("deleteAction: node not found")
+                }
+            }
+            
+            return UIMenu(title: "", children: [editAction, deleteAction])
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let editAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Edit", comment: "Edit")) { [weak self] (action, view, completionHandler) in
+            if let node = self?.getNode(indexPath: indexPath) {
+                let add_view_controller = AddViewController(isEdit: true, node: node)
+                add_view_controller.master_view_controller = self
+                self?.present(add_view_controller, animated: true)
+                
+            } else {
+                #fatalError("editAction: node not found")
+            }
+            completionHandler(true)
+        }
+        // Edit button color
+        editAction.backgroundColor = .blue
 
+        let deleteAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Delete")) { [weak self] (action, view, completionHandler) in
+            if let node = self?.getNode(indexPath: indexPath) {
+                DBMaster.shared.unpersistNode(node)
+                self?.removeNode(node)
+            } else {
+                #fatalError("deleteAction: node not found")
+            }
+            completionHandler(true)
+        }
+        // Delete button color
+        deleteAction.backgroundColor = .red
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return configuration
+    }
+    
+/* Before using trailingSwipeActionsConfigurationForRowAt, the following code was working to let a row being deleted with a swipe
     // Delete every rows corresponding to a node
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete { #fatalError("editingStyle invalid") }
@@ -1298,7 +1394,7 @@ class MasterViewController: UITableViewController, DeviceManager {
         var new_persistent_node_list = [String]()
         let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
         for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 2)
+            let str_fields = str.split(separator: ";", maxSplits: 3)
             let target_name = String(str_fields[0])
             if !node.getDnsNames().map({ $0.toString() }).contains(target_name) {
                 new_persistent_node_list.insert(str, at: new_persistent_node_list.endIndex)
@@ -1311,7 +1407,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         tableView.deleteRows(at: index_paths_removed, with: .automatic)
         tableView.endUpdates()
     }
-
+    */
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation

@@ -66,7 +66,7 @@ class StepByStepPhotoController: NSObject {
     public func popUp(_ title: String, _ message: String, _ ok: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: ok, style: .default) {_ in
-            SKStoreReviewController.requestReview()
+            if !disable_request_reviews { SKStoreReviewController.requestReview() }
         }
         alert.addAction(action)
         self.step_by_step_view_controller?.present(alert, animated: true)
@@ -183,7 +183,7 @@ struct StepByStepSwiftUIView: View {
                     NSLocalizedString("OPEN ADVANCED INTERFACE", comment: "OPEN ADVANCED INTERFACE"),
                     {
                         Text("")
-                        Text("You will be able to come back later to the home window simply by clicking on the following icon:")
+                        Text("You will be able to come back later to the home window simply by clicking on the following icon:").padding()
                         
                         Image(systemName: "house")
                             .scaleEffect(2)

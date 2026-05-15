@@ -79,6 +79,11 @@ class NetworkBrowser {
     }
     
     private func manageAnswer(from: IPAddress) async {
+        Task.detached { @MainActor in
+            SNMPManager.manager.addIpToCheck(from)
+            self.device_manager.addTrace("network browsing: adding \(from.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
+        }
+
         let node = Node()
         switch from.getFamily() {
         case AF_INET:
@@ -309,7 +314,6 @@ class NetworkBrowser {
                         // wait some delay before sending another broadcast packet
                         try? await Task.sleep(nanoseconds: 250_000_000)
                     }
-                    
                     
                     // Wait .5 sec between the last multicast packet sent and toggling the finished flag
                     try? await Task.sleep(nanoseconds: 500_000_000)

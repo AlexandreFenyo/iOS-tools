@@ -32,6 +32,7 @@ class LeftNavController : UINavigationController {
         masterIPViewController?.tableView.scrollToRow(at: topRow, at: .top, animated: true)
     }
 
+    // A partir de iOS 26, si dans Info.plist on ne positionne pas UIDesignRequiresCompatibility à YES, viewDidLoad n'est jamais appelée et on ne voit donc pas le LeftNavController
     override func viewDidLoad() {
         super.viewDidLoad()
 

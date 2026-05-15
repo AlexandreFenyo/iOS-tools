@@ -13,23 +13,24 @@ import iOSToolsMacros
 typealias PortMapper = [Port : (service: ServiceName?, bonjour_service: BonjourServiceName?, count: UInt)]
 
 enum SectionType: Int, CaseIterable {
-    case localhost = 0, ios, chargen_discard, gateway, internet, other
+    case localhost = 0, ios, chargen_discard, snmp, gateway, internet, other
 }
 
-enum NodeType: Int, CaseIterable {
-    case localhost = 0, ios, chargen, discard, gateway, internet
+enum NodeType: Int, CaseIterable, Codable {
+    case localhost = 0, ios, chargen, discard, snmp, gateway, internet
 }
 
 enum IPProtocol: Int, CaseIterable, CustomStringConvertible {
     var description: String {
         return rawValue == 0 ? "TCP" : "UDP"
     }
-    
     case TCP, UDP
 }
+
 typealias PortNumber = UInt16
 typealias ServiceName = String
 typealias BonjourServiceName = String
+
 struct Port : Hashable, CustomStringConvertible {
     var description: String {
         return "\(ip_protocol)/\(port_number)"
@@ -41,13 +42,25 @@ struct Port : Hashable, CustomStringConvertible {
 
 // A domain part may contain a dot
 // ex: fenyo.net, net, www.fenyo.net
-class DomainPart : Hashable, Comparable {
+class DomainPart : Hashable, Comparable, Codable {
     let name: String
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(name)
     }
 
+    enum CodingKeys: CodingKey { case name }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+    }
+    
     init(_ name: String) {
         if name.isEmpty {
             #fatalError("DomainPart")
@@ -81,11 +94,18 @@ class HostPart : DomainPart {
         }
         super.init(name)
     }
+    
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
 }
 
 // A domain name must contain a host part and may optionally contain a domain part
 // ex: {www, nil}, {www, fenyo.net}
-class DomainName : Hashable, Comparable {
+// its String representation does not contain any trailing or leading "."
+class DomainName : Hashable, Comparable, LosslessStringConvertible, Codable {
+    var description: String
+    
     func hash(into hasher: inout Hasher) {
         hasher.combine(host_part)
         hasher.combine(domain_part)
@@ -94,13 +114,36 @@ class DomainName : Hashable, Comparable {
     let host_part: HostPart
     let domain_part: DomainPart?
     
-    init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
-        self.host_part = host_part
-        if let domain_part = domain_part { self.domain_part = domain_part }
-        else { self.domain_part = nil }
+    enum CodingKeys: CodingKey { case description, host_part, domain_part }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(description, forKey: .description)
+        try container.encode(host_part, forKey: .host_part)
+        try container.encodeIfPresent(domain_part, forKey: .domain_part)
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        description = try container.decode(String.self, forKey: .description)
+        host_part = try container.decode(HostPart.self, forKey: .host_part)
+        domain_part = try container.decodeIfPresent(DomainPart.self, forKey: .domain_part)
     }
     
-    init?(_ name: String) {
+    init(_ host_part : HostPart, _ domain_part : DomainPart? = nil) {
+        self.host_part = host_part
+        if let domain_part = domain_part {
+            self.domain_part = domain_part
+            description = host_part.toString() + "." + domain_part.toString()
+        }
+        else {
+            self.domain_part = nil
+            description = host_part.toString()
+        }
+    }
+    
+    required init?(_ name: String) {
+        description = name
         if let idx = name.firstIndex(of: ".") {
             if idx == name.indices.first || idx == name.indices.last { return nil }
             host_part = HostPart(String(name.prefix(upTo: idx)))
@@ -112,11 +155,7 @@ class DomainName : Hashable, Comparable {
     }
     
     func toString() -> String {
-        if let domain_part = domain_part {
-            return host_part.toString() + "." + domain_part.toString()
-        } else {
-            return host_part.toString()
-        }
+        return description
     }
     
     func isFQDN() -> Bool {
@@ -138,12 +177,20 @@ class FQDN : DomainName {
     init(_ host_part : String, _ domain_part : String) {
         super.init(HostPart(host_part), DomainPart(domain_part))
     }
+    
+    required init?(_ name: String) {
+        super.init(name)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
 }
 
-class BonjourServiceInfo : Hashable {
+class BonjourServiceInfo: Hashable, Codable {
     let name: String
     let port: String
-    let attr: [String : String]
+    let attr: [String: String]
     
     init(_ name: String, _ port: String, _ attr: [String: String]) {
         self.name = name
@@ -151,6 +198,24 @@ class BonjourServiceInfo : Hashable {
         self.attr = attr
     }
     
+    enum CodingKeys: String, CodingKey {
+        case name, port, attr
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        port = try container.decode(String.self, forKey: .port)
+        attr = try container.decode([String: String].self, forKey: .attr)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(port, forKey: .port)
+        try container.encode(attr, forKey: .attr)
+    }
+
     static func == (lhs: BonjourServiceInfo, rhs: BonjourServiceInfo) -> Bool {
         return lhs.name == rhs.name && lhs.port == rhs.port && lhs.attr == rhs.attr
     }
@@ -165,7 +230,7 @@ class BonjourServiceInfo : Hashable {
 // A node is an object that has sets of multicast DNS names (FQDNs), or domain names, or IPv4 addresses or IPv6 addresses
 // ex of mDNS name: iPad de Alexandre.local
 // ex of dns names: localhost, localhost.localdomain, www.fenyo.net, www
-class Node : Hashable {
+class Node: Hashable, Codable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(mcast_dns_names)
         hasher.combine(dns_names)
@@ -176,43 +241,120 @@ class Node : Hashable {
         hasher.combine(udp_ports)
         hasher.combine(types)
         hasher.combine(services)
+        hasher.combine(snmp_target)
     }
     
     //    private var is_in_model = false
     
     // Design rule: updating those variables for a Node already included in the model MUST be done only by methods in this class. This is needed to be able to synchronize what is displayed in 3D with the main model.
-    fileprivate var mcast_dns_names = Set<FQDN>()
-    fileprivate var dns_names = Set<DomainName>()
-    fileprivate var names = Set<String>()
-    fileprivate var v4_addresses = Set<IPv4Address>()
-    fileprivate var v6_addresses = Set<IPv6Address>()
-    fileprivate var tcp_ports = Set<UInt16>()
-    fileprivate var udp_ports = Set<UInt16>()
-    fileprivate var types = Set<NodeType>()
-    fileprivate var services = Set<BonjourServiceInfo>()
+    private var mcast_dns_names = Set<FQDN>()
+    private var dns_names = Set<DomainName>()
+
+    // Names are not registered in DNS or received by multicast announcements, they come typically from a call to UIDevice.current.name() like "iPhone de Alexandre", or from a user entry (like when adding a new node with the GUI)
+    private var names = Set<String>()
+
+    private var v4_addresses = Set<IPv4Address>()
+    private var v6_addresses = Set<IPv6Address>()
+    private var tcp_ports = Set<UInt16>()
+    private var udp_ports = Set<UInt16>()
+    private var types = Set<NodeType>()
+    private var services = Set<BonjourServiceInfo>()
+    private var snmp_target: SNMPTarget?
     
+    init(mcast_dns_names: Set<FQDN> = Set<FQDN>(), dns_names: Set<DomainName> = Set<DomainName>(), names: Set<String> = Set<String>(), v4_addresses: Set<IPv4Address> = Set<IPv4Address>(), v6_addresses: Set<IPv6Address> = Set<IPv6Address>(), tcp_ports: Set<UInt16> = Set<UInt16>(), udp_ports: Set<UInt16> = Set<UInt16>(), types: Set<NodeType> = Set<NodeType>(), services: Set<BonjourServiceInfo> = Set<BonjourServiceInfo>(), snmp_target: SNMPTarget? = nil) {
+        self.mcast_dns_names = mcast_dns_names
+        self.dns_names = dns_names
+        self.names = names
+        self.v4_addresses = v4_addresses
+        self.v6_addresses = v6_addresses
+        self.tcp_ports = tcp_ports
+        self.udp_ports = udp_ports
+        self.types = types
+        self.services = services
+        self.snmp_target = snmp_target
+    }
+
+    enum CodingKeys: CodingKey { case mcast_dns_names, dns_names, names, v4_addresses, v6_addresses, tcp_ports, udp_ports, types, services, snmp_target }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(mcast_dns_names, forKey: .mcast_dns_names)
+        try container.encode(dns_names, forKey: .dns_names)
+        try container.encode(names, forKey: .names)
+        try container.encode(v4_addresses, forKey: .v4_addresses)
+        try container.encode(v6_addresses, forKey: .v6_addresses)
+        try container.encode(tcp_ports, forKey: .tcp_ports)
+        try container.encode(udp_ports, forKey: .udp_ports)
+        try container.encode(types, forKey: .types)
+        try container.encode(services, forKey: .services)
+        try container.encodeIfPresent(snmp_target, forKey: .snmp_target)
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        mcast_dns_names = try container.decode(Set<FQDN>.self, forKey: .mcast_dns_names)
+        dns_names = try container.decode(Set<DomainName>.self, forKey: .dns_names)
+        names = try container.decode(Set<String>.self, forKey: .names)
+        v4_addresses = try container.decode(Set<IPv4Address>.self, forKey: .v4_addresses)
+        v6_addresses = try container.decode(Set<IPv6Address>.self, forKey: .v6_addresses)
+        tcp_ports = try container.decode(Set<UInt16>.self, forKey: .tcp_ports)
+        udp_ports = try container.decode(Set<UInt16>.self, forKey: .mcast_dns_names)
+        types = try container.decode(Set<NodeType>.self, forKey: .types)
+        services = try container.decode(Set<BonjourServiceInfo>.self, forKey: .services)
+        snmp_target = try container.decodeIfPresent(SNMPTarget.self, forKey: .snmp_target)
+    }
+
+    func getCopy() -> Node {
+        return Node(mcast_dns_names: mcast_dns_names, dns_names: dns_names, names: names, v4_addresses: v4_addresses, v6_addresses: v6_addresses, tcp_ports: tcp_ports, udp_ports: udp_ports, types: types, services: services, snmp_target: snmp_target?.getCopy())
+    }
+    
+    func getName() -> String {
+        return (getMcastDnsNames().map { $0.toString() } + getDnsNames().map { $0.toString() } + getNames()).first ?? "no name"
+    }
+
     func isLocalHost() -> Bool {
         return types.contains(.localhost)
     }
     
     // NodeType is an enum, therefore no need to copy the Set elements to be sure they are not updated
-    private func getTypes() -> Set<NodeType> {
+    func getTypes() -> Set<NodeType> {
         return types
     }
-    
+
     // BonjourServiceInfo is a class with constant attributes (each declared as a let String), therefore no need to copy the Set elements to be sure they are not updated
     func getServices() -> Set<BonjourServiceInfo> {
         return services
     }
-    
+
+    func setServices(_ services: Set<BonjourServiceInfo>) {
+        self.services = services
+    }
+
     // FQDN is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getMcastDnsNames() -> Set<FQDN> {
         return mcast_dns_names
     }
-    
+
+    func setMcastDnsNames(_ mcast_dns_names: Set<FQDN>) {
+        self.mcast_dns_names = mcast_dns_names
+    }
+
+    func addMcastDnsName(_ fqdn: FQDN) {
+        mcast_dns_names.insert(fqdn)
+    }
+
     // DomainName is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getDnsNames() -> Set<DomainName> {
         return dns_names
+    }
+    
+    func setDnsNames(_ dns_names: Set<DomainName>) {
+        self.dns_names = dns_names
+    }
+    
+    func addDnsName(_ domain_name: DomainName) {
+        dns_names.insert(domain_name)
     }
     
     // No need to copy the set elements to be sure they are not updated
@@ -224,7 +366,15 @@ class Node : Hashable {
     func getV4Addresses() -> Set<IPv4Address> {
         return v4_addresses
     }
-    
+
+    func setV4Addresses(_ v4_addresses: Set<IPv4Address>) {
+        self.v4_addresses = v4_addresses
+    }
+
+    func setV6Addresses(_ v6_addresses: Set<IPv6Address>) {
+        self.v6_addresses = v6_addresses
+    }
+
     // IPv4Address is a hierarchy of classes with constant attributes (each declared as a let struct), therefore no need to copy the Set elements to be sure they are not updated
     func getV6Addresses() -> Set<IPv6Address> {
         return v6_addresses
@@ -238,6 +388,18 @@ class Node : Hashable {
     // No need to copy the set elements to be sure they are not updated
     func getUdpPorts() -> Set<UInt16> {
         return udp_ports
+    }
+
+    func setTcpPorts(_ tcp_ports: Set<UInt16>) {
+        self.tcp_ports = tcp_ports
+    }
+
+    func setUdpPorts(_ udp_ports: Set<UInt16>) {
+        self.udp_ports = udp_ports
+    }
+
+    func getSNMPTarget() -> SNMPTarget? {
+        return snmp_target
     }
     
     func setTypes(_ types: Set<NodeType>) {
@@ -256,16 +418,20 @@ class Node : Hashable {
         v4_addresses.insert(address)
     }
     
+    func clearV4Addresses() {
+        v4_addresses.removeAll()
+    }
+    
     func addV6Address(_ address: IPv6Address) {
         v6_addresses.insert(address)
     }
     
-    func addName(_ name: String) {
-        names.insert(name)
+    func clearV6Addresses() {
+        v6_addresses.removeAll()
     }
     
-    func addDnsName(_ domain_name: DomainName) {
-        dns_names.insert(domain_name)
+    func addName(_ name: String) {
+        names.insert(name)
     }
     
     func addMcastFQDN(_ domain_name: FQDN) {
@@ -279,8 +445,10 @@ class Node : Hashable {
     func addUdpPort(_ port: UInt16) {
         udp_ports.insert(port)
     }
-    
-    init() { }
+
+    func setSNMPTarget(_ snmp_target: SNMPTarget) {
+        self.snmp_target = snmp_target
+    }
     
     private var adresses: Set<IPAddress> {
         return (v4_addresses as Set<IPAddress>).union(v6_addresses)
@@ -311,8 +479,8 @@ class Node : Hashable {
         if types.contains(.chargen) || types.contains(.discard) { section_types.insert(.chargen_discard) }
         if types.contains(.gateway) { section_types.insert(.gateway) }
         if types.contains(.internet) { section_types.insert(.internet) }
-        
-        if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) { section_types.insert(.other) }
+        if types.contains(.snmp) { section_types.insert(.snmp) }
+        if !types.contains(.localhost) && !types.contains(.ios) && !types.contains(.chargen) && !types.contains(.discard) && !types.contains(.gateway) && !types.contains(.internet) && !types.contains(.snmp) { section_types.insert(.other) }
         
         return section_types
     }
@@ -334,6 +502,10 @@ class Node : Hashable {
         _ = node.services.map({ node_name_to_service_info[$0.name] = $0 })
         name_to_service_info.merge(node_name_to_service_info) { (_, new) in new }
         services = Set(name_to_service_info.map { $0.value })
+
+        if node.snmp_target != nil {
+            snmp_target = node.snmp_target
+        }
     }
     
     func isSimilar(with: Node) -> Bool {
@@ -344,12 +516,14 @@ class Node : Hashable {
         if !mcast_dns_names.intersection(with.mcast_dns_names).isEmpty { return true }
         
         if !dns_names.intersection(with.dns_names).isEmpty { return true }
-        
+
+        if !names.intersection(with.names).isEmpty { return true }
+
         return false
     }
     
     static func == (lhs: Node, rhs: Node) -> Bool {
-        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services
+        return lhs.mcast_dns_names == rhs.mcast_dns_names && lhs.dns_names == rhs.dns_names && lhs.names == rhs.names && lhs.v4_addresses == rhs.v4_addresses && lhs.v6_addresses == rhs.v6_addresses && lhs.tcp_ports == rhs.tcp_ports && lhs.udp_ports == rhs.udp_ports && lhs.types == rhs.types && lhs.services == rhs.services && lhs.snmp_target == rhs.snmp_target
     }
     
     func dump() -> String {
@@ -520,6 +694,90 @@ class DBMaster {
     
     private(set) var networks: Set<IPNetwork>
 
+    // MARK: - Manage user config
+    
+    func unpersistNode(_ node: Node) {
+        var new_persistent_node_list = [String]()
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for current_node_b64 in config {
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    if !node.isSimilar(with: current_node) {
+                        new_persistent_node_list.insert(current_node_b64, at: new_persistent_node_list.endIndex)
+                    }
+                } else {
+                    #fatalError("Not in base64")
+                }
+            } catch {
+                #fatalError("Decoding error: \(error)")
+            }
+
+        }
+        UserDefaults.standard.set(new_persistent_node_list, forKey: "nodes")
+    }
+    
+    static func isSaved(_ node: Node) -> Bool {
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for current_node_b64 in config {
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    if node.isSimilar(with: current_node) {
+                        return true
+                    }
+                } else {
+                    #fatalError("Not in base64")
+                }
+            } catch {
+                #fatalError("Decoding error: \(error)")
+            }
+        }
+        return false
+    }
+    
+    func saveNode(_ node: Node) {
+        // Convert node to base64
+        let encoder = JSONEncoder()
+        let jsonData = try? encoder.encode(node)
+        let node_b64: String
+        if let jsonData {
+            node_b64 = jsonData.base64EncodedString()
+        } else {
+            #fatalError("Can not serialize node")
+            return
+        }
+
+        // Remove nodes similar to this node from config
+        unpersistNode(node)
+
+        // Add node to base64 config
+        var config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        config.insert(node_b64, at: config.endIndex)
+        UserDefaults.standard.set(config, forKey: "nodes")
+    }
+    
+    func loadNodes() {
+        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
+        for current_node_b64 in config {
+            do {
+                if let jsonData = Data(base64Encoded: current_node_b64) {
+                    let decoder = JSONDecoder()
+                    let current_node = try decoder.decode(Node.self, from: jsonData)
+                    _ = addNode(current_node, demo_mode: true)
+                } else {
+                    #fatalError("Not in base64")
+                }
+            } catch {
+                #fatalError("Decoding error: \(error)")
+            }
+        }
+    }
+    
+    // MARK:
+    
     func resetNetworks() {
         networks = Set<IPNetwork>()
     }
@@ -588,24 +846,24 @@ class DBMaster {
  */
 
     static func getNode(name: String) -> Node? {
-        shared.nodes.filter { $0.names.contains(name) }.first
+        shared.nodes.filter { $0.getNames().contains(name) }.first
     }
 
     static func getNode(mcast_fqdn: FQDN) -> Node? {
-        shared.nodes.filter { $0.mcast_dns_names.contains(mcast_fqdn) }.first
+        shared.nodes.filter { $0.getMcastDnsNames().contains(mcast_fqdn) }.first
     }
 
     static func getNode(address: IPAddress) -> Node? {
         if address.getFamily() == AF_INET {
             let addr = address as! IPv4Address
-            let nodes = shared.nodes.filter { $0.v4_addresses.contains(addr) }
+            let nodes = shared.nodes.filter { $0.getV4Addresses().contains(addr) }
             if nodes.count > 1 {
                 print("\(#function): Warning: bad number of nodes for one IPv4 address")
             }
             return nodes.first
         } else {
             let addr = address as! IPv6Address
-            let nodes = shared.nodes.filter { $0.v6_addresses.contains(addr) }
+            let nodes = shared.nodes.filter { $0.getV6Addresses().contains(addr) }
             if nodes.count > 1 {
                 print("\(#function): Warning: bad number of nodes for one IPv6 address")
             }
@@ -622,13 +880,13 @@ class DBMaster {
         var udp_ports_count = [PortNumber : UInt]()
 
         for node in shared.nodes {
-            tcp_ports.formUnion(node.tcp_ports)
-            udp_ports.formUnion(node.udp_ports)
-            for n in node.tcp_ports {
+            tcp_ports.formUnion(node.getTcpPorts())
+            udp_ports.formUnion(node.getUdpPorts())
+            for n in node.getTcpPorts() {
                 if !tcp_ports_count.keys.contains(n) { tcp_ports_count[n] = 0 }
                 tcp_ports_count[n]! += 1
             }
-            for n in node.udp_ports {
+            for n in node.getUdpPorts() {
                 if !udp_ports_count.keys.contains(n) { udp_ports_count[n] = 0 }
                 udp_ports_count[n]! += 1
             }
@@ -656,13 +914,13 @@ class DBMaster {
         var udp_ports_count = [PortNumber : UInt]()
 
         for node in shared.nodes {
-            tcp_ports.formUnion(node.tcp_ports)
-            udp_ports.formUnion(node.udp_ports)
-            for n in node.tcp_ports {
+            tcp_ports.formUnion(node.getTcpPorts())
+            udp_ports.formUnion(node.getUdpPorts())
+            for n in node.getTcpPorts() {
                 if !tcp_ports_count.keys.contains(n) { tcp_ports_count[n] = 0 }
                 tcp_ports_count[n]! += 1
             }
-            for n in node.udp_ports {
+            for n in node.getUdpPorts() {
                 if !udp_ports_count.keys.contains(n) { udp_ports_count[n] = 0 }
                 udp_ports_count[n]! += 1
             }
@@ -687,12 +945,12 @@ class DBMaster {
         for node in shared.nodes {
             switch port.ip_protocol {
             case .TCP:
-                if node.tcp_ports.contains(port.port_number) {
+                if node.getTcpPorts().contains(port.port_number) {
                     nodes.insert(node)
                 }
 
             case .UDP:
-                if node.udp_ports.contains(port.port_number) {
+                if node.getUdpPorts().contains(port.port_number) {
                     nodes.insert(node)
                 }
             }
@@ -720,7 +978,7 @@ class DBMaster {
     func getLocalGateways() -> [Node] {
         var gateways = [Node]()
         let gw = Node()
-        gw.types.insert(.gateway)
+        gw.addType(.gateway)
         
         var idx : Int32 = 0, ret : Int32
         repeat {
@@ -731,7 +989,9 @@ class DBMaster {
             if (ret >= 0) {
                 if let s = SockAddr4(data.prefix(MemoryLayout<sockaddr_in>.size)) {
                     let addr = s.getIPAddress() as! IPv4Address
-                    gw.v4_addresses.insert(addr)
+                    gw.addV4Address(addr)
+                    // We only add IPv4 gateway IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
+                    SNMPManager.manager.addIpToCheck(addr)
                 }
             }
             idx += 1
@@ -744,12 +1004,12 @@ class DBMaster {
 
             if (ret >= 0) {
                 let addr = SockAddr6(data.prefix(MemoryLayout<sockaddr_in6>.size))!.getIPAddress() as! IPv6Address
-                gw.v6_addresses.insert(addr)
+                gw.addV6Address(addr)
             }
             idx += 1
         } while ret >= 0
         
-        if !gw.v4_addresses.isEmpty || !gw.v6_addresses.isEmpty {
+        if !gw.getV4Addresses().isEmpty || !gw.getV6Addresses().isEmpty {
             gateways.append(gw)
         }
         
@@ -762,7 +1022,7 @@ class DBMaster {
     
     func getLocalNode() -> Node {
         let node = Node()
-        node.types = [ .localhost ]
+        node.setTypes([.localhost])
         var idx : Int32 = 0, mask_len : Int32
         repeat {
             var data = Data(count: MemoryLayout<sockaddr_storage>.size)
@@ -772,12 +1032,15 @@ class DBMaster {
                 switch my_sock_addr.getFamily() {
                 case AF_INET:
                     let address = my_sock_addr.getIPAddress() as! IPv4Address
-                    node.v4_addresses.insert(address)
+                    node.addV4Address(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv4Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
+                    // Do not check local IP adresses, for the SNMP module to be more available
+                    // We only add IPv4 local IPs since only one such IP is necessary to check the local host for SNMP and there are a lot if IPv6 addresses on iOS devices. So it is faster to only add IPv4 addresses.
+                    // SNMPManager.manager.addIpToCheck(address)
 
                 case AF_INET6:
                     let address = my_sock_addr.getIPAddress() as! IPv6Address
-                    node.v6_addresses.insert(address)
+                    node.addV6Address(address)
                     networks.insert(IPNetwork(ip_address: address.and(IPv6Address(mask_len: UInt8(mask_len))), mask_len: UInt8(mask_len)))
                     
                 default:
@@ -787,8 +1050,8 @@ class DBMaster {
             idx += 1
         } while mask_len >= 0
 
-        node.names.insert(UIDevice.current.name)
-        node.dns_names.insert(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
+        node.addName(UIDevice.current.name)
+        node.addDnsName(DomainName(HostPart(UIDevice.current.name.replacingOccurrences(of: ".", with: "_"))))
         return node
     }
     
@@ -1085,103 +1348,89 @@ class DBMaster {
             // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
             var node = Node()
 
-            node.mcast_dns_names.insert(FQDN("  router", "fenyo.net"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.254")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
-            node.types = [ .gateway ]
+            node.addMcastFQDN(FQDN("router", "fenyo.net"))
+            node.addV4Address(IPv4Address("192.168.0.254")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
+            node.setTypes([.gateway])
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("   Mac Mini", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.42")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
+            node.addMcastFQDN(FQDN("Mac Mini", "local"))
+            node.addV4Address(IPv4Address("192.168.0.42")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("iPhone Agnès", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.17")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
+            node.addMcastFQDN(FQDN("iPhone Agnès", "local"))
+            node.addV4Address(IPv4Address("192.168.0.17")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Mac Book", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.172")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
+            node.addMcastFQDN(FQDN("Mac Book", "local"))
+            node.addV4Address(IPv4Address("192.168.0.172")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("iPad Alexandre", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.20")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
+            node.addMcastFQDN(FQDN("iPad Alexandre", "local"))
+            node.addV4Address(IPv4Address("192.168.0.20")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Home Pod", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.125")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
+            node.addMcastFQDN(FQDN("Home Pod", "local"))
+            node.addV4Address(IPv4Address("192.168.0.125")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AudioAccessory"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Apple TV", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.45")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
+            node.addMcastFQDN(FQDN("Apple TV", "local"))
+            node.addV4Address(IPv4Address("192.168.0.45")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
             node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AppleTV"]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("printer", "fenyo.net"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.12")!)
-            node.v6_addresses.insert(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
+            node.addMcastFQDN(FQDN("printer", "fenyo.net"))
+            node.addV4Address(IPv4Address("192.168.0.12")!)
+            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
             node.addService(BonjourServiceInfo("_pdl-datastream._tcp.", "515", [:]))
             _ = addNode(node, demo_mode: true)
 
             node = Node()
-            node.mcast_dns_names.insert(FQDN("Marantz", "local"))
-            node.v4_addresses.insert(IPv4Address("192.168.0.63")!)
+            node.addMcastFQDN(FQDN("Marantz", "local"))
+            node.addV4Address(IPv4Address("192.168.0.63")!)
             node.addService(BonjourServiceInfo("_raop._tcp.", "49152", [:]))
             _ = addNode(node, demo_mode: true)
         }
         
         var node = Node()
-        node.mcast_dns_names.insert(FQDN("flood", "eowyn.eu.org"))
-        node.v4_addresses.insert(IPv4Address("51.75.31.39")!)
-        node.v6_addresses.insert(IPv6Address("2001:41d0:304:200::9001")!)
-        node.types = [ .chargen, .internet ]
+        node.addDnsName(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
+        node.addV4Address(IPv4Address("51.75.31.39")!)
+        node.addV6Address(IPv6Address("2001:41d0:304:200::9001")!)
+        node.setTypes([.chargen, .internet])
+        _ = addNode(node, demo_mode: true)
+        SNMPManager.manager.addIpToCheck(IPv4Address("51.75.31.39")!)
+
+        node = Node()
+        node.addDnsName(DomainName(HostPart("dns"), DomainPart("google")))
+        for addr in ips_v4_google { node.addV4Address(IPv4Address(addr)!) }
+        for addr in ips_v6_google { node.addV6Address(IPv6Address(addr)!) }
+        node.setTypes([.internet])
         _ = addNode(node, demo_mode: true)
 
         node = Node()
-        node.mcast_dns_names.insert(FQDN("dns", "google"))
-        for addr in ips_v4_google { node.v4_addresses.insert(IPv4Address(addr)!) }
-        for addr in ips_v6_google { node.v6_addresses.insert(IPv6Address(addr)!) }
-        node.types = [ .internet ]
+        node.addDnsName(DomainName(HostPart("dns9"), DomainPart("quad9.net")))
+        for addr in ips_v4_quad9 { node.addV4Address(IPv4Address(addr)!) }
+        for addr in ips_v6_quad9 { node.addV6Address(IPv6Address(addr)!) }
+        node.setTypes([.internet])
         _ = addNode(node, demo_mode: true)
 
-        node = Node()
-        node.mcast_dns_names.insert(FQDN("dns9", "quad9.net"))
-        for addr in ips_v4_quad9 { node.v4_addresses.insert(IPv4Address(addr)!) }
-        for addr in ips_v6_quad9 { node.v6_addresses.insert(IPv6Address(addr)!) }
-        node.types = [ .internet ]
-        _ = addNode(node, demo_mode: true)
-
-        let config = UserDefaults.standard.stringArray(forKey: "nodes") ?? [ ]
-        for str in config {
-            let str_fields = str.split(separator: ";", maxSplits: 2)
-            let (target_name, target_ip, node_type_str) = (String(str_fields[0]), String(str_fields[1]), String(str_fields[2]))
-            let node_type: NodeType = NodeType(rawValue: Int(node_type_str)!)!
-            let node = Node()
-            node.dns_names.insert(DomainName(target_name)!)
-            if isIPv4(target_ip) {
-                node.v4_addresses.insert(IPv4Address(target_ip)!)
-            } else if isIPv6(target_ip) {
-                node.v6_addresses.insert(IPv6Address(target_ip)!)
-            }
-            if Int(node_type_str) != NodeType.localhost.rawValue {
-                node.types = [ node_type ]
-            }
-            _ = addNode(node, demo_mode: true)
-        }
+        // Add previously saved persistent nodes
+        loadNodes()
     }
 
     func isPublicDefaultService(_ ip: String) -> Bool {
@@ -1197,6 +1446,7 @@ class DBMaster {
             .localhost: ModelSection("Localhost", "Localhost", "this host"),
             .ios: ModelSection("iOS devices", "iOS devices", "other devices running this app"),
             .chargen_discard: ModelSection("Chargen Discard services", "Chargen Discard services", "other devices running these services"),
+            .snmp: ModelSection("SNMP agents", "SNMP agents", "Devices running some SNMP agent"),
             .gateway: ModelSection("Local gateway", "Local gateway", "local router"),
             .internet: ModelSection("Internet", "Internet", "remote hosts on the Internet"),
             .other: ModelSection("Other hosts", "Other hosts", "any host")

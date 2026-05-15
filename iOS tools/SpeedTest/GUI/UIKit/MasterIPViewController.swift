@@ -86,7 +86,7 @@ class MasterIPViewController: UITableViewController {
                 let indexPath = IndexPath(row: cnt, section: 0)
                 self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
                 let addr = toIpAddress(self.auto_select!)
-                self.master_view_controller!.addressSelected(address: addr)
+                self.master_view_controller!.addressSelected(address: addr, node: node!)
             }
             self.auto_select = nil
         } else {
@@ -97,7 +97,7 @@ class MasterIPViewController: UITableViewController {
                 self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .bottom)
                 let ips = Array(self.node!.getV4Addresses().sorted()) + Array(self.node!.getV6Addresses().sorted())
                 if !ips.isEmpty {
-                    self.master_view_controller!.addressSelected(address: ips.first!)
+                    self.master_view_controller!.addressSelected(address: ips.first!, node: node!)
                 }
             }
         }
@@ -204,7 +204,7 @@ class MasterIPViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
-        master_view_controller!.addressSelected(address: address)
+        master_view_controller!.addressSelected(address: address, node: node!)
     }
     
     // MARK: - Navigation

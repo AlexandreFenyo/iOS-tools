@@ -15,14 +15,32 @@ import SwiftUI
 @MainActor
 class AddViewController: UIViewController {
     public weak var master_view_controller: MasterViewController?
-    
-    //    @IBOutlet weak var view1: SKView!
-    //    @IBOutlet weak var view2: UIView!
-    
+
     private lazy var hosting_view_controller = makeHostingController()
+
+    private let isEdit: Bool
+    private let node: Node?
+
+    // If isEdit is not nil, therefore node must not be nil: we edit this node
+    init(master_view_controller: MasterViewController? = nil, isEdit: Bool, node: Node? = nil) {
+        self.master_view_controller = master_view_controller
+        self.isEdit = isEdit
+
+        // Create a copy of the node since it is already displayed, so it can not be updated directly
+        self.node = node?.getCopy()
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func makeHostingController() -> UIHostingController<AddSwiftUIView> {
-        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self))
+        let target = SNMPTargetSimple(node?.getSNMPTarget() ?? SNMPTarget())
+        
+        // We send a node and a target since Node is not observable and we want, at least, some parts of the target to be observable
+        let hosting_view_controller = UIHostingController(rootView: AddSwiftUIView(add_view_controller: self, isEdit: isEdit, node: node ?? Node(), target: target, ipv4_addresses: node != nil ? Array(node!.getV4Addresses()) : [IPv4Address](), ipv6_addresses: node != nil ? Array(node!.getV6Addresses()) : [IPv6Address]()))
         hosting_view_controller.view.translatesAutoresizingMaskIntoConstraints = false
         hosting_view_controller.modalPresentationStyle = .overCurrentContext
         return hosting_view_controller

@@ -1,0 +1,760 @@
+//
+//  SNMPManager.swift
+//  iOS tools
+//
+//  Created by Alexandre Fenyo on 08/05/2025.
+//  Copyright © 2025 Alexandre Fenyo. All rights reserved.
+//
+
+import Foundation
+import iOSToolsMacros
+import SwiftUI
+
+enum SNMPManagerError: Error {
+    case notAvailable
+    case invalidRange
+}
+
+struct OIDInfos: Decodable {
+    let oid: String
+    let mib: String
+    let conv: String?
+    let syntax: String?
+    let hint: String?
+    let status: String?
+    let access: String?
+    let description: String?
+    let line: String?
+}
+
+enum SNMPManagerState: Int {
+    case available = 0
+    case walking
+    // Finished state when data pulled by the manager have not been retrieved from it
+    case walk_finished
+    case pull_finished
+}
+
+enum SNMPTransportProto: String, Codable {
+    case TCP, UDP
+    static let `default` = SNMPTransportProto.UDP
+}
+
+enum SNMPNetworkProto: String, Codable {
+    case IPv4, IPv6
+    static let `default` = SNMPNetworkProto.IPv4
+}
+
+enum V3AuthProto: Codable {
+    case MD5, SHA1
+}
+
+enum V3PrivacyProto: Codable {
+    case DES, AES
+}
+
+enum SNMPSecLevel: String, Codable {
+    case noAuthNoPriv, authNoPriv, authPriv
+    static let `default` = SNMPSecLevel.noAuthNoPriv
+}
+
+class SNMPTargetSimple: ObservableObject {
+    @Published var host: String = ""
+    @Published var port: String = ""
+    @Published var transport_proto: SNMPTransportProto = .`default`
+    @Published var ip_version: SNMPNetworkProto = .`default`
+    
+    enum Credentials {
+        case v1
+        case v2c
+        case v3
+    }
+    @Published var credentials: Credentials = .v2c
+    @Published var community: String = ""
+    
+    @Published var username: String = ""
+    
+    @Published var authProtoSecret: String = ""
+    @Published var privProtoSecret: String = ""
+    
+    enum AuthProto {
+        case MD5
+        case SHA1
+    }
+    @Published var auth_proto: AuthProto = .SHA1
+    
+    enum PrivacyProto {
+        case DES
+        case AES
+    }
+    @Published var privacy_proto: PrivacyProto = .AES
+    
+    enum SecurityLevel {
+        case noAuthNoPriv
+        case authNoPriv
+        case authPriv
+        static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
+    }
+    @Published var security_level: SecurityLevel = .`default`
+    
+    init() { }
+    
+    init(_ target: SNMPTarget) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        switch target.credentials {
+        case .v1(let community):
+            credentials = .v1
+            self.community = community
+        case .v2c(let community):
+            credentials = .v2c
+            self.community = community
+        case .v3(let v3cred):
+            credentials = .v3
+            username = v3cred.username
+            switch v3cred.security_level {
+            case .noAuthNoPriv:
+                security_level = .noAuthNoPriv
+            case .authNoPriv(let auth_proto):
+                security_level = .authNoPriv
+                switch auth_proto {
+                case .MD5(let secret):
+                    self.auth_proto = .MD5
+                    authProtoSecret = secret
+                case .SHA1(let secret):
+                    self.auth_proto = .SHA1
+                    authProtoSecret = secret
+                }
+            case .authPriv(let auth_proto, let privacy_proto):
+                security_level = .authPriv
+                switch auth_proto {
+                case .MD5(let secret):
+                    self.auth_proto = .MD5
+                    authProtoSecret = secret
+                case .SHA1(let secret):
+                    self.auth_proto = .SHA1
+                    authProtoSecret = secret
+                }
+                switch privacy_proto {
+                case .DES(let secret):
+                    self.privacy_proto = .DES
+                    privProtoSecret = secret
+                case .AES(let secret):
+                    self.privacy_proto = .AES
+                    privProtoSecret = secret
+                }
+            }
+        }
+    }
+
+    func setFrom(_ target: SNMPTargetSimple) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        credentials = target.credentials
+        community = target.community
+        username = target.username
+        authProtoSecret = target.authProtoSecret
+        privProtoSecret = target.privProtoSecret
+        auth_proto = target.auth_proto
+        privacy_proto = target.privacy_proto
+        security_level = target.security_level
+    }
+}
+
+class SNMPTarget: ObservableObject, Codable, Hashable {
+    typealias SNMPv1v2cCredentials = String
+
+    init() { }
+    
+    init(_ target: SNMPTargetSimple) {
+        host = target.host
+        port = target.port
+        transport_proto = target.transport_proto
+        ip_version = target.ip_version
+        switch target.credentials {
+        case .v1:
+            credentials = .v1(target.community)
+        case .v2c:
+            credentials = .v2c(target.community)
+        case .v3:
+            let v3cred = SNMPv3Credentials()
+            v3cred.username = target.username
+            switch target.security_level {
+            case .noAuthNoPriv:
+                v3cred.security_level = .noAuthNoPriv
+            case .authNoPriv:
+                switch target.auth_proto {
+                case .MD5:
+                    v3cred.security_level = .authNoPriv(.MD5(target.authProtoSecret))
+                case .SHA1:
+                    v3cred.security_level = .authNoPriv(.SHA1(target.authProtoSecret))
+                }
+            case .authPriv:
+                switch target.auth_proto {
+                case .MD5:
+                    switch target.privacy_proto {
+                    case .DES:
+                        v3cred.security_level = .authPriv(.MD5(target.authProtoSecret), .DES(target.privProtoSecret))
+                    case .AES:
+                        v3cred.security_level = .authPriv(.MD5(target.authProtoSecret), .AES(target.privProtoSecret))
+                    }
+                case .SHA1:
+                    switch target.privacy_proto {
+                    case .DES:
+                        v3cred.security_level = .authPriv(.SHA1(target.authProtoSecret), .DES(target.privProtoSecret))
+                    case .AES:
+                        v3cred.security_level = .authPriv(.SHA1(target.authProtoSecret), .AES(target.privProtoSecret))
+                    }
+                }
+            }
+            credentials = .v3(v3cred)
+        }
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(host)
+        hasher.combine(port)
+        hasher.combine(transport_proto)
+        hasher.combine(ip_version)
+        hasher.combine(credentials)
+    }
+
+    static func == (lhs: SNMPTarget, rhs: SNMPTarget) -> Bool {
+        return lhs.host == rhs.host && lhs.port == rhs.port && lhs.transport_proto == rhs.transport_proto && lhs.ip_version == rhs.ip_version && lhs.credentials == rhs.credentials
+    }
+    
+    enum CodingKeysTypeValue: CodingKey { case type, value }
+    enum CodingKeysAuthPriv: CodingKey { case caseName, authProto, privacyProto }
+    enum CodingKeys: String, CodingKey { case host, port, transport_proto, ip_version, credentials }
+
+    class SNMPv3Credentials: ObservableObject, Codable, Hashable {
+        init() { }
+
+        static func == (lhs: SNMPTarget.SNMPv3Credentials, rhs: SNMPTarget.SNMPv3Credentials) -> Bool {
+            return true
+        }
+        
+        @Published var username: String = ""
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(username)
+            hasher.combine(security_level)
+        }
+
+        enum AuthProto: Codable, Hashable {
+            case MD5(String)
+            case SHA1(String)
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+                switch self {
+                case .MD5(let val):
+                    try container.encode("MD5", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                case .SHA1(let val):
+                    try container.encode("SHA1", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+                let type = try container.decode(String.self, forKey: .type)
+                let value = try container.decode(String.self, forKey: .value)
+                switch type {
+                case "MD5": self = .MD5(value)
+                case "SHA1": self = .SHA1(value)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid AuthProto type")
+                }
+            }
+        }
+        
+        enum PrivacyProto: Codable, Hashable {
+            case DES(String)
+            case AES(String)
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+                switch self {
+                case .DES(let val):
+                    try container.encode("DES", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                case .AES(let val):
+                    try container.encode("AES", forKey: .type)
+                    try container.encode(val, forKey: .value)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+                let type = try container.decode(String.self, forKey: .type)
+                let value = try container.decode(String.self, forKey: .value)
+                switch type {
+                case "DES": self = .DES(value)
+                case "AES": self = .AES(value)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid PrivacyProto type")
+                }
+            }
+        }
+        
+        enum SecurityLevel: Codable, Hashable {
+            case noAuthNoPriv
+            case authNoPriv(AuthProto)
+            case authPriv(AuthProto, PrivacyProto)
+            static let `default` = SecurityLevel.noAuthNoPriv // must equal to SNMPSecLevel.`default`
+
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeysAuthPriv.self)
+                
+                switch self {
+                case .noAuthNoPriv:
+                    try container.encode("noAuthNoPriv", forKey: .caseName)
+                case .authNoPriv(let authProto):
+                    try container.encode("authNoPriv", forKey: .caseName)
+                    try container.encode(authProto, forKey: .authProto)
+                case .authPriv(let authProto, let privacyProto):
+                    try container.encode("authPriv", forKey: .caseName)
+                    try container.encode(authProto, forKey: .authProto)
+                    try container.encode(privacyProto, forKey: .privacyProto)
+                }
+            }
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeysAuthPriv.self)
+                let caseName = try container.decode(String.self, forKey: .caseName)
+                
+                switch caseName {
+                case "noAuthNoPriv":
+                    self = .noAuthNoPriv
+                case "authNoPriv":
+                    let authProto = try container.decode(AuthProto.self, forKey: .authProto)
+                    self = .authNoPriv(authProto)
+                case "authPriv":
+                    let authProto = try container.decode(AuthProto.self, forKey: .authProto)
+                    let privacyProto = try container.decode(PrivacyProto.self, forKey: .privacyProto)
+                    self = .authPriv(authProto, privacyProto)
+                default:
+                    throw DecodingError.dataCorruptedError(forKey: .caseName, in: container, debugDescription: "Invalid SecurityLevel case")
+                }
+            }
+        }
+        
+        @Published var security_level: SecurityLevel = .`default`
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeysTypeValue.self)
+            try container.encode(username, forKey: .type)
+            try container.encode(security_level, forKey: .value)
+        }
+        
+        required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+            username = try container.decode(String.self, forKey: .type)
+            security_level = try container.decode(SecurityLevel.self, forKey: .value)
+        }
+    }
+    
+    @Published var host: String = ""
+    @Published var port: String = ""
+    @Published var transport_proto: SNMPTransportProto = .`default`
+    @Published var ip_version: SNMPNetworkProto = .`default`
+    
+    enum Credentials: Codable, Hashable {
+        static func == (lhs: SNMPTarget.Credentials, rhs: SNMPTarget.Credentials) -> Bool {
+            return true
+        }
+        
+        case v1(SNMPv1v2cCredentials)
+        case v2c(SNMPv1v2cCredentials)
+        case v3(SNMPv3Credentials)
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: SNMPTarget.CodingKeysTypeValue.self)
+            switch self {
+            case .v1(let str):
+                try container.encode("v1", forKey: .type)
+                try container.encode(str, forKey: .value)
+            case .v2c(let str):
+                try container.encode("v2c", forKey: .type)
+                try container.encode(str, forKey: .value)
+            case .v3(let creds):
+                try container.encode("v3", forKey: .type)
+                try container.encode(creds, forKey: .value)
+            }
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeysTypeValue.self)
+            let type = try container.decode(String.self, forKey: .type)
+            
+            switch type {
+            case "v1":
+                let value = try container.decode(SNMPv1v2cCredentials.self, forKey: .value)
+                self = .v1(value)
+            case "v2c":
+                let value = try container.decode(SNMPv1v2cCredentials.self, forKey: .value)
+                self = .v2c(value)
+            case "v3":
+                let creds = try container.decode(SNMPv3Credentials.self, forKey: .value)
+                self = .v3(creds)
+            default:
+                throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Invalid Credentials type")
+            }
+        }
+    }
+    @Published var credentials: Credentials = .v2c("")
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(host, forKey: .host)
+        try container.encode(port, forKey: .port)
+        try container.encode(transport_proto, forKey: .transport_proto)
+        try container.encode(ip_version, forKey: .ip_version)
+        try container.encode(credentials, forKey: .credentials)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        host = try container.decode(String.self, forKey: .host)
+        port = try container.decode(String.self, forKey: .port)
+        transport_proto = try container.decode(SNMPTransportProto.self, forKey: .transport_proto)
+        ip_version = try container.decode(SNMPNetworkProto.self, forKey: .ip_version)
+        credentials = try container.decode(Credentials.self, forKey: .credentials)
+    }
+    
+    func getCopy() -> SNMPTarget? {
+        return GenericTools.copyCodableClass(self)
+    }
+}
+
+@MainActor
+class SNMPManager {
+    static let manager = SNMPManager()
+    
+    private var state: SNMPManagerState = .available
+    private var is_option_output_X_called = false
+    
+    private var IP_to_check = [IPAddress]()
+    private var device_manager: DeviceManager?
+
+    init() {
+        // Create background thread
+        if debug_snmp { return }
+        Task.detached {
+            while (true) {
+                let task = Task<IPAddress?, Never>{ @MainActor in
+                    if SNMPAvailability.shared.getAvailability() == false || self.IP_to_check.isEmpty {
+                        return nil
+                    }
+                    let msg: String
+                    if let addr = self.IP_to_check.first?.toNumericString() {
+                        msg = "Checking SNMP agent on \(addr)"
+                    } else {
+                        // Should never happen
+                        #fatalError("Checking SNMP agent on unknown address")
+                        msg = "Checking SNMP agent on unknown address"
+                    }
+                    SNMPAvailability.shared.setAvailability(false, message: msg)
+                    return self.IP_to_check.removeFirst()
+                }
+                
+                if let ip_address = await task.value {
+                    if let str_array = await SNMPManager.manager.getPingCommandLineFromTarget(address: ip_address) {
+                        Task { @MainActor in
+                            do {
+                                try SNMPManager.manager.pushArray(str_array)
+                                try SNMPManager.manager.walk() { oid_root, errbuf in
+                                    if oid_root.children.count != 0 {
+                                        let node = Node()
+                                        if ip_address.getFamily() == AF_INET { node.addV4Address(ip_address as! IPv4Address) }
+                                        else { node.addV6Address(ip_address as! IPv6Address) }
+                                        node.addUdpPort(161)
+                                        node.setTypes([ .snmp ])
+                                        Task {
+                                            self.device_manager?.setInformation(ip_address.toNumericString() ?? "addr is nil" + ": port 161")
+                                            self.device_manager?.addNode(node)
+                                        }
+                                    }
+                                    SNMPAvailability.shared.setAvailability(true)
+                                }
+                            } catch {
+                                #fatalError("Explore SNMP Error: \(error)")
+                            }
+                        }
+                    }
+                } else {
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                }
+            }
+        }
+    }
+    
+    func addIpToCheck(_ ip: IPAddress) {
+        if !IP_to_check.contains(ip) {
+            IP_to_check.append(ip)
+        }
+    }
+    
+    func flushIpToCheck() {
+        IP_to_check = [IPAddress]()
+    }
+    
+    func isIPToCheckEmpty() -> Bool {
+        return IP_to_check.isEmpty
+    }
+    
+    func getPingCommandLineFromTarget(address: IPAddress) -> [String]? {
+        // no retries, 1 sec timeout - only for UDP
+        var str_array = ["snmpwalk", "-r1", "-t1"]
+
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX")
+            is_option_output_X_called = true
+        }
+
+        str_array.append(contentsOf: [ "-v2c", "-c", "public"]);
+
+        if address.getFamily() == AF_INET {
+            if let addr_as_string = (address as? IPv4Address)?.toNumericString() {
+                str_array.append("udp:\(addr_as_string)")
+            } else {
+                #fatalError("getPingCommandeLineFromTarget: can not get IPv4 address as string")
+                return nil
+            }
+        } else {
+            if let addr_as_string = (address as? IPv6Address)?.toNumericString() {
+                str_array.append("udp6:[\(addr_as_string)]")
+            } else {
+                #fatalError("getPingCommandeLineFromTarget: can not get IPv6 address as string")
+                return nil
+            }
+        }
+
+        str_array.append(".1.3.6.1.2.1.1.1")
+        return str_array
+    }
+    
+    func getWalkCommandLineFromTarget(target: SNMPTarget) -> [String] {
+        // 3 retries, 1 sec each - only for UDP. For TCP: ~75s timeout at connect() time (no way to change it in iOS)
+        var str_array = ["snmpwalk", "-r3", "-t1"]
+
+        // Call '-OX' only once since it is an option that is toggled in net-snmp.
+        if is_option_output_X_called == false {
+            str_array.append("-OX");
+            is_option_output_X_called = true;
+        }
+//        str_array.append(contentsOf: [ "-v2c", "-c", "public", target.host/*, "IF-MIB::ifInOctets"*/ ]);
+
+        switch target.credentials {
+        case .v1(let community):
+            str_array.append(contentsOf: ["-v1", "-c", community.isEmpty ? "public" : community])
+        case .v2c(let community):
+            str_array.append(contentsOf: ["-v2c", "-c", community.isEmpty ? "public" : community])
+        case .v3(let v3cred):
+            str_array.append(contentsOf: ["-u", v3cred.username])
+            switch v3cred.security_level {
+            case .noAuthNoPriv:
+                str_array.append(contentsOf: ["-v3", "-l", "noAuthNoPriv"])
+            case .authNoPriv(let auth_proto):
+                switch auth_proto {
+                case .MD5(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authNoPriv", "-a", "MD5", "-A", str])
+                case .SHA1(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authNoPriv", "-a", "SHA1", "-A", str])
+                }
+            case .authPriv(let auth_proto, let priv_proto):
+                switch auth_proto {
+                case .MD5(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authPriv", "-a", "MD5", "-A", str])
+                case .SHA1(let str):
+                    str_array.append(contentsOf: ["-v3", "-l", "authPriv", "-a", "SHA1", "-A", str])
+                }
+                switch priv_proto {
+                case .DES(let str):
+                    str_array.append(contentsOf: ["-x", "DES", "-X", str])
+                case .AES(let str):
+                    str_array.append(contentsOf: ["-x", "AES", "-X", str])
+                }
+            }
+        }
+
+        if target.host.contains(":") {
+            // The target host is an IPv6 address
+            var agent_string = target.transport_proto == .UDP ? "udp6" : "tcp6"
+            agent_string.append(":[\(target.host)]:")
+            agent_string.append(String(target.port == "" ? "161" : target.port))
+            str_array.append(contentsOf: [agent_string])
+        } else {
+            // The target host is an IPv4 address or a DNS name
+            var agent_string = target.transport_proto == .UDP ? "udp" : "tcp"
+            if target.ip_version == .IPv6 {
+                agent_string.append("6")
+            }
+            agent_string.append(":\(target.host):")
+            agent_string.append(String(target.port == "" ? "161" : target.port))
+            str_array.append(contentsOf: [agent_string])
+        }
+
+        return str_array
+    }
+
+    func setDeviceManager(_ device_manager: DeviceManager) {
+        self.device_manager = device_manager
+    }
+
+    func initLibSNMP() {
+        // Initialize net-snmp library
+
+        // $HOME=/var/mobile/Containers/Data/Application/<UUID_de_l_application>
+        // contient :
+        // - Documents : accessibles via l'app Fichiers
+        // - Library : pour l'app, en lecture/écriture
+        
+        // homedir: /private/var/mobile/Containers/Data/Application/A9640F58-D593-402A-A647-8830A667096E
+        let homedir = ProcessInfo.processInfo.environment["HOME"]!
+
+        // bundledir: /private/var/containers/Bundle/Application/DB28E2B7-DA7C-4BA1-9871-13CB22577CAB/iOS tools.app
+        let bundledir = Bundle.main.path(forResource: "BRIDGE-MIB", ofType: "txt")!.replacingOccurrences(of: "/BRIDGE-MIB.txt", with: "")
+        
+        // documentsurl: $HOME/Documents
+        if let documentsurl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+            // snmpurl: $HOME/Documents/snmp
+            let snmpurl = documentsurl.appendingPathComponent("snmp")
+            // Créer le répertoire $HOME/Documents/snmp
+            try? FileManager.default.createDirectory(at: snmpurl, withIntermediateDirectories: true, attributes: nil)
+            // Créer le fichier $HOME/Documents/snmp/snmp.conf
+            let snmpconfurl = snmpurl.appendingPathComponent("snmp.conf")
+            let content = "mibdirs \"\(bundledir)\"\n"
+            try? content.write(to: snmpconfurl, atomically: true, encoding: .utf8)
+         }
+
+        // Créer un lien symbolique nommé snmp.txt et pointant vers snmp.conf, pour pouvoir facilement voir le contenu depuis l'IHM d'un iPhone/iPad
+        try? FileManager.default.linkItem(at: URL(fileURLWithPath: "\(homedir)/Documents/snmp/snmp.conf"), to: URL(fileURLWithPath: "\(homedir)/Documents/snmp/snmp.txt"))
+
+        let str = "\(homedir)/Documents/snmp"
+        if let pointer = GenericTools.stringToUnsafeMutablePointer(str) {
+            alex_setsnmpconfpath(pointer)
+            pointer.deallocate()
+        }
+
+        let str2 = bundledir
+        if let pointer = GenericTools.stringToUnsafeMutablePointer(str2) {
+            alex_setsnmpmibdir(pointer)
+            pointer.deallocate()
+        }
+    }
+    
+    private func setState(_ state: SNMPManagerState) {
+        self.state = state
+    }
+
+    private func getState() -> SNMPManagerState {
+        if state == .walk_finished && alex_rollingbuf_isempty() == 1 {
+            state = .pull_finished
+        }
+        return state
+    }
+
+    // Must be in sync with alex_walk.c
+    let ALEX_AV_TAB_LEN = 32
+    let ALEX_AV_STR_LEN = 1024
+    let ALEX_ERRBUF_LEN = 4096
+    let ALEX_TRANSLATE_IN_LEN = 1024
+    let ALEX_TRANSLATE_OUT_LEN = 8192
+
+    func pushArray(_ str_array: [String]) throws(SNMPManagerError) {
+        if str_array.count > ALEX_AV_TAB_LEN {
+            #fatalError("pushArray: str_array.count too large")
+            throw SNMPManagerError.invalidRange
+        }
+        alex_set_av_count(0);
+        for i in 0..<str_array.count {
+            if str_array[i].count > ALEX_AV_STR_LEN - 1 {
+                #fatalError("pushArray: string length too large")
+                throw SNMPManagerError.invalidRange
+            }
+            if let pointer = GenericTools.stringToUnsafeMutablePointer(str_array[i]) {
+                alex_setsnmpconfpath(pointer)
+                alex_set_av(Int32(i), pointer)
+                pointer.deallocate()
+            } else {
+                #fatalError("pushArray: can not push argument")
+            }
+        }
+        alex_set_av_count(Int32(str_array.count));
+    }
+    
+    func translate(_ str: String) throws(SNMPManagerError) -> String {
+        if state != .available {
+            throw SNMPManagerError.notAvailable
+        }
+
+        if let pointer = GenericTools.stringToUnsafeMutablePointer(str /*"IF-MIB::ifNumber"*/) {
+            alex_translate(pointer)
+            pointer.deallocate()
+        } else {
+            #fatalError("alex_translate")
+            return ""
+        }
+
+        let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: ALEX_TRANSLATE_OUT_LEN)
+        alex_get_translation(pointer)
+        let translation = String(cString: pointer)
+        pointer.deallocate()
+        return translation
+    }
+    
+    // onEnd will be called on MainActor
+    func walk(onEnd: @escaping (OIDNode, String) -> Void) throws(SNMPManagerError) {
+        if state != .available {
+            throw SNMPManagerError.notAvailable
+        }
+        setState(.walking)
+        alex_rollingbuf_init();
+
+        // Launch a background thread that runs snmpwalk
+        Task.detached {
+            alex_errbuf_clear()
+            alex_walk()
+            await self.setState(.walk_finished)
+        }
+
+        // Launch a background thread that continuously pulls the results from the static length buffer used by alex_walk()
+        Task.detached {
+            let oid_root = OIDNode(type: .root, val: "")
+            while await self.getState() != .pull_finished {
+                let len = Int(alex_rollingbuf_poplength())
+                if len == -1 {
+                    // No value to pull, we wait 0.2 sec for the alex_walk() thread to collect data
+                    usleep(useconds_t(200000))
+                } else {
+                    let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: len + 1)
+                    let ret = alex_rollingbuf_pop(pointer)
+                    if ret == -1 {
+                        #fatalError("walk: alex_rollingbuf_pop: \(ret)")
+                    } else {
+//                        print("XXXXX: debug oids: \(String(cString: pointer))")
+                        oid_root.mergeSingleOID(OIDNode.parse(String(cString: pointer)))
+                    }
+                    pointer.deallocate()
+                }
+            }
+            
+            await MainActor.run {
+                let pointer = UnsafeMutablePointer<CChar>.allocate(capacity: self.ALEX_ERRBUF_LEN + 1)
+                alex_errbuf_get(pointer)
+                let errbuf = String(cString: pointer)
+                pointer.deallocate()
+                onEnd(oid_root, errbuf)
+            }
+            await self.setState(.available)
+        }
+    }
+}
