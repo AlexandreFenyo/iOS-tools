@@ -50,11 +50,16 @@ class LeftNavController : UINavigationController {
         // pour éviter les problèmes avec iOS15 : https://developer.apple.com/forums/thread/682420
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-
         appearance.backgroundColor = COLORS.leftpannel_topbar_bg
 
         navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
+        navigationBar.scrollEdgeAppearance = appearance
+        navigationBar.compactAppearance = appearance
+
+        if #available(iOS 26.0, *) {
+            // Remove the extra top padding added by Liquid Glass on the navigation bar
+            additionalSafeAreaInsets.top = -45
+        }
     }
 
     private func setupLegacyToolbar() {
