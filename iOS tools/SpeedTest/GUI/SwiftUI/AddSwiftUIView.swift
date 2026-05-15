@@ -19,20 +19,34 @@ struct AddSwiftUIView: View {
     // Node is not observable
     var node: Node
     
-    @State private var scope: NodeType = .snmp
-    @State private var new_scope: NodeType = .snmp
-    
+    @State private var hasChargen: Bool
+    @State private var hasSnmp: Bool
+    @State private var hasInternet: Bool
+
     @StateObject var target: SNMPTargetSimple
 
     @State var ipv4_addresses: [IPv4Address]
     @State var ipv6_addresses: [IPv6Address]
-    
+
     @State private var new_ipv4 = ""
     @State private var new_ipv6 = ""
     @State private var new_name = ""
-    
+
     @State private var showAlert = false
     @State private var msgAlert = ""
+
+    init(add_view_controller: AddViewController?, isEdit: Bool, node: Node, target: SNMPTargetSimple, ipv4_addresses: [IPv4Address], ipv6_addresses: [IPv6Address]) {
+        self.add_view_controller = add_view_controller
+        self.isEdit = isEdit
+        self.node = node
+        _target = StateObject(wrappedValue: target)
+        _ipv4_addresses = State(initialValue: ipv4_addresses)
+        _ipv6_addresses = State(initialValue: ipv6_addresses)
+        let types = node.getTypes()
+        _hasChargen = State(initialValue: types.contains(.chargen))
+        _hasSnmp = State(initialValue: types.contains(.snmp))
+        _hasInternet = State(initialValue: types.contains(.internet))
+    }
 
     var body: some View {
         HStack {
@@ -42,24 +56,19 @@ struct AddSwiftUIView: View {
                     .resizable()
                     .frame(width: 80, height: 80)
                     .cornerRadius(20)
-                Text(isEdit ? "Edit target" : "Add new target")
+                Text(isEdit ? "Edit and persist target" : "Add new persistent target")
                     .font(.headline)
                 if isEdit {
                     Text(node.getName())
                 }
                 
                 ScrollView {
-                    Picker("Section", selection: $scope) {
-                        Text("Chargen").tag(NodeType.chargen).disabled(false)
-                        Text("SNMP").tag(NodeType.snmp)
-                        Text("Internet").tag(NodeType.internet)
-                    }.pickerStyle(.segmented)
-                        .onChange(of: scope) { newValue in
-                            withAnimation(Animation.easeInOut(duration: 0.5)) {
-                                new_scope = newValue
-                            }
-                        }
-                        .padding()
+                    HStack(spacing: 12) {
+                        TypeToggleButton(label: "Chargen", isOn: $hasChargen)
+                        TypeToggleButton(label: "SNMP", isOn: $hasSnmp)
+                        TypeToggleButton(label: "Internet", isOn: $hasInternet)
+                    }
+                    .padding()
                     if !isEdit {
                         VStack {
                             HStack {
@@ -254,7 +263,7 @@ struct AddSwiftUIView: View {
                     .padding(.leading, 15)
                     .padding(.trailing, 15)
                     
-                    if new_scope == .snmp {
+                    if hasSnmp {
                         SNMPTargetView(usage: isEdit ? .edit : .add, target: target, isTargetExpanded: Binding<Bool>(get: { true }, set: { _ in }))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .autocorrectionDisabled(true)
@@ -263,7 +272,7 @@ struct AddSwiftUIView: View {
                     }
                     
                     HStack {
-                        Button(isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
+                        Button(!new_ipv4.isEmpty || !new_ipv6.isEmpty ? "OK (click + to add the IP address)" : !hasChargen && !hasSnmp && !hasInternet ? "OK (select a type)" : isEdit ? ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK") : (new_name.isEmpty ? "OK (add a name)" : ((ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) ? "OK (add an IP address and click +)" : "OK"))) {
                             // Here, node is a copy of the selected Node
                             // In order to update this displayed node, we need to remove it and add it again. We must not update node before calling removeNode() since it would not be find anymore in the model.
                             // If the model has been updated and this node modified (for instance because we were browsing the network, or because of the receive of a multicast announcement), it will not be removed. Therefore, old properties will be merged with new properties when calling add_view_controller?.master_view_controller!.addNode(node) later.
@@ -281,15 +290,14 @@ struct AddSwiftUIView: View {
                             // Remove UDP port list
                             new_node.setUdpPorts(Set<UInt16>())
 
-                            // Add scope
-                            if scope == .snmp {
+                            if hasChargen {
+                                new_node.addType(.chargen)
+                            }
+                            if hasSnmp {
                                 new_node.addType(.snmp)
                                 new_node.setSNMPTarget(SNMPTarget(target))
                             }
-                            if scope == .chargen {
-                                new_node.addType(.chargen)
-                            }
-                            if scope == .internet {
+                            if hasInternet {
                                 new_node.addType(.internet)
                             }
 
@@ -308,7 +316,7 @@ struct AddSwiftUIView: View {
 
                             add_view_controller?.dismiss(animated: true)
                         }
-                        .disabled((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty))
+                        .disabled((isEdit == false && new_name.isEmpty) || (ipv4_addresses.isEmpty && ipv6_addresses.isEmpty) || (!hasChargen && !hasSnmp && !hasInternet) || !new_ipv4.isEmpty || !new_ipv6.isEmpty)
                         .padding(10)
                         .font(.headline)
                         .background(Color.white)
@@ -341,5 +349,28 @@ struct AddSwiftUIView: View {
                         Text(msgAlert)
                     }
         }
+    }
+}
+
+@MainActor
+private struct TypeToggleButton: View {
+    let label: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                isOn.toggle()
+            }
+        } label: {
+            Text(label)
+                .font(.subheadline.weight(.semibold))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(isOn ? Color.accentColor : Color.gray.opacity(0.3))
+                .foregroundColor(isOn ? .white : .primary)
+                .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
     }
 }

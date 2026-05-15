@@ -9,7 +9,7 @@ import SwiftUI
 import WebKit
 import iOSToolsMacros
 
-let debug_snmp = true
+let debug_snmp = false
 let disable_request_reviews = true
 
 // https://developer.apple.com/documentation/swiftui/outlinegroup
@@ -560,7 +560,9 @@ struct SNMPView: View {
                     rootNode.type = oid_root_displayable.type
                     rootNode.val = oid_root_displayable.val
                     rootNode.children = oid_root_displayable.children
+                    rootNode.children?.forEach { $0.parent = rootNode }
                     rootNode.children_backup = oid_root_displayable.children_backup
+                    rootNode.children_backup?.forEach { $0.parent = rootNode }
                     rootNode.subnodes = oid_root_displayable.subnodes
                     is_manager_available_obj.setAvailability(true)
 
