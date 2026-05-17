@@ -175,3 +175,42 @@
 "SNMP-OID-Tree" = "Árbol-OID-de-SNMP";
 "SNMP Object Identifier Help" = "Identificadores OID - Ayuda";
 "browse this SNMP agent" = "Navegar por este agente SNMP";
+
+// SNMP OID help (missing from es)
+"object identifier (symbolic format)" = "identificador de objeto (formato simbólico)";
+"object identifier (numeric format)" = "identificador de objeto (formato numérico)";
+"MIB module(s) on which the object is defined" = "módulo(s) MIB donde se define el objeto";
+"value syntax" = "sintaxis del valor";
+"status (current, obsolete or deprecated)" = "estado (current, obsolete o deprecated)";
+"access mode (read-only, read-write or not-accessible)" = "modo de acceso (read-only, read-write o not-accessible)";
+"Error: no description received" = "Error: no se recibió descripción";
+
+// AddSwiftUIView
+"Edit and persist target" = "Editar y persistir el objetivo";
+"Add new persistent target" = "Agregar un nuevo objetivo persistente";
+"OK (select a type)" = "OK (seleccione un tipo)";
+"OK (click + to add the IP address)" = "OK (haga clic en + para agregar la dirección IP)";
+"Error" = "Error";
+
+// DetailSwiftUIView
+"Stop" = "Detener";
+"heatmap" = "mapa de calor";
+"SSL/TLS" = "SSL/TLS";
+
+// SNMPView
+"stop interfaces scan" = "detener escaneo de interfaces";
+
+// HeatMapSwiftUIView
+"Wait while saving heat map..." = "Guardando el mapa de calor...";
+"This may take up to a minute to produce a high resolution map.\nThe map will be saved into your photo roll." = "Esto puede tardar hasta un minuto para producir un mapa de alta resolución.\nEl mapa se guardará en tu carrete de fotos.";
+"help" = "ayuda";
+"ignore white AP" = "ignorar AP blancos";
+
+// Interman3DSwiftUIView
+"scan" = "escanear";
+"reset" = "restablecer";
+"auto" = "auto";
+
+// MasterViewController
+"no IPv4 address" = "sin dirección IPv4";
+"no IPv6 address" = "sin dirección IPv6";

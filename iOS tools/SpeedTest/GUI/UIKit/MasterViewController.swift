@@ -1271,7 +1271,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             // 3rd choice: autoconfig
             address.isAutoConfig()
         })).first { cell.detail1.text = best.toNumericString() }
-        else { cell.detail1.text = "no IPv4 address" }
+        else { cell.detail1.text = NSLocalizedString("no IPv4 address", comment: "") }
 
         // Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.
         if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
@@ -1284,7 +1284,7 @@ class MasterViewController: UITableViewController, DeviceManager {
             // 3rd choice: LLA
             address.isLLA()
         })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
-        else { cell.detail2.text = "no IPv6 address" }
+        else { cell.detail2.text = NSLocalizedString("no IPv6 address", comment: "") }
 
         cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
         cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")

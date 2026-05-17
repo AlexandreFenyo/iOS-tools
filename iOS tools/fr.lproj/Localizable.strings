@@ -175,3 +175,33 @@
 "access mode (read-only, read-write or not-accessible)" = "mode d'accès (read-only, read-write ou not-accessible)";
 "Error: no description received" = "Erreur: aucune description reçue";
 "browse this SNMP agent" = "parcourir cet agent SNMP";
+
+// AddSwiftUIView
+"Edit and persist target" = "Éditer et persister la cible";
+"Add new persistent target" = "Ajouter une nouvelle cible persistante";
+"OK (select a type)" = "OK (sélectionnez un type)";
+"OK (click + to add the IP address)" = "OK (cliquez sur + pour ajouter l'adresse IP)";
+"Error" = "Erreur";
+
+// DetailSwiftUIView
+"Stop" = "Stop";
+"heatmap" = "heatmap";
+"SSL/TLS" = "SSL/TLS";
+
+// SNMPView
+"stop interfaces scan" = "arrêter le scan des interfaces";
+
+// HeatMapSwiftUIView
+"Wait while saving heat map..." = "Sauvegarde de la heat map en cours...";
+"This may take up to a minute to produce a high resolution map.\nThe map will be saved into your photo roll." = "Cela peut prendre jusqu'à une minute pour produire une carte haute résolution.\nLa carte sera enregistrée dans votre photothèque.";
+"help" = "aide";
+"ignore white AP" = "ignorer les AP blancs";
+
+// Interman3DSwiftUIView
+"scan" = "scanner";
+"reset" = "réinitialiser";
+"auto" = "auto";
+
+// MasterViewController
+"no IPv4 address" = "pas d'adresse IPv4";
+"no IPv6 address" = "pas d'adresse IPv6";
