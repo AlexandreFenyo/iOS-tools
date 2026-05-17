@@ -79,7 +79,7 @@ class LocalDiscardClient : Thread {
 
     // Main thread
     public func getLastErrno() -> Int32 {
-        let ret = localChargenClientGetLastErrorNo()
+        let ret = localDiscardClientGetLastErrorNo()
         if ret < 0 { #fatalError("getLastErrno") }
         return ret
     }

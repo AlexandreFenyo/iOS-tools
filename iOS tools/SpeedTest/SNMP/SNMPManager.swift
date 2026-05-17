@@ -477,7 +477,7 @@ class SNMPManager {
                                         node.addUdpPort(161)
                                         node.setTypes([ .snmp ])
                                         Task {
-                                            self.device_manager?.setInformation(ip_address.toNumericString() ?? "addr is nil" + ": port 161")
+                                            self.device_manager?.setInformation((ip_address.toNumericString() ?? "addr is nil") + ": port 161")
                                             self.device_manager?.addNode(node)
                                         }
                                     }

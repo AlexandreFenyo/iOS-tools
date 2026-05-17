@@ -290,24 +290,25 @@ struct AddSwiftUIView: View {
                             // Remove UDP port list
                             new_node.setUdpPorts(Set<UInt16>())
 
-                            if hasChargen {
-                                new_node.addType(.chargen)
-                            }
+                            // Reset editable types, then set only the selected ones
+                            var persistedTypes = Set<NodeType>()
+                            if hasChargen { persistedTypes.insert(.chargen) }
+                            if hasSnmp { persistedTypes.insert(.snmp) }
+                            if hasInternet { persistedTypes.insert(.internet) }
+                            new_node.setTypes(persistedTypes)
                             if hasSnmp {
-                                new_node.addType(.snmp)
                                 new_node.setSNMPTarget(SNMPTarget(target))
-                            }
-                            if hasInternet {
-                                new_node.addType(.internet)
                             }
 
                             // Let the node be persistant after app restart.
                             DBMaster.shared.saveNode(new_node)
                             add_view_controller?.master_view_controller?.addTrace("Add/Edit node: node saved to persistent storage (\(node.fullDump()))", level: .INFO)
-                            
-                            // We update properties that we want to be kept in the GUI.
+
+                            // Re-add non-editable types for GUI consistency (localhost, ios, discard, gateway)
                             for type in node.getTypes() {
-                                new_node.addType(type)
+                                if type != .chargen && type != .snmp && type != .internet {
+                                    new_node.addType(type)
+                                }
                             }
                             new_node.setTcpPorts(node.getTcpPorts())
                             new_node.setUdpPorts(node.getUdpPorts())
