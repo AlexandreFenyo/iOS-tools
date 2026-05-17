@@ -25,6 +25,63 @@ struct OIDInfos: Decodable {
     let access: String?
     let description: String?
     let line: String?
+
+    init(oid: String, mib: String, conv: String?, syntax: String?, hint: String?, status: String?, access: String?, description: String?, line: String?) {
+        self.oid = oid
+        self.mib = mib
+        self.conv = conv
+        self.syntax = syntax
+        self.hint = hint
+        self.status = status
+        self.access = access
+        self.description = description
+        self.line = line
+    }
+}
+
+enum OIDDictionary {
+    private static var data: [String: OIDInfos]?
+    private static var aliases: [String: String]?
+
+    private struct Root: Decodable {
+        let data: [String: OIDInfos]
+        let aliases: [String: String]
+    }
+
+    static func load() {
+        guard data == nil else { return }
+        guard let url = Bundle.main.url(forResource: "oid_dictionary", withExtension: "json"),
+              let raw = try? Data(contentsOf: url),
+              let root = try? JSONDecoder().decode(Root.self, from: raw) else {
+            data = [:]
+            aliases = [:]
+            return
+        }
+        data = root.data
+        aliases = root.aliases
+    }
+
+    private static func resolve(_ key: String) -> OIDInfos? {
+        if let info = data![key] { return info }
+        if let primary = aliases![key], let info = data![primary] { return info }
+        return nil
+    }
+
+    static func lookup(_ key: String) -> OIDInfos? {
+        load()
+
+        if let info = resolve(key) { return info }
+
+        var stripped = key
+        while let dotRange = stripped.range(of: ".", options: .backwards) {
+            let suffix = stripped[dotRange.upperBound...]
+            guard suffix.allSatisfy({ $0.isNumber }) else { break }
+            stripped = String(stripped[..<dotRange.lowerBound])
+            if let info = resolve(stripped) { return info }
+        }
+
+        return nil
+    }
 }
 
 enum SNMPManagerState: Int {

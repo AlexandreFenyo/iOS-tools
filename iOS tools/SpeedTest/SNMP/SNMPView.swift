@@ -73,8 +73,8 @@ struct OIDTreeView: View {
     @ObservedObject var node: OIDNodeDisplayable
     @Binding var highlight: String
     
-    var show_info_cb: (String) -> Void
-    
+    var show_info_cb: (OIDInfos?) -> Void
+
     var body: some View {
         if node.children == nil || node.children?.isEmpty == true {
             // no child
@@ -116,36 +116,7 @@ struct OIDTreeView: View {
                                     .onTapGesture {
                                         if let foo = node.line.components(separatedBy: " = ").first {
                                             if let bar = foo.components(separatedBy: "[").first {
-                                                Task {
-                                                    do {
-                                                        // We call the following web service:
-                                                        // vps-225bc1f7# cat snmptranslate.cgi
-                                                        // #!/bin/zsh
-                                                        // echo Content-type: text/html
-                                                        // echo
-                                                        // OID=`echo $QUERY_STRING | sed 's/[^0-9a-zA-Z.:-]//g'`
-                                                        // snmptranslate -mall -Td $OID 2> /dev/null | read -d '' RESP
-                                                        // echo $RESP | sed -n 1p | read XOID
-                                                        // echo $RESP | grep '  -- FROM' | head -1 | sed 's/  -- FROM[ \t]*//' | sed 's/"/\\\\"/g' | read MIB
-                                                        // echo $RESP | grep '  -- TEXTUAL CONVENTION' | head -1 | sed -E 's/  -- TEXTUAL CONVENTION[\t ]*//' | sed 's/"/\\\\"/g' | read TXT
-                                                        // echo $RESP | grep '  SYNTAX' | head -1 | sed -E 's/  SYNTAX[\t ]*//' | sed 's/"/\\\\"/g' | read SYNTAX
-                                                        // echo $RESP | grep '  DISPLAY-HINT' | head -1 | sed -E 's/  DISPLAY-HINT[\t ]*//' | sed 's/"/\\\\"/g' | read HINT
-                                                        // echo $RESP | grep '  MAX-ACCESS' | head -1 | sed -E 's/  MAX-ACCESS[\t ]*//' | sed 's/"/\\\\"/g' | read ACCESS
-                                                        // echo $RESP | grep '  STATUS' | head -1 | sed -E 's/  STATUS[\t ]*//' | sed 's/"/\\\\"/g' | read STATUS
-                                                        // echo $RESP | grep '::= ' | head -1 | sed -E 's/::= //' | sed 's/"/\\\\"/g' | read LINE
-                                                        // echo `echo $RESP | sed '0,/DESCRIPTION/ { /DESCRIPTION/!d }' | egrep -v '^::= '` | sed 's/^DESCRIPTION *//' | sed 's/^"//' | sed 's/"$//' | sed 's/"/\\\\"/g' | read DESCRIPTION
-                                                        // echo "{ \"oid\": \"$XOID\", \"mib\": \"$MIB\", \"conv\": \"$TXT\", \"syntax\": \"$SYNTAX\", \"hint\": \"$HINT\", \"access\": \"$ACCESS\", \"status\": \"$STATUS\", \"line\": \"$LINE\", \"description\": \"$DESCRIPTION\" }"
-                                                        // exit 0
-                                                        let data = try await URLSession.shared.data(from: URL(string: "http://ovh.fenyo.net/cgi-bin/snmptranslate.cgi?\(bar)")!).0
-                                                        if let str = String(data: data, encoding: .utf8) {
-                                                            show_info_cb(str)
-                                                        } else {
-                                                            #fatalError("snmptranslate encoding error")
-                                                        }
-                                                    } catch {
-                                                        #fatalError("snmptranslate: \(error)")
-                                                    }
-                                                }
+                                                show_info_cb(OIDDictionary.lookup(bar))
                                             }
                                         }
                                     }
@@ -498,26 +469,8 @@ struct SNMPView: View {
     
     var oid_time_series = OIDTimeSeries()
     
-    func showInfo(info: String) {
-        if let jsonData = info.data(using: .utf8) {
-            let decoder = JSONDecoder()
-            do {
-                oid_info = try decoder.decode(OIDInfos.self, from: jsonData)
-                /*
-                print("oid: \(String(describing: oid_info?.oid))")
-                print("mib: \(String(describing: oid_info?.mib))")
-                print("textual_convention: \(String(describing: oid_info?.conv))")
-                print("syntax: \(String(describing: oid_info?.syntax))")
-                print("display_hint: \(String(describing: oid_info?.hint))")
-                print("status: \(String(describing: oid_info?.status))")
-                print("line: \(String(describing: oid_info?.line))")
-                print("description: \(String(describing: oid_info?.description))")
-                */
-            } catch {
-                #fatalError("JSON parser error: \(error.localizedDescription)")
-            }
-        }
-        
+    func showInfo(info: OIDInfos?) {
+        oid_info = info
         show_popup = true
     }
     
