@@ -72,8 +72,9 @@ struct HighlightedTextView: View {
 struct OIDTreeView: View {
     @ObservedObject var node: OIDNodeDisplayable
     @Binding var highlight: String
-    
+
     var show_info_cb: (OIDInfos?) -> Void
+    @ObservedObject var oid_time_series: OIDTimeSeries
 
     var body: some View {
         if node.children == nil || node.children?.isEmpty == true {
@@ -109,7 +110,21 @@ struct OIDTreeView: View {
                                 .font(.subheadline)
                                 .foregroundColor(.red)
                                 .multilineTextAlignment(.trailing)
-                            
+
+                            if node.line.contains("Octets") {
+                                if let rate = oid_time_series.formattedBitrate(forLine: node.line) {
+                                    Text("(\(rate))")
+                                        .font(.subheadline)
+                                        .foregroundColor(.green)
+                                        .multilineTextAlignment(.trailing)
+                                }
+                            } else if let first = oid_time_series.firstValueWithoutType(forLine: node.line) {
+                                Text("(\(first))")
+                                    .font(.subheadline)
+                                    .foregroundColor(node.line.contains("Pkts") ? .green : .gray)
+                                    .multilineTextAlignment(.trailing)
+                            }
+
                             if !node.line.isEmpty {
                                 Image(systemName: "questionmark.circle")
                                     .foregroundColor(.orange)
@@ -134,7 +149,7 @@ struct OIDTreeView: View {
             DisclosureGroup(isExpanded: $node.isExpanded, content: {
                 if let children = node.children {
                     ForEach(children) { child in
-                        OIDTreeView(node: child, highlight: $highlight, show_info_cb: show_info_cb)
+                        OIDTreeView(node: child, highlight: $highlight, show_info_cb: show_info_cb, oid_time_series: oid_time_series)
                     }
                 }
             }) {
@@ -466,8 +481,8 @@ struct SNMPView: View {
     @State private var interface_loop = false
 
     @EnvironmentObject var current_selected_target_simple: SNMPTargetSimple
-    
-    var oid_time_series = OIDTimeSeries()
+
+    @StateObject var oid_time_series = OIDTimeSeries()
     
     func showInfo(info: OIDInfos?) {
         oid_info = info
@@ -476,9 +491,8 @@ struct SNMPView: View {
     
     private func onEndLoop(_ oid_node: OIDNode?) -> Void {
         guard let oid_node = oid_node else { return }
-
+        guard interface_loop else { return }
         oid_time_series.update(oid_node)
-        
     }
     
     private func doLoop(command: [String], message: String) {
@@ -595,10 +609,11 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
+                            oid_time_series.reset()
                             withAnimation(Animation.easeInOut(duration: 0.5)) {
                                 interface_loop = true
                             }
-                            
+
                             var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
                             str_array.append(".1.3.6.1.2.1.2.2")
                             doLoop(command: str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
@@ -621,9 +636,8 @@ struct SNMPView: View {
                             Button(action: {
                                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                                     interface_loop = false
-
-
                                 }
+                                oid_time_series.reset()
                                 master_view_controller.addTrace("SNMP: stopped interfaces scan")
                             })
                             {
@@ -713,7 +727,7 @@ struct SNMPView: View {
                 .padding(.bottom, 5)
                 
                 List {
-                    OIDTreeView(node: rootNode, highlight: $highlight, show_info_cb: showInfo)
+                    OIDTreeView(node: rootNode, highlight: $highlight, show_info_cb: showInfo, oid_time_series: oid_time_series)
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color(COLORS.right_pannel_bg))

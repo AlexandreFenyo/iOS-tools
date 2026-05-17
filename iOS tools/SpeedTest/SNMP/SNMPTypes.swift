@@ -197,32 +197,105 @@ class OIDNodeDisplayable: Identifiable, ObservableObject {
     }
 }
 
-@MainActor
-class OIDTimeSeries {
-    
-    // Ex.:
-    // IF-MIB::ifOutUcastPkts[1] = Counter32: 38764859
-    func scan(_ line: String) {
-        if let left_bracket_index = line.firstIndex(of: "[") {
-            let param_name = String(line[..<left_bracket_index])
-            let remainder = String(line[line.index(after: left_bracket_index)..<line.endIndex])
-            if let right_bracket_index = remainder.firstIndex(of: "]") {
-                let index_str = String(remainder[..<right_bracket_index])
-                if let index_number = Int(index_str) {
-                    // CONTINUER ICI mais débugger l'arbre d'oid retourné
-                } else {
-                    print("OIDTimeSeries.scan(): not a number: \(index_str)")
-                }
-            } else {
-                print("OIDTimeSeries.scan(): no ']' found after '['")
-            }
-        } else {
-            print("OIDTimeSeries.scan(): no '[' found")
+// Splits a raw SNMP line "<key> = <type>: <value>" or "<key> = <value>" into
+// (key, full value after " = ", value without the leading "<type>: " prefix).
+// Examples:
+//   "IF-MIB::ifOutOctets[1] = Counter32: 12345" -> ("IF-MIB::ifOutOctets[1]", "Counter32: 12345", "12345")
+//   "SNMPv2-MIB::sysDescr.0 = STRING: \"Linux\""  -> ("SNMPv2-MIB::sysDescr.0", "STRING: \"Linux\"", "\"Linux\"")
+fileprivate func parseSNMPLine(_ line: String) -> (key: String, value: String, valueWithoutType: String)? {
+    guard let sep = line.range(of: " = ") else { return nil }
+    let key = String(line[..<sep.lowerBound])
+    let value = String(line[sep.upperBound...])
+    var valueWithoutType = value
+    if let colon = value.range(of: ": ") {
+        let typePart = value[..<colon.lowerBound]
+        if !typePart.contains(" ") {
+            valueWithoutType = String(value[colon.upperBound...])
         }
     }
-    
+    return (key, value, valueWithoutType)
+}
+
+struct OIDReading {
+    let value: String  // full value with type prefix, e.g. "Counter32: 12345"
+    let date: Date
+}
+
+fileprivate func stripSNMPType(_ value: String) -> String {
+    if let colon = value.range(of: ": ") {
+        let typePart = value[..<colon.lowerBound]
+        if !typePart.contains(" ") {
+            return String(value[colon.upperBound...])
+        }
+    }
+    return value
+}
+
+fileprivate func formatBitrate(_ bps: Double) -> String {
+    if bps >= 1_000_000_000 {
+        return String(format: "%.1f Gbit/s", bps / 1_000_000_000)
+    }
+    if bps >= 1_000_000 {
+        return String(format: "%.1f Mbit/s", bps / 1_000_000)
+    }
+    if bps >= 1_000 {
+        return String(format: "%.1f kbit/s", bps / 1_000)
+    }
+    return "\(Int(bps.rounded())) bit/s"
+}
+
+@MainActor
+class OIDTimeSeries: ObservableObject {
+    // OID key (e.g. "IF-MIB::ifOutOctets[1]") -> first/last received readings
+    @Published private(set) var firstReadings: [String: OIDReading] = [:]
+    @Published private(set) var lastReadings: [String: OIDReading] = [:]
+
+    func reset() {
+        firstReadings = [:]
+        lastReadings = [:]
+    }
+
+    func firstValueWithoutType(forLine line: String) -> String? {
+        guard let parsed = parseSNMPLine(line) else { return nil }
+        guard let first = firstReadings[parsed.key],
+              let last = lastReadings[parsed.key] else { return nil }
+        if first.value == last.value { return nil }
+        return stripSNMPType(first.value)
+    }
+
+    // Bitrate in bit/s = (last - first) * 8 / (last_date - first_date).
+    // Uses only stored readings, never `Date()` at call time, so the value stays
+    // stable between walks and only changes when new data is recorded.
+    func bitrate(forLine line: String) -> Double? {
+        guard let parsed = parseSNMPLine(line) else { return nil }
+        guard let first = firstReadings[parsed.key],
+              let last = lastReadings[parsed.key] else { return nil }
+        if first.value == last.value { return nil }
+        guard let firstNum = Double(stripSNMPType(first.value).trimmingCharacters(in: .whitespaces)),
+              let lastNum = Double(stripSNMPType(last.value).trimmingCharacters(in: .whitespaces)) else {
+            return nil
+        }
+        let dt = last.date.timeIntervalSince(first.date)
+        guard dt > 0 else { return nil }
+        let octets = lastNum - firstNum
+        guard octets >= 0 else { return nil }
+        return octets * 8.0 / dt
+    }
+
+    func formattedBitrate(forLine line: String) -> String? {
+        guard let bps = bitrate(forLine: line) else { return nil }
+        return formatBitrate(bps)
+    }
+
     func update(_ oid: OIDNode) {
-        scan(oid.line)
+        let now = Date()
+        if !oid.line.isEmpty, let parsed = parseSNMPLine(oid.line) {
+            let reading = OIDReading(value: parsed.value, date: now)
+            if firstReadings[parsed.key] == nil {
+                firstReadings[parsed.key] = reading
+            }
+            lastReadings[parsed.key] = reading
+        }
         for child in oid.children {
             update(child)
         }
