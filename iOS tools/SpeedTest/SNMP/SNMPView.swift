@@ -494,6 +494,31 @@ struct SNMPView: View {
         guard interface_loop else { return }
         oid_time_series.update(oid_node)
     }
+
+    // Precompute the green flag on every leaf, reading the time series directly
+    // (not through an escaping closure, which could capture a disconnected copy of
+    // the @StateObject). Traverses children_backup when present so hidden leaves
+    // are re-evaluated too.
+    private func markGreen(_ node: OIDNodeDisplayable) {
+        let kids = node.children_backup ?? node.children
+        if let kids, !kids.isEmpty {
+            for child in kids {
+                markGreen(child)
+            }
+        } else {
+            node.isGreen = oid_time_series.isGreenLine(node.line)
+        }
+    }
+
+    // While the interface speed scan runs, keep only the green leaves (and their
+    // ancestors), like the text filter does. Otherwise apply the text filter only.
+    private func applyFilter(_ str: String) {
+        if interface_loop {
+            markGreen(rootNode)
+        }
+        rootNode.expandAll()
+        _ = rootNode.filter(str, greenOnly: interface_loop)
+    }
     
     private func doLoop(command: [String], message: String) {
         walk(command, message: message, onEnd: onEndLoop)
@@ -523,6 +548,12 @@ struct SNMPView: View {
                     }
                 }
                 let oid_root_displayable = oid_root.getDisplayable()
+
+                // Update the time series before filtering so the green filter sees current values.
+                if let onEnd {
+                    onEnd(oid_root)
+                }
+
                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                     rootNode.type = oid_root_displayable.type
                     rootNode.val = oid_root_displayable.val
@@ -533,12 +564,7 @@ struct SNMPView: View {
                     rootNode.subnodes = oid_root_displayable.subnodes
                     is_manager_available_obj.setAvailability(true)
 
-                    rootNode.expandAll()
-                    _ = rootNode.filter(highlight)
-                }
-                
-                if let onEnd {
-                    onEnd(oid_root)
+                    applyFilter(highlight)
                 }
             }
         } catch {
@@ -636,8 +662,14 @@ struct SNMPView: View {
                             Button(action: {
                                 withAnimation(Animation.easeInOut(duration: 0.5)) {
                                     interface_loop = false
+                                    oid_time_series.reset()
+                                    // Restore the full tree now that the green filter is off
+                                    applyFilter(highlight)
                                 }
-                                oid_time_series.reset()
+                                // Hide the "SNMP walk in progress" spinner/message right away:
+                                // no new walk is started after stop, and an in-flight walk would
+                                // otherwise keep availability false until it (slowly) completes.
+                                is_manager_available_obj.setAvailability(true)
                                 master_view_controller.addTrace("SNMP: stopped interfaces scan")
                             })
                             {
@@ -680,8 +712,7 @@ struct SNMPView: View {
                             .focused($isTextFieldFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: highlight) { _, newValue in
-                                rootNode.expandAll()
-                                _ = rootNode.filter(newValue)
+                                applyFilter(newValue)
                             }
                     } else {
                         TextField("Set a filter...", text: $highlight)
@@ -689,8 +720,7 @@ struct SNMPView: View {
                             .focused($isTextFieldFocused)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .onChange(of: highlight) { newValue in
-                                rootNode.expandAll()
-                                _ = rootNode.filter(newValue)
+                                applyFilter(newValue)
                             }
                     }
                     

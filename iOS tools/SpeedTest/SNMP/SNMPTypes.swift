@@ -31,6 +31,10 @@ class OIDNodeDisplayable: Identifiable, ObservableObject {
     @Published var isExpanded: Bool = true
     @Published var isHidden: Bool = false
 
+    // Set during the interface speed scan: true when this leaf's data has evolved
+    // (green line). Precomputed so the filter does not depend on the time series.
+    var isGreen: Bool = false
+
     weak var parent: OIDNodeDisplayable?
     
     init(type: OIDType, val: String, children: [OIDNodeDisplayable]? = nil, subnodes: [OIDNodeDisplayable] = [], parent: OIDNodeDisplayable? = nil, line: String = "") {
@@ -87,44 +91,51 @@ class OIDNodeDisplayable: Identifiable, ObservableObject {
     }
 
     // renvoie true si doit apparaître car lui ou un de ses descendants matche le filtre
-    func filter(_ str: String) -> Bool {
-        if str.isEmpty {
+    // greenOnly : si vrai, une feuille n'apparaît que si son drapeau isGreen est vrai
+    // (utilisé pour n'afficher que les lignes "vertes" — données qui ont évolué —
+    // pendant le scan du débit des interfaces). isGreen est précalculé par la vue.
+    func filter(_ str: String, greenOnly: Bool = false) -> Bool {
+        let has_text = !str.isEmpty
+
+        if !has_text && !greenOnly {
             restore()
             guard let children_backup else {
                 return true
             }
             for child in children_backup {
-                _ = child.filter(str)
+                _ = child.filter(str, greenOnly: greenOnly)
             }
             return true
         } else {
             var should_appear = false
-            
+
             if children_backup == nil {
                 children_backup = children
             }
-            
+
             if let children_backup, children_backup.isEmpty == false {
                 // children exist
                 for child in children_backup {
-                    if child.filter(str) {
+                    if child.filter(str, greenOnly: greenOnly) {
                         should_appear = true
                     }
                 }
-                if getDisplayValAndSubValues().lowercased().contains(str.lowercased()) {
+                // Un parent peut apparaître de lui-même via le texte, mais pas quand le filtre vert est actif
+                if !greenOnly && getDisplayValAndSubValues().lowercased().contains(str.lowercased()) {
                     should_appear = true
                 }
             }
             else {
-                // no child
-                if getDisplayValAndSubValues().lowercased().contains(str.lowercased()) {
-                    should_appear = true
-                }
-                if let foo = subnodes.last {
-                    if foo.val.lowercased().contains(str.lowercased()) {
-                        should_appear = true
+                // no child (leaf)
+                var text_match = true
+                if has_text {
+                    text_match = getDisplayValAndSubValues().lowercased().contains(str.lowercased())
+                    if !text_match, let foo = subnodes.last {
+                        text_match = foo.val.lowercased().contains(str.lowercased())
                     }
                 }
+                let green_match = greenOnly ? isGreen : true
+                should_appear = text_match && green_match
             }
             if should_appear {
                 restore()
@@ -246,13 +257,20 @@ fileprivate func formatBitrate(_ bps: Double) -> String {
 
 @MainActor
 class OIDTimeSeries: ObservableObject {
+    // Sliding window length over which bitrates are averaged.
+    private static let windowSeconds: TimeInterval = 30
+
     // OID key (e.g. "IF-MIB::ifOutOctets[1]") -> first/last received readings
     @Published private(set) var firstReadings: [String: OIDReading] = [:]
     @Published private(set) var lastReadings: [String: OIDReading] = [:]
+    // Recent readings per key, kept only for the last windowSeconds, used to
+    // average the bitrate over that sliding window instead of since scan start.
+    @Published private(set) var history: [String: [OIDReading]] = [:]
 
     func reset() {
         firstReadings = [:]
         lastReadings = [:]
+        history = [:]
     }
 
     func firstValueWithoutType(forLine line: String) -> String? {
@@ -263,19 +281,20 @@ class OIDTimeSeries: ObservableObject {
         return stripSNMPType(first.value)
     }
 
-    // Bitrate in bit/s = (last - first) * 8 / (last_date - first_date).
+    // Bitrate in bit/s averaged over the readings taken in the last windowSeconds:
+    // (newest - oldest_in_window) * 8 / (newest_date - oldest_in_window_date).
     // Uses only stored readings, never `Date()` at call time, so the value stays
-    // stable between walks and only changes when new data is recorded.
+    // stable between walks and only changes when a new measurement is recorded.
     func bitrate(forLine line: String) -> Double? {
         guard let parsed = parseSNMPLine(line) else { return nil }
-        guard let first = firstReadings[parsed.key],
-              let last = lastReadings[parsed.key] else { return nil }
-        if first.value == last.value { return nil }
-        guard let firstNum = Double(stripSNMPType(first.value).trimmingCharacters(in: .whitespaces)),
-              let lastNum = Double(stripSNMPType(last.value).trimmingCharacters(in: .whitespaces)) else {
+        guard let readings = history[parsed.key], readings.count >= 2,
+              let oldest = readings.first, let newest = readings.last else { return nil }
+        if oldest.value == newest.value { return nil }
+        guard let firstNum = Double(stripSNMPType(oldest.value).trimmingCharacters(in: .whitespaces)),
+              let lastNum = Double(stripSNMPType(newest.value).trimmingCharacters(in: .whitespaces)) else {
             return nil
         }
-        let dt = last.date.timeIntervalSince(first.date)
+        let dt = newest.date.timeIntervalSince(oldest.date)
         guard dt > 0 else { return nil }
         let octets = lastNum - firstNum
         guard octets >= 0 else { return nil }
@@ -287,6 +306,18 @@ class OIDTimeSeries: ObservableObject {
         return formatBitrate(bps)
     }
 
+    // A "green" line is one whose data has evolved since the first reading:
+    // an Octets counter with a computable bitrate, or a Pkts counter that changed.
+    func isGreenLine(_ line: String) -> Bool {
+        if line.contains("Octets") {
+            return bitrate(forLine: line) != nil
+        }
+        if line.contains("Pkts") {
+            return firstValueWithoutType(forLine: line) != nil
+        }
+        return false
+    }
+
     func update(_ oid: OIDNode) {
         let now = Date()
         if !oid.line.isEmpty, let parsed = parseSNMPLine(oid.line) {
@@ -295,6 +326,12 @@ class OIDTimeSeries: ObservableObject {
                 firstReadings[parsed.key] = reading
             }
             lastReadings[parsed.key] = reading
+            // Append to the sliding window and drop readings older than windowSeconds.
+            let cutoff = now.addingTimeInterval(-Self.windowSeconds)
+            var readings = history[parsed.key] ?? []
+            readings.append(reading)
+            readings.removeAll { $0.date < cutoff }
+            history[parsed.key] = readings
         }
         for child in oid.children {
             update(child)
