@@ -496,9 +496,15 @@ class SNMPManager {
     
     private var state: SNMPManagerState = .available
     private var is_option_output_X_called = false
-    
+
     private var IP_to_check = [IPAddress]()
     private var device_manager: DeviceManager?
+
+    // True while the user is on the SNMP tab. Suspends consumption of the
+    // IP_to_check queue (the in-flight check, if any, completes naturally).
+    // The queue is flushed when pausing ends, so entries accumulated during
+    // the visit are not replayed when the user leaves the SNMP tab.
+    private var is_paused: Bool = false
 
     init() {
         // Create background thread
@@ -506,7 +512,7 @@ class SNMPManager {
         Task.detached {
             while (true) {
                 let task = Task<IPAddress?, Never>{ @MainActor in
-                    if SNMPAvailability.shared.getAvailability() == false || self.IP_to_check.isEmpty {
+                    if self.is_paused || SNMPAvailability.shared.getAvailability() == false || self.IP_to_check.isEmpty {
                         return nil
                     }
                     let msg: String
@@ -560,6 +566,17 @@ class SNMPManager {
     
     func flushIpToCheck() {
         IP_to_check = [IPAddress]()
+    }
+
+    func pauseChecks() {
+        is_paused = true
+    }
+
+    func resumeChecks() {
+        is_paused = false
+        // Drop anything that accumulated in the queue while the user was on
+        // the SNMP tab so it does not get tested when they come back.
+        flushIpToCheck()
     }
     
     func isIPToCheckEmpty() -> Bool {

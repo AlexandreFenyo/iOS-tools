@@ -46,4 +46,14 @@ class SnmpViewController: UIViewController {
             hostingViewController.view.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        SNMPManager.manager.pauseChecks()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        SNMPManager.manager.resumeChecks()
+    }
 }
