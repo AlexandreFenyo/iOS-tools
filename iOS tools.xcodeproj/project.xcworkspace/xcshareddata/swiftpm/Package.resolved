@@ -1,0 +1,51 @@
+{
+  "originHash" : "009c9b20527e0d4439e6907bb7c77ae84726f32cd0654540e128224a5393043a",
+  "pins" : [
+    {
+      "identity" : "iostoolsmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/iOSToolsMacros",
+      "state" : {
+        "branch" : "main",
+        "revision" : "29ccc369d6ebb3b2cb0f9b787e46d1a107cc376f"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftadvancedatomicscpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/SwiftAdvancedAtomicsCPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d2b04455a4fb8fc28bc645cca7790a716dc4eab2"
+      }
+    },
+    {
+      "identity" : "swiftadvancedatomicsswiftpackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/SwiftAdvancedAtomicsSwiftPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "bd6da2eb0906556406caf48e3733837a766fd4fe"
+      }
+    },
+    {
+      "identity" : "webclientspackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AlexandreFenyo/WebClientsPackage.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "64c7bba570da44b23898a8ff28f6ac4631206e62"
+      }
+    }
+  ],
+  "version" : 3
+}
