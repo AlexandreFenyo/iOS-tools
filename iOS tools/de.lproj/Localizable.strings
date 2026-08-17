@@ -1,0 +1,211 @@
+/*
+  Localizable.strings
+  iOS tools
+
+  German localization — created 2026-08-17.
+  Keys are the English source strings.
+*/
+
+"web access" = "Webzugriff";
+"parameter-lang" = "en";
+"mDNS and DNS host names" = "mDNS- und DNS-Namen";
+"IPv4 and IPv6 addresses" = "IPv4- und IPv6-Adressen";
+"scan TCP ports" = "TCP-Ports scannen";
+"TCP flood discard" = "TCP-Discard-Port fluten";
+"TCP flood chargen" = "TCP-Chargen-Port fluten";
+"UDP flood" = "UDP-Flooding";
+"ICMP ping" = "ICMP-Ping";
+"TCP ports and associated service names" = "TCP-Ports und zugehörige Dienste";
+"UDP ports and associated service names" = "UDP-Ports und zugehörige Dienste";
+"iOS device" = "iOS-Gerät";
+"Chargen Discard" = "Chargen oder Discard";
+"Add permanently" = "Dauerhaft hinzufügen";
+"Target name" = "Name des Ziels";
+"Target IP" = "IP des Ziels";
+"Target List" = "Zielliste";
+"Resolve target IPv4 from target name" = "IPv4-Adresse aus dem Zielnamen auflösen";
+"Resolve target IPv6 from target name" = "IPv6-Adresse aus dem Zielnamen auflösen";
+"Add this new target" = "Dieses neue Ziel hinzufügen";
+"Dismiss" = "Abbrechen";
+"Localhost" = "Lokales Gerät";
+"this host" = "dieses Gerät";
+"iOS devices" = "iOS-Geräte";
+"other devices running this app" = "andere Geräte mit dieser App";
+"Chargen Discard services" = "Chargen-/Discard-Dienste";
+"other devices running these services" = "andere Geräte mit diesen Diensten";
+"Local gateway" = "Lokales Gateway";
+"Other host" = "Anderes Gerät";
+"local router" = "lokaler Router";
+"remote hosts on the Internet" = "entfernte Hosts im Internet";
+"Other hosts" = "Andere Geräte";
+"Internet" = "Internet";
+"any host" = "beliebige Hosts";
+"New node properties" = "Eigenschaften des neuen Ziels";
+"Heat Map Builder" = "Heatmap erstellen";
+"Select your floor plan" = "Wählen Sie Ihren Grundriss";
+"Add new probe" = "Messpunkt hinzufügen";
+"Save measure" = "Messung speichern";
+"Undo" = "Rückgängig";
+"Reset all" = "Alles löschen";
+"Reset\nall" = "Alles\nlöschen";
+"Share your map" = "Karte teilen";
+"Share\nyour map" = "Karte\nteilen";
+"Hide map" = "Karte ausblenden";
+"ALL" = "ALLE";
+"Scan local network" = "Lokales Netzwerk durchsuchen";
+"Advanced actions" = "Erweiterte Aktionen";
+"Chart usage" = "Verwendung des Diagramms";
+"Internet speed test" = "Internet-Geschwindigkeitstest";
+"Open ports explorer" = "Offene Ports erkunden";
+"App settings" = "App-Einstellungen";
+"You can reset this app, for instance to display again each help pop-up you have previously dismissed. To reset this app or update its parameters, you need to open the iOS Configuration app and select the name of this app in the app list." = "Sie können diese App zurücksetzen, zum Beispiel um alle zuvor ausgeblendeten Hilfe-Pop-ups wieder anzuzeigen. Öffnen Sie dazu die iOS-Einstellungen und wählen Sie den Namen dieser App in der App-Liste aus.";
+"Licensing" = "Lizenz";
+"This tool makes use of CTHelp by Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\n3D model credits available at https://fenyo.net/network3dwifitools/credits.html\nEven if I often publish free software open-source code (see https://github.com/AlexandreFenyo), this specific software is not free, however it is open-source, but you must not redistribute the sources." = "Diese App verwendet CTHelp von Stewart Lynch\nhttps://github.com/StewartLynch/CTHelp/blob/master/LICENSE\nLizenzen der 3D-Modelle: https://fenyo.net/network3dwifitools/credits.html\nAuch wenn ich häufig freie Open-Source-Software veröffentliche (siehe https://github.com/AlexandreFenyo), ist diese App nicht frei; der Quellcode ist einsehbar, darf aber nicht weiterverbreitet werden.";
+"Come back here after having started a TCP Flood Chargen action on a target (download speed testing).\nThe target must remain the same until the heat map is built.\n- to estimate the Wi-Fi internal throughput between local hosts, either select a target on the local wired network, or select a wirelessly connected target that is as close as possible to an access point, for instance using another iOS device running this app;\n- to estimate the Internet throughput for various locations on your local Wi-Fi network, select a target on the Internet, like flood.eowyn.eu.org." = "Kommen Sie hierher zurück, nachdem Sie eine TCP-Chargen-Flooding-Aktion auf ein Ziel gestartet haben (Messung der Empfangsgeschwindigkeit).\nDas Ziel muss bis zur Fertigstellung der Heatmap dasselbe bleiben.\n- Um den WLAN-internen Durchsatz zwischen lokalen Geräten zu schätzen, wählen Sie ein Ziel im kabelgebundenen lokalen Netz, oder ein drahtlos verbundenes Ziel möglichst nahe an einem Access Point, zum Beispiel ein weiteres iOS-Gerät mit dieser App;\n- um den Internet-Durchsatz an verschiedenen Stellen Ihres WLANs zu schätzen, wählen Sie ein Ziel im Internet, etwa flood.eowyn.eu.org.";
+"Welcome on the main page of this app. Either pull down the node list or click on the reload button, to scan the local network for new nodes. You can also select a node to display its IP addresses, then launch actions on the selected target. For instance, to estimate the average incoming and outgoing speed of your Internet connection, select the target flood.eowyn.eu.org that is a host on the Internet that supports both TCP Chargen and Discard services. Then launch one of the following action: TCP flood discard to estimate outgoing speed to the Internet, or TCP flood chargen to estimate incoming speed from the Internet." = "Willkommen auf der Hauptseite dieser App. Ziehen Sie die Zielliste nach unten oder tippen Sie auf die Aktualisieren-Taste, um das lokale Netzwerk nach neuen Geräten zu durchsuchen. Sie können auch ein Gerät auswählen, um seine IP-Adressen anzuzeigen und Aktionen darauf zu starten. Um zum Beispiel die mittlere Empfangs- und Sendegeschwindigkeit Ihrer Internetverbindung zu schätzen, wählen Sie das Ziel flood.eowyn.eu.org — einen Internet-Host, der die Dienste TCP Chargen und Discard anbietet. Starten Sie dann eine der folgenden Aktionen: TCP-Discard-Flooding für die Sendegeschwindigkeit oder TCP-Chargen-Flooding für die Empfangsgeschwindigkeit.";
+"IP List" = "IP-Liste";
+"You can select another IP or launch an action on the current IP (scan TCP ports, TCP flood discard, TCP flood chargen, UDP flood or ICMP ping)." = "Sie können eine andere IP auswählen oder eine Aktion auf der aktuellen IP starten (TCP-Ports scannen, TCP-Discard-Flooding, TCP-Chargen-Flooding, UDP-Flooding oder ICMP-Ping).";
+"Error saving map" = "Fehler beim Speichern der Heatmap";
+"Map saved" = "Heatmap gespeichert";
+"Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)" = "Der Zugriff auf die Fotos ist nicht erlaubt. Bitte ändern Sie die Zugriffsrechte in den App-Einstellungen (tippen Sie auf das Zahnrad in der Symbolleiste, um die Einstellungen zu öffnen).";
+"You can find the heat map in your photo library" = "Sie finden die Heatmap in Ihrer Fotomediathek.";
+"Help: " = "Hilfe: ";
+"Help" = "Hilfe";
+"Don't show this message again" = "Diese Meldung nicht mehr anzeigen";
+"Dismiss further help messages" = "Keine weiteren Hilfemeldungen anzeigen";
+"public host" = "öffentlicher Host";
+"local host" = "lokaler Host";
+"TCP flood discard: outgoing throughput" = "Discard-Port fluten (Sendedurchsatz)";
+"TCP flood chargen: incoming throughput" = "Chargen-Port fluten (Empfangsdurchsatz)";
+"ICMP (ping)" = "Ping (ICMP)";
+"update nodes" = "lokales Netzwerk durchsuchen";
+"remove nodes" = "Geräte entfernen";
+"Internet speed" = "Internet-Geschwindigkeit";
+"no public DNS record" = "kein öffentlicher DNS-Eintrag";
+"This button will remove every node automatically discovered during the current session. It will not affect local host, local gateway, static default nodes nor nodes you added manually. To remove a node you added manually, swipe left on this node." = "Diese Taste entfernt alle in der aktuellen Sitzung automatisch entdeckten Geräte. Das lokale Gerät, das lokale Gateway, die statischen Standardziele und manuell hinzugefügte Ziele bleiben erhalten. Um ein manuell hinzugefügtes Ziel zu entfernen, streichen Sie auf ihm nach links.";
+"This button starts browsing the network for nodes on connected LANs. Then it scans each node to find open TCP ports. When needed, press the stop button to cancel this task. Traces panel will provide you with progress information if needed." = "Diese Taste startet die Suche nach Geräten in den verbundenen lokalen Netzen. Anschließend wird jedes Gerät nach offenen TCP-Ports durchsucht. Mit der Stopp-Taste können Sie den Vorgang jederzeit abbrechen. Das Protokoll-Panel zeigt bei Bedarf den Fortschritt an.";
+"This kind of public node on the Internet should only be used for running an ICMP (ping) action, to estimate the network average round trip time (RTT). Other services are not supported by those remote hosts." = "Diese Art von öffentlichem Internet-Host sollte nur für ICMP-Pings verwendet werden, um die mittlere Netzwerklatenz (RTT) zu schätzen. Andere Dienste werden von diesen Hosts nicht unterstützt.";
+"This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action." = "Dieses Ziel entspricht Ihrem Apple-Gerät. Sie sehen seine verschiedenen IPv4- und IPv6-Adressen. Wählen Sie eine dieser IPs aus und starten Sie eine lokale Loop-Aktion.";
+"On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth." = "Auf diesem Ziel sind die Dienste TCP Chargen und Discard aktiviert. Es ist dieser App gewidmet und in einer Cloud im Internet bereitgestellt, damit Sie Ihren maximalen Sende- und Empfangsdurchsatz schätzen können. Starten Sie TCP-Discard-Flooding, um sich mit dem Discard-Dienst zu verbinden und Daten zu senden — so messen Sie Ihre Upload-Bandbreite. Starten Sie TCP-Chargen-Flooding, um sich mit dem Chargen-Dienst zu verbinden und Daten zu empfangen — so messen Sie Ihre Download-Bandbreite.";
+"This hostname does not have a public DNS record. Select a host name with public DNS records to get their values." = "Dieser Hostname hat keinen öffentlichen DNS-Eintrag. Geben Sie einen Hostnamen mit öffentlichen DNS-Einträgen ein, um deren Werte abzurufen.";
+"Parallel TCP connections will be established to " = "Es werden parallele TCP-Verbindungen aufgebaut zu ";
+" on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = " auf den TCP-Ports 1 bis 65535, um offene Dienste zu finden. Neu entdeckte Dienste werden in der unteren Ansicht angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"A TCP connection to the Discard port (9/TCP) of " = "Eine TCP-Verbindung zum Discard-Port (9/TCP) von ";
+" will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = " wird aufgebaut. Anschließend sendet dieses Gerät Daten mit maximal möglichem Durchsatz an das Ziel, um die maximale Geschwindigkeit in Senderichtung zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"A TCP connection to the Chargen port (19/TCP) of " = "Eine TCP-Verbindung zum Chargen-Port (19/TCP) von ";
+" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." = " wird aufgebaut. Anschließend empfängt dieses Gerät Daten mit maximal möglichem Durchsatz vom Ziel, um die maximale Geschwindigkeit in Empfangsrichtung zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"ICMP packets of type ECHO_REQUEST will be sent to " = "ICMP-Pakete vom Typ ECHO_REQUEST werden gesendet an ";
+" at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = " mit einem Paket pro Sekunde. Das Ziel sollte mit ICMP-Paketen vom Typ ECHO_REPLY antworten. Die Umlaufzeit wird berechnet und im Diagramm angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"I understand" = "Verstanden";
+"OPEN ADVANCED INTERFACE" = "ERWEITERTE OBERFLÄCHE ÖFFNEN";
+"UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance." = "UDP-Flooding sendet Pakete asynchron mit maximaler Rate an den UDP-Port 8888 des Ziels; viele Pakete können jedoch auf Software-, Hardware- oder Netzwerkebene verloren gehen. Der im Diagramm angezeigte Durchsatz ist derjenige der Softwareschicht Ihres Geräts. Er liegt daher sicher über dem tatsächlich über das Netz gesendeten: Verwenden Sie ein Werkzeug, um die erreichte Bandbreite zu schätzen — zum Beispiel den Netzwerkverkehr mitschneiden oder die Pakete am Ziel zählen.";
+"none" = "nicht verfügbar";
+"found " = "gefunden ";
+"trying " = "prüfe ";
+"browsing TCP ports" = "TCP-Ports werden durchsucht";
+"Hostname" = "Hostname";
+"mDNS/Bonjour services" = "mDNS-/Bonjour-Dienste";
+"Service key content" = "Inhalt des Dienstschlüssels";
+"Image rotation applied" = "Bild wurde gedreht";
+"The floor plan you selected is not in portrait mode. Therefore a rotation has been applied to the picture. At the end of the heat map building process, when you will tap on Share your map, the heat map will be saved in the original vertical mode in your photo roll." = "Der gewählte Grundriss ist nicht im Hochformat. Das Bild wurde daher gedreht. Am Ende der Heatmap-Erstellung, wenn Sie auf „Karte teilen“ tippen, wird die Heatmap in der ursprünglichen vertikalen Ausrichtung in Ihrer Fotomediathek gespeichert.";
+"Continue" = "Weiter";
+"continue" = "weiter";
+"Filter" = "Filtern";
+"Hide list" = "Liste ausblenden";
+"Reset filter" = "Filter zurücksetzen";
+"Advanced Interface" = "Erweiterte Oberfläche";
+"Web Site" = "Website";
+"Documentation" = "Dokumentation";
+"Returning To The App Home Page" = "Zurück Zur Startseite Der App";
+"You will be able to come back later to the home window simply by clicking on the following icon:" = "Sie können später jederzeit zur Startseite zurückkehren, indem Sie auf dieses Symbol tippen:";
+"Open advanced interface" = "Erweiterte Oberfläche öffnen";
+"Open Advanced Interface" = "Erweiterte Oberfläche Öffnen";
+"Step-by-step easy mode (heatmap only)" = "Heatmap im Schritt-für-Schritt-Modus";
+"Step-by-step easy mode" = "Heatmap Schritt für Schritt";
+"Choose a predefined floor plan or load an image" = "Wählen Sie einen vorgefertigten Grundriss oder laden Sie ein Bild";
+"Load an image" = "Bild laden";
+"Click on the map on your location!" = "Tippen Sie auf der Karte auf Ihren Standort!";
+"Move and click again!" = "Gehen Sie weiter und tippen Sie erneut!";
+"Continue to cover your whole map!" = "Machen Sie weiter, bis die ganze Karte abgedeckt ist!";
+"Yes! Let's take a few measurements more..." = "Sehr gut! Noch ein paar Messungen...";
+"When you want to compute the highres map, click on the Share icon. To restart from the beginning, click on the trash bin icon!" = "Wenn Sie die hochauflösende Karte erzeugen möchten, tippen Sie auf das Teilen-Symbol. Um von vorne zu beginnen, tippen Sie auf den Papierkorb.";
+"The advanced interface provides access to every network tools (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...).\n\nIt also allows building a WiFi coverage heatmap, with many options. This interface is intended for users who already have some initial knowledge of networks." = "Die erweiterte Oberfläche bietet Zugriff auf alle Netzwerkwerkzeuge (Erkennung der Geräte im lokalen Netz, Latenz- und Durchsatzmessungen, Scannen offener Ports und Dienste, 3D-Ansicht des Netzwerks, ...).\n\nSie ermöglicht außerdem die Erstellung einer WLAN-Heatmap mit vielen Optionen. Diese Oberfläche richtet sich an Nutzer, die bereits erste Netzwerkkenntnisse haben.";
+"The step-by-step interface is dedicated to building a WiFi coverage heatmap, it is specifically aimed at users wishing to create a WiFi coverage heatmap as simply as possible, with complete support.\n\nNo prior knowledge of networks is necessary." = "Die Schritt-für-Schritt-Oberfläche dient ausschließlich der Erstellung einer WLAN-Heatmap. Sie richtet sich an Nutzer, die möglichst einfach und vollständig begleitet eine WLAN-Ausleuchtung erstellen möchten.\n\nNetzwerkkenntnisse sind nicht erforderlich.";
+"The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen." = "Die Dokumentation beschreibt die Schritte zur Erstellung einer WLAN-Heatmap mit der erweiterten Oberfläche — zum Beispiel mit zwei iPhones/iPads für lokale Messungen, oder mit einem einzigen iPhone/iPad und dem im Internet bereitgestellten, dieser App gewidmeten CHARGEN-Responder (Protokoll zur Verkehrserzeugung).\n\nUm die weiteren Werkzeuge dieser App zu entdecken (Geräteerkennung im lokalen Netz, Latenz- und Durchsatzmessungen, Scannen offener Ports und Dienste, 3D-Ansicht des Netzwerks, ...), öffnen Sie die erweiterte Oberfläche und tippen Sie oben links auf die Hilfe-Taste.";
+"Click on your prefered blinking rectangle to choose between advanced interface, step-by-step heatmap and documentation. Click on the question marks to get help about each interface." = "Tippen Sie auf das blinkende Rechteck Ihrer Wahl, um zwischen erweiterter Oberfläche, Schritt-für-Schritt-Heatmap und Dokumentation zu wählen. Tippen Sie auf die Fragezeichen, um Hilfe zu jeder Oberfläche zu erhalten.";
+"3D flight" = "3D-Flug";
+"left" = "oben";
+"SNMP agents" = "SNMP-Agenten";
+"Devices running some SNMP agent" = "Geräte mit SNMP-Agent";
+"Add new target" = "Neues Ziel hinzufügen";
+"Name" = "Name";
+"IPv4 addresses" = "IPv4-Adressen";
+"IPv6 addresses" = "IPv6-Adressen";
+"new name" = "neuer Name";
+"new IPv4 address" = "neue IPv4-Adresse";
+"new IPv6 address" = "neue IPv6-Adresse";
+"community" = "Community";
+"OK (add a name)" = "OK (Namen hinzufügen)";
+"OK (add an IP address and click +)" = "OK (IP-Adresse eingeben und + antippen)";
+"Cancel" = "Abbrechen";
+"Edit" = "Bearbeiten";
+"Delete" = "Löschen";
+"Edit target" = "Ziel bearbeiten";
+"target (SNMP agent)" = "Ziel (SNMP-Agent)";
+"SNMP agent configuration" = "Konfiguration des SNMP-Agenten";
+"hostname" = "Hostname";
+"community (public)" = "Community (public)";
+"fast scan" = "Schnellscan";
+"full scan" = "Vollständiger Scan";
+"scan interfaces speed" = "Durchsatz der Schnittstellen";
+"username" = "Benutzername";
+"authentication secret" = "Authentifizierungs-Geheimnis";
+"privacy secret" = "Verschlüsselungs-Geheimnis";
+"Set a filter..." = "Filter eingeben...";
+"SNMP-OID-Tree" = "SNMP-OID-Baum";
+"SNMP Object Identifier Help" = "SNMP-Objektbezeichner – Hilfe";
+
+"object identifier (symbolic format)" = "Objektbezeichner (symbolisches Format)";
+"object identifier (numeric format)" = "Objektbezeichner (numerisches Format)";
+"MIB module(s) on which the object is defined" = "MIB-Modul(e), die das Objekt definieren";
+"value syntax" = "Syntax des Werts";
+"status (current, obsolete or deprecated)" = "Status (current, obsolete oder deprecated)";
+"access mode (read-only, read-write or not-accessible)" = "Zugriffsmodus (read-only, read-write oder not-accessible)";
+"Error: no description received" = "Fehler: keine Beschreibung empfangen";
+"browse this SNMP agent" = "diesen SNMP-Agenten durchsuchen";
+
+// AddSwiftUIView
+"Edit and persist target" = "Ziel bearbeiten und speichern";
+"Add new persistent target" = "Neues dauerhaftes Ziel hinzufügen";
+"OK (select a type)" = "OK (Typ auswählen)";
+"OK (click + to add the IP address)" = "OK (+ antippen, um die IP-Adresse hinzuzufügen)";
+"Error" = "Fehler";
+
+// DetailSwiftUIView
+"Stop" = "Stopp";
+"heatmap" = "Heatmap";
+"SSL/TLS" = "SSL/TLS";
+
+// SNMPView
+"stop interfaces scan" = "Schnittstellen-Scan stoppen";
+
+// HeatMapSwiftUIView
+"Wait while saving heat map..." = "Heatmap wird gespeichert...";
+"This may take up to a minute to produce a high resolution map.\nThe map will be saved into your photo roll." = "Die Erzeugung der hochauflösenden Karte kann bis zu einer Minute dauern.\nDie Karte wird in Ihrer Fotomediathek gespeichert.";
+"help" = "Hilfe";
+"ignore white AP" = "weiße APs ignorieren";
+
+// Interman3DSwiftUIView
+"scan" = "scannen";
+"reset" = "zurücksetzen";
+"auto" = "auto";
+
+// MasterViewController
+"no IPv4 address" = "keine IPv4-Adresse";
+"no IPv6 address" = "keine IPv6-Adresse";
+
+// Cles presentes uniquement en es jusqu'ici
+"DEBUG" = "DEBUG";
+"port (161)" = "Port (161)";
+"port" = "Port";
+"traces" = "Protokoll";

@@ -26,7 +26,7 @@ DD="${TMPDIR:-/tmp}/screenshots-dd"
 
 typeset -A DEVICES
 DEVICES=(iphone69 "iPhone 17 Pro Max" ipad13 "iPad Pro 13-inch (M5)")
-LANGS=(en en-GB fr es)
+LANGS=(en en-GB fr es de)
 SCENARIOS=(heatmap measure discover)
 
 echo "=== build simulateur"

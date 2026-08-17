@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map analyse votre réseau local pour découvrir les appareils présents, mesurer le débit et la latence WiFi, et construire votre carte de couverture. Rien ne quitte jamais votre appareil.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map enregistre la carte de couverture que vous construisez dans votre photothèque, pour que vous puissiez la conserver ou la partager.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map a besoin d'accéder à vos photos pour que vous puissiez choisir le plan ou la photo de pièce sur lequel votre carte de couverture sera dessinée.";

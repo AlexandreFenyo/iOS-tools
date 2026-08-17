@@ -1,0 +1,6 @@
+Mode pas-à-pas entièrement repensé : choisissez un plan, marchez, appuyez. La carte de couverture est faite.
+
+- Nouvelle échelle de couleurs, lisible d'un coup d'œil et adaptée au daltonisme
+- Écran de mesure plus clair, la configuration est faite pour vous
+- Correction : l'écran de carte pouvait redemander indéfiniment de lancer une mesure déjà arrêtée
+- Rendu de la carte plus rapide

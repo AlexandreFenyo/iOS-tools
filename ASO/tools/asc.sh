@@ -18,6 +18,14 @@ BODY="${3:-}"
 JWT="$(ruby "$HERE/asc_jwt.rb" "$KEY" "$KEY_ID" "$ISSUER_ID")"
 
 args=(-sS -X "$METHOD" -H "Authorization: Bearer $JWT" -w '\n__HTTP_%{http_code}__')
+
+# Contournement d'un resolveur systeme capricieux (mDNSResponder perturbe par les
+# simulateurs) : pre-resolution en DNS direct si disponible.
+API_HOST=api.appstoreconnect.apple.com
+API_IP="$(host -t A "$API_HOST" 2>/dev/null | awk '/has address/{print $4; exit}')"
+if [[ -n "${API_IP:-}" ]]; then
+  args+=(--resolve "$API_HOST:443:$API_IP")
+fi
 if [[ -n "$BODY" ]]; then
   args+=(-H 'Content-Type: application/json' --data-binary "@$BODY")
 fi

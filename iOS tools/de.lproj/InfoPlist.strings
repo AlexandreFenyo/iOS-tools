@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map durchsucht Ihr lokales Netzwerk nach Geräten, misst WLAN-Durchsatz und Latenz und erstellt Ihre Heatmap. Nichts verlässt jemals Ihr Gerät.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map speichert die von Ihnen erstellte Heatmap in Ihrer Fotomediathek, damit Sie sie behalten oder teilen können.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map benötigt Zugriff auf Ihre Fotos, damit Sie den Grundriss oder das Raumfoto auswählen können, auf dem Ihre Heatmap gezeichnet wird.";

@@ -205,3 +205,9 @@
 // MasterViewController
 "no IPv4 address" = "pas d'adresse IPv4";
 "no IPv6 address" = "pas d'adresse IPv6";
+
+// Clés ajoutées (présentes en es uniquement jusqu'ici)
+"DEBUG" = "DEBUG";
+"port (161)" = "port (161)";
+"port" = "port";
+"traces" = "traces";

@@ -1,0 +1,6 @@
+Modo paso a paso completamente rediseñado: elige un plano, camina, toca. El mapa de calor ya está.
+
+- Nueva escala de color, legible de un vistazo y apta para daltónicos
+- Pantalla de medición más clara, con la configuración hecha por ti
+- Corregido: la pantalla del mapa podía seguir pidiendo iniciar una medición ya detenida
+- Renderizado del mapa más rápido
