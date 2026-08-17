@@ -1,0 +1,1 @@
+mapa,calor,cobertura,alcance,escáner,router,repetidor,malla,velocidad,prueba,snmp,lan,ping,potencia

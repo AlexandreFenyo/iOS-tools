@@ -1,0 +1,1 @@
+warmtekaart,dekking,bereik,netwerk,scanner,router,versterker,repeater,mesh,meten,snmp,wlan,ping

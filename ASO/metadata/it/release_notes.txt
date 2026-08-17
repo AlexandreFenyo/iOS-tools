@@ -1,0 +1,6 @@
+Modalità passo passo completamente ridisegnata: scegli una piantina, cammina, tocca. La mappa di calore è fatta.
+
+- Nuova scala di colori, leggibile a colpo d occhio e adatta ai daltonici
+- Schermata di misura più chiara, con la configurazione fatta per te
+- Corretto: la schermata della mappa poteva continuare a chiedere di avviare una misura già interrotta
+- Rendering della mappa più veloce

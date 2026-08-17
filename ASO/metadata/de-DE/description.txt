@@ -1,0 +1,55 @@
+Finden Sie die Funklöcher in Ihrer Wohnung in unter 10 Minuten — nur mit Ihrem iPhone.
+Gehen Sie von Raum zu Raum, tippen Sie zum Messen, und sehen Sie zu, wie sich eine
+farbige Karte Ihres echten WLANs aufbaut — Durchsatz und Latenz, dort wo Sie leben.
+Kein Abo. Keine Werbung. Kein Konto. Einmal kaufen, für immer behalten.
+
+DAS FINDEN SIE WIRKLICH HERAUS
+- Welche Räume langsam sind, und wie langsam, in Zahlen mit denen Sie arbeiten können
+- Ob das Problem an Ihrem WLAN liegt oder an Ihrem Internetanschluss
+- Wo Sie einen Mesh-Knoten, einen Repeater oder den Router selbst aufstellen sollten
+- Welches Gerät in Ihrem Netzwerk Ihre Bandbreite verbraucht
+- Was jedes IoT-Gerät in Ihrem Netzwerk über sich selbst aussendet
+
+SO FUNKTIONIERT ES
+1. Wählen Sie einen fertigen Grundriss, oder nutzen Sie ein Foto Ihres eigenen Plans
+2. Stellen Sie sich an eine Stelle und tippen Sie einmal — die App misst dort
+3. Wiederholen Sie das in jedem Raum. Die Karte baut sich dabei auf
+4. Sichern Sie die Karte in Ihren Fotos, um nach dem Umstellen des Routers zu vergleichen
+
+Der Schritt-für-Schritt-Modus übernimmt die Einrichtung für Sie: kein Ziel auswählen,
+kein Protokoll einstellen, keine Dokumentation lesen. Die erweiterte Oberfläche bleibt
+verfügbar, wenn Sie die volle Kontrolle möchten.
+
+KEINE ZUSATZHARDWARE. KEIN ABO.
+Eine professionelle WLAN-Ausleuchtung braucht ein Ekahau Sidekick oder einen WLAN Pi.
+Diese App braucht Ihr iPhone. Und anders als fast jede andere WLAN-App im App Store
+gibt es hier weder Wochen- noch Jahresabo und keine Werbung: Sie kaufen einmal.
+
+AUSSERDEM EIN KOMPLETTER NETZWERK-WERKZEUGKASTEN
+- Scannen Sie jedes Gerät im lokalen Netz: Hersteller, IP-Adresse, offene Ports
+- Entdecken Sie alle mDNS/Bonjour-Dienste: HomePod, Apple TV, Drucker, IoT
+- Ping und Latenz zu lokalen Geräten und zu beliebigen Hosts im Internet
+- Durchsatzmessung gegen ein zweites Gerät mit dieser App, gegen einen beliebigen
+  TCP-CHARGEN/DISCARD-Server oder gegen das Internet
+- Betreiben Sie einen TCP-CHARGEN- oder DISCARD-Dienst auf Ihrem eigenen Gerät
+- Animierte 3D-Ansicht der Topologie Ihres Netzwerks
+
+VOLLSTÄNDIGER SNMP-CLIENT ENTHALTEN
+Fragen Sie jeden SNMP-Agenten auf Ihren Routern, Switches, Access Points und Druckern
+ab. SNMP v1, v2c und v3, mit noAuthNoPriv, authNoPriv und authPriv, MD5- und
+SHA1-Authentifizierung, DES- und AES-Verschlüsselung. 64 Standard-MIBs sind
+mitgeliefert: Object Identifier werden offline in lesbare Namen aufgelöst — ohne
+Server, ohne Abo, und ohne mehr einzurichten als Adresse und Zugangsdaten des Agenten.
+
+FÜR ZUHAUSE UND FÜR PROFIS
+Entwickelt von einem Netzwerkingenieur. Einfach genug, um Ihre Wohnung an einem
+Sonntagnachmittag zu diagnostizieren, und genau genug, dass Fachleute aus der
+Telekommunikation sie im Beruf einsetzen.
+
+VOR DEM KAUF — WAS DIESE APP NICHT KANN
+Apple erlaubt keiner iOS-App von Drittanbietern, die WLAN-Signalstärke auszulesen oder
+benachbarte Netze zu scannen; keine App im App Store kann das. Genau deshalb brauchen
+professionelle Werkzeuge externe Hardware. Diese App kartiert, was sie an Ihrem
+Standort messen kann: echten Durchsatz und echte Latenz. Genau das braucht eine
+Ausleuchtung für Zuhause. Sie misst das Netz, mit dem Sie verbunden sind, und
+erstellt eine Karte nach der anderen.

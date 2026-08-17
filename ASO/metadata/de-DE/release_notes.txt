@@ -1,0 +1,6 @@
+Schritt-für-Schritt-Modus komplett überarbeitet: Grundriss wählen, gehen, tippen. Fertig ist die Ausleuchtung.
+
+- Neue Farbskala, auf einen Blick lesbar und für Farbenblinde geeignet
+- Klarerer Messbildschirm, die Einrichtung wird für Sie erledigt
+- Behoben: der Kartenbildschirm konnte endlos auffordern, eine bereits gestoppte Messung zu starten
+- Schnellere Darstellung der Karte

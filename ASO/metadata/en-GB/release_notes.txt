@@ -1,0 +1,6 @@
+Completely rewritten step-by-step mode: pick a floor plan, walk, tap. That is the whole heat map.
+
+- New colour scale, readable at a glance and colour-blind friendly
+- Clearer measurement screen, with the setup done for you
+- Fixed: the heat map screen could keep asking you to start a measurement that had already stopped
+- Faster map rendering

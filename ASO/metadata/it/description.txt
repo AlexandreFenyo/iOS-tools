@@ -1,0 +1,56 @@
+Trova le zone morte del tuo WiFi in meno di 10 minuti, con il solo iPhone.
+Cammina di stanza in stanza, tocca per misurare e guarda una mappa a colori del tuo
+WiFi reale costruirsi da sola — velocità e latenza, proprio dove vivi.
+Nessun abbonamento. Nessuna pubblicità. Nessun account. Un acquisto, tuo per sempre.
+
+COSA SCOPRIRAI DAVVERO
+- Quali stanze sono lente, e quanto, con numeri su cui puoi agire
+- Se il problema è il tuo WiFi oppure la tua connessione a internet
+- Dove mettere un nodo mesh, un ripetitore o il router stesso
+- Quale dispositivo della tua rete sta consumando la banda
+- Che cosa ogni dispositivo IoT della tua rete trasmette su sé stesso
+
+COME FUNZIONA
+1. Scegli una delle piantine già pronte, o usa una foto della tua piantina
+2. Mettiti in un punto e tocca una volta — l'app misura velocità e latenza lì
+3. Ripeti in ogni stanza. La mappa si costruisce man mano che cammini
+4. Salva la mappa nelle tue foto, per confrontarla dopo aver spostato il router
+
+La modalità passo passo fa la configurazione al posto tuo: nessun bersaglio da
+scegliere, nessun protocollo da impostare, nessuna documentazione da leggere.
+L'interfaccia avanzata resta disponibile quando vuoi il controllo completo.
+
+NESSUN HARDWARE AGGIUNTIVO. NESSUN ABBONAMENTO.
+Un rilievo WiFi professionale richiede un Ekahau Sidekick o un WLAN Pi. Questa app
+richiede il tuo iPhone. E a differenza di quasi ogni altra app WiFi dell'App Store,
+non c'è piano settimanale, non c'è piano annuale e non c'è pubblicità: la compri una
+volta sola.
+
+ANCHE UNA CASSETTA DEGLI ATTREZZI DI RETE COMPLETA
+- Scansiona ogni dispositivo della rete locale: produttore, indirizzo IP, porte aperte
+- Scopri tutti i servizi mDNS/Bonjour: HomePod, Apple TV, stampanti, IoT
+- Ping e latenza verso dispositivi locali e verso qualsiasi host su internet
+- Misura di velocità contro un secondo dispositivo con questa app, contro un
+  qualsiasi server TCP CHARGEN/DISCARD, oppure contro internet
+- Esegui un servizio TCP CHARGEN o DISCARD sul tuo stesso dispositivo
+- Vista 3D animata della topologia della tua rete
+
+CLIENT SNMP COMPLETO INCLUSO
+Interroga qualsiasi agente SNMP sui tuoi router, switch, access point e stampanti.
+SNMP v1, v2c e v3, con noAuthNoPriv, authNoPriv e authPriv, autenticazione MD5 e
+SHA1, cifratura DES e AES. Sono incluse 64 MIB standard: gli object identifier
+vengono risolti in nomi leggibili anche offline — senza server, senza abbonamento e
+senza nulla da configurare oltre all'indirizzo e alle credenziali dell'agente.
+
+PER LA CASA E PER I PROFESSIONISTI
+Sviluppata da un ingegnere di rete. Abbastanza semplice da diagnosticare il tuo
+appartamento una domenica pomeriggio, abbastanza precisa perché i professionisti
+delle telecomunicazioni la usino al lavoro.
+
+PRIMA DI ACQUISTARE — COSA QUESTA APP NON FA
+Apple non consente a nessuna app iOS di terze parti di leggere la potenza del segnale
+WiFi né di scansionare le reti vicine, e nessuna app dell'App Store può farlo: è per
+questo che gli strumenti professionali hanno bisogno di hardware esterno. Questa app
+mappa ciò che può misurare nel punto in cui ti trovi: velocità e latenza reali. È
+esattamente ciò di cui ha bisogno una mappa di calore domestica. Misura la rete a cui
+sei connesso, una mappa alla volta.

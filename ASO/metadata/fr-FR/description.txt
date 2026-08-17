@@ -1,0 +1,57 @@
+Trouvez les zones blanches de votre WiFi en moins de 10 minutes, avec votre seul iPhone.
+Marchez de pièce en pièce, appuyez pour mesurer, et regardez une carte en couleurs de
+votre WiFi réel se construire toute seule — débit et latence, là où vous vivez.
+Sans abonnement. Sans publicité. Sans compte. Un achat, à vous pour toujours.
+
+CE QUE VOUS ALLEZ VRAIMENT APPRENDRE
+- Quelles pièces sont lentes, et à quel point, avec des chiffres exploitables
+- Si le problème vient de votre WiFi ou de votre connexion internet
+- Où placer un boîtier maillé, un répéteur, ou la box elle-même
+- Lequel des appareils de votre réseau consomme votre bande passante
+- Ce que chaque objet connecté diffuse à son sujet sur votre réseau
+
+COMMENT ÇA MARCHE
+1. Choisissez un plan tout fait, ou utilisez une photo de votre propre plan
+2. Placez-vous quelque part, appuyez une fois — l'app mesure débit et latence
+3. Recommencez dans chaque pièce. La carte se construit au fur et à mesure
+4. Enregistrez la carte dans vos photos, pour comparer après avoir déplacé la box
+
+Le mode pas-à-pas fait la configuration à votre place : aucune cible à choisir,
+aucun protocole à régler, aucune documentation à lire. L'interface avancée reste
+disponible quand vous voulez tout contrôler.
+
+AUCUN MATÉRIEL SUPPLÉMENTAIRE. AUCUN ABONNEMENT.
+Une étude WiFi professionnelle exige un Ekahau Sidekick ou un WLAN Pi. Cette app
+exige votre iPhone. Et contrairement à presque toutes les autres apps WiFi de
+l'App Store, il n'y a ni forfait hebdomadaire, ni forfait annuel, ni publicité :
+vous l'achetez une fois.
+
+AUSSI UNE BOÎTE À OUTILS RÉSEAU COMPLÈTE
+- Scannez chaque appareil de votre réseau local : constructeur, IP, ports ouverts
+- Découvrez tous les services mDNS/Bonjour : HomePod, Apple TV, imprimantes, IoT
+- Ping et latence vers vos appareils locaux comme vers n'importe quel hôte internet
+- Mesure de débit contre un autre appareil équipé de cette app, n'importe quel
+  serveur TCP CHARGEN/DISCARD, ou internet
+- Faites tourner un service TCP CHARGEN ou DISCARD sur votre propre appareil
+- Vue 3D animée et interactive de la topologie de votre réseau
+
+CLIENT SNMP COMPLET INCLUS
+Interrogez n'importe quel agent SNMP de vos routeurs, commutateurs, points d'accès
+et imprimantes. SNMP v1, v2c et v3, avec noAuthNoPriv, authNoPriv et authPriv,
+authentification MD5 et SHA1, chiffrement DES et AES. 64 MIB standard sont
+embarquées : les identifiants d'objets sont résolus en noms lisibles hors ligne,
+sans serveur, sans abonnement, sans rien à configurer d'autre que l'adresse de
+l'agent et ses identifiants.
+
+POUR LA MAISON COMME POUR LES PROFESSIONNELS
+Développée par un ingénieur réseau. Assez simple pour diagnostiquer votre
+appartement un dimanche après-midi, assez précise pour que des professionnels des
+télécoms s'en servent au travail.
+
+AVANT D'ACHETER — CE QUE CETTE APP NE FAIT PAS
+Apple n'autorise aucune app iOS tierce à lire la puissance du signal WiFi ni à
+scanner les réseaux voisins, et aucune app de l'App Store ne peut le faire : c'est
+pour cela que les outils professionnels ont besoin de matériel externe. Cette app
+cartographie ce qu'elle peut mesurer à l'endroit où vous vous tenez : le débit réel
+et la latence. C'est ce dont une carte de couverture domestique a besoin. Elle
+mesure le réseau auquel vous êtes connecté, une carte à la fois.

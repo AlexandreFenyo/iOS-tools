@@ -1,0 +1,6 @@
+Stapsgewijze modus volledig herzien: kies een plattegrond, loop, tik. Klaar is uw warmtekaart.
+
+- Nieuwe kleurenschaal, in één oogopslag leesbaar en kleurenblindvriendelijk
+- Duidelijker meetscherm, de instellingen worden voor u gedaan
+- Opgelost: het kaartscherm kon blijven vragen om een al gestopte meting te starten
+- Snellere weergave van de kaart

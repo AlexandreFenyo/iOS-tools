@@ -1,0 +1,53 @@
+Find your home WiFi dead zones in under 10 minutes, using nothing but your iPhone.
+Walk from room to room, tap to measure, and watch a color map of your actual WiFi
+performance build itself — speed and latency, where you really live.
+No subscription. No ads. No account. One purchase, yours forever.
+
+WHAT YOU CAN ACTUALLY FIND OUT
+- Which rooms are slow, and how slow, in numbers you can act on
+- Whether the problem is your WiFi or your internet connection
+- Where to put a mesh node, an extender or the router itself
+- Which of the devices on your network is eating your bandwidth
+- What every IoT device on your network is broadcasting about itself
+
+HOW IT WORKS
+1. Pick one of the ready-made floor plans, or use a photo of your own plan
+2. Walk to a spot, tap once — the app measures throughput and latency there
+3. Repeat for each room. The heat map builds as you go
+4. Save the finished map to your photos, to compare after you move the router
+
+Step-by-step mode does the setup for you: no target to choose, no protocol to
+configure, no documentation to read. The advanced interface is still there when
+you want full control.
+
+NO EXTRA HARDWARE. NO SUBSCRIPTION.
+Professional WiFi surveys need an Ekahau Sidekick or a WLAN Pi. This app needs
+your iPhone. And unlike almost every other WiFi analyzer on the App Store, there
+is no weekly plan, no annual plan, and no ads — you buy it once.
+
+ALSO A COMPLETE NETWORK TOOLKIT
+- Scan every device on your LAN, with vendor, IP address and open ports
+- Discover every mDNS/Bonjour service: HomePod, Apple TV, printers, IoT
+- Ping and latency to local devices and to any internet host
+- Throughput measurement against another device running this app, any TCP
+  CHARGEN/DISCARD server, or the internet
+- Run a TCP CHARGEN or DISCARD service on your own device
+- 3D animated view of your local network topology
+
+FULL SNMP CLIENT INCLUDED
+Query any SNMP agent on your routers, switches, access points and printers.
+SNMP v1, v2c and v3, with noAuthNoPriv, authNoPriv and authPriv, MD5 and SHA1
+authentication, DES and AES privacy. 64 standard MIBs are bundled, so object
+identifiers are resolved to readable names offline — no server, no subscription,
+nothing to configure beyond the agent address and credentials.
+
+FOR HOMES AND FOR PROFESSIONALS
+Built by a network engineer. Simple enough to diagnose your apartment on a Sunday
+afternoon, precise enough that telecom professionals use it on the job.
+
+BEFORE YOU BUY — WHAT THIS APP DOES NOT DO
+Apple does not let any third-party iOS app read WiFi signal strength or scan
+neighboring networks, and no App Store app can do it — this is why professional
+tools need external hardware. This app maps what it can measure at the spot where
+you are standing: real throughput and latency. That is what a home heat map needs.
+It measures the network you are connected to, one heat map at a time.
