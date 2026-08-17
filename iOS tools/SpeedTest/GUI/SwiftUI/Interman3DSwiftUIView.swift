@@ -468,8 +468,8 @@ struct Interman3DSwiftUIView: View {
                 
                 disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -483,8 +483,8 @@ struct Interman3DSwiftUIView: View {
                 
                 disable_buttons = true
                 let animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -498,8 +498,8 @@ struct Interman3DSwiftUIView: View {
                 
                 disable_buttons = true
                 var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = camera.presentation.pivot
-                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                 animation.duration = 1
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -507,8 +507,8 @@ struct Interman3DSwiftUIView: View {
                 camera.addAnimation(animation, forKey: "campivot")
                 
                 animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -540,8 +540,8 @@ struct Interman3DSwiftUIView: View {
                 camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 
                 let animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 1, 2))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -557,8 +557,8 @@ struct Interman3DSwiftUIView: View {
                 disable_buttons = true
                 
                 var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = camera.presentation.pivot
-                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                 animation.duration = 1
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -566,14 +566,14 @@ struct Interman3DSwiftUIView: View {
                 camera.addAnimation(animation, forKey: "campivot")
                 
                 animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     // Top to side
                     let animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = camera.presentation.transform
-                    animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 1, 2))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "camtransform")
@@ -605,16 +605,16 @@ struct Interman3DSwiftUIView: View {
                     
                     // Since we removed the contraint, we must set the pivot
                     var animation = CABasicAnimation(keyPath: "pivot")
-                    animation.fromValue = camera.presentation.pivot
-                    animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "campivot")
                     camera.pivot = camera.presentation.pivot
                     
                     animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = camera.presentation.transform
-                    animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
                     animation.duration = 1
                     camera.addAnimation(animation, forKey: "camtransform")
                     camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
@@ -629,16 +629,16 @@ struct Interman3DSwiftUIView: View {
                 
                 // Since we removed the contraint, we must set the pivot
                 var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = camera.presentation.pivot
-                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
                 camera.addAnimation(animation, forKey: "campivot")
                 camera.pivot = camera.presentation.pivot
                 
                 animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
                 animation.duration = 1
                 camera.addAnimation(animation, forKey: "camtransform")
                 camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
@@ -652,8 +652,8 @@ struct Interman3DSwiftUIView: View {
                 
                 // Side to top
                 var animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     // Top to top host
@@ -661,16 +661,16 @@ struct Interman3DSwiftUIView: View {
                     
                     // Since we removed the contraint, we must set the pivot
                     animation = CABasicAnimation(keyPath: "pivot")
-                    animation.fromValue = camera.presentation.pivot
-                    animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({ disable_buttons = false })
                     camera.addAnimation(animation, forKey: "campivot")
                     camera.pivot = camera.presentation.pivot
                     
                     animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = camera.presentation.transform
-                    animation.toValue = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
                     animation.duration = 1
                     camera.addAnimation(animation, forKey: "camtransform")
                     camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
@@ -698,8 +698,8 @@ struct Interman3DSwiftUIView: View {
                 disable_buttons = true
                 
                 let animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 1, 2))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     free_flight_active = true
@@ -718,8 +718,8 @@ struct Interman3DSwiftUIView: View {
                 disable_buttons = true
                 
                 var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = camera.presentation.pivot
-                animation.toValue = SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
                 animation.duration = 1
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
@@ -727,14 +727,14 @@ struct Interman3DSwiftUIView: View {
                 camera.addAnimation(animation, forKey: "campivot")
                 
                 animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = camera.presentation.transform
-                animation.toValue = SCNMatrix4MakeTranslation(0, 5, 0)
+                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     // Top to side
                     let animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = camera.presentation.transform
-                    animation.toValue = SCNMatrix4MakeTranslation(0, 1, 2)
+                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
+                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 1, 2))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({
                         free_flight_active = true

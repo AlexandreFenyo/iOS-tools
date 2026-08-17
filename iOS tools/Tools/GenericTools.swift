@@ -628,3 +628,15 @@ protocol AutoTrace {
 
 extension AutoTrace {
 }
+
+// L'overlay Swift de SceneKit sous Mac Catalyst n'expose ni le pontage implicite
+// SCNMatrix4 -> NSValue ni SCNMatrix4.init(simd_float4x4). Ce convertisseur
+// portable construit la matrice champ par champ (.init s'adapte au type des
+// champs, Float sur iOS, CGFloat sur macOS/Catalyst).
+func SCNMatrix4FromSimd(_ m: simd_float4x4) -> SCNMatrix4 {
+    let c0 = m.columns.0, c1 = m.columns.1, c2 = m.columns.2, c3 = m.columns.3
+    return SCNMatrix4(m11: .init(c0.x), m12: .init(c0.y), m13: .init(c0.z), m14: .init(c0.w),
+                      m21: .init(c1.x), m22: .init(c1.y), m23: .init(c1.z), m24: .init(c1.w),
+                      m31: .init(c2.x), m32: .init(c2.y), m33: .init(c2.z), m34: .init(c2.w),
+                      m41: .init(c3.x), m42: .init(c3.y), m43: .init(c3.z), m44: .init(c3.w))
+}

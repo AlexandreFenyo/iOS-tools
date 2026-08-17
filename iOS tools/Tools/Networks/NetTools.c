@@ -16,6 +16,12 @@ __uint16_t _ntohs(__uint16_t x) {
     return ntohs(x);
 }
 
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+// Le SDK macOS/Catalyst fournit net/route.h : utiliser les vraies definitions
+// pour eviter un conflit de types avec celles recopiees ci-dessous pour iOS.
+#include <net/route.h>
+#else
 // From OSX net/route.h:
 // /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/net/route.h
 struct rt_metrics {
@@ -48,6 +54,7 @@ struct rt_msghdr {
     u_int32_t rtm_inits;    /* which metrics we are initializing */
     struct rt_metrics rtm_rmx; /* metrics themselves */
 };
+#endif /* !TARGET_OS_OSX && !TARGET_OS_MACCATALYST */
 
 static int nextValidAddr(struct ifaddrs **paddress) {
     while ((*paddress)->ifa_addr == NULL || ((*paddress)->ifa_addr->sa_family != AF_INET && (*paddress)->ifa_addr->sa_family != AF_INET6)) {

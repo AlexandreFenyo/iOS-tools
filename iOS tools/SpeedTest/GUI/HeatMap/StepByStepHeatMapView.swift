@@ -235,6 +235,12 @@ struct StepByStepHeatMapView: View {
                                         }
                                 }//.scaleEffect(1.2)
                                 .transition(.opacity)
+
+                                #if targetEnvironment(macCatalyst)
+                                // Sur Mac, CoreWLAN donne le vrai niveau de signal
+                                RSSIBadge()
+                                #endif
+
                                 Spacer().frame(width: 10)
                                 
                                 VStack {

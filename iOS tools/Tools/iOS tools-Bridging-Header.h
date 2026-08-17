@@ -84,3 +84,11 @@ int multicasticmp6();
 #include <unistd.h>
 int localPingClientSetDelay(useconds_t);
 int localPingClientLoop(foo_type *, const int, useconds_t);
+
+// Version Mac (Catalyst) : RSSI reel via CoreWLAN (cf. CoreWLANShim.m)
+#include <TargetConditionals.h>
+#if TARGET_OS_MACCATALYST
+extern long wlan_rssi(void);
+extern long wlan_noise(void);
+extern double wlan_txrate(void);
+#endif

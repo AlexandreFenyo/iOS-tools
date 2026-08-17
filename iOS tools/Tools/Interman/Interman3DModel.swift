@@ -292,8 +292,8 @@ class B3D: SCNNode {
         transl[3, 0] = -1
         simdPivot = transl * rot
         let animation = CABasicAnimation(keyPath: "pivot")
-        animation.fromValue = SCNMatrix4(rot)
-        animation.toValue = SCNMatrix4(transl * rot)
+        animation.fromValue = NSValue(scnMatrix4: SCNMatrix4FromSimd(rot))
+        animation.toValue = NSValue(scnMatrix4: SCNMatrix4FromSimd(transl * rot))
         animation.duration = 1
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
@@ -312,7 +312,7 @@ class B3D: SCNNode {
         var transl = matrix_identity_float4x4
         transl[3, 0] = -1
         let animation = CABasicAnimation(keyPath: "pivot")
-        animation.toValue = SCNMatrix4(transl * rot)
+        animation.toValue = NSValue(scnMatrix4: SCNMatrix4FromSimd(transl * rot))
         animation.duration = 1
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
