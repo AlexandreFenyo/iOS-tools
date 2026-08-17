@@ -10,7 +10,6 @@ import WebKit
 import iOSToolsMacros
 
 let debug_snmp = false
-let disable_request_reviews = true
 
 // https://developer.apple.com/documentation/swiftui/outlinegroup
 // fenyo@mac ~ % snmpwalk -v2c -OT -OX -c public 192.168.0.254 > /tmp/snmpwalk.res

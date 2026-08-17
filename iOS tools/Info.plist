@@ -5,11 +5,11 @@
 	<key>Resilient</key>
 	<true/>
 	<key>LSApplicationCategoryType</key>
-	<string></string>
+	<string>public.app-category.utilities</string>
 	<key>CFBundleVersion</key>
-	<string>6.1.0</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>6.1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>UIFileSharingEnabled</key>
@@ -17,7 +17,7 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>CFBundleDisplayName</key>
-	<string>WiFi Heatmap &amp; Network Tools</string>
+	<string>WiFi Heat Map</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -153,20 +153,16 @@
 		<string>_xserveraid._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Network usage is required for macOS/iOS communication</string>
+	<string>WiFi Heat Map scans your local network to discover the devices on it, measure WiFi throughput and latency, and build your heat map. Nothing ever leaves your device.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Saving you heatmap to your photo roll.</string>
+	<string>WiFi Heat Map saves the heat map you build to your photo library, so you can keep it or share it.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>ceci est uyn test</string>
+	<string>WiFi Heat Map needs access to your photos so you can pick the floor plan or room picture your WiFi heat map will be drawn on.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SpeedTest</string>
 	<key>UIMainStoryboardFile</key>
 	<string>SpeedTest</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UIRequiresFullScreen</key>
+		<key>UIRequiresFullScreen</key>
 	<false/>
 	<key>UIStatusBarHidden</key>
 	<false/>

@@ -70,7 +70,7 @@
 "Error saving map" = "Erreur de sauvegarde de la HeatMap";
 "Map saved" = "Heat Map sauvegardée";
 "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)" = "L'accès aux photos est interdit. Vous devez modifier les droits d'accès dans le panneau de configuration iOS de l'app (cliquez sur la roue dentée dans la barre d'outils, pour accéder à cette configuration).";
-"You can find the heatmap in you photo roll" = "vous trouverez la Heat Map dans l'application Photos.";
+"You can find the heat map in your photo library" = "vous trouverez la carte de couverture dans l'application Photos.";
 "Help: " = "Aide : ";
 "Help" = "Aide";
 "Don't show this message again" = "Ne pas réafficher ce message";

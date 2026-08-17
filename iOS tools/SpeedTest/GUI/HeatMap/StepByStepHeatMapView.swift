@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Network
 import PhotosUI
 import SpriteKit
 import StoreKit
@@ -43,6 +44,10 @@ struct StepByStepHeatMapView: View {
     @State private var average_last_update = Date()
     @State private var average_prev: Float = 0
     @State private var average_next: Float = 0
+
+    // Watchdog de relance de la boucle chargen (cf. onReceive(timer_get_average))
+    @State private var zero_speed_ticks = 0
+    @State private var chargen_restart_count = 0
     
     @State private var image_last_update = Date()
     @State private var cg_image_prev: CGImage?
@@ -330,21 +335,21 @@ struct StepByStepHeatMapView: View {
                                                 let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)
                                                 let bar = CGFloat(foo)
                                                 
-                                                Image(systemName: "restart")
+                                                Image(systemName: "restart").foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                     .position(x: SCALE_WIDTH, y: speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
                                                 
                                                 let foo2 = speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
                                                 
                                                 Text("\(UInt64(speed)) bit/s")
-                                                    .font(.system(size: 8).monospacedDigit())
+                                                    .font(.system(size: 8).monospacedDigit()).foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                 //.frame(maxWidth: .infinity, alignment: .trailing)
                                                     .position(x: SCALE_WIDTH + 50, y: foo2)
                                                 
                                                 if foo2 >= 20 {
-                                                    Image(systemName: "restart")
+                                                    Image(systemName: "restart").foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                         .position(x: SCALE_WIDTH, y: 0)
                                                     Text("\(UInt64(model.max_scale)) bit/s")
-                                                        .font(.system(size: 8).monospacedDigit())
+                                                        .font(.system(size: 8).monospacedDigit()).foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                         .position(x: SCALE_WIDTH + 50, y: 0)
                                                 }
                                             }
@@ -417,6 +422,14 @@ struct StepByStepHeatMapView: View {
                 .background(Color(COLORS.right_pannel_scroll_bg))  //.background(.red)//.background(Color(COLORS.right_pannel_bg))
                 
                 EmptyView().onReceive(timer_set_speed) { _ in  // 100 Hz
+                    #if DEBUG
+                    // Mode capture d'écran : compteur et curseur figés
+                    if DemoMode.enabled {
+                        speed = DemoMode.displayed_speed
+                        return
+                    }
+                    #endif
+
                     // Manage speed
                     let interval_speed = Float(Date().timeIntervalSince(self.average_last_update))
                     let UPDATE_SPEED_DELAY: Float = 1.0
@@ -471,6 +484,32 @@ struct StepByStepHeatMapView: View {
                                 .detail_view_controller!.ts.getAverage()
                             if average_prev == 0.0 {
                                 average_prev = average_next
+                            }
+
+                            // Watchdog : si la boucle chargen s'est arrêtée (timeout,
+                            // connexion coupée), le débit reste à 0 et l'écran semblait
+                            // demander indéfiniment de lancer une mesure déjà lancée
+                            // (cf. avis App Store). On relance automatiquement la boucle,
+                            // au plus 3 fois par session d'écran.
+                            #if DEBUG
+                            let watchdog_active = !DemoMode.enabled
+                            #else
+                            let watchdog_active = true
+                            #endif
+                            if watchdog_active {
+                                if average_next == 0.0 {
+                                    zero_speed_ticks += 1
+                                    if zero_speed_ticks >= 6 && chargen_restart_count < 3 {
+                                        zero_speed_ticks = 0
+                                        chargen_restart_count += 1
+                                        await step_by_step_view_controller
+                                            .master_view_controller?
+                                            .chargenTCP(IPv4Address("51.75.31.39")!)
+                                    }
+                                } else {
+                                    zero_speed_ticks = 0
+                                    chargen_restart_count = 0
+                                }
                             }
                         }
                     }

@@ -59,14 +59,21 @@ class StepByStepPhotoController: NSObject {
         if error != nil {
             popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)"), "OK")
         } else {
-            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heatmap in you photo roll", comment: "You can find the heatmap in you photo roll"), "OK")
+            ReviewRequester.shared.recordHeatMapCompleted()
+            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heat map in your photo library", comment: "You can find the heat map in your photo library"), "OK", ask_review: true)
         }
     }
     
-    public func popUp(_ title: String, _ message: String, _ ok: String) {
+    public func popUp(_ title: String, _ message: String, _ ok: String, ask_review: Bool = false) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: ok, style: .default) {_ in
-            if !disable_request_reviews { SKStoreReviewController.requestReview() }
+        let action = UIAlertAction(title: ok, style: .default) { [weak self] _ in
+            guard ask_review else { return }
+            // L'invite est ignoree par iOS tant qu'une alerte est presentee : on attend
+            // que celle-ci soit refermee.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                ReviewRequester.shared.requestIfAppropriate(in: self?.step_by_step_view_controller?.view.window?.windowScene)
+            }
         }
         alert.addAction(action)
         self.step_by_step_view_controller?.present(alert, animated: true)
@@ -103,7 +110,7 @@ struct StepByStepSwiftUIView: View {
             HStack {
                 Spacer()
                 
-                Text("WiFi Heatmap & Network Tools")
+                Text(verbatim: "WiFi Heat Map & Analyzer")
                     .font(Font.system(size: 14, weight: .bold).lowercaseSmallCaps())
                     .foregroundColor(Color(COLORS.leftpannel_ip_text))
                     .padding(.vertical)
@@ -117,6 +124,14 @@ struct StepByStepSwiftUIView: View {
             }
             .background(Color(COLORS.right_pannel_scroll_bg))
             .cornerRadius(15)
+            #if DEBUG
+            // Mode capture d'écran : navigation automatique vers la heat map de démo
+            .onAppear {
+                if DemoMode.enabled && DemoMode.scenario != "discover" {
+                    navigation_path.append(NavigationTarget.step_heat_map)
+                }
+            }
+            #endif
 
             if showing_exit_button {
                 HStack {
@@ -473,10 +488,18 @@ struct StepHeatMap: View {
     var body: some View {
         StepByStepHeatMapView(step_by_step_view_controller!)
             .onAppear {
-                Task {
-                    await step_by_step_view_controller?.master_view_controller?.chargenTCP(IPv4Address("51.75.31.39")!)
+                #if DEBUG
+                let demo_mode = DemoMode.enabled
+                #else
+                let demo_mode = false
+                #endif
+
+                if !demo_mode {
+                    Task {
+                        await step_by_step_view_controller?.master_view_controller?.chargenTCP(IPv4Address("51.75.31.39")!)
+                    }
                 }
-                
+
                 if let image_name {
                     let image = UIImage(named: image_name)
                     let resized_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image!))
@@ -484,11 +507,33 @@ struct StepHeatMap: View {
                     model.original_map_image = StepHeatMap.rotateIfNeeded(image!)
                     model.input_map_image = resized_image
                     model.idw_values = Array<IDWValue>()
-                    
+
                     // Initialize other model parameters
                     model.step = 0
                     model.max_scale = LOWEST_MAX_SCALE
                 }
+
+                #if DEBUG
+                // Mode capture d'écran : carte pré-remplie et reproductible, sans réseau
+                if demo_mode {
+                    if model.input_map_image == nil {
+                        let image = UIImage(named: "plan-rectangle")!
+                        model.original_map_image_rotation = image.cgImage!.width < image.cgImage!.height
+                        model.original_map_image = StepHeatMap.rotateIfNeeded(image)
+                        model.input_map_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image))
+                    }
+                    let cg = model.input_map_image!.cgImage!
+                    let probes = DemoMode.values(width: cg.width, height: cg.height)
+                    if DemoMode.scenario == "measure" {
+                        model.idw_values = Array(probes.prefix(4))
+                        model.step = 3
+                    } else {
+                        model.idw_values = probes
+                        model.step = 4
+                    }
+                    model.max_scale = DemoMode.max_scale
+                }
+                #endif
             }
     }
 }

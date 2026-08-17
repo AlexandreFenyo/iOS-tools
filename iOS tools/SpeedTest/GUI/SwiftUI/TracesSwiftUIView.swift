@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import StoreKit
 
 // https://useyourloaf.com/blog/adapting-swiftui-label-style/
 struct AdaptiveLabelStyle: LabelStyle {
@@ -230,14 +229,6 @@ struct TracesSwiftUIView: View {
                     .padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
                 }
                 .background(Color(COLORS.right_pannel_bg))
-                .onAppear() {
-                    Task { @MainActor in
-                        try await Task.sleep(nanoseconds: 2_000_000_000)
-                        if let windowScene = UIApplication.shared.windows.first?.windowScene {
-                            if !disable_request_reviews { SKStoreReviewController.requestReview(in: windowScene) }
-                        }
-                    }
-                }
             }
         }
     }

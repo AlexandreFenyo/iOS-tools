@@ -63,21 +63,47 @@ public struct IDWImage {
         return values
     }
 
-    // yellow_size indique l'importance du jaune dans les couleurs utilisées
-    public static let yellow_size: Float = 1.5
-    
+    // contrast_exponent : > 1 comprime le milieu de l'échelle et étire les extrémités
+    // (anciennement yellow_size, la rampe n'ayant plus de jaune au milieu)
+    public static let contrast_exponent: Float = 1.5
+
+    // Rampe dérivée de viridis, tronquée de ses teintes les plus sombres pour que le
+    // plan (composité par-dessus en gris à alpha 0.2, cf. computeMergedImage) reste
+    // lisible. La luminance croît de façon monotone : la carte se lit donc aussi en
+    // deutéranopie, en protanopie et en niveaux de gris, contrairement au rouge->vert
+    // précédent. Un débit faible n'apparaît plus en rouge vif, qui se lisait comme une
+    // panne plutôt que comme une mesure.
+    // index 0 = débit le plus faible (bleu-indigo) ... dernier = le plus élevé (jaune-vert)
+    private static let ramp: [(r: Float, g: Float, b: Float)] = [
+        (0.275, 0.196, 0.494), (0.231, 0.318, 0.545), (0.184, 0.424, 0.557),
+        (0.149, 0.510, 0.557), (0.122, 0.596, 0.545), (0.173, 0.694, 0.494),
+        (0.345, 0.780, 0.396), (0.678, 0.863, 0.188), (0.993, 0.906, 0.144),
+    ]
+
+    // Interpolation linéaire dans la rampe, t clampé dans [0, 1]
+    private static func sample(_ t: Float) -> (r: UInt8, g: UInt8, b: UInt8) {
+        let scaled = min(max(t, 0), 1) * Float(ramp.count - 1)
+        let i0 = min(Int(scaled), ramp.count - 1)
+        let i1 = min(i0 + 1, ramp.count - 1)
+        let f = scaled - Float(i0)
+        let a = ramp[i0], b = ramp[i1]
+        return (UInt8(((a.r + (b.r - a.r) * f) * 255).rounded()),
+                UInt8(((a.g + (b.g - a.g) * f) * 255).rounded()),
+                UInt8(((a.b + (b.b - a.b) * f) * 255).rounded()))
+    }
+
+    // Arithmétique pure : la table se construit sans instancier 65 536 SwiftUI.Color,
+    // ce qui évitait aussi d'appeler cgColor hors du main actor depuis computeCGImageAsync.
     public static let rgb_from_value: [(r: UInt8, g: UInt8, b: UInt8)] = {
         var tab = [(r: UInt8, g: UInt8, b: UInt8)]()
+        tab.reserveCapacity(Int(UInt16.max) + 1)
         let fmax = Float(UInt16.max)
         for i in 0...UInt16.max {
-            var fi = Float(i)
-            var ii = pow(abs((fi - fmax / 2.0)) / (fmax / 2.0), yellow_size)
+            let fi = Float(i)
+            var ii = pow(abs(fi - fmax / 2.0) / (fmax / 2.0), contrast_exponent)
             if fi < fmax / 2.0 { ii = -ii }
             ii = 0.5 + ii / 2.0
-            ii = ii * fmax
-            let hue: Double = Double(Float(ii) / Float(UInt16.max) * 0.33)
-            let c = Color(hue: hue, saturation: 1, brightness: 1, opacity: 1)
-            tab.insert((r: UInt8((c.cgColor?.components)![0] * CGFloat(UInt8.max)), g: UInt8((c.cgColor?.components)![1] * CGFloat(UInt8.max)), b: UInt8((c.cgColor?.components)![2] * CGFloat(UInt8.max))), at: tab.count)
+            tab.append(sample(ii))
         }
         return tab
     }()

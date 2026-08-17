@@ -94,14 +94,21 @@ private class HeatMapPhotoController: NSObject {
         if error != nil {
             popUp(NSLocalizedString("Error saving map", comment: "Error saving map"), NSLocalizedString("Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)", comment: "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)"), "OK")
         } else {
-            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heatmap in you photo roll", comment: "You can find the heatmap in you photo roll"), "OK")
+            ReviewRequester.shared.recordHeatMapCompleted()
+            popUp(NSLocalizedString("Map saved", comment: "Map saved"), NSLocalizedString("You can find the heat map in your photo library", comment: "You can find the heat map in your photo library"), "OK", ask_review: true)
         }
     }
 
-    public func popUp(_ title: String, _ message: String, _ ok: String) {
+    public func popUp(_ title: String, _ message: String, _ ok: String, ask_review: Bool = false) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: ok, style: .default) {_ in
-            if !disable_request_reviews { SKStoreReviewController.requestReview() }
+        let action = UIAlertAction(title: ok, style: .default) { [weak self] _ in
+            guard ask_review else { return }
+            // L'invite est ignoree par iOS tant qu'une alerte est presentee : on attend
+            // que celle-ci soit refermee.
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_200_000_000)
+                ReviewRequester.shared.requestIfAppropriate(in: self?.heatmap_view_controller?.view.window?.windowScene)
+            }
         }
         alert.addAction(action)
         self.heatmap_view_controller?.present(alert, animated: true)
@@ -477,19 +484,19 @@ struct HeatMapSwiftUIView: View {
                                                 let foo: Float = speed / model.max_scale * (Float(cg_image_next!.height) - 1.0)
                                                 let bar = CGFloat(foo)
                                                 
-                                                Image(systemName: "restart")
+                                                Image(systemName: "restart").foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                     .position(x: SCALE_WIDTH, y: speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) : 0)
                                                 
                                                 let foo2 = speed <= model.max_scale ? geom.size.height - bar * geom.size.width / CGFloat(cg_image_next!.width) + 3 : 0
                                                 
-                                                Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit())
+                                                Text("\(UInt64(speed)) bit/s").font(.system(size: 8).monospacedDigit()).foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                 //.frame(maxWidth: .infinity, alignment: .trailing)
                                                     .position(x: SCALE_WIDTH + 50, y: foo2)
                                                 
                                                 if foo2 >= 20 {
-                                                    Image(systemName: "restart")
+                                                    Image(systemName: "restart").foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                         .position(x: SCALE_WIDTH, y: 0)
-                                                    Text("\(UInt64(model.max_scale)) bit/s").font(.system(size: 8).monospacedDigit())
+                                                    Text("\(UInt64(model.max_scale)) bit/s").font(.system(size: 8).monospacedDigit()).foregroundStyle(.white).shadow(color: .black.opacity(0.7), radius: 1)
                                                         .position(x: SCALE_WIDTH + 50, y: 0)
                                                 }
                                             }

@@ -76,7 +76,7 @@
 "Error saving map" = "Error al guardar el mapa";
 "Map saved" = "Mapa guardado";
 "Access to photos is forbidden. You need to change the access rights in the app configuration panel (click on the wheel button in the toolbar to access the configuration panel)" = "El acceso a las fotos está prohibido. Necesitas cambiar los derechos de acceso en el panel de configuración de la aplicación (haz clic en el botón de la rueda en la barra de herramientas para acceder al panel de configuración).";
-"You can find the heatmap in you photo roll" = "Puedes encontrar el mapa de calor en tu carrete de fotos.";
+"You can find the heat map in your photo library" = "Puedes encontrar el mapa de calor en tu fototeca.";
 "Help: " = "Ayuda: ";
 "Help" = "Ayuda";
 "Don't show this message again" = "No mostrar este mensaje de nuevo";

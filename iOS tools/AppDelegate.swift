@@ -254,13 +254,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
          browser.start(queue: .main)
          */
         
+        #if DEBUG
+        // Mode capture d'écran, scénario "discover" : pas de modal pas-à-pas,
+        // on reste sur la liste des cibles
+        let skip_step_by_step = DemoMode.enabled && DemoMode.scenario == "discover"
+        #else
+        let skip_step_by_step = false
+        #endif
+
         // Launch the step-by-step process from the root view controller for iOS 26+ compatibility
-        DispatchQueue.main.async {
-            let step_by_step_view_controller = StepByStepViewController()
-            step_by_step_view_controller.master_view_controller = masterViewController
-            step_by_step_view_controller.modalPresentationStyle = .fullScreen
-            step_by_step_view_controller.isModalInPresentation = true
-            tabBarController.present(step_by_step_view_controller, animated: true)
+        if !skip_step_by_step {
+            DispatchQueue.main.async {
+                let step_by_step_view_controller = StepByStepViewController()
+                step_by_step_view_controller.master_view_controller = masterViewController
+                step_by_step_view_controller.modalPresentationStyle = .fullScreen
+                step_by_step_view_controller.isModalInPresentation = true
+                tabBarController.present(step_by_step_view_controller, animated: true)
+            }
         }
 
         return true

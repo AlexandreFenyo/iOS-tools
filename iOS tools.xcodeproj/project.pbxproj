@@ -72,6 +72,7 @@
 		5D65EE58296381780099871C /* app-icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE48296381780099871C /* app-icon-20.png */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D7289F12CC5728F00DD4B8A /* OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7289F02CC5728F00DD4B8A /* OrientationView.swift */; };
+		5DAA0004000000000000RR04 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA0003000000000000RR03 /* DemoData.swift */; };
 		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
@@ -156,6 +157,7 @@
 		5D9BCBF12C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */; };
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DA794142D80C80C006900F3 /* SwiftUIViewSharedTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */; };
+		5DAA0002000000000000RR02 /* ReviewRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA0001000000000000RR01 /* ReviewRequester.swift */; };
 		5DADCF212DA2B75E00846627 /* SnmpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DADCF202DA2B75E00846627 /* SnmpViewController.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
 		5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */ = {isa = PBXBuildFile; fileRef = 5DC43CFE2CAB493500B90FAA /* infos.cgi */; };
@@ -302,6 +304,7 @@
 		5D65EE63296491DF0099871C /* IMG_0071.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0071.PNG; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		5D7289F02CC5728F00DD4B8A /* OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationView.swift; sourceTree = "<group>"; };
+		5DAA0003000000000000RR03 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		5D78EF6D290FC56400842B76 /* IDWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDWView.swift; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -407,6 +410,7 @@
 		5D9BCBF02C3F005D00F9ADE6 /* StepByStepSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepByStepSwiftUIView.swift; sourceTree = "<group>"; };
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewSharedTools.swift; sourceTree = "<group>"; };
+		5DAA0001000000000000RR01 /* ReviewRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequester.swift; sourceTree = "<group>"; };
 		5DADCF202DA2B75E00846627 /* SnmpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnmpViewController.swift; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
@@ -826,6 +830,7 @@
 				5DE22F7829BDC20C002D9BEE /* Interman */,
 				5DF21515212D7C13002B7603 /* genericTools.h */,
 				5DF21514212D7C13002B7603 /* genericTools.c */,
+				5DAA0001000000000000RR01 /* ReviewRequester.swift */,
 				5D13521F20853BEA00E4A76D /* GenericTools.swift */,
 				5DF21500211B4FD7002B7603 /* Charts */,
 				5DF214FF211B4FCE002B7603 /* Networks */,
@@ -1126,6 +1131,7 @@
 				5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */,
 				5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */,
 				5DC62F7E290AF54D00C4B58E /* ImagePicker.swift */,
+				5DAA0003000000000000RR03 /* DemoData.swift */,
 				5D78EF6D290FC56400842B76 /* IDWView.swift */,
 				5DE8DC41295074BB00FAE74D /* Graham.swift */,
 				5D9BCBEE2C3F001300F9ADE6 /* StepByStepViewController.swift */,
@@ -1887,6 +1893,7 @@
 				5DE22F8629C5C782002D9BEE /* Interman3DSwiftUIView.swift in Sources */,
 				5DF21509211C9455002B7603 /* LocalDiscardService.swift in Sources */,
 				5D86320F28E88544000B7E2D /* TCPPorts2Services.swift in Sources */,
+				5DAA0004000000000000RR04 /* DemoData.swift in Sources */,
 				5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */,
 				5D636442213D8A7500BFEB0F /* TCPPortBrowser.swift in Sources */,
 				5DC736C420D3A55600C2A199 /* NetTools.c in Sources */,
@@ -1929,6 +1936,7 @@
 				5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */,
 				5D7289F12CC5728F00DD4B8A /* OrientationView.swift in Sources */,
 				5DE9CE95214FE99B006F3BC0 /* leftNavController.swift in Sources */,
+				5DAA0002000000000000RR02 /* ReviewRequester.swift in Sources */,
 				5D13522020853BEA00E4A76D /* GenericTools.swift in Sources */,
 				5DC7AFF120C56BA7002A4491 /* LocalChargenService.swift in Sources */,
 				5D1F1245272803A900656D0D /* TracesViewController.swift in Sources */,
@@ -2105,15 +2113,13 @@
 				CODE_SIGN_ENTITLEMENTS = "iOS tools/iOS tools.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Network Tools & Maps";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2125,7 +2131,11 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
 				);
-				MARKETING_VERSION = 6.1;
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/simulator",
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2148,14 +2158,12 @@
 				CODE_SIGN_ENTITLEMENTS = "iOS tools/iOS tools.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 27;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = "iOS tools/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "WiFi Network Tools & Maps";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2167,7 +2175,11 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp",
 				);
-				MARKETING_VERSION = 6.1;
+				"LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*]" = (
+					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/simulator",
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 6.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

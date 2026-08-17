@@ -9,7 +9,6 @@
 import SwiftUI
 import SceneKit
 import iOSToolsMacros
-import StoreKit
 
 /*
  Debugging camera movements:
@@ -1122,14 +1121,6 @@ struct Interman3DSwiftUIView: View {
                 timer_auto_rotation_button?.invalidate()
                 timer_camera?.invalidate()
                 timer_text?.invalidate()
-            }
-            .onAppear() {
-                Task { @MainActor in
-                    try await Task.sleep(nanoseconds: 5_000_000_000)
-                    if let windowScene = UIApplication.shared.windows.first?.windowScene {
-                        if !disable_request_reviews { SKStoreReviewController.requestReview(in: windowScene) }
-                    }
-                }
             }
     }
 }

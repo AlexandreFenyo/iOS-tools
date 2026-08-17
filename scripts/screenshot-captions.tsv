@@ -1,0 +1,22 @@
+locale	sim_language	index	scenario	caption
+en-US	en	1	heatmap	See your WiFi dead zones,\nroom by room
+en-US	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-US	en	3	discover	Every device on your network,\nin one list
+en-GB	en-GB	1	heatmap	See your WiFi blackspots,\nroom by room
+en-GB	en-GB	2	measure	Walk, tap, measure —\nno extra hardware
+en-GB	en-GB	3	discover	Every device on your network,\nin one list
+fr-FR	fr	1	heatmap	Vos zones blanches WiFi,\npièce par pièce
+fr-FR	fr	2	measure	Marchez, appuyez, mesurez —\nsans aucun matériel
+fr-FR	fr	3	discover	Chaque appareil de votre réseau,\nen une liste
+es-ES	es	1	heatmap	Tus zonas muertas WiFi,\nhabitación a habitación
+es-ES	es	2	measure	Camina, toca, mide —\nsin hardware adicional
+es-ES	es	3	discover	Cada dispositivo de tu red,\nen una lista
+de-DE	en	1	heatmap	WLAN-Funklöcher sehen,\nRaum für Raum
+de-DE	en	2	measure	Gehen, tippen, messen —\nohne Zusatzhardware
+de-DE	en	3	discover	Jedes Gerät im Netzwerk,\nauf einen Blick
+nl-NL	en	1	heatmap	Zie uw wifi-dode zones,\nkamer voor kamer
+nl-NL	en	2	measure	Loop, tik, meet —\nzonder extra hardware
+nl-NL	en	3	discover	Elk apparaat in uw netwerk,\nin één lijst
+it	en	1	heatmap	Le tue zone morte WiFi,\nstanza per stanza
+it	en	2	measure	Cammina, tocca, misura —\nsenza hardware extra
+it	en	3	discover	Ogni dispositivo della rete,\nin un unico elenco
