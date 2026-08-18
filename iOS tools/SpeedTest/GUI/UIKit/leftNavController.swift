@@ -56,10 +56,28 @@ class LeftNavController : UINavigationController {
         navigationBar.scrollEdgeAppearance = appearance
         navigationBar.compactAppearance = appearance
 
-        if #available(iOS 26.0, *) {
-            // Remove the extra top padding added by Liquid Glass on the navigation bar
-            additionalSafeAreaInsets.top = -45
+        // Note : la compensation du rembourrage Liquid Glass (iOS 26) est calculée
+        // dynamiquement dans viewDidLayoutSubviews — l'ancien -45 fixe faisait passer
+        // la barre sous la Dynamic Island (iPhone), la barre d'état (iPad) et les
+        // boutons de fenêtre (Mac Catalyst).
+    }
+
+    // Sous iOS 26, Liquid Glass ajoute un rembourrage excessif au-dessus de la barre
+    // de navigation dans un UISplitViewController en colonnes. On retire uniquement
+    // l'excédent au-delà de la safe area réelle de la fenêtre, jamais davantage :
+    // la barre affleure ainsi la Dynamic Island / barre d'état / barre de titre sans
+    // passer dessous. Le calcul converge : une fois l'excédent retiré, il vaut zéro.
+    private func compensateLiquidGlassPadding() {
+        guard #available(iOS 26.0, *) else { return }
+        #if targetEnvironment(macCatalyst)
+        // Pas de rembourrage excédentaire constaté sous Catalyst : ne rien retirer.
+        #else
+        let window_safe_top = view.window?.safeAreaInsets.top ?? 0
+        let excess = navigationBar.frame.minY - window_safe_top
+        if excess > 0.5 {
+            additionalSafeAreaInsets.top -= excess
         }
+        #endif
     }
 
     private func setupLegacyToolbar() {
@@ -163,6 +181,8 @@ class LeftNavController : UINavigationController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        compensateLiquidGlassPadding()
 
         // Ensure custom toolbar stays on top of FloatingBarContainerView
         if let customToolbarView {
