@@ -742,6 +742,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		5DAA0011000000000000RR11 /* ASO */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ASO; sourceTree = "<group>"; };
 		5D26B5112DC8E47B00C3B350 /* SNMP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SNMP; sourceTree = "<group>"; };
 		5D7289E92CC570D200DD4B8A /* plans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = plans; sourceTree = "<group>"; };
 		5D8503B22CFE572D00B0D720 /* Speedometer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Speedometer; sourceTree = "<group>"; };
@@ -777,6 +778,7 @@
 		5D1351E2208538DB00E4A76D = {
 			isa = PBXGroup;
 			children = (
+				5DAA0011000000000000RR11 /* ASO */,
 				5D463FBA2A3722A500DA77C4 /* Artwork */,
 				5D1351ED208538DB00E4A76D /* iOS tools */,
 				5D135204208538E300E4A76D /* iOS toolsTests */,
