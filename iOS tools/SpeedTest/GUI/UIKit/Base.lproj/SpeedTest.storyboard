@@ -357,7 +357,7 @@
         <scene sceneID="kn3-Gh-yRt">
             <objects>
                 <splitViewController preferredPrimaryColumnWidthFraction="0.0" id="X4Q-a0-4Mv" customClass="SplitViewController" customModule="iOS_tools" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Discover" image="note.text" catalog="system" id="Jgi-Wj-wsx"/>
+                    <tabBarItem key="tabBarItem" title="Discover" id="Jgi-Wj-wsx"/>
                     <variation key="widthClass=regular" preferredPrimaryColumnWidthFraction="0.3"/>
                     <connections>
                         <segue destination="nVb-da-Lxi" kind="relationship" relationship="masterViewController" id="R27-No-sgh"/>
@@ -461,7 +461,6 @@
         <image name="info.circle" catalog="system" width="128" height="123"/>
         <image name="list.bullet.rectangle.portrait" catalog="system" width="115" height="128"/>
         <image name="map" catalog="system" width="128" height="112"/>
-        <image name="note.text" catalog="system" width="128" height="107"/>
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
         <image name="rectangle.badge.minus" catalog="system" width="128" height="97"/>
         <image name="rectangle.badge.plus" catalog="system" width="128" height="97"/>

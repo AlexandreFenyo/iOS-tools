@@ -209,3 +209,4 @@
 "port (161)" = "Port (161)";
 "port" = "Port";
 "traces" = "Protokoll";
+"Filter traces" = "Protokoll filtern";

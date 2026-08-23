@@ -10,7 +10,11 @@
 import Foundation
 import iOSToolsMacros
 
-class LocalPingClient : Thread {
+// Les instances traversent la frontière MainActor -> Task.detached dans MasterViewController.
+// @unchecked Sendable est justifié : l'état Swift est immuable après init (address, count...),
+// last_n*/last_date ne sont mutés que séquentiellement (start() puis getThroughput() dans la même
+// Task), et la synchronisation réelle est assurée par les mutex de la couche C.
+class LocalPingClient : Thread, @unchecked Sendable {
     private let address: IPAddress
     private var last_nread: Int?
     private var last_date: Date?

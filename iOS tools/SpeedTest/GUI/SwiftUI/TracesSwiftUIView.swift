@@ -29,10 +29,12 @@ struct AdaptiveLabelStyle: LabelStyle {
 public class TracesViewModel : ObservableObject {
     static let shared = TracesViewModel()
     
+    // Libellés complétés à 5 caractères pour que le texte qui suit soit aligné
+    // (la fonte des traces est à chasse fixe sur Mac)
     private let log_level_to_string: [LogLevel: String] = [
-        LogLevel.INFO: "INFO",
+        LogLevel.INFO: "INFO ",
         LogLevel.DEBUG: "DEBUG",
-        LogLevel.ALL: "ALL"
+        LogLevel.ALL: "ALL  "
     ]
     
     private let df: DateFormatter = {
@@ -76,72 +78,171 @@ public enum LogLevel : Int {
     case ALL
 }
 
+// Contrôleur permettant aux boutons SwiftUI de piloter le défilement du UITextView
+@MainActor
+final class TracesScrollController {
+    fileprivate weak var text_view: UITextView?
+
+    fileprivate func scrollToTop() {
+        guard let text_view else { return }
+        text_view.setContentOffset(CGPoint(x: 0, y: -text_view.adjustedContentInset.top), animated: true)
+    }
+
+    fileprivate func scrollToBottom() {
+        guard let text_view else { return }
+        let y = text_view.contentSize.height - text_view.bounds.height + text_view.adjustedContentInset.bottom
+        text_view.setContentOffset(CGPoint(x: 0, y: max(y, -text_view.adjustedContentInset.top)), animated: true)
+    }
+}
+
+// Les traces sont affichées dans un UITextView natif en lecture seule plutôt que dans des
+// Text SwiftUI : on bénéficie ainsi des gestes classiques de sélection et de copie (glisser
+// à la souris sur Mac, poignées de sélection sur iOS, menu contextuel, Cmd-A/Cmd-C), y
+// compris sur une sélection à cheval sur plusieurs lignes.
+fileprivate struct TracesTextView: UIViewRepresentable {
+    let traces: [String]
+    let filter: String
+    @Binding var locked: Bool
+    let controller: TracesScrollController
+
+    // SF Mono : la déclinaison à chasse fixe de San Francisco, sur toutes les plates-formes
+    private static let attributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.monospacedSystemFont(ofSize: 10, weight: .regular),
+        .foregroundColor: COLORS.standard_background.darker().darker()
+    ]
+
+    // Les occurrences du filtre sont mises en gras dans les lignes affichées
+    private static let bold_attributes: [NSAttributedString.Key: Any] = [
+        .font: UIFont.monospacedSystemFont(ofSize: 10, weight: .bold),
+        .foregroundColor: COLORS.standard_background.darker().darker()
+    ]
+
+    // Une ligne de trace, avec les occurrences du filtre en gras (même comparaison,
+    // insensible à la casse, que le filtrage lui-même)
+    private static func attributedLine(_ line: String, filter: String) -> NSAttributedString {
+        let result = NSMutableAttributedString(string: line, attributes: attributes)
+        guard !filter.isEmpty else { return result }
+        var search_range = line.startIndex..<line.endIndex
+        while let match = line.range(of: filter, options: [.caseInsensitive], range: search_range, locale: .current) {
+            result.addAttributes(bold_attributes, range: NSRange(match, in: line))
+            search_range = match.upperBound..<line.endIndex
+        }
+        return result
+    }
+
+    private static func attributedText<S: Sequence>(_ traces: S, filter: String, leading_newline: Bool) -> NSAttributedString where S.Element == String {
+        let result = NSMutableAttributedString()
+        var first = !leading_newline
+        for trace in traces {
+            if !first {
+                result.append(NSAttributedString(string: "\n", attributes: attributes))
+            }
+            first = false
+            result.append(attributedLine(trace, filter: filter))
+        }
+        return result
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let text_view = UITextView()
+        text_view.isEditable = false
+        text_view.isSelectable = true
+        text_view.backgroundColor = .clear
+        text_view.alwaysBounceVertical = true
+        text_view.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        text_view.delegate = context.coordinator
+        return text_view
+    }
+
+    func updateUIView(_ text_view: UITextView, context: Context) {
+        let coordinator = context.coordinator
+        coordinator.parent = self
+        controller.text_view = text_view
+
+        if traces.count > coordinator.applied_count, coordinator.applied_count > 0,
+           filter == coordinator.applied_filter,
+           traces[coordinator.applied_count - 1] == coordinator.applied_last {
+            // Cas courant : de nouvelles traces ajoutées à la fin — on n'ajoute que le suffixe,
+            // sans réécrire tout le texte, pour préserver une éventuelle sélection en cours
+            text_view.textStorage.append(Self.attributedText(traces[coordinator.applied_count...], filter: filter, leading_newline: true))
+        } else if traces.count != coordinator.applied_count || traces.last != coordinator.applied_last
+                    || filter != coordinator.applied_filter {
+            // Réécriture complète (premier affichage, traces effacées ou filtre modifié)
+            text_view.attributedText = Self.attributedText(traces, filter: filter, leading_newline: false)
+        } else {
+            return
+        }
+        coordinator.applied_count = traces.count
+        coordinator.applied_last = traces.last
+        coordinator.applied_filter = filter
+
+        // Suivi automatique de la fin des traces
+        if locked {
+            DispatchQueue.main.async { [weak controller] in
+                controller?.scrollToBottom()
+            }
+        }
+    }
+
+    @MainActor
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var parent: TracesTextView
+        var applied_count = 0
+        var applied_last: String?
+        var applied_filter = ""
+
+        init(_ parent: TracesTextView) {
+            self.parent = parent
+        }
+
+        // L'utilisateur commence à faire défiler : on suspend le suivi automatique de la fin
+        func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+            if parent.locked {
+                DispatchQueue.main.async { self.parent.locked = false }
+            }
+        }
+
+        // Revenu en bas de la liste : on reprend le suivi automatique
+        func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+            if !decelerate { checkBottom(scrollView) }
+        }
+
+        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+            checkBottom(scrollView)
+        }
+
+        private func checkBottom(_ scrollView: UIScrollView) {
+            let bottom_offset = scrollView.contentSize.height - scrollView.bounds.height + scrollView.adjustedContentInset.bottom
+            if scrollView.contentOffset.y >= bottom_offset - 1, !parent.locked {
+                DispatchQueue.main.async { self.parent.locked = true }
+            }
+        }
+    }
+}
+
 struct TracesSwiftUIView: View {
     @ObservedObject var model = TracesViewModel.shared
 
     @State public var locked = true
-    @Namespace var topID
-    @Namespace var bottomID
-    
-    private struct ScrollViewOffsetPreferenceKey: PreferenceKey {
-        static var defaultValue: CGFloat = .zero
-        
-        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-            value += nextValue()
-        }
-    }
-    
-    @State private var timer: Timer?
-    
+    @State private var scroll_controller = TracesScrollController()
+    @State private var filter = ""
+
     var body: some View {
-        GeometryReader { traceGeom in
-            ScrollViewReader { scrollViewProxy in
-                ZStack {
-                    ScrollView {
-                        ZStack {
-                            LazyVStack(alignment: .leading, spacing: 0) {
-                                Spacer().id(topID)
-                                ForEach(0 ..< model.traces.count - 1, id: \.self) { i in
-                                    Text(model.traces[i])
-                                        .textSelection(.enabled)
-                                        .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                        .lineLimit(nil)
-                                        .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                                }
-                                Text(model.traces.last!)
-                                    .textSelection(.enabled)
-                                    .font(Font.custom("San Francisco", size: 10).monospacedDigit())
-                                    .id(bottomID)
-                                    .lineLimit(nil)
-                                    .foregroundColor(Color(COLORS.standard_background.darker().darker()))
-                            }.padding()
-                            
-                            GeometryReader { scrollViewContentGeom in
-                                Color.clear.preference(key: ScrollViewOffsetPreferenceKey.self, value: traceGeom.size.height - scrollViewContentGeom.size.height - scrollViewContentGeom.frame(in: .named("scroll")).minY)
-                            }
-                        }
-                    }
-                    .onPreferenceChange(ScrollViewOffsetPreferenceKey.self) { value in
-                        if value > 0 { locked = true }
-                    }
-                    // The DragGesture is made inside a simultaneousGesture since we want the default DragGesture that scrolls the ScrollView continue to work
-                    .simultaneousGesture(DragGesture().onEnded { _ in
-                        locked = false
-                    }, isEnabled: true)
-                    .onAppear() {
-                        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                            if locked {
-                                Task { @MainActor in
-                                    withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                                }
-                            }
-                        }
-                    }
-                    .onDisappear() {
-                        timer?.invalidate()
-                    }
-                    
-                    VStack {
+        ZStack {
+            TracesTextView(traces: filter.isEmpty ? model.traces :
+                            model.traces.filter { $0.localizedCaseInsensitiveContains(filter) },
+                           filter: filter, locked: $locked, controller: scroll_controller)
+
+            VStack {
+                HStack(alignment: .top) {
+                    // Le fixedSize horizontal contraint ce VStack à sa largeur idéale, dictée
+                    // par la rangée de boutons ; le champ de filtre (maxWidth: .infinity)
+                    // s'étire alors exactement à cette largeur
+                    VStack(alignment: .leading) {
                         HStack {
                             Button {
                                 model.setLevel(.INFO)
@@ -156,7 +257,7 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20).font(.footnote)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
+
                             Button {
                                 model.setLevel(.DEBUG)
                                 model.append("set trace level to DEBUG", level: .INFO)
@@ -170,7 +271,7 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
+
                             Button {
                                 model.setLevel(.ALL)
                                 model.append("set trace level to ALL", level: .INFO)
@@ -184,54 +285,89 @@ struct TracesSwiftUIView: View {
                             .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
                             .cornerRadius(20)
                             .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
-                            Spacer()
-                            
-                            Button {
-                                withAnimation { scrollViewProxy.scrollTo(topID) }
-                            } label: {
-                                Image("arrow up")
-                                    .renderingMode(.template)
-                                    .foregroundColor(.gray).padding(12)
+                        }
+                        .lineLimit(1)
+
+                        HStack {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                                .foregroundColor(.gray)
+                            ZStack(alignment: .leading) {
+                                if filter.isEmpty {
+                                    // Placeholder gris, comme les boutons de niveau non sélectionnés
+                                    Text("Filter traces")
+                                        .font(.footnote)
+                                        .foregroundColor(Color.gray)
+                                        .allowsHitTesting(false)
+                                }
+                                TextField("", text: $filter)
+                                    .textFieldStyle(.plain)
+                                    .autocorrectionDisabled()
+                                    .textInputAutocapitalization(.never)
+                                    .font(.footnote)
+                                    .foregroundColor(Color.white.lighter())
                             }
-                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
-                            Button {
-                                locked = true
-                                withAnimation { scrollViewProxy.scrollTo(bottomID) }
-                            } label: {
-                                Image("arrow down")
-                                    .renderingMode(.template)
-                                    .foregroundColor(locked ? Color.white : .gray)
-                                    .padding(12)
+                            if !filter.isEmpty {
+                                Button {
+                                    filter = ""
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .background(Color(COLORS.standard_background).darker().darker())
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
-                            Button {
-                                model.clear()
-                            } label: {
-                                Image(systemName: "delete.left.fill")
-                                    .renderingMode(.template)
-                                    .foregroundColor(.gray).padding(12)
-                            }
-                            .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
-                            
-                        }.background(Color.clear).lineLimit(1)
-                        
-                        Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 12).padding(.vertical, 8)
+                        .background(Color(COLORS.standard_background).darker().darker())
+                        .cornerRadius(20)
+                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
                     }
-                    .padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
-                }
-                .background(Color(COLORS.right_pannel_bg))
+                    .fixedSize(horizontal: true, vertical: false)
+
+                    Spacer()
+
+                    Button {
+                        locked = false
+                        scroll_controller.scrollToTop()
+                    } label: {
+                        Image("arrow up")
+                            .renderingMode(.template)
+                            .foregroundColor(.gray).padding(12)
+                    }
+                    .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                    .cornerRadius(20)
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
+                    Button {
+                        locked = true
+                        scroll_controller.scrollToBottom()
+                    } label: {
+                        Image("arrow down")
+                            .renderingMode(.template)
+                            .foregroundColor(locked ? Color.white : .gray)
+                            .padding(12)
+                    }
+                    .background(Color(COLORS.standard_background).darker().darker())
+                    .cornerRadius(20)
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
+                    Button {
+                        model.clear()
+                    } label: {
+                        Image(systemName: "delete.left.fill")
+                            .renderingMode(.template)
+                            .foregroundColor(.gray).padding(12)
+                    }
+                    .background(Color(COLORS.standard_background).darker().darker()).cornerRadius(CGFloat.greatestFiniteMagnitude)
+                    .cornerRadius(20)
+                    .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+
+                }.background(Color.clear)
+
+                Spacer()
             }
+            .padding() // Pour que les boutons en haut ne soient pas trop proches des bords de l'écran
         }
+        .background(Color(COLORS.right_pannel_bg))
     }
 }
-
-

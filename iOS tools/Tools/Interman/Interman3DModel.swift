@@ -1491,8 +1491,11 @@ public class Interman3DModel: ObservableObject {
         print(#function)
 
         return;
-        
-        _ = addBroadcast()
+
+        // Code de debug inatteignable, conservé en commentaire pour référence
+        // (supprime les warnings « code after 'return' » et « '_' is redundant »)
+        /*
+        addBroadcast()
         
         return
         
@@ -1585,5 +1588,6 @@ public class Interman3DModel: ObservableObject {
 */
         
         print("testComponent() done")
+        */
     }
 }

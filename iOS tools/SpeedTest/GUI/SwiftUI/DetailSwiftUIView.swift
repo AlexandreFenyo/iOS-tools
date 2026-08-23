@@ -32,13 +32,16 @@ struct TagCloudView: View {
     private func generateContent(in g: GeometryProxy) -> some View {
         var width = CGFloat.zero
         var height = CGFloat.zero
+        // On extrait la largeur (CGFloat, Sendable) pour ne pas capturer le GeometryProxy
+        // (non-Sendable) dans les closures @Sendable de alignmentGuide()
+        let container_width = g.size.width
         
         return ZStack(alignment: .topLeading) {
             ForEach(self.tags, id: \.self) { tag in
-                self.item(for: tag, width: g.size.width)
+                self.item(for: tag, width: container_width)
                     .padding([.horizontal, .vertical], 4)
                     .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > g.size.width) {
+                        if (abs(width - d.width) > container_width) {
                             width = 0
                             height -= d.height
                         }

@@ -51,6 +51,11 @@ class LeftNavController : UINavigationController {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = COLORS.leftpannel_topbar_bg
+        // Sous Mac Catalyst, le titre est rendu par défaut avec un effet de vibrance
+        // qui le fait apparaître en mélange de bleu et de noir sur notre fond opaque.
+        // Fixer explicitement la couleur désactive cet effet ; sans incidence sur les
+        // autres plates-formes, où le titre est déjà noir (style Light forcé).
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
 
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = appearance

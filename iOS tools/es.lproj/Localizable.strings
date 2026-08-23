@@ -149,7 +149,7 @@
 "Add new target" = "Agregar un nuevo objetivo";
 "Name" = "Nombre";
 "IPv4 addresses" = "Direcciones IPv4";
-"IPv4 addresses" = "Direcciones IPv6";
+"IPv6 addresses" = "Direcciones IPv6";
 "new name" = "nuevo nombre";
 "new IPv4 address" = "nuevas direcciones IPv4";
 "new IPv6 address" = "nuevas direcciones IPv6";
@@ -214,3 +214,4 @@
 // MasterViewController
 "no IPv4 address" = "sin dirección IPv4";
 "no IPv6 address" = "sin dirección IPv6";
+"Filter traces" = "Filtrar las trazas";

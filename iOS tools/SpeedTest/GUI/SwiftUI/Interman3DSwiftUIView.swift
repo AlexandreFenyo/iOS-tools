@@ -94,6 +94,10 @@ class SetCameraConstraint: NSObject, CAAnimationDelegate {
     }
     
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        // La contrainte lookAt oriente le nœud sans tenir compte du pivot : le pivot
+        // hérité du mode topHost (rotation pi/2) doit être remis à l'identité au moment
+        // où la contrainte prend le relais, sinon la caméra viserait à 90° de la cible
+        camera.pivot = SCNMatrix4Identity
         camera.constraints = [constraint]
     }
 }
@@ -442,6 +446,13 @@ struct Interman3DSwiftUIView: View {
         print(bar)
     }
     
+    // Vue de dessus (mode topHost) : l'orientation est portée par la matrice transform
+    // (rotation -pi/2 autour de x composée avec la translation), et non plus par le pivot,
+    // dont ni les CABasicAnimation ni le rendu ne sont fiables avec les iOS récents
+    private func topDownTransform(x: Float, y: Float, z: Float) -> SCNMatrix4 {
+        SCNMatrix4Mult(SCNMatrix4MakeRotation(-.pi / 2, 1, 0, 0), SCNMatrix4MakeTranslation(x, y, z))
+    }
+
     private func setCameraMode(_ mode: CameraMode) {
         let prev_mode = camera_model.getCameraMode()
         
@@ -497,22 +508,23 @@ struct Interman3DSwiftUIView: View {
                 camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 
                 disable_buttons = true
-                var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
-                animation.duration = 1
+                
+                // La caméra garde son orientation plongeante (portée par la matrice transform)
+                // pendant la glissade, puis la contrainte lookAt prend le relais à la fin :
+                // les deux configurations regardent le sol à cet instant, la bascule est invisible
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
-                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
-                camera.addAnimation(animation, forKey: "campivot")
                 
-                animation = CABasicAnimation(keyPath: "transform")
+                let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
+                animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0, y: 5, z: 0))
                 animation.duration = 1
-                animation.delegate = RunAfterAnimation({ disable_buttons = false })
+                animation.delegate = RunAfterAnimation({
+                    camera.constraints = [lookAtConstraint]
+                    disable_buttons = false
+                })
                 camera.addAnimation(animation, forKey: "camtransform")
-                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+                camera.transform = topDownTransform(x: 0, y: 5, z: 0)
             }
             
         case .sideCentered:
@@ -556,20 +568,17 @@ struct Interman3DSwiftUIView: View {
                 camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 disable_buttons = true
                 
-                var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
-                animation.duration = 1
+                // Orientation plongeante conservée (portée par transform) pendant la remontée,
+                // puis contrainte lookAt à la verticale de la sphère, avant la descente de côté
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
-                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
-                camera.addAnimation(animation, forKey: "campivot")
                 
-                animation = CABasicAnimation(keyPath: "transform")
+                let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
+                animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0, y: 5, z: 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
+                    camera.constraints = [lookAtConstraint]
                     // Top to side
                     let animation = CABasicAnimation(keyPath: "transform")
                     animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
@@ -580,7 +589,7 @@ struct Interman3DSwiftUIView: View {
                     camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
                 })
                 camera.addAnimation(animation, forKey: "camtransform")
-                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+                camera.transform = topDownTransform(x: 0, y: 5, z: 0)
             }
             
         case .topHost:
@@ -601,23 +610,16 @@ struct Interman3DSwiftUIView: View {
 
                 Task { @MainActor in
                     try? await Task.sleep(nanoseconds: 100_000_000)
+                    let from_transform = camera.presentation.transform
                     camera.constraints?.removeAll()
                     
-                    // Since we removed the contraint, we must set the pivot
-                    var animation = CABasicAnimation(keyPath: "pivot")
-                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+                    let animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = NSValue(scnMatrix4: from_transform)
+                    animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0.5, y: 5, z: 0))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({ disable_buttons = false })
-                    camera.addAnimation(animation, forKey: "campivot")
-                    camera.pivot = camera.presentation.pivot
-                    
-                    animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
-                    animation.duration = 1
                     camera.addAnimation(animation, forKey: "camtransform")
-                    camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    camera.transform = topDownTransform(x: 0.5, y: 5, z: 0)
                 }
             }
             
@@ -625,23 +627,18 @@ struct Interman3DSwiftUIView: View {
                 camera.parent!.runAction(SCNAction.scale(to: 1.5 * scale_zoom, duration: 0.5))
                 disable_buttons = true
                 
+                // fromValue capturé avant le retrait de la contrainte : on part de
+                // l'orientation courante (plongeante) sans à-coup
+                let from_transform = camera.presentation.transform
                 camera.constraints?.removeAll()
                 
-                // Since we removed the contraint, we must set the pivot
-                var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+                let animation = CABasicAnimation(keyPath: "transform")
+                animation.fromValue = NSValue(scnMatrix4: from_transform)
+                animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0.5, y: 5, z: 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({ disable_buttons = false })
-                camera.addAnimation(animation, forKey: "campivot")
-                camera.pivot = camera.presentation.pivot
-                
-                animation = CABasicAnimation(keyPath: "transform")
-                animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
-                animation.duration = 1
                 camera.addAnimation(animation, forKey: "camtransform")
-                camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                camera.transform = topDownTransform(x: 0.5, y: 5, z: 0)
             }
             
             if prev_mode == .sideCentered { // OK
@@ -657,23 +654,16 @@ struct Interman3DSwiftUIView: View {
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
                     // Top to top host
+                    let from_transform = camera.presentation.transform
                     camera.constraints?.removeAll()
                     
-                    // Since we removed the contraint, we must set the pivot
-                    animation = CABasicAnimation(keyPath: "pivot")
-                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
+                    animation = CABasicAnimation(keyPath: "transform")
+                    animation.fromValue = NSValue(scnMatrix4: from_transform)
+                    animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0.5, y: 5, z: 0))
                     animation.duration = 1
                     animation.delegate = RunAfterAnimation({ disable_buttons = false })
-                    camera.addAnimation(animation, forKey: "campivot")
-                    camera.pivot = camera.presentation.pivot
-                    
-                    animation = CABasicAnimation(keyPath: "transform")
-                    animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                    animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0.5, 5, 0))
-                    animation.duration = 1
                     camera.addAnimation(animation, forKey: "camtransform")
-                    camera.transform = SCNMatrix4MakeTranslation(0.5, 5, 0)
+                    camera.transform = topDownTransform(x: 0.5, y: 5, z: 0)
                     
                 })
                 camera.addAnimation(animation, forKey: "camtransform")
@@ -717,20 +707,17 @@ struct Interman3DSwiftUIView: View {
                 camera.parent!.runAction(SCNAction.scale(to: 2 * scale_zoom, duration: 0.5))
                 disable_buttons = true
                 
-                var animation = CABasicAnimation(keyPath: "pivot")
-                animation.fromValue = NSValue(scnMatrix4: camera.presentation.pivot)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeRotation(.pi / 2, 1, 0, 0))
-                animation.duration = 1
+                // Orientation plongeante conservée (portée par transform) pendant la remontée ;
+                // la contrainte lookAt est appliquée à la fin, dans le delegate ci-dessous
                 let lookAtConstraint = SCNLookAtConstraint(target: sphere)
                 lookAtConstraint.isGimbalLockEnabled = false
-                animation.delegate = SetCameraConstraint(camera: camera, constraint: lookAtConstraint)
-                camera.addAnimation(animation, forKey: "campivot")
                 
-                animation = CABasicAnimation(keyPath: "transform")
+                let animation = CABasicAnimation(keyPath: "transform")
                 animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
-                animation.toValue = NSValue(scnMatrix4: SCNMatrix4MakeTranslation(0, 5, 0))
+                animation.toValue = NSValue(scnMatrix4: topDownTransform(x: 0, y: 5, z: 0))
                 animation.duration = 1
                 animation.delegate = RunAfterAnimation({
+                    camera.constraints = [lookAtConstraint]
                     // Top to side
                     let animation = CABasicAnimation(keyPath: "transform")
                     animation.fromValue = NSValue(scnMatrix4: camera.presentation.transform)
@@ -746,7 +733,7 @@ struct Interman3DSwiftUIView: View {
                     camera.transform = SCNMatrix4MakeTranslation(0, 1, 2)
                 })
                 camera.addAnimation(animation, forKey: "camtransform")
-                camera.transform = SCNMatrix4MakeTranslation(0, 5, 0)
+                camera.transform = topDownTransform(x: 0, y: 5, z: 0)
             }
         }
     }
@@ -1013,25 +1000,24 @@ struct Interman3DSwiftUIView: View {
                                 .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topCentered)
                             
-                            // Les animations vers .topHost se finissent sans qu'on ne voit plus rien sur iPad et MacOS, donc on supprime ce bouton sur ces plate-formes
-                            if ProcessInfo.processInfo.isMacCatalystApp == false && UIDevice.current.userInterfaceIdiom != .pad {
-                                Button {
-                                    setCameraMode(.topHost)
-                                } label: {
-                                    VStack {
-                                    //                      if horizontalSizeClass == .regular { Text("top host") }
-                                    Image("icon-2D-left").renderingMode(.template).resizable()
-                                        .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
-                                        .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
-                                    // Let the background clickable
-                                        .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
-                                        Text("left")
-                                            .font(.custom("Arial Narrow", size: 8))
-                                            .foregroundColor(.gray.darker().darker())
-                                    }
-                                    .padding(space_between_buttons)
-                                }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
-                            }
+                            // Bouton réactivé sur toutes les plates-formes (il était masqué sur iPad
+                            // et Mac à cause d'animations vers .topHost qui se terminaient sur une vue vide)
+                            Button {
+                                setCameraMode(.topHost)
+                            } label: {
+                                VStack {
+                                //                      if horizontalSizeClass == .regular { Text("top host") }
+                                Image("icon-2D-left").renderingMode(.template).resizable()
+                                    .foregroundColor((disable_buttons || camera_model.camera_mode == .topHost) ? nil : Color(COLORS.standard_background))
+                                    .frame(width: 25 * button_size_factor, height: 25 * button_size_factor)
+                                // Let the background clickable
+                                    .background { Rectangle().foregroundStyle(Color(COLORS.toolbar_background)).opacity(0.1) }
+                                    Text("top")
+                                        .font(.custom("Arial Narrow", size: 8))
+                                        .foregroundColor(.gray.darker().darker())
+                                }
+                                .padding(space_between_buttons)
+                            }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
                             
                             Spacer().frame(width: 25)
                             

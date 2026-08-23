@@ -135,6 +135,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
         else { fatalError(#saveTrace("application / intermanViewController")) }
 
+        // Icône de l'onglet Discover : "note.text" est déprécié (renommé "text.pad.header" par
+        // Xcode 26), mais le nouveau nom n'existe qu'à partir d'iOS 26. On pose donc l'icône ici
+        // avec repli, plutôt que dans le storyboard (qui générait un warning de dépréciation).
+        // Le fallback "note.text" reste valide à l'exécution sur toutes les versions (alias SF Symbols).
+        storyboardSplitViewController.tabBarItem.image =
+            UIImage(systemName: "text.pad.header") ?? UIImage(systemName: "note.text")
+
         // Set up cross-references between controllers BEFORE creating the column split,
         // because setViewController() may trigger view loading which requires master_view_controller.
         self.masterViewController = masterViewController
