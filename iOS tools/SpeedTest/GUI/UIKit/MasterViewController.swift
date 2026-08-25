@@ -358,8 +358,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         master_ip_view_controller?.navigationItem.titleView = MasterViewController.makeTwoLevelTitleView(ip_title)
     }
     
-    // Titre "deux niveaux" : partie principale en gras (fonte système, la même que
-    // celle des IPs dans les listes), le reste ("port 161"...) en petite ligne dessous
+    // Titre "deux niveaux" : partie principale en SF Rounded semi-gras,
+    // le reste ("port 161"...) en petite ligne dessous
     static func makeTwoLevelTitleView(_ title: String) -> UIView {
         var main = title
         var sub: String? = nil
@@ -370,7 +370,14 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
         let main_label = UILabel()
         main_label.text = main
-        main_label.font = UIFont.boldSystemFont(ofSize: 15)
+        // SF Rounded 17 semi-gras : plus grand que le bouton système « Edit » (17 regular)
+        // pour rétablir la hiérarchie titre > bouton, formes assorties aux capsules de l'app
+        let main_font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        if let rounded = main_font.fontDescriptor.withDesign(.rounded) {
+            main_label.font = UIFont(descriptor: rounded, size: 17)
+        } else {
+            main_label.font = main_font
+        }
         main_label.textColor = COLORS.standard_background
         let stack = UIStackView(arrangedSubviews: [main_label])
         stack.axis = .vertical
@@ -379,7 +386,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let sub, !sub.isEmpty {
             let sub_label = UILabel()
             sub_label.text = sub
-            sub_label.font = UIFont.systemFont(ofSize: 10)
+            let sub_font = UIFont.systemFont(ofSize: 11)
+            if let rounded = sub_font.fontDescriptor.withDesign(.rounded) {
+                sub_label.font = UIFont(descriptor: rounded, size: 11)
+            } else {
+                sub_label.font = sub_font
+            }
             sub_label.textColor = UIColor(red: 0x6d / 255.0, green: 0x64 / 255.0, blue: 0x25 / 255.0, alpha: 1)
             stack.addArrangedSubview(sub_label)
         }
