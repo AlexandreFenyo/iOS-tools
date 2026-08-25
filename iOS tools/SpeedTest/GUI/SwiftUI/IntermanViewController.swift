@@ -29,7 +29,10 @@ class IntermanViewController : UIViewController {
     // For this to work, we must set "View controller-based status bar appearance" to true in Plist
     // See also "Status bar is initially hidden" in Plist
     override var prefersStatusBarHidden: Bool {
-        return true
+        // Barre d'état visible sur tous les onglets : la masquer ici faisait varier la
+        // safe area haute (et donc la position du sélecteur d'onglets sur iPad/Mac)
+        // selon l'onglet sélectionné
+        return false
     }
 
     override func viewDidLoad() {

@@ -1133,7 +1133,7 @@ struct Interman3DSwiftUIView: View {
                                     segmentCameraButton("flight", Image(systemName: "rotate.3d"), .freeFlight)
                                 }
                                 .padding(3)
-                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg)).opacity(0.85))
+                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg.darker())).opacity(0.9))
                                 
                                 HStack(spacing: 2) {
                                     Button {
@@ -1163,7 +1163,7 @@ struct Interman3DSwiftUIView: View {
                                     }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
                                 }
                                 .padding(3)
-                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg)).opacity(0.85))
+                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg.darker())).opacity(0.9))
                             }
                         }
                     }

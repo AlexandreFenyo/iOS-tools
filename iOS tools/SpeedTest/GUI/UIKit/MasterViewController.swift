@@ -1255,8 +1255,27 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     // MARK: - DeviceManager protocol
 
+    // Annulation programmée du message d'activité affiché dans le titre
+    private var information_revert_work: DispatchWorkItem?
+    private var last_information: String?
+
     func setInformation(_ info: String) {
+        // Un message identique au précédent ne réarme pas la temporisation : sans cela,
+        // une activité répétitive (le testeur SNMP re-vérifiant le même agent) pouvait
+        // maintenir indéfiniment le même message à l'écran
+        if info == last_information { return }
+        last_information = info
         setTitle(info)
+        // Les messages d'activité (« found … », « IP: port 161 »…) sont transitoires :
+        // au bout d'une seconde sans nouveau message, on revient au titre par défaut
+        // (« Target List », ou « IP List » sur la liste des IPs via setTitle)
+        information_revert_work?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            self?.last_information = nil
+            self?.setTitle(NSLocalizedString("Target List", comment: "Target List"))
+        }
+        information_revert_work = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: work)
     }
     
     // MARK: - UIScrollViewDelegate

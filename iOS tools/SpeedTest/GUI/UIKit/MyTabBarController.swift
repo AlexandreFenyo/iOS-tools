@@ -67,7 +67,13 @@ class MyTabBarController: UITabBarController {
             button.addTarget(self, action: #selector(customTabPressed(_:)), for: .touchUpInside)
             stack.addArrangedSubview(button)
             custom_tab_buttons.append(button)
-            custom_tab_titles.append(vc.tabBarItem.title ?? vc.title ?? "")
+            if vc is IntermanViewController {
+                // Libellé raccourci (« Vue 3D » au lieu de « Vue réseau 3D ») pour
+                // limiter la largeur du bandeau, qui touchait la liste des cibles
+                custom_tab_titles.append(NSLocalizedString("3D View", comment: "3D View"))
+            } else {
+                custom_tab_titles.append(vc.tabBarItem.title ?? vc.title ?? "")
+            }
         }
 
         bar.addSubview(stack)

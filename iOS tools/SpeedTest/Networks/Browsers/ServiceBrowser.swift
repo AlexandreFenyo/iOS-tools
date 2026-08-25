@@ -138,6 +138,8 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             service.delegate = self
             BonjourResolverThread.shared.perform {
                 self.services.append(service)
+                // Même précaution que pour le browser : une seule run loop (celle-ci)
+                service.remove(from: .main, forMode: .default)
                 service.schedule(in: RunLoop.current, forMode: .default)
                 service.resolve(withTimeout: TimeInterval(10))
             }
@@ -311,39 +313,48 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     }
 }
 
-class ServiceBrowser : NetServiceBrowser {
+// Enveloppe de NetServiceBrowser strictement confinée au thread résolveur Bonjour.
+//
+// Deux raisons cumulées :
+// 1. Le démarrage d'une recherche (comme l'arrêt) passe par une IPC synchrone vers
+//    mDNSResponder qui peut bloquer : avec la centaine de types de services parcourus,
+//    ces appels cumulés gelaient le main thread au lancement.
+// 2. NSNetServiceBrowser s'auto-programme sur la run loop du thread qui le CRÉE dès
+//    l'init : un browser créé sur main puis re-programmé sur le résolveur vivait une
+//    transition racée entre les deux run loops — use-after-free constaté sur iPad
+//    (_CFAssertMismatchedTypeID dans CFRunLoopSourceInvalidate / _BrowserCancel).
+// Le NetServiceBrowser sous-jacent est donc CRÉÉ, démarré et arrêté uniquement sur le
+// thread résolveur : toutes ses sources run loop vivent sur une seule run loop, sans
+// transition. Les callbacks du delegate y arrivent aussi et repassent par Task/MainActor
+// pour publier leurs résultats.
+class ServiceBrowser {
     private let browser_delegate : BrowserDelegate
     private let type : String
     private let device_manager : DeviceManager
+
+    // Créé paresseusement sur le thread résolveur ; n'y toucher QUE depuis ce thread
+    private var browser: NetServiceBrowser?
 
     init(_ type: String, deviceManager: DeviceManager) {
         device_manager = deviceManager
         browser_delegate = BrowserDelegate(type, deviceManager: deviceManager)
         self.type = type
-        super.init()
-        self.delegate = browser_delegate
     }
 
-    private var scheduled_on_resolver = false
-
-    // Le démarrage d'une recherche (comme l'arrêt) passe par une IPC synchrone vers
-    // mDNSResponder qui peut bloquer : avec la centaine de types de services parcourus,
-    // ces appels cumulés gelaient le main thread au lancement. Ils sont donc exécutés
-    // sur la run loop du thread résolveur ; les callbacks du delegate y sont insensibles
-    // (ils repassent par Task/MainActor pour publier leurs résultats).
     public func search() {
         BonjourResolverThread.shared.perform {
-            if !self.scheduled_on_resolver {
-                self.schedule(in: RunLoop.current, forMode: .default)
-                self.scheduled_on_resolver = true
+            if self.browser == nil {
+                let browser = NetServiceBrowser()   // auto-programmé sur la run loop du résolveur
+                browser.delegate = self.browser_delegate
+                self.browser = browser
             }
-            self.searchForServices(ofType: self.type, inDomain: NetworkDefaults.local_domain_for_browsing)
+            self.browser!.searchForServices(ofType: self.type, inDomain: NetworkDefaults.local_domain_for_browsing)
         }
     }
 
-    override public func stop() {
+    public func stop() {
         BonjourResolverThread.shared.perform {
-            super.stop()
+            self.browser?.stop()
         }
     }
 }
