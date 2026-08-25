@@ -43,16 +43,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     private var snmpViewController: SnmpViewController?
     
     // Check that the service is published with: dig -p 5353 @192.168.0.170 _speedtestapp._tcp.local. PTR
+    // Nom d'instance Bonjour unique par environnement d'exécution : avec name: "",
+    // les builds Catalyst et simulateur qui tournent en même temps sur le même Mac
+    // revendiquaient le même nom dérivé du nom de la machine, déclenchant la boucle
+    // de republication décrite dans LocalService.netServiceDidStop
+    private static var bonjourInstanceName: String {
+        #if targetEnvironment(simulator)
+        return UIDevice.current.name + " (sim)"
+        #elseif targetEnvironment(macCatalyst)
+        return UIDevice.current.name + " (mac)"
+        #else
+        return UIDevice.current.name
+        #endif
+    }
+
     private func startChargenService() {
         if let local_chargen_service_delegate {
             local_chargen_service_delegate.timer!.invalidate()
         }
         
-        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: "", port: Int32(NetworkDefaults.speed_test_chargen_port))
+        local_chargen_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_chargen_service_type, name: AppDelegate.bonjourInstanceName, port: Int32(NetworkDefaults.speed_test_chargen_port))
         local_chargen_service_delegate = LocalGenericDelegate<SpeedTestChargenClient>(manage_input: true, manage_output: true, master_view_controller: masterViewController)
         local_chargen_service_delegate!.restartService = startChargenService
         local_chargen_service!.delegate = local_chargen_service_delegate
-        local_chargen_service!.publish(options: .listenForConnections)
+        // publish() ouvre une connexion synchrone à mDNSResponder qui peut bloquer
+        // plusieurs secondes sur iPhone (couche de confidentialité réseau local) :
+        // l'appel part sur le thread résolveur Bonjour. Le service étant programmé
+        // explicitement sur la main run loop, les callbacks du delegate (timer,
+        // connexions entrantes, UI) restent délivrés sur le main thread.
+        local_chargen_service!.schedule(in: RunLoop.main, forMode: .default)
+        let chargen_service = local_chargen_service!
+        BonjourResolverThread.shared.perform {
+            chargen_service.publish(options: .listenForConnections)
+        }
     }
     
     private func startDiscardService() {
@@ -60,11 +83,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             local_discard_service_delegate.timer!.invalidate()
         }
 
-        local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: "", port: Int32(NetworkDefaults.speed_test_discard_port))
+        local_discard_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_discard_service_type, name: AppDelegate.bonjourInstanceName, port: Int32(NetworkDefaults.speed_test_discard_port))
         local_discard_service_delegate = LocalGenericDelegate<SpeedTestDiscardClient>(manage_input: true, manage_output: false, master_view_controller: masterViewController)
         local_discard_service_delegate!.restartService = startDiscardService
         local_discard_service!.delegate = local_discard_service_delegate
-        local_discard_service!.publish(options: .listenForConnections)
+        // publish() ouvre une connexion synchrone à mDNSResponder qui peut bloquer
+        // plusieurs secondes sur iPhone (couche de confidentialité réseau local) :
+        // l'appel part sur le thread résolveur Bonjour. Le service étant programmé
+        // explicitement sur la main run loop, les callbacks du delegate (timer,
+        // connexions entrantes, UI) restent délivrés sur le main thread.
+        local_discard_service!.schedule(in: RunLoop.main, forMode: .default)
+        let discard_service = local_discard_service!
+        BonjourResolverThread.shared.perform {
+            discard_service.publish(options: .listenForConnections)
+        }
     }
     
     private func startAppService() {
@@ -72,11 +104,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             local_app_service_delegate.timer!.invalidate()
         }
 
-        local_app_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_app_service_type, name: "", port: Int32(NetworkDefaults.speed_test_app_port))
+        local_app_service = NetService(domain: NetworkDefaults.local_domain_for_browsing, type: NetworkDefaults.speed_test_app_service_type, name: AppDelegate.bonjourInstanceName, port: Int32(NetworkDefaults.speed_test_app_port))
         local_app_service_delegate = LocalGenericDelegate<SpeedTestAppClient>(manage_input: true, manage_output: false, master_view_controller: masterViewController)
         local_app_service_delegate!.restartService = startAppService
         local_app_service!.delegate = local_app_service_delegate
-        local_app_service!.publish(options: .listenForConnections)
+        // publish() ouvre une connexion synchrone à mDNSResponder qui peut bloquer
+        // plusieurs secondes sur iPhone (couche de confidentialité réseau local) :
+        // l'appel part sur le thread résolveur Bonjour. Le service étant programmé
+        // explicitement sur la main run loop, les callbacks du delegate (timer,
+        // connexions entrantes, UI) restent délivrés sur le main thread.
+        local_app_service!.schedule(in: RunLoop.main, forMode: .default)
+        let app_service = local_app_service!
+        BonjourResolverThread.shared.perform {
+            app_service.publish(options: .listenForConnections)
+        }
     }
     
     // Called once at app start
@@ -128,8 +169,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             let masterViewController = leftNavController.topViewController as? MasterViewController,
             let rightNavController = storyboardSplitViewController.viewControllers.last as? RightNavController,
             let detailViewController = rightNavController.topViewController as? DetailViewController,
-            let tracesViewController = tabBarController.viewControllers?[2] as? TracesViewController,
-            let snmpViewController = tabBarController.viewControllers?[3] as? SnmpViewController
+            let snmpViewController = tabBarController.viewControllers?[2] as? SnmpViewController,
+            let tracesViewController = tabBarController.viewControllers?[3] as? TracesViewController
         else { fatalError(#saveTrace("application")) }
 
         guard let intermanViewController = tabBarController.viewControllers?[1] as? IntermanViewController
@@ -197,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
         // May be useful for debugging:
         // Select the SNMP tab as the default one, to debug faster
-        if debug_snmp { tabBarController.selectedIndex = 3 }
+        if debug_snmp { tabBarController.selectedIndex = 2 }
 
         // Placeholder for some tests
         if GenericTools.must_call_initial_tests { GenericTools.test(masterViewController: masterViewController) }

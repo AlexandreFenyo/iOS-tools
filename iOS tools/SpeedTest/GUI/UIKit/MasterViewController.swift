@@ -349,22 +349,60 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     func setTitle(_ title: String) {
         navigationItem.title = title
-
-        // changer la couleur du texte qui est en noir par défaut
-
-//        navigationController!.navigationBar.barStyle = .default
-//        navigationController?.navigationBar.barTintColor = .blue
-//        print(navigationController?.navigationBar.barTintColor)
-//        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.red]
+        navigationItem.titleView = MasterViewController.makeTwoLevelTitleView(title)
+        // La liste des IPs (poussée par-dessus) affiche le même titre d'activité,
+        // mais son titre par défaut est « IP List », pas « Target List »
+        let ip_title = title == NSLocalizedString("Target List", comment: "Target List")
+            ? NSLocalizedString("IP List", comment: "IP List") : title
+        master_ip_view_controller?.navigationItem.title = ip_title
+        master_ip_view_controller?.navigationItem.titleView = MasterViewController.makeTwoLevelTitleView(ip_title)
+    }
+    
+    // Titre "deux niveaux" : partie principale en gras (fonte système, la même que
+    // celle des IPs dans les listes), le reste ("port 161"...) en petite ligne dessous
+    static func makeTwoLevelTitleView(_ title: String) -> UIView {
+        var main = title
+        var sub: String? = nil
+        // Coupure sur le dernier ": " pour ne pas casser les adresses IPv6
+        if let separator_range = title.range(of: ": ", options: .backwards) {
+            main = String(title[..<separator_range.lowerBound])
+            sub = String(title[separator_range.upperBound...])
+        }
+        let main_label = UILabel()
+        main_label.text = main
+        main_label.font = UIFont.boldSystemFont(ofSize: 15)
+        main_label.textColor = COLORS.standard_background
+        let stack = UIStackView(arrangedSubviews: [main_label])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 1
+        if let sub, !sub.isEmpty {
+            let sub_label = UILabel()
+            sub_label.text = sub
+            sub_label.font = UIFont.systemFont(ofSize: 10)
+            sub_label.textColor = UIColor(red: 0x6d / 255.0, green: 0x64 / 255.0, blue: 0x25 / 255.0, alpha: 1)
+            stack.addArrangedSubview(sub_label)
+        }
+        return stack
     }
     
     @IBAction func remove_pressed(_ sender: Any) {
         popUpHelp(.remove_nodes, "This button will remove every node automatically discovered during the current session. It will not affect local host, local gateway, static default nodes nor nodes you added manually. To remove a node you added manually, swipe left on this node.") {
-            Task.detached { @MainActor in
-                await self.resetToDefaultHosts()
-                await DBMaster.shared.addDefaultNodes()
-                self.updateLocalNodeAndGateways()
-            }
+            // Confirmation systématique avant la suppression (le message d'aide ci-dessus
+            // n'est affiché qu'une fois, tant que l'utilisateur ne l'a pas désactivé)
+            let alert = UIAlertController(
+                title: NSLocalizedString("remove nodes", comment: "remove nodes"),
+                message: NSLocalizedString("Do you really want to remove every node automatically discovered during this session?", comment: "remove confirmation"),
+                preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Remove"), style: .destructive) { _ in
+                Task.detached { @MainActor in
+                    await self.resetToDefaultHosts()
+                    await DBMaster.shared.addDefaultNodes()
+                    self.updateLocalNodeAndGateways()
+                }
+            })
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel))
+            self.parent!.present(alert, animated: true)
         }
     }
     
@@ -1186,6 +1224,35 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
+    // MARK: - Badges v4/v6 de la liste des cibles
+
+    // Petit rectangle arrondi "v4"/"v6" affiché devant les adresses des cellules de cibles
+    private static let v4_badge = makeAddressBadge("v4", bg: COLORS.leftpannel_node_rect2_bg, fg: COLORS.standard_background)
+    private static let v6_badge = makeAddressBadge("v6", bg: COLORS.global_background, fg: COLORS.standard_background)
+
+    private static func makeAddressBadge(_ text: String, bg: UIColor, fg: UIColor) -> UIImage {
+        let font = UIFont.systemFont(ofSize: 9, weight: .bold)
+        let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: fg]
+        let text_size = (text as NSString).size(withAttributes: attributes)
+        let size = CGSize(width: ceil(text_size.width) + 8, height: ceil(text_size.height) + 3)
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            UIBezierPath(roundedRect: CGRect(origin: .zero, size: size), cornerRadius: 4).addClip()
+            bg.setFill()
+            UIBezierPath(rect: CGRect(origin: .zero, size: size)).fill()
+            (text as NSString).draw(at: CGPoint(x: 4, y: 1.5), withAttributes: attributes)
+        }
+    }
+
+    // Adresse précédée du badge, centré verticalement sur la ligne de texte
+    private static func badgedAddress(_ badge: UIImage, _ text: String, font: UIFont) -> NSAttributedString {
+        let attachment = NSTextAttachment()
+        attachment.image = badge
+        attachment.bounds = CGRect(x: 0, y: (font.capHeight - badge.size.height) / 2, width: badge.size.width, height: badge.size.height)
+        let result = NSMutableAttributedString(attachment: attachment)
+        result.append(NSAttributedString(string: " " + text))
+        return result
+    }
+
     // MARK: - DeviceManager protocol
 
     func setInformation(_ info: String) {
@@ -1270,8 +1337,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         }) + Array(node.getV4Addresses().filter { (address) -> Bool in
             // 3rd choice: autoconfig
             address.isAutoConfig()
-        })).first { cell.detail1.text = best.toNumericString() }
-        else { cell.detail1.text = NSLocalizedString("no IPv4 address", comment: "") }
+        })).first { cell.detail1.attributedText = MasterViewController.badgedAddress(MasterViewController.v4_badge, best.toNumericString() ?? "", font: cell.detail1.font) }
+        else { cell.detail1.attributedText = MasterViewController.badgedAddress(MasterViewController.v4_badge, NSLocalizedString("no IPv4 address", comment: ""), font: cell.detail1.font) }
 
         // Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.
         if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
@@ -1283,8 +1350,8 @@ class MasterViewController: UITableViewController, DeviceManager {
         }) + Array(node.getV6Addresses().filter { (address) -> Bool in
             // 3rd choice: LLA
             address.isLLA()
-        })).first { cell.detail2.text = best.toNumericString() ?? "invalid IPv6 address" }
-        else { cell.detail2.text = NSLocalizedString("no IPv6 address", comment: "") }
+        })).first { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, best.toNumericString() ?? "invalid IPv6 address", font: cell.detail2.font) }
+        else { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, NSLocalizedString("no IPv6 address", comment: ""), font: cell.detail2.font) }
 
         cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
         cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")

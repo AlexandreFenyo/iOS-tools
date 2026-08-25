@@ -18,6 +18,8 @@ let demo_mode = false
 // This list must be synchronized with the services declared in Info.plist, in order to have authorization to listen to the corresponding service announcements
 let service_names = [
     "_speedtestapp._tcp.",
+    "_speedtestchrgn._tcp.",
+    "_speedtestdscrd._tcp.",
     "_speedtestchargen._tcp.",
     "_speedtestdiscard._tcp.",
     "_1password4._tcp.",
@@ -142,8 +144,10 @@ let service_names = [
 var service_names_descr: [String : String] = {
     var service_names_descr = [String : String]()
     service_names_descr["_speedtestapp._tcp."] = "Network3DWiFiTools discovering service"
-    service_names_descr["_speedtestchargen._tcp."] = "Network3DWiFiTools chargen service"
-    service_names_descr["_speedtestdiscard._tcp."] = "Network3DWiFiTools discard service"
+    service_names_descr["_speedtestchrgn._tcp."] = "Network3DWiFiTools chargen service"
+    service_names_descr["_speedtestdscrd._tcp."] = "Network3DWiFiTools discard service"
+    service_names_descr["_speedtestchargen._tcp."] = "Network3DWiFiTools chargen service (legacy)"
+    service_names_descr["_speedtestdiscard._tcp."] = "Network3DWiFiTools discard service (legacy)"
     service_names_descr["_1password4._tcp."] = "1Password Wi-Fi Sync"
     service_names_descr["_KeynoteControl._tcp."] = "OSX Keynote"
     service_names_descr["_acp-sync._tcp."] = "Airport Base Station Sync"
@@ -261,8 +265,24 @@ struct NetworkDefaults {
     public static let speed_test_app_port: UInt16 = 4
     public static let buffer_size = 3000
     public static let local_domain_for_browsing = "local."
+    // RFC 6763 §7 limite le nom de service à 15 caractères : les anciens types
+    // _speedtestchargen/_speedtestdiscard (16) provoquent un avertissement
+    // "Bad service type" de mDNSResponder à chaque enregistrement. Les types
+    // raccourcis conformes sont utilisés sur iOS/iPadOS/simulateur (vérifié).
+    // ⚠️ Sous Mac Catalyst sandboxé, l'enregistrement des types raccourcis est
+    // REJETÉ (-72008 kDNSServiceErr_BadParam) alors que les types historiques
+    // passent — constaté expérimentalement sur macOS 26.5 (même nom, même port,
+    // même code ; hors sandbox et dans le simulateur les types courts passent) ;
+    // cause OS non identifiée. On garde donc les anciens types sur Catalyst.
+    // Les deux jeux de types restent dans service_names et NSBonjourServices,
+    // toutes les combinaisons de versions se découvrent donc entre elles.
+    #if targetEnvironment(macCatalyst)
     public static let speed_test_chargen_service_type = "_speedtestchargen._tcp."
     public static let speed_test_discard_service_type = "_speedtestdiscard._tcp."
+    #else
+    public static let speed_test_chargen_service_type = "_speedtestchrgn._tcp."
+    public static let speed_test_discard_service_type = "_speedtestdscrd._tcp."
+    #endif
     public static let speed_test_app_service_type = "_speedtestapp._tcp."
     public static let n_icmp_echo_reply = 3
 }

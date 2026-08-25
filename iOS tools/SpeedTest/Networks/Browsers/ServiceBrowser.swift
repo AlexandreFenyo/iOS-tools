@@ -32,6 +32,46 @@ les réponses sont récupérées via un wireshark, ou il faut lancer cette comma
  <string>_Friendly._sub._bp2p._tcp</string>
  */
 
+// Thread dédié aux résolutions Bonjour : NSNetService.resolve() commence par ouvrir une
+// connexion synchrone (IPC deliver_request) vers mDNSResponder, qui peut bloquer plusieurs
+// secondes par service. Exécutées sur le main thread dans didFind, ces attentes cumulées
+// gelaient l'affichage au lancement (écran noir ~15 s constaté sur iPhone). Les résolutions
+// sont donc programmées sur la run loop de ce thread ; netServiceDidResolveAddress rebascule
+// de toute façon sur la MainActor pour publier les résultats. L'accès au tableau services
+// des BrowserDelegate est sérialisé sur ce même thread.
+final class BonjourResolverThread: NSObject {
+    static let shared = BonjourResolverThread()
+
+    private var thread: Thread!
+
+    private final class BlockHolder {
+        let block: () -> Void
+        init(_ block: @escaping () -> Void) { self.block = block }
+    }
+
+    override private init() {
+        super.init()
+        thread = Thread {
+            // Un port factice maintient la run loop en vie
+            RunLoop.current.add(NSMachPort(), forMode: .default)
+            while true {
+                RunLoop.current.run(mode: .default, before: .distantFuture)
+            }
+        }
+        thread.name = "BonjourResolver"
+        thread.qualityOfService = .utility
+        thread.start()
+    }
+
+    func perform(_ block: @escaping () -> Void) {
+        perform(#selector(runBlock(_:)), on: thread, with: BlockHolder(block), waitUntilDone: false)
+    }
+
+    @objc private func runBlock(_ holder: Any) {
+        (holder as! BlockHolder).block()
+    }
+}
+
 class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     private var services: [NetService] = []
     private let type: String
@@ -95,24 +135,29 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         // print(#function)
 //        if (service.name != UIDevice.current.name) {
-            services.append(service)
             service.delegate = self
-            service.resolve(withTimeout: TimeInterval(10))
+            BonjourResolverThread.shared.perform {
+                self.services.append(service)
+                service.schedule(in: RunLoop.current, forMode: .default)
+                service.resolve(withTimeout: TimeInterval(10))
+            }
 //        }
     }
 
     // Remote service app closed
     public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         // print(#function)
-        if let idx = services.firstIndex(of: service) {
-            let trace = "Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)"
-            Task.detached {
-                await self.device_manager.addTrace(trace, level: .DEBUG)
+        BonjourResolverThread.shared.perform {
+            if let idx = self.services.firstIndex(of: service) {
+                let trace = "Bonjour/mDNS: service disappeared: name:\(service.name); hostname:\(service.hostName ?? ""); sender.type:\(service.type); port:\(service.port); descr:\(service.description); domain:\(service.domain)"
+                Task.detached {
+                    await self.device_manager.addTrace(trace, level: .DEBUG)
+                }
+                self.services.remove(at: idx)
             }
-            services.remove(at: idx)
-        }
-        else {
-            print("warning: service app closed but not previously discovered")
+            else {
+                print("warning: service app closed but not previously discovered")
+            }
         }
     }
 
@@ -279,7 +324,26 @@ class ServiceBrowser : NetServiceBrowser {
         self.delegate = browser_delegate
     }
 
+    private var scheduled_on_resolver = false
+
+    // Le démarrage d'une recherche (comme l'arrêt) passe par une IPC synchrone vers
+    // mDNSResponder qui peut bloquer : avec la centaine de types de services parcourus,
+    // ces appels cumulés gelaient le main thread au lancement. Ils sont donc exécutés
+    // sur la run loop du thread résolveur ; les callbacks du delegate y sont insensibles
+    // (ils repassent par Task/MainActor pour publier leurs résultats).
     public func search() {
-        searchForServices(ofType: type, inDomain: NetworkDefaults.local_domain_for_browsing)
+        BonjourResolverThread.shared.perform {
+            if !self.scheduled_on_resolver {
+                self.schedule(in: RunLoop.current, forMode: .default)
+                self.scheduled_on_resolver = true
+            }
+            self.searchForServices(ofType: self.type, inDomain: NetworkDefaults.local_domain_for_browsing)
+        }
+    }
+
+    override public func stop() {
+        BonjourResolverThread.shared.perform {
+            super.stop()
+        }
     }
 }

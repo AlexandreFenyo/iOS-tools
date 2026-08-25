@@ -19,38 +19,6 @@ class StepByStepViewController: UIViewController {
     public var master_view_controller: MasterViewController?
     private lazy var hosting_view_controller = makeHostingController()
 
-    #if targetEnvironment(macCatalyst)
-    // Sous Mac Catalyst (iOS 26), le sélecteur d'onglets n'est pas dans la hiérarchie UIKit :
-    // le système l'installe dans la NSToolbar de la fenêtre (NSToolbarTabBarTabItemsItemIdentifier).
-    // Une présentation plein écran ne le recouvre donc pas : on masque la toolbar pendant que ce
-    // modal est affiché, et on la restaure à sa fermeture. Au lancement, la NSToolbar peut ne pas
-    // encore exister quand viewDidAppear est appelé : on réessaie brièvement.
-    private var toolbar_hide_task: Task<Void, Never>?
-
-    private func setWindowToolbarVisible(_ visible: Bool) {
-        toolbar_hide_task?.cancel()
-        toolbar_hide_task = nil
-        if visible {
-            view.window?.windowScene?.titlebar?.toolbar?.isVisible = true
-        } else {
-            toolbar_hide_task = Task { @MainActor [weak self] in
-                for _ in 0..<20 {
-                    if Task.isCancelled { return }
-                    if let toolbar = self?.view.window?.windowScene?.titlebar?.toolbar {
-                        toolbar.isVisible = false
-                        return
-                    }
-                    try? await Task.sleep(nanoseconds: 100_000_000)
-                }
-            }
-        }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        setWindowToolbarVisible(false)
-    }
-    #endif
     
     private func makeHostingController() -> UIHostingController<StepByStepSwiftUIView> {
         let hosting_view_controller = UIHostingController(rootView: StepByStepSwiftUIView(self))
@@ -60,9 +28,6 @@ class StepByStepViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        #if targetEnvironment(macCatalyst)
-        setWindowToolbarVisible(true)
-        #endif
         hosting_view_controller.rootView.cleanUp()
         if exporting_map == true {
             exporting_map = false

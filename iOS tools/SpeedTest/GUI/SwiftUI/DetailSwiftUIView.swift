@@ -233,6 +233,47 @@ public class DetailViewModel : ObservableObject {
 }
 
 @MainActor
+// Piste "groupes titrés" de la barre d'actions (iPad et Mac uniquement : sur iPhone,
+// l'écran est trop étroit — la barre reste à plat, sans titres ni séparateurs)
+fileprivate struct ActionGroupTitle: View {
+    let title: LocalizedStringKey
+    var body: some View {
+        Text(title)
+            .font(.system(size: 10, weight: .bold))
+            .foregroundColor(.gray)
+            .textCase(.uppercase)
+            .kerning(0.8)
+    }
+}
+
+fileprivate struct ActionGroupSeparator: View {
+    var body: some View {
+        if UIDevice.current.userInterfaceIdiom != .phone {
+            Rectangle()
+                .fill(Color(COLORS.standard_background).opacity(0.2))
+                .frame(width: 1, height: 56)
+                .padding(.horizontal, 5)
+                .padding(.top, 14)
+        }
+    }
+}
+
+// Titre centré au-dessus du bloc de boutons sur iPad/Mac ; contenu à plat sur iPhone
+fileprivate struct ActionGroup<Content: View>: View {
+    let title: LocalizedStringKey
+    @ViewBuilder let content: Content
+    var body: some View {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            content
+        } else {
+            VStack(alignment: .center, spacing: 2) {
+                ActionGroupTitle(title: title)
+                HStack(alignment: .top) { content }
+            }
+        }
+    }
+}
+
 struct DetailSwiftUIView: View {
     public let view: UIView
     public let master_view_controller: MasterViewController
@@ -295,6 +336,16 @@ struct DetailSwiftUIView: View {
                 Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
                     .font(first_line_font)
                     .frame(maxWidth: .infinity)
+                    // Copie de l'adresse IP courante : clic droit sur Mac, appui long sur iOS
+                    .contextMenu {
+                        if let address_str = model.address_str {
+                            Button {
+                                UIPasteboard.general.string = address_str
+                            } label: {
+                                Label("Copy", systemImage: "doc.on.doc")
+                            }
+                        }
+                    }
                 
                 HStack {
                     Spacer()
@@ -360,6 +411,8 @@ struct DetailSwiftUIView: View {
                 VStack {
                     VStack {
                         HStack(alignment: .top) {
+                            // Groupes titrés (iPad/Mac) : Découverte | Mesure | Web ; à plat sur iPhone
+                            ActionGroup(title: "Discovery") {
                             Button {
                                 if model.address != nil {
                                     master_view_controller.popUpHelp(.scan_TCP_ports, NSLocalizedString("Parallel TCP connections will be established to ", comment: "Parallel TCP connections will be established to ") + (model.address_str ?? "") + NSLocalizedString(" on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.", comment: " on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button.")) {
@@ -376,7 +429,11 @@ struct DetailSwiftUIView: View {
                             }
                             .accentColor(Color(COLORS.standard_background))
                             .frame(maxWidth: 200).disabled(!model.buttons_enabled || model.address_str == nil)
+                            }
                             
+                            ActionGroupSeparator()
+                            
+                            ActionGroup(title: "Measure") {
                             Button {
                                 if model.address != nil {
                                     master_view_controller.popUpHelp(.TCP_flood_discard, NSLocalizedString("A TCP connection to the Discard port (9/TCP) of ", comment: "A TCP connection to the Discard port (9/TCP) of ") + (model.address_str ?? "") + NSLocalizedString(" will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.", comment: " will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button.")) {
@@ -482,8 +539,12 @@ struct DetailSwiftUIView: View {
                                 .accentColor(Color(COLORS.standard_background))
                                 .frame(maxWidth: model.animated_width_map, maxHeight: model.animated_width_map == 0 ? 0 : 200, alignment: .topLeading)
                             }
+                            }
                             
                             if horizontalSizeClass != .compact {
+                                ActionGroupSeparator()
+                                
+                                ActionGroup(title: "Web") {
                                 Button {
                                     if let url = URL(string: model.family == AF_INET ? "http://\(model.address_str!)" : "http://[\(model.address_str!)]") {
                                         UIApplication.shared.open(url)
@@ -509,6 +570,7 @@ struct DetailSwiftUIView: View {
                                 }
                                 .accentColor(Color(COLORS.standard_background)).disabled(model.address_str == nil || model.address_str?.contains("%") == true || model.text_tcp_ports.contains("HTTPS (443)") == false)
                                 .frame(maxWidth: 200)
+                                }
                             }
                         }
 //                        .animation(.easeOut(duration: 1.0), value: model.animated_width_map)
@@ -551,7 +613,8 @@ struct DetailSwiftUIView: View {
                             if model.is_snmp_manager {
                                 Spacer()
                                 Button(action: {
-                                    self.master_view_controller.tabBarController?.selectedIndex = 3
+                                    // onglet SNMP (avant-dernier depuis l'inversion SNMP/Traces)
+                                    self.master_view_controller.tabBarController?.selectedIndex = 2
                                 }) {
                                     Text("browse this SNMP agent").font(.footnote)
                                         .frame(maxWidth: .infinity)
@@ -687,11 +750,13 @@ struct DetailSwiftUIView: View {
                                         
                                         Text(service_name + " on port " + model.text_services_port[service_name]!)
                                             .font(.body)
+                                            .textSelection(.enabled)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
                                         
                                         Text(service_names_descr[service_name] ?? "")
                                             .font(.footnote)
+                                            .textSelection(.enabled)
                                             .padding(.leading, 5)
                                             .padding(.trailing, 5)
                                         

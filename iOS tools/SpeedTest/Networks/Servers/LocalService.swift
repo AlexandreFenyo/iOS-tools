@@ -227,9 +227,16 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
 //                print("PB REUSEADDR")
             // quand ça vient ici, il y a quand même un netServiceWillPublish et un netServiceDidPublish qui sont appelés apprès, même si on ne fait rien ici !
             
-            Task {
-                // The three possible values for the restartService lambda are AppDelegate.startChargenService(), AppDelegate.startDiscardService() and AppDelegate.startAppService() (see AppDelegate.swift). They all are managed by the main actor since AppDelegate is decorated with @MainActor
-                self.restartService()
+            // Même back-off que netServiceDidStop : sans lui, un EADDRINUSE persistant
+            // (ports fixes déjà pris par une autre instance sur la même pile réseau)
+            // relançait restartService en boucle serrée
+            if let delay = LocalDelegate.republishBackoff() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                    Task {
+                        // The three possible values for the restartService lambda are AppDelegate.startChargenService(), AppDelegate.startDiscardService() and AppDelegate.startAppService() (see AppDelegate.swift). They all are managed by the main actor since AppDelegate is decorated with @MainActor
+                        self.restartService()
+                    }
+                }
             }
             
         } else if errorDict["NSNetServicesErrorDomain"] == 10 && errorDict["NSNetServicesErrorCode"] == -72000 {
@@ -243,15 +250,45 @@ class LocalDelegate : NSObject, NetServiceDelegate, RefClosed {
     
     func netServiceDidPublish(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
+        // Publication réussie : on réarme le back-off de republication
+        LocalDelegate.republish_delay = 1
+        LocalDelegate.republish_attempts = 0
     }
     
     func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
 //        print("XXXXX: \(#function)")
     }
     
+    // Back-off de republication : la version historique republiait immédiatement, sans
+    // délai ni limite, sur DEUX chemins — netServiceDidStop (collision de nom, -72000)
+    // et didNotPublish code 48 (EADDRINUSE, via restartService qui RECRÉE le delegate).
+    // Quand l'app tourne à la fois en Catalyst et dans le simulateur sur le même Mac
+    // (pile réseau partagée : mêmes noms ET mêmes ports), chaque échec devenait une
+    // boucle à ~150 enregistrements/s qui saturait mDNSResponder et tuait la résolution
+    // DNS de toute la machine. Compteurs STATIQUES car restartService recrée le
+    // delegate : un état d'instance serait remis à zéro à chaque tour de boucle.
+    // Borne : 5 essais, délai exponentiel 1 s → 30 s, réarmé par un succès.
+    private static var republish_delay: TimeInterval = 1
+    private static var republish_attempts = 0
+
+    // true si un nouvel essai est autorisé ; le délai à respecter est dans out_delay
+    fileprivate static func republishBackoff() -> TimeInterval? {
+        guard republish_attempts < 5 else { return nil }   // on abandonne au lieu de boucler
+        republish_attempts += 1
+        let delay = republish_delay
+        republish_delay = min(republish_delay * 2, 30)
+        return delay
+    }
+
     func netServiceDidStop(_ sender: NetService) {
 //        print("XXXXX: \(#function)")
-        sender.publish(options: .listenForConnections)
+        guard let delay = LocalDelegate.republishBackoff() else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            // publish() bloquant : hors du main thread (cf. AppDelegate.startChargenService)
+            BonjourResolverThread.shared.perform {
+                sender.publish(options: .listenForConnections)
+            }
+        }
     }
     
     func netServiceWillPublish(_ sender: NetService) {

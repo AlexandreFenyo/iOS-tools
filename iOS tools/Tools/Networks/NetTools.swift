@@ -613,7 +613,9 @@ public class IPv6Address : IPAddress, Comparable, LosslessStringConvertible {
     }
 
     public func isLLA() -> Bool {
-        return and(IPv6Address._ipv6_fc00).inaddr == IPv6Address._ipv6_fe80.inaddr
+        // fe80::/10 : le masque est ffc0::, pas fc00:: (l'ancien masque rendait le test
+        // toujours faux, les adresses lien-local n'étaient jamais reconnues)
+        return and(IPv6Address._ipv6_ffc0).inaddr == IPv6Address._ipv6_fe80.inaddr
     }
 
     public func isUnicastPublic() -> Bool {

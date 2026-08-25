@@ -138,20 +138,7 @@ class LeftNavController : UINavigationController {
         let items: [UIBarButtonItem] = topViewController?.toolbarItems
             ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
             ?? []
-        barItemToButton.removeAll()
-        for barItem in items {
-            let button = UIButton(type: .system)
-            button.setImage(barItem.image, for: .normal)
-            button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
-            button.isEnabled = barItem.isEnabled
-            if let target = barItem.target, let action = barItem.action {
-                button.addTarget(target, action: action, for: .touchUpInside)
-            }
-            button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-            stackView.addArrangedSubview(button)
-            barItemToButton.append((barItem, button))
-        }
+        populateToolbar(stackView, items: items)
 
         // Start a timer to sync dynamic properties (enabled, tintColor) from bar items to buttons
         syncTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
@@ -161,17 +148,95 @@ class LeftNavController : UINavigationController {
         container.addSubview(stackView)
         view.addSubview(container)
         view.bringSubviewToFront(container)
+        // Ancrage au bas de la VUE sur toutes les plates-formes (jamais à la safe area,
+        // que reserveCustomToolbarInset modifie : sur iPhone cet ancrage créait une
+        // boucle de rétroaction de layout qui gelait le premier rendu ~15 s).
+        // Sur iPhone la hauteur est étendue de l'inset système (indicateur home) par
+        // reserveCustomToolbarInset ; les boutons restent dans les 44 pt supérieurs.
+        let height_constraint = container.heightAnchor.constraint(equalToConstant: 44)
+        custom_toolbar_height_constraint = height_constraint
+        let bottom_constraint = container.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        custom_toolbar_bottom_constraint = bottom_constraint
         NSLayoutConstraint.activate([
             container.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             container.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            container.bottomAnchor.constraint(equalTo: UIDevice.current.userInterfaceIdiom == .pad ? view.bottomAnchor : view.safeAreaLayoutGuide.bottomAnchor),
-            container.heightAnchor.constraint(equalToConstant: 44),
+            bottom_constraint,
+            height_constraint,
             stackView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
             stackView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
             stackView.topAnchor.constraint(equalTo: container.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+            stackView.heightAnchor.constraint(equalToConstant: 44)
         ])
         customToolbarView = container
+    }
+
+    // Nombre d'items représentés par la barre personnalisée (les séparateurs et
+    // groupes rendent arrangedSubviews.count inutilisable pour la comparaison)
+    private var built_toolbar_item_count = 0
+
+    // (Re)construit la barre : groupes séparés par de fins liserés
+    // (navigation | actions sur la liste | réglages) quand la barre complète est affichée
+    private func populateToolbar(_ stackView: UIStackView, items: [UIBarButtonItem]) {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        barItemToButton.removeAll()
+        built_toolbar_item_count = items.count
+        
+        func makeButton(_ barItem: UIBarButtonItem) -> UIButton {
+            let button = UIButton(type: .system)
+            button.setImage(barItem.image, for: .normal)
+            button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
+            button.isEnabled = barItem.isEnabled
+            if let target = barItem.target, let action = barItem.action {
+                button.addTarget(target, action: action, for: .touchUpInside)
+            }
+            button.widthAnchor.constraint(equalToConstant: 36).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 36).isActive = true
+            barItemToButton.append((barItem, button))
+            return button
+        }
+        
+        func makeSeparator() -> UIView {
+            let separator = UIView()
+            separator.backgroundColor = COLORS.standard_background.withAlphaComponent(0.35)
+            separator.translatesAutoresizingMaskIntoConstraints = false
+            separator.widthAnchor.constraint(equalToConstant: 1).isActive = true
+            separator.heightAnchor.constraint(equalToConstant: 22).isActive = true
+            return separator
+        }
+        
+        // Les items d'espacement (flexible/fixed space, sans image ni titre ni vue)
+        // servaient à répartir les icônes dans la toolbar native : dans cette barre
+        // personnalisée ils deviendraient des boutons vides — on les écarte
+        let items = items.filter { $0.image != nil || $0.title != nil || $0.customView != nil }
+        let groups: [[UIBarButtonItem]]
+        var pack_left = false
+        if items.count == 8 {
+            // Liste des cibles : navigation | actions sur la liste | réglages, répartis
+            groups = [Array(items[0...1]), Array(items[2...5]), Array(items[6...7])]
+        } else if items.count == 4 {
+            // Liste des IPs : [3 boutons] | séparateur | [configuration], alignés à gauche
+            groups = [Array(items[0...2]), [items[3]]]
+            pack_left = true
+        } else {
+            groups = [items]
+        }
+        stackView.distribution = pack_left ? .fill : .equalSpacing
+        stackView.spacing = pack_left ? 10 : 4
+        for (group_index, group) in groups.enumerated() {
+            if group_index > 0 { stackView.addArrangedSubview(makeSeparator()) }
+            let group_stack = UIStackView()
+            group_stack.axis = .horizontal
+            group_stack.spacing = 4
+            group_stack.alignment = .center
+            for barItem in group { group_stack.addArrangedSubview(makeButton(barItem)) }
+            stackView.addArrangedSubview(group_stack)
+        }
+        if pack_left {
+            // Une vue extensible en fin de pile pousse les groupes vers la gauche
+            let spacer = UIView()
+            spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            stackView.addArrangedSubview(spacer)
+        }
     }
 
     private func syncBarItemProperties() {
@@ -184,10 +249,59 @@ class LeftNavController : UINavigationController {
         }
     }
 
+    private var custom_toolbar_height_constraint: NSLayoutConstraint?
+    private var custom_toolbar_bottom_constraint: NSLayoutConstraint?
+
+    // La barre d'outils personnalisée iOS 26 (une simple UIView posée par-dessus le
+    // contenu) ne participe pas à la safe area, contrairement à la toolbar native :
+    // sans cette réservation, la dernière ligne des listes est masquée dessous.
+    // ⚠️ Calcul en forme fermée, UNIQUEMENT à partir de constantes et des insets de
+    // la FENÊTRE (indépendants de additionalSafeAreaInsets) : une première version
+    // mesurait toolbar_view.frame, qui dépendait de la safe area que ce code modifie —
+    // boucle de rétroaction de layout qui gelait le premier rendu ~15 s sur iPhone.
+    private func reserveCustomToolbarInset() {
+        guard let toolbar_view = customToolbarView else { return }
+        let wanted: CGFloat
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            // Sur iPhone, la vue s'étend sous la tab bar native (et l'indicateur home) :
+            // la barre est remontée de la part SYSTÈME de la safe area — le total mesuré
+            // moins notre propre contribution, différence invariante qui ne crée donc
+            // pas de rétroaction de layout (contrairement à un ancrage à la safe area)
+            let system_bottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
+            if abs((custom_toolbar_bottom_constraint?.constant ?? 0) + system_bottom) > 0.5 {
+                custom_toolbar_bottom_constraint?.constant = -system_bottom
+            }
+            wanted = toolbar_view.isHidden ? 0 : 44
+        } else {
+            let system_bottom = view.window?.safeAreaInsets.bottom ?? 0
+            wanted = toolbar_view.isHidden ? 0 : max(0, 44 - system_bottom)
+        }
+        if abs(additionalSafeAreaInsets.bottom - wanted) > 0.5 {
+            additionalSafeAreaInsets.bottom = wanted
+        }
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        // La UIToolbar native, masquée dans viewDidLoad, est réaffichée par iOS 26
+        // lors du push d'un contrôleur portant des toolbarItems (constaté avec la
+        // liste des IPs) et recouvre alors la barre personnalisée. setToolbarHidden
+        // ne suffit pas (le système la réaffiche après la dernière passe de layout) :
+        // on neutralise la vue elle-même, comme MyTabBarController le fait pour la
+        // tab bar héritée
+        if #available(iOS 26.0, *) {
+            if !isToolbarHidden {
+                setToolbarHidden(true, animated: false)
+            }
+            if toolbar.alpha != 0 || !toolbar.isHidden {
+                toolbar.alpha = 0
+                toolbar.isHidden = true
+            }
+        }
+
         compensateLiquidGlassPadding()
+        reserveCustomToolbarInset()
 
         // Ensure custom toolbar stays on top of FloatingBarContainerView
         if let customToolbarView {
@@ -203,22 +317,8 @@ class LeftNavController : UINavigationController {
             let currentItems: [UIBarButtonItem] = topViewController?.toolbarItems
                 ?? viewControllers.compactMap({ $0.toolbarItems }).first(where: { !$0.isEmpty })
                 ?? []
-            if stackView.arrangedSubviews.count != currentItems.count, !currentItems.isEmpty {
-                stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-                barItemToButton.removeAll()
-                for barItem in currentItems {
-                    let button = UIButton(type: .system)
-                    button.setImage(barItem.image, for: .normal)
-                    button.tintColor = barItem.tintColor ?? COLORS.leftpannel_bottombar_buttons
-                    button.isEnabled = barItem.isEnabled
-                    if let target = barItem.target, let action = barItem.action {
-                        button.addTarget(target, action: action, for: .touchUpInside)
-                    }
-                    button.widthAnchor.constraint(equalToConstant: 36).isActive = true
-                    button.heightAnchor.constraint(equalToConstant: 36).isActive = true
-                    stackView.addArrangedSubview(button)
-                    barItemToButton.append((barItem, button))
-                }
+            if built_toolbar_item_count != currentItems.count, !currentItems.isEmpty {
+                populateToolbar(stackView, items: currentItems)
             }
         }
     }

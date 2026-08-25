@@ -446,6 +446,48 @@ struct Interman3DSwiftUIView: View {
         print(bar)
     }
     
+    // Piste "deux segments" (iPad/Mac) : bouton de mode caméra, sélection = capsule teal pleine
+    @ViewBuilder
+    private func segmentCameraButton(_ title: LocalizedStringKey, _ image: Image, _ mode: CameraMode) -> some View {
+        let selected = camera_model.camera_mode == mode
+        Button {
+            if mode == .freeFlight { auto_rotation_active = false }
+            setCameraMode(mode)
+        } label: {
+            HStack(spacing: 5) {
+                image.renderingMode(.template).resizable().aspectRatio(contentMode: .fit)
+                    .frame(width: 16, height: 16)
+                Text(title).font(.system(size: 11, weight: selected ? .semibold : .regular))
+            }
+            .foregroundColor(selected ? Color.white : Color(COLORS.standard_background))
+            .padding(.horizontal, 11).padding(.vertical, 7)
+            .background(Capsule().foregroundColor(selected ? Color(COLORS.standard_background) : .clear))
+        }
+        .disabled(disable_buttons || selected)
+    }
+
+    // Séparateur vertical entre groupes de boutons (rangée iPhone), même liseré que
+    // celui des barres d'outils des listes de cibles et d'IPs (leftNavController)
+    @ViewBuilder
+    private func toolGroupSeparator() -> some View {
+        Rectangle()
+            .fill(Color(COLORS.standard_background).opacity(0.35))
+            .frame(width: 1, height: 22)
+            .padding(.horizontal, 8)
+    }
+
+    // Contenu d'un bouton du segment outils
+    @ViewBuilder
+    private func toolSegmentLabel(_ title: LocalizedStringKey, _ image: Image, active: Bool = true) -> some View {
+        HStack(spacing: 5) {
+            image.renderingMode(.template).resizable().aspectRatio(contentMode: .fit)
+                .frame(width: 16, height: 16)
+            Text(title).font(.system(size: 11))
+        }
+        .foregroundColor(Color(COLORS.standard_background).opacity(active ? 1 : 0.45))
+        .padding(.horizontal, 11).padding(.vertical, 7)
+    }
+
     // Vue de dessus (mode topHost) : l'orientation est portée par la matrice transform
     // (rotation -pi/2 autour de x composée avec la translation), et non plus par le pivot,
     // dont ni les CABasicAnimation ni le rendu ne sont fiables avec les iOS récents
@@ -906,6 +948,7 @@ struct Interman3DSwiftUIView: View {
                 HStack {
                     HStack {
                         Spacer()
+                        if UIDevice.current.userInterfaceIdiom == .phone {
                         HStack(alignment: .center, spacing: 0) {
                             Button {
                                 // interman3d_model.testIHMCreate()
@@ -944,7 +987,7 @@ struct Interman3DSwiftUIView: View {
                             }.disabled(camera_model.camera_mode == .freeFlight)
                                 //.background(Color.blue)
                             
-                            Spacer().frame(width: 25)
+                            toolGroupSeparator()
                             
                             Button {
                                 setCameraMode(.freeFlight)
@@ -1019,7 +1062,7 @@ struct Interman3DSwiftUIView: View {
                                 .padding(space_between_buttons)
                             }.disabled(disable_buttons || camera_model.camera_mode == .topHost)
                             
-                            Spacer().frame(width: 25)
+                            toolGroupSeparator()
                             
                             Button {
                                 disable_traces.toggle()
@@ -1080,6 +1123,49 @@ struct Interman3DSwiftUIView: View {
                                     .opacity(0.3)
                                 
                             })
+                        } else {
+                            // Piste "deux segments" : modes caméra | outils
+                            HStack(spacing: 12) {
+                                HStack(spacing: 2) {
+                                    segmentCameraButton("3D", Image("icon-3D-cube"), .sideCentered)
+                                    segmentCameraButton("2D", Image("icon-2D-top"), .topCentered)
+                                    segmentCameraButton("top", Image("icon-2D-left"), .topHost)
+                                    segmentCameraButton("flight", Image(systemName: "rotate.3d"), .freeFlight)
+                                }
+                                .padding(3)
+                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg)).opacity(0.85))
+                                
+                                HStack(spacing: 2) {
+                                    Button {
+                                        master_view_controller!.update_pressed()
+                                    } label: {
+                                        toolSegmentLabel("scan", Image(systemName: "repeat"))
+                                    }
+                                    
+                                    Button {
+                                        master_view_controller!.interman_view_controller?.hostingViewController.rootView.resetCamera()
+                                    } label: {
+                                        toolSegmentLabel("reset", Image(systemName: "slowmo"))
+                                    }.disabled(camera_model.camera_mode == .freeFlight)
+                                    
+                                    Button {
+                                        disable_traces.toggle()
+                                    } label: {
+                                        toolSegmentLabel("traces", Image(systemName: "text.justify"), active: !disable_traces)
+                                    }
+                                    
+                                    Button {
+                                        auto_rotation_active.toggle()
+                                        if auto_rotation_active == true { resetCameraTimer() }
+                                    } label: {
+                                        toolSegmentLabel("auto", Image(systemName: "gearshape.arrow.triangle.2.circlepath"),
+                                                         active: !auto_rotation_active || auto_rotation_button_toggle)
+                                    }.disabled(disable_auto_rotation_button || camera_model.camera_mode == .freeFlight)
+                                }
+                                .padding(3)
+                                .background(Capsule().foregroundColor(Color(COLORS.chart_bg)).opacity(0.85))
+                            }
+                        }
                     }
                 }
 //                .padding(8)

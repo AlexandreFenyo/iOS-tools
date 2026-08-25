@@ -132,6 +132,10 @@ class MasterIPViewController: UITableViewController {
         super.viewDidLoad()
         print("MasterIPViewController.viewDidLoad() called")
         
+        // Les séparateurs par défaut sont remplacés par le double liseré (2 px + 2 px)
+        // de la liste des cibles, dessiné dans cellForRowAt
+        tableView.separatorStyle = .none
+        
         // Uncomment the following line to preserve selection between presentations
         clearsSelectionOnViewWillAppear = false
     }
@@ -140,6 +144,10 @@ class MasterIPViewController: UITableViewController {
         super.viewWillAppear(animated)
         master_view_controller?.detail_view_controller?.setButtonMasterIPHiddenState(false)
         tableView.backgroundColor = COLORS.leftpannel_bg
+        // Titre par défaut tant qu'aucune activité n'a fourni de titre (setTitle)
+        if navigationItem.titleView == nil {
+            navigationItem.titleView = MasterViewController.makeTwoLevelTitleView(NSLocalizedString("IP List", comment: "IP List"))
+        }
     }
     
     override func viewWillDisappear(_ animated : Bool) {
@@ -183,15 +191,56 @@ class MasterIPViewController: UITableViewController {
         return node!.getV4Addresses().count + node!.getV6Addresses().count
     }
     
+    // Description du type d'adresse, affichée sous l'adresse elle-même
+    private static func addressDescription(_ address: IPAddress) -> String {
+        if let v4 = address as? IPv4Address {
+            if v4.isLocal() { return NSLocalizedString("IPv4 · loopback", comment: "IP type") }
+            if v4.isPrivate() { return NSLocalizedString("IPv4 · private (RFC 1918)", comment: "IP type") }
+            if v4.isAutoConfig() { return NSLocalizedString("IPv4 · link-local (APIPA)", comment: "IP type") }
+            if !v4.isUnicast() { return NSLocalizedString("IPv4 · multicast", comment: "IP type") }
+            return NSLocalizedString("IPv4 · public", comment: "IP type")
+        }
+        if let v6 = address as? IPv6Address {
+            if v6.toNumericString() == "::1" { return NSLocalizedString("IPv6 · loopback", comment: "IP type") }
+            if v6.isLLA() { return NSLocalizedString("IPv6 · link-local", comment: "IP type") }
+            if v6.isULA() { return NSLocalizedString("IPv6 · unique local (ULA)", comment: "IP type") }
+            if v6.isMulticastPublic() { return NSLocalizedString("IPv6 · multicast", comment: "IP type") }
+            if v6.isUnicastPublic() { return NSLocalizedString("IPv6 · global", comment: "IP type") }
+            return "IPv6"
+        }
+        return ""
+    }
+    
     // cellForRowAt
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
         let cell = tableView.dequeueReusableCell(withIdentifier: "DeviceAddressCell", for: indexPath) as! DeviceAddressCell
-        cell.textLabel!.text = address.toNumericString()
         
-        cell.textLabel!.textColor = COLORS.leftpannel_ip_text //.black
-        cell.textLabel!.layer.opacity = COLORS.leftpannel_ip_text_opacity
-        cell.textLabel!.highlightedTextColor = COLORS.leftpannel_ip_text_selected
+        // Adresse en fonte à chasse fixe + type d'adresse en dessous ; les couleurs
+        // suivent l'état de sélection (beige/indigo comme auparavant).
+        // Le nom d'interface (scope "%en0") est retiré de l'adresse affichée et reporté
+        // dans la ligne de description ("IPv6 · lien local · en0") ; la copie par le
+        // menu contextuel restitue l'adresse complète, scope inclus.
+        let address_str = address.toNumericString() ?? ""
+        let address_parts = address_str.split(separator: "%", maxSplits: 1)
+        let display_str = String(address_parts.first ?? "")
+        var subtitle = MasterIPViewController.addressDescription(address)
+        if address_parts.count > 1 { subtitle += " · " + String(address_parts[1]) }
+        cell.configurationUpdateHandler = { cell, state in
+            var content = cell.defaultContentConfiguration()
+            content.text = display_str
+            content.secondaryText = subtitle
+            // Même police que les IPs de la liste des cibles (système 15 pt, cf. detail1
+            // de DeviceCell dans le storyboard) ; semi-gras sur la ligne sélectionnée
+            content.textProperties.font = UIFont.systemFont(ofSize: 15, weight: state.isSelected ? .semibold : .regular)
+            content.textProperties.color = state.isSelected ? COLORS.leftpannel_ip_text_selected
+                : COLORS.leftpannel_ip_text.withAlphaComponent(CGFloat(COLORS.leftpannel_ip_text_opacity))
+            content.secondaryTextProperties.font = UIFont.systemFont(ofSize: 11)
+            content.secondaryTextProperties.color = state.isSelected ? COLORS.standard_background
+                : COLORS.leftpannel_ip_text.withAlphaComponent(0.55)
+            content.textToSecondaryTextVerticalPadding = 2
+            cell.contentConfiguration = content
+        }
         
         cell.backgroundColor = COLORS.standard_background
         
@@ -199,12 +248,56 @@ class MasterIPViewController: UITableViewController {
         bgColorView.backgroundColor = COLORS.chart_bg
         cell.selectedBackgroundView = bgColorView
         
+        // Séparateur identique à celui de la liste des cibles : deux liserés de 2 px
+        // (mêmes couleurs que rect1/rect2 de DeviceCell), ajoutés une seule fois par cellule.
+        // Attachés à la cellule elle-même et non à contentView : l'application de
+        // contentConfiguration REMPLACE la contentView (UIListContentView), ce qui
+        // supprimerait des vues qui y seraient ajoutées.
+        if cell.viewWithTag(1001) == nil {
+            let sep1 = UIView()
+            sep1.tag = 1001
+            sep1.backgroundColor = COLORS.leftpannel_node_rect1_bg
+            let sep2 = UIView()
+            sep2.tag = 1002
+            sep2.backgroundColor = COLORS.leftpannel_node_rect2_bg
+            for sep in [sep1, sep2] {
+                sep.translatesAutoresizingMaskIntoConstraints = false
+                sep.isUserInteractionEnabled = false
+                // Toujours au-dessus de la UIListContentView, quel que soit l'ordre des sous-vues
+                sep.layer.zPosition = 1
+                cell.addSubview(sep)
+            }
+            NSLayoutConstraint.activate([
+                sep1.leadingAnchor.constraint(equalTo: cell.leadingAnchor),
+                sep1.trailingAnchor.constraint(equalTo: cell.trailingAnchor),
+                sep1.heightAnchor.constraint(equalToConstant: 2),
+                sep1.bottomAnchor.constraint(equalTo: sep2.topAnchor),
+                sep2.leadingAnchor.constraint(equalTo: cell.leadingAnchor),
+                sep2.trailingAnchor.constraint(equalTo: cell.trailingAnchor),
+                sep2.heightAnchor.constraint(equalToConstant: 2),
+                sep2.bottomAnchor.constraint(equalTo: cell.bottomAnchor)
+            ])
+        }
+        
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
         master_view_controller!.addressSelected(address: address, node: node!)
+    }
+    
+    // Appui long (iOS) ou clic droit (Mac) sur une ligne : menu proposant de copier l'adresse IP
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let address = (Array(node!.getV4Addresses().sorted()) + Array(node!.getV6Addresses().sorted()))[indexPath.item]
+        guard let address_str = address.toNumericString() else { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            UIMenu(children: [
+                UIAction(title: NSLocalizedString("Copy", comment: "Copy"), image: UIImage(systemName: "doc.on.doc")) { _ in
+                    UIPasteboard.general.string = address_str
+                }
+            ])
+        }
     }
     
     // MARK: - Navigation
