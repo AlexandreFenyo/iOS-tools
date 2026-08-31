@@ -1008,7 +1008,11 @@ public class Interman3DModel: ObservableObject {
     private var broadcasts = Set<Broadcast3D>()
     private var b3d_hosts: [B3DHost]
     // Associative map to improve performances of getB3DHost(_ host: Node) -> B3DHost?
-    private var node_to_b3d_host = [Node : B3DHost]()
+    // Clé par IDENTITÉ d'objet et non par Node : Node est une classe mutable dont hash/== dépendent
+    // du contenu (adresses, noms, ports...), qui change après insertion au fil de la découverte.
+    // Un [Node: B3DHost] finissait par trapper (KEY_TYPE_OF_DICTIONARY_VIOLATES_HASHABLE_REQUIREMENTS)
+    // lors d'un re-hash interne (redimensionnement) — cause des crashs de 2024 et du 31/08/2026.
+    private var node_to_b3d_host = [ObjectIdentifier : B3DHost]()
 
     // Does not contain localhost IPs
     private var scanned_IPs = Set<IPAddress>()
@@ -1083,12 +1087,11 @@ public class Interman3DModel: ObservableObject {
         }
         return b3d_host
         */
-        guard let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == host }) else {
-            #fatalError("node is not in node_to_b3d_host array (2)")
-            return nil
-        }
-        let key = node_to_b3d_host.keys[idx]
-        return node_to_b3d_host[key]
+        if let b3d_host = node_to_b3d_host[ObjectIdentifier(host)] { return b3d_host }
+        // Filet de sécurité si un appelant passe une instance égale mais distincte du modèle
+        if let b3d_host = (node_to_b3d_host.values.first { $0.getHost() == host }) { return b3d_host }
+        #fatalError("node is not in node_to_b3d_host array (2)")
+        return nil
     }
     
     // We could implement a cache, but it is not sure it may really improve global performances
@@ -1127,18 +1130,10 @@ public class Interman3DModel: ObservableObject {
     private func debug_dump_b3d_hosts(_ fct: String) {
         print("XXXX: -------------------")
         print("XXXX: \(fct)")
-        node_to_b3d_host.keys.forEach { node in
-            print("XXXX: \(node.fullDump())")
+        node_to_b3d_host.values.forEach { b3d_host in
+            print("XXXX: \(b3d_host.getHost().fullDump())")
         }
         print("XXXX: -------------------")
-    }
-    
-    private func get_key_from_node_to_b3d_host(_ node: Node) -> Node {
-        for key in node_to_b3d_host.keys {
-            if key == node { return key }
-        }
-        #fatalError("node_to_b3d_host inconsistency")
-        return Node()
     }
 
     func updateOpacity(_ node: Node, _ b3d_host: B3DHost) {
@@ -1187,14 +1182,14 @@ public class Interman3DModel: ObservableObject {
     // Sync with the main model
     func notifyNodeAdded(_ node: Node) {
         let b3d_host = addHost(node)
-        node_to_b3d_host.updateValue(b3d_host, forKey: node)
+        node_to_b3d_host.updateValue(b3d_host, forKey: ObjectIdentifier(node))
 
         updateOpacity(node, b3d_host)
     }
 
     // Sync with the main model
     func notifyNodeRemoved(_ node: Node) {
-        if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeRemoved") }
+        if nil == node_to_b3d_host.removeValue(forKey: ObjectIdentifier(node)) { #fatalError("notifyNodeRemoved") }
 
         guard let b3d_host = detachB3DSimilarHost(node) else { return }
         updateAngles()
@@ -1219,22 +1214,14 @@ public class Interman3DModel: ObservableObject {
     // @inline(never) pour debugguer plus facilement si ça se reproduit
     @inline(never)
     func notifyNodeMerged(_ node: Node, _ into: Node) {
-        // J'ai eu une fois ce cas le 7 fév 2024 sur iPad Pro
-        if nil == node_to_b3d_host.removeValue(forKey: node) { #fatalError("notifyNodeMerged") }
-        // Mais je ne sais pas si ça a crashé après la ligne précédente, je rajoute donc ceci pour éviter de crasher :
-        let _idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })
-        if _idx == nil {
-            #fatalError("notifyNodeMerged 2")
-            return
-        }
-        let idx = _idx!
-        node_to_b3d_host.remove(at: idx)
+        // node a été retiré du modèle, son contenu fusionné dans into (qui recevra
+        // ensuite un notifyNodeUpdated) : on supprime l'entrée et l'hôte 3D de node,
+        // into conserve les siens
+        if nil == node_to_b3d_host.removeValue(forKey: ObjectIdentifier(node)) { #fatalError("notifyNodeMerged") }
 
-        guard let b3d_host = detachB3DHostInstance(into) else { return }
+        guard let b3d_host = detachB3DHostInstance(node) else { return }
         updateAngles()
         b3d_host.remove()
-
-        node_to_b3d_host.updateValue(b3d_host, forKey: get_key_from_node_to_b3d_host(into))
     }
 
     // Sync with the main model
@@ -1242,24 +1229,12 @@ public class Interman3DModel: ObservableObject {
     // @inline(never) pour debugguer plus facilement si ça se reproduit
     @inline(never)
     func notifyNodeUpdated(_ node: Node) {
-        // Bug ceci ne fonctionne pas (la clé n'est pas identifiée) :
-        // let b3d_host = node_to_b3d_host[node]!
-        // if nil == node_to_b3d_host.removeValue(forKey: node) { fatalError() }
-        // node_to_b3d_host[node] = b3d_host
-        // On fait donc le contournement suivant :
-        // let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node })!
-        // let b3d_host = node_to_b3d_host[idx].value
-        // node_to_b3d_host.remove(at: idx)
-        // node_to_b3d_host.updateValue(b3d_host, forKey: node)
-
-        // Mais le 6 avril 2024, un utilisateur signale un bug dont le stacktrace du crashdump montre que c'est dans cette méthode qu'il y a une trap, on contourne donc comme ceci :
-        guard let idx = node_to_b3d_host.keys.firstIndex(where: { $0 == node }) else {
+        // Avec des clés par identité (ObjectIdentifier), la mutation du contenu du Node
+        // n'invalide plus la clé : plus besoin des contournements historiques (2024)
+        guard let b3d_host = node_to_b3d_host[ObjectIdentifier(node)] else {
             #fatalError("node is not in node_to_b3d_host array")
             return
         }
-        let b3d_host = node_to_b3d_host[idx].value
-        node_to_b3d_host.remove(at: idx)
-        node_to_b3d_host.updateValue(b3d_host, forKey: node)
         b3d_host.updateModelAndValues()
 
         updateOpacity(node, b3d_host)

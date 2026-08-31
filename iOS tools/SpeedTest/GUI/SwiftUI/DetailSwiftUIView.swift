@@ -359,6 +359,14 @@ struct DetailSwiftUIView: View {
                             .font(second_line_font)
                             .foregroundColor(Color(COLORS.chart_scale)).opacity(0.75)
                             .lineLimit(1)
+                            // Copie du nom de la target : clic droit sur Mac, appui long sur iOS
+                            .contextMenu {
+                                Button {
+                                    UIPasteboard.general.string = target_name
+                                } label: {
+                                    Label("Copy", systemImage: "doc.on.doc")
+                                }
+                            }
                     }
                 }
                 .frame(maxWidth: .infinity)

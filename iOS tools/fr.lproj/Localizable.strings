@@ -213,6 +213,9 @@
 "traces" = "traces";
 "Filter traces" = "Filtrer les traces";
 "Copy" = "Copier";
+"Copy name" = "Copier le nom";
+"Copy IPv4 address" = "Copier l'adresse IPv4";
+"Copy IPv6 address" = "Copier l'adresse IPv6";
 "IPv4 · loopback" = "IPv4 · boucle locale";
 "IPv4 · private (RFC 1918)" = "IPv4 · privée (RFC 1918)";
 "IPv4 · link-local (APIPA)" = "IPv4 · lien local (APIPA)";

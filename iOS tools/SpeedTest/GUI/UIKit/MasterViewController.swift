@@ -1256,6 +1256,35 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
 
+    // Adresse IPv4 affichée dans la cellule d'une target (multicast exclues)
+    static func bestDisplayedV4(_ node: Node) -> IPv4Address? {
+        return (Array(node.getV4Addresses().filter { (address) -> Bool in
+            // 1st choice: public (not autoconfig) && unicast
+            !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
+            // 2nd choice: private && not autoconfig
+            address.isPrivate() && !address.isAutoConfig()
+        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
+            // 3rd choice: autoconfig
+            address.isAutoConfig()
+        })).first
+    }
+
+    // Adresse IPv6 affichée dans la cellule d'une target. Multicast, unspecified (::/128)
+    // et loopback (::1/128) exclues : seules unicast publiques, ULA et LLA sont retenues.
+    static func bestDisplayedV6(_ node: Node) -> IPv6Address? {
+        return (Array(node.getV6Addresses().filter { (address) -> Bool in
+            // 1st choice: unicast public
+            address.isUnicastPublic()
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
+            // 2nd choice: ULA
+            address.isULA()
+        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
+            // 3rd choice: LLA
+            address.isLLA()
+        })).first
+    }
+
     // Adresse précédée du badge, centré verticalement sur la ligne de texte
     static func badgedAddress(_ badge: UIImage, _ text: String, font: UIFont) -> NSAttributedString {
         let attachment = NSTextAttachment()
@@ -1359,30 +1388,10 @@ class MasterViewController: UITableViewController, DeviceManager {
 
         cell.name.text = (DBMaster.isSaved(node) ? "💾 " : "") + node.getName()
         
-        // Multicast IPv4 addresses are not selected
-        if let best = (Array(node.getV4Addresses().filter { (address) -> Bool in
-            // 1st choice: public (not autoconfig) && unicast
-            !address.isPrivate() && !address.isAutoConfig() && address.isUnicast()
-        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
-            // 2nd choice: private && not autoconfig
-            address.isPrivate() && !address.isAutoConfig()
-        }) + Array(node.getV4Addresses().filter { (address) -> Bool in
-            // 3rd choice: autoconfig
-            address.isAutoConfig()
-        })).first { cell.detail1.attributedText = MasterViewController.badgedAddress(MasterViewController.v4_badge, best.toNumericString() ?? "", font: cell.detail1.font) }
+        if let best = MasterViewController.bestDisplayedV4(node) { cell.detail1.attributedText = MasterViewController.badgedAddress(MasterViewController.v4_badge, best.toNumericString() ?? "", font: cell.detail1.font) }
         else { cell.detail1.attributedText = MasterViewController.badgedAddress(MasterViewController.v4_badge, NSLocalizedString("no IPv4 address", comment: ""), font: cell.detail1.font) }
 
-        // Multicast IPv6 addresses, unspecified (::/128) and loopback (::1/128) addresses are not selected. Only unicast public, ULA and LLA addresses can be selected.
-        if let best = (Array(node.getV6Addresses().filter { (address) -> Bool in
-            // 1st choice: unicast public
-            address.isUnicastPublic()
-        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
-            // 2nd choice: ULA
-            address.isULA()
-        }) + Array(node.getV6Addresses().filter { (address) -> Bool in
-            // 3rd choice: LLA
-            address.isLLA()
-        })).first { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, best.toNumericString() ?? "invalid IPv6 address", font: cell.detail2.font) }
+        if let best = MasterViewController.bestDisplayedV6(node) { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, best.toNumericString() ?? "invalid IPv6 address", font: cell.detail2.font) }
         else { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, NSLocalizedString("no IPv6 address", comment: ""), font: cell.detail2.font) }
 
         cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
@@ -1422,11 +1431,35 @@ class MasterViewController: UITableViewController, DeviceManager {
     
     // Local gateway and Internet rows can not be removed
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if getNode(indexPath: indexPath).isLocalHost() {
-            return nil
-        }
-        
+        // Localhost : menu limité à la copie (pas d'édition ni de suppression)
+        let is_localhost = getNode(indexPath: indexPath).isLocalHost()
+
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            // Copie des adresses affichées dans la cellule (les mêmes que detail1/detail2),
+            // regroupées dans une section inline en tête de menu (séparateur automatique)
+            var copy_actions = [UIAction]()
+            if let node = self?.getNode(indexPath: indexPath) {
+                let name = node.getName()
+                if name != "no name" {
+                    copy_actions.append(UIAction(title: NSLocalizedString("Copy name", comment: "Copy name"),
+                                                 image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = name
+                    })
+                }
+                if let v4 = MasterViewController.bestDisplayedV4(node)?.toNumericString() {
+                    copy_actions.append(UIAction(title: NSLocalizedString("Copy IPv4 address", comment: "Copy IPv4 address"),
+                                                 image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = v4
+                    })
+                }
+                if let v6 = MasterViewController.bestDisplayedV6(node)?.toNumericString() {
+                    copy_actions.append(UIAction(title: NSLocalizedString("Copy IPv6 address", comment: "Copy IPv6 address"),
+                                                 image: UIImage(systemName: "doc.on.doc")) { _ in
+                        UIPasteboard.general.string = v6
+                    })
+                }
+            }
+
             let editAction = UIAction(title: NSLocalizedString("Edit", comment: "Edit"),
                                       image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"),
                                       attributes: .destructive) { _ in
@@ -1449,7 +1482,19 @@ class MasterViewController: UITableViewController, DeviceManager {
                 }
             }
             
-            return UIMenu(title: "", children: [editAction, deleteAction])
+            if is_localhost {
+                // Pas d'entrées Edit/Delete pour le périphérique local ; pas de menu
+                // du tout s'il n'y a rien à copier
+                if copy_actions.isEmpty { return nil }
+                return UIMenu(title: "", children: copy_actions)
+            }
+            if copy_actions.isEmpty {
+                return UIMenu(title: "", children: [editAction, deleteAction])
+            }
+            return UIMenu(title: "", children: [
+                UIMenu(title: "", options: .displayInline, children: copy_actions),
+                UIMenu(title: "", options: .displayInline, children: [editAction, deleteAction])
+            ])
         }
     }
     

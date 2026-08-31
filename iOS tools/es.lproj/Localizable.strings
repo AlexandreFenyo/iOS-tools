@@ -216,6 +216,9 @@
 "no IPv6 address" = "sin dirección IPv6";
 "Filter traces" = "Filtrar las trazas";
 "Copy" = "Copiar";
+"Copy name" = "Copiar el nombre";
+"Copy IPv4 address" = "Copiar la dirección IPv4";
+"Copy IPv6 address" = "Copiar la dirección IPv6";
 "IPv4 · loopback" = "IPv4 · bucle local";
 "IPv4 · private (RFC 1918)" = "IPv4 · privada (RFC 1918)";
 "IPv4 · link-local (APIPA)" = "IPv4 · enlace local (APIPA)";

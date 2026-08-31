@@ -211,6 +211,9 @@
 "traces" = "Protokoll";
 "Filter traces" = "Protokoll filtern";
 "Copy" = "Kopieren";
+"Copy name" = "Namen kopieren";
+"Copy IPv4 address" = "IPv4-Adresse kopieren";
+"Copy IPv6 address" = "IPv6-Adresse kopieren";
 "IPv4 · loopback" = "IPv4 · Loopback";
 "IPv4 · private (RFC 1918)" = "IPv4 · privat (RFC 1918)";
 "IPv4 · link-local (APIPA)" = "IPv4 · Link-local (APIPA)";

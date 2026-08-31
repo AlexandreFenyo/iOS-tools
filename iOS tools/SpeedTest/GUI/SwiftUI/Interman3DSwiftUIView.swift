@@ -926,10 +926,12 @@ struct Interman3DSwiftUIView: View {
 //                                        discovered_ports_model.filtering = true
 //                                    }
                             }
-                            
+
                         }
-                        
+
                     }
+                    // Apparition/disparition du panneau de traces en 1 s (glissement + fondu)
+                    .transition(.move(edge: .top).combined(with: .opacity))
                 } else {
                     HStack {
                         Spacer()
@@ -1065,7 +1067,7 @@ struct Interman3DSwiftUIView: View {
                             toolGroupSeparator()
                             
                             Button {
-                                disable_traces.toggle()
+                                withAnimation(.easeInOut(duration: 1)) { disable_traces.toggle() }
                             } label: {
                                 VStack {
 
@@ -1149,7 +1151,7 @@ struct Interman3DSwiftUIView: View {
                                     }.disabled(camera_model.camera_mode == .freeFlight)
                                     
                                     Button {
-                                        disable_traces.toggle()
+                                        withAnimation(.easeInOut(duration: 1)) { disable_traces.toggle() }
                                     } label: {
                                         toolSegmentLabel("traces", Image(systemName: "text.justify"), active: !disable_traces)
                                     }
