@@ -1239,8 +1239,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     // MARK: - Badges v4/v6 de la liste des cibles
 
     // Petit rectangle arrondi "v4"/"v6" affiché devant les adresses des cellules de cibles
-    private static let v4_badge = makeAddressBadge("v4", bg: COLORS.leftpannel_node_rect2_bg, fg: COLORS.standard_background)
-    private static let v6_badge = makeAddressBadge("v6", bg: COLORS.global_background, fg: COLORS.standard_background)
+    // (réutilisé par la liste des IPs, cf. MasterIPViewController)
+    static let v4_badge = makeAddressBadge("v4", bg: COLORS.leftpannel_node_rect2_bg, fg: COLORS.standard_background)
+    static let v6_badge = makeAddressBadge("v6", bg: COLORS.global_background, fg: COLORS.standard_background)
 
     private static func makeAddressBadge(_ text: String, bg: UIColor, fg: UIColor) -> UIImage {
         let font = UIFont.systemFont(ofSize: 9, weight: .bold)
@@ -1256,7 +1257,7 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     // Adresse précédée du badge, centré verticalement sur la ligne de texte
-    private static func badgedAddress(_ badge: UIImage, _ text: String, font: UIFont) -> NSAttributedString {
+    static func badgedAddress(_ badge: UIImage, _ text: String, font: UIFont) -> NSAttributedString {
         let attachment = NSTextAttachment()
         attachment.image = badge
         attachment.bounds = CGRect(x: 0, y: (font.capHeight - badge.size.height) / 2, width: badge.size.width, height: badge.size.height)

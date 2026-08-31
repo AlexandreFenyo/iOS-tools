@@ -100,6 +100,8 @@ public class DetailViewModel : ObservableObject {
     @Published private(set) var v4address: IPv4Address? = nil
     @Published private(set) var v6address: IPv6Address? = nil
     @Published private(set) var address_str: String? = nil
+    // Nom de la target sélectionnée, affiché sous l'IP au-dessous du graphique
+    @Published private(set) var target_name: String? = nil
     @Published private(set) var buttons_enabled = false
     @Published private(set) var stop_button_enabled = false
     @Published private(set) var text_addresses = [String]()
@@ -182,6 +184,7 @@ public class DetailViewModel : ObservableObject {
         v4address = nil
         v6address = nil
         address_str = nil
+        target_name = nil
     }
     
     internal func updateDetails(_ node: Node, _ address: IPAddress, _ buttons_enabled: Bool) {
@@ -220,6 +223,8 @@ public class DetailViewModel : ObservableObject {
         self.address = address
         family = address.getFamily()
         address_str = address.toNumericString()
+        let name = node.getName()
+        target_name = (name == "no name" || name == address_str) ? nil : name
         if family == AF_INET {
             v4address = address as? IPv4Address
             v6address = nil
@@ -293,6 +298,8 @@ struct DetailSwiftUIView: View {
     @State private var selected_delay = "1 sec"
     
     let first_line_font = Font.custom("San Francisco", size: UIDevice.current.userInterfaceIdiom == .phone ? 12 : 17).monospacedDigit()
+    // Nom de la target sous l'IP : un cran plus petit que la ligne principale
+    let second_line_font = Font.custom("San Francisco", size: UIDevice.current.userInterfaceIdiom == .phone ? 10 : 13)
     
     var body: some View {
         HStack {
@@ -333,19 +340,28 @@ struct DetailSwiftUIView: View {
                 }
                 .frame(maxWidth: .infinity)
                 
-                Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
-                    .font(first_line_font)
-                    .frame(maxWidth: .infinity)
-                    // Copie de l'adresse IP courante : clic droit sur Mac, appui long sur iOS
-                    .contextMenu {
-                        if let address_str = model.address_str {
-                            Button {
-                                UIPasteboard.general.string = address_str
-                            } label: {
-                                Label("Copy", systemImage: "doc.on.doc")
+                VStack(spacing: 0) {
+                    Text(model.address_str == nil ? NSLocalizedString("none", comment: "none") : model.address_str!).foregroundColor(Color(COLORS.chart_scale))
+                        .font(first_line_font)
+                        // Copie de l'adresse IP courante : clic droit sur Mac, appui long sur iOS
+                        .contextMenu {
+                            if let address_str = model.address_str {
+                                Button {
+                                    UIPasteboard.general.string = address_str
+                                } label: {
+                                    Label("Copy", systemImage: "doc.on.doc")
+                                }
                             }
                         }
+                    // Nom de la target sous l'IP, en plus petit
+                    if let target_name = model.target_name {
+                        Text(target_name)
+                            .font(second_line_font)
+                            .foregroundColor(Color(COLORS.chart_scale)).opacity(0.75)
+                            .lineLimit(1)
                     }
+                }
+                .frame(maxWidth: .infinity)
                 
                 HStack {
                     Spacer()

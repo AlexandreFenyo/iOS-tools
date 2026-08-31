@@ -224,12 +224,23 @@ class MasterIPViewController: UITableViewController {
         let address_str = address.toNumericString() ?? ""
         let address_parts = address_str.split(separator: "%", maxSplits: 1)
         let display_str = String(address_parts.first ?? "")
+        // Le préfixe "IPv4 · "/"IPv6 · " du libellé localisé est remplacé par le badge
+        // v4/v6 de la liste des cibles (même image, donc mêmes couleurs)
         var subtitle = MasterIPViewController.addressDescription(address)
-        if address_parts.count > 1 { subtitle += " · " + String(address_parts[1]) }
+        if let prefix_range = subtitle.range(of: "· ") {
+            subtitle = String(subtitle[prefix_range.upperBound...])
+        } else if subtitle.hasPrefix("IPv") {
+            subtitle = ""
+        }
+        if address_parts.count > 1 {
+            subtitle += (subtitle.isEmpty ? "" : " · ") + String(address_parts[1])
+        }
+        let badge = address is IPv4Address ? MasterViewController.v4_badge : MasterViewController.v6_badge
+        let subtitle_attributed = MasterViewController.badgedAddress(badge, subtitle, font: UIFont.systemFont(ofSize: 11))
         cell.configurationUpdateHandler = { cell, state in
             var content = cell.defaultContentConfiguration()
             content.text = display_str
-            content.secondaryText = subtitle
+            content.secondaryAttributedText = subtitle_attributed
             // Même police que les IPs de la liste des cibles (système 15 pt, cf. detail1
             // de DeviceCell dans le storyboard) ; semi-gras sur la ligne sélectionnée
             content.textProperties.font = UIFont.systemFont(ofSize: 15, weight: state.isSelected ? .semibold : .regular)
