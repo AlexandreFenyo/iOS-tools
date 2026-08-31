@@ -55,6 +55,7 @@
                     <navigationItem key="navigationItem" id="6Kh-0x-S6x"/>
                     <connections>
                         <outlet property="view1" destination="tyb-c3-KLe" id="OW4-XM-h95"/>
+                        <outlet property="view1_height" destination="sQ2-GI-tMh" id="vh1-ct-Kst"/>
                         <outlet property="view2" destination="7Ku-Sp-0Me" id="k9t-j6-ucc"/>
                     </connections>
                 </viewController>

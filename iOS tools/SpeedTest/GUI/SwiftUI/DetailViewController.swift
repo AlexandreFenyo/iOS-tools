@@ -33,6 +33,14 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var view1: SKView!
     @IBOutlet weak var view2: UIView!
+    // Contrainte de hauteur du graphique (350 dans le storyboard), animée pour le masquer
+    @IBOutlet weak var view1_height: NSLayoutConstraint!
+
+    // Masquage du graphique pour laisser la place au contenu du dessous
+    private var chart_hidden = false
+    private var chart_full_height: CGFloat = 350
+    private static let chart_collapsed_height: CGFloat = 26
+    private var chart_toggle_button: UIButton!
 
     var can_be_launched = true
     
@@ -92,8 +100,35 @@ class DetailViewController: UIViewController {
 
         }
 
+        // Bouton de masquage/affichage du graphique, en haut à droite de celui-ci
+        chart_full_height = view1_height.constant
+        chart_toggle_button = UIButton(type: .system)
+        chart_toggle_button.setImage(UIImage(systemName: "chevron.up.circle.fill"), for: .normal)
+        chart_toggle_button.tintColor = COLORS.standard_background.withAlphaComponent(0.6)
+        chart_toggle_button.translatesAutoresizingMaskIntoConstraints = false
+        chart_toggle_button.addTarget(self, action: #selector(toggleChart), for: .touchUpInside)
+        view.addSubview(chart_toggle_button)
+        NSLayoutConstraint.activate([
+            chart_toggle_button.topAnchor.constraint(equalTo: view1.topAnchor, constant: 3),
+            chart_toggle_button.trailingAnchor.constraint(equalTo: view1.trailingAnchor, constant: -6),
+            chart_toggle_button.widthAnchor.constraint(equalToConstant: 22),
+            chart_toggle_button.heightAnchor.constraint(equalToConstant: 22)
+        ])
     }
-    
+
+    @objc private func toggleChart() {
+        chart_hidden.toggle()
+        chart_toggle_button.setImage(UIImage(systemName: chart_hidden ? "chevron.down.circle.fill" : "chevron.up.circle.fill"), for: .normal)
+        view1_height.constant = chart_hidden ? Self.chart_collapsed_height : chart_full_height
+        UIView.animate(withDuration: 0.3) {
+            // Fondu du SKView : sans cela, la scène SpriteKit serait écrasée verticalement
+            self.view1.alpha = self.chart_hidden ? 0 : 1
+            self.view.layoutIfNeeded()
+        }
+        // Économise le rendu SpriteKit quand le graphique est masqué
+        chart_node?.scene?.view?.isPaused = chart_hidden
+    }
+
     func stopButtonWillAppear() {
         hostingViewController.rootView.model.setStopButtonEnabled(false)
     }
@@ -127,7 +162,7 @@ class DetailViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if chart_node != nil {
-            chart_node!.scene!.view!.isPaused = false
+            chart_node!.scene!.view!.isPaused = chart_hidden
         }
         can_be_launched = true
     }
