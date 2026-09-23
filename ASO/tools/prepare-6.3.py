@@ -20,7 +20,6 @@ import json
 import os
 import subprocess
 import sys
-import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BACKUP = os.path.join(HERE, "..", "backup-asc-6.2")
@@ -67,10 +66,11 @@ def delete_if_exists(path):
         raise
 
 
+# Transferts par curl (trousseau macOS) : le Python de python.org n'a pas les certificats
+# racine du système et urllib échoue en CERTIFICATE_VERIFY_FAILED
 def download(template_url, w, h):
     url = template_url.replace("{w}", str(w)).replace("{h}", str(h)).replace("{f}", "png")
-    with urllib.request.urlopen(url, timeout=60) as r:
-        return r.read()
+    return subprocess.run(["curl", "-sSf", "--max-time", "120", url], capture_output=True, check=True).stdout
 
 
 def upload_screenshot(set_id, file_name, data):
@@ -81,10 +81,10 @@ def upload_screenshot(set_id, file_name, data):
     shot = res["data"]
     for op in shot["attributes"]["uploadOperations"]:
         chunk = data[op["offset"]:op["offset"] + op["length"]]
-        req = urllib.request.Request(op["url"], data=chunk, method=op["method"])
+        cmd = ["curl", "-sSf", "--max-time", "300", "-X", op["method"], "--data-binary", "@-", op["url"]]
         for h in op.get("requestHeaders", []):
-            req.add_header(h["name"], h["value"])
-        urllib.request.urlopen(req, timeout=120).read()
+            cmd[1:1] = ["-H", f"{h['name']}: {h['value']}"]
+        subprocess.run(cmd, input=chunk, capture_output=True, check=True)
     call("PATCH", f"/v1/appScreenshots/{shot['id']}", {"data": {
         "type": "appScreenshots", "id": shot["id"],
         "attributes": {"uploaded": True, "sourceFileChecksum": hashlib.md5(data).hexdigest()}}})
