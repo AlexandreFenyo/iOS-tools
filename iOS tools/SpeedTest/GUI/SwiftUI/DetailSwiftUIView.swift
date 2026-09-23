@@ -288,6 +288,11 @@ struct DetailSwiftUIView: View {
     @ObservedObject var model = DetailViewModel.shared
     @State var animated_width_stop: CGFloat = 0
 
+    // Clignotement du bouton Stop, au même rythme que ses homologues des barres
+    // d'outils des listes de targets et d'IPs (bascule toutes les 0,5 s)
+    let timer_stop_blink = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
+    @State private var stop_blink = false
+
     let timer_set_speed = Timer.publish(every: 0.01, on: .main, in: .common).autoconnect()
     @State private var speed: Double = 0
 
@@ -543,7 +548,12 @@ struct DetailSwiftUIView: View {
                                 .onDisappear {
                                     animated_width_stop = 0
                                 }
-                                .accentColor(Color(COLORS.standard_background))
+                                // Actif (une action est en cours) : clignote comme les boutons
+                                // Stop des barres d'outils ; inactif : simplement grisé
+                                .accentColor((model.buttons_enabled || model.address_str == nil || stop_blink)
+                                    ? Color(COLORS.standard_background)
+                                    : Color(COLORS.standard_background.lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter().lighter()))
+                                .onReceive(timer_stop_blink) { _ in stop_blink.toggle() }
                                 .frame(maxWidth: animated_width_stop).disabled(model.buttons_enabled || model.address_str == nil)
                                 .animation(.easeOut(duration: 1.0), value: animated_width_stop)
                             }

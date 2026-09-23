@@ -2,3 +2,6 @@
 UserInterfaceState.xcuserstate
 ASO/screenshots/
 ASO/screenshots-backup-6.1/
+
+# Fichier temporaire généré à chaque build par le script CocoaPods de copie des ressources
+Pods/resources-to-copy-*.txt

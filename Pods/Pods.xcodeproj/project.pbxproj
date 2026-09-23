@@ -417,7 +417,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/CTHelp/CTHelp-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MODULEMAP_FILE = Headers/Public/CTHelp/CTHelp.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
@@ -570,7 +570,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				IBSC_MODULE = CTHelp;
 				INFOPLIST_FILE = "Target Support Files/CTHelp/ResourceBundle-CTHelp-CTHelp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				PRODUCT_NAME = CTHelp;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -632,7 +632,7 @@
 				DEVELOPMENT_TEAM = JHZ84Y8364;
 				IBSC_MODULE = CTHelp;
 				INFOPLIST_FILE = "Target Support Files/CTHelp/ResourceBundle-CTHelp-CTHelp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				PRODUCT_NAME = CTHelp;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -650,7 +650,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/CTHelp/CTHelp-prefix.pch";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MODULEMAP_FILE = Headers/Public/CTHelp/CTHelp.modulemap;
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
