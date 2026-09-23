@@ -1,9 +1,33 @@
-# Chantier de redressement ASO — état au 18 août 2026
+# Chantier de redressement ASO — état au 23 septembre 2026
 
 Document de reprise : tout ce qui a été décidé, fait et reste à faire, pour continuer
 depuis n'importe quelle machine. Contexte complet dans `Diagnostic ASO & plan d'action.pdf`
 (diagnostic du 15 août 2026 : ventes −84 %, cause racine = retrait App Store mars–avril 2025
 sur plainte du titulaire de la marque « WiFi Map », aucun champ indexé modifié depuis).
+
+## ⚠ Mise à jour du 23/09/2026 : 6.3 correctif, travail ASO de la 6.2 mis de côté
+
+Le SDK iOS 27 (Xcode livré avec macOS 27) bloque au lancement les apps sans cycle de vie
+UIScene. Correctif urgent publié en **6.3 (build 28)**, **soumise le 23/09/2026 à 17 h,
+en attente d'examen**, publication **AFTER_APPROVAL** (comme la 6.1).
+
+Sur décision d'Alexandre, la 6.3 reprend **à l'identique la fiche de la 6.1** et ignore la 6.2 :
+
+- la fiche ASC 6.2 (jamais soumise) a été **renommée en 6.3** (même id
+  `ec7c637d-919d-4ae4-a12d-c6fea96fd17b`) ; langues ramenées à en-US, fr-FR, es-ES ;
+  textes, nom (« WiFi Network Tools & Maps »), sous-titre et 25 captures par langue
+  recopiés depuis la 6.1 (`tools/prepare-6.3.py`) ; « What's New » = correctif du lancement
+  sur la dernière version d'iOS ;
+- seul écart conservé : l'URL de confidentialité corrigée (l'ancienne, wifimapexplorer.com,
+  ne répond plus) ;
+- contact App Review renseigné (Alexandre Fenyo, gmail, +33 6…) : il était vide ;
+- `ITSAppUsesNonExemptEncryption = NO` ajouté à l'`Info.plist` (HTTPS uniquement).
+
+**Tout le travail ASO de la 6.2 reste réutilisable pour une prochaine version** : textes
+maîtres dans `metadata/<locale>/`, état ASC complet d'avant écrasement (7 langues, textes,
+liste des captures) dans `backup-asc-6.2/`, captures régénérables par `scripts/screenshots.sh`.
+Les sections ci-dessous décrivent ce travail tel qu'il était au 18/08 : les mentions
+« 6.2 » y désignent désormais **la prochaine version ASO** (à numéroter ≥ 6.4).
 
 ## Décisions actées
 
@@ -14,13 +38,13 @@ sur plainte du titulaire de la marque « WiFi Map », aucun champ indexé modifi
 | Sous-titres | en-US « Dead zones, signal & speed » · fr « Zones blanches, signal, débit » · de « Funklöcher, Signal & Speed » · en-GB « Blackspots, signal & speed » (termes différents de l'US = couverture élargie) |
 | Mots-clés | calibrés en **octets** (accents = 2 o). `snmp` et `mib` ajoutés (niche vide : un MIB browser payant 6,99 $ survit avec 8 notes). Zéro doublon nom/sous-titre/mots-clés. |
 | Description | ne PAS promettre l'export PDF ni l'historique multi-cartes (le PDF §8 les promettait à tort — non implémentés). Section SNMP ajoutée (v1/v2c/v3, 64 MIB). Section « BEFORE YOU BUY » conservée. |
-| Version | 6.2 / build 27, publication **MANUAL** (les précédentes étaient AFTER_APPROVAL) |
+| Version | prévue en 6.2 / build 27, publication **MANUAL** ; reportée : la 6.3 (build 28, correctif iOS 27) est partie avec la fiche 6.1 — la version ASO sera ≥ 6.4 |
 | Mac | version **Catalyst native** (même bundle id → achat universel iPhone/iPad/Mac), avec **RSSI réel** via CoreWLAN — argument que personne ne peut afficher sur iOS |
 | Captures | mode démo compilé Debug (`-UIScreenshotMode`), pipeline scripté, PAS de captures sous git (régénérables) |
 
 ## Fait — App Store Connect (via l'API, outillage dans `tools/`)
 
-- **Version 6.2 créée** (`PREPARE_FOR_SUBMISSION`). Ids : version `ec7c637d-919d-4ae4-a12d-c6fea96fd17b`, appInfo éditable `2b4c5325-7066-449b-9db4-99341283f2c6`.
+- **Version 6.2 créée** (`PREPARE_FOR_SUBMISSION`), puis **renommée 6.3 et remplie avec la fiche 6.1 le 23/09** (voir en tête) : les éléments de cette section ne sont plus sur ASC, ils sont sauvegardés dans `backup-asc-6.2/`. Ids : version `ec7c637d-919d-4ae4-a12d-c6fea96fd17b` (= 6.3), appInfo éditable `2b4c5325-7066-449b-9db4-99341283f2c6`.
 - **7 vitrines complètes** : en-US, en-GB, fr-FR, es-ES, de-DE, nl-NL, it (⚠ code « it », pas « it-IT »). Nom, sous-titre, mots-clés, description, promo, nouveautés — textes maîtres dans `metadata/<locale>/`.
 - **42 captures uploadées** sur la 6.2 (7 locales × 3 écrans × iPhone 6,9" 1320×2868 + iPad 13" 2064×2752), toutes `COMPLETE`. Les captures de-DE utilisent l'interface allemande réelle.
 - **URL de confidentialité** corrigée : `https://fenyo.net/network3dwifitools/support.html` (pointait vers wifimapexplorer.com, la marque contestée, en http).
@@ -43,12 +67,16 @@ sur plainte du titulaire de la marque « WiFi Map », aucun champ indexé modifi
 
 ## Outillage (tout dans le dépôt)
 
-- `tools/asc.sh` + `tools/asc_jwt.rb` : client API ASC. Clé `.p8` (App Manager) dans `~/.appstoreconnect/AuthKey_8534RFTT7P.p8` — **à copier sur la nouvelle machine, jamais dans le dépôt**. Issuer ID : voir ASC → Utilisateurs et accès → Intégrations.
+- `tools/asc.sh` + `tools/asc_jwt.rb` : client API ASC. Clé `.p8` (App Manager) dans `~/.appstoreconnect/` ou `~/.appstore/` (`AuthKey_8534RFTT7P.p8`, les deux emplacements sont cherchés) — **à copier sur la nouvelle machine, jamais dans le dépôt**. Issuer ID : voir ASC → Utilisateurs et accès → Intégrations.
+- `tools/prepare-6.3.py` : exemple complet de recopie d'une fiche (textes, nom, captures via `uploadOperations`) — réutilisable pour remettre la fiche ASO depuis `backup-asc-6.2/`.
+- Upload de binaire : `xcodebuild -exportArchive` avec `destination=upload` fonctionne **avec le compte Apple connecté dans Xcode** (signature cloud). La clé API App Manager ne suffit pas (signature cloud réservée au rôle Admin) et il n'y a pas de certificat de distribution local.
 - `scripts/screenshots.sh` : captures auto (simulateurs, barre d'état 9:41, langues en/en-GB/fr/es/de × 3 scénarios × iPhone 6,9"/iPad 13"). ⚠ noms de simulateurs à adapter (ici « iPhone 17 Pro Max », « iPad Pro 13-inch (M5) »).
 - `scripts/compose-screenshots.swift` + `scripts/screenshot-captions.tsv` : bandeau texte indexé en haut, PNG sans alpha aux formats ASC.
 - Test SNMP de bout en bout : `flood.eowyn.eu.org`, communauté `public`, v2c.
 
 ## Reste à faire (dans l'ordre)
+
+0. **Suivre l'examen de la 6.3** (publication automatique à l'approbation). Ensuite, pour la version ASO (≥ 6.4) : créer la version, remettre la fiche depuis `backup-asc-6.2/` + `metadata/` (7 langues, nom « WiFi Heat Map & Analyzer »), régénérer les captures, puis reprendre la liste ci-dessous.
 
 1. **Relecture germanophone** de `metadata/de-DE/` et `de.lproj` (Funkloch, Ausleuchtung… à valider par un natif).
 2. **Tests manuels de la version Mac** : heat map de bout en bout (mesure + sauvegarde photo, sandbox !), walk SNMP, ping ICMP longue durée.
