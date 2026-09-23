@@ -7,7 +7,9 @@
 set -euo pipefail
 
 HERE="${0:A:h}"
-KEY="$HOME/.appstoreconnect/AuthKey_8534RFTT7P.p8"
+KEY="${ASC_KEY_PATH:-$HOME/.appstoreconnect/AuthKey_8534RFTT7P.p8}"
+# Selon les machines, la clé est rangée dans ~/.appstore/ plutôt que ~/.appstoreconnect/
+[ -f "$KEY" ] || KEY="$HOME/.appstore/AuthKey_8534RFTT7P.p8"
 KEY_ID="8534RFTT7P"
 ISSUER_ID="${ASC_ISSUER_ID:?ASC_ISSUER_ID non defini}"
 

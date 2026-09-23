@@ -1,0 +1,102 @@
+{
+ "cfefcdb7-a2ff-445a-8ed8-240943e1420d": {
+  "state": "READY_FOR_SALE",
+  "locs": {
+   "en-US": {
+    "id": "684ec752-a4b7-467f-bd6d-c57369e97d80",
+    "locale": "en-US",
+    "name": "WiFi Network Tools & Maps",
+    "subtitle": "3D view, 2D map, ...",
+    "privacyPolicyUrl": "http://wifimapexplorer.com/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "es-ES": {
+    "id": "05fecace-2bb2-4b2d-9d48-6ea89d532a87",
+    "locale": "es-ES",
+    "name": "WiFi Network Tools & Maps",
+    "subtitle": "Explore WiFi, vista 3D, ...",
+    "privacyPolicyUrl": "http://wifimapexplorer.com/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "fr-FR": {
+    "id": "baa0aceb-9a7c-4381-8ce1-0fae377bab68",
+    "locale": "fr-FR",
+    "name": "WiFi Network Tools & Maps",
+    "subtitle": "réseaux, vue 3D, carte 2D, ...",
+    "privacyPolicyUrl": "http://wifimapexplorer.com/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   }
+  }
+ },
+ "2b4c5325-7066-449b-9db4-99341283f2c6": {
+  "state": "PREPARE_FOR_SUBMISSION",
+  "locs": {
+   "nl-NL": {
+    "id": "73da832e-ee00-42f8-b9fa-08aca56e139c",
+    "locale": "nl-NL",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Dode zones, signaal & snelheid",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "en-GB": {
+    "id": "8e20065e-6201-40b4-9919-3ef24ac34989",
+    "locale": "en-GB",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Blackspots, signal & speed",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "es-ES": {
+    "id": "530fb5bd-06d8-4689-8a25-b2603c0503fc",
+    "locale": "es-ES",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Zonas muertas, señal y red",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "de-DE": {
+    "id": "57381d45-aeb4-436a-8672-ca4b0821f6ab",
+    "locale": "de-DE",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Funklöcher, Signal & Speed",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "fr-FR": {
+    "id": "727bee05-196e-4168-82d6-1e7adbaefb66",
+    "locale": "fr-FR",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Zones blanches, signal, débit",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "en-US": {
+    "id": "9d6cf036-f43b-49e3-905a-1d38f2b2b112",
+    "locale": "en-US",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Dead zones, signal & speed",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   },
+   "it": {
+    "id": "d9d74594-5ccd-42b2-ac27-1105a98ba391",
+    "locale": "it",
+    "name": "WiFi Heat Map & Analyzer",
+    "subtitle": "Zone morte, segnale, velocità",
+    "privacyPolicyUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "privacyChoicesUrl": null,
+    "privacyPolicyText": null
+   }
+  }
+ }
+}

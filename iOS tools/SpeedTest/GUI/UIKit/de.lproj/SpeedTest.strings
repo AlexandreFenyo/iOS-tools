@@ -8,10 +8,10 @@
 "9XB-83-j13.title" = "Stopp";
 
 /* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "AG8-ji-YkN"; */
-"AG8-ji-YkN.title" = "Stopp";
+"AG8-ji-YkN.title" = "Heatmap";
 
 /* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "BfU-ZZ-5VE"; */
-"BfU-ZZ-5VE.title" = "Stopp";
+"BfU-ZZ-5VE.title" = "Einstellungen";
 
 /* Class = "UIBarButtonItem"; title = "Stop"; ObjectID = "GvR-Yn-FTs"; */
 "GvR-Yn-FTs.title" = "Stopp";
@@ -32,7 +32,7 @@
 "MOv-aN-EaL.title" = "Hinzufügen";
 
 /* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "Mvn-mF-1uc"; */
-"Mvn-mF-1uc.title" = "Element";
+"Mvn-mF-1uc.title" = "Hilfe";
 
 /* Class = "UILabel"; text = "192.168.1.12"; ObjectID = "QP4-NA-1wu"; */
 "QP4-NA-1wu.text" = "192.168.1.12";

@@ -1,0 +1,1017 @@
+{
+ "6.1": {
+  "en-US": {
+   "id": "7951be2f-cb93-400b-9671-3c703bee1be9",
+   "attrs": {
+    "description": "Main features:\n- 3D animated view of your local network,\n- Network analyzer tools,\n- build a heatmap of your local wireless network,\n- discover all devices connected to the local network,\n- scan and discover every open TCP ports on local or remote devices,\n- discover every mDNS/Bonjour service broadcasted by IoT and home-automation devices (display every broadcasted parameter), by devices like Apple HomePod, AppleTV and other such assistant and streaming devices,\n- latency measurement with local and remote devices,\n- ingress and egress throughput measurements with other local devices running this app,\n- ingress and egress throughput measurements with any TCP CHARGEN/DISCARD server,\n- ingress and egress throughput measurements with the Internet,\n- implement a TCP/CHARGEN service on your device,\n- implement a TCP/DISCARD service on your device.",
+    "locale": "en-US",
+    "keywords": "WiFi,heat map,3D,Network,Analyzer,Scan,Speed,Ping,Chargen,Discard,ICMP,Map,Heat,speed test,ports,TCP",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "No subscription, no ads, no account. Walk through your home, tap to measure, and see exactly where your WiFi falls apart — room by room, on your iPhone alone.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Visual update for iOS 26: the app adopts Apple's new Liquid Glass design."
+   },
+   "screenshots": {
+    "APP_IPHONE_55": [
+     {
+      "id": "ce9a2803-ee01-4212-9c54-06bd936c887d",
+      "fileName": "iphone-frise-3D-55-1-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/5f/a4/66/5fa466c7-3984-719b-08f1-0003a9a446ad/d1fd04de-f58e-44ee-843a-88d26d6ac0f9_iphone-frise-3D-55-1-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "2e748129-c8ef-4a01-83da-d57072b1cfe9",
+      "fileName": "iphone-frise-3D-55-2-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/75/58/b8/7558b8ee-340e-ee30-fc7b-f8728684ca1f/0b1b1a80-d334-467a-9b6b-b5fde8a950e7_iphone-frise-3D-55-2-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "51903a56-5184-45a7-aa69-60e7f7690bb0",
+      "fileName": "iphone-frise-3D-55-3-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/20/7b/fd/207bfde0-f54b-68f6-1be2-7c99c929a1dc/9ad7aa9a-d04a-4efc-8a38-61406aa0d633_iphone-frise-3D-55-3-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "d5dbdbd8-e21a-4c6f-a681-03eec3b90d81",
+      "fileName": "iphone-frise-3D-55-4-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/6f/b0/5e/6fb05ee9-d223-0948-dfae-bb0640e6fee3/a1ff6ce6-7f8d-4948-b00e-34a9210eb683_iphone-frise-3D-55-4-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "b2c20c0f-76a6-4783-a618-a40487ef15dc",
+      "fileName": "iphone-frise-3D-55-5-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/e8/bf/fe/e8bffe91-0b95-efb9-8a65-679726b0daab/7615d528-c30d-4cbc-8f60-b16578cd686b_iphone-frise-3D-55-5-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "cf4cbda4-5b99-4249-866e-3628b49a4c25",
+      "fileName": "iphone-frise-3D-55-6-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/33/25/2d/33252d25-39c2-7bb3-7b89-cf6618f6d304/0b8ceb89-3710-486c-b4d8-fb7c915589cd_iphone-frise-3D-55-6-EN.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     }
+    ],
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "17e4b030-a536-416c-a40e-735ce5382967",
+      "fileName": "ipad-frise-3D-1-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/a0/76/4f/a0764f87-bdc4-004b-f256-1f703ea18310/2dca1a86-a41f-4d82-8778-c9a184c79e9f_ipad-frise-3D-1-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "f2754e0d-8da0-480b-8ef1-ffe31d2bd4f6",
+      "fileName": "ipad-frise-3D-2-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/78/1e/ca/781ecad1-ac7e-9798-b924-233db7ac6a5f/96000fbb-787e-4780-ab03-03075064dfed_ipad-frise-3D-2-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "53a46617-8dd8-4f06-8a80-297eae008852",
+      "fileName": "ipad-frise-3D-3-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/30/0c/e8/300ce85b-410c-9c02-d380-ca597f184e60/5aa0d732-b1cf-4467-aa2e-bb6d3ca16dd2_ipad-frise-3D-3-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "615f5a8e-b5fa-4b1a-90d6-d5a487813c75",
+      "fileName": "ipad-frise-3D-4-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/8b/3a/5e/8b3a5e28-0e9d-5fcd-ced1-a787516b1e32/7c88b09a-55b4-478a-94de-15541bcdf113_ipad-frise-3D-4-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "c7adba19-1677-422d-90f7-49f397b4a9cf",
+      "fileName": "ipad-frise-3D-5-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e2/80/2b/e2802bbe-ff9d-9f03-fb85-46aaae16bb0c/5cd392b9-5fc0-41d7-8bb4-1a2d16bf459a_ipad-frise-3D-5-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "ad7302b9-3cac-489e-b883-b06f8367daec",
+      "fileName": "ipad-frise-3D-6-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/87/2d/5b/872d5bfc-3c3e-e4eb-4ff6-e78762b52da8/ecaa9135-8db3-47f9-9592-50df713268d6_ipad-frise-3D-6-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPAD_PRO_129": [
+     {
+      "id": "5be28375-79a1-4849-8869-70f078c17e08",
+      "fileName": "ipad-frise-3D-1-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/e0/d6/e8/e0d6e86b-d4ff-f2b9-ef2f-4d0d69ffff0e/a15ce75f-5e96-479c-8357-0d0e99de0418_ipad-frise-3D-1-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "5441570f-d550-4ed9-bd01-7bfd18b2413e",
+      "fileName": "ipad-frise-3D-2-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/76/17/53/76175387-99fe-6b20-3793-d4392174b57b/c4dc471b-766b-4889-967a-68c82274344d_ipad-frise-3D-2-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "4187812b-3b37-4f31-9e2b-63002a5b990a",
+      "fileName": "ipad-frise-3D-3-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/a3/78/3c/a3783ccb-c4d1-c240-0d7e-1b74284318c2/9b30d6ef-9700-4c42-abe9-b3e01036b2b8_ipad-frise-3D-3-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "f9b8be2e-2485-4be0-b942-7fa8977d48d6",
+      "fileName": "ipad-frise-3D-4-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/66/01/8c/66018c2b-a5a0-23d5-29b4-b551c32de7eb/44f8daaa-66d4-43e8-ad80-2f3b6d4745c7_ipad-frise-3D-4-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "1bbeccc2-731a-4ea5-b005-6cb911cefbd2",
+      "fileName": "ipad-frise-3D-5-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/9e/e2/9c/9ee29c73-12c2-49cb-5737-f2a5e9bb24ca/bac68b5b-41a7-4420-a4c7-8718c469eac3_ipad-frise-3D-5-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "5188c29a-8829-4b4b-899e-8f0567384a6d",
+      "fileName": "ipad-frise-3D-6-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/b1/c0/03/b1c003e4-a083-3102-ab13-69b17ac361ea/b75b7226-2e32-42cf-a8fa-e658583db04c_ipad-frise-3D-6-EN.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "b8d0c509-9caf-499b-a70d-e391378af6eb",
+      "fileName": "iphone-frise-3D-65-1-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/47/c9/45/47c945d3-ed6c-0599-5964-b53ffba8245f/d0c34d32-05a0-4568-891f-d95aa1ecb9a2_iphone-frise-3D-65-1-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "19f7511c-cbdd-4af0-8d0a-fd847903f75b",
+      "fileName": "iphone-frise-3D-65-2-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/76/ee/ba/76eeba9c-4f83-c1a4-1151-20f3858fa76c/0b9c59e9-a3ae-4bfe-893e-6e4649ff16d9_iphone-frise-3D-65-2-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "7842a4ac-f0f9-4880-a221-7ea3a4eacdaf",
+      "fileName": "iphone-frise-3D-65-3-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/56/7c/98/567c9899-3156-85cc-8d70-d060d5dd79cc/8c03628b-7b48-40b4-8405-5af4caa2af62_iphone-frise-3D-65-3-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "92cb982b-6f6d-4b65-a0af-9bf9b3789c06",
+      "fileName": "iphone-frise-3D-65-4-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/82/c0/70/82c070c4-51f9-6f70-a52e-d489204781c8/f8f41f79-74ed-461c-840d-ba0fefca5dc4_iphone-frise-3D-65-4-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "1846475e-b431-45d7-ab41-48bb5d444d94",
+      "fileName": "iphone-frise-3D-65-5-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/a3/b5/6f/a3b56f47-64f4-ec40-306b-78130321d47a/623e742c-f3df-47d4-9d88-4c4ea447d4f4_iphone-frise-3D-65-5-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "5662c8f4-7d8b-41d9-9ab6-99ea8646a4cd",
+      "fileName": "iphone-frise-3D-65-6-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/17/7a/ab/177aab4a-ea7c-01f0-d68c-1bdf27b4f60c/57ada377-e8eb-4914-b37a-066fbc22ab66_iphone-frise-3D-65-6-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "060dbb54-c419-4f19-9527-e98ca254c06c",
+      "fileName": "iphone-frise-3D-65-7-EN.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/86/85/7a/86857ac4-af7d-8914-5f9b-0caf155d5ad7/d46a88f2-0945-486b-8f95-408699cc01fa_iphone-frise-3D-65-7-EN.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     }
+    ]
+   }
+  },
+  "fr-FR": {
+   "id": "7bb83bd3-57ed-4143-9258-92ea0813bc92",
+   "attrs": {
+    "description": "Fonctionnalités principales :\n- outils d'analyse réseau,\n- création d'une heat map de votre réseau sans fil local (carte de couverture du signal),\n- vue 3D animée des périphériques du réseau local,\n- découverte de tous les appareils connectés à votre réseau local,\n- découverte des ports et services TCP ouverts sur chacun de ces appareils,\n- découverte de l'ensemble des services mDNS/Bonjour annoncés par les périphériques IoT (domotique) connectés à votre WiFi et affichage de l'ensemble des paramètres annoncés par chacun de ces services, comme par ex. les boitiers HomePod d'Apple, les AppleTV et autres assistants et périphériques de streaming,\n- détection et ouverture automatisée du serveur web hébergé par ces périphériques IoT (domotique) quand il y en a un,\n- mesure de la latence de communication avec les appareils locaux ou vers Internet,\n- mesures des débits entrants et sortants avec les autres appareils sur lesquels cette app est aussi installée,\n- mesures des débits entrants et sortants avec les serveurs TCP CHARGEN/DISCARD,\n- mesures des débits entrants et sortants avec Internet,\n- implémentation d'un service TCP/CHARGEN sur votre périphérique,\n- implémentation d'un service TCP/DISCARD sur votre périphérique.",
+    "locale": "fr-FR",
+    "keywords": "WiFi,heat map,map,réseau,3D,scan,exploration,débit,vitesse,ping,chargen,discard,ICMP,carte",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "Sans abonnement, sans pub, sans compte. Parcourez votre logement, appuyez pour mesurer, voyez où votre WiFi décroche — pièce par pièce, avec votre seul iPhone.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Mise à jour visuelle pour iOS 26 : l'app adopte le nouveau design Liquid Glass d'Apple."
+   },
+   "screenshots": {
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "135ca0d2-5e7c-4d18-9621-38d8fc5af8cb",
+      "fileName": "ipad-frise-3D-1-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/0b/90/e6/0b90e62e-e634-bf06-8749-610c6478cf17/b932bc09-8dfc-4640-b0c1-d0e57d21183e_ipad-frise-3D-1-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "1c69f317-64cb-494e-b6ce-be6b5d7b9986",
+      "fileName": "ipad-frise-3D-2-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/40/c7/bc/40c7bc81-eb1a-0a14-39fb-5202ee78e3fd/c49516c3-7d10-4408-8ad2-1d371952d4da_ipad-frise-3D-2-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "2b1d4834-ca7b-4341-9210-0147d32e3d45",
+      "fileName": "ipad-frise-3D-3-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/07/22/c3/0722c32e-aaf7-ed87-098b-ec5dde0e3868/df703659-840e-4254-a3b4-8ed2fc286b62_ipad-frise-3D-3-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "91322d91-a2d4-4555-a8fa-f043f6b07cc8",
+      "fileName": "ipad-frise-3D-4-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/09/8e/0c/098e0c88-0374-4e97-ad9c-c8924d5bab0c/4bc62ada-1396-489d-aca6-a66de3bba3be_ipad-frise-3D-4-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "f9cfafe1-eac7-4cdf-8e11-cf9a05769858",
+      "fileName": "ipad-frise-3D-5-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/31/f6/d9/31f6d932-55e6-c2c2-a644-47145d767ac7/628e9de0-4862-435e-a1a5-043498e3aaae_ipad-frise-3D-5-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "698d0748-220b-42f1-b555-e8faff47872b",
+      "fileName": "ipad-frise-3D-6-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/3f/2e/76/3f2e7664-9844-8894-c2f7-c66b1034531a/cddc0a34-6372-43a0-8e16-fec6e03d5244_ipad-frise-3D-6-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPAD_PRO_129": [
+     {
+      "id": "8eb26c80-71f8-47d9-964c-d45578b16ed2",
+      "fileName": "ipad-frise-3D-1-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/67/de/d1/67ded153-d7ed-dc44-9ac3-bb6c3031d5c1/8e3dadc6-e9f7-4a2a-a578-62dd24efad92_ipad-frise-3D-1-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "7eee6363-abcf-4115-9e41-a4d6322092d0",
+      "fileName": "ipad-frise-3D-2-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/7e/7c/4a/7e7c4a11-80a5-0d09-d2c5-41dac0a06cbe/cdc127d9-8040-4c87-b46d-7d733d5acbf6_ipad-frise-3D-2-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "bb8705c5-5a83-4135-aeac-f3b734f5fb99",
+      "fileName": "ipad-frise-3D-3-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/4e/ae/59/4eae59f2-a388-3606-28c7-ce0694e0a968/e23a44a7-f0a3-4caf-8d4b-d5bd02ff910d_ipad-frise-3D-3-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "e0f617b8-0668-4b4f-bdff-ef81370ea916",
+      "fileName": "ipad-frise-3D-4-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/56/4c/a5/564ca5c1-ecd5-943e-f925-db045b3dca08/22f5ec51-b79f-46b2-97e2-43a9f2c43a78_ipad-frise-3D-4-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "a6cd4790-6799-4391-8ba0-3d1cae4484c0",
+      "fileName": "ipad-frise-3D-5-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/97/86/1e/97861e8d-585e-dbb3-f050-b5cb07509468/e4dfabe1-0111-4caf-bc6f-a7049d118b43_ipad-frise-3D-5-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "7edd9817-f656-420d-b828-837bf261bf29",
+      "fileName": "ipad-frise-3D-6-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/53/f2/f7/53f2f707-bfde-2142-eead-cb79301c2f5e/d4773b92-c4b7-477d-a90e-6f341b25f87e_ipad-frise-3D-6-FR.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "ed276b0b-9b37-498a-8a34-5322629c65a3",
+      "fileName": "iphone-frise-3D-65-1-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/54/2e/f2/542ef20c-8ba3-f103-eb93-10c699d4dc86/a4d4cf9c-e8b9-4019-9366-45707405ad6d_iphone-frise-3D-65-1-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "4e0b09e9-bb62-4d20-a3d8-1ab9f1652c10",
+      "fileName": "iphone-frise-3D-65-2-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/7d/25/ea/7d25ea90-082c-d5aa-ecf5-ee3b436f36ce/6164430c-4330-42e2-ae53-26e781d41b9c_iphone-frise-3D-65-2-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "97ebb4ca-467e-421c-96e7-fdf48762dedd",
+      "fileName": "iphone-frise-3D-65-3-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/b4/08/bc/b408bc79-3ea6-60c1-8b0e-9bbcadb6b58c/b1a2cf5e-4b79-49e0-bbd4-727ba9231b26_iphone-frise-3D-65-3-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "3c3068ea-9da7-417e-8e9a-1c5ccd7cb228",
+      "fileName": "iphone-frise-3D-65-4-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/65/12/02/651202e1-e104-8ff7-e792-85e29d5709b2/ee600722-98cf-4565-9477-d0aecd763059_iphone-frise-3D-65-4-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "6251ace5-51ee-40b3-a800-b96a1a003dec",
+      "fileName": "iphone-frise-3D-65-5-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/6a/e9/49/6ae949fc-357a-39e2-6c81-dccaab279503/8cbf5c82-2e11-44b6-95cb-9d148ea92e00_iphone-frise-3D-65-5-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "7a9ef4df-d952-4023-bb4f-d7c68b6b3c93",
+      "fileName": "iphone-frise-3D-65-6-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/b6/ba/fb/b6bafb86-4eb7-1b48-490f-14ec7fdcd3ca/91f916b1-f609-4c2d-81ae-47e31d85590b_iphone-frise-3D-65-6-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "4b5d2084-1fa2-4fc0-a541-cbb7331f399e",
+      "fileName": "iphone-frise-3D-65-7-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/c0/a4/82/c0a48233-53f1-16fd-dfcb-9ec91abdcb9f/1a510535-cbcc-4654-8ca7-c5fdc8beb10b_iphone-frise-3D-65-7-FR.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     }
+    ],
+    "APP_IPHONE_55": [
+     {
+      "id": "c7353f05-cef0-4a99-ab41-99edd0f37f64",
+      "fileName": "iphone-frise-3D-55-1-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/d1/46/ee/d146ee2e-dabf-449f-8c22-08b5a90b7c06/f1fff757-02b3-43b5-940d-0dd9ae0db532_iphone-frise-3D-55-1-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "7c5879fd-dd01-4e4d-a29c-2f467600ffe8",
+      "fileName": "iphone-frise-3D-55-2-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/5b/b5/de/5bb5dea6-904c-fe64-6adc-396b35d2edae/82ff482c-27eb-4b82-a1a4-f54d862d2ccd_iphone-frise-3D-55-2-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "247016f8-b9dd-497d-80fa-ba775d22cdd5",
+      "fileName": "iphone-frise-3D-55-3-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/0a/46/56/0a4656d6-eaa8-60d3-ca8c-2f7af40abb19/ea6040ed-d183-4747-a2ea-cac64c254253_iphone-frise-3D-55-3-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "dbe32d8e-5abe-47b8-a421-e5c44a849089",
+      "fileName": "iphone-frise-3D-55-4-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/1e/50/5e/1e505e2e-f7b7-87fc-397b-cfede9812c5c/9655591f-8ffc-40de-b84d-16bc519a5a54_iphone-frise-3D-55-4-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "1e977698-7719-4fdd-97b6-7f48e88190eb",
+      "fileName": "iphone-frise-3D-55-5-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/b6/fb/b5/b6fbb56f-c171-3299-af12-b06db76c506d/301739f0-e6d7-4b19-aaba-aab02a046bf5_iphone-frise-3D-55-5-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "534e1137-8341-4178-bcb0-6923640dfc9a",
+      "fileName": "iphone-frise-3D-55-6-FR.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/e2/94/2b/e2942b58-4e1f-6c59-c839-4097185adf18/1fe4157a-79fc-4f60-a571-e1a47fa858a4_iphone-frise-3D-55-6-FR.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     }
+    ]
+   }
+  },
+  "es-ES": {
+   "id": "b9c1ba8f-16cc-4800-a239-197860f0d519",
+   "attrs": {
+    "description": "Principales características:\n- Herramientas de análisis de red,\n- construya un mapa de calor de su red inalámbrica local,\n- vista animada en 3D,\n- descubrir todos los dispositivos conectados a la red local,\n- escanear y descubrir todos los puertos TCP abiertos en dispositivos locales o remotos,\n- descubra todos los servicios mDNS/Bonjour transmitidos por IoT y dispositivos de automatización del hogar (muestre todos los parámetros transmitidos), por dispositivos como Apple HomePod, AppleTV y otros dispositivos asistentes y de transmisión,\n- medición de latencia con dispositivos locales y remotos,\n- mediciones de rendimiento de entrada y salida con otros dispositivos locales que ejecutan esta aplicación,\n- mediciones de rendimiento de entrada y salida con cualquier servidor TCP CHARGEN/DISCARD,\n- mediciones de rendimiento de entrada y salida con Internet,\n- implementar un servicio TCP/CHARGEN en su dispositivo,\n- implementar un servicio TCP/DISCARD en su dispositivo.",
+    "locale": "es-ES",
+    "keywords": "WiFi,heatmap,mapa de calor,3D,red,analizador,velocidad,ping,ICMP,mapa,calor,puertos,TCP",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "Sin suscripción, sin anuncios, sin cuenta. Recorre tu casa, toca para medir y ve exactamente dónde falla tu WiFi — habitación por habitación, solo con tu iPhone.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Actualización visual para iOS 26: la app adopta el nuevo diseño Liquid Glass de Apple."
+   },
+   "screenshots": {
+    "APP_IPHONE_67": [
+     {
+      "id": "e0484dbf-52d7-43e2-be2b-52c33c8936d8",
+      "fileName": "iphone-frise-3D-65-1-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/46/b9/0e/46b90ecf-fa2c-923b-a550-64a82ca9f2d9/e7b45d0c-98fd-4f8e-9ca9-e2f6911dd0ef_iphone-frise-3D-65-1-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "eacd6bdf-cb33-448a-9a3c-49a2e74e1a73",
+      "fileName": "iphone-frise-3D-65-2-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/7a/f6/81/7af6816b-33f6-f287-1318-623e4a4e1882/e889618b-6b9d-4ec1-899f-6dcd1306e62f_iphone-frise-3D-65-2-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "be15c174-8e9e-4c7f-ab9e-d5251114e9a2",
+      "fileName": "iphone-frise-3D-65-3-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/2c/6d/cf/2c6dcffc-b946-6ae8-c598-ad35f16c03cd/8c1e5d81-d9c0-4d8c-aeae-6e0adf150f08_iphone-frise-3D-65-3-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "734b2f9f-a1be-48ef-ae1f-f721623e4e92",
+      "fileName": "iphone-frise-3D-65-4-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/54/3e/de/543ede6e-bc54-f434-0363-adf67ad3c48b/40578546-9ff1-489b-8d9b-058922c5752c_iphone-frise-3D-65-4-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "1969ef7e-4920-4019-b8f3-d19053eda90d",
+      "fileName": "iphone-frise-3D-65-5-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/14/40/ac/1440acac-c2e6-bbea-a8a8-42022e1c9558/cece82b0-e853-4042-bc60-0e94fb22f3d5_iphone-frise-3D-65-5-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "4eb27d26-e136-4160-80c8-8e1819be3df3",
+      "fileName": "iphone-frise-3D-65-6-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/86/25/ca/8625ca14-61a3-49f2-0867-670357a9c658/d227e526-ceaf-43d6-a11d-05e10d797ed3_iphone-frise-3D-65-6-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     },
+     {
+      "id": "626d10b5-c416-4477-b89e-820cb74df7f5",
+      "fileName": "iphone-frise-3D-65-7-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/67/42/68/674268f7-ea41-b2f8-7824-99a1fa43dff4/af4fed30-1ac3-46ab-ac8b-0c4f7e20d4fb_iphone-frise-3D-65-7-ES.png/{w}x{h}bb.{f}",
+      "w": 1290,
+      "h": 2796
+     }
+    ],
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "4a52d1b3-38d8-41e5-9380-536df3960fc8",
+      "fileName": "ipad-frise-3D-1-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/e0/13/c8/e013c808-bdf1-b7bf-37fb-03740c2a13af/6067ef51-9c08-4c7e-b174-bce5736aafd3_ipad-frise-3D-1-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "e358ca4c-0890-4b25-bd94-2a88f966bee9",
+      "fileName": "ipad-frise-3D-2-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/71/f6/56/71f6569e-f869-5f33-f855-742014e11ffb/46353f49-5378-4496-9e9b-a8c3eebad0b2_ipad-frise-3D-2-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "3da4e328-81c6-4ad9-93ab-6944d2bbb76f",
+      "fileName": "ipad-frise-3D-3-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/0c/4a/ca/0c4acaa6-eba9-76d5-93aa-71cccddb6387/7f62a765-90f2-4be1-8f6b-0343abead520_ipad-frise-3D-3-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "f97c5dc6-d468-484f-881c-70e13b1cbcbc",
+      "fileName": "ipad-frise-3D-4-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/56/bb/0d/56bb0db8-077e-8890-66db-36c8641f85df/d80e4575-2646-492f-9648-d8a24fa14745_ipad-frise-3D-4-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "bf348962-e3c4-4f4b-8189-fd12c9dfd507",
+      "fileName": "ipad-frise-3D-5-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/5c/61/93/5c6193d9-d4d8-1d5d-6827-c009d92f94a7/738d652a-454c-4022-bac2-005380c6a6b4_ipad-frise-3D-5-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "e6152273-3920-4acf-8cef-a879a487dbb2",
+      "fileName": "ipad-frise-3D-6-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/42/06/4f/42064f17-49bb-a544-c85f-f769f162987b/0a90f40c-448c-4675-9718-d6d2caa6630d_ipad-frise-3D-6-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPAD_PRO_129": [
+     {
+      "id": "4900340c-e043-46d0-8a32-074e23d7dba5",
+      "fileName": "ipad-frise-3D-1-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/67/5e/57/675e574f-3979-e3a1-470c-16033b84e8cb/5c691223-d2df-462a-bb53-43f6d15b1188_ipad-frise-3D-1-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "00c0be76-6e1a-4dca-a531-76f3a207df3d",
+      "fileName": "ipad-frise-3D-2-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/38/61/aa/3861aa49-7658-8269-9b44-a38ab8b89919/427821f1-ba93-43fc-9d4a-0448faf9202b_ipad-frise-3D-2-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "2a34713e-2616-4df5-9304-3a639c057a23",
+      "fileName": "ipad-frise-3D-3-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/ee/46/b3/ee46b353-bb75-081f-5886-471dd4d6dad3/8a303f68-3ac4-4fce-b8ff-9b3965763eb2_ipad-frise-3D-3-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "083f37e0-4511-4463-ba0e-9211eba4a3df",
+      "fileName": "ipad-frise-3D-4-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/ab/13/55/ab135512-0366-96dc-fcfa-422706891b12/86ea879a-1aeb-4c8c-af18-47f178aa9a67_ipad-frise-3D-4-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "6d3fdc3c-7ce0-4943-8ff4-dac3ec180c76",
+      "fileName": "ipad-frise-3D-5-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/fb/8e/86/fb8e860b-73fb-0557-41ae-e40f138b8bd5/32fde591-941e-4b75-a920-080b7118c9db_ipad-frise-3D-5-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     },
+     {
+      "id": "5b75aee7-79d2-4d5d-bc81-720e3abe26b5",
+      "fileName": "ipad-frise-3D-6-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/9b/33/a8/9b33a81b-3de4-099e-a285-9b19ca360148/a14f411f-1158-4bb0-8bc6-49d4167b9bb7_ipad-frise-3D-6-ES.png/{w}x{h}bb.{f}",
+      "w": 2048,
+      "h": 2732
+     }
+    ],
+    "APP_IPHONE_55": [
+     {
+      "id": "0da9fdf9-231c-4796-a012-e4dcf685ba15",
+      "fileName": "iphone-frise-3D-55-1-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/9f/81/ce/9f81ce49-aceb-3fa2-9a33-5adbfa67c227/26641d4f-07b7-4cf5-be34-362ffa8b24d6_iphone-frise-3D-55-1-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "06886210-f844-46f3-ac91-1edcb678c18b",
+      "fileName": "iphone-frise-3D-55-2-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/6f/30/fb/6f30fb81-53fb-b479-e06b-293508223436/29d60eee-303a-40f5-92c0-1ec7a6f52123_iphone-frise-3D-55-2-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "77552e13-8a20-4649-b0e8-682d71ff8c22",
+      "fileName": "iphone-frise-3D-55-3-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource126/v4/e9/5e/45/e95e4517-8414-57b9-5315-199e8838bd2e/5d498f40-a457-4742-8648-fbd840c9cf98_iphone-frise-3D-55-3-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "571afc73-428c-4d56-a7db-15b4d0537be6",
+      "fileName": "iphone-frise-3D-55-4-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/8e/c5/c9/8ec5c91a-184c-245d-cb34-eb2a4526fae8/19b0fe94-a4d0-4ee4-8c87-b6658601e645_iphone-frise-3D-55-4-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "42f8f335-4a78-40f4-ae1f-ee795661b22c",
+      "fileName": "iphone-frise-3D-55-5-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/c1/fd/db/c1fddb49-5346-4362-0241-54b14fb77756/6dca8289-e324-4309-ae5b-b029d960e393_iphone-frise-3D-55-5-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     },
+     {
+      "id": "b47698b4-5376-4bb0-8a5b-fd660adfa271",
+      "fileName": "iphone-frise-3D-55-6-ES.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource116/v4/45/5d/34/455d34ea-2e04-c607-73d0-58a2f0acd7d6/91ce947a-687d-4661-835c-fa3df95dd66f_iphone-frise-3D-55-6-ES.png/{w}x{h}bb.{f}",
+      "w": 1242,
+      "h": 2208
+     }
+    ]
+   }
+  }
+ },
+ "6.2": {
+  "de-DE": {
+   "id": "00995f8c-e71b-4db3-bf84-b95d8384c45c",
+   "attrs": {
+    "description": "Finden Sie die Funklöcher in Ihrer Wohnung in unter 10 Minuten — nur mit Ihrem iPhone.\nGehen Sie von Raum zu Raum, tippen Sie zum Messen, und sehen Sie zu, wie sich eine\nfarbige Karte Ihres echten WLANs aufbaut — Durchsatz und Latenz, dort wo Sie leben.\nKein Abo. Keine Werbung. Kein Konto. Einmal kaufen, für immer behalten.\n\nDAS FINDEN SIE WIRKLICH HERAUS\n- Welche Räume langsam sind, und wie langsam, in Zahlen mit denen Sie arbeiten können\n- Ob das Problem an Ihrem WLAN liegt oder an Ihrem Internetanschluss\n- Wo Sie einen Mesh-Knoten, einen Repeater oder den Router selbst aufstellen sollten\n- Welches Gerät in Ihrem Netzwerk Ihre Bandbreite verbraucht\n- Was jedes IoT-Gerät in Ihrem Netzwerk über sich selbst aussendet\n\nSO FUNKTIONIERT ES\n1. Wählen Sie einen fertigen Grundriss, oder nutzen Sie ein Foto Ihres eigenen Plans\n2. Stellen Sie sich an eine Stelle und tippen Sie einmal — die App misst dort\n3. Wiederholen Sie das in jedem Raum. Die Karte baut sich dabei auf\n4. Sichern Sie die Karte in Ihren Fotos, um nach dem Umstellen des Routers zu vergleichen\n\nDer Schritt-für-Schritt-Modus übernimmt die Einrichtung für Sie: kein Ziel auswählen,\nkein Protokoll einstellen, keine Dokumentation lesen. Die erweiterte Oberfläche bleibt\nverfügbar, wenn Sie die volle Kontrolle möchten.\n\nKEINE ZUSATZHARDWARE. KEIN ABO.\nEine professionelle WLAN-Ausleuchtung braucht ein Ekahau Sidekick oder einen WLAN Pi.\nDiese App braucht Ihr iPhone. Und anders als fast jede andere WLAN-App im App Store\ngibt es hier weder Wochen- noch Jahresabo und keine Werbung: Sie kaufen einmal.\n\nAUSSERDEM EIN KOMPLETTER NETZWERK-WERKZEUGKASTEN\n- Scannen Sie jedes Gerät im lokalen Netz: Hersteller, IP-Adresse, offene Ports\n- Entdecken Sie alle mDNS/Bonjour-Dienste: HomePod, Apple TV, Drucker, IoT\n- Ping und Latenz zu lokalen Geräten und zu beliebigen Hosts im Internet\n- Durchsatzmessung gegen ein zweites Gerät mit dieser App, gegen einen beliebigen\n  TCP-CHARGEN/DISCARD-Server oder gegen das Internet\n- Betreiben Sie einen TCP-CHARGEN- oder DISCARD-Dienst auf Ihrem eigenen Gerät\n- Animierte 3D-Ansicht der Topologie Ihres Netzwerks\n\nVOLLSTÄNDIGER SNMP-CLIENT ENTHALTEN\nFragen Sie jeden SNMP-Agenten auf Ihren Routern, Switches, Access Points und Druckern\nab. SNMP v1, v2c und v3, mit noAuthNoPriv, authNoPriv und authPriv, MD5- und\nSHA1-Authentifizierung, DES- und AES-Verschlüsselung. 64 Standard-MIBs sind\nmitgeliefert: Object Identifier werden offline in lesbare Namen aufgelöst — ohne\nServer, ohne Abo, und ohne mehr einzurichten als Adresse und Zugangsdaten des Agenten.\n\nFÜR ZUHAUSE UND FÜR PROFIS\nEntwickelt von einem Netzwerkingenieur. Einfach genug, um Ihre Wohnung an einem\nSonntagnachmittag zu diagnostizieren, und genau genug, dass Fachleute aus der\nTelekommunikation sie im Beruf einsetzen.\n\nVOR DEM KAUF — WAS DIESE APP NICHT KANN\nApple erlaubt keiner iOS-App von Drittanbietern, die WLAN-Signalstärke auszulesen oder\nbenachbarte Netze zu scannen; keine App im App Store kann das. Genau deshalb brauchen\nprofessionelle Werkzeuge externe Hardware. Diese App kartiert, was sie an Ihrem\nStandort messen kann: echten Durchsatz und echte Latenz. Genau das braucht eine\nAusleuchtung für Zuhause. Sie misst das Netz, mit dem Sie verbunden sind, und\nerstellt eine Karte nach der anderen.\n",
+    "locale": "de-DE",
+    "keywords": "wlan,analyse,funkloch,signalstärke,ausleuchtung,netzwerk,scanner,router,repeater,mesh,snmp,messen",
+    "marketingUrl": null,
+    "promotionalText": "Schnelles WLAN dort, wo Sie es wirklich brauchen. Gehen, tippen, Funklöcher farbig sehen — ohne Zusatzhardware, ohne Abo, ohne Konto.",
+    "supportUrl": null,
+    "whatsNew": "Schritt-für-Schritt-Modus komplett überarbeitet: Grundriss wählen, gehen, tippen. Fertig ist die Ausleuchtung.\n\n- Neue Farbskala, auf einen Blick lesbar und für Farbenblinde geeignet\n- Klarerer Messbildschirm, die Einrichtung wird für Sie erledigt\n- Behoben: der Kartenbildschirm konnte endlos auffordern, eine bereits gestoppte Messung zu starten\n- Schnellere Darstellung der Karte"
+   },
+   "screenshots": {
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "8bd3d32d-8aee-4685-8af1-9c29b90403f0",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/15/31/ad/1531ad96-9c14-a337-2c3e-beac122578ff/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "28dc3bde-0d27-417b-bf26-fead313e2621",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/cb/b7/1a/cbb71a5e-c5e5-1af6-e616-2603c25682bd/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "52cbdc40-489e-4d09-b2e5-fd39052ccfc1",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c0/82/f4/c082f4ff-53eb-f526-bc49-f1dd27f915fe/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "f9582fc8-a9be-4eee-955e-8430d06c8c9b",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/37/39/91/373991c1-bb68-526e-44f7-8a7332f36e74/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "e9b04b27-5a70-4b06-a7b8-0699927d9a52",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c6/5e/63/c65e6321-d392-b05b-2117-1a30f1bff766/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "67f425b6-82b0-4b79-accb-df2579af6960",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/6f/74/5c/6f745c7b-527e-b3e1-7cf5-38bebf696094/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ]
+   }
+  },
+  "en-GB": {
+   "id": "2c866c7a-1942-4489-911b-e75f6a2c57b7",
+   "attrs": {
+    "description": "Find your home WiFi dead zones in under 10 minutes, using nothing but your iPhone.\nWalk from room to room, tap to measure, and watch a colour map of your actual WiFi\nperformance build itself — speed and latency, where you really live.\nNo subscription. No ads. No account. One purchase, yours forever.\n\nWHAT YOU CAN ACTUALLY FIND OUT\n- Which rooms are slow, and how slow, in numbers you can act on\n- Whether the problem is your WiFi or your internet connection\n- Where to put a mesh node, an extender or the router itself\n- Which of the devices on your network is eating your bandwidth\n- What every IoT device on your network is broadcasting about itself\n\nHOW IT WORKS\n1. Pick one of the ready-made floor plans, or use a photo of your own plan\n2. Walk to a spot, tap once — the app measures throughput and latency there\n3. Repeat for each room. The heat map builds as you go\n4. Save the finished map to your photos, to compare after you move the router\n\nStep-by-step mode does the setup for you: no target to choose, no protocol to\nconfigure, no documentation to read. The advanced interface is still there when\nyou want full control.\n\nNO EXTRA HARDWARE. NO SUBSCRIPTION.\nProfessional WiFi surveys need an Ekahau Sidekick or a WLAN Pi. This app needs\nyour iPhone. And unlike almost every other WiFi analyzer on the App Store, there\nis no weekly plan, no annual plan, and no ads — you buy it once.\n\nALSO A COMPLETE NETWORK TOOLKIT\n- Scan every device on your LAN, with vendor, IP address and open ports\n- Discover every mDNS/Bonjour service: HomePod, Apple TV, printers, IoT\n- Ping and latency to local devices and to any internet host\n- Throughput measurement against another device running this app, any TCP\n  CHARGEN/DISCARD server, or the internet\n- Run a TCP CHARGEN or DISCARD service on your own device\n- 3D animated view of your local network topology\n\nFULL SNMP CLIENT INCLUDED\nQuery any SNMP agent on your routers, switches, access points and printers.\nSNMP v1, v2c and v3, with noAuthNoPriv, authNoPriv and authPriv, MD5 and SHA1\nauthentication, DES and AES privacy. 64 standard MIBs are bundled, so object\nidentifiers are resolved to readable names offline — no server, no subscription,\nnothing to configure beyond the agent address and credentials.\n\nFOR HOMES AND FOR PROFESSIONALS\nBuilt by a network engineer. Simple enough to diagnose your flat on a Sunday\nafternoon, precise enough that telecom professionals use it on the job.\n\nBEFORE YOU BUY — WHAT THIS APP DOES NOT DO\nApple does not let any third-party iOS app read WiFi signal strength or scan\nneighbouring networks, and no App Store app can do it — this is why professional\ntools need external hardware. This app maps what it can measure at the spot where\nyou are standing: real throughput and latency. That is what a home heat map needs.\nIt measures the network you are connected to, one heat map at a time.\n",
+    "locale": "en-GB",
+    "keywords": "broadband,coverage,survey,scanner,router,mesh,extender,booster,snmp,strength,meter,dbm,ping,lan",
+    "marketingUrl": null,
+    "promotionalText": "Faster WiFi where you actually need it. Walk, tap, and see your WiFi blackspots on a colour map — no extra hardware, no subscription, no account.",
+    "supportUrl": null,
+    "whatsNew": "Completely rewritten step-by-step mode: pick a floor plan, walk, tap. That is the whole heat map.\n\n- New colour scale, readable at a glance and colour-blind friendly\n- Clearer measurement screen, with the setup done for you\n- Fixed: the heat map screen could keep asking you to start a measurement that had already stopped\n- Faster map rendering\n"
+   },
+   "screenshots": {
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "72ecc83c-5035-4a1e-b4ec-74ef16976c12",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/e3/ed/d7/e3edd719-3bd8-3448-2f75-d1ef153536d8/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "bbb3fa2f-f115-42cd-8ec8-fc9f7d96bc0c",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/13/a2/a4/13a2a47e-a2ef-41c4-914d-4905734f05b0/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "b0227757-d6f4-434a-9afa-a9fe6831b184",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/dd/70/06/dd70066d-efed-d2cf-d7e2-3aa6c7380b1b/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "6d02e64f-0c86-422f-9575-b552c02580d4",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/58/1e/31/581e3186-039d-7aef-ffa8-02b79c9d893c/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "dc0d39be-7651-466a-b224-0a8c8799576c",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/6c/86/ef/6c86ef64-3691-7ba5-61a7-42ee4649437b/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "ea42b813-9647-4e8d-a0ba-a5cfa96c77c0",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/d6/cf/5b/d6cf5ba3-c18a-8f00-1c77-47c3cc54d69b/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ]
+   }
+  },
+  "nl-NL": {
+   "id": "0814581f-7e58-4ecc-8419-19f84e7e66bc",
+   "attrs": {
+    "description": "Vind de dode zones in uw wifi in minder dan 10 minuten, met alleen uw iPhone.\nLoop van kamer naar kamer, tik om te meten, en zie hoe een kleurenkaart van uw\nwerkelijke wifi zichzelf opbouwt — snelheid en latentie, daar waar u echt woont.\nGeen abonnement. Geen advertenties. Geen account. Eén aankoop, voor altijd van u.\n\nWAT U ECHT TE WETEN KOMT\n- Welke kamers traag zijn, en hoe traag, in cijfers waar u iets mee kunt\n- Of het probleem bij uw wifi ligt of bij uw internetverbinding\n- Waar u een mesh-punt, een versterker of de router zelf moet neerzetten\n- Welk apparaat in uw netwerk uw bandbreedte opslokt\n- Wat elk IoT-apparaat in uw netwerk over zichzelf uitzendt\n\nZO WERKT HET\n1. Kies een kant-en-klare plattegrond, of gebruik een foto van uw eigen plattegrond\n2. Ga op een plek staan en tik één keer — de app meet daar snelheid en latentie\n3. Herhaal dit in elke kamer. De kaart bouwt zich al lopend op\n4. Bewaar de kaart in uw foto's, om te vergelijken nadat u de router verplaatst\n\nDe stapsgewijze modus doet de instellingen voor u: geen doel kiezen, geen protocol\ninstellen, geen handleiding lezen. De geavanceerde interface blijft beschikbaar\nwanneer u volledige controle wilt.\n\nGEEN EXTRA HARDWARE. GEEN ABONNEMENT.\nEen professionele wifi-survey vereist een Ekahau Sidekick of een WLAN Pi. Deze app\nvereist uw iPhone. En anders dan bijna elke andere wifi-app in de App Store is er\ngeen weekabonnement, geen jaarabonnement en geen reclame: u koopt hem één keer.\n\nOOK EEN COMPLETE NETWERK-GEREEDSCHAPSKIST\n- Scan elk apparaat in uw lokale netwerk: fabrikant, IP-adres en open poorten\n- Ontdek alle mDNS/Bonjour-diensten: HomePod, Apple TV, printers, IoT\n- Ping en latentie naar lokale apparaten en naar elke host op internet\n- Snelheidsmeting tegen een tweede apparaat met deze app, tegen een willekeurige\n  TCP-CHARGEN/DISCARD-server, of tegen internet\n- Draai zelf een TCP-CHARGEN- of DISCARD-dienst op uw eigen apparaat\n- Geanimeerde 3D-weergave van de topologie van uw netwerk\n\nVOLLEDIGE SNMP-CLIENT INBEGREPEN\nBevraag elke SNMP-agent op uw routers, switches, accesspoints en printers. SNMP v1,\nv2c en v3, met noAuthNoPriv, authNoPriv en authPriv, MD5- en SHA1-authenticatie,\nDES- en AES-versleuteling. 64 standaard-MIB's zijn meegeleverd: object identifiers\nworden offline omgezet naar leesbare namen — zonder server, zonder abonnement, en\nzonder meer in te stellen dan het adres en de inloggegevens van de agent.\n\nVOOR THUIS EN VOOR PROFESSIONALS\nGemaakt door een netwerkingenieur. Eenvoudig genoeg om uw woning op een zondagmiddag\ndoor te meten, nauwkeurig genoeg dat telecomprofessionals hem op het werk gebruiken.\n\nVOORDAT U KOOPT — WAT DEZE APP NIET DOET\nApple staat geen enkele iOS-app van derden toe de wifi-signaalsterkte uit te lezen of\nnaburige netwerken te scannen, en geen enkele app in de App Store kan dat — daarom\nhebben professionele gereedschappen externe hardware nodig. Deze app brengt in kaart\nwat zij kan meten op de plek waar u staat: werkelijke snelheid en latentie. Dat is\nprecies wat een warmtekaart voor thuis nodig heeft. Zij meet het netwerk waarmee u\nverbonden bent, en maakt één kaart tegelijk.\n",
+    "locale": "nl-NL",
+    "keywords": "warmtekaart,dekking,bereik,netwerk,scanner,router,versterker,repeater,mesh,meten,snmp,wlan,ping",
+    "marketingUrl": null,
+    "promotionalText": "Snelle wifi waar u die echt nodig hebt. Lopen, tikken, en uw dode zones in kleur zien — geen extra hardware, geen abonnement, geen account.",
+    "supportUrl": null,
+    "whatsNew": "Stapsgewijze modus volledig herzien: kies een plattegrond, loop, tik. Klaar is uw warmtekaart.\n\n- Nieuwe kleurenschaal, in één oogopslag leesbaar en kleurenblindvriendelijk\n- Duidelijker meetscherm, de instellingen worden voor u gedaan\n- Opgelost: het kaartscherm kon blijven vragen om een al gestopte meting te starten\n- Snellere weergave van de kaart"
+   },
+   "screenshots": {
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "ac3ea1cd-27ac-48d9-a316-effd3768a79a",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/3e/4b/cc/3e4bccc1-0366-f83a-d520-24ea77422ec8/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "2377622c-e759-48e8-bee0-19773d35ceea",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/fc/53/21/fc5321d3-516d-95ce-48f2-f50ae99af9c0/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "f0f47c83-495c-4c51-98cf-918d45f307ce",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/60/58/92/60589257-dce6-908f-e3e0-303014baffdf/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "68bb6996-663c-4bc6-9833-c7ebb14f6790",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/88/48/9d/88489d45-4abc-521f-6a4a-84c4d21ce5ba/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "4b980fc8-1e75-4f3f-b1af-05f6f5d09519",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/85/2d/eb/852deb6f-46a1-6ff4-f71f-d739685d8081/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "1dfa4c5a-4d72-4776-a2c1-a4d05ee0c4c9",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/b7/6d/ea/b76dea52-c385-e8c9-53d5-19f62591e274/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ]
+   }
+  },
+  "it": {
+   "id": "40b1fc42-83f1-4caa-8167-e29f6d13f179",
+   "attrs": {
+    "description": "Trova le zone morte del tuo WiFi in meno di 10 minuti, con il solo iPhone.\nCammina di stanza in stanza, tocca per misurare e guarda una mappa a colori del tuo\nWiFi reale costruirsi da sola — velocità e latenza, proprio dove vivi.\nNessun abbonamento. Nessuna pubblicità. Nessun account. Un acquisto, tuo per sempre.\n\nCOSA SCOPRIRAI DAVVERO\n- Quali stanze sono lente, e quanto, con numeri su cui puoi agire\n- Se il problema è il tuo WiFi oppure la tua connessione a internet\n- Dove mettere un nodo mesh, un ripetitore o il router stesso\n- Quale dispositivo della tua rete sta consumando la banda\n- Che cosa ogni dispositivo IoT della tua rete trasmette su sé stesso\n\nCOME FUNZIONA\n1. Scegli una delle piantine già pronte, o usa una foto della tua piantina\n2. Mettiti in un punto e tocca una volta — l'app misura velocità e latenza lì\n3. Ripeti in ogni stanza. La mappa si costruisce man mano che cammini\n4. Salva la mappa nelle tue foto, per confrontarla dopo aver spostato il router\n\nLa modalità passo passo fa la configurazione al posto tuo: nessun bersaglio da\nscegliere, nessun protocollo da impostare, nessuna documentazione da leggere.\nL'interfaccia avanzata resta disponibile quando vuoi il controllo completo.\n\nNESSUN HARDWARE AGGIUNTIVO. NESSUN ABBONAMENTO.\nUn rilievo WiFi professionale richiede un Ekahau Sidekick o un WLAN Pi. Questa app\nrichiede il tuo iPhone. E a differenza di quasi ogni altra app WiFi dell'App Store,\nnon c'è piano settimanale, non c'è piano annuale e non c'è pubblicità: la compri una\nvolta sola.\n\nANCHE UNA CASSETTA DEGLI ATTREZZI DI RETE COMPLETA\n- Scansiona ogni dispositivo della rete locale: produttore, indirizzo IP, porte aperte\n- Scopri tutti i servizi mDNS/Bonjour: HomePod, Apple TV, stampanti, IoT\n- Ping e latenza verso dispositivi locali e verso qualsiasi host su internet\n- Misura di velocità contro un secondo dispositivo con questa app, contro un\n  qualsiasi server TCP CHARGEN/DISCARD, oppure contro internet\n- Esegui un servizio TCP CHARGEN o DISCARD sul tuo stesso dispositivo\n- Vista 3D animata della topologia della tua rete\n\nCLIENT SNMP COMPLETO INCLUSO\nInterroga qualsiasi agente SNMP sui tuoi router, switch, access point e stampanti.\nSNMP v1, v2c e v3, con noAuthNoPriv, authNoPriv e authPriv, autenticazione MD5 e\nSHA1, cifratura DES e AES. Sono incluse 64 MIB standard: gli object identifier\nvengono risolti in nomi leggibili anche offline — senza server, senza abbonamento e\nsenza nulla da configurare oltre all'indirizzo e alle credenziali dell'agente.\n\nPER LA CASA E PER I PROFESSIONISTI\nSviluppata da un ingegnere di rete. Abbastanza semplice da diagnosticare il tuo\nappartamento una domenica pomeriggio, abbastanza precisa perché i professionisti\ndelle telecomunicazioni la usino al lavoro.\n\nPRIMA DI ACQUISTARE — COSA QUESTA APP NON FA\nApple non consente a nessuna app iOS di terze parti di leggere la potenza del segnale\nWiFi né di scansionare le reti vicine, e nessuna app dell'App Store può farlo: è per\nquesto che gli strumenti professionali hanno bisogno di hardware esterno. Questa app\nmappa ciò che può misurare nel punto in cui ti trovi: velocità e latenza reali. È\nesattamente ciò di cui ha bisogno una mappa di calore domestica. Misura la rete a cui\nsei connesso, una mappa alla volta.\n",
+    "locale": "it",
+    "keywords": "mappa,calore,copertura,portata,rete,scanner,router,ripetitore,mesh,misurare,snmp,wlan,ping,segnale",
+    "marketingUrl": null,
+    "promotionalText": "WiFi veloce dove ti serve davvero. Cammina, tocca e guarda le tue zone morte a colori — nessun hardware extra, nessun abbonamento, nessun account.",
+    "supportUrl": null,
+    "whatsNew": "Modalità passo passo completamente ridisegnata: scegli una piantina, cammina, tocca. La mappa di calore è fatta.\n\n- Nuova scala di colori, leggibile a colpo d occhio e adatta ai daltonici\n- Schermata di misura più chiara, con la configurazione fatta per te\n- Corretto: la schermata della mappa poteva continuare a chiedere di avviare una misura già interrotta\n- Rendering della mappa più veloce"
+   },
+   "screenshots": {
+    "APP_IPHONE_67": [
+     {
+      "id": "2bbd98a0-4801-416b-8442-96a1290a03c6",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ea/e2/69/eae26956-d8d4-0ff7-a744-e3f3ee9162ac/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "cd74f310-2dbf-4e93-91cc-b37bbee723ec",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/9f/5a/c3/9f5ac3ab-596c-7500-d85b-24e96adb822f/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "42fcf9a5-1abd-4d1c-ad32-fdb27b7cc883",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/c0/0e/43/c00e4358-9348-1d95-34c2-b0be2d2a5deb/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ],
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "836833ca-2633-47aa-956a-23fbd243b885",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/59/9c/ca/599cca2b-9bcf-3387-d967-a23e0e739c34/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "46a60ce5-c30f-42ea-9c82-a44d9867ec36",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e1/bf/df/e1bfdf2b-fd15-3089-a372-edb7a1c49b9f/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "e195e15b-505f-455c-a225-d35b9426d323",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e6/4b/27/e64b274e-50c9-6c53-3825-09960cd90f11/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ]
+   }
+  },
+  "es-ES": {
+   "id": "8edad1e1-1d6b-4fac-8fe8-d2313e3c3c68",
+   "attrs": {
+    "description": "Encuentra las zonas muertas de tu WiFi en menos de 10 minutos, solo con tu iPhone.\nCamina de habitación en habitación, toca para medir y mira cómo se construye sola\nun mapa en color de tu WiFi real — velocidad y latencia, allí donde vives.\nSin suscripción. Sin anuncios. Sin cuenta. Una compra, tuya para siempre.\n\nLO QUE VAS A DESCUBRIR DE VERDAD\n- Qué habitaciones son lentas, y cuánto, con cifras que puedes usar\n- Si el problema es tu WiFi o tu conexión a internet\n- Dónde colocar un nodo mesh, un repetidor o el propio router\n- Cuál de los dispositivos de tu red se está comiendo tu ancho de banda\n- Qué difunde sobre sí mismo cada dispositivo IoT de tu red\n\nCÓMO FUNCIONA\n1. Elige uno de los planos ya preparados, o usa una foto de tu propio plano\n2. Colócate en un punto y toca una vez — la app mide velocidad y latencia ahí\n3. Repite en cada habitación. El mapa se construye sobre la marcha\n4. Guarda el mapa en tus fotos, para comparar tras mover el router\n\nEl modo paso a paso hace la configuración por ti: ninguna diana que elegir, ningún\nprotocolo que ajustar, ninguna documentación que leer. La interfaz avanzada sigue\nahí cuando quieras el control total.\n\nSIN HARDWARE ADICIONAL. SIN SUSCRIPCIÓN.\nUn estudio WiFi profesional necesita un Ekahau Sidekick o un WLAN Pi. Esta app\nnecesita tu iPhone. Y a diferencia de casi todas las demás apps WiFi de la App\nStore, no hay plan semanal, ni plan anual, ni anuncios: la compras una sola vez.\n\nTAMBIÉN UNA CAJA DE HERRAMIENTAS DE RED COMPLETA\n- Escanea cada dispositivo de tu red local: fabricante, IP y puertos abiertos\n- Descubre todos los servicios mDNS/Bonjour: HomePod, Apple TV, impresoras, IoT\n- Ping y latencia hacia dispositivos locales y hacia cualquier host de internet\n- Medición de velocidad contra otro dispositivo con esta app, cualquier servidor\n  TCP CHARGEN/DISCARD, o internet\n- Ejecuta un servicio TCP CHARGEN o DISCARD en tu propio dispositivo\n- Vista 3D animada e interactiva de la topología de tu red\n\nCLIENTE SNMP COMPLETO INCLUIDO\nConsulta cualquier agente SNMP de tus routers, switches, puntos de acceso e\nimpresoras. SNMP v1, v2c y v3, con noAuthNoPriv, authNoPriv y authPriv,\nautenticación MD5 y SHA1, cifrado DES y AES. Incluye 64 MIB estándar: los\nidentificadores de objeto se resuelven a nombres legibles sin conexión, sin\nservidor, sin suscripción y sin nada que configurar salvo la dirección del agente\ny sus credenciales.\n\nPARA CASAS Y PARA PROFESIONALES\nCreada por un ingeniero de redes. Lo bastante sencilla para diagnosticar tu piso\nun domingo por la tarde, lo bastante precisa para que profesionales de las\ntelecomunicaciones la usen en su trabajo.\n\nANTES DE COMPRAR — LO QUE ESTA APP NO HACE\nApple no permite a ninguna app iOS de terceros leer la potencia de la señal WiFi\nni escanear las redes vecinas, y ninguna app de la App Store puede hacerlo: por\neso las herramientas profesionales necesitan hardware externo. Esta app cartografía\nlo que sí puede medir en el punto donde estás: velocidad y latencia reales. Eso es\nlo que necesita un mapa de calor doméstico. Mide la red a la que estás conectado,\nun mapa cada vez.\n",
+    "locale": "es-ES",
+    "keywords": "mapa,calor,cobertura,alcance,escáner,router,repetidor,malla,velocidad,prueba,snmp,lan,ping,potencia",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "WiFi rápido donde de verdad lo necesitas. Camina, toca y mira tus zonas muertas en color — sin hardware, sin suscripción, sin cuenta.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Modo paso a paso completamente rediseñado: elige un plano, camina, toca. El mapa de calor ya está.\n\n- Nueva escala de color, legible de un vistazo y apta para daltónicos\n- Pantalla de medición más clara, con la configuración hecha por ti\n- Corregido: la pantalla del mapa podía seguir pidiendo iniciar una medición ya detenida\n- Renderizado del mapa más rápido"
+   },
+   "screenshots": {
+    "APP_IPHONE_67": [
+     {
+      "id": "42647770-e03c-4556-b4ef-393cdfc694b8",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/2e/61/4f/2e614f59-2e75-460f-f868-e193563e59fa/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "f2eed56b-606f-45de-bade-a88df2ad144f",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ab/11/24/ab112400-49d2-502d-393f-2d1a0faeb84b/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "29264e2f-2f3f-4b69-8f3a-c920f8238d8d",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/65/e5/3b/65e53bda-57af-29ed-17e5-14b8f9ef5361/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ],
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "9a52a779-d439-4e6b-a03c-b43ee217b330",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/b8/d6/9f/b8d69f13-7ca5-3fa5-c2b4-e887df354578/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "7e3ff636-01b2-4123-9fa8-e91e9e2053d4",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/71/a9/4f/71a94f77-dc02-51ac-3208-9d0ce4b39b81/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "6993939b-d48c-4e03-a088-9a5d7fb35d05",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/fc/4b/95/fc4b9570-0139-5c05-a503-c84c3b6d9f1f/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ]
+   }
+  },
+  "en-US": {
+   "id": "de729a8b-138e-4fe0-bb3b-5ba1389aa8cf",
+   "attrs": {
+    "description": "Find your home WiFi dead zones in under 10 minutes, using nothing but your iPhone.\nWalk from room to room, tap to measure, and watch a colour map of your actual WiFi\nperformance build itself — speed and latency, where you really live.\nNo subscription. No ads. No account. One purchase, yours forever.\n\nWHAT YOU CAN ACTUALLY FIND OUT\n- Which rooms are slow, and how slow, in numbers you can act on\n- Whether the problem is your WiFi or your internet connection\n- Where to put a mesh node, an extender or the router itself\n- Which of the devices on your network is eating your bandwidth\n- What every IoT device on your network is broadcasting about itself\n\nHOW IT WORKS\n1. Pick one of the ready-made floor plans, or use a photo of your own plan\n2. Walk to a spot, tap once — the app measures throughput and latency there\n3. Repeat for each room. The heat map builds as you go\n4. Save the finished map to your photos, to compare after you move the router\n\nStep-by-step mode does the setup for you: no target to choose, no protocol to\nconfigure, no documentation to read. The advanced interface is still there when\nyou want full control.\n\nNO EXTRA HARDWARE. NO SUBSCRIPTION.\nProfessional WiFi surveys need an Ekahau Sidekick or a WLAN Pi. This app needs\nyour iPhone. And unlike almost every other WiFi analyzer on the App Store, there\nis no weekly plan, no annual plan, and no ads — you buy it once.\n\nALSO A COMPLETE NETWORK TOOLKIT\n- Scan every device on your LAN, with vendor, IP address and open ports\n- Discover every mDNS/Bonjour service: HomePod, Apple TV, printers, IoT\n- Ping and latency to local devices and to any internet host\n- Throughput measurement against another device running this app, any TCP\n  CHARGEN/DISCARD server, or the internet\n- Run a TCP CHARGEN or DISCARD service on your own device\n- 3D animated view of your local network topology\n\nFULL SNMP CLIENT INCLUDED\nQuery any SNMP agent on your routers, switches, access points and printers.\nSNMP v1, v2c and v3, with noAuthNoPriv, authNoPriv and authPriv, MD5 and SHA1\nauthentication, DES and AES privacy. 64 standard MIBs are bundled, so object\nidentifiers are resolved to readable names offline — no server, no subscription,\nnothing to configure beyond the agent address and credentials.\n\nFOR HOMES AND FOR PROFESSIONALS\nBuilt by a network engineer. Simple enough to diagnose your flat on a Sunday\nafternoon, precise enough that telecom professionals use it on the job.\n\nBEFORE YOU BUY — WHAT THIS APP DOES NOT DO\nApple does not let any third-party iOS app read WiFi signal strength or scan\nneighbouring networks, and no App Store app can do it — this is why professional\ntools need external hardware. This app maps what it can measure at the spot where\nyou are standing: real throughput and latency. That is what a home heat map needs.\nIt measures the network you are connected to, one heat map at a time.\n",
+    "locale": "en-US",
+    "keywords": "heatmap,coverage,survey,scanner,router,mesh,extender,booster,snmp,strength,test,dbm,wlan,network,mib",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "Faster WiFi where you actually need it. Walk, tap, and see your dead zones on a colour map — no extra hardware, no subscription, no account.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Completely rewritten step-by-step mode: pick a floor plan, walk, tap. That is the whole heat map.\n\n- New colour scale, readable at a glance and colour-blind friendly\n- Clearer measurement screen, with the setup done for you\n- Fixed: the heat map screen could keep asking you to start a measurement that had already stopped\n- Faster map rendering\n"
+   },
+   "screenshots": {
+    "APP_IPHONE_67": [
+     {
+      "id": "e3e8c9f0-8aaa-46e6-aef5-e27890ff30f1",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/e1/2d/e8/e12de889-485a-4b3a-4016-4101c92352e7/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "8cba839b-458b-4ece-a115-5d8c79e696b4",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/af/5a/9b/af5a9beb-7331-4805-db40-fb54b7f33f79/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "42036358-964a-432f-9349-8e2441e15aee",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/00/02/60/00026012-8ea2-63b0-94b6-efd670d2b09f/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ],
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "8512f580-a915-4751-8fb3-51b3091a55a7",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/22/d4/60/22d4604c-c999-218f-0531-9fef3d34d2ea/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "6cb09909-a035-44e4-848e-8cbfd1fd36f8",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/26/b5/c1/26b5c123-c93e-b6c9-588d-3530f624d15c/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "e3c2cf37-d15c-43cf-9d64-d8bb29dc2d28",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/28/c0/af/28c0af3c-1f84-23b7-ded7-556f21f052aa/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ]
+   }
+  },
+  "fr-FR": {
+   "id": "e6c1b290-e7bc-42fb-8a55-d527162498e9",
+   "attrs": {
+    "description": "Trouvez les zones blanches de votre WiFi en moins de 10 minutes, avec votre seul iPhone.\nMarchez de pièce en pièce, appuyez pour mesurer, et regardez une carte en couleurs de\nvotre WiFi réel se construire toute seule — débit et latence, là où vous vivez.\nSans abonnement. Sans publicité. Sans compte. Un achat, à vous pour toujours.\n\nCE QUE VOUS ALLEZ VRAIMENT APPRENDRE\n- Quelles pièces sont lentes, et à quel point, avec des chiffres exploitables\n- Si le problème vient de votre WiFi ou de votre connexion internet\n- Où placer un boîtier maillé, un répéteur, ou la box elle-même\n- Lequel des appareils de votre réseau consomme votre bande passante\n- Ce que chaque objet connecté diffuse à son sujet sur votre réseau\n\nCOMMENT ÇA MARCHE\n1. Choisissez un plan tout fait, ou utilisez une photo de votre propre plan\n2. Placez-vous quelque part, appuyez une fois — l'app mesure débit et latence\n3. Recommencez dans chaque pièce. La carte se construit au fur et à mesure\n4. Enregistrez la carte dans vos photos, pour comparer après avoir déplacé la box\n\nLe mode pas-à-pas fait la configuration à votre place : aucune cible à choisir,\naucun protocole à régler, aucune documentation à lire. L'interface avancée reste\ndisponible quand vous voulez tout contrôler.\n\nAUCUN MATÉRIEL SUPPLÉMENTAIRE. AUCUN ABONNEMENT.\nUne étude WiFi professionnelle exige un Ekahau Sidekick ou un WLAN Pi. Cette app\nexige votre iPhone. Et contrairement à presque toutes les autres apps WiFi de\nl'App Store, il n'y a ni forfait hebdomadaire, ni forfait annuel, ni publicité :\nvous l'achetez une fois.\n\nAUSSI UNE BOÎTE À OUTILS RÉSEAU COMPLÈTE\n- Scannez chaque appareil de votre réseau local : constructeur, IP, ports ouverts\n- Découvrez tous les services mDNS/Bonjour : HomePod, Apple TV, imprimantes, IoT\n- Ping et latence vers vos appareils locaux comme vers n'importe quel hôte internet\n- Mesure de débit contre un autre appareil équipé de cette app, n'importe quel\n  serveur TCP CHARGEN/DISCARD, ou internet\n- Faites tourner un service TCP CHARGEN ou DISCARD sur votre propre appareil\n- Vue 3D animée et interactive de la topologie de votre réseau\n\nCLIENT SNMP COMPLET INCLUS\nInterrogez n'importe quel agent SNMP de vos routeurs, commutateurs, points d'accès\net imprimantes. SNMP v1, v2c et v3, avec noAuthNoPriv, authNoPriv et authPriv,\nauthentification MD5 et SHA1, chiffrement DES et AES. 64 MIB standard sont\nembarquées : les identifiants d'objets sont résolus en noms lisibles hors ligne,\nsans serveur, sans abonnement, sans rien à configurer d'autre que l'adresse de\nl'agent et ses identifiants.\n\nPOUR LA MAISON COMME POUR LES PROFESSIONNELS\nDéveloppée par un ingénieur réseau. Assez simple pour diagnostiquer votre\nappartement un dimanche après-midi, assez précise pour que des professionnels des\ntélécoms s'en servent au travail.\n\nAVANT D'ACHETER — CE QUE CETTE APP NE FAIT PAS\nApple n'autorise aucune app iOS tierce à lire la puissance du signal WiFi ni à\nscanner les réseaux voisins, et aucune app de l'App Store ne peut le faire : c'est\npour cela que les outils professionnels ont besoin de matériel externe. Cette app\ncartographie ce qu'elle peut mesurer à l'endroit où vous vous tenez : le débit réel\net la latence. C'est ce dont une carte de couverture domestique a besoin. Elle\nmesure le réseau auquel vous êtes connecté, une carte à la fois.\n",
+    "locale": "fr-FR",
+    "keywords": "carte,chaleur,couverture,mortes,réseau,scanner,routeur,répéteur,mesh,portée,vitesse,snmp,box,lan",
+    "marketingUrl": "https://fenyo.net/network3dwifitools",
+    "promotionalText": "Un WiFi qui passe enfin là où vous en avez besoin. Marchez, appuyez, voyez vos zones blanches en couleurs — sans matériel, sans abonnement, sans compte.",
+    "supportUrl": "https://fenyo.net/network3dwifitools/support.html",
+    "whatsNew": "Mode pas-à-pas entièrement repensé : choisissez un plan, marchez, appuyez. La carte de couverture est faite.\n\n- Nouvelle échelle de couleurs, lisible d’un coup d’œil et adaptée au daltonisme\n- Écran de mesure plus clair, la configuration est faite pour vous\n- Correction : l’écran de carte pouvait redemander indéfiniment de lancer une mesure déjà arrêtée\n- Rendu de la carte plus rapide"
+   },
+   "screenshots": {
+    "APP_IPAD_PRO_3GEN_129": [
+     {
+      "id": "d7cc2d1d-755e-43fb-9c37-646db99f315c",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/ba/74/71/ba74713c-5f83-6030-2a3d-83bde615f948/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "77cc59a0-fbd4-4127-a965-6a5193b4f814",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/6f/fd/83/6ffd8397-701f-43f3-47dc-d07665f3ef0f/2_measure.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     },
+     {
+      "id": "347528ac-8121-4aa0-8b66-a9f05e8a7a35",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/0d/f7/8b/0df78b14-41f5-797d-e1f8-0d91ba712a3b/3_discover.png/{w}x{h}bb.{f}",
+      "w": 2064,
+      "h": 2752
+     }
+    ],
+    "APP_IPHONE_67": [
+     {
+      "id": "b1388f18-e03b-4463-ab1a-e0e1a0abb4d7",
+      "fileName": "1_heatmap.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/56/9b/f5/569bf529-93f6-2b58-9671-b20961cc644a/1_heatmap.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "c8e84b17-cb7f-4067-a7ab-d31081afc48d",
+      "fileName": "2_measure.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/76/36/eb/7636ebc3-937c-9b99-939d-7e33e90dc355/2_measure.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     },
+     {
+      "id": "e14bdc60-12e2-4210-9eaa-909e442e3325",
+      "fileName": "3_discover.png",
+      "url": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/74/b6/eb/74b6eb8c-50a4-f929-eff6-aa73cca7e42e/3_discover.png/{w}x{h}bb.{f}",
+      "w": 1320,
+      "h": 2868
+     }
+    ]
+   }
+  }
+ }
+}
