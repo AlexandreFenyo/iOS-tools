@@ -6,6 +6,7 @@
 //  Copyright © 2024 Alexandre Fenyo. All rights reserved.
 //
 
+import Combine
 import Foundation
 import Network
 import PhotosUI

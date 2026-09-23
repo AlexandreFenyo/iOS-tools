@@ -6,6 +6,7 @@
 //  Copyright © 2021 Alexandre Fenyo. All rights reserved.
 //
 
+import Combine
 import SwiftUI
 import SpriteKit
 import PhotosUI
