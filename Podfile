@@ -22,3 +22,14 @@ post_install do |installer|
     end
   end
 end
+
+# CocoaPods écrit ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES dans les xcconfig de la cible,
+# ce que Xcode 27 signale (« Remove Embed Swift Standard Libraries Setting ») sans pouvoir le
+# retirer lui-même : inutile depuis iOS 12.2 (runtime Swift intégré à l'OS, minimum 16.6 ici).
+post_integrate do |installer|
+  Dir.glob(File.join(installer.sandbox.root, 'Target Support Files', 'Pods-*', '*.xcconfig')).each do |path|
+    content = File.read(path)
+    cleaned = content.gsub(/^ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES\n/, '')
+    File.write(path, cleaned) if cleaned != content
+  end
+end
