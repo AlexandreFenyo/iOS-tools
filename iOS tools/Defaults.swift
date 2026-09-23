@@ -12,8 +12,14 @@ import SwiftUI
 import SpriteKit
 import iOSToolsMacros
 
-// A mode to make screenshots
+// Mode captures d'écran : réseau fictif (DBMaster.addDefaultNodes) à la place de la vraie
+// découverte, qui est ignorée par addNode(). Actif avec l'argument -UIScreenshotMode
+// (scripts/screenshots.sh), en Debug uniquement.
+#if DEBUG
+let demo_mode = DemoMode.enabled
+#else
 let demo_mode = false
+#endif
 
 // This list must be synchronized with the services declared in Info.plist, in order to have authorization to listen to the corresponding service announcements
 let service_names = [

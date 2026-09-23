@@ -6,7 +6,8 @@
 //  résultats de recherche), et produit un PNG sans canal alpha aux dimensions exactes
 //  exigées par App Store Connect.
 //
-//  Usage :  swift scripts/compose-screenshots.swift [répertoire-screenshots]
+//  Usage :  swift scripts/compose-screenshots.swift [répertoire-screenshots] [locales]
+//           locales : liste séparée par des virgules (ex. en-US,fr-FR) ; vide = toutes
 //
 //  Lit scripts/screenshot-captions.tsv (locale, langue simulateur, index, scénario,
 //  légende avec \n pour les retours à la ligne) et, pour chaque entrée et chaque
@@ -23,6 +24,9 @@ let root = script_url.deletingLastPathComponent().deletingLastPathComponent()
 let base = CommandLine.arguments.count > 1
     ? URL(fileURLWithPath: CommandLine.arguments[1])
     : root.appendingPathComponent("ASO/screenshots")
+let locale_filter: Set<String> = CommandLine.arguments.count > 2
+    ? Set(CommandLine.arguments[2].split(separator: ",").map(String.init))
+    : []
 
 // Dimensions exigées par App Store Connect (portrait)
 let sizes: [String: NSSize] = [
@@ -104,6 +108,7 @@ for line in tsv.split(separator: "\n").dropFirst() {
     let f = line.split(separator: "\t", omittingEmptySubsequences: false).map(String.init)
     guard f.count >= 5 else { continue }
     let (locale, sim_language, index, scenario) = (f[0], f[1], f[2], f[3])
+    if !locale_filter.isEmpty && !locale_filter.contains(locale) { continue }
     let caption = f[4].replacingOccurrences(of: "\\n", with: "\n")
     for (dev, size) in sizes {
         let raw = base.appendingPathComponent("raw/\(sim_language)/\(dev)/\(scenario).png")

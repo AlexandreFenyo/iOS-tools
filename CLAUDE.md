@@ -39,7 +39,7 @@ Deployment target iOS 16.6, Swift 5 language mode, `SUPPORTS_MACCATALYST = YES`,
 
 ### Other scripts
 
-- `scripts/screenshots.sh` — App Store screenshots, fully automated via the app's demo mode (see below). Simulator names inside must be adapted to what is installed.
+- `scripts/screenshots.sh [-l en-US,fr-FR] [-o dir] [-n]` — App Store screenshots, fully automated via the app's demo mode (see below): builds Debug, creates/reuses dedicated simulators on the newest iOS runtime ("ASC iPhone 6.9" = iPhone 17 Pro Max, 1320×2868; "ASC iPad 13" = iPad Pro 13" M5, 2064×2752 — the only two sizes App Store Connect requires, all others are downscaled by Apple), checks every capture's pixel size, then runs the compositor. Captures are written to a temp dir first: the simulator service cannot write to the external volume holding the repo.
 - `scripts/compose-screenshots.swift` + `screenshot-captions.tsv` — adds the indexed caption banner, outputs ASC-sized PNGs without alpha.
 - `generate_oid_dictionary.sh` — regenerates `iOS tools/SpeedTest/SNMP/oid_dictionary.json` from `snmptranslate` (run on a host that has net-snmp installed).
 - `countlines.sh` — expects the sibling SPM packages checked out at `../` (`SwiftAdvancedAtomics*Package`, `iOSToolsMacros`, `WebClientsPackage`).
@@ -110,7 +110,7 @@ Traps documented in `ASO/plan-detaille.md` §7 and still valid:
 - Migration to a `.xcstrings` String Catalog was **deliberately rejected** for this release: dynamic keys (`NSLocalizedString(Self.messages[model.step], …)` in `StepByStepHeatMapView.swift`, `NSLocalizedString(description, …)` in `Model.swift`) are invisible to Xcode's extractor and would be silently marked stale.
 - Don't use `fr.lproj/SpeedTest.strings` as a model for a new storyboard translation — only a few of its 22 entries are translated; start from `en.lproj`.
 
-Demo/screenshot mode: launch arguments `-UIScreenshotMode` and `-UIScreenshotScenario heatmap|measure|discover` (`SpeedTest/GUI/HeatMap/DemoData.swift`) make the app navigate itself with canned probe data, frozen `max_scale` and no network dependency (the `chargenTCP` bootstrap is short-circuited). `Defaults.swift` also has a static `demo_mode` flag.
+Demo/screenshot mode: launch arguments `-UIScreenshotMode` and `-UIScreenshotScenario heatmap|measure|discover` (`SpeedTest/GUI/HeatMap/DemoData.swift`) make the app navigate itself with canned probe data, frozen `max_scale` and no network dependency (the `chargenTCP` bootstrap is short-circuited). `demo_mode` (`Defaults.swift`) follows `-UIScreenshotMode` in Debug: real discovery is ignored by `DBMaster.addNode` and a fictitious home network is shown (`addDefaultNodes`: `home.arpa`, IPv6 `2001:db8::/32`, generic device names — never put real names or prefixes there, the screenshots are public). Always `false` in Release.
 
 ## App Store / ASO
 

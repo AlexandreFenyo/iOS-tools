@@ -1345,68 +1345,45 @@ class DBMaster {
 
     func addDefaultNodes() async {
         if demo_mode {
-            // To get a good looking screenshot: set iPhone Agnès to the right and let Marantz being viewed from side
-            var node = Node()
-
-            node.addMcastFQDN(FQDN("router", "fenyo.net"))
-            node.addV4Address(IPv4Address("192.168.0.254")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:20d:edff:fec0:49c3")!)
-            node.setTypes([.gateway])
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("Mac Mini", "local"))
-            node.addV4Address(IPv4Address("192.168.0.42")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:abed:42ba:dd1:abb0")!)
-            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"Macmini"]))
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("iPhone Agnès", "local"))
-            node.addV4Address(IPv4Address("192.168.0.17")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:9331:91aa:2dd2:53c1")!)
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("Mac Book", "local"))
-            node.addV4Address(IPv4Address("192.168.0.172")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:831:ab8:2232:5ba")!)
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("iPad Alexandre", "local"))
-            node.addV4Address(IPv4Address("192.168.0.20")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:812:9a52:2aab:ffe0")!)
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("Home Pod", "local"))
-            node.addV4Address(IPv4Address("192.168.0.125")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:f3a:3911:a92:7a11")!)
-            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AudioAccessory"]))
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("Apple TV", "local"))
-            node.addV4Address(IPv4Address("192.168.0.45")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:ff2:2c2a:192:22a1")!)
-            node.addService(BonjourServiceInfo("_airplay._tcp.", "7000", ["model":"AppleTV"]))
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("printer", "fenyo.net"))
-            node.addV4Address(IPv4Address("192.168.0.12")!)
-            node.addV6Address(IPv6Address("2a01:e0a:582:ab83:32a:edfe:ab20:24c1")!)
-            node.addService(BonjourServiceInfo("_pdl-datastream._tcp.", "515", [:]))
-            _ = addNode(node, demo_mode: true)
-
-            node = Node()
-            node.addMcastFQDN(FQDN("Marantz", "local"))
-            node.addV4Address(IPv4Address("192.168.0.63")!)
-            node.addService(BonjourServiceInfo("_raop._tcp.", "49152", [:]))
-            _ = addNode(node, demo_mode: true)
+            // Réseau domestique fictif pour les captures App Store (scripts/screenshots.sh).
+            // Aucune donnée réelle : domaine home.arpa (RFC 8375), IPv6 en 2001:db8::/32
+            // (préfixe de documentation, RFC 3849), noms d'appareils génériques.
+            func demoNode(_ name: String, _ domain: String, _ v4: String, _ v6: String?,
+                          types: Set<NodeType> = [], services: [BonjourServiceInfo] = [],
+                          tcp: [UInt16] = [], udp: [UInt16] = []) {
+                let node = Node()
+                node.addMcastFQDN(FQDN(name, domain))
+                node.addV4Address(IPv4Address(v4)!)
+                if let v6 { node.addV6Address(IPv6Address(v6)!) }
+                if !types.isEmpty { node.setTypes(types) }
+                services.forEach { node.addService($0) }
+                tcp.forEach { node.addTcpPort($0) }
+                udp.forEach { node.addUdpPort($0) }
+                _ = addNode(node, demo_mode: true)
+            }
+            demoNode("iPhone", "local", "192.168.1.23", "2001:db8:1a2b:10::23", types: [.localhost],
+                     tcp: [7, 9, 19])
+            demoNode("router", "home.arpa", "192.168.1.1", "2001:db8:1a2b:10::1", types: [.gateway, .snmp],
+                     tcp: [22, 53, 80, 443], udp: [53, 161])
+            demoNode("iPad", "local", "192.168.1.20", "2001:db8:1a2b:10::20", types: [.ios, .chargen, .discard],
+                     tcp: [9, 19])
+            demoNode("MacBook Pro", "local", "192.168.1.42", "2001:db8:1a2b:10::42",
+                     services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "MacBookPro"])],
+                     tcp: [22, 5000, 7000])
+            demoNode("Living Room TV", "local", "192.168.1.45", "2001:db8:1a2b:10::45",
+                     services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "AppleTV"])],
+                     tcp: [7000, 7100])
+            demoNode("HomePod", "local", "192.168.1.125", "2001:db8:1a2b:10::125",
+                     services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "AudioAccessory"])],
+                     tcp: [7000])
+            demoNode("printer", "home.arpa", "192.168.1.12", "2001:db8:1a2b:10::12", types: [.snmp],
+                     services: [BonjourServiceInfo("_ipp._tcp.", "631", [:])], tcp: [80, 515, 631, 9100], udp: [161])
+            demoNode("NAS", "home.arpa", "192.168.1.10", "2001:db8:1a2b:10::10", types: [.snmp],
+                     tcp: [22, 139, 445, 5000], udp: [161])
+            demoNode("Kitchen Speaker", "local", "192.168.1.63", nil,
+                     services: [BonjourServiceInfo("_raop._tcp.", "49152", [:])], tcp: [49152])
         }
-        
+
         var node = Node()
         node.addDnsName(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
         node.addV4Address(IPv4Address("51.75.31.39")!)
