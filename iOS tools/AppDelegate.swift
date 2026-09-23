@@ -121,16 +121,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     }
     
     // Called once at app start
+    // Depuis le SDK iOS 27, le cycle de vie UIScene est obligatoire (sinon arrêt au lancement
+    // dans _UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption) : la fenêtre n'existe
+    // pas encore ici. Seule l'initialisation indépendante de l'interface reste dans cette
+    // méthode ; le câblage de l'interface est fait par setupUI(window:), appelée par SceneDelegate.
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         SNMPManager.manager.initLibSNMP()
-        
-        // Set a minimal window size on Mac Catalyst
-        if ProcessInfo.processInfo.isMacCatalystApp {
-            if let windowScene = window?.windowScene {
-                windowScene.sizeRestrictions?.minimumSize = CGSize(width: 1200, height: 800)
-            }
-        }
-        
+
         // The following line is a trick: this forces the initialization of DBMaster.shared at the start of the app, therefore this calls addNode() for default nodes at the start of the app even if it not necessary. Otherwise, when we debug the app starting on the Network panel, the default nodes would not appear before going to the Discover panel.
         _ = DBMaster.shared
 
@@ -161,9 +158,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         }
         
         InitTCPPort2Service()
-        
+
+        return true
+    }
+
+    // Câblage de l'interface, une fois la fenêtre créée à partir du storyboard par la scène
+    func setupUI(window: UIWindow) {
+        self.window = window
+
+        // Set a minimal window size on Mac Catalyst
+        if ProcessInfo.processInfo.isMacCatalystApp {
+            window.windowScene?.sizeRestrictions?.minimumSize = CGSize(width: 1200, height: 800)
+        }
+
         guard
-            let tabBarController = window?.rootViewController as? MyTabBarController,
+            let tabBarController = window.rootViewController as? MyTabBarController,
             let storyboardSplitViewController = tabBarController.viewControllers?.first as? SplitViewController,
             let leftNavController = storyboardSplitViewController.viewControllers.first as? LeftNavController,
             let masterViewController = leftNavController.topViewController as? MasterViewController,
@@ -219,7 +228,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             splitViewController = columnSplit
             // Also color the tab bar controller's view and window background
             tabBarController.view.backgroundColor = COLORS.right_pannel_bg
-            window?.backgroundColor = COLORS.right_pannel_bg
+            window.backgroundColor = COLORS.right_pannel_bg
         } else {
             splitViewController = storyboardSplitViewController
         }
@@ -320,8 +329,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 tabBarController.present(step_by_step_view_controller, animated: true)
             }
         }
-
-        return true
     }
 
     // Tester ce qui se passe si le bg vient d'un appel tél reçu
@@ -397,6 +404,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // On iPhone (compact), show the primary column (target list) when collapsing
     func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         return .primary
+    }
+}
+
+// Scène unique de l'application (UIApplicationSupportsMultipleScenes = NO) : UIKit crée la
+// fenêtre à partir du storyboard SpeedTest et l'affecte à window avant willConnectTo.
+// Avec le cycle de vie par scène, les applicationWillResignActive/DidBecomeActive de
+// l'AppDelegate ne sont plus appelés par le système : on les relaie ici.
+@MainActor
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+
+    private var app_delegate: AppDelegate? { UIApplication.shared.delegate as? AppDelegate }
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let window else { fatalError(#saveTrace("SceneDelegate: no window created from storyboard")) }
+        app_delegate?.setupUI(window: window)
+    }
+
+    func sceneWillResignActive(_ scene: UIScene) {
+        app_delegate?.applicationWillResignActive(UIApplication.shared)
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        app_delegate?.applicationDidBecomeActive(UIApplication.shared)
+    }
+
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        app_delegate?.applicationDidEnterBackground(UIApplication.shared)
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        app_delegate?.applicationWillEnterForeground(UIApplication.shared)
     }
 }
 

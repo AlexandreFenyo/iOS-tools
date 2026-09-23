@@ -78,28 +78,6 @@ class DetailViewController: UIViewController {
             hostingViewController.view.heightAnchor.constraint(equalTo: view2.heightAnchor)
         ])
 
-        let scene = SKScene(size: view1.bounds.size)
-        // pour débugguer si taille mal ajustée
-        scene.backgroundColor = COLORS.chart_view_bg
-
-        scene_delegate = MySKSceneDelegate()
-        scene.delegate = scene_delegate
-
-        view1.presentScene(scene)
-
-        Task {
-            await chart_node = SKChartNode(ts: ts, full_size: view1.bounds.size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: 120, bottom_height: 50, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: COLORS.chart_bg, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
-            scene.addChild(chart_node!)
-            scene_delegate!.nodes.append(chart_node!)
-            
-            chart_node!.position = CGPoint(x: 0, y: 0)
-            chart_node!.registerGestureRecognizers(view: view1)
-
-            // view1.showsFPS = true
-            // view1.showsQuadCount = true
-
-        }
-
         // Bouton de masquage/affichage du graphique, en haut à droite de celui-ci
         chart_full_height = view1_height.constant
         chart_toggle_button = UIButton(type: .system)
@@ -114,6 +92,48 @@ class DetailViewController: UIViewController {
             chart_toggle_button.widthAnchor.constraint(equalToConstant: 22),
             chart_toggle_button.heightAnchor.constraint(equalToConstant: 22)
         ])
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        createChartIfNeeded()
+    }
+
+    // Le graphique est créé à la première mise en page qui donne au SKView une taille réelle,
+    // et non dans viewDidLoad : sous iOS 27 (cycle de vie UIScene), les bounds n'y sont pas
+    // encore calculés (largeur ou hauteur à 0), ce qui donnait des dimensions de nœuds
+    // négatives et une NSInvalidArgumentException dans SKSpriteNode ("Invalid size specified").
+    private var chart_created = false
+    private static let chart_left_width: CGFloat = 120
+    private static let chart_bottom_height: CGFloat = 50
+
+    private func createChartIfNeeded() {
+        guard !chart_created else { return }
+        let size = view1.bounds.size
+        guard size.width > Self.chart_left_width, size.height > Self.chart_bottom_height else { return }
+        chart_created = true
+
+        let scene = SKScene(size: size)
+        // pour débugguer si taille mal ajustée
+        scene.backgroundColor = COLORS.chart_view_bg
+
+        scene_delegate = MySKSceneDelegate()
+        scene.delegate = scene_delegate
+
+        view1.presentScene(scene)
+
+        Task {
+            await chart_node = SKChartNode(ts: ts, full_size: size, grid_size: CGSize(width: 20, height: 20), subgrid_size: CGSize(width: 5, height: 5), line_width: 1, left_width: Self.chart_left_width, bottom_height: Self.chart_bottom_height, vertical_unit: "Kbit/s", grid_vertical_cost: 10, date: Date(), grid_time_interval: 2, background: COLORS.chart_bg, max_horizontal_font_size: 10, max_vertical_font_size: 20, spline: true, vertical_auto_layout: true, debug: false, follow_view: view1)
+            scene.addChild(chart_node!)
+            scene_delegate!.nodes.append(chart_node!)
+
+            chart_node!.position = CGPoint(x: 0, y: 0)
+            chart_node!.registerGestureRecognizers(view: view1)
+            chart_node!.scene?.view?.isPaused = chart_hidden
+
+            // view1.showsFPS = true
+            // view1.showsQuadCount = true
+        }
     }
 
     @objc private func toggleChart() {
