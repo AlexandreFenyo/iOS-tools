@@ -38,7 +38,6 @@
 		5D2FFB3C2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5D2FFB3A2B543A38006D1F57 /* ToolsDataModel.xcdatamodeld */; };
 		5D3779532CA1B29D00235C5C /* WebClientsPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D3779522CA1B29D00235C5C /* WebClientsPackage */; };
 		5D37D20929734FB700578E59 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5D37D20B29734FB700578E59 /* Localizable.strings */; };
-		5DAA0008000000000000RR08 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DAA0007000000000000RR07 /* InfoPlist.strings */; };
 		5D38681020963915009FE239 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D38680F20963915009FE239 /* config.plist */; };
 		5D3A7E572138921A00060C92 /* Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3A7E562138921A00060C92 /* Defaults.swift */; };
 		5D3BA6572A5C3EAA005D11E0 /* printer2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5D3BA6562A5C3EAA005D11E0 /* printer2.scn */; };
@@ -73,7 +72,6 @@
 		5D65EE58296381780099871C /* app-icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D65EE48296381780099871C /* app-icon-20.png */; };
 		5D6E7FF920EA9E9800375D42 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */; };
 		5D7289F12CC5728F00DD4B8A /* OrientationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7289F02CC5728F00DD4B8A /* OrientationView.swift */; };
-		5DAA0004000000000000RR04 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA0003000000000000RR03 /* DemoData.swift */; };
 		5D78EF6E290FC56400842B76 /* IDWView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78EF6D290FC56400842B76 /* IDWView.swift */; };
 		5D7C30D820EA1A0B00BF0CF8 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */; };
 		5D7C30DA20EA1B1300BF0CF8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */; };
@@ -159,6 +157,8 @@
 		5DA5420520FF97F800A06B22 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */; };
 		5DA794142D80C80C006900F3 /* SwiftUIViewSharedTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */; };
 		5DAA0002000000000000RR02 /* ReviewRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA0001000000000000RR01 /* ReviewRequester.swift */; };
+		5DAA0004000000000000RR04 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA0003000000000000RR03 /* DemoData.swift */; };
+		5DAA0008000000000000RR08 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DAA0007000000000000RR07 /* InfoPlist.strings */; };
 		5DAA000E000000000000RR0E /* WiFiSignalMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA000D000000000000RR0D /* WiFiSignalMonitor.swift */; };
 		5DAA0010000000000000RR10 /* CoreWLANShim.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA000F000000000000RR0F /* CoreWLANShim.m */; };
 		5DADCF212DA2B75E00846627 /* SnmpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DADCF202DA2B75E00846627 /* SnmpViewController.swift */; };
@@ -254,11 +254,6 @@
 		5D2FFB3B2B543A38006D1F57 /* ToolsDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToolsDataModel.xcdatamodel; sourceTree = "<group>"; };
 		5D37D20A29734FB700578E59 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5D37D20C29734FC300578E59 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5DAA0005000000000000RR05 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5DAA0009000000000000RR09 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5DAA000A000000000000RR0A /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5DAA000B000000000000RR0B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5DAA000C000000000000RR0C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5D38680F20963915009FE239 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		5D3A7E562138921A00060C92 /* Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defaults.swift; sourceTree = "<group>"; };
 		5D3B1A272AC75C9300E8F2CE /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SpeedTest.strings; sourceTree = "<group>"; };
@@ -312,7 +307,6 @@
 		5D65EE63296491DF0099871C /* IMG_0071.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = IMG_0071.PNG; sourceTree = "<group>"; };
 		5D6E7FF820EA9E9800375D42 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		5D7289F02CC5728F00DD4B8A /* OrientationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationView.swift; sourceTree = "<group>"; };
-		5DAA0003000000000000RR03 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
 		5D78EF6D290FC56400842B76 /* IDWView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDWView.swift; sourceTree = "<group>"; };
 		5D7C30D720EA1A0B00BF0CF8 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		5D7C30D920EA1B1300BF0CF8 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -349,7 +343,6 @@
 		5D8B17E02B82AACF00CA168F /* Ports2BonjourServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ports2BonjourServices.swift; sourceTree = "<group>"; };
 		5D8B7A102970107800F89A32 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D8B7A122970107900F89A32 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
-		5DAA0006000000000000RR06 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/SpeedTest.strings; sourceTree = "<group>"; };
 		5D909CFE2D8FEE2100C7553F /* AGENTX-MIB.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AGENTX-MIB.txt"; sourceTree = "<group>"; };
 		5D909CFF2D8FEE2100C7553F /* BRIDGE-MIB.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "BRIDGE-MIB.txt"; sourceTree = "<group>"; };
 		5D909D002D8FEE2100C7553F /* DISMAN-EVENT-MIB.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "DISMAN-EVENT-MIB.txt"; sourceTree = "<group>"; };
@@ -420,6 +413,13 @@
 		5DA5420420FF97F800A06B22 /* ServiceBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		5DA794132D80C7FA006900F3 /* SwiftUIViewSharedTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewSharedTools.swift; sourceTree = "<group>"; };
 		5DAA0001000000000000RR01 /* ReviewRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRequester.swift; sourceTree = "<group>"; };
+		5DAA0003000000000000RR03 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
+		5DAA0005000000000000RR05 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DAA0006000000000000RR06 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DAA0009000000000000RR09 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DAA000A000000000000RR0A /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DAA000B000000000000RR0B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DAA000C000000000000RR0C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5DAA000D000000000000RR0D /* WiFiSignalMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiSignalMonitor.swift; sourceTree = "<group>"; };
 		5DAA000F000000000000RR0F /* CoreWLANShim.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreWLANShim.m; sourceTree = "<group>"; };
 		5DADCF202DA2B75E00846627 /* SnmpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnmpViewController.swift; sourceTree = "<group>"; };
@@ -742,10 +742,50 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5DAA0011000000000000RR11 /* ASO */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ASO; sourceTree = "<group>"; };
-		5D26B5112DC8E47B00C3B350 /* SNMP */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SNMP; sourceTree = "<group>"; };
-		5D7289E92CC570D200DD4B8A /* plans */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = plans; sourceTree = "<group>"; };
-		5D8503B22CFE572D00B0D720 /* Speedometer */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Speedometer; sourceTree = "<group>"; };
+		5D26B5112DC8E47B00C3B350 /* SNMP */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = SNMP;
+			sourceTree = "<group>";
+		};
+		5D7289E92CC570D200DD4B8A /* plans */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = plans;
+			sourceTree = "<group>";
+		};
+		5D8503B22CFE572D00B0D720 /* Speedometer */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = Speedometer;
+			sourceTree = "<group>";
+		};
+		5DAA0011000000000000RR11 /* ASO */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = ASO;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1881,13 +1921,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS tools/Pods-iOS tools-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOS tools/Pods-iOS tools-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1974,17 +2010,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		5DAA0007000000000000RR07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5DAA0009000000000000RR09 /* en */,
-				5DAA000A000000000000RR0A /* fr */,
-				5DAA000B000000000000RR0B /* es */,
-				5DAA000C000000000000RR0C /* de */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		5D37D20B29734FB700578E59 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1994,6 +2019,17 @@
 				5DAA0005000000000000RR05 /* de */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		5DAA0007000000000000RR07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5DAA0009000000000000RR09 /* en */,
+				5DAA000A000000000000RR0A /* fr */,
+				5DAA000B000000000000RR0B /* es */,
+				5DAA000C000000000000RR0C /* de */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		5DF2F9E229700F7A00EEDDCE /* SpeedTest.storyboard */ = {
