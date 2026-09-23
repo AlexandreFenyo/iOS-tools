@@ -169,6 +169,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         // Set a minimal window size on Mac Catalyst
         if ProcessInfo.processInfo.isMacCatalystApp {
             window.windowScene?.sizeRestrictions?.minimumSize = CGSize(width: 1200, height: 800)
+            #if DEBUG
+            // Captures App Store (scripts/screenshots.sh) : fenêtre de 1440x900 points écran
+            // (16:10, format ASC), sans dépendre de l'accessibilité pour la redimensionner.
+            // sizeRestrictions ne convient pas : il s'exprime en points de l'app, que Catalyst
+            // met à l'échelle de l'interface iPad (la fenêtre obtenue faisait 999x624).
+            if DemoMode.enabled, let scene = window.windowScene {
+                scene.sizeRestrictions?.minimumSize = .zero
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    scene.requestGeometryUpdate(.Mac(systemFrame: CGRect(x: 40, y: 40, width: 1440, height: 900))) { error in
+                        print("DemoMode: requestGeometryUpdate: \(error)")
+                    }
+                }
+            }
+            #endif
         }
 
         guard

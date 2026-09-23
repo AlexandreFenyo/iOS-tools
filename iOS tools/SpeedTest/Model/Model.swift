@@ -1361,13 +1361,17 @@ class DBMaster {
                 udp.forEach { node.addUdpPort($0) }
                 _ = addNode(node, demo_mode: true)
             }
-            demoNode("iPhone", "local", "192.168.1.23", "2001:db8:1a2b:10::23", types: [.localhost],
+            // L'appareil local et l'autre appareil iOS dépendent de la plate-forme capturée
+            let local_name = ProcessInfo.processInfo.isMacCatalystApp ? "MacBook Pro"
+                : (UIDevice.current.userInterfaceIdiom == .pad ? "iPad" : "iPhone")
+            let other_ios = local_name == "iPad" ? "iPhone" : "iPad"
+            demoNode(local_name, "local", "192.168.1.23", "2001:db8:1a2b:10::23", types: [.localhost],
                      tcp: [7, 9, 19])
             demoNode("router", "home.arpa", "192.168.1.1", "2001:db8:1a2b:10::1", types: [.gateway, .snmp],
                      tcp: [22, 53, 80, 443], udp: [53, 161])
-            demoNode("iPad", "local", "192.168.1.20", "2001:db8:1a2b:10::20", types: [.ios, .chargen, .discard],
+            demoNode(other_ios, "local", "192.168.1.20", "2001:db8:1a2b:10::20", types: [.ios, .chargen, .discard],
                      tcp: [9, 19])
-            demoNode("MacBook Pro", "local", "192.168.1.42", "2001:db8:1a2b:10::42",
+            demoNode(local_name == "MacBook Pro" ? "iMac" : "MacBook Pro", "local", "192.168.1.42", "2001:db8:1a2b:10::42",
                      services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "MacBookPro"])],
                      tcp: [22, 5000, 7000])
             demoNode("Living Room TV", "local", "192.168.1.45", "2001:db8:1a2b:10::45",

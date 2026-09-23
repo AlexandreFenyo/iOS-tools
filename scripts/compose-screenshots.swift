@@ -28,11 +28,21 @@ let locale_filter: Set<String> = CommandLine.arguments.count > 2
     ? Set(CommandLine.arguments[2].split(separator: ",").map(String.init))
     : []
 
-// Dimensions exigées par App Store Connect (portrait)
+// Dimensions exigées par App Store Connect : iPhone 6,9" et iPad 13" en portrait,
+// Mac en 16:10. Pour le Mac, le format dépend de la capture brute : 2880x1800 depuis un
+// écran Retina, 1440x900 depuis un écran non Retina (jamais d'agrandissement flou).
 let sizes: [String: NSSize] = [
     "iphone69": NSSize(width: 1320, height: 2868),
     "ipad13": NSSize(width: 2064, height: 2752),
+    "mac": NSSize(width: 2880, height: 1800),
 ]
+
+func target_size(device: String, raw: URL) -> NSSize {
+    guard device == "mac",
+          let rep = NSImageRep(contentsOf: raw), rep.pixelsWide < 2000
+    else { return sizes[device]! }
+    return NSSize(width: 1440, height: 900)
+}
 
 let band_ratio = 0.16          // hauteur du bandeau texte, en fraction de la hauteur
 let bg = NSColor(srgbRed: 0.043, green: 0.106, blue: 0.169, alpha: 1)   // #0B1B2B
@@ -66,7 +76,8 @@ func compose(raw: URL, caption: String, size: NSSize, out: URL) throws {
     para.alignment = .center
     para.lineHeightMultiple = 1.08
     let attrs: [NSAttributedString.Key: Any] = [
-        .font: NSFont.systemFont(ofSize: size.width * 0.052, weight: .bold),
+        // Portrait : proportionnel à la largeur ; paysage (Mac) : borné par la hauteur du bandeau
+        .font: NSFont.systemFont(ofSize: min(size.width * 0.052, band * 0.32), weight: .bold),
         .foregroundColor: NSColor.white,
         .paragraphStyle: para,
     ]
@@ -110,15 +121,18 @@ for line in tsv.split(separator: "\n").dropFirst() {
     let (locale, sim_language, index, scenario) = (f[0], f[1], f[2], f[3])
     if !locale_filter.isEmpty && !locale_filter.contains(locale) { continue }
     let caption = f[4].replacingOccurrences(of: "\\n", with: "\n")
-    for (dev, size) in sizes {
-        let raw = base.appendingPathComponent("raw/\(sim_language)/\(dev)/\(scenario).png")
+    for dev in sizes.keys.sorted() {
+        // Appareil non capturé lors de cette exécution : ignoré sans bruit
+        let dev_dir = base.appendingPathComponent("raw/\(sim_language)/\(dev)")
+        guard FileManager.default.fileExists(atPath: dev_dir.path) else { continue }
+        let raw = dev_dir.appendingPathComponent("\(scenario).png")
         let out = base.appendingPathComponent("\(locale)/\(dev)/\(index)_\(scenario).png")
         guard FileManager.default.fileExists(atPath: raw.path) else {
             print("manquant : \(raw.path)")
             missing += 1
             continue
         }
-        try compose(raw: raw, caption: caption, size: size, out: out)
+        try compose(raw: raw, caption: caption, size: target_size(device: dev, raw: raw), out: out)
         count += 1
     }
 }

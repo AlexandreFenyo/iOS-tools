@@ -6,15 +6,20 @@
 #   - découverte : réseau domestique fictif (DBMaster.addDefaultNodes), la vraie
 #     découverte réseau est ignorée — aucune donnée réelle dans les captures.
 #
-# Formats produits = les deux seuls qu'App Store Connect exige (tous les autres
-# formats d'appareils sont déduits par réduction automatique) :
+# Formats produits = ceux qu'App Store Connect exige (tous les autres formats
+# d'appareils iPhone/iPad sont déduits par réduction automatique) :
 #   iphone69 : iPhone 6,9"   (iPhone 17 Pro Max)      1320 x 2868 portrait
 #   ipad13   : iPad 13"      (iPad Pro 13-inch M5)    2064 x 2752 portrait
+#   mac      : app Mac Catalyst, fenêtre figée à 1440 x 900 points par le mode démo ;
+#              après composition 2880 x 1800 (écran Retina) ou 1440 x 900 (non Retina),
+#              deux formats 16:10 acceptés. Nécessite l'autorisation « Enregistrement
+#              de l'écran » pour le Terminal (screencapture).
 # Source : developer.apple.com/help/app-store-connect/reference/screenshot-specifications
 #
 # Usage :
-#   scripts/screenshots.sh [-l en-US,fr-FR,es-ES] [-o répertoire] [-n]
+#   scripts/screenshots.sh [-l en-US,fr-FR,es-ES] [-d iphone69,ipad13,mac] [-o répertoire] [-n]
 #     -l  locales App Store à produire (défaut : toutes celles de screenshot-captions.tsv)
+#     -d  appareils à capturer (défaut : iphone69,ipad13,mac)
 #     -o  répertoire de sortie (défaut : ASO/screenshots, non versionné)
 #     -n  captures brutes seulement, sans composition des bandeaux
 #
@@ -34,13 +39,15 @@ SCHEME="iOS tools"
 BUNDLE_ID="net.fenyo.apple.wifi-map-explorer"
 CAPTIONS="$ROOT/scripts/screenshot-captions.tsv"
 OUT="$ROOT/ASO/screenshots"
-DD="${TMPDIR:-/tmp}/screenshots-dd"
+DD="${${TMPDIR:-/tmp}%/}/screenshots-dd"
 LOCALES=""
+DEVICES="iphone69,ipad13,mac"
 COMPOSE=1
 
-while getopts "l:o:n" opt; do
+while getopts "l:d:o:n" opt; do
     case $opt in
         l) LOCALES="$OPTARG" ;;
+        d) DEVICES="$OPTARG" ;;
         o) OUT="$OPTARG" ;;
         n) COMPOSE=0 ;;
         *) sed -n '2,30p' "$0"; exit 1 ;;
@@ -87,6 +94,25 @@ for d in json.load(sys.stdin)["devices"].get(rt, []):
     echo "$udid"
 }
 
+SIM_KEYS=(${(s:,:)DEVICES})
+SIM_KEYS=(${SIM_KEYS:#mac})
+WANT_MAC=0; [[ ",$DEVICES," == *,mac,* ]] && WANT_MAC=1
+
+errors=0
+TMP_SHOT="$(mktemp -d)/shot.png"
+
+check_size() {   # <png> <libellé> <tailles acceptées séparées par des espaces>
+    local size
+    size=$(sips -g pixelWidth -g pixelHeight "$1" | awk '/pixelWidth/{w=$2} /pixelHeight/{h=$2} END{print w "x" h}')
+    if [[ " $3 " == *" $size "* ]]; then
+        echo "  ok  $2 ($size)"
+    else
+        echo "  ERREUR  $2 : $size au lieu de $3"
+        errors=$((errors + 1))
+    fi
+}
+
+if (( ${#SIM_KEYS} > 0 )); then
 echo "=== build simulateur (Debug : le mode démo n'existe pas en Release)"
 # ARCHS=arm64 : la lib net-snmp simulateur n'a pas de tranche x86_64
 xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
@@ -94,10 +120,9 @@ xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO -skipMacroValidation \
            -derivedDataPath "$DD" build | grep -E "BUILD (SUCCEEDED|FAILED)"
 APP="$DD/Build/Products/Debug-iphonesimulator/iOS tools.app"
+fi
 
-errors=0
-TMP_SHOT="$(mktemp -d)/shot.png"
-for key in iphone69 ipad13; do
+for key in $SIM_KEYS; do
     udid=$(sim_udid $key)
     echo "=== ${DEVNAME[$key]} ($udid), attendu ${DEVSIZE[$key]}"
     xcrun simctl boot "$udid" 2>/dev/null || true
@@ -134,18 +159,63 @@ for key in iphone69 ipad13; do
             xcrun simctl io "$udid" screenshot --type png "$TMP_SHOT" 2>&1 | grep -vE "^(Note|Wrote)" || true
             [[ -s "$TMP_SHOT" ]] || { echo "  ERREUR  capture impossible : $lang/$key/$scenario"; exit 1; }
             mv -f "$TMP_SHOT" "$png"
-            size=$(sips -g pixelWidth -g pixelHeight "$png" | awk '/pixelWidth/{w=$2} /pixelHeight/{h=$2} END{print w "x" h}')
-            if [[ "$size" == "${DEVSIZE[$key]}" ]]; then
-                echo "  ok  $lang/$key/$scenario.png ($size)"
-            else
-                echo "  ERREUR  $lang/$key/$scenario.png : $size au lieu de ${DEVSIZE[$key]}"
-                errors=$((errors + 1))
-            fi
+            check_size "$png" "$lang/$key/$scenario.png" "${DEVSIZE[$key]}"
         done
     done
     xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
     xcrun simctl status_bar "$udid" clear
 done
+
+if (( WANT_MAC )); then
+    if [[ "$(ioreg -n Root -d1)" == *'"IOConsoleLocked" = Yes'* ]]; then
+        echo "=== ERREUR : écran verrouillé, macOS interdit les captures de fenêtres Mac"; exit 1
+    fi
+    echo "=== build Mac Catalyst (Debug)"
+    xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
+               -destination "platform=macOS,variant=Mac Catalyst,arch=arm64" -skipMacroValidation \
+               -derivedDataPath "$DD" build | grep -E "BUILD (SUCCEEDED|FAILED)"
+    MAC_APP="$DD/Build/Products/Debug-maccatalyst/iOS tools.app"
+    MAC_BIN="$MAC_APP/Contents/MacOS/iOS tools"
+    WINID_TOOL="$(mktemp -d)/mac-window-id"
+    swiftc -O -o "$WINID_TOOL" "$ROOT/scripts/mac-window-id.swift"
+    echo "=== Mac (fenêtre 1440x900 points)"
+    for lang in $LANGS; do
+        for scenario in $SCENARIOS; do
+            dir="$OUT/raw/$lang/mac"; mkdir -p "$dir"
+            png="$dir/$scenario.png"
+            pkill -f "Debug-maccatalyst/iOS tools.app" 2>/dev/null || true
+            sleep 1
+            # « open » active l'app : fenêtre au premier plan (boutons de fenêtre en couleur),
+            # contrairement au lancement direct de l'exécutable depuis le Terminal
+            open -n "$MAC_APP" --args -UIScreenshotMode -UIScreenshotScenario "$scenario" \
+                 -AppleLanguages "($lang)" -AppleLocale "$lang"
+            sleep 12   # démarrage, calcul de la carte, fondu
+            # Recherche par la fin du chemin : LaunchServices normalise le chemin complet
+            mac_pid=$(pgrep -n -f "Debug-maccatalyst/iOS tools.app/Contents/MacOS/iOS tools") \
+                || { echo "  ERREUR  l'app Mac ne s'est pas lancée"; exit 1; }
+            winid=$("$WINID_TOOL" $mac_pid) || { echo "  ERREUR  fenêtre introuvable : $lang/mac/$scenario"; exit 1; }
+            # Pas de « | grep -q » : sous pipefail, l'arrêt anticipé de grep fait échouer ioreg
+            if [[ "$(ioreg -n Root -d1)" == *'"IOConsoleLocked" = Yes'* ]]; then
+                echo "  ERREUR  écran verrouillé : macOS interdit les captures de fenêtres"; exit 1
+            fi
+            # -o : sans l'ombre de la fenêtre ; -x : sans son
+            screencapture -x -o -l "$winid" "$TMP_SHOT"
+            mv -f "$TMP_SHOT" "$png"
+            # Catalyst applique sa propre échelle au cadre demandé (1296x810 observé pour
+            # 1440x900 demandés) : on exige seulement du 16:10 assez grand, la composition
+            # ramène ensuite au format ASC exact (1440x900 ou 2880x1800)
+            read w h <<< "$(sips -g pixelWidth -g pixelHeight "$png" | awk '/pixelWidth/{w=$2} /pixelHeight/{h=$2} END{print w, h}')"
+            if (( w >= 1200 && w * 10 == h * 16 )); then
+                echo "  ok  $lang/mac/$scenario.png (${w}x$h)"
+            else
+                echo "  ERREUR  $lang/mac/$scenario.png : ${w}x$h (attendu 16:10, largeur >= 1200)"
+                errors=$((errors + 1))
+            fi
+            kill $mac_pid 2>/dev/null || true
+        done
+    done
+    pkill -f "Debug-maccatalyst/iOS tools.app" 2>/dev/null || true
+fi
 
 (( errors == 0 )) || { echo "=== $errors capture(s) aux mauvaises dimensions, composition annulée"; exit 1; }
 echo "=== captures brutes dans $OUT/raw"
@@ -153,5 +223,8 @@ echo "=== captures brutes dans $OUT/raw"
 if (( COMPOSE )); then
     echo "=== composition des bandeaux"
     swift "$ROOT/scripts/compose-screenshots.swift" "$OUT" "$LOCALES"
+    for f in "$OUT"/*/mac/*.png(N); do
+        check_size "$f" "${f#$OUT/}" "2880x1800 1440x900"
+    done
     echo "=== captures prêtes pour App Store Connect dans $OUT/<locale>/<appareil>/"
 fi
