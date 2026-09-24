@@ -48,7 +48,10 @@ enum DemoMode {
 
     /// Journal fictif de l'onglet Traces : cohérent avec le réseau de démo
     /// (DBMaster.addDefaultNodes), sans aucune donnée réelle. Horodaté à partir de 9:38.
-    static let traces: [(seconds: Int, level: LogLevel, text: String)] = [
+    /// Assez long (~135 lignes) pour remplir l'écran d'un iPad 13" ou d'une fenêtre Mac.
+    static let traces: [(seconds: Int, level: LogLevel, text: String)] = traces_head + traces_tail
+
+    private static let traces_head: [(seconds: Int, level: LogLevel, text: String)] = [
         (0, .INFO, "main: application launched"),
         (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _speedtestapp._tcp."),
         (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _airplay._tcp."),
@@ -89,6 +92,109 @@ enum DemoMode {
         (37, .INFO, "flood TCP chargen port: stopped with target 192.168.1.20"),
     ]
 
+    /// Suite du journal, générée : boucles ICMP, débit, balayage de ports, parcours SNMP.
+    /// L'onglet affiche la fin du journal : les blocs les plus variés sont donc en dernier.
+    private static let traces_tail: [(seconds: Int, level: LogLevel, text: String)] = {
+        var arr = [(seconds: Int, level: LogLevel, text: String)]()
+        var t = 40
+
+        t += 3
+        arr.append((t, .INFO, "ICMP loop: starting for target 192.168.1.10"))
+        let rtts = [1.9, 2.3, 1.7, 2.0, 2.8, 1.8, 2.1, 1.6, 2.4, 1.9, 3.2, 2.0, 1.8, 2.2, 1.7, 2.5]
+        for i in 0..<30 {
+            t += 1
+            arr.append((t, .DEBUG, "ICMP loop: received answer from 192.168.1.10 after \(rtts[i % rtts.count]) ms"))
+        }
+        t += 1
+        arr.append((t, .INFO, "ICMP loop: stopped with target 192.168.1.10"))
+
+        t += 2
+        arr.append((t, .INFO, "flood TCP discard port: starting for target 192.168.1.10"))
+        for v in [412.6, 437.9, 441.3, 428.0, 445.7, 439.2, 443.8, 436.5] {
+            t += 3
+            arr.append((t, .INFO, "flood TCP discard port: target 192.168.1.10 - \(v) Mbit/s"))
+        }
+        t += 1
+        arr.append((t, .INFO, "flood TCP discard port: stopped with target 192.168.1.10"))
+
+        t += 2
+        arr.append((t, .INFO, "ICMP loop: starting for target 2001:db8:1a2b:10::1"))
+        for i in 0..<12 {
+            t += 1
+            arr.append((t, .DEBUG, "ICMP loop: received answer from 2001:db8:1a2b:10::1 after \(rtts[(i + 5) % rtts.count]) ms"))
+        }
+        t += 1
+        arr.append((t, .INFO, "ICMP loop: stopped with target 2001:db8:1a2b:10::1"))
+
+        t += 3
+        arr.append((t, .INFO, "browsing TCP ports: target 192.168.1.12"))
+        for port in [80, 443, 515, 631, 9100] {
+            t += 1
+            arr.append((t, .DEBUG, "browsing TCP ports: 192.168.1.12 port \(port) open"))
+        }
+        t += 2
+        arr.append((t, .INFO, "browsing TCP ports: target 192.168.1.1"))
+        for port in [22, 53, 80, 443, 1900, 5000] {
+            t += 1
+            arr.append((t, .DEBUG, "browsing TCP ports: 192.168.1.1 port \(port) open"))
+        }
+        t += 2
+        arr.append((t, .INFO, "browsing TCP ports: finished"))
+
+        t += 3
+        arr.append((t, .INFO, "SNMP: walk started on 192.168.1.1 (v2c, community public)"))
+        let snmp = [
+            "SNMPv2-MIB::sysDescr.0 = STRING: Home router, firmware 4.2.1",
+            "SNMPv2-MIB::sysObjectID.0 = OID: SNMPv2-SMI::enterprises.8072.3.2.10",
+            "DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (86412300) 10 days, 0:02:03.00",
+            "SNMPv2-MIB::sysContact.0 = STRING: admin@home.arpa",
+            "SNMPv2-MIB::sysName.0 = STRING: router.home.arpa",
+            "SNMPv2-MIB::sysLocation.0 = STRING: living room",
+            "IF-MIB::ifNumber.0 = INTEGER: 4",
+            "IF-MIB::ifDescr.1 = STRING: lo",
+            "IF-MIB::ifDescr.2 = STRING: eth0",
+            "IF-MIB::ifDescr.3 = STRING: wlan0",
+            "IF-MIB::ifDescr.4 = STRING: wlan1",
+            "IF-MIB::ifType.2 = INTEGER: ethernetCsmacd(6)",
+            "IF-MIB::ifType.3 = INTEGER: ieee80211(71)",
+            "IF-MIB::ifType.4 = INTEGER: ieee80211(71)",
+            "IF-MIB::ifSpeed.2 = Gauge32: 1000000000",
+            "IF-MIB::ifSpeed.3 = Gauge32: 866700000",
+            "IF-MIB::ifSpeed.4 = Gauge32: 300000000",
+            "IF-MIB::ifOperStatus.2 = INTEGER: up(1)",
+            "IF-MIB::ifOperStatus.3 = INTEGER: up(1)",
+            "IF-MIB::ifOperStatus.4 = INTEGER: up(1)",
+            "IF-MIB::ifInOctets.2 = Counter32: 3867240519",
+            "IF-MIB::ifInOctets.3 = Counter32: 1204877312",
+            "IF-MIB::ifOutOctets.2 = Counter32: 902331876",
+            "IF-MIB::ifOutOctets.3 = Counter32: 2789013457",
+            "IP-MIB::ipAdEntAddr.192.168.1.1 = IpAddress: 192.168.1.1",
+            "IP-MIB::ipAdEntNetMask.192.168.1.1 = IpAddress: 255.255.255.0",
+        ]
+        for (i, line) in snmp.enumerated() {
+            if i % 4 == 0 { t += 1 }
+            arr.append((t, .DEBUG, "SNMP: " + line))
+        }
+        t += 1
+        arr.append((t, .INFO, "SNMP: walk finished on 192.168.1.1, \(snmp.count) values"))
+        return arr
+    }()
+
+    /// Latences fictives de la courbe de l'écran Exploration (iPad, Mac), en µs :
+    /// ~8 ms avec un bruit léger et quelques pointes, reproductibles d'une capture à l'autre.
+    @MainActor final class DemoRTT {
+        private var state: UInt32 = 12345
+        private var n = 0
+
+        func next() -> Float {
+            state = state &* 1103515245 &+ 12345
+            let noise = Float((state >> 16) & 0x7fff) / Float(0x7fff) - 0.5
+            n += 1
+            let spike: Float = n % 37 == 0 ? 4_500 : (n % 23 == 0 ? 2_000 : 0)
+            return 8_000 + 900 * noise + 400 * sin(Float(n) / 9) + spike
+        }
+    }
+
     /// Haut de l'échelle : 240 Mbit/s.
     static let max_scale: Float = 240_000_000
 
@@ -122,52 +228,36 @@ import UIKit
 
 extension MasterViewController {
     /// Scénario « discover » sur iPad et Mac (où la courbe est visible à côté de la liste) :
-    /// reproduit les gestes d'un utilisateur — toucher flood.eowyn.eu.org (ouvre la liste de
-    /// ses IP, qui sélectionne une adresse et lance la boucle de ping, donc la courbe), revenir
-    /// à la liste des cibles, la remonter tout en haut. Le script de capture attend ensuite que
-    /// la courbe occupe toute la largeur du graphique.
+    /// la courbe de latence est remplie d'emblée par des données fictives — les 3 dernières
+    /// minutes, soit plus que la largeur du graphique — puis prolongée d'un point par seconde.
+    /// Aucune dépendance réseau, et la capture n'a pas à attendre que la courbe se déroule.
     func demoPrepareDiscover() {
         guard DemoMode.enabled, DemoMode.scenario == "discover",
               ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad
         else { return }
 
-        demoSelectFlood(attempt: 0)
+        demoFeedChart(attempt: 0)
     }
 
-    private func demoSelectFlood(attempt: Int) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+    private func demoFeedChart(attempt: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self else { return }
-            let flood = Node()
-            flood.addDnsName(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
-            var target: IndexPath?
-            for section in SectionType.allCases {
-                if let row = DBMaster.shared.sections[section]?.nodes.firstIndex(where: { $0.isSimilar(with: flood) }) {
-                    target = IndexPath(row: row, section: section.rawValue)
-                    break
-                }
-            }
-            // La ligne doit exister dans le tableau affiché, pas seulement dans le modèle :
-            // sinon selectRow lève une exception (le tableau se remplit après le modèle)
-            guard let target,
-                  target.section < self.tableView.numberOfSections,
-                  target.row < self.tableView.numberOfRows(inSection: target.section)
-            else {
-                if attempt < 5 { self.demoSelectFlood(attempt: attempt + 1) }
+            guard let ts = self.detail_view_controller?.ts else {
+                if attempt < 10 { self.demoFeedChart(attempt: attempt + 1) }
                 return
             }
-            self.tableView.selectRow(at: target, animated: false, scrollPosition: .none)
-            self.tableView(self.tableView, didSelectRowAt: target)
-            self.performSegue(withIdentifier: "segue to IP list", sender: self)
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                guard let self else { return }
-                self.navigationController?.popViewController(animated: true)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                    guard let self else { return }
-                    if let selected = self.tableView.indexPathForSelectedRow {
-                        self.tableView.deselectRow(at: selected, animated: false)
+            let rtt = DemoMode.DemoRTT()
+            Task { @MainActor in
+                ts.setUnits(units: .RTT)
+                await ts.removeAll()
+                let now = Date()
+                for i in stride(from: 180, to: 0, by: -1) {
+                    await ts.add(TimeSeriesElement(date: now.addingTimeInterval(-TimeInterval(i)), value: rtt.next()))
+                }
+                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    Task { @MainActor in
+                        await ts.add(TimeSeriesElement(date: Date(), value: rtt.next()))
                     }
-                    self.tableView.setContentOffset(CGPoint(x: 0, y: -self.tableView.adjustedContentInset.top), animated: true)
                 }
             }
         }

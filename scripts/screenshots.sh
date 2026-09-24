@@ -162,11 +162,12 @@ for key in $SIM_KEYS; do
                 -UIScreenshotMode -UIScreenshotScenario "$scenario" \
                 -AppleLanguages "($lang)" -AppleLocale "$lang" > /dev/null
             # Délai avant capture : la vue 3D se peuple puis bascule en mode 3D ; l'accueil
-            # garde une marge sur l'animation du modal ; ailleurs, carte (1 Hz) + fondu
-            # Découverte sur iPad : la courbe de ping (lancée par la séquence de démo) doit
-            # occuper toute la largeur du graphique, soit environ 90 s
+            # garde une marge sur l'animation du modal ; ailleurs, carte (1 Hz) + fondu.
+            # Mesure sur iPad : le calcul de la carte (IDW) sur la grande image est plus long
+            # Découverte sur iPad : courbe de latence fictive injectée par le mode démo
             case $key:$scenario in
-                ipad13:discover) sleep 110 ;;
+                ipad13:discover) sleep 15 ;;
+                ipad13:measure|ipad13:heatmap) sleep 20 ;;
                 *:3d) sleep 25 ;;   # plus lent à se peupler sur iPhone
                 *:welcome) sleep 12 ;;
                 *) sleep 9 ;;
@@ -207,9 +208,8 @@ if (( WANT_MAC )); then
             # contrairement au lancement direct de l'exécutable depuis le Terminal
             open -n "$MAC_APP" --args -UIScreenshotMode -UIScreenshotScenario "$scenario" \
                  -AppleLanguages "($lang)" -AppleLocale "$lang"
-            # démarrage, carte, scène 3D ; découverte : courbe sur toute la largeur (graphique
-            # plus large que sur iPad)
-            case $scenario in discover) sleep 115 ;; 3d) sleep 18 ;; *) sleep 12 ;; esac
+            # démarrage, carte, scène 3D ; découverte : courbe de latence fictive
+            case $scenario in discover) sleep 15 ;; 3d) sleep 18 ;; *) sleep 12 ;; esac
             # Recherche par la fin du chemin : LaunchServices normalise le chemin complet
             mac_pid=$(pgrep -n -f "Debug-maccatalyst/iOS tools.app/Contents/MacOS/iOS tools") \
                 || { echo "  ERREUR  l'app Mac ne s'est pas lancée"; exit 1; }
