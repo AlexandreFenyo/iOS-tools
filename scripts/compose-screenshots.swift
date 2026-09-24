@@ -28,12 +28,14 @@ let locale_filter: Set<String> = CommandLine.arguments.count > 2
     ? Set(CommandLine.arguments[2].split(separator: ",").map(String.init))
     : []
 
-// Dimensions exigées par App Store Connect : iPhone 6,9" et iPad 13" en portrait,
-// Mac en 16:10. Pour le Mac, le format dépend de la capture brute : 2880x1800 depuis un
-// écran Retina, 1440x900 depuis un écran non Retina (jamais d'agrandissement flou).
+// Dimensions exigées par App Store Connect : iPhone 6,9" en portrait, iPad 13" en
+// portrait ou en paysage, Mac en 16:10. Pour le Mac, le format dépend de la capture
+// brute : 2880x1800 depuis un écran Retina, 1440x900 depuis un écran non Retina
+// (jamais d'agrandissement flou).
 let sizes: [String: NSSize] = [
     "iphone69": NSSize(width: 1320, height: 2868),
     "ipad13": NSSize(width: 2064, height: 2752),
+    "ipad13-landscape": NSSize(width: 2752, height: 2064),
     "mac": NSSize(width: 2880, height: 1800),
 ]
 
@@ -76,7 +78,7 @@ func compose(raw: URL, caption: String, size: NSSize, out: URL) throws {
     para.alignment = .center
     para.lineHeightMultiple = 1.08
     let attrs: [NSAttributedString.Key: Any] = [
-        // Portrait : proportionnel à la largeur ; paysage (Mac) : borné par la hauteur du bandeau
+        // Portrait : proportionnel à la largeur ; paysage (iPad, Mac) : borné par la hauteur du bandeau
         .font: NSFont.systemFont(ofSize: min(size.width * 0.052, band * 0.32), weight: .bold),
         .foregroundColor: NSColor.white,
         .paragraphStyle: para,

@@ -21,7 +21,8 @@ enum DemoMode {
     ///   "heatmap"  : carte terminée (défaut)
     ///   "measure"  : mesure en cours, carte partielle avec les points de mesure
     ///   "discover" : pas de modal d'accueil, liste des cibles
-    ///   "details"  : détails de la première cible (ampli audio fictif), courbe masquée
+    ///   "details"  : détails de la première cible (ampli audio fictif) ; courbe fictive sur
+    ///                iPad et Mac, courbe masquée sur iPhone (le reste n'y tiendrait pas)
     ///   "3d"       : vue réseau 3D, mode caméra « 3D », zoom de 20 % (40 % sur iPhone), 5° de rotation
     ///   "traces"   : onglet des traces, journal fictif
     static let scenario: String = {
@@ -243,7 +244,8 @@ extension MasterViewController {
     /// Scénario « details » : toucher la première cible de la liste (l'appareil local, qui
     /// porte dans ce scénario les noms et services d'un ampli audio, cf. addDefaultNodes) ouvre
     /// la liste de ses IP, qui sélectionne sa première adresse et affiche ses détails (poussés
-    /// par-dessus la liste sur iPhone) ; puis masquer la courbe pour montrer tout le reste.
+    /// par-dessus la liste sur iPhone). Sur iPhone, la courbe est ensuite masquée pour montrer
+    /// le reste ; sur iPad et Mac, où la place ne manque pas, elle reçoit des latences fictives.
     func demoPrepareDetails() {
         guard DemoMode.enabled, DemoMode.scenario == "details" else { return }
         demoSelectFirstTarget(attempt: 0)
@@ -265,14 +267,20 @@ extension MasterViewController {
             self.tableView(self.tableView, didSelectRowAt: first)
             self.performSegue(withIdentifier: "segue to IP list", sender: self)
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                self?.detail_view_controller?.demoHideChart()
+            if ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad {
+                // Après le vidage de la courbe qui suit la sélection de l'adresse par la liste
+                // des IP (à son apparition, fin de l'animation de transition comprise)
+                self.demoFeedChart(attempt: 0, delay: 3)
+            } else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                    self?.detail_view_controller?.demoHideChart()
+                }
             }
         }
     }
 
-    private func demoFeedChart(attempt: Int) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+    private func demoFeedChart(attempt: Int, delay: TimeInterval = 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self else { return }
             guard let ts = self.detail_view_controller?.ts else {
                 if attempt < 10 { self.demoFeedChart(attempt: attempt + 1) }

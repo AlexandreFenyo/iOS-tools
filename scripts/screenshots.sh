@@ -10,6 +10,11 @@
 # d'appareils iPhone/iPad sont déduits par réduction automatique) :
 #   iphone69 : iPhone 6,9"   (iPhone 17 Pro Max)      1320 x 2868 portrait
 #   ipad13   : iPad 13"      (iPad Pro 13-inch M5)    2064 x 2752 portrait
+#   ipad13-landscape : le même iPad en paysage,       2752 x 2064 — seconde passe sur le
+#              même simulateur, après la série portrait. Ni l'app (iPadOS refuse la rotation
+#              par programme en mode fenêtré : UISceneErrorDomain 101) ni simctl ne savent
+#              tourner l'appareil : c'est un test d'interface XCTest (scripts/SimRotator,
+#              XCUIDevice.orientation) qui le fait pivoter, sans autorisation macOS (~1 min).
 #   mac      : app Mac Catalyst, fenêtre figée à 1440 x 900 points par le mode démo ;
 #              après composition 2880 x 1800 (écran Retina) ou 1440 x 900 (non Retina),
 #              deux formats 16:10 acceptés. Nécessite l'autorisation « Enregistrement
@@ -17,9 +22,9 @@
 # Source : developer.apple.com/help/app-store-connect/reference/screenshot-specifications
 #
 # Usage :
-#   scripts/screenshots.sh [-l en-US,fr-FR,es-ES] [-d iphone69,ipad13,mac] [-o répertoire] [-n]
+#   scripts/screenshots.sh [-l en-US,fr-FR,es-ES] [-d iphone69,ipad13,ipad13-landscape,mac] [-o répertoire] [-n]
 #     -l  locales App Store à produire (défaut : toutes celles de screenshot-captions.tsv)
-#     -d  appareils à capturer (défaut : iphone69,ipad13,mac)
+#     -d  appareils à capturer (défaut : iphone69,ipad13,ipad13-landscape,mac)
 #     -o  répertoire de sortie (défaut : ASO/screenshots, non versionné)
 #     -n  captures brutes seulement, sans composition des bandeaux
 #
@@ -42,7 +47,7 @@ CAPTIONS="$ROOT/scripts/screenshot-captions.tsv"
 OUT="$ROOT/ASO/screenshots"
 DD="${${TMPDIR:-/tmp}%/}/screenshots-dd"
 LOCALES=""
-DEVICES="iphone69,ipad13,mac"
+DEVICES="iphone69,ipad13,ipad13-landscape,mac"
 COMPOSE=1
 
 while getopts "l:d:o:n" opt; do
@@ -60,7 +65,7 @@ typeset -A DEVTYPE DEVNAME DEVSIZE
 DEVTYPE=(iphone69 com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max
          ipad13   com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB)
 DEVNAME=(iphone69 "ASC iPhone 6.9" ipad13 "ASC iPad 13")
-DEVSIZE=(iphone69 "1320x2868" ipad13 "2064x2752")
+DEVSIZE=(iphone69 "1320x2868" ipad13 "2064x2752" ipad13-landscape "2752x2064")
 
 # Langues du simulateur à capturer, déduites du TSV (plusieurs locales App Store
 # peuvent partager une langue, ex. nl-NL et it utilisent l'interface anglaise)
@@ -105,6 +110,31 @@ for d in json.load(sys.stdin)["devices"].get(rt, []):
 
 SIM_KEYS=(${(s:,:)DEVICES})
 SIM_KEYS=(${SIM_KEYS:#mac})
+WANT_LANDSCAPE=0
+if (( ${SIM_KEYS[(Ie)ipad13-landscape]} )); then
+    WANT_LANDSCAPE=1
+    SIM_KEYS=(${SIM_KEYS:#ipad13-landscape})
+    (( ${SIM_KEYS[(Ie)ipad13]} )) || SIM_KEYS+=(ipad13)
+fi
+
+# Orientation courante d'un simulateur iPad, déduite de la taille d'une capture
+sim_orientation() {
+    local shot="${TMP_SHOT%.png}-orient.png" w
+    xcrun simctl io "$1" screenshot --type png "$shot" > /dev/null 2>&1
+    w=$(sips -g pixelWidth "$shot" | awk '/pixelWidth/{print $2}'); rm -f "$shot"
+    [[ $w == 2064 ]] && echo portrait || echo landscape
+}
+
+# Pivote le simulateur par le test d'interface SimRotator : <udid> <portrait|landscape>
+wait_orientation() {
+    [[ $(sim_orientation $1) == $2 ]] && return
+    echo "  rotation en $2 (test d'interface SimRotator)"
+    TEST_RUNNER_SIM_ORIENTATION=$2 xcodebuild test-without-building -xctestrun "$ROTATOR_RUN" \
+        -destination "id=$1" > "${TMP_SHOT%.png}-rotator.log" 2>&1 \
+        || { echo "  ERREUR  rotation impossible, cf. ${TMP_SHOT%.png}-rotator.log"; exit 1; }
+    sleep 3
+    [[ $(sim_orientation $1) == $2 ]] || { echo "  ERREUR  l'iPad n'est pas en $2 après rotation"; exit 1; }
+}
 WANT_MAC=0; [[ ",$DEVICES," == *,mac,* ]] && WANT_MAC=1
 
 errors=0
@@ -129,6 +159,15 @@ xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO -skipMacroValidation \
            -derivedDataPath "$DD" build | grep -E "BUILD (SUCCEEDED|FAILED)"
 APP="$DD/Build/Products/Debug-iphonesimulator/iOS tools.app"
+if [[ ${SIM_KEYS[(Ie)ipad13]} -gt 0 ]]; then
+    # Test d'interface qui pivote le simulateur iPad (série paysage, retour en portrait)
+    echo "=== build SimRotator (rotation du simulateur)"
+    xcodebuild build-for-testing -project "$ROOT/scripts/SimRotator/SimRotator.xcodeproj" \
+               -scheme SimRotator -destination "generic/platform=iOS Simulator" \
+               -derivedDataPath "$DD-rotator" | grep -E "BUILD (SUCCEEDED|FAILED)"
+    ROTATOR_RUN=$(print -l "$DD-rotator"/Build/Products/SimRotator_iphonesimulator*.xctestrun(N) | head -1)
+    [[ -n "$ROTATOR_RUN" ]] || { echo "  ERREUR  SimRotator : .xctestrun introuvable"; exit 1; }
+fi
 fi
 
 for key in $SIM_KEYS; do
@@ -153,9 +192,16 @@ for key in $SIM_KEYS; do
     xcrun simctl uninstall "$udid" "$BUNDLE_ID" 2>/dev/null || true
     xcrun simctl install "$udid" "$APP"
 
+    # Passes : portrait, puis paysage sur le même simulateur iPad si demandé
+    passes=($key)
+    [[ $key == ipad13 ]] && (( WANT_LANDSCAPE )) && passes+=(ipad13-landscape)
+    for out_key in $passes; do
+    if [[ $key == ipad13 ]]; then
+        [[ $out_key == ipad13-landscape ]] && wait_orientation "$udid" landscape || wait_orientation "$udid" portrait
+    fi
     for lang in $LANGS; do
         for scenario in $SCENARIOS; do
-            dir="$OUT/raw/$lang/$key"; mkdir -p "$dir"
+            dir="$OUT/raw/$lang/$out_key"; mkdir -p "$dir"
             png="$dir/$scenario.png"
             xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
             xcrun simctl launch "$udid" "$BUNDLE_ID" \
@@ -176,10 +222,11 @@ for key in $SIM_KEYS; do
             # simulateur qui écrit l'image n'a pas accès aux volumes externes (le dépôt
             # est sur /Volumes/external-mac) et échoue en « Operation not permitted »
             xcrun simctl io "$udid" screenshot --type png "$TMP_SHOT" 2>&1 | grep -vE "^(Note|Wrote)" || true
-            [[ -s "$TMP_SHOT" ]] || { echo "  ERREUR  capture impossible : $lang/$key/$scenario"; exit 1; }
+            [[ -s "$TMP_SHOT" ]] || { echo "  ERREUR  capture impossible : $lang/$out_key/$scenario"; exit 1; }
             mv -f "$TMP_SHOT" "$png"
-            check_size "$png" "$lang/$key/$scenario.png" "${DEVSIZE[$key]}"
+            check_size "$png" "$lang/$out_key/$scenario.png" "${DEVSIZE[$out_key]}"
         done
+    done
     done
     xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
     xcrun simctl status_bar "$udid" clear
