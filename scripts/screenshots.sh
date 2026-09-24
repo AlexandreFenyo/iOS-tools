@@ -163,7 +163,14 @@ for key in $SIM_KEYS; do
                 -AppleLanguages "($lang)" -AppleLocale "$lang" > /dev/null
             # Délai avant capture : la vue 3D se peuple puis bascule en mode 3D ; l'accueil
             # garde une marge sur l'animation du modal ; ailleurs, carte (1 Hz) + fondu
-            case $scenario in 3d) sleep 15 ;; welcome) sleep 12 ;; *) sleep 9 ;; esac
+            # Découverte sur iPad : la courbe de ping (lancée par la séquence de démo) doit
+            # occuper toute la largeur du graphique, soit environ 90 s
+            case $key:$scenario in
+                ipad13:discover) sleep 110 ;;
+                *:3d) sleep 25 ;;   # plus lent à se peupler sur iPhone
+                *:welcome) sleep 12 ;;
+                *) sleep 9 ;;
+            esac
             # Capture dans un répertoire temporaire puis déplacement : le service du
             # simulateur qui écrit l'image n'a pas accès aux volumes externes (le dépôt
             # est sur /Volumes/external-mac) et échoue en « Operation not permitted »
@@ -200,7 +207,9 @@ if (( WANT_MAC )); then
             # contrairement au lancement direct de l'exécutable depuis le Terminal
             open -n "$MAC_APP" --args -UIScreenshotMode -UIScreenshotScenario "$scenario" \
                  -AppleLanguages "($lang)" -AppleLocale "$lang"
-            case $scenario in 3d) sleep 18 ;; *) sleep 12 ;; esac   # démarrage, carte, scène 3D
+            # démarrage, carte, scène 3D ; découverte : courbe sur toute la largeur (graphique
+            # plus large que sur iPad)
+            case $scenario in discover) sleep 115 ;; 3d) sleep 18 ;; *) sleep 12 ;; esac
             # Recherche par la fin du chemin : LaunchServices normalise le chemin complet
             mac_pid=$(pgrep -n -f "Debug-maccatalyst/iOS tools.app/Contents/MacOS/iOS tools") \
                 || { echo "  ERREUR  l'app Mac ne s'est pas lancée"; exit 1; }

@@ -332,6 +332,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         if DemoMode.enabled, let tab = DemoMode.initialTab {
             tabBarController.selectedIndex = tab
         }
+        masterViewController.demoPrepareDiscover()
         #else
         let skip_step_by_step = false
         #endif

@@ -1203,6 +1203,8 @@ class MasterViewController: UITableViewController, DeviceManager {
     }
 
     func popUpHelp(_ title: PopUpMessages, _ message: String, completion: (() -> Void)? = nil) {
+        // Captures App Store : pas de fenêtre d'aide (elle bloquerait la séquence de démo)
+        if demo_mode { completion?(); return }
         let key = "help." + title.rawValue
         let defaults = UserDefaults.standard
         if defaults.bool(forKey: key) == false {

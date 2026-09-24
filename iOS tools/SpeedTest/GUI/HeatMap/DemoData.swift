@@ -116,3 +116,61 @@ enum DemoMode {
     }
 }
 #endif
+
+#if DEBUG
+import UIKit
+
+extension MasterViewController {
+    /// Scénario « discover » sur iPad et Mac (où la courbe est visible à côté de la liste) :
+    /// reproduit les gestes d'un utilisateur — toucher flood.eowyn.eu.org (ouvre la liste de
+    /// ses IP, qui sélectionne une adresse et lance la boucle de ping, donc la courbe), revenir
+    /// à la liste des cibles, la remonter tout en haut. Le script de capture attend ensuite que
+    /// la courbe occupe toute la largeur du graphique.
+    func demoPrepareDiscover() {
+        guard DemoMode.enabled, DemoMode.scenario == "discover",
+              ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad
+        else { return }
+
+        demoSelectFlood(attempt: 0)
+    }
+
+    private func demoSelectFlood(attempt: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            guard let self else { return }
+            let flood = Node()
+            flood.addDnsName(DomainName(HostPart("flood"), DomainPart("eowyn.eu.org")))
+            var target: IndexPath?
+            for section in SectionType.allCases {
+                if let row = DBMaster.shared.sections[section]?.nodes.firstIndex(where: { $0.isSimilar(with: flood) }) {
+                    target = IndexPath(row: row, section: section.rawValue)
+                    break
+                }
+            }
+            // La ligne doit exister dans le tableau affiché, pas seulement dans le modèle :
+            // sinon selectRow lève une exception (le tableau se remplit après le modèle)
+            guard let target,
+                  target.section < self.tableView.numberOfSections,
+                  target.row < self.tableView.numberOfRows(inSection: target.section)
+            else {
+                if attempt < 5 { self.demoSelectFlood(attempt: attempt + 1) }
+                return
+            }
+            self.tableView.selectRow(at: target, animated: false, scrollPosition: .none)
+            self.tableView(self.tableView, didSelectRowAt: target)
+            self.performSegue(withIdentifier: "segue to IP list", sender: self)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                guard let self else { return }
+                self.navigationController?.popViewController(animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    guard let self else { return }
+                    if let selected = self.tableView.indexPathForSelectedRow {
+                        self.tableView.deselectRow(at: selected, animated: false)
+                    }
+                    self.tableView.setContentOffset(CGPoint(x: 0, y: -self.tableView.adjustedContentInset.top), animated: true)
+                }
+            }
+        }
+    }
+}
+#endif
