@@ -71,7 +71,7 @@ class NetworkBrowser {
             return Date().timeIntervalSince(last_use) > 3
         }).first?.key else { return nil }
         reply_ipv4[address]!.0 -= 1
-        if let info = address.toNumericString() { device_manager.setInformation((reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? "" : "re") + NSLocalizedString("trying ", comment: "trying ") + info) }
+        if let info = address.toNumericString() { device_manager.setInformation(String(format: reply_ipv4[address]!.0 == NetworkDefaults.n_icmp_echo_reply - 1 ? NSLocalizedString("trying %@", comment: "trying %@ (address)") : NSLocalizedString("retrying %@", comment: "retrying %@ (address)"), info)) }
         // Remove the address if used 3 times, but note that when the last one is removed, we should wait 3 secs before considering we have been able to wait for a reply from this last address
         if reply_ipv4[address]!.0 == 0 { reply_ipv4.removeValue(forKey: address) }
         else { reply_ipv4[address]!.1 = Date() }
@@ -92,7 +92,7 @@ class NetworkBrowser {
             device_manager.addNode(node, resolve_ipv4_addresses: node.getV4Addresses())
             if let info = from.toNumericString() {
                 self.device_manager.addTrace("network browsing: answer from IPv4 address: \(info)", level: .INFO)
-                device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
+                device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), info))
             }
             // Do not try to reach this address with unicast anymore
             reply_ipv4.removeValue(forKey: from as! IPv4Address)
@@ -103,7 +103,7 @@ class NetworkBrowser {
             device_manager.addNode(node, resolve_ipv6_addresses: node.getV6Addresses())
             if let info = from.toNumericString() {
                 self.device_manager.addTrace("network browsing: answer from IPv6 address: \(info)", level: .INFO)
-                device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info)
+                device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), info))
             }
             
         default:

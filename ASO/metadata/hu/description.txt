@@ -1,0 +1,58 @@
+Találja meg otthoni wifije holttereit kevesebb mint 10 perc alatt, csak az iPhone-jával.
+Járjon végig szobáról szobára, koppintson a méréshez, és nézze, ahogy felépül a
+wifi valós teljesítményének színes térképe – sebesség és késleltetés ott, ahol
+valóban él.
+Nincs előfizetés. Nincsenek hirdetések. Nincs fiók. Egyszeri vásárlás, örökre az Öné.
+
+AMIT VALÓBAN MEGTUDHAT
+- Mely szobák lassúak, és mennyire, olyan számokkal, amelyek alapján cselekedhet
+- Hogy a wifivel vagy az internetkapcsolattal van-e a gond
+- Hová tegyen egy mesh egységet, egy jelerősítőt vagy magát a routert
+- Melyik eszköz emészti fel a sávszélességet a hálózatán
+- Mit sugároz magáról a hálózat minden IoT-eszköze
+
+HOGYAN MŰKÖDIK
+1. Válasszon egy kész alaprajzot, vagy használjon fotót a saját alaprajzáról
+2. Menjen egy pontra, és koppintson egyszer – az alkalmazás ott méri az átviteli sebességet és a késleltetést
+3. Ismételje meg minden szobában. A hőtérkép menet közben épül fel
+4. Mentse a kész térképet a fotói közé, hogy összevethesse, miután áthelyezte a routert
+
+A lépésenkénti mód elvégzi Ön helyett a beállítást: nem kell célt választani,
+protokollt konfigurálni vagy dokumentációt olvasni. A haladó felület továbbra is
+rendelkezésre áll, ha teljes irányítást szeretne.
+
+NINCS EXTRA ESZKÖZ. NINCS ELŐFIZETÉS.
+A professzionális wifi-felmérésekhez Ekahau Sidekick vagy WLAN Pi kell. Ehhez az
+alkalmazáshoz csak az iPhone-ja. És szinte az összes többi App Store-os wifi-elemzővel
+ellentétben nincs heti csomag, nincs éves csomag és nincsenek hirdetések – egyszer
+veszi meg.
+
+EGYBEN TELJES HÁLÓZATI ESZKÖZTÁR
+- A LAN összes eszközének felderítése gyártóval, IP-címmel és nyitott portokkal
+- Az összes mDNS/Bonjour szolgáltatás felderítése: HomePod, Apple TV, nyomtatók, IoT
+- Ping és késleltetés helyi eszközökhöz és bármely internetes géphez
+- Átviteli sebesség mérése egy másik, ezt az alkalmazást futtató eszközzel, bármely
+  TCP CHARGEN/DISCARD szerverrel vagy az internettel szemben
+- TCP CHARGEN vagy DISCARD szolgáltatás futtatása a saját eszközén
+- A helyi hálózat topológiájának animált 3D-s nézete
+
+TELJES SNMP-KLIENS BENNE
+Kérdezzen le bármely SNMP-ügynököt routereken, switcheken, hozzáférési pontokon és
+nyomtatókon. SNMP v1, v2c és v3, noAuthNoPriv, authNoPriv és authPriv módban, MD5 és
+SHA1 hitelesítéssel, DES és AES titkosítással. 64 szabványos MIB van mellékelve, így az
+objektumazonosítók offline olvasható nevekre fordulnak – szerver és előfizetés nélkül,
+az ügynök címén és a hitelesítő adatokon kívül nincs mit beállítani.
+
+OTTHONRA ÉS SZAKEMBEREKNEK
+Egy hálózatmérnök fejlesztette. Elég egyszerű ahhoz, hogy egy vasárnap délután
+átvizsgálja vele a lakását, és elég pontos ahhoz, hogy távközlési szakemberek a
+munkájuk során használják.
+
+VÁSÁRLÁS ELŐTT – AMIT AZ ALKALMAZÁS NEM TUD
+Az Apple egyetlen külső iOS-alkalmazásnak sem engedi, hogy leolvassa a wifi
+jelerősségét vagy a szomszédos hálózatokat keresse, és erre egyetlen App Store-os
+alkalmazás sem képes – ezért van szükségük a professzionális eszközöknek külső
+hardverre. Ez az alkalmazás azt térképezi fel, amit azon a ponton mérni tud, ahol Ön
+áll: a valós átviteli sebességet és késleltetést. Pontosan erre van szüksége egy
+otthoni hőtérképnek. Azt a hálózatot méri, amelyhez csatlakozik, egyszerre egy
+hőtérképet.

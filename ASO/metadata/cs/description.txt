@@ -1,0 +1,38 @@
+Najděte hluchá místa své domácí Wi-Fi za méně než 10 minut, jen s pomocí iPhonu.
+Procházejte byt místnost po místnosti, klepnutím měřte a sledujte, jak se sama skládá barevná mapa skutečného výkonu vaší Wi-Fi — rychlost a odezva přesně tam, kde opravdu žijete.
+Žádné předplatné. Žádné reklamy. Žádný účet. Jeden nákup, navždy váš.
+
+CO SE SKUTEČNĚ DOZVÍTE
+- Které místnosti jsou pomalé a jak moc — v číslech, podle kterých můžete jednat
+- Zda je problém ve Wi-Fi, nebo v připojení k internetu
+- Kam umístit mesh jednotku, extender nebo samotný router
+- Které zařízení ve vaší síti vám ujídá šířku pásma
+- Co o sobě vysílá každé IoT zařízení ve vaší síti
+
+JAK TO FUNGUJE
+1. Vyberte jeden z připravených půdorysů, nebo použijte fotku vlastního plánu
+2. Postavte se na místo a jednou klepněte — aplikace tam změří propustnost a odezvu
+3. Opakujte v každé místnosti. Tepelná mapa vzniká průběžně
+4. Uložte hotovou mapu do Fotek a porovnejte ji po přesunutí routeru
+
+Režim krok za krokem vše nastaví za vás: žádný cíl k výběru, žádný protokol ke konfiguraci, žádná dokumentace ke čtení. Pokročilé rozhraní je stále k dispozici, když chcete mít plnou kontrolu.
+
+ŽÁDNÝ DALŠÍ HARDWARE. ŽÁDNÉ PŘEDPLATNÉ.
+Profesionální měření Wi-Fi vyžaduje Ekahau Sidekick nebo WLAN Pi. Tato aplikace potřebuje jen váš iPhone. A na rozdíl od téměř všech ostatních analyzátorů Wi-Fi v App Storu tu není týdenní ani roční tarif a žádné reklamy — koupíte ji jednou.
+
+TAKÉ KOMPLETNÍ SADA SÍŤOVÝCH NÁSTROJŮ
+- Skenování všech zařízení v síti LAN: výrobce, IP adresa a otevřené porty
+- Vyhledání všech služeb mDNS/Bonjour: HomePod, Apple TV, tiskárny, IoT
+- Ping a odezva k místním zařízením i k libovolnému hostiteli na internetu
+- Měření propustnosti proti jinému zařízení s touto aplikací, libovolnému serveru TCP CHARGEN/DISCARD nebo internetu
+- Spuštění služby TCP CHARGEN nebo DISCARD na vlastním zařízení
+- Animované 3D zobrazení topologie místní sítě
+
+PLNOHODNOTNÝ SNMP KLIENT V CENĚ
+Dotazujte se libovolného SNMP agenta na routerech, přepínačích, přístupových bodech a tiskárnách. SNMP v1, v2c a v3 s úrovněmi noAuthNoPriv, authNoPriv a authPriv, ověřováním MD5 a SHA1 a šifrováním DES a AES. Součástí je 64 standardních MIB, takže identifikátory objektů se překládají na čitelné názvy offline — bez serveru, bez předplatného, bez nastavování čehokoli kromě adresy agenta a přihlašovacích údajů.
+
+PRO DOMÁCNOSTI I PRO PROFESIONÁLY
+Vytvořil ji síťový inženýr. Dost jednoduchá na to, abyste v neděli odpoledne zdiagnostikovali svůj byt, a dost přesná na to, aby ji při práci používali profesionálové z telekomunikací.
+
+NEŽ SI JI KOUPÍTE — CO TATO APLIKACE NEUMÍ
+Apple nedovoluje žádné aplikaci třetí strany pro iOS číst sílu signálu Wi-Fi ani skenovat okolní sítě a žádná aplikace z App Storu to neumí — proto profesionální nástroje potřebují externí hardware. Tato aplikace mapuje to, co dokáže změřit v místě, kde právě stojíte: skutečnou propustnost a odezvu. Přesně to domácí tepelná mapa potřebuje. Měří síť, ke které jste připojeni, vždy jednu tepelnou mapu.

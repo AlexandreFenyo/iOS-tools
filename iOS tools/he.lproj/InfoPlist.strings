@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map סורק את הרשת המקומית שלכם כדי לגלות את המכשירים שבה, למדוד את מהירות ה-Wi-Fi ואת ההשהיה, ולבנות את מפת החום שלכם. שום מידע לא יוצא מהמכשיר שלכם.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map שומר את מפת החום שאתם בונים בספריית התמונות שלכם, כדי שתוכלו לשמור אותה או לשתף אותה.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map זקוק לגישה לתמונות שלכם כדי שתוכלו לבחור את תוכנית הקומה או את תמונת החדר שעליה תצויר מפת החום של ה-Wi-Fi.";

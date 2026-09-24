@@ -1,0 +1,1 @@
+carte,chaleur,couverture,réseau,scanner,routeur,répéteur,mesh,portée,vitesse,snmp,modem,internet

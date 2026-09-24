@@ -1,6 +1,4 @@
-Modo paso a paso completamente rediseñado: elige un plano, camina, toca. El mapa de calor ya está.
+WiFi Heat Map ya habla tu idioma: la app está disponible en 44 idiomas, entre ellos árabe, chino, hindi, japonés, coreano, portugués, ruso y muchos más.
 
-- Nueva escala de color, legible de un vistazo y apta para daltónicos
-- Pantalla de medición más clara, con la configuración hecha por ti
-- Corregido: la pantalla del mapa podía seguir pidiendo iniciar una medición ya detenida
-- Renderizado del mapa más rápido
+- Todas las pantallas, mensajes de ayuda y mensajes de error están traducidos
+- Mensajes de error más claros cuando una medición no puede llegar a su destino

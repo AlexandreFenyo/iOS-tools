@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "A WiFi Heat Map átvizsgálja a helyi hálózatot, hogy felderítse a rajta lévő eszközöket, megmérje a Wi-Fi átviteli sebességét és késleltetését, és elkészítse a hőtérképet. Semmi sem hagyja el az eszközét.";
+"NSPhotoLibraryAddUsageDescription" = "A WiFi Heat Map a fotókönyvtárába menti az elkészített hőtérképet, hogy megtarthassa vagy megoszthassa.";
+"NSPhotoLibraryUsageDescription" = "A WiFi Heat Map hozzáférést kér a fotóihoz, hogy kiválaszthassa az alaprajzot vagy a helyiségről készült fotót, amelyre a Wi-Fi-hőtérkép rajzolódik.";

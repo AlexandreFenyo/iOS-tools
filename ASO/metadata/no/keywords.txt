@@ -1,0 +1,1 @@
+varmekart,dekning,nettverk,ruter,router,forsterker,mesh,skanner,test,snmp,dbm,wlan,trådløst,mib

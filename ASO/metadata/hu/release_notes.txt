@@ -1,0 +1,4 @@
+A WiFi Heat Map mostantól az Ön nyelvén beszél: az alkalmazás 44 nyelven érhető el, köztük arabul, kínaiul, hindiül, japánul, koreaiul, portugálul, oroszul és még sok más nyelven.
+
+- Minden képernyő, súgóüzenet és hibaüzenet le van fordítva
+- Érthetőbb hibaüzenetek, ha egy mérés nem éri el a célját

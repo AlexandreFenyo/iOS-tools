@@ -1,6 +1,4 @@
-Mode pas-à-pas entièrement repensé : choisissez un plan, marchez, appuyez. La carte de couverture est faite.
+WiFi Heat Map parle désormais votre langue : l'app est disponible en 44 langues, dont l'arabe, le chinois, l'hindi, le japonais, le coréen, le portugais, le russe et bien d'autres.
 
-- Nouvelle échelle de couleurs, lisible d'un coup d'œil et adaptée au daltonisme
-- Écran de mesure plus clair, la configuration est faite pour vous
-- Correction : l'écran de carte pouvait redemander indéfiniment de lancer une mesure déjà arrêtée
-- Rendu de la carte plus rapide
+- Tous les écrans, messages d'aide et messages d'erreur sont traduits
+- Messages d'erreur plus clairs quand une mesure ne parvient pas à atteindre sa cible

@@ -1,0 +1,4 @@
+WiFi Heat Map teraz hovorí vaším jazykom: aplikácia je dostupná v 44 jazykoch, okrem iného v arabčine, čínštine, hindčine, japončine, kórejčine, portugalčine, ruštine a mnohých ďalších.
+
+- Všetky obrazovky, texty pomocníka a chybové hlásenia sú preložené
+- Zrozumiteľnejšie chybové hlásenia, keď meranie nemôže dosiahnuť svoj cieľ

@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map skanuje sieć lokalną, aby wykryć podłączone do niej urządzenia, zmierzyć przepustowość i opóźnienie Wi-Fi oraz zbudować mapę cieplną. Żadne dane nigdy nie opuszczają Twojego urządzenia.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map zapisuje utworzoną mapę cieplną w bibliotece zdjęć, aby można było ją zachować lub udostępnić.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map potrzebuje dostępu do zdjęć, aby można było wybrać plan pomieszczenia lub zdjęcie pokoju, na którym zostanie narysowana mapa cieplna Wi-Fi.";

@@ -1,0 +1,1 @@
+toplotna,karta,pokritost,omrežje,usmerjevalnik,router,ojačevalnik,mesh,skener,test,snmp,dbm,wlan

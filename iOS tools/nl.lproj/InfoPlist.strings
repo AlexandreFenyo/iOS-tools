@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map scant je lokale netwerk om de apparaten erop te ontdekken, de wifidoorvoer en -latentie te meten en je heatmap te maken. Er verlaat nooit iets je apparaat.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map bewaart de heatmap die je maakt in je fotobibliotheek, zodat je hem kunt bewaren of delen.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map heeft toegang tot je foto's nodig zodat je de plattegrond of de foto van de ruimte kunt kiezen waarop je wifi-heatmap wordt getekend.";

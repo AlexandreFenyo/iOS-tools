@@ -1,0 +1,57 @@
+Găsește zonele moarte ale Wi-Fi-ului de acasă în mai puțin de 10 minute, doar cu iPhone-ul.
+Mergi din cameră în cameră, atinge pentru a măsura și privește cum se construiește
+o hartă colorată a performanței reale a Wi-Fi-ului tău – viteză și latență, acolo
+unde locuiești cu adevărat.
+Fără abonament. Fără reclame. Fără cont. O singură achiziție, a ta pentru totdeauna.
+
+CE POȚI AFLA CU ADEVĂRAT
+- Care camere sunt lente și cât de lente, în cifre pe baza cărora poți acționa
+- Dacă problema este Wi-Fi-ul sau conexiunea la internet
+- Unde să pui un nod mesh, un extender sau chiar routerul
+- Care dintre dispozitivele din rețea îți consumă lățimea de bandă
+- Ce transmite despre sine fiecare dispozitiv IoT din rețea
+
+CUM FUNCȚIONEAZĂ
+1. Alege unul dintre planurile gata făcute sau folosește o fotografie a planului tău
+2. Mergi într-un punct și atinge o dată – aplicația măsoară acolo debitul și latența
+3. Repetă pentru fiecare cameră. Harta termică se construiește pe măsură ce avansezi
+4. Salvează harta finalizată în Poze, ca să compari după ce muți routerul
+
+Modul pas cu pas face configurarea în locul tău: nicio țintă de ales, niciun
+protocol de configurat, nicio documentație de citit. Interfața avansată rămâne
+disponibilă când vrei control deplin.
+
+FĂRĂ ECHIPAMENTE ÎN PLUS. FĂRĂ ABONAMENT.
+Măsurătorile Wi-Fi profesionale necesită un Ekahau Sidekick sau un WLAN Pi. Această
+aplicație are nevoie doar de iPhone-ul tău. Și, spre deosebire de aproape toate
+celelalte analizoare Wi-Fi din App Store, nu există plan săptămânal, nici plan anual
+și nici reclame – o cumperi o singură dată.
+
+ȘI O TRUSĂ COMPLETĂ DE INSTRUMENTE DE REȚEA
+- Scanează toate dispozitivele din LAN, cu producătorul, adresa IP și porturile deschise
+- Descoperă toate serviciile mDNS/Bonjour: HomePod, Apple TV, imprimante, IoT
+- Ping și latență către dispozitivele locale și către orice gazdă de pe internet
+- Măsurarea debitului față de un alt dispozitiv care rulează această aplicație, față
+  de orice server TCP CHARGEN/DISCARD sau față de internet
+- Rulează un serviciu TCP CHARGEN sau DISCARD pe propriul dispozitiv
+- Vizualizare 3D animată a topologiei rețelei locale
+
+CLIENT SNMP COMPLET INCLUS
+Interoghează orice agent SNMP de pe routere, switch-uri, puncte de acces și imprimante.
+SNMP v1, v2c și v3, cu noAuthNoPriv, authNoPriv și authPriv, autentificare MD5 și SHA1,
+criptare DES și AES. Sunt incluse 64 de MIB-uri standard, astfel încât identificatorii
+de obiecte sunt traduși offline în nume lizibile – fără server, fără abonament, nimic
+de configurat în afară de adresa agentului și de datele de autentificare.
+
+PENTRU ACASĂ ȘI PENTRU PROFESIONIȘTI
+Creată de un inginer de rețele. Suficient de simplă ca să-ți diagnostichezi
+apartamentul într-o duminică după-amiază, suficient de precisă încât profesioniștii
+din telecomunicații o folosesc la lucru.
+
+ÎNAINTE SĂ CUMPERI – CE NU FACE ACEASTĂ APLICAȚIE
+Apple nu permite niciunei aplicații iOS terțe să citească puterea semnalului Wi-Fi
+sau să scaneze rețelele învecinate, iar nicio aplicație din App Store nu poate face
+asta – de aceea instrumentele profesionale au nevoie de echipamente externe. Această
+aplicație cartografiază ceea ce poate măsura în locul în care te afli: debitul și
+latența reale. Exact de asta are nevoie o hartă termică pentru acasă. Măsoară rețeaua
+la care ești conectat, câte o hartă termică pe rând.

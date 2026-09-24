@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "يفحص WiFi Heat Map شبكتك المحلية لاكتشاف الأجهزة المتصلة بها وقياس سرعة Wi-Fi وزمن الاستجابة وإنشاء خريطتك الحرارية. لا شيء يغادر جهازك أبدًا.";
+"NSPhotoLibraryAddUsageDescription" = "يحفظ WiFi Heat Map الخريطة الحرارية التي تنشئها في مكتبة الصور، لتتمكن من الاحتفاظ بها أو مشاركتها.";
+"NSPhotoLibraryUsageDescription" = "يحتاج WiFi Heat Map إلى الوصول إلى صورك لتتمكن من اختيار مخطط الطابق أو صورة الغرفة التي ستُرسم عليها خريطة Wi-Fi الحرارية.";

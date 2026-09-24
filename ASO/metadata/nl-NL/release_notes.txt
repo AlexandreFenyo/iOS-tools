@@ -1,6 +1,4 @@
-Stapsgewijze modus volledig herzien: kies een plattegrond, loop, tik. Klaar is uw warmtekaart.
+WiFi Heat Map spreekt nu uw taal: de app is beschikbaar in 44 talen, waaronder Arabisch, Chinees, Hindi, Japans, Koreaans, Portugees, Russisch en nog veel meer.
 
-- Nieuwe kleurenschaal, in één oogopslag leesbaar en kleurenblindvriendelijk
-- Duidelijker meetscherm, de instellingen worden voor u gedaan
-- Opgelost: het kaartscherm kon blijven vragen om een al gestopte meting te starten
-- Snellere weergave van de kaart
+- Alle schermen, helpteksten en foutmeldingen zijn vertaald
+- Duidelijkere foutmeldingen wanneer een meting haar doel niet kan bereiken

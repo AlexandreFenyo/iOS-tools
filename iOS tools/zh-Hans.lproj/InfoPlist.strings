@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map 会扫描你的本地网络，以发现其中的设备、测量 Wi-Fi 吞吐量和延迟，并生成你的热力图。任何数据都不会离开你的设备。";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map 会将你生成的热力图保存到照片图库，方便你保留或分享。";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map 需要访问你的照片，以便你选择用于绘制 Wi-Fi 热力图的平面图或房间照片。";

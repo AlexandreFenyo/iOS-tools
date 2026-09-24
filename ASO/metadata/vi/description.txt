@@ -1,0 +1,38 @@
+Tìm ra các vùng chết Wi-Fi trong nhà bạn chỉ trong chưa đầy 10 phút, chỉ với chiếc iPhone.
+Đi từ phòng này sang phòng khác, chạm để đo và xem bản đồ màu thể hiện hiệu suất Wi-Fi thực tế tự hình thành — tốc độ và độ trễ, ngay tại nơi bạn thực sự sinh hoạt.
+Không thuê bao. Không quảng cáo. Không cần tài khoản. Mua một lần, dùng mãi mãi.
+
+NHỮNG GÌ BẠN THỰC SỰ BIẾT ĐƯỢC
+- Phòng nào chậm và chậm đến mức nào, bằng những con số bạn có thể dựa vào để xử lý
+- Vấn đề nằm ở Wi-Fi hay ở đường truyền internet
+- Nên đặt nút mesh, bộ kích sóng hay chính router ở đâu
+- Thiết bị nào trong mạng đang ngốn băng thông của bạn
+- Mỗi thiết bị IoT trong mạng đang phát đi những thông tin gì về chính nó
+
+CÁCH HOẠT ĐỘNG
+1. Chọn một sơ đồ mặt bằng có sẵn, hoặc dùng ảnh chụp sơ đồ của riêng bạn
+2. Đi đến một vị trí, chạm một lần — ứng dụng đo thông lượng và độ trễ tại đó
+3. Lặp lại cho từng phòng. Bản đồ nhiệt hình thành dần khi bạn di chuyển
+4. Lưu bản đồ hoàn chỉnh vào Ảnh để so sánh sau khi dời router
+
+Chế độ từng bước tự thiết lập giúp bạn: không phải chọn mục tiêu, không phải cấu hình giao thức, không phải đọc tài liệu. Giao diện nâng cao vẫn luôn sẵn sàng khi bạn muốn toàn quyền kiểm soát.
+
+KHÔNG CẦN THÊM PHẦN CỨNG. KHÔNG THUÊ BAO.
+Khảo sát Wi-Fi chuyên nghiệp cần Ekahau Sidekick hoặc WLAN Pi. Ứng dụng này chỉ cần iPhone của bạn. Và khác với hầu hết các ứng dụng phân tích Wi-Fi trên App Store, ở đây không có gói tuần, không có gói năm, không có quảng cáo — bạn chỉ mua một lần.
+
+ĐỒNG THỜI LÀ BỘ CÔNG CỤ MẠNG ĐẦY ĐỦ
+- Quét mọi thiết bị trong mạng LAN, kèm nhà sản xuất, địa chỉ IP và cổng đang mở
+- Khám phá mọi dịch vụ mDNS/Bonjour: HomePod, Apple TV, máy in, IoT
+- Ping và đo độ trễ tới thiết bị nội bộ và tới bất kỳ máy chủ internet nào
+- Đo thông lượng với một thiết bị khác đang chạy ứng dụng này, bất kỳ máy chủ TCP CHARGEN/DISCARD nào, hoặc với internet
+- Chạy dịch vụ TCP CHARGEN hoặc DISCARD ngay trên thiết bị của bạn
+- Chế độ xem 3D động về cấu trúc mạng nội bộ
+
+TÍCH HỢP TRÌNH KHÁCH SNMP ĐẦY ĐỦ
+Truy vấn bất kỳ SNMP agent nào trên router, switch, điểm truy cập và máy in. Hỗ trợ SNMP v1, v2c và v3, với noAuthNoPriv, authNoPriv và authPriv, xác thực MD5 và SHA1, mã hóa DES và AES. Tích hợp sẵn 64 MIB chuẩn, nên các định danh đối tượng được chuyển thành tên dễ đọc ngay cả khi ngoại tuyến — không cần máy chủ, không thuê bao, không phải cấu hình gì ngoài địa chỉ agent và thông tin xác thực.
+
+CHO GIA ĐÌNH VÀ CHO DÂN CHUYÊN NGHIỆP
+Được phát triển bởi một kỹ sư mạng. Đủ đơn giản để chẩn đoán căn hộ của bạn vào một chiều Chủ nhật, đủ chính xác để các chuyên gia viễn thông dùng trong công việc.
+
+TRƯỚC KHI MUA — NHỮNG GÌ ỨNG DỤNG NÀY KHÔNG LÀM
+Apple không cho phép bất kỳ ứng dụng iOS bên thứ ba nào đọc cường độ tín hiệu Wi-Fi hay quét các mạng lân cận, và không ứng dụng nào trên App Store làm được điều đó — đó là lý do các công cụ chuyên nghiệp cần phần cứng bên ngoài. Ứng dụng này lập bản đồ những gì nó đo được tại đúng vị trí bạn đang đứng: thông lượng và độ trễ thực tế. Đó chính là những gì một bản đồ nhiệt trong nhà cần. Ứng dụng đo mạng mà bạn đang kết nối, mỗi lần một bản đồ nhiệt.

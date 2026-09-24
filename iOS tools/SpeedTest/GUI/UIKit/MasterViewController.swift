@@ -426,10 +426,10 @@ class MasterViewController: UITableViewController, DeviceManager {
 
     @IBAction func help_pressed(_ sender: Any) {
         let ctHelp = CTHelp()
-        ctHelp.new(CTHelpItem(title: "Actions 1/2",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Actions 1/2", comment: "Actions 1/2"),
                                  helpText: "",
                                  imageName: "docs-actions"))
-        ctHelp.new(CTHelpItem(title: "Actions 2/2",
+        ctHelp.new(CTHelpItem(title: NSLocalizedString("Actions 2/2", comment: "Actions 2/2"),
                                  helpText: "",
                                  imageName: "docs-actions-2"))
         ctHelp.new(CTHelpItem(title: NSLocalizedString("Scan local network", comment: "Scan local network"),
@@ -1057,10 +1057,10 @@ class MasterViewController: UITableViewController, DeviceManager {
                         if errno != 0 {
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
-                                var message = str
+                                var message = NSLocalizedString(str, comment: str)
                                 let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
                                 if address.toNumericString() != nil && is_public_default_service {
-                                    message = "connection \(str) - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
+                                    message += " - " + NSLocalizedString("public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service", comment: "public DNS services")
                                 }
                                 await self.popUp("TCP discard", message, "continue")
                             } else {
@@ -1073,7 +1073,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                                         if errno == nil || errno == EBADF {
                                             await self.popUp("TCP discard", "Connection closed", "continue")
                                         } else {
-                                            await self.popUp("TCP discard", "error (errno = \(String(describing: errno)))", "continue")
+                                            await self.popUp("TCP discard", String(format: NSLocalizedString("error (errno = %d)", comment: "error (errno = %d)"), errno ?? 0), "continue")
                                         }
                                     }
                                 }
@@ -1092,7 +1092,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                     var message = "timeout occurred"
                     let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
                     if address.toNumericString() != nil && is_public_default_service {
-                        message = "timeout occurred - public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service"
+                        message = NSLocalizedString("timeout occurred", comment: "timeout occurred") + " - " + NSLocalizedString("public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service", comment: "public DNS services")
                     }
                     await self.popUp("TCP discard", message, "continue")
                     break
@@ -1149,10 +1149,10 @@ class MasterViewController: UITableViewController, DeviceManager {
                         if errno != 0 {
                             if errno == ECONNREFUSED || errno == ECONNABORTED {
                                 let str = errno == ECONNABORTED ? "connection aborted" : "connection refused"
-                                var message = str
+                                var message = NSLocalizedString(str, comment: str)
                                 let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
                                 if address.toNumericString() != nil && is_public_default_service {
-                                    message = "connection \(str) - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
+                                    message += " - " + NSLocalizedString("public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service", comment: "public DNS services")
                                 }
                                 await self.popUp("TCP chargen", message, "continue")
                             } else {
@@ -1165,7 +1165,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                                         if errno == nil || errno == EBADF {
                                             await self.popUp("TCP chargen", "Connection closed", "continue")
                                         } else {
-                                            await self.popUp("TCP chargen", "error (errno = \(String(describing: errno)))", "continue")
+                                            await self.popUp("TCP chargen", String(format: NSLocalizedString("error (errno = %d)", comment: "error (errno = %d)"), errno ?? 0), "continue")
                                         }
                                     }
                                 }
@@ -1184,7 +1184,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                     
                     let is_public_default_service = await DBMaster.shared.isPublicDefaultService(address.toNumericString()!)
                     if address.toNumericString() != nil && is_public_default_service {
-                        message = "timeout occurred - public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service"
+                        message = NSLocalizedString("timeout occurred", comment: "timeout occurred") + " - " + NSLocalizedString("public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service", comment: "public DNS services")
                     }
                     await self.popUp("TCP chargen", message, "continue")
                     break
@@ -1219,7 +1219,7 @@ class MasterViewController: UITableViewController, DeviceManager {
                 }
                 completion?()
             }))
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction!) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .default, handler: { (_: UIAlertAction!) in
                 completion?()
             }))
             parent!.present(alert, animated: true, completion: nil)
@@ -1228,10 +1228,12 @@ class MasterViewController: UITableViewController, DeviceManager {
         }
     }
     
+    // Titre, message et bouton sont traduits ici : les appelants peuvent passer la clé anglaise
+    // (ex. "continue") ou un texte déjà traduit, que NSLocalizedString renvoie alors inchangé
     func popUp(_ title: String, _ message: String, _ ok: String) {
         Task { @MainActor in
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let action = UIAlertAction(title: ok, style: .default)
+            let alert = UIAlertController(title: NSLocalizedString(title, comment: title), message: NSLocalizedString(message, comment: message), preferredStyle: .alert)
+            let action = UIAlertAction(title: NSLocalizedString(ok, comment: ok), style: .default)
             alert.addAction(action)
             // self.parent!.present au lieu de self.present pour éviter le message d'erreur "Presenting view controllers on detached view controllers is discouraged"
             self.parent!.present(alert, animated: true)
@@ -1399,8 +1401,9 @@ class MasterViewController: UITableViewController, DeviceManager {
         if let best = MasterViewController.bestDisplayedV6(node) { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, best.toNumericString() ?? "invalid IPv6 address", font: cell.detail2.font) }
         else { cell.detail2.attributedText = MasterViewController.badgedAddress(MasterViewController.v6_badge, NSLocalizedString("no IPv6 address", comment: ""), font: cell.detail2.font) }
 
-        cell.nIPs.text = String(node.getV4Addresses().count + node.getV6Addresses().count) + " IP" + (node.getV4Addresses().count + node.getV6Addresses().count > 1 ? "s" : "")
-        cell.nPorts.text = String(node.getTcpPorts().count + node.getUdpPorts().count) + " port" + (node.getTcpPorts().count + node.getUdpPorts().count > 1 ? "s" : "")
+        // Pluriels selon les règles de chaque langue : Localizable.stringsdict
+        cell.nIPs.text = String.localizedStringWithFormat(NSLocalizedString("%d IPs", comment: "number of IP addresses of a target"), node.getV4Addresses().count + node.getV6Addresses().count)
+        cell.nPorts.text = String.localizedStringWithFormat(NSLocalizedString("%d ports", comment: "number of open TCP/UDP ports of a target"), node.getTcpPorts().count + node.getUdpPorts().count)
 
        return cell
     }

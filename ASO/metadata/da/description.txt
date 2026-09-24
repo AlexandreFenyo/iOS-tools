@@ -1,0 +1,53 @@
+Find de døde zoner i dit wifi derhjemme på under 10 minutter, kun med din iPhone.
+Gå fra rum til rum, tryk for at måle, og se et farvekort over dit wifis faktiske
+ydeevne tage form – hastighed og latens, dér hvor du rent faktisk bor.
+Intet abonnement. Ingen reklamer. Ingen konto. Ét køb, dit for altid.
+
+DET KAN DU FAKTISK FINDE UD AF
+- Hvilke rum der er langsomme, og hvor langsomme, i tal du kan handle på
+- Om problemet er dit wifi eller din internetforbindelse
+- Hvor du skal placere en mesh-enhed, en forstærker eller selve routeren
+- Hvilken af enhederne på dit netværk der æder din båndbredde
+- Hvad hver IoT-enhed på dit netværk udsender om sig selv
+
+SÅDAN VIRKER DET
+1. Vælg en af de færdige plantegninger, eller brug et foto af din egen
+2. Gå hen til et sted og tryk én gang – appen måler gennemløb og latens dér
+3. Gentag i hvert rum. Varmekortet bygges op undervejs
+4. Gem det færdige kort i dine fotos, så du kan sammenligne, når du har flyttet routeren
+
+Trin-for-trin-tilstanden klarer opsætningen for dig: intet mål at vælge, ingen
+protokol at konfigurere, ingen dokumentation at læse. Den avancerede brugerflade
+er der stadig, når du vil have fuld kontrol.
+
+INTET EKSTRA UDSTYR. INTET ABONNEMENT.
+Professionelle wifi-målinger kræver en Ekahau Sidekick eller en WLAN Pi. Denne app
+kræver kun din iPhone. Og i modsætning til næsten alle andre wifi-analyseapps i
+App Store er der ingen uge- eller årsplan og ingen reklamer – du køber den én gang.
+
+OGSÅ EN KOMPLET NETVÆRKSVÆRKTØJSKASSE
+- Scan alle enheder på dit lokalnetværk, med producent, IP-adresse og åbne porte
+- Find alle mDNS/Bonjour-tjenester: HomePod, Apple TV, printere, IoT
+- Ping og latens til lokale enheder og til enhver vært på internettet
+- Måling af gennemløb mod en anden enhed, der kører denne app, enhver TCP
+  CHARGEN/DISCARD-server eller internettet
+- Kør en TCP CHARGEN- eller DISCARD-tjeneste på din egen enhed
+- Animeret 3D-visning af dit lokalnetværks topologi
+
+KOMPLET SNMP-KLIENT INKLUDERET
+Forespørg enhver SNMP-agent på dine routere, switche, adgangspunkter og printere.
+SNMP v1, v2c og v3, med noAuthNoPriv, authNoPriv og authPriv, MD5- og
+SHA1-godkendelse, DES- og AES-kryptering. 64 standard-MIB'er følger med, så
+objekt-id'er oversættes til læsbare navne offline – ingen server, intet abonnement,
+intet at konfigurere ud over agentens adresse og loginoplysninger.
+
+TIL HJEMMET OG TIL PROFESSIONELLE
+Udviklet af en netværksingeniør. Enkel nok til at undersøge din lejlighed en
+søndag eftermiddag, præcis nok til at telefagfolk bruger den i deres arbejde.
+
+FØR DU KØBER – DET KAN APPEN IKKE
+Apple tillader ingen tredjeparts iOS-app at aflæse wifi-signalstyrken eller scanne
+nabonetværk, og ingen app i App Store kan gøre det – derfor kræver professionelle
+værktøjer eksternt udstyr. Denne app kortlægger det, den kan måle dér, hvor du står:
+faktisk gennemløb og latens. Det er, hvad et varmekort til hjemmet har brug for.
+Den måler det netværk, du er forbundet til, ét varmekort ad gangen.

@@ -1,0 +1,1 @@
+ওয়াইফাই,নেটওয়ার্ক,heatmap,coverage,router,mesh,extender,snmp

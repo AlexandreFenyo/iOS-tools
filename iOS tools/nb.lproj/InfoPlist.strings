@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map skanner det lokale nettverket ditt for å finne enhetene på det, måle Wi-Fi-gjennomstrømming og forsinkelse og lage varmekartet ditt. Ingenting forlater noen gang enheten din.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map lagrer varmekartet du lager, i bildebiblioteket ditt, slik at du kan beholde det eller dele det.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map trenger tilgang til bildene dine slik at du kan velge plantegningen eller bildet av rommet som Wi-Fi-varmekartet ditt skal tegnes på.";

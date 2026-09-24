@@ -31,8 +31,8 @@ class StepByStepViewController: UIViewController {
         hosting_view_controller.rootView.cleanUp()
         if exporting_map == true {
             exporting_map = false
-            let dialogMessage = UIAlertController(title: "Warning", message: "You have dismissed the heat map high resolution computation, it will continue in the background, check your photo roll in about one minute to find the exported map.", preferredStyle: .alert)
-            let action = UIAlertAction(title: "OK", style: .default)
+            let dialogMessage = UIAlertController(title: NSLocalizedString("Warning", comment: "Warning"), message: NSLocalizedString("You have dismissed the heat map high resolution computation, it will continue in the background, check your photo roll in about one minute to find the exported map.", comment: "dismissed heat map computation"), preferredStyle: .alert)
+            let action = UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .default)
             dialogMessage.addAction(action)
             master_view_controller!.parent!.present(dialogMessage, animated: true, completion: nil)
         }

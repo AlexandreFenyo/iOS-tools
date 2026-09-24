@@ -1,0 +1,1 @@
+värmekarta,täckning,nätverk,router,förstärkare,mesh,skanner,test,snmp,dbm,wlan,trådlöst,mib

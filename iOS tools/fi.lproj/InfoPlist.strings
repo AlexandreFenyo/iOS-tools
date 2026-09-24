@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map skannaa lähiverkkosi löytääkseen siinä olevat laitteet, mitatakseen Wi-Fi-siirtonopeuden ja viiveen sekä luodakseen lämpökarttasi. Mitään ei koskaan lähetetä laitteeltasi.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map tallentaa luomasi lämpökartan kuvakirjastoosi, jotta voit säilyttää tai jakaa sen.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map tarvitsee pääsyn kuviisi, jotta voit valita pohjapiirroksen tai huonekuvan, jonka päälle Wi-Fi-lämpökarttasi piirretään.";

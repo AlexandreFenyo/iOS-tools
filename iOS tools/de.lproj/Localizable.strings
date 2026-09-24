@@ -88,20 +88,10 @@
 "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action." = "Dieses Ziel entspricht Ihrem Apple-Gerät. Sie sehen seine verschiedenen IPv4- und IPv6-Adressen. Wählen Sie eine dieser IPs aus und starten Sie eine lokale Loop-Aktion.";
 "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth." = "Auf diesem Ziel sind die Dienste TCP Chargen und Discard aktiviert. Es ist dieser App gewidmet und in einer Cloud im Internet bereitgestellt, damit Sie Ihren maximalen Sende- und Empfangsdurchsatz schätzen können. Starten Sie TCP-Discard-Flooding, um sich mit dem Discard-Dienst zu verbinden und Daten zu senden — so messen Sie Ihre Upload-Bandbreite. Starten Sie TCP-Chargen-Flooding, um sich mit dem Chargen-Dienst zu verbinden und Daten zu empfangen — so messen Sie Ihre Download-Bandbreite.";
 "This hostname does not have a public DNS record. Select a host name with public DNS records to get their values." = "Dieser Hostname hat keinen öffentlichen DNS-Eintrag. Geben Sie einen Hostnamen mit öffentlichen DNS-Einträgen ein, um deren Werte abzurufen.";
-"Parallel TCP connections will be established to " = "Es werden parallele TCP-Verbindungen aufgebaut zu ";
-" on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = " auf den TCP-Ports 1 bis 65535, um offene Dienste zu finden. Neu entdeckte Dienste werden in der unteren Ansicht angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
-"A TCP connection to the Discard port (9/TCP) of " = "Eine TCP-Verbindung zum Discard-Port (9/TCP) von ";
-" will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = " wird aufgebaut. Anschließend sendet dieses Gerät Daten mit maximal möglichem Durchsatz an das Ziel, um die maximale Geschwindigkeit in Senderichtung zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
-"A TCP connection to the Chargen port (19/TCP) of " = "Eine TCP-Verbindung zum Chargen-Port (19/TCP) von ";
-" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." = " wird aufgebaut. Anschließend empfängt dieses Gerät Daten mit maximal möglichem Durchsatz vom Ziel, um die maximale Geschwindigkeit in Empfangsrichtung zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
-"ICMP packets of type ECHO_REQUEST will be sent to " = "ICMP-Pakete vom Typ ECHO_REQUEST werden gesendet an ";
-" at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = " mit einem Paket pro Sekunde. Das Ziel sollte mit ICMP-Paketen vom Typ ECHO_REPLY antworten. Die Umlaufzeit wird berechnet und im Diagramm angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
 "I understand" = "Verstanden";
 "OPEN ADVANCED INTERFACE" = "ERWEITERTE OBERFLÄCHE ÖFFNEN";
 "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance." = "UDP-Flooding sendet Pakete asynchron mit maximaler Rate an den UDP-Port 8888 des Ziels; viele Pakete können jedoch auf Software-, Hardware- oder Netzwerkebene verloren gehen. Der im Diagramm angezeigte Durchsatz ist derjenige der Softwareschicht Ihres Geräts. Er liegt daher sicher über dem tatsächlich über das Netz gesendeten: Verwenden Sie ein Werkzeug, um die erreichte Bandbreite zu schätzen — zum Beispiel den Netzwerkverkehr mitschneiden oder die Pakete am Ziel zählen.";
 "none" = "nicht verfügbar";
-"found " = "gefunden ";
-"trying " = "prüfe ";
 "browsing TCP ports" = "TCP-Ports werden durchsucht";
 "Hostname" = "Hostname";
 "mDNS/Bonjour services" = "mDNS-/Bonjour-Dienste";
@@ -134,7 +124,7 @@
 "The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen." = "Die Dokumentation beschreibt die Schritte zur Erstellung einer WLAN-Heatmap mit der erweiterten Oberfläche — zum Beispiel mit zwei iPhones/iPads für lokale Messungen, oder mit einem einzigen iPhone/iPad und dem im Internet bereitgestellten, dieser App gewidmeten CHARGEN-Responder (Protokoll zur Verkehrserzeugung).\n\nUm die weiteren Werkzeuge dieser App zu entdecken (Geräteerkennung im lokalen Netz, Latenz- und Durchsatzmessungen, Scannen offener Ports und Dienste, 3D-Ansicht des Netzwerks, ...), öffnen Sie die erweiterte Oberfläche und tippen Sie oben links auf die Hilfe-Taste.";
 "Click on your prefered blinking rectangle to choose between advanced interface, step-by-step heatmap and documentation. Click on the question marks to get help about each interface." = "Tippen Sie auf das blinkende Rechteck Ihrer Wahl, um zwischen erweiterter Oberfläche, Schritt-für-Schritt-Heatmap und Dokumentation zu wählen. Tippen Sie auf die Fragezeichen, um Hilfe zu jeder Oberfläche zu erhalten.";
 "3D flight" = "3D-Flug";
-"left" = "oben";
+"left" = "links";
 "SNMP agents" = "SNMP-Agenten";
 "Devices running some SNMP agent" = "Geräte mit SNMP-Agent";
 "Add new target" = "Neues Ziel hinzufügen";
@@ -232,3 +222,39 @@
 "3D View" = "3D-Ansicht";
 "top" = "oben";
 "flight" = "Flug";
+
+/* Messages d'erreur, alertes et libellés ajoutés (sept. 2026) */
+"connection refused" = "Verbindung abgelehnt";
+"connection aborted" = "Verbindung abgebrochen";
+"timeout occurred" = "Zeitüberschreitung";
+"timeout occurred, no answer from target" = "Zeitüberschreitung, keine Antwort vom Ziel";
+"public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service" = "öffentliche DNS-Dienste bieten keinen Discard-Dienst an - Sie können das Ziel flood.eowyn.eu.org verwenden, das den Discard-Dienst unterstützt";
+"public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service" = "öffentliche DNS-Dienste bieten keinen Chargen-Dienst an - Sie können das Ziel flood.eowyn.eu.org verwenden, das den Chargen-Dienst unterstützt";
+"error (errno = %d)" = "Fehler (errno = %d)";
+"network unreachable - check your Internet connection" = "Netzwerk nicht erreichbar - überprüfen Sie Ihre Internetverbindung";
+"Connection reset by peer" = "Verbindung von der Gegenstelle zurückgesetzt";
+"Connection closed" = "Verbindung geschlossen";
+"Actions 1/2" = "Aktionen 1/2";
+"Actions 2/2" = "Aktionen 2/2";
+"OK" = "OK";
+"Warning" = "Warnung";
+"You have dismissed the heat map high resolution computation, it will continue in the background, check your photo roll in about one minute to find the exported map." = "Sie haben die Berechnung der hochauflösenden Karte verlassen: Sie läuft im Hintergrund weiter. Sehen Sie in etwa einer Minute in Ihrer Fotomediathek nach, um die exportierte Karte zu finden.";
+"Please choose a delay" = "Wählen Sie ein Intervall";
+"Real WiFi signal strength, measured by macOS (CoreWLAN)" = "Tatsächliche WLAN-Signalstärke, gemessen von macOS (CoreWLAN)";
+"SNMP Warning" = "SNMP-Warnung";
+"SNMP protocol" = "SNMP-Protokoll";
+"SNMP sec level" = "SNMP-Sicherheitsstufe";
+"SNMP transport protocol" = "SNMP-Transportprotokoll";
+"SNMP network protocol" = "SNMP-Netzwerkprotokoll";
+"v3 auth proto" = "v3-Authentifizierungsprotokoll";
+"v3 auth algo" = "v3-Authentifizierungsalgorithmus";
+"v3 privacy algo" = "v3-Verschlüsselungsalgorithmus";
+
+/* Phrases à trou (%@ = adresse ou nom) */
+"Parallel TCP connections will be established to %@ on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = "Es werden parallele TCP-Verbindungen zu %@ auf den TCP-Ports 1 bis 65535 aufgebaut, um offene Dienste zu finden. Neu entdeckte Dienste werden in der unteren Ansicht angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"A TCP connection to the Discard port (9/TCP) of %@ will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = "Es wird eine TCP-Verbindung zum Discard-Port (9/TCP) von %@ aufgebaut. Anschließend sendet dieses Gerät über diese Verbindung Daten mit maximal verfügbarem Durchsatz an den Zielhost, um die in Senderichtung maximal erreichbare Geschwindigkeit zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"A TCP connection to the Chargen port (19/TCP) of %@ will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." = "Es wird eine TCP-Verbindung zum Chargen-Port (19/TCP) von %@ aufgebaut. Anschließend empfängt dieses Gerät über diese Verbindung Daten mit maximal verfügbarem Durchsatz vom Zielhost, um die in Empfangsrichtung maximal erreichbare Geschwindigkeit zu ermitteln. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"ICMP packets of type ECHO_REQUEST will be sent to %@ at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = "An %@ werden ICMP-Pakete vom Typ ECHO_REQUEST mit einer Rate von einem Paket pro Sekunde gesendet. Das Ziel sollte mit einem ICMP-Paket vom Typ ECHO_REPLY antworten. Die Umlaufzeit wird berechnet und im Diagramm angezeigt. Sie können den Vorgang mit der STOPP-Taste abbrechen.";
+"found %@" = "gefunden: %@";
+"trying %@" = "prüfe %@";
+"retrying %@" = "prüfe %@ erneut";

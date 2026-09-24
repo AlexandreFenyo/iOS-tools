@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map scanează rețeaua locală pentru a descoperi dispozitivele din ea, a măsura debitul și latența Wi-Fi și a crea harta termică. Nimic nu părăsește vreodată dispozitivul dvs.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map salvează harta termică pe care o creați în fototeca dvs., ca să o puteți păstra sau partaja.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map are nevoie de acces la pozele dvs. pentru ca să puteți alege planul sau fotografia camerei pe care va fi desenată harta termică Wi-Fi.";

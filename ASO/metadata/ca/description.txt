@@ -1,0 +1,57 @@
+Troba les zones mortes de la wifi de casa en menys de 10 minuts, només amb l'iPhone.
+Ves d'habitació en habitació, toca per mesurar i mira com es construeix un mapa de
+colors del rendiment real de la teva wifi: velocitat i latència, allà on vius de debò.
+Sense subscripció. Sense anuncis. Sense compte. Una sola compra, teva per sempre.
+
+QUÈ POTS DESCOBRIR DE DEBÒ
+- Quines habitacions són lentes, i com de lentes, amb xifres per poder actuar
+- Si el problema és la wifi o la connexió a internet
+- On posar un node mesh, un repetidor o el mateix router
+- Quin dels dispositius de la xarxa s'està menjant l'amplada de banda
+- Què difon sobre si mateix cada dispositiu IoT de la xarxa
+
+COM FUNCIONA
+1. Tria un dels plànols ja preparats o fes servir una foto del teu plànol
+2. Ves a un punt i toca un cop: l'app hi mesura el cabal i la latència
+3. Repeteix-ho a cada habitació. El mapa de calor es construeix a mesura que avances
+4. Desa el mapa acabat a les fotos per comparar-lo després de moure el router
+
+El mode pas a pas fa la configuració per tu: cap objectiu per triar, cap protocol
+per configurar, cap documentació per llegir. La interfície avançada continua
+disponible quan vols el control total.
+
+SENSE MAQUINARI EXTRA. SENSE SUBSCRIPCIÓ.
+Els estudis de wifi professionals necessiten un Ekahau Sidekick o un WLAN Pi.
+Aquesta app només necessita el teu iPhone. I a diferència de gairebé tots els altres
+analitzadors de wifi de l'App Store, no hi ha pla setmanal, ni pla anual, ni anuncis:
+la compres una sola vegada.
+
+TAMBÉ UN JOC COMPLET D'EINES DE XARXA
+- Escaneja tots els dispositius de la xarxa local, amb fabricant, adreça IP i ports oberts
+- Descobreix tots els serveis mDNS/Bonjour: HomePod, Apple TV, impressores, IoT
+- Ping i latència cap als dispositius locals i cap a qualsevol host d'internet
+- Mesura del cabal contra un altre dispositiu que executi aquesta app, qualsevol
+  servidor TCP CHARGEN/DISCARD o internet
+- Executa un servei TCP CHARGEN o DISCARD al teu propi dispositiu
+- Vista 3D animada de la topologia de la xarxa local
+
+CLIENT SNMP COMPLET INCLÒS
+Consulta qualsevol agent SNMP dels teus routers, commutadors, punts d'accés i
+impressores. SNMP v1, v2c i v3, amb noAuthNoPriv, authNoPriv i authPriv,
+autenticació MD5 i SHA1, xifratge DES i AES. S'hi inclouen 64 MIB estàndard, de
+manera que els identificadors d'objecte es tradueixen a noms llegibles sense
+connexió: sense servidor, sense subscripció, res a configurar a part de l'adreça de
+l'agent i les credencials.
+
+PER A CASA I PER A PROFESSIONALS
+Creada per un enginyer de xarxes. Prou senzilla per diagnosticar el teu pis un
+diumenge a la tarda, prou precisa perquè els professionals de les telecomunicacions
+la facin servir a la feina.
+
+ABANS DE COMPRAR-LA: QUÈ NO FA AQUESTA APP
+Apple no permet a cap app d'iOS de tercers llegir la intensitat del senyal wifi ni
+escanejar les xarxes veïnes, i cap app de l'App Store no ho pot fer; per això les
+eines professionals necessiten maquinari extern. Aquesta app representa el que pot
+mesurar al punt on ets: el cabal i la latència reals. És el que necessita un mapa de
+calor per a casa. Mesura la xarxa a la qual estàs connectat, un mapa de calor cada
+vegada.

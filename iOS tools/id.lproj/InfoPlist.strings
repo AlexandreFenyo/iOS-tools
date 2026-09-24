@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map memindai jaringan lokal Anda untuk menemukan perangkat di dalamnya, mengukur throughput dan latensi WiFi, serta membuat heat map Anda. Tidak ada data yang pernah keluar dari perangkat Anda.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map menyimpan heat map yang Anda buat ke perpustakaan foto Anda, sehingga Anda dapat menyimpannya atau membagikannya.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map memerlukan akses ke foto Anda agar Anda dapat memilih denah lantai atau foto ruangan tempat heat map WiFi Anda akan digambar.";

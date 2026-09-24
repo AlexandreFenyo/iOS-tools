@@ -1,0 +1,38 @@
+Temukan blank spot WiFi di rumah Anda dalam waktu kurang dari 10 menit, hanya dengan iPhone.
+Berjalanlah dari satu ruangan ke ruangan lain, ketuk untuk mengukur, dan lihat peta warna performa WiFi Anda yang sebenarnya terbentuk dengan sendirinya — kecepatan dan latensi, tepat di tempat Anda benar-benar tinggal.
+Tanpa langganan. Tanpa iklan. Tanpa akun. Sekali beli, milik Anda selamanya.
+
+APA YANG BENAR-BENAR BISA ANDA KETAHUI
+- Ruangan mana yang lambat, dan seberapa lambat, dalam angka yang bisa Anda tindak lanjuti
+- Apakah masalahnya ada di WiFi atau di koneksi internet Anda
+- Di mana sebaiknya menaruh node mesh, extender, atau router itu sendiri
+- Perangkat mana di jaringan Anda yang menghabiskan bandwidth
+- Informasi apa saja yang disiarkan setiap perangkat IoT di jaringan Anda tentang dirinya
+
+CARA KERJANYA
+1. Pilih salah satu denah siap pakai, atau gunakan foto denah Anda sendiri
+2. Berjalan ke suatu titik, ketuk sekali — aplikasi mengukur throughput dan latensi di sana
+3. Ulangi untuk setiap ruangan. Heat map terbentuk seiring Anda berjalan
+4. Simpan peta yang sudah jadi ke Foto, untuk dibandingkan setelah Anda memindahkan router
+
+Mode langkah demi langkah menyiapkan semuanya untuk Anda: tidak perlu memilih target, tidak perlu mengonfigurasi protokol, tidak perlu membaca dokumentasi. Antarmuka lanjutan tetap tersedia saat Anda menginginkan kendali penuh.
+
+TANPA PERANGKAT KERAS TAMBAHAN. TANPA LANGGANAN.
+Survei WiFi profesional membutuhkan Ekahau Sidekick atau WLAN Pi. Aplikasi ini hanya membutuhkan iPhone Anda. Dan tidak seperti hampir semua penganalisis WiFi lain di App Store, tidak ada paket mingguan, tidak ada paket tahunan, dan tidak ada iklan — cukup beli sekali.
+
+SEKALIGUS KUMPULAN ALAT JARINGAN YANG LENGKAP
+- Pindai semua perangkat di LAN Anda, lengkap dengan vendor, alamat IP, dan port yang terbuka
+- Temukan semua layanan mDNS/Bonjour: HomePod, Apple TV, printer, IoT
+- Ping dan latensi ke perangkat lokal dan ke host internet mana pun
+- Pengukuran throughput terhadap perangkat lain yang menjalankan aplikasi ini, server TCP CHARGEN/DISCARD mana pun, atau internet
+- Jalankan layanan TCP CHARGEN atau DISCARD di perangkat Anda sendiri
+- Tampilan animasi 3D topologi jaringan lokal Anda
+
+KLIEN SNMP LENGKAP SUDAH TERMASUK
+Kirim kueri ke agen SNMP mana pun di router, switch, access point, dan printer Anda. SNMP v1, v2c, dan v3, dengan noAuthNoPriv, authNoPriv, dan authPriv, autentikasi MD5 dan SHA1, enkripsi DES dan AES. 64 MIB standar sudah disertakan, sehingga object identifier diterjemahkan menjadi nama yang mudah dibaca secara offline — tanpa server, tanpa langganan, tidak ada yang perlu dikonfigurasi selain alamat agen dan kredensial.
+
+UNTUK RUMAH DAN UNTUK PROFESIONAL
+Dibuat oleh seorang network engineer. Cukup sederhana untuk mendiagnosis rumah Anda di Minggu sore, cukup presisi sehingga para profesional telekomunikasi memakainya dalam pekerjaan.
+
+SEBELUM MEMBELI — YANG TIDAK DILAKUKAN APLIKASI INI
+Apple tidak mengizinkan aplikasi iOS pihak ketiga mana pun membaca kekuatan sinyal WiFi atau memindai jaringan di sekitar, dan tidak ada aplikasi App Store yang bisa melakukannya — itulah sebabnya alat profesional membutuhkan perangkat keras eksternal. Aplikasi ini memetakan apa yang dapat diukurnya di titik tempat Anda berdiri: throughput dan latensi yang sebenarnya. Itulah yang dibutuhkan heat map untuk rumah. Aplikasi mengukur jaringan yang sedang Anda gunakan, satu heat map dalam satu waktu.

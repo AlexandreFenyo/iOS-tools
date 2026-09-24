@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map analitza la vostra xarxa local per descobrir-hi els dispositius, mesurar el rendiment i la latència WiFi i construir el vostre mapa de calor. Res no surt mai del vostre dispositiu.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map desa el mapa de calor que construïu a la vostra fototeca, perquè el pugueu conservar o compartir.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map necessita accedir a les vostres fotos perquè pugueu triar el plànol o la foto de l'habitació sobre la qual es dibuixarà el vostre mapa de calor WiFi.";

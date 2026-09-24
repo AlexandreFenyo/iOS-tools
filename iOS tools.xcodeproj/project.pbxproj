@@ -203,6 +203,7 @@
 		5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2F9E229700F7A00EEDDCE /* SpeedTest.storyboard */; };
 		5DF73B4529812C6100438F65 /* NetworkServiceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF73B4429812C6100438F65 /* NetworkServiceListener.swift */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
+		5DC2000000000000000000AB /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 5DC2000000000000000000AA /* Localizable.stringsdict */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -423,6 +424,141 @@
 		5DAA000D000000000000RR0D /* WiFiSignalMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiSignalMonitor.swift; sourceTree = "<group>"; };
 		5DAA000F000000000000RR0F /* CoreWLANShim.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreWLANShim.m; sourceTree = "<group>"; };
 		5DADCF202DA2B75E00846627 /* SnmpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnmpViewController.swift; sourceTree = "<group>"; };
+		5DC100000100000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100000200000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100000300000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100010100000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100010200000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100010300000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bn; path = bn.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100020100000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100020200000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100020300000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100030100000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100030200000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100030300000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100040100000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100040200000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100040300000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100050100000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100050200000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100050300000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100060100000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-AU"; path = "en-AU.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC100060200000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-AU"; path = "en-AU.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC100060300000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-AU"; path = "en-AU.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC100070100000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-CA"; path = "en-CA.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC100070200000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-CA"; path = "en-CA.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC100070300000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-CA"; path = "en-CA.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC100080100000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC100080200000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC100080300000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC100090100000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC100090200000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC100090300000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "es-MX"; path = "es-MX.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC1000A0100000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1000A0200000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1000A0300000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1000B0100000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC1000B0200000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC1000B0300000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "fr-CA"; path = "fr-CA.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC1000C0100000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = gu; path = gu.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1000C0200000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = gu; path = gu.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1000C0300000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = gu; path = gu.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1000D0100000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1000D0200000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1000D0300000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1000E0100000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1000E0200000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1000E0300000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1000F0100000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1000F0200000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1000F0300000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100100100000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100100200000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100100300000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100110100000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100110200000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100110300000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100120100000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100120200000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100120300000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100130100000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100130200000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100130300000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100140100000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kn; path = kn.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100140200000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kn; path = kn.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100140300000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kn; path = kn.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100150100000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100150200000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100150300000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100160100000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ml; path = ml.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100160200000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ml; path = ml.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100160300000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ml; path = ml.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100170100000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100170200000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100170300000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = mr; path = mr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100180100000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100180200000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100180300000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ms; path = ms.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100190100000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100190200000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100190300000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001A0100000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001A0200000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001A0300000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001B0100000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = or; path = or.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001B0200000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = or; path = or.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001B0300000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = or; path = or.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001C0100000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pa; path = pa.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001C0200000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pa; path = pa.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001C0300000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pa; path = pa.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001D0100000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001D0200000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001D0300000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001E0100000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001E0200000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001E0300000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1001F0100000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1001F0200000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1001F0300000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100200100000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100200200000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100200300000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100210100000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100210200000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100210300000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100220100000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100220200000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100220300000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100230100000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100230200000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100230300000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100240100000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100240200000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100240300000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100250100000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100250200000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100250300000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100260100000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100260200000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100260300000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = th; path = th.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100270100000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100270200000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100270300000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100280100000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100280200000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100280300000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC100290100000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ur; path = ur.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC100290200000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ur; path = ur.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC100290300000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ur; path = ur.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1002A0100000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5DC1002A0200000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5DC1002A0300000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/SpeedTest.strings; sourceTree = "<group>"; };
+		5DC1002B0100000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC1002B0200000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC1002B0300000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
+		5DC1002C0100000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		5DC1002C0200000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		5DC1002C0300000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
 		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
@@ -739,6 +875,55 @@
 		6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iOS tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F56DDF129AA99A901A294BE2 /* Pods-iOS tools.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.debug.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.debug.xcconfig"; sourceTree = "<group>"; };
 		FE1B554AAEFF369AC974FA67 /* Pods-iOS tools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.release.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.release.xcconfig"; sourceTree = "<group>"; };
+		5DC200000000000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ar; path = ar.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200010000000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = bn; path = bn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200020000000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ca; path = ca.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200030000000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = cs; path = cs.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200040000000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = da; path = da.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200050000000000000000 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200060000000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = el; path = el.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200070000000000000000 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200080000000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-AU"; path = en-AU.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200090000000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-CA"; path = en-CA.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000A0000000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-GB"; path = en-GB.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000B0000000000000000 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000C0000000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "es-MX"; path = es-MX.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000D0000000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fi; path = fi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000E0000000000000000 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000F0000000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "fr-CA"; path = fr-CA.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200100000000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = gu; path = gu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200110000000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = he; path = he.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200120000000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hi; path = hi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200130000000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hr; path = hr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200140000000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hu; path = hu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200150000000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = id; path = id.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200160000000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200170000000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ja; path = ja.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200180000000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = kn; path = kn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200190000000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001A0000000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ml; path = ml.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001B0000000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = mr; path = mr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001C0000000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ms; path = ms.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001D0000000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nb; path = nb.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001E0000000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001F0000000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = or; path = or.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200200000000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pa; path = pa.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200210000000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200220000000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pt; path = pt.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200230000000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ro; path = ro.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200240000000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200250000000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sk; path = sk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200260000000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sl; path = sl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200270000000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sv; path = sv.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200280000000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ta; path = ta.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200290000000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = te; path = te.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002A0000000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = th; path = th.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002B0000000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = tr; path = tr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002C0000000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002D0000000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ur; path = ur.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002E0000000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002F0000000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = zh-Hans.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200300000000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = zh-Hant.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -814,6 +999,7 @@
 				5D1351FC208538E300E4A76D /* Info.plist */,
 				5DAA0007000000000000RR07 /* InfoPlist.strings */,
 				5D37D20B29734FB700578E59 /* Localizable.strings */,
+				5DC2000000000000000000AA /* Localizable.stringsdict */,
 			);
 			path = "iOS tools";
 			sourceTree = "<group>";
@@ -1688,6 +1874,51 @@
 				fr,
 				es,
 				de,
+				ar,
+				bn,
+				ca,
+				cs,
+				da,
+				el,
+				"en-AU",
+				"en-CA",
+				"en-GB",
+				"es-MX",
+				fi,
+				"fr-CA",
+				gu,
+				he,
+				hi,
+				hr,
+				hu,
+				id,
+				it,
+				ja,
+				kn,
+				ko,
+				ml,
+				mr,
+				ms,
+				nb,
+				nl,
+				or,
+				pa,
+				pl,
+				pt,
+				ro,
+				ru,
+				sk,
+				sl,
+				sv,
+				ta,
+				te,
+				th,
+				tr,
+				uk,
+				ur,
+				vi,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 5D1351E2208538DB00E4A76D;
 			packageReferences = (
@@ -1720,6 +1951,7 @@
 				5D65EE52296381780099871C /* app-icon-120.png in Resources */,
 				5DAA0008000000000000RR08 /* InfoPlist.strings in Resources */,
 				5D37D20929734FB700578E59 /* Localizable.strings in Resources */,
+				5DC2000000000000000000AB /* Localizable.stringsdict in Resources */,
 				5D909D3E2D8FEE2100C7553F /* IPV6-FLOW-LABEL-MIB.txt in Resources */,
 				5D909D3F2D8FEE2100C7553F /* UCD-DEMO-MIB.txt in Resources */,
 				5D909D402D8FEE2100C7553F /* IPV6-TC.txt in Resources */,
@@ -1981,6 +2213,51 @@
 				5D37D20C29734FC300578E59 /* fr */,
 				5D3B1A282AC75C9300E8F2CE /* es */,
 				5DAA0005000000000000RR05 /* de */,
+				5DC100000100000000000000 /* ar */,
+				5DC100010100000000000000 /* bn */,
+				5DC100020100000000000000 /* ca */,
+				5DC100030100000000000000 /* cs */,
+				5DC100040100000000000000 /* da */,
+				5DC100050100000000000000 /* el */,
+				5DC100060100000000000000 /* en-AU */,
+				5DC100070100000000000000 /* en-CA */,
+				5DC100080100000000000000 /* en-GB */,
+				5DC100090100000000000000 /* es-MX */,
+				5DC1000A0100000000000000 /* fi */,
+				5DC1000B0100000000000000 /* fr-CA */,
+				5DC1000C0100000000000000 /* gu */,
+				5DC1000D0100000000000000 /* he */,
+				5DC1000E0100000000000000 /* hi */,
+				5DC1000F0100000000000000 /* hr */,
+				5DC100100100000000000000 /* hu */,
+				5DC100110100000000000000 /* id */,
+				5DC100120100000000000000 /* it */,
+				5DC100130100000000000000 /* ja */,
+				5DC100140100000000000000 /* kn */,
+				5DC100150100000000000000 /* ko */,
+				5DC100160100000000000000 /* ml */,
+				5DC100170100000000000000 /* mr */,
+				5DC100180100000000000000 /* ms */,
+				5DC100190100000000000000 /* nb */,
+				5DC1001A0100000000000000 /* nl */,
+				5DC1001B0100000000000000 /* or */,
+				5DC1001C0100000000000000 /* pa */,
+				5DC1001D0100000000000000 /* pl */,
+				5DC1001E0100000000000000 /* pt */,
+				5DC1001F0100000000000000 /* ro */,
+				5DC100200100000000000000 /* ru */,
+				5DC100210100000000000000 /* sk */,
+				5DC100220100000000000000 /* sl */,
+				5DC100230100000000000000 /* sv */,
+				5DC100240100000000000000 /* ta */,
+				5DC100250100000000000000 /* te */,
+				5DC100260100000000000000 /* th */,
+				5DC100270100000000000000 /* tr */,
+				5DC100280100000000000000 /* uk */,
+				5DC100290100000000000000 /* ur */,
+				5DC1002A0100000000000000 /* vi */,
+				5DC1002B0100000000000000 /* zh-Hans */,
+				5DC1002C0100000000000000 /* zh-Hant */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1992,6 +2269,51 @@
 				5DAA000A000000000000RR0A /* fr */,
 				5DAA000B000000000000RR0B /* es */,
 				5DAA000C000000000000RR0C /* de */,
+				5DC100000200000000000000 /* ar */,
+				5DC100010200000000000000 /* bn */,
+				5DC100020200000000000000 /* ca */,
+				5DC100030200000000000000 /* cs */,
+				5DC100040200000000000000 /* da */,
+				5DC100050200000000000000 /* el */,
+				5DC100060200000000000000 /* en-AU */,
+				5DC100070200000000000000 /* en-CA */,
+				5DC100080200000000000000 /* en-GB */,
+				5DC100090200000000000000 /* es-MX */,
+				5DC1000A0200000000000000 /* fi */,
+				5DC1000B0200000000000000 /* fr-CA */,
+				5DC1000C0200000000000000 /* gu */,
+				5DC1000D0200000000000000 /* he */,
+				5DC1000E0200000000000000 /* hi */,
+				5DC1000F0200000000000000 /* hr */,
+				5DC100100200000000000000 /* hu */,
+				5DC100110200000000000000 /* id */,
+				5DC100120200000000000000 /* it */,
+				5DC100130200000000000000 /* ja */,
+				5DC100140200000000000000 /* kn */,
+				5DC100150200000000000000 /* ko */,
+				5DC100160200000000000000 /* ml */,
+				5DC100170200000000000000 /* mr */,
+				5DC100180200000000000000 /* ms */,
+				5DC100190200000000000000 /* nb */,
+				5DC1001A0200000000000000 /* nl */,
+				5DC1001B0200000000000000 /* or */,
+				5DC1001C0200000000000000 /* pa */,
+				5DC1001D0200000000000000 /* pl */,
+				5DC1001E0200000000000000 /* pt */,
+				5DC1001F0200000000000000 /* ro */,
+				5DC100200200000000000000 /* ru */,
+				5DC100210200000000000000 /* sk */,
+				5DC100220200000000000000 /* sl */,
+				5DC100230200000000000000 /* sv */,
+				5DC100240200000000000000 /* ta */,
+				5DC100250200000000000000 /* te */,
+				5DC100260200000000000000 /* th */,
+				5DC100270200000000000000 /* tr */,
+				5DC100280200000000000000 /* uk */,
+				5DC100290200000000000000 /* ur */,
+				5DC1002A0200000000000000 /* vi */,
+				5DC1002B0200000000000000 /* zh-Hans */,
+				5DC1002C0200000000000000 /* zh-Hant */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -2004,8 +2326,109 @@
 				5D8B7A122970107900F89A32 /* fr */,
 				5D3B1A272AC75C9300E8F2CE /* es */,
 				5DAA0006000000000000RR06 /* de */,
+				5DC100000300000000000000 /* ar */,
+				5DC100010300000000000000 /* bn */,
+				5DC100020300000000000000 /* ca */,
+				5DC100030300000000000000 /* cs */,
+				5DC100040300000000000000 /* da */,
+				5DC100050300000000000000 /* el */,
+				5DC100060300000000000000 /* en-AU */,
+				5DC100070300000000000000 /* en-CA */,
+				5DC100080300000000000000 /* en-GB */,
+				5DC100090300000000000000 /* es-MX */,
+				5DC1000A0300000000000000 /* fi */,
+				5DC1000B0300000000000000 /* fr-CA */,
+				5DC1000C0300000000000000 /* gu */,
+				5DC1000D0300000000000000 /* he */,
+				5DC1000E0300000000000000 /* hi */,
+				5DC1000F0300000000000000 /* hr */,
+				5DC100100300000000000000 /* hu */,
+				5DC100110300000000000000 /* id */,
+				5DC100120300000000000000 /* it */,
+				5DC100130300000000000000 /* ja */,
+				5DC100140300000000000000 /* kn */,
+				5DC100150300000000000000 /* ko */,
+				5DC100160300000000000000 /* ml */,
+				5DC100170300000000000000 /* mr */,
+				5DC100180300000000000000 /* ms */,
+				5DC100190300000000000000 /* nb */,
+				5DC1001A0300000000000000 /* nl */,
+				5DC1001B0300000000000000 /* or */,
+				5DC1001C0300000000000000 /* pa */,
+				5DC1001D0300000000000000 /* pl */,
+				5DC1001E0300000000000000 /* pt */,
+				5DC1001F0300000000000000 /* ro */,
+				5DC100200300000000000000 /* ru */,
+				5DC100210300000000000000 /* sk */,
+				5DC100220300000000000000 /* sl */,
+				5DC100230300000000000000 /* sv */,
+				5DC100240300000000000000 /* ta */,
+				5DC100250300000000000000 /* te */,
+				5DC100260300000000000000 /* th */,
+				5DC100270300000000000000 /* tr */,
+				5DC100280300000000000000 /* uk */,
+				5DC100290300000000000000 /* ur */,
+				5DC1002A0300000000000000 /* vi */,
+				5DC1002B0300000000000000 /* zh-Hans */,
+				5DC1002C0300000000000000 /* zh-Hant */,
 			);
 			name = SpeedTest.storyboard;
+			sourceTree = "<group>";
+		};
+		5DC2000000000000000000AA /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5DC200000000000000000000 /* ar */,
+				5DC200010000000000000000 /* bn */,
+				5DC200020000000000000000 /* ca */,
+				5DC200030000000000000000 /* cs */,
+				5DC200040000000000000000 /* da */,
+				5DC200050000000000000000 /* de */,
+				5DC200060000000000000000 /* el */,
+				5DC200070000000000000000 /* en */,
+				5DC200080000000000000000 /* en-AU */,
+				5DC200090000000000000000 /* en-CA */,
+				5DC2000A0000000000000000 /* en-GB */,
+				5DC2000B0000000000000000 /* es */,
+				5DC2000C0000000000000000 /* es-MX */,
+				5DC2000D0000000000000000 /* fi */,
+				5DC2000E0000000000000000 /* fr */,
+				5DC2000F0000000000000000 /* fr-CA */,
+				5DC200100000000000000000 /* gu */,
+				5DC200110000000000000000 /* he */,
+				5DC200120000000000000000 /* hi */,
+				5DC200130000000000000000 /* hr */,
+				5DC200140000000000000000 /* hu */,
+				5DC200150000000000000000 /* id */,
+				5DC200160000000000000000 /* it */,
+				5DC200170000000000000000 /* ja */,
+				5DC200180000000000000000 /* kn */,
+				5DC200190000000000000000 /* ko */,
+				5DC2001A0000000000000000 /* ml */,
+				5DC2001B0000000000000000 /* mr */,
+				5DC2001C0000000000000000 /* ms */,
+				5DC2001D0000000000000000 /* nb */,
+				5DC2001E0000000000000000 /* nl */,
+				5DC2001F0000000000000000 /* or */,
+				5DC200200000000000000000 /* pa */,
+				5DC200210000000000000000 /* pl */,
+				5DC200220000000000000000 /* pt */,
+				5DC200230000000000000000 /* ro */,
+				5DC200240000000000000000 /* ru */,
+				5DC200250000000000000000 /* sk */,
+				5DC200260000000000000000 /* sl */,
+				5DC200270000000000000000 /* sv */,
+				5DC200280000000000000000 /* ta */,
+				5DC200290000000000000000 /* te */,
+				5DC2002A0000000000000000 /* th */,
+				5DC2002B0000000000000000 /* tr */,
+				5DC2002C0000000000000000 /* uk */,
+				5DC2002D0000000000000000 /* ur */,
+				5DC2002E0000000000000000 /* vi */,
+				5DC2002F0000000000000000 /* zh-Hans */,
+				5DC200300000000000000000 /* zh-Hant */,
+			);
+			name = Localizable.stringsdict;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -2147,7 +2570,7 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "iOS tools/iOS tools maccatalyst.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -2173,7 +2596,7 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/maccatalyst",
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 6.3;
+				MARKETING_VERSION = 6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2197,7 +2620,7 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "iOS tools/iOS tools maccatalyst.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
@@ -2222,7 +2645,7 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/maccatalyst",
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 6.3;
+				MARKETING_VERSION = 6.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

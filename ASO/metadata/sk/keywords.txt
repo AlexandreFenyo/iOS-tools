@@ -1,0 +1,1 @@
+mapa,tepelná,pokrytie,dosah,router,extender,zosilňovač,mesh,skener,sieť,test,snmp,hluché,mib

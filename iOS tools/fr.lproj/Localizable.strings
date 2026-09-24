@@ -90,20 +90,10 @@
 "This node corresponds to your Apple device. You can see displayed its many IPv4 and IPv6 addresses. Select one of these IPs and start a local loop action." = "Ce nœud correspond à ce périphérique Apple. Vous pouvez découvrir ses différentes adresses IPv4 et IPv6. Sélectionnez une de ces IPs et démarrez une tâche, il s'agit alors d'une tâche dite de boucle locale.";
 "On this node, the TCP Chargen and Discard services are activated. This node, dedicated to this app and deployed in a cloud on the Internet, lets you estimate your maximum outgoing and incoming throughput. Start the action TCP Flood Discard to connect to the discard service and send outgoing data to it, this will allow you to evaluate your outgoing/upload bandwidth. Start the action TCP Flood Chargen to connect to the chargen service and receive incoming data from it, this will allow you to evaluate your incoming/download bandwidth." = "Ce nœud offre les services Chargen et Discard. Il est dédié à cette app et est déployé dans un cloud Internet, pour vous permettre d'évaluer vos débits descendant et montant avec Internet. Démarrez une tâche de type inondation du port discard pour vous connecter sur le service discard de ce nœud et y envoyer du trafic sortant, cela permettra d'évaluer votre débit montant. Démarrez une tâche de type inondation du port chargen pour vous connecter sur le service chargen de ce nœud et recevoir du trafic entrant, cela permettra d'évaluer votre débit descendant.";
 "This hostname does not have a public DNS record. Select a host name with public DNS records to get their values." = "Ce nom d'hôte n'est associé à aucun enregistrement DNS public. Saisissez un nom d'hôte disposant d'enregistrements DNS publics pour récupérer les valeurs de ces enregistrements.";
-"Parallel TCP connections will be established to " = "Des connexions TCP vont être établies simultanément vers ";
-" on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = " sur les ports TCP de 1 à 65535, pour découvrir des services. Les nouveaux services découverts seront affichés en bas de cette vue. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
-"A TCP connection to the Discard port (9/TCP) of " = "Une connexion vers le port Discard (9/TCP) de ";
-" will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = " sera établie. Des données seront alors envoyées sur cette connexion à la vitesse maximale possible, par ce périphérique vers cette cible, afin d'estimer le débit maximum qui peut être atteint dans la direction sortante. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
-"A TCP connection to the Chargen port (19/TCP) of " = "Une connexion TCP vers le port Chargen (19/TCP) de ";
-" will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." =  " sera établie. Des données seront reçues sur cette connexion à la vitesse maximale possible, par ce périphérique depuis cette cible, afin d'estimer le débit maximum qui peut être atteint dans la direction entrante. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
-"ICMP packets of type ECHO_REQUEST will be sent to " = "Des paquets ICMP de type ECHO_REQUEST seront envoyés vers ";
-" at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = " à une fréquence d'un paquet par seconde. La cible doit répondre avec des paquets ICMP de type ECHO_REPLY. La latence sera calculée et affichée sur le graphe. Vous pourrez interrompre cette tâche en pressant le bouton STOP.";
 "I understand" = "J'ai compris";
 "OPEN ADVANCED INTERFACE" = "OUVRIR L'INTERFACE AVANCEE";
 "UDP flooding sends packets asynchronously to UDP port 8888 of the target at a maximum rate, but many packets can be lost at software, hardware or network layers. Note that the throughput that is displayed on this chart is the one achieved at the software layer of your device. Therefore, it certainly is above the one at which data is sent over the network: you must use a tool to estimate the reached bandwitdh. Either sniff the network or count packets on the target, for instance." = "L'inondation UDP envoie des paquets vers le port UDP 8888 de la cible, à la vitesse maximale possible, mais de nombreux paquets peuvent être perdus au niveau logiciel, matériel ou dans la chaîne de liaison réseau. Notez que le débit affiché sur le graphe est celui atteint au niveau de la couche logicielle de votre périphérique. Ainsi, il est certainement surévalué vis à vis du débit réellement envoyé sur le réseau : vous devez donc mettre en place un moyen spécifique pour estimer le débit réseau réellement atteint. Vous pouvez pour cela observer le réseau ou décompter les paquets reçus par la cible, par exemple.";
 "none" = "non disponible";
-"found " = "trouvé ";
-"trying " = "teste ";
 "browsing TCP ports" = "parcours des ports TCP";
 "Hostname" = "Nom d'hôte";
 "mDNS/Bonjour services" = "Services mDNS/Bonjour";
@@ -136,7 +126,7 @@
 "The documentation describes the steps to build a WiFi coverage heatmap with the advanced interface, using for example two iPhone/iPad to establish local measurements, or using a single iPhone/iPad and the CHARGEN (traffic generation protocol) responder deployed on the Internet and dedicated to this application.\n\nTo discover the other tools provided by this application (discovery of devices on the local network, latency and throughput measurements, scanning of open ports and services, 3D view of the network, ...) launch the advanced interface and click on the help button at the top left of the screen." = "La documentation décrit les étapes pour construire une heatmap de couverture WiFi avec l'interface avancée, en utilisant par exemple deux iPhone/iPad pour établir des mesures locales, ou encore en utilisant un seul iPhone/iPad et le répondeur CHARGEN (protocole pour générer du trafic) déployé sur Internet et dédié à cette application.\n\nPour découvrir les autres fonctions de cette application (scan des équipements et des ports et services ouverts sur le réseau local, mesures de latence et de débit, vue 3D du réseau local, ...) lancez l'interface avancée et cliquez sur le bouton d'aide en haut à gauche de l'écran.";
 "Click on your prefered blinking rectangle to choose between advanced interface, step-by-step heatmap and documentation. Click on the question marks to get help about each interface." = "Cliquez sur le rectangle clignotant de votre choix pour choisir entre l'interface avancée, la heatmap pas-à-pas et la documentation. Cliquez sur les points d'interrogation pour obtenir de l'aide sur chaque interface.";
 "3D flight" = "vol 3D";
-"left" = "top";
+"left" = "gauche";
 "SNMP agents" = "Agents SNMP";
 "Devices running some SNMP agent" = "Périphériques supportant SNMP";
 "Add new target" = "Ajouter une nouvelle cible";
@@ -232,5 +222,41 @@
 "Measure" = "Mesure";
 "Web" = "Web";
 "3D View" = "Vue 3D";
-"top" = "top";
+"top" = "dessus";
 "flight" = "vol";
+
+/* Messages d'erreur, alertes et libellés ajoutés (sept. 2026) */
+"connection refused" = "connexion refusée";
+"connection aborted" = "connexion interrompue";
+"timeout occurred" = "délai dépassé";
+"timeout occurred, no answer from target" = "délai dépassé, pas de réponse de la cible";
+"public DNS services do not offer Discard service support - you can use the target named flood.eowyn.eu.org that supports the Discard service" = "les services DNS publics ne proposent pas le service Discard - vous pouvez utiliser la cible flood.eowyn.eu.org, qui prend en charge le service Discard";
+"public DNS services do not offer Chargen service support - you can use the target named flood.eowyn.eu.org that supports the Chargen service" = "les services DNS publics ne proposent pas le service Chargen - vous pouvez utiliser la cible flood.eowyn.eu.org, qui prend en charge le service Chargen";
+"error (errno = %d)" = "erreur (errno = %d)";
+"network unreachable - check your Internet connection" = "réseau inaccessible - vérifiez votre connexion Internet";
+"Connection reset by peer" = "Connexion réinitialisée par la cible";
+"Connection closed" = "Connexion fermée";
+"Actions 1/2" = "Actions 1/2";
+"Actions 2/2" = "Actions 2/2";
+"OK" = "OK";
+"Warning" = "Attention";
+"You have dismissed the heat map high resolution computation, it will continue in the background, check your photo roll in about one minute to find the exported map." = "Vous avez quitté le calcul de la carte haute résolution : il continue en arrière-plan. Consultez votre photothèque dans une minute environ pour y trouver la carte exportée.";
+"Please choose a delay" = "Choisissez un intervalle";
+"Real WiFi signal strength, measured by macOS (CoreWLAN)" = "Puissance réelle du signal WiFi, mesurée par macOS (CoreWLAN)";
+"SNMP Warning" = "Avertissement SNMP";
+"SNMP protocol" = "Protocole SNMP";
+"SNMP sec level" = "Niveau de sécurité SNMP";
+"SNMP transport protocol" = "Protocole de transport SNMP";
+"SNMP network protocol" = "Protocole réseau SNMP";
+"v3 auth proto" = "Protocole d'authentification v3";
+"v3 auth algo" = "Algorithme d'authentification v3";
+"v3 privacy algo" = "Algorithme de chiffrement v3";
+
+/* Phrases à trou (%@ = adresse ou nom) */
+"Parallel TCP connections will be established to %@ on TCP ports from 1 to 65535, to find open services. The new discovered services will be displayed on the bottom view. You can interrupt this task by pressing the STOP button." = "Des connexions TCP parallèles vont être établies vers %@ sur les ports TCP 1 à 65535, afin de découvrir les services ouverts. Les nouveaux services découverts seront affichés dans la vue du bas. Vous pourrez interrompre cette tâche en appuyant sur le bouton STOP.";
+"A TCP connection to the Discard port (9/TCP) of %@ will be established. Data will then be sent on this connection at the maximum throughput available, by this device to this target host, to evaluate the maximum speed that can be reached in the outgoing direction. You can interrupt this task by pressing the STOP button." = "Une connexion TCP va être établie vers le port Discard (9/TCP) de %@. Cet appareil enverra ensuite des données à cette cible sur cette connexion, au débit maximal disponible, afin d'estimer le débit maximal atteignable dans le sens sortant. Vous pourrez interrompre cette tâche en appuyant sur le bouton STOP.";
+"A TCP connection to the Chargen port (19/TCP) of %@ will be established. Data will then be received on this connection at the maximum throughput available, by this device from this target host, to evaluate the maximum speed that can be reached in the incoming direction. You can interrupt this task by pressing the STOP button." = "Une connexion TCP va être établie vers le port Chargen (19/TCP) de %@. Cet appareil recevra ensuite des données de cette cible sur cette connexion, au débit maximal disponible, afin d'estimer le débit maximal atteignable dans le sens entrant. Vous pourrez interrompre cette tâche en appuyant sur le bouton STOP.";
+"ICMP packets of type ECHO_REQUEST will be sent to %@ at a rate of one packet per second. The target should reply with an ICMP packet of type ECHO_REPLY. The round trip type is computed and displayed on the chart. You can interrupt this task by pressing the STOP button." = "Des paquets ICMP de type ECHO_REQUEST seront envoyés vers %@ au rythme d'un paquet par seconde. La cible doit répondre par un paquet ICMP de type ECHO_REPLY. Le temps d'aller-retour sera calculé et affiché sur le graphe. Vous pourrez interrompre cette tâche en appuyant sur le bouton STOP.";
+"found %@" = "trouvé : %@";
+"trying %@" = "test de %@";
+"retrying %@" = "nouvel essai pour %@";

@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map quét mạng cục bộ của bạn để phát hiện các thiết bị trên đó, đo thông lượng và độ trễ WiFi, và tạo bản đồ nhiệt. Không có dữ liệu nào rời khỏi thiết bị của bạn.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map lưu bản đồ nhiệt bạn tạo vào thư viện ảnh để bạn có thể giữ lại hoặc chia sẻ.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map cần truy cập ảnh của bạn để bạn có thể chọn sơ đồ mặt bằng hoặc ảnh căn phòng làm nền cho bản đồ nhiệt WiFi.";

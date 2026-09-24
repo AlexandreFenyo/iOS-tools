@@ -1,0 +1,38 @@
+Cari zon mati WiFi di rumah anda dalam masa kurang daripada 10 minit, hanya dengan iPhone anda.
+Berjalan dari bilik ke bilik, ketik untuk mengukur, dan lihat peta warna prestasi sebenar WiFi anda terbina dengan sendirinya — kelajuan dan kependaman, di tempat anda benar-benar tinggal.
+Tiada langganan. Tiada iklan. Tiada akaun. Beli sekali, milik anda selamanya.
+
+APA YANG ANDA BENAR-BENAR BOLEH KETAHUI
+- Bilik mana yang perlahan, dan seberapa perlahan, dalam angka yang boleh anda gunakan untuk bertindak
+- Sama ada masalahnya pada WiFi atau pada sambungan internet anda
+- Di mana hendak meletakkan nod mesh, extender atau penghala itu sendiri
+- Peranti mana dalam rangkaian anda yang menghabiskan lebar jalur
+- Apa yang disiarkan oleh setiap peranti IoT dalam rangkaian anda tentang dirinya
+
+CARA IA BERFUNGSI
+1. Pilih salah satu pelan lantai sedia ada, atau gunakan foto pelan anda sendiri
+2. Berjalan ke satu titik, ketik sekali — aplikasi mengukur daya pemprosesan (throughput) dan kependaman di situ
+3. Ulang untuk setiap bilik. Peta haba terbina sambil anda bergerak
+4. Simpan peta yang siap ke Foto, untuk dibandingkan selepas anda mengalihkan penghala
+
+Mod langkah demi langkah membuat persediaan untuk anda: tiada sasaran untuk dipilih, tiada protokol untuk dikonfigurasi, tiada dokumentasi untuk dibaca. Antara muka lanjutan tetap tersedia apabila anda mahukan kawalan penuh.
+
+TIADA PERKAKASAN TAMBAHAN. TIADA LANGGANAN.
+Tinjauan WiFi profesional memerlukan Ekahau Sidekick atau WLAN Pi. Aplikasi ini hanya memerlukan iPhone anda. Dan tidak seperti hampir semua penganalisis WiFi lain di App Store, tiada pelan mingguan, tiada pelan tahunan dan tiada iklan — anda beli sekali sahaja.
+
+JUGA KIT ALAT RANGKAIAN YANG LENGKAP
+- Imbas setiap peranti dalam LAN anda, dengan pengeluar, alamat IP dan port terbuka
+- Temui setiap perkhidmatan mDNS/Bonjour: HomePod, Apple TV, pencetak, IoT
+- Ping dan kependaman ke peranti setempat dan ke mana-mana hos internet
+- Pengukuran daya pemprosesan terhadap peranti lain yang menjalankan aplikasi ini, mana-mana pelayan TCP CHARGEN/DISCARD, atau internet
+- Jalankan perkhidmatan TCP CHARGEN atau DISCARD pada peranti anda sendiri
+- Paparan animasi 3D topologi rangkaian setempat anda
+
+KLIEN SNMP PENUH DISERTAKAN
+Hantar pertanyaan kepada mana-mana ejen SNMP pada penghala, suis, titik akses dan pencetak anda. SNMP v1, v2c dan v3, dengan noAuthNoPriv, authNoPriv dan authPriv, pengesahan MD5 dan SHA1, privasi DES dan AES. 64 MIB standard disertakan, jadi pengecam objek diterjemahkan kepada nama yang mudah dibaca secara luar talian — tiada pelayan, tiada langganan, tiada apa-apa untuk dikonfigurasi selain alamat ejen dan bukti kelayakan.
+
+UNTUK RUMAH DAN UNTUK PROFESIONAL
+Dibina oleh seorang jurutera rangkaian. Cukup mudah untuk mendiagnosis rumah anda pada petang Ahad, cukup tepat sehingga profesional telekomunikasi menggunakannya dalam kerja mereka.
+
+SEBELUM ANDA MEMBELI — APA YANG APLIKASI INI TIDAK LAKUKAN
+Apple tidak membenarkan mana-mana aplikasi iOS pihak ketiga membaca kekuatan isyarat WiFi atau mengimbas rangkaian berdekatan, dan tiada aplikasi App Store yang boleh melakukannya — sebab itulah alat profesional memerlukan perkakasan luaran. Aplikasi ini memetakan apa yang boleh diukurnya di tempat anda berdiri: daya pemprosesan dan kependaman sebenar. Itulah yang diperlukan oleh peta haba untuk rumah. Ia mengukur rangkaian yang sedang anda sambungi, satu peta haba pada satu masa.

@@ -279,14 +279,14 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
                     switch sock_addr.getFamily() {
                     case AF_INET:
                         node.addV4Address(sock_addr.getIPAddress() as! IPv4Address)
-                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
+                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), info)) }
                         SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv4Address)
                         self.device_manager.addTrace("NetServiceDidResolveAddress: adding \(sock_addr.getIPAddress()!.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
 
                         
                     case AF_INET6:
                         node.addV6Address(sock_addr.getIPAddress() as! IPv6Address)
-                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + info) }
+                        if let info = sock_addr.getIPAddress()!.toNumericString() { self.device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), info)) }
                         // Do not check IPv6 addresses: they often have an IPv4 address too, not checking them let the SNMP module being more available
                         // SNMPManager.manager.addIpToCheck(sock_addr.getIPAddress() as! IPv6Address)
                         // self.device_manager.addTrace("NetServiceDidResolveAddress: adding \(sock_addr.getIPAddress()!.toNumericString() ?? "[invalid IP address]") to the SNMP agent list to check", level: .INFO)
@@ -300,11 +300,11 @@ class BrowserDelegate : NSObject, NetServiceBrowserDelegate, NetServiceDelegate 
             // sender.domain not used ("local.")
             if !name.isEmpty {
                 node.addName(name)
-                self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + name)
+                self.device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), name))
             }
             if let domain = DomainName(host_name!) {
                 node.addDnsName(domain)
-                self.device_manager.setInformation(NSLocalizedString("found ", comment: "found ") + name)
+                self.device_manager.setInformation(String(format: NSLocalizedString("found %@", comment: "found %@ (address or name)"), name))
             }
             
             self.device_manager.addTrace("Bonjour/mDNS: service found: type:\(self.type); name:\(name); hostname:\(host_name ?? ""); sender.type:\(type); port:\(port); descr:\(description); domain:\(domain); attributes:\(text_attr)", level: .DEBUG)

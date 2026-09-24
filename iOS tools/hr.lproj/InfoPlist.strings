@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map skenira vašu lokalnu mrežu kako bi otkrio uređaje na njoj, izmjerio Wi-Fi propusnost i latenciju te izradio vašu toplinsku kartu. Ništa nikada ne napušta vaš uređaj.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map sprema izrađenu toplinsku kartu u vašu fototeku kako biste je mogli zadržati ili podijeliti.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map treba pristup vašim fotografijama kako biste mogli odabrati tlocrt ili fotografiju prostorije na kojoj će se nacrtati vaša Wi-Fi toplinska karta.";

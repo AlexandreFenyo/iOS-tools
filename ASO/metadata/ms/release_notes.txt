@@ -1,0 +1,4 @@
+WiFi Heat Map kini bercakap dalam bahasa anda: aplikasi ini tersedia dalam 44 bahasa, termasuk Arab, Cina, Hindi, Jepun, Korea, Portugis, Rusia dan banyak lagi.
+
+- Setiap skrin, mesej bantuan dan mesej ralat telah diterjemahkan
+- Mesej ralat yang lebih jelas apabila pengukuran tidak dapat mencapai sasarannya

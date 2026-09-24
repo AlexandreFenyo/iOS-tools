@@ -1,0 +1,4 @@
+WiFi Heat Map taler nu dit sprog: appen fås på 44 sprog, bl.a. arabisk, kinesisk, hindi, japansk, koreansk, portugisisk, russisk og mange flere.
+
+- Alle skærme, hjælpebeskeder og fejlmeddelelser er oversat
+- Tydeligere fejlmeddelelser, når en måling ikke kan nå sit mål

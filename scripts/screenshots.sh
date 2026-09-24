@@ -27,6 +27,9 @@
 #     -d  appareils à capturer (défaut : iphone69,ipad13,ipad13-landscape,mac)
 #     -o  répertoire de sortie (défaut : ASO/screenshots, non versionné)
 #     -n  captures brutes seulement, sans composition des bandeaux
+#     -B  sans compilation : réutilise les produits déjà compilés (pour lancer plusieurs
+#         instances en parallèle, une par appareil, après une première compilation)
+#   « ipad13-landscape » seul ne capture que le paysage ; avec « ipad13 », les deux passes.
 #
 # Sortie :
 #   <out>/raw/<langue simulateur>/<appareil>/<scénario>.png   captures brutes
@@ -53,13 +56,15 @@ DD="${${TMPDIR:-/tmp}%/}/screenshots-dd"
 LOCALES=""
 DEVICES="iphone69,ipad13,ipad13-landscape,mac"
 COMPOSE=1
+SKIP_BUILD=0
 
-while getopts "l:d:o:n" opt; do
+while getopts "l:d:o:nB" opt; do
     case $opt in
         l) LOCALES="$OPTARG" ;;
         d) DEVICES="$OPTARG" ;;
         o) OUT="$OPTARG" ;;
         n) COMPOSE=0 ;;
+        B) SKIP_BUILD=1 ;;
         *) sed -n '2,30p' "$0"; exit 1 ;;
     esac
 done
@@ -114,7 +119,8 @@ for d in json.load(sys.stdin)["devices"].get(rt, []):
 
 SIM_KEYS=(${(s:,:)DEVICES})
 SIM_KEYS=(${SIM_KEYS:#mac})
-WANT_LANDSCAPE=0
+WANT_LANDSCAPE=0; WANT_PORTRAIT=0
+(( ${SIM_KEYS[(Ie)ipad13]} )) && WANT_PORTRAIT=1
 if (( ${SIM_KEYS[(Ie)ipad13-landscape]} )); then
     WANT_LANDSCAPE=1
     SIM_KEYS=(${SIM_KEYS:#ipad13-landscape})
@@ -158,7 +164,7 @@ check_size() {   # <png> <libellé> <tailles acceptées séparées par des espac
 if (( ${#SIM_KEYS} > 0 )); then
 echo "=== build simulateur (Debug : le mode démo n'existe pas en Release)"
 # ARCHS=arm64 : la lib net-snmp simulateur n'a pas de tranche x86_64
-xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
+(( SKIP_BUILD )) || xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
            -destination "generic/platform=iOS Simulator" \
            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO -skipMacroValidation \
            -derivedDataPath "$DD" build | grep -E "BUILD (SUCCEEDED|FAILED)"
@@ -166,7 +172,7 @@ APP="$DD/Build/Products/Debug-iphonesimulator/iOS tools.app"
 if [[ ${SIM_KEYS[(Ie)ipad13]} -gt 0 ]]; then
     # Test d'interface qui pivote le simulateur iPad (série paysage, retour en portrait)
     echo "=== build SimRotator (rotation du simulateur)"
-    xcodebuild build-for-testing -project "$ROOT/scripts/SimRotator/SimRotator.xcodeproj" \
+    (( SKIP_BUILD )) || xcodebuild build-for-testing -project "$ROOT/scripts/SimRotator/SimRotator.xcodeproj" \
                -scheme SimRotator -destination "generic/platform=iOS Simulator" \
                -derivedDataPath "$DD-rotator" | grep -E "BUILD (SUCCEEDED|FAILED)"
     ROTATOR_RUN=$(print -l "$DD-rotator"/Build/Products/SimRotator_iphonesimulator*.xctestrun(N) | head -1)
@@ -198,7 +204,11 @@ for key in $SIM_KEYS; do
 
     # Passes : portrait, puis paysage sur le même simulateur iPad si demandé
     passes=($key)
-    [[ $key == ipad13 ]] && (( WANT_LANDSCAPE )) && passes+=(ipad13-landscape)
+    if [[ $key == ipad13 ]]; then
+        passes=()
+        (( WANT_PORTRAIT )) && passes+=(ipad13)
+        (( WANT_LANDSCAPE )) && passes+=(ipad13-landscape)
+    fi
     for out_key in $passes; do
     if [[ $key == ipad13 ]]; then
         [[ $out_key == ipad13-landscape ]] && wait_orientation "$udid" landscape || wait_orientation "$udid" portrait
@@ -241,7 +251,7 @@ if (( WANT_MAC )); then
         echo "=== ERREUR : écran verrouillé, macOS interdit les captures de fenêtres Mac"; exit 1
     fi
     echo "=== build Mac Catalyst (Debug)"
-    xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
+    (( SKIP_BUILD )) || xcodebuild -workspace "$WS" -scheme "$SCHEME" -configuration Debug \
                -destination "platform=macOS,variant=Mac Catalyst,arch=arm64" -skipMacroValidation \
                -derivedDataPath "$DD" build | grep -E "BUILD (SUCCEEDED|FAILED)"
     MAC_APP="$DD/Build/Products/Debug-maccatalyst/iOS tools.app"

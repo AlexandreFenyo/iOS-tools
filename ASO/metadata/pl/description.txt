@@ -1,0 +1,38 @@
+Znajdź martwe strefy Wi-Fi w swoim domu w mniej niż 10 minut, używając tylko iPhone'a.
+Przechodź z pokoju do pokoju, stuknij, aby zmierzyć, i patrz, jak sama tworzy się kolorowa mapa rzeczywistej wydajności Twojego Wi-Fi — prędkość i opóźnienie tam, gdzie naprawdę mieszkasz.
+Bez subskrypcji. Bez reklam. Bez konta. Jeden zakup, Twój na zawsze.
+
+CO NAPRAWDĘ SPRAWDZISZ
+- Które pokoje są wolne i jak bardzo — w liczbach, na podstawie których możesz działać
+- Czy problem leży w Wi-Fi, czy w łączu internetowym
+- Gdzie postawić węzeł mesh, wzmacniacz sygnału lub sam router
+- Które urządzenie w Twojej sieci zjada przepustowość
+- Co każde urządzenie IoT w Twojej sieci rozgłasza o sobie
+
+JAK TO DZIAŁA
+1. Wybierz jeden z gotowych planów mieszkania albo użyj zdjęcia własnego planu
+2. Stań w wybranym miejscu i stuknij raz — aplikacja zmierzy tam przepustowość i opóźnienie
+3. Powtórz w każdym pokoju. Mapa cieplna tworzy się na bieżąco
+4. Zapisz gotową mapę w Zdjęciach, aby porównać wyniki po przestawieniu routera
+
+Tryb krok po kroku sam wszystko konfiguruje: bez wybierania celu, bez ustawiania protokołu, bez czytania dokumentacji. Zaawansowany interfejs jest nadal dostępny, gdy chcesz mieć pełną kontrolę.
+
+BEZ DODATKOWEGO SPRZĘTU. BEZ SUBSKRYPCJI.
+Profesjonalne pomiary Wi-Fi wymagają Ekahau Sidekick lub WLAN Pi. Ta aplikacja wymaga tylko Twojego iPhone'a. I w przeciwieństwie do niemal wszystkich innych analizatorów Wi-Fi w App Store nie ma tu planu tygodniowego, planu rocznego ani reklam — kupujesz raz.
+
+TAKŻE KOMPLETNY ZESTAW NARZĘDZI SIECIOWYCH
+- Skanowanie wszystkich urządzeń w sieci LAN: producent, adres IP i otwarte porty
+- Wykrywanie wszystkich usług mDNS/Bonjour: HomePod, Apple TV, drukarki, IoT
+- Ping i opóźnienie do urządzeń lokalnych i do dowolnego hosta w internecie
+- Pomiar przepustowości względem innego urządzenia z tą aplikacją, dowolnego serwera TCP CHARGEN/DISCARD lub internetu
+- Uruchamianie usługi TCP CHARGEN lub DISCARD na własnym urządzeniu
+- Animowany widok 3D topologii sieci lokalnej
+
+PEŁNY KLIENT SNMP W ZESTAWIE
+Odpytuj dowolnego agenta SNMP w routerach, przełącznikach, punktach dostępowych i drukarkach. SNMP v1, v2c i v3, z noAuthNoPriv, authNoPriv i authPriv, uwierzytelnianiem MD5 i SHA1 oraz szyfrowaniem DES i AES. Aplikacja zawiera 64 standardowe bazy MIB, więc identyfikatory obiektów są tłumaczone na czytelne nazwy offline — bez serwera, bez subskrypcji, bez konfigurowania czegokolwiek poza adresem agenta i danymi uwierzytelniającymi.
+
+DLA DOMU I DLA PROFESJONALISTÓW
+Stworzona przez inżyniera sieciowego. Na tyle prosta, by w niedzielne popołudnie zdiagnozować własne mieszkanie, i na tyle precyzyjna, że profesjonaliści z branży telekomunikacyjnej używają jej w pracy.
+
+ZANIM KUPISZ — CZEGO TA APLIKACJA NIE ROBI
+Apple nie pozwala żadnej zewnętrznej aplikacji na iOS odczytywać siły sygnału Wi-Fi ani skanować sąsiednich sieci i żadna aplikacja z App Store tego nie potrafi — dlatego profesjonalne narzędzia potrzebują zewnętrznego sprzętu. Ta aplikacja mapuje to, co może zmierzyć w miejscu, w którym stoisz: rzeczywistą przepustowość i opóźnienie. Właśnie tego potrzebuje domowa mapa cieplna. Mierzy sieć, z którą jesteś połączony, jedną mapę cieplną naraz.

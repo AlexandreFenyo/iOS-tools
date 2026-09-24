@@ -1,0 +1,1 @@
+lämpökartta,kuuluvuus,kattavuus,verkko,reititin,mesh,toistin,skanneri,testi,snmp,dbm,wlan,langaton

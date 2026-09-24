@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map skenuje vaši místní síť, aby v ní našla zařízení, změřila propustnost a latenci Wi-Fi a vytvořila tepelnou mapu. Žádná data nikdy neopustí vaše zařízení.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map ukládá vytvořenou tepelnou mapu do knihovny fotek, abyste si ji mohli ponechat nebo sdílet.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map potřebuje přístup k vašim fotkám, abyste mohli vybrat půdorys nebo fotku místnosti, na kterou se tepelná mapa Wi-Fi vykreslí.";

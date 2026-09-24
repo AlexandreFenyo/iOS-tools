@@ -1,0 +1,55 @@
+Löydä kotisi wifin katvealueet alle 10 minuutissa pelkällä iPhonella.
+Kävele huoneesta toiseen, napauta mitataksesi ja katso, kuinka wifisi todellisesta
+suorituskyvystä syntyy värikartta – nopeus ja viive siellä, missä oikeasti asut.
+Ei tilausta. Ei mainoksia. Ei tiliä. Yksi osto, sinun ikuisesti.
+
+MITÄ VOIT OIKEASTI SAADA SELVILLE
+- Mitkä huoneet ovat hitaita ja kuinka hitaita, lukuina, joiden perusteella voit toimia
+- Onko ongelma wifissä vai internetyhteydessä
+- Mihin sijoittaa mesh-yksikkö, toistin tai itse reititin
+- Mikä verkkosi laitteista syö kaistanleveyttäsi
+- Mitä kukin verkkosi IoT-laite kertoo itsestään
+
+NÄIN SE TOIMII
+1. Valitse jokin valmiista pohjapiirroksista tai käytä valokuvaa omasta piirroksestasi
+2. Kävele kohtaan ja napauta kerran – sovellus mittaa siinä siirtonopeuden ja viiveen
+3. Toista jokaisessa huoneessa. Lämpökartta rakentuu samalla
+4. Tallenna valmis kartta kuviisi, jotta voit verrata reitittimen siirtämisen jälkeen
+
+Vaiheittainen tila tekee asetukset puolestasi: ei valittavaa kohdetta, ei
+määritettävää protokollaa, ei luettavaa dokumentaatiota. Edistynyt käyttöliittymä
+on edelleen käytettävissä, kun haluat täyden hallinnan.
+
+EI LISÄLAITTEITA. EI TILAUSTA.
+Ammattimaiset wifi-mittaukset vaativat Ekahau Sidekickin tai WLAN Pin. Tämä sovellus
+tarvitsee vain iPhonesi. Ja toisin kuin lähes kaikki muut App Storen wifi-analysaattorit,
+siinä ei ole viikko- tai vuositilausta eikä mainoksia – ostat sen kerran.
+
+MYÖS TÄYDELLINEN VERKKOTYÖKALUPAKKI
+- Skannaa kaikki lähiverkon laitteet valmistajineen, IP-osoitteineen ja avoimine portteineen
+- Löydä kaikki mDNS/Bonjour-palvelut: HomePod, Apple TV, tulostimet, IoT
+- Ping ja viive paikallisiin laitteisiin ja mihin tahansa internetin palvelimeen
+- Siirtonopeuden mittaus toista tätä sovellusta käyttävää laitetta, mitä tahansa
+  TCP CHARGEN/DISCARD -palvelinta tai internetiä vastaan
+- Aja TCP CHARGEN- tai DISCARD-palvelua omalla laitteellasi
+- Animoitu 3D-näkymä lähiverkon topologiasta
+
+TÄYDELLINEN SNMP-ASIAKAS MUKANA
+Tee kyselyjä mihin tahansa SNMP-agenttiin reitittimissä, kytkimissä, tukiasemissa ja
+tulostimissa. SNMP v1, v2c ja v3, noAuthNoPriv, authNoPriv ja authPriv, MD5- ja
+SHA1-todennus, DES- ja AES-salaus. Mukana on 64 vakio-MIBiä, joten objektitunnisteet
+muunnetaan luettaviksi nimiksi ilman verkkoyhteyttä – ei palvelinta, ei tilausta, ei
+mitään määritettävää agentin osoitteen ja tunnistetietojen lisäksi.
+
+KOTIIN JA AMMATTILAISILLE
+Verkkoinsinöörin tekemä. Tarpeeksi yksinkertainen asuntosi vianmääritykseen
+sunnuntai-iltapäivänä, tarpeeksi tarkka, että tietoliikenteen ammattilaiset käyttävät
+sitä työssään.
+
+ENNEN KUIN OSTAT – MITÄ TÄMÄ SOVELLUS EI TEE
+Apple ei anna yhdenkään kolmannen osapuolen iOS-sovelluksen lukea wifin
+signaalinvoimakkuutta tai etsiä lähellä olevia verkkoja, eikä mikään App Storen
+sovellus pysty siihen – siksi ammattityökalut tarvitsevat ulkoisen laitteen. Tämä
+sovellus kartoittaa sen, minkä se voi mitata siinä kohdassa, jossa seisot: todellisen
+siirtonopeuden ja viiveen. Juuri sitä kodin lämpökartta tarvitsee. Se mittaa verkkoa,
+johon olet yhteydessä, yksi lämpökartta kerrallaan.

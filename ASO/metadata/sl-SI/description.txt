@@ -1,0 +1,54 @@
+Poiščite mrtve cone domačega wifija v manj kot 10 minutah, samo z iPhonom.
+Hodite iz sobe v sobo, tapnite za meritev in opazujte, kako nastaja barvna karta
+dejanske zmogljivosti vašega wifija – hitrost in zakasnitev tam, kjer res živite.
+Brez naročnine. Brez oglasov. Brez računa. En nakup, vaš za vedno.
+
+KAJ LAHKO RES UGOTOVITE
+- Katere sobe so počasne in kako zelo, v številkah, s katerimi si lahko pomagate
+- Ali je težava v wifiju ali v vaši internetni povezavi
+- Kam postaviti vozlišče mesh, ojačevalnik ali sam usmerjevalnik
+- Katera naprava v omrežju vam požira pasovno širino
+- Kaj vsaka naprava IoT v omrežju oddaja o sebi
+
+KAKO DELUJE
+1. Izberite enega od pripravljenih tlorisov ali uporabite fotografijo svojega
+2. Pojdite na mesto in enkrat tapnite – aplikacija tam izmeri prepustnost in zakasnitev
+3. Ponovite v vsaki sobi. Toplotna karta nastaja sproti
+4. Končano karto shranite med fotografije, da jo primerjate, ko premaknete usmerjevalnik
+
+Način po korakih vse nastavi namesto vas: ni treba izbirati cilja, nastavljati
+protokola ali brati dokumentacije. Napredni vmesnik je še vedno na voljo, ko
+želite popoln nadzor.
+
+BREZ DODATNE OPREME. BREZ NAROČNINE.
+Profesionalne meritve wifija zahtevajo Ekahau Sidekick ali WLAN Pi. Ta aplikacija
+potrebuje le vaš iPhone. In za razliko od skoraj vseh drugih analizatorjev wifija
+v App Storu ni tedenskega ali letnega paketa in ni oglasov – kupite jo enkrat.
+
+TUDI POPOLN NABOR OMREŽNIH ORODIJ
+- Pregled vseh naprav v lokalnem omrežju s proizvajalcem, naslovom IP in odprtimi vrati
+- Odkrivanje vseh storitev mDNS/Bonjour: HomePod, Apple TV, tiskalniki, IoT
+- Ping in zakasnitev do lokalnih naprav in do katerega koli gostitelja na internetu
+- Merjenje prepustnosti z drugo napravo, na kateri teče ta aplikacija, s katerim koli
+  strežnikom TCP CHARGEN/DISCARD ali z internetom
+- Zagon storitve TCP CHARGEN ali DISCARD na lastni napravi
+- Animiran 3D-prikaz topologije lokalnega omrežja
+
+VKLJUČEN POPOLN ODJEMALEC SNMP
+Pošiljajte poizvedbe kateremu koli agentu SNMP na usmerjevalnikih, stikalih, dostopnih
+točkah in tiskalnikih. SNMP v1, v2c in v3, z noAuthNoPriv, authNoPriv in authPriv,
+overjanjem MD5 in SHA1 ter šifriranjem DES in AES. Priloženih je 64 standardnih MIB,
+zato se identifikatorji objektov brez povezave prevedejo v berljiva imena – brez
+strežnika, brez naročnine, nastaviti je treba le naslov agenta in poverilnice.
+
+ZA DOM IN ZA STROKOVNJAKE
+Razvil jo je omrežni inženir. Dovolj preprosta, da v nedeljo popoldne diagnosticirate
+svoje stanovanje, in dovolj natančna, da jo telekomunikacijski strokovnjaki uporabljajo
+pri delu.
+
+PRED NAKUPOM – ČESA TA APLIKACIJA NE ZMORE
+Apple nobeni aplikaciji tretjih oseb za iOS ne dovoli brati moči signala wifi ali
+iskati sosednjih omrežij in tega ne zmore nobena aplikacija v App Storu – zato
+profesionalna orodja potrebujejo zunanjo opremo. Ta aplikacija prikaže, kar lahko
+izmeri na mestu, kjer stojite: dejansko prepustnost in zakasnitev. Prav to potrebuje
+domača toplotna karta. Meri omrežje, s katerim ste povezani, eno toplotno karto naenkrat.

@@ -1,0 +1,4 @@
+WiFi Heat Map puhuu nyt sinun kieltäsi: sovellus on saatavilla 44 kielellä, muun muassa arabiaksi, kiinaksi, hindiksi, japaniksi, koreaksi, portugaliksi, venäjäksi ja monilla muilla kielillä.
+
+- Kaikki näkymät, ohjeviestit ja virheilmoitukset on käännetty
+- Selkeämmät virheilmoitukset, kun mittaus ei tavoita kohdettaan

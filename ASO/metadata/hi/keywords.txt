@@ -1,0 +1,1 @@
+वाईफाई,नेटवर्क,heatmap,coverage,scanner,router,mesh,extender,snmp,lan

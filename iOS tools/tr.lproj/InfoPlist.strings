@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map, yerel ağınızdaki aygıtları bulmak, Wi-Fi aktarım hızını ve gecikmesini ölçmek ve ısı haritanızı oluşturmak için yerel ağınızı tarar. Hiçbir veri aygıtınızdan dışarı çıkmaz.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map, oluşturduğunuz ısı haritasını saklayabilmeniz veya paylaşabilmeniz için fotoğraf arşivinize kaydeder.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map, Wi-Fi ısı haritanızın üzerine çizileceği kat planını veya oda fotoğrafını seçebilmeniz için fotoğraflarınıza erişmek ister.";

@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "WiFi Heat Map analizza la tua rete locale per rilevare i dispositivi presenti, misurare throughput e latenza Wi-Fi e creare la tua mappa di copertura. Nessun dato lascia mai il tuo dispositivo.";
+"NSPhotoLibraryAddUsageDescription" = "WiFi Heat Map salva nella tua libreria foto la mappa di copertura che crei, così puoi conservarla o condividerla.";
+"NSPhotoLibraryUsageDescription" = "WiFi Heat Map ha bisogno di accedere alle tue foto per permetterti di scegliere la planimetria o la foto della stanza su cui verrà disegnata la tua mappa di copertura Wi-Fi.";

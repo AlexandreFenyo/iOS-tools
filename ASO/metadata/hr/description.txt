@@ -1,0 +1,38 @@
+Pronađite mrtve zone svog kućnog Wi-Fija za manje od 10 minuta, samo s iPhoneom.
+Hodajte iz sobe u sobu, dodirnite za mjerenje i gledajte kako se sama gradi karta u bojama stvarnih performansi vašeg Wi-Fija — brzina i latencija ondje gdje zaista živite.
+Bez pretplate. Bez oglasa. Bez računa. Jedna kupnja, zauvijek vaša.
+
+ŠTO ĆETE ZAPRAVO SAZNATI
+- Koje su sobe spore i koliko — u brojkama na temelju kojih možete djelovati
+- Je li problem u Wi-Fiju ili u internetskoj vezi
+- Gdje postaviti mesh čvor, pojačivač signala ili sam router
+- Koji uređaj u vašoj mreži troši vašu propusnost
+- Što svaki IoT uređaj u vašoj mreži emitira o sebi
+
+KAKO FUNKCIONIRA
+1. Odaberite jedan od gotovih tlocrta ili upotrijebite fotografiju vlastitog tlocrta
+2. Stanite na neko mjesto i dodirnite jednom — aplikacija ondje mjeri propusnost i latenciju
+3. Ponovite u svakoj sobi. Toplinska karta nastaje dok hodate
+4. Spremite gotovu kartu u Fotografije kako biste je usporedili nakon premještanja routera
+
+Način rada korak po korak sve postavlja umjesto vas: nema cilja za odabir, nema protokola za konfiguriranje, nema dokumentacije za čitanje. Napredno sučelje i dalje je tu kad želite potpunu kontrolu.
+
+BEZ DODATNOG HARDVERA. BEZ PRETPLATE.
+Profesionalna mjerenja Wi-Fija zahtijevaju Ekahau Sidekick ili WLAN Pi. Ova aplikacija treba samo vaš iPhone. I za razliku od gotovo svih drugih analizatora Wi-Fija u App Storeu, nema tjednog plana, nema godišnjeg plana i nema oglasa — kupujete je jednom.
+
+I POTPUN SKUP MREŽNIH ALATA
+- Skeniranje svih uređaja u LAN-u: proizvođač, IP adresa i otvoreni portovi
+- Otkrivanje svih mDNS/Bonjour usluga: HomePod, Apple TV, pisači, IoT
+- Ping i latencija prema lokalnim uređajima i prema bilo kojem internetskom hostu
+- Mjerenje propusnosti prema drugom uređaju s ovom aplikacijom, bilo kojem TCP CHARGEN/DISCARD poslužitelju ili internetu
+- Pokretanje TCP CHARGEN ili DISCARD usluge na vlastitom uređaju
+- Animirani 3D prikaz topologije lokalne mreže
+
+UKLJUČEN POTPUNI SNMP KLIJENT
+Postavljajte upite bilo kojem SNMP agentu na routerima, preklopnicima, pristupnim točkama i pisačima. SNMP v1, v2c i v3, s razinama noAuthNoPriv, authNoPriv i authPriv, autentifikacijom MD5 i SHA1 te enkripcijom DES i AES. Uključena su 64 standardna MIB-a, pa se identifikatori objekata pretvaraju u čitljive nazive offline — bez poslužitelja, bez pretplate, bez ikakvog podešavanja osim adrese agenta i vjerodajnica.
+
+ZA DOM I ZA PROFESIONALCE
+Izradio ju je mrežni inženjer. Dovoljno jednostavna da u nedjelju poslijepodne dijagnosticirate svoj stan, a dovoljno precizna da je telekom profesionalci koriste na poslu.
+
+PRIJE KUPNJE — ŠTO OVA APLIKACIJA NE RADI
+Apple nijednoj aplikaciji treće strane za iOS ne dopušta čitanje jačine Wi-Fi signala ni skeniranje susjednih mreža i nijedna aplikacija iz App Storea to ne može — zato profesionalni alati trebaju vanjski hardver. Ova aplikacija mapira ono što može izmjeriti na mjestu na kojem stojite: stvarnu propusnost i latenciju. Upravo to treba kućnoj toplinskoj karti. Mjeri mrežu na koju ste spojeni, jednu po jednu toplinsku kartu.

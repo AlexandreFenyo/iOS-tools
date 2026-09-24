@@ -1,43 +1,301 @@
 locale	sim_language	index	scenario	caption
-en-US	en	1	welcome	WiFi heat maps and network\ntools, in one app
-en-US	en	2	measure	Walk, tap, measure —\nno extra hardware
-en-US	en	3	discover	Every device on your network,\nin one list
-en-US	en	4	details	Names, ports and services\nof every device
-en-US	en	5	3d	Your whole network\nin interactive 3D
-en-US	en	6	traces	Detailed logs\nfor network pros
-en-GB	en	1	welcome	WiFi heat maps and network\ntools, in one app
-en-GB	en	2	measure	Walk, tap, measure —\nno extra hardware
-en-GB	en	3	discover	Every device on your network,\nin one list
-en-GB	en	4	details	Names, ports and services\nof every device
-en-GB	en	5	3d	Your whole network\nin interactive 3D
-en-GB	en	6	traces	Detailed logs\nfor network pros
-fr-FR	fr	1	welcome	Cartes WiFi et outils réseau,\nen une seule app
-fr-FR	fr	2	measure	Marchez, appuyez, mesurez —\nsans aucun matériel
-fr-FR	fr	3	discover	Chaque appareil de votre réseau,\nen une liste
-fr-FR	fr	4	details	Noms, ports et services\nde chaque appareil
-fr-FR	fr	5	3d	Tout votre réseau\nen 3D interactive
-fr-FR	fr	6	traces	Des journaux détaillés\npour les pros du réseau
-es-ES	es	1	welcome	Mapas WiFi y herramientas\nde red, en una sola app
-es-ES	es	2	measure	Camina, toca, mide —\nsin hardware adicional
-es-ES	es	3	discover	Cada dispositivo de tu red,\nen una lista
-es-ES	es	4	details	Nombres, puertos y servicios\nde cada dispositivo
-es-ES	es	5	3d	Toda tu red\nen 3D interactivo
-es-ES	es	6	traces	Registros detallados\npara expertos en redes
+ar-SA	ar	1	welcome	خرائط حرارية للواي فاي\nوأدوات الشبكة في تطبيق واحد
+ar-SA	ar	2	measure	امشِ، المس، قِس —\nدون أي أجهزة إضافية
+ar-SA	ar	3	discover	كل الأجهزة على شبكتك\nفي قائمة واحدة
+ar-SA	ar	4	details	الأسماء والمنافذ والخدمات\nلكل جهاز
+ar-SA	ar	5	3d	شبكتك بالكامل\nبعرض ثلاثي الأبعاد تفاعلي
+ar-SA	ar	6	traces	سجلات مفصّلة\nلخبراء الشبكات
+bn-BD	bn	1	welcome	ওয়াই-ফাই হিটম্যাপ ও নেটওয়ার্ক\nটুল, এক অ্যাপেই
+bn-BD	bn	2	measure	হাঁটুন, ট্যাপ করুন, মাপুন —\nবাড়তি কোনো যন্ত্র ছাড়াই
+bn-BD	bn	3	discover	আপনার নেটওয়ার্কের সব ডিভাইস,\nএক তালিকায়
+bn-BD	bn	4	details	প্রতিটি ডিভাইসের নাম,\nপোর্ট ও সার্ভিস
+bn-BD	bn	5	3d	আপনার পুরো নেটওয়ার্ক\nইন্টারঅ্যাক্টিভ 3D-তে
+bn-BD	bn	6	traces	নেটওয়ার্ক পেশাদারদের জন্য\nবিস্তারিত লগ
+ca	ca	1	welcome	Mapes WiFi i eines de xarxa,\nen una sola app
+ca	ca	2	measure	Camina, toca, mesura —\nsense maquinari addicional
+ca	ca	3	discover	Cada dispositiu de la xarxa,\nen una sola llista
+ca	ca	4	details	Noms, ports i serveis\nde cada dispositiu
+ca	ca	5	3d	Tota la teva xarxa\nen 3D interactiu
+ca	ca	6	traces	Registres detallats\nper a experts en xarxes
+cs	cs	1	welcome	Mapy Wi-Fi a síťové nástroje\nv jediné aplikaci
+cs	cs	2	measure	Choďte, ťukněte, měřte —\nbez dalšího hardwaru
+cs	cs	3	discover	Každé zařízení ve vaší síti\nv jednom seznamu
+cs	cs	4	details	Názvy, porty a služby\nkaždého zařízení
+cs	cs	5	3d	Celá vaše síť\nv interaktivním 3D
+cs	cs	6	traces	Podrobné protokoly\npro síťové profíky
+da	da	1	welcome	Wi-Fi-kort og netværks-\nværktøjer i én app
+da	da	2	measure	Gå, tryk, mål —\nuden ekstra hardware
+da	da	3	discover	Alle enheder på dit netværk\ni én liste
+da	da	4	details	Navne, porte og tjenester\nfor hver enhed
+da	da	5	3d	Hele dit netværk\ni interaktiv 3D
+da	da	6	traces	Detaljerede logfiler\ntil netværksprofessionelle
 de-DE	de	1	welcome	WLAN-Heatmaps und Netzwerk-\ntools in einer App
 de-DE	de	2	measure	Gehen, tippen, messen —\nohne Zusatzhardware
 de-DE	de	3	discover	Jedes Gerät im Netzwerk,\nauf einen Blick
 de-DE	de	4	details	Namen, Ports und Dienste\njedes Geräts
 de-DE	de	5	3d	Ihr ganzes Netzwerk\nin interaktivem 3D
 de-DE	de	6	traces	Detaillierte Protokolle\nfür Netzwerkprofis
-nl-NL	en	1	welcome	Wifi-heatmaps en netwerktools\nin één app
-nl-NL	en	2	measure	Loop, tik, meet —\nzonder extra hardware
-nl-NL	en	3	discover	Elk apparaat in uw netwerk,\nin één lijst
-nl-NL	en	4	details	Namen, poorten en diensten\nvan elk apparaat
-nl-NL	en	5	3d	Uw hele netwerk\nin interactief 3D
-nl-NL	en	6	traces	Gedetailleerde logs\nvoor netwerkprofs
-it	en	1	welcome	Mappe WiFi e strumenti di rete,\nin un'unica app
-it	en	2	measure	Cammina, tocca, misura —\nsenza hardware extra
-it	en	3	discover	Ogni dispositivo della rete,\nin un unico elenco
-it	en	4	details	Nomi, porte e servizi\ndi ogni dispositivo
-it	en	5	3d	Tutta la tua rete\nin 3D interattivo
-it	en	6	traces	Log dettagliati\nper esperti di rete
+el	el	1	welcome	Χάρτες Wi-Fi και εργαλεία\nδικτύου σε μία εφαρμογή
+el	el	2	measure	Περπατήστε, πατήστε, μετρήστε —\nχωρίς επιπλέον εξοπλισμό
+el	el	3	discover	Κάθε συσκευή του δικτύου σας,\nσε μία λίστα
+el	el	4	details	Ονόματα, θύρες και υπηρεσίες\nκάθε συσκευής
+el	el	5	3d	Όλο το δίκτυό σας\nσε διαδραστικό 3D
+el	el	6	traces	Αναλυτικά αρχεία καταγραφής\nγια επαγγελματίες δικτύων
+en-AU	en	1	welcome	WiFi heat maps and network\ntools, in one app
+en-AU	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-AU	en	3	discover	Every device on your network,\nin one list
+en-AU	en	4	details	Names, ports and services\nof every device
+en-AU	en	5	3d	Your whole network\nin interactive 3D
+en-AU	en	6	traces	Detailed logs\nfor network pros
+en-CA	en	1	welcome	WiFi heat maps and network\ntools, in one app
+en-CA	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-CA	en	3	discover	Every device on your network,\nin one list
+en-CA	en	4	details	Names, ports and services\nof every device
+en-CA	en	5	3d	Your whole network\nin interactive 3D
+en-CA	en	6	traces	Detailed logs\nfor network pros
+en-GB	en	1	welcome	WiFi heat maps and network\ntools, in one app
+en-GB	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-GB	en	3	discover	Every device on your network,\nin one list
+en-GB	en	4	details	Names, ports and services\nof every device
+en-GB	en	5	3d	Your whole network\nin interactive 3D
+en-GB	en	6	traces	Detailed logs\nfor network pros
+en-US	en	1	welcome	WiFi heat maps and network\ntools, in one app
+en-US	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-US	en	3	discover	Every device on your network,\nin one list
+en-US	en	4	details	Names, ports and services\nof every device
+en-US	en	5	3d	Your whole network\nin interactive 3D
+en-US	en	6	traces	Detailed logs\nfor network pros
+es-ES	es	1	welcome	Mapas WiFi y herramientas\nde red, en una sola app
+es-ES	es	2	measure	Camina, toca, mide —\nsin hardware adicional
+es-ES	es	3	discover	Cada dispositivo de tu red,\nen una lista
+es-ES	es	4	details	Nombres, puertos y servicios\nde cada dispositivo
+es-ES	es	5	3d	Toda tu red\nen 3D interactivo
+es-ES	es	6	traces	Registros detallados\npara expertos en redes
+es-MX	es-MX	1	welcome	Mapas de WiFi y herramientas\nde red, en una sola app
+es-MX	es-MX	2	measure	Camina, toca, mide —\nsin hardware adicional
+es-MX	es-MX	3	discover	Cada dispositivo de tu red,\nen una sola lista
+es-MX	es-MX	4	details	Nombres, puertos y servicios\nde cada dispositivo
+es-MX	es-MX	5	3d	Toda tu red\nen 3D interactivo
+es-MX	es-MX	6	traces	Registros detallados\npara expertos en redes
+fi	fi	1	welcome	Wi-Fi-kartat ja verkko-\ntyökalut yhdessä sovelluksessa
+fi	fi	2	measure	Kävele, napauta, mittaa —\nilman lisälaitteita
+fi	fi	3	discover	Kaikki verkkosi laitteet\nyhdessä listassa
+fi	fi	4	details	Jokaisen laitteen nimet,\nportit ja palvelut
+fi	fi	5	3d	Koko verkkosi\ninteraktiivisena 3D:nä
+fi	fi	6	traces	Yksityiskohtaiset lokit\nverkkoammattilaisille
+fr-CA	fr-CA	1	welcome	Cartes Wi-Fi et outils réseau,\nen une seule appli
+fr-CA	fr-CA	2	measure	Marchez, touchez, mesurez —\nsans aucun matériel
+fr-CA	fr-CA	3	discover	Chaque appareil de votre réseau,\nen une liste
+fr-CA	fr-CA	4	details	Noms, ports et services\nde chaque appareil
+fr-CA	fr-CA	5	3d	Tout votre réseau\nen 3D interactive
+fr-CA	fr-CA	6	traces	Des journaux détaillés\npour les pros du réseau
+fr-FR	fr	1	welcome	Cartes WiFi et outils réseau,\nen une seule app
+fr-FR	fr	2	measure	Marchez, appuyez, mesurez —\nsans aucun matériel
+fr-FR	fr	3	discover	Chaque appareil de votre réseau,\nen une liste
+fr-FR	fr	4	details	Noms, ports et services\nde chaque appareil
+fr-FR	fr	5	3d	Tout votre réseau\nen 3D interactive
+fr-FR	fr	6	traces	Des journaux détaillés\npour les pros du réseau
+gu-IN	gu	1	welcome	Wi-Fi હીટ મેપ અને નેટવર્ક\nટૂલ્સ, એક જ ઍપમાં
+gu-IN	gu	2	measure	ચાલો, ટૅપ કરો, માપો —\nકોઈ વધારાના હાર્ડવેર વિના
+gu-IN	gu	3	discover	તમારા નેટવર્કના દરેક ડિવાઇસ,\nએક જ યાદીમાં
+gu-IN	gu	4	details	દરેક ડિવાઇસનાં નામ,\nપોર્ટ અને સેવાઓ
+gu-IN	gu	5	3d	તમારું આખું નેટવર્ક\nઇન્ટરૅક્ટિવ 3Dમાં
+gu-IN	gu	6	traces	નેટવર્ક નિષ્ણાતો માટે\nવિગતવાર લૉગ્સ
+he	he	1	welcome	מפות חום של Wi-Fi וכלי רשת\nבאפליקציה אחת
+he	he	2	measure	ללכת, להקיש, למדוד —\nבלי חומרה נוספת
+he	he	3	discover	כל המכשירים ברשת שלך,\nברשימה אחת
+he	he	4	details	שמות, פורטים ושירותים\nשל כל מכשיר
+he	he	5	3d	כל הרשת שלך\nבתלת-ממד אינטראקטיבי
+he	he	6	traces	יומנים מפורטים\nלמקצועני רשתות
+hi	hi	1	welcome	Wi-Fi हीट मैप और नेटवर्क\nटूल्स, एक ही ऐप में
+hi	hi	2	measure	चलिए, टैप कीजिए, मापिए —\nकोई अतिरिक्त हार्डवेयर नहीं
+hi	hi	3	discover	आपके नेटवर्क का हर डिवाइस,\nएक ही सूची में
+hi	hi	4	details	हर डिवाइस के नाम,\nपोर्ट और सेवाएँ
+hi	hi	5	3d	आपका पूरा नेटवर्क\nइंटरैक्टिव 3D में
+hi	hi	6	traces	नेटवर्क विशेषज्ञों के लिए\nविस्तृत लॉग
+hr	hr	1	welcome	Wi-Fi karte i mrežni alati\nu jednoj aplikaciji
+hr	hr	2	measure	Hodajte, dodirnite, mjerite —\nbez dodatnog hardvera
+hr	hr	3	discover	Svaki uređaj u vašoj mreži,\nna jednom popisu
+hr	hr	4	details	Nazivi, portovi i usluge\nsvakog uređaja
+hr	hr	5	3d	Cijela vaša mreža\nu interaktivnom 3D-u
+hr	hr	6	traces	Detaljni zapisnici\nza mrežne stručnjake
+hu	hu	1	welcome	Wi-Fi-térképek és hálózati\neszközök egy appban
+hu	hu	2	measure	Sétálj, koppints, mérj —\nextra hardver nélkül
+hu	hu	3	discover	A hálózatod minden eszköze\negy listában
+hu	hu	4	details	Minden eszköz neve,\nportjai és szolgáltatásai
+hu	hu	5	3d	A teljes hálózatod\ninteraktív 3D-ben
+hu	hu	6	traces	Részletes naplók\nhálózati szakembereknek
+id	id	1	welcome	Peta panas WiFi dan alat\njaringan dalam satu aplikasi
+id	id	2	measure	Jalan, ketuk, ukur —\ntanpa perangkat tambahan
+id	id	3	discover	Semua perangkat jaringan Anda\ndalam satu daftar
+id	id	4	details	Nama, port, dan layanan\nsetiap perangkat
+id	id	5	3d	Seluruh jaringan Anda\ndalam 3D interaktif
+id	id	6	traces	Log terperinci\nuntuk pakar jaringan
+it	it	1	welcome	Mappe WiFi e strumenti di rete,\nin un'unica app
+it	it	2	measure	Cammina, tocca, misura —\nsenza hardware extra
+it	it	3	discover	Ogni dispositivo della rete,\nin un unico elenco
+it	it	4	details	Nomi, porte e servizi\ndi ogni dispositivo
+it	it	5	3d	Tutta la tua rete\nin 3D interattivo
+it	it	6	traces	Log dettagliati\nper esperti di rete
+ja	ja	1	welcome	Wi-Fiヒートマップと\nネットワークツールを1つに
+ja	ja	2	measure	歩いて、タップして、測る\n追加の機器は不要
+ja	ja	3	discover	ネットワーク上の全デバイスを\nひとつのリストに
+ja	ja	4	details	すべてのデバイスの\n名前・ポート・サービス
+ja	ja	5	3d	ネットワーク全体を\nインタラクティブな3Dで
+ja	ja	6	traces	ネットワークのプロ向けの\n詳細なログ
+kn-IN	kn	1	welcome	Wi-Fi ಹೀಟ್ ಮ್ಯಾಪ್ ಮತ್ತು ನೆಟ್‌ವರ್ಕ್\nಟೂಲ್‌ಗಳು, ಒಂದೇ ಆ್ಯಪ್‌ನಲ್ಲಿ
+kn-IN	kn	2	measure	ನಡೆಯಿರಿ, ಟ್ಯಾಪ್ ಮಾಡಿ, ಅಳೆಯಿರಿ —\nಹೆಚ್ಚುವರಿ ಹಾರ್ಡ್‌ವೇರ್ ಬೇಡ
+kn-IN	kn	3	discover	ನೆಟ್‌ವರ್ಕ್‌ನ ಎಲ್ಲಾ ಸಾಧನಗಳು,\nಒಂದೇ ಪಟ್ಟಿಯಲ್ಲಿ
+kn-IN	kn	4	details	ಪ್ರತಿ ಸಾಧನದ ಹೆಸರು,\nಪೋರ್ಟ್‌ಗಳು ಮತ್ತು ಸೇವೆಗಳು
+kn-IN	kn	5	3d	ನಿಮ್ಮ ಸಂಪೂರ್ಣ ನೆಟ್‌ವರ್ಕ್\nಇಂಟರಾಕ್ಟಿವ್ 3D ಯಲ್ಲಿ
+kn-IN	kn	6	traces	ನೆಟ್‌ವರ್ಕ್ ತಜ್ಞರಿಗಾಗಿ\nವಿವರವಾದ ಲಾಗ್‌ಗಳು
+ko	ko	1	welcome	Wi-Fi 히트맵과 네트워크\n도구를 하나의 앱에
+ko	ko	2	measure	걷고, 탭하고, 측정하세요\n추가 장비 필요 없음
+ko	ko	3	discover	네트워크의 모든 기기를\n하나의 목록으로
+ko	ko	4	details	모든 기기의 이름,\n포트, 서비스까지
+ko	ko	5	3d	네트워크 전체를\n인터랙티브 3D로
+ko	ko	6	traces	네트워크 전문가를 위한\n상세한 로그
+ml-IN	ml	1	welcome	Wi-Fi ഹീറ്റ് മാപ്പുകളും നെറ്റ്‌വർക്ക്\nടൂളുകളും ഒരൊറ്റ ആപ്പിൽ
+ml-IN	ml	2	measure	നടക്കൂ, ടാപ്പ് ചെയ്യൂ, അളക്കൂ —\nഅധിക ഹാർഡ്‌വെയർ വേണ്ട
+ml-IN	ml	3	discover	നെറ്റ്‌വർക്കിലെ എല്ലാ ഉപകരണങ്ങളും\nഒരൊറ്റ ലിസ്റ്റിൽ
+ml-IN	ml	4	details	ഓരോ ഉപകരണത്തിന്റെയും പേര്,\nപോർട്ടുകൾ, സേവനങ്ങൾ
+ml-IN	ml	5	3d	നിങ്ങളുടെ മുഴുവൻ നെറ്റ്‌വർക്കും\nഇന്ററാക്ടീവ് 3D-യിൽ
+ml-IN	ml	6	traces	നെറ്റ്‌വർക്ക് വിദഗ്ധർക്കായി\nവിശദമായ ലോഗുകൾ
+mr-IN	mr	1	welcome	Wi-Fi हीट मॅप आणि नेटवर्क\nटूल्स, एकाच ॲपमध्ये
+mr-IN	mr	2	measure	चाला, टॅप करा, मोजा —\nअतिरिक्त हार्डवेअरशिवाय
+mr-IN	mr	3	discover	नेटवर्कमधील प्रत्येक डिव्हाइस,\nएकाच यादीत
+mr-IN	mr	4	details	प्रत्येक डिव्हाइसची नावे,\nपोर्ट आणि सेवा
+mr-IN	mr	5	3d	तुमचे संपूर्ण नेटवर्क\nइंटरॅक्टिव्ह 3D मध्ये
+mr-IN	mr	6	traces	नेटवर्क तज्ज्ञांसाठी\nतपशीलवार लॉग
+ms	ms	1	welcome	Peta haba WiFi dan alat\nrangkaian dalam satu apl
+ms	ms	2	measure	Jalan, ketik, ukur —\ntanpa perkakasan tambahan
+ms	ms	3	discover	Semua peranti rangkaian anda\ndalam satu senarai
+ms	ms	4	details	Nama, port dan perkhidmatan\nsetiap peranti
+ms	ms	5	3d	Seluruh rangkaian anda\ndalam 3D interaktif
+ms	ms	6	traces	Log terperinci\nuntuk pakar rangkaian
+nl-NL	nl	1	welcome	Wifi-heatmaps en netwerktools\nin één app
+nl-NL	nl	2	measure	Loop, tik, meet —\nzonder extra hardware
+nl-NL	nl	3	discover	Elk apparaat in uw netwerk,\nin één lijst
+nl-NL	nl	4	details	Namen, poorten en diensten\nvan elk apparaat
+nl-NL	nl	5	3d	Uw hele netwerk\nin interactief 3D
+nl-NL	nl	6	traces	Gedetailleerde logs\nvoor netwerkprofs
+no	nb	1	welcome	Wi-Fi-kart og nettverks-\nverktøy i én app
+no	nb	2	measure	Gå, trykk, mål —\nuten ekstra maskinvare
+no	nb	3	discover	Alle enhetene i nettverket\ni én liste
+no	nb	4	details	Navn, porter og tjenester\nfor hver enhet
+no	nb	5	3d	Hele nettverket ditt\ni interaktiv 3D
+no	nb	6	traces	Detaljerte logger\nfor nettverksproffer
+or-IN	or	1	welcome	Wi-Fi ହିଟ୍ ମ୍ୟାପ୍ ଓ ନେଟୱର୍କ\nଟୁଲ୍ସ, ଗୋଟିଏ ଆପ୍‌ରେ
+or-IN	or	2	measure	ଚାଲନ୍ତୁ, ଟାପ୍ କରନ୍ତୁ, ମାପନ୍ତୁ —\nଅତିରିକ୍ତ ହାର୍ଡୱେର୍ ବିନା
+or-IN	or	3	discover	ଆପଣଙ୍କ ନେଟୱର୍କର ପ୍ରତ୍ୟେକ ଡିଭାଇସ୍,\nଗୋଟିଏ ତାଲିକାରେ
+or-IN	or	4	details	ପ୍ରତ୍ୟେକ ଡିଭାଇସ୍‌ର ନାମ,\nପୋର୍ଟ ଓ ସେବା
+or-IN	or	5	3d	ଆପଣଙ୍କ ସମ୍ପୂର୍ଣ୍ଣ ନେଟୱର୍କ\nଇଣ୍ଟରାକ୍ଟିଭ୍ 3Dରେ
+or-IN	or	6	traces	ନେଟୱର୍କ ବିଶେଷଜ୍ଞଙ୍କ ପାଇଁ\nବିସ୍ତୃତ ଲଗ୍
+pa-IN	pa	1	welcome	Wi-Fi ਹੀਟ ਮੈਪ ਅਤੇ ਨੈੱਟਵਰਕ\nਟੂਲ, ਇੱਕੋ ਐਪ ਵਿੱਚ
+pa-IN	pa	2	measure	ਤੁਰੋ, ਟੈਪ ਕਰੋ, ਮਾਪੋ —\nਕਿਸੇ ਵਾਧੂ ਹਾਰਡਵੇਅਰ ਤੋਂ ਬਿਨਾਂ
+pa-IN	pa	3	discover	ਤੁਹਾਡੇ ਨੈੱਟਵਰਕ ਦਾ ਹਰ ਡਿਵਾਈਸ,\nਇੱਕੋ ਸੂਚੀ ਵਿੱਚ
+pa-IN	pa	4	details	ਹਰ ਡਿਵਾਈਸ ਦੇ ਨਾਮ,\nਪੋਰਟ ਅਤੇ ਸੇਵਾਵਾਂ
+pa-IN	pa	5	3d	ਤੁਹਾਡਾ ਪੂਰਾ ਨੈੱਟਵਰਕ\nਇੰਟਰਐਕਟਿਵ 3D ਵਿੱਚ
+pa-IN	pa	6	traces	ਨੈੱਟਵਰਕ ਮਾਹਿਰਾਂ ਲਈ\nਵਿਸਤ੍ਰਿਤ ਲੌਗ
+pl	pl	1	welcome	Mapy Wi-Fi i narzędzia\nsieciowe w jednej aplikacji
+pl	pl	2	measure	Chodź, stuknij, zmierz —\nbez dodatkowego sprzętu
+pl	pl	3	discover	Każde urządzenie w sieci,\nna jednej liście
+pl	pl	4	details	Nazwy, porty i usługi\nkażdego urządzenia
+pl	pl	5	3d	Cała Twoja sieć\nw interaktywnym 3D
+pl	pl	6	traces	Szczegółowe logi\ndla specjalistów od sieci
+pt-BR	pt	1	welcome	Mapas de Wi-Fi e ferramentas\nde rede em um só app
+pt-BR	pt	2	measure	Ande, toque, meça —\nsem hardware extra
+pt-BR	pt	3	discover	Todos os dispositivos da rede\nem uma só lista
+pt-BR	pt	4	details	Nomes, portas e serviços\nde cada dispositivo
+pt-BR	pt	5	3d	Toda a sua rede\nem 3D interativo
+pt-BR	pt	6	traces	Logs detalhados\npara profissionais de rede
+pt-PT	pt	1	welcome	Mapas Wi-Fi e ferramentas\nde rede numa só app
+pt-PT	pt	2	measure	Caminhe, toque, meça —\nsem hardware adicional
+pt-PT	pt	3	discover	Todos os dispositivos da rede\nnuma só lista
+pt-PT	pt	4	details	Nomes, portas e serviços\nde cada dispositivo
+pt-PT	pt	5	3d	Toda a sua rede\nem 3D interativo
+pt-PT	pt	6	traces	Registos detalhados\npara profissionais de redes
+ro	ro	1	welcome	Hărți Wi-Fi și unelte de rețea,\nîntr-o singură aplicație
+ro	ro	2	measure	Mergi, atinge, măsoară —\nfără hardware suplimentar
+ro	ro	3	discover	Toate dispozitivele din rețea,\nîntr-o singură listă
+ro	ro	4	details	Nume, porturi și servicii\npentru fiecare dispozitiv
+ro	ro	5	3d	Întreaga ta rețea\nîn 3D interactiv
+ro	ro	6	traces	Jurnale detaliate\npentru experți în rețele
+ru	ru	1	welcome	Тепловые карты Wi-Fi и сетевые\nинструменты в одном приложении
+ru	ru	2	measure	Ходите, нажимайте, измеряйте —\nбез лишнего оборудования
+ru	ru	3	discover	Все устройства вашей сети\nв одном списке
+ru	ru	4	details	Имена, порты и службы\nкаждого устройства
+ru	ru	5	3d	Вся ваша сеть\nв интерактивном 3D
+ru	ru	6	traces	Подробные журналы\nдля сетевых специалистов
+sk	sk	1	welcome	Mapy Wi-Fi a sieťové nástroje\nv jednej aplikácii
+sk	sk	2	measure	Choďte, ťuknite, merajte —\nbez ďalšieho hardvéru
+sk	sk	3	discover	Každé zariadenie vo vašej sieti\nv jednom zozname
+sk	sk	4	details	Názvy, porty a služby\nkaždého zariadenia
+sk	sk	5	3d	Celá vaša sieť\nv interaktívnom 3D
+sk	sk	6	traces	Podrobné záznamy\npre sieťových profesionálov
+sl-SI	sl	1	welcome	Zemljevidi Wi-Fi in omrežna\norodja v eni aplikaciji
+sl-SI	sl	2	measure	Hodite, tapnite, merite —\nbrez dodatne strojne opreme
+sl-SI	sl	3	discover	Vse naprave v vašem omrežju\nna enem seznamu
+sl-SI	sl	4	details	Imena, vrata in storitve\nvsake naprave
+sl-SI	sl	5	3d	Vse vaše omrežje\nv interaktivnem 3D
+sl-SI	sl	6	traces	Podrobni dnevniki\nza omrežne strokovnjake
+sv	sv	1	welcome	Wi-Fi-kartor och nätverks-\nverktyg i en app
+sv	sv	2	measure	Gå, tryck, mät —\nutan extra hårdvara
+sv	sv	3	discover	Alla enheter i ditt nätverk\ni en lista
+sv	sv	4	details	Namn, portar och tjänster\nför varje enhet
+sv	sv	5	3d	Hela ditt nätverk\ni interaktiv 3D
+sv	sv	6	traces	Detaljerade loggar\nför nätverksproffs
+ta-IN	ta	1	welcome	Wi-Fi ஹீட் மேப்கள், நெட்வொர்க்\nகருவிகள், ஒரே ஆப்பில்
+ta-IN	ta	2	measure	நடங்கள், தட்டுங்கள், அளவிடுங்கள் —\nகூடுதல் வன்பொருள் தேவையில்லை
+ta-IN	ta	3	discover	நெட்வொர்க்கின் எல்லா சாதனங்களும்\nஒரே பட்டியலில்
+ta-IN	ta	4	details	ஒவ்வொரு சாதனத்தின் பெயர்,\nபோர்ட்கள், சேவைகள்
+ta-IN	ta	5	3d	உங்கள் முழு நெட்வொர்க்\nஊடாடும் 3D-யில்
+ta-IN	ta	6	traces	நெட்வொர்க் நிபுணர்களுக்கான\nவிரிவான பதிவுகள்
+te-IN	te	1	welcome	Wi-Fi హీట్ మ్యాప్‌లు, నెట్‌వర్క్\nటూల్స్, ఒకే యాప్‌లో
+te-IN	te	2	measure	నడవండి, ట్యాప్ చేయండి, కొలవండి —\nఅదనపు హార్డ్‌వేర్ అవసరం లేదు
+te-IN	te	3	discover	మీ నెట్‌వర్క్‌లోని ప్రతి పరికరం,\nఒకే జాబితాలో
+te-IN	te	4	details	ప్రతి పరికరం పేర్లు,\nపోర్ట్‌లు, సేవలు
+te-IN	te	5	3d	మీ మొత్తం నెట్‌వర్క్\nఇంటరాక్టివ్ 3Dలో
+te-IN	te	6	traces	నెట్‌వర్క్ నిపుణుల కోసం\nవివరణాత్మక లాగ్‌లు
+th	th	1	welcome	ฮีตแมป Wi-Fi และเครื่องมือ\nเครือข่าย ครบในแอปเดียว
+th	th	2	measure	เดิน แตะ วัด —\nไม่ต้องใช้อุปกรณ์เสริม
+th	th	3	discover	ทุกอุปกรณ์ในเครือข่าย\nรวมไว้ในรายการเดียว
+th	th	4	details	ชื่อ พอร์ต และบริการ\nของทุกอุปกรณ์
+th	th	5	3d	เครือข่ายทั้งหมดของคุณ\nในแบบ 3D โต้ตอบได้
+th	th	6	traces	บันทึกโดยละเอียด\nสำหรับมือโปรด้านเครือข่าย
+tr	tr	1	welcome	Wi-Fi ısı haritaları ve ağ\naraçları tek uygulamada
+tr	tr	2	measure	Yürüyün, dokunun, ölçün —\nek donanım gerekmez
+tr	tr	3	discover	Ağınızdaki her cihaz\ntek bir listede
+tr	tr	4	details	Her cihazın adları,\nportları ve hizmetleri
+tr	tr	5	3d	Tüm ağınız\netkileşimli 3D'de
+tr	tr	6	traces	Ağ uzmanları için\nayrıntılı kayıtlar
+uk	uk	1	welcome	Карти Wi-Fi і мережеві\nінструменти в одному застосунку
+uk	uk	2	measure	Ходіть, торкайтеся, вимірюйте —\nбез додаткового обладнання
+uk	uk	3	discover	Усі пристрої вашої мережі\nв одному списку
+uk	uk	4	details	Імена, порти й служби\nкожного пристрою
+uk	uk	5	3d	Уся ваша мережа\nв інтерактивному 3D
+uk	uk	6	traces	Детальні журнали\nдля мережевих фахівців
+ur-PK	ur	1	welcome	وائی فائی ہیٹ میپس اور نیٹ ورک\nٹولز، ایک ہی ایپ میں
+ur-PK	ur	2	measure	چلیں، ٹیپ کریں، پیمائش کریں —\nکسی اضافی ہارڈویئر کے بغیر
+ur-PK	ur	3	discover	آپ کے نیٹ ورک کا ہر ڈیوائس،\nایک ہی فہرست میں
+ur-PK	ur	4	details	ہر ڈیوائس کے نام،\nپورٹس اور سروسز
+ur-PK	ur	5	3d	آپ کا پورا نیٹ ورک\nانٹرایکٹو 3D میں
+ur-PK	ur	6	traces	نیٹ ورک ماہرین کے لیے\nتفصیلی لاگز
+vi	vi	1	welcome	Bản đồ nhiệt WiFi và công cụ\nmạng trong một ứng dụng
+vi	vi	2	measure	Đi, chạm, đo —\nkhông cần thêm phần cứng
+vi	vi	3	discover	Mọi thiết bị trong mạng,\ngọn trong một danh sách
+vi	vi	4	details	Tên, cổng và dịch vụ\ncủa mọi thiết bị
+vi	vi	5	3d	Toàn bộ mạng của bạn\ndưới dạng 3D tương tác
+vi	vi	6	traces	Nhật ký chi tiết\ncho chuyên gia mạng
+zh-Hans	zh-Hans	1	welcome	Wi-Fi 热力图与网络工具\n集于一个 App
+zh-Hans	zh-Hans	2	measure	走一走、点一点、测一测\n无需额外硬件
+zh-Hans	zh-Hans	3	discover	网络中的每台设备\n尽在一个列表
+zh-Hans	zh-Hans	4	details	每台设备的\n名称、端口和服务
+zh-Hans	zh-Hans	5	3d	以交互式 3D\n呈现整个网络
+zh-Hans	zh-Hans	6	traces	为网络专业人士打造的\n详细日志
+zh-Hant	zh-Hant	1	welcome	Wi-Fi 熱度圖與網路工具\n集於一個 App
+zh-Hant	zh-Hant	2	measure	走一走、點一點、測一測\n無需額外硬體
+zh-Hant	zh-Hant	3	discover	網路上的每部裝置\n盡在一個清單
+zh-Hant	zh-Hant	4	details	每部裝置的\n名稱、連接埠與服務
+zh-Hant	zh-Hant	5	3d	以互動式 3D\n呈現整個網路
+zh-Hant	zh-Hant	6	traces	為網路專業人士打造的\n詳細記錄

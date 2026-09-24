@@ -1,0 +1,1 @@
+χάρτης,κάλυψη,ρούτερ,δίκτυο,router,heatmap,extender,mesh,snmp,wlan,scanner

@@ -1,0 +1,38 @@
+Evinizdeki WiFi ölü bölgelerini 10 dakikadan kısa sürede, yalnızca iPhone'unuzla bulun.
+Odadan odaya yürüyün, ölçmek için dokunun ve gerçek WiFi performansınızın renkli haritasının kendiliğinden oluştuğunu izleyin — hız ve gecikme, tam da yaşadığınız yerde.
+Abonelik yok. Reklam yok. Hesap yok. Tek seferlik satın alma, sonsuza dek sizin.
+
+GERÇEKTE NELERİ ÖĞRENEBİLİRSİNİZ
+- Hangi odaların yavaş olduğunu ve ne kadar yavaş olduğunu, işe yarar rakamlarla
+- Sorunun WiFi'nizde mi yoksa internet bağlantınızda mı olduğunu
+- Mesh düğümünü, menzil genişleticiyi ya da modemin kendisini nereye koymanız gerektiğini
+- Ağınızdaki cihazlardan hangisinin bant genişliğinizi tükettiğini
+- Ağınızdaki her IoT cihazının kendisi hakkında ne yayınladığını
+
+NASIL ÇALIŞIR
+1. Hazır kat planlarından birini seçin ya da kendi planınızın bir fotoğrafını kullanın
+2. Bir noktaya gidin, bir kez dokunun — uygulama orada veri hızını ve gecikmeyi ölçer
+3. Her oda için tekrarlayın. Isı haritası siz ilerledikçe oluşur
+4. Modemin yerini değiştirdikten sonra karşılaştırmak için bitmiş haritayı fotoğraflarınıza kaydedin
+
+Adım adım modu kurulumu sizin yerinize yapar: seçilecek hedef, yapılandırılacak protokol, okunacak belge yok. Tam kontrol istediğinizde gelişmiş arayüz yine elinizin altında.
+
+EK DONANIM YOK. ABONELİK YOK.
+Profesyonel WiFi etütleri için bir Ekahau Sidekick ya da WLAN Pi gerekir. Bu uygulamanın ihtiyacı ise yalnızca iPhone'unuz. Üstelik App Store'daki neredeyse tüm diğer WiFi analiz uygulamalarının aksine, haftalık plan, yıllık plan ya da reklam yok — bir kez satın alırsınız.
+
+AYNI ZAMANDA EKSİKSİZ BİR AĞ ARAÇ KUTUSU
+- Yerel ağınızdaki her cihazı üretici, IP adresi ve açık portlarla tarayın
+- Tüm mDNS/Bonjour hizmetlerini keşfedin: HomePod, Apple TV, yazıcılar, IoT
+- Yerel cihazlara ve internetteki herhangi bir sunucuya ping ve gecikme
+- Bu uygulamayı çalıştıran başka bir cihaza, herhangi bir TCP CHARGEN/DISCARD sunucusuna ya da internete karşı veri hızı ölçümü
+- Kendi cihazınızda bir TCP CHARGEN veya DISCARD hizmeti çalıştırın
+- Yerel ağ topolojinizin animasyonlu 3D görünümü
+
+EKSİKSİZ SNMP İSTEMCİSİ DAHİL
+Router, switch, erişim noktası ve yazıcılarınızdaki herhangi bir SNMP ajanını sorgulayın. SNMP v1, v2c ve v3; noAuthNoPriv, authNoPriv ve authPriv; MD5 ve SHA1 kimlik doğrulama; DES ve AES şifreleme. 64 standart MIB dahildir, böylece nesne tanımlayıcıları çevrimdışı olarak okunabilir adlara çevrilir — sunucu yok, abonelik yok, ajan adresi ve kimlik bilgileri dışında yapılandırılacak hiçbir şey yok.
+
+EVLER VE PROFESYONELLER İÇİN
+Bir ağ mühendisi tarafından geliştirildi. Bir pazar öğleden sonrası dairenizi teşhis edecek kadar basit, telekom profesyonellerinin işte kullanacağı kadar hassas.
+
+SATIN ALMADAN ÖNCE — BU UYGULAMA NELERİ YAPMAZ
+Apple, üçüncü taraf hiçbir iOS uygulamasının WiFi sinyal gücünü okumasına ya da komşu ağları taramasına izin vermez ve App Store'daki hiçbir uygulama bunu yapamaz — profesyonel araçların harici donanıma ihtiyaç duymasının nedeni budur. Bu uygulama, durduğunuz noktada ölçebildiğini haritalar: gerçek veri hızı ve gecikme. Bir ev ısı haritasının ihtiyacı da tam olarak budur. Bağlı olduğunuz ağı ölçer, her seferinde bir ısı haritası.

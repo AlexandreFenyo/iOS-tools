@@ -1,0 +1,1 @@
+வைஃபை,நெட்வொர்க்,heatmap,coverage,scanner,router,mesh,extender,snmp

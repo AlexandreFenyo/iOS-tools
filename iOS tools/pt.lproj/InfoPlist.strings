@@ -1,0 +1,3 @@
+"NSLocalNetworkUsageDescription" = "O WiFi Heat Map varre sua rede local para descobrir os dispositivos conectados, medir a taxa de transferência e a latência do WiFi e criar seu mapa de calor. Nada sai do seu dispositivo.";
+"NSPhotoLibraryAddUsageDescription" = "O WiFi Heat Map salva o mapa de calor que você cria na sua fototeca, para que você possa guardá-lo ou compartilhá-lo.";
+"NSPhotoLibraryUsageDescription" = "O WiFi Heat Map precisa acessar suas fotos para que você possa escolher a planta baixa ou a foto do cômodo sobre a qual o mapa de calor WiFi será desenhado.";

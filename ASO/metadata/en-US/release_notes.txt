@@ -1,6 +1,4 @@
-Completely rewritten step-by-step mode: pick a floor plan, walk, tap. That is the whole heat map.
+WiFi Heat Map now speaks your language: the app is available in 44 languages, including Arabic, Chinese, Hindi, Japanese, Korean, Portuguese, Russian and many more.
 
-- New colour scale, readable at a glance and colour-blind friendly
-- Clearer measurement screen, with the setup done for you
-- Fixed: the heat map screen could keep asking you to start a measurement that had already stopped
-- Faster map rendering
+- Every screen, help message and error message is translated
+- Clearer error messages when a measurement cannot reach its target
