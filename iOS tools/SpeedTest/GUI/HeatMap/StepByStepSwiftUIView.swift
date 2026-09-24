@@ -514,14 +514,13 @@ struct StepHeatMap: View {
                 }
 
                 #if DEBUG
-                // Mode capture d'écran : carte pré-remplie et reproductible, sans réseau
+                // Mode capture d'écran : carte pré-remplie et reproductible, sans réseau, sur un
+                // plan d'appartement (Artwork/plans/flat.png, copié dans l'asset demo-flat)
                 if demo_mode {
-                    if model.input_map_image == nil {
-                        let image = UIImage(named: "plan-rectangle")!
-                        model.original_map_image_rotation = image.cgImage!.width < image.cgImage!.height
-                        model.original_map_image = StepHeatMap.rotateIfNeeded(image)
-                        model.input_map_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image))
-                    }
+                    let image = UIImage(named: "demo-flat")!
+                    model.original_map_image_rotation = image.cgImage!.width < image.cgImage!.height
+                    model.original_map_image = StepHeatMap.rotateIfNeeded(image)
+                    model.input_map_image = StepHeatMap.resizeIfNeeded(StepHeatMap.rotateIfNeeded(image))
                     let cg = model.input_map_image!.cgImage!
                     let probes = DemoMode.values(width: cg.width, height: cg.height)
                     if DemoMode.scenario == "measure" {
