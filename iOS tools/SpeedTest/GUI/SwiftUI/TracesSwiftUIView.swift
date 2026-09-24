@@ -49,6 +49,21 @@ public class TracesViewModel : ObservableObject {
     @Published private(set) var traces: [String] = {
         var arr = [String]()
         arr.append("")
+        #if DEBUG
+        // Captures App Store : journal fictif à la place des vraies traces (noms d'hôtes,
+        // adresses, historique des sessions précédentes rechargé depuis Core Data)
+        if DemoMode.enabled {
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let start = Calendar.current.date(bySettingHour: 9, minute: 38, second: 0, of: Date()) ?? Date()
+            let labels: [LogLevel: String] = [.INFO: "INFO ", .DEBUG: "DEBUG", .ALL: "ALL  "]
+            for t in DemoMode.traces {
+                arr.append(df.string(from: start.addingTimeInterval(TimeInterval(t.seconds)))
+                           + " [" + labels[t.level]! + "]: " + t.text)
+            }
+            return arr
+        }
+        #endif
         for i in 1...200 {
 //                arr.append("Speed Test - Traces zfeiopjf oifj o jefozi jeofjioj ei jozefij ezoi jezo ijezo ijezoi ejzfo jzeo jzefi oezfj ziefo jzeo ijzef oizejfoize jfezo ijzefo ijzef ozefj zieo jezio jzeoi jzeofi jezo ijzeoi jzeoi jzeoi jezo ijzeo ijzeo ijzeio jzeio j \(i)")
 //                arr.append("Speed Test - Traces \(i)")
@@ -62,6 +77,9 @@ public class TracesViewModel : ObservableObject {
     }
     
     public func append(_ str: String, level _level: LogLevel = .ALL, date _date: Date? = nil) {
+        #if DEBUG
+        if DemoMode.enabled { return }
+        #endif
         if _level.rawValue <= level.rawValue {
             let level = log_level_to_string[_level]!
             traces.append(df.string(from: _date ?? Date()) + " [" + level + "]: " + str)

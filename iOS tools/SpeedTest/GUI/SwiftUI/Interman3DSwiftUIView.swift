@@ -1189,7 +1189,20 @@ struct Interman3DSwiftUIView: View {
                 }
                 // Avoid situations when buttons are definitely disabled
                 disable_buttons = false
-                
+
+                #if DEBUG
+                // Captures App Store, scénario « 3d » : comme un clic sur le bouton 3D suivi
+                // d'un agrandissement de 20 % par pincement (même calcul que handlePinch)
+                if DemoMode.enabled && DemoMode.scenario == "3d" && camera_model.camera_mode != .sideCentered {
+                    // La scène met plusieurs secondes à se peupler : bascule après son remplissage
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                        setCameraMode(.sideCentered)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            scaleCamera(getCameraScaleFactor() / 1.2)
+                        }
+                    }
+                }
+                #endif
             }
             .onDisappear() {
                 timer_auto_rotation_button?.invalidate()

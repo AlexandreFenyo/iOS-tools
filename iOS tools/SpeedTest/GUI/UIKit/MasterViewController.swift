@@ -1302,6 +1302,9 @@ class MasterViewController: UITableViewController, DeviceManager {
     private var last_information: String?
 
     func setInformation(_ info: String) {
+        // Captures App Store : les messages d'activité viennent de la vraie découverte
+        // réseau (noms d'hôtes, adresses MAC) et ne doivent pas apparaître
+        if demo_mode { return }
         // Un message identique au précédent ne réarme pas la temporisation : sans cela,
         // une activité répétitive (le testeur SNMP re-vérifiant le même agent) pouvait
         // maintenir indéfiniment le même message à l'écran

@@ -16,9 +16,13 @@ import Foundation
 enum DemoMode {
     static let enabled = ProcessInfo.processInfo.arguments.contains("-UIScreenshotMode")
 
-    /// Scénario de capture : "heatmap" (carte terminée, défaut), "measure" (mesure en
-    /// cours, carte partielle) ou "discover" (pas de modal pas-à-pas, liste des cibles).
-    /// Se passe en argument : -UIScreenshotScenario measure
+    /// Scénario de capture, passé en argument : -UIScreenshotScenario measure
+    ///   "welcome"  : écran d'accueil (interface avancée / pas à pas / documentation)
+    ///   "heatmap"  : carte terminée (défaut)
+    ///   "measure"  : mesure en cours, carte partielle avec les points de mesure
+    ///   "discover" : pas de modal d'accueil, liste des cibles
+    ///   "3d"       : vue réseau 3D, mode caméra « 3D », zoom de 20 %
+    ///   "traces"   : onglet des traces, journal fictif
     static let scenario: String = {
         let args = ProcessInfo.processInfo.arguments
         if let i = args.firstIndex(of: "-UIScreenshotScenario"), i + 1 < args.count {
@@ -26,6 +30,64 @@ enum DemoMode {
         }
         return "heatmap"
     }()
+
+    /// Scénarios qui ferment le modal d'accueil au lancement.
+    static var skipsWelcome: Bool { ["discover", "3d", "traces"].contains(scenario) }
+
+    /// Scénarios qui naviguent du modal d'accueil vers l'écran de heat map.
+    static var opensHeatMap: Bool { ["heatmap", "measure"].contains(scenario) }
+
+    /// Onglet affiché au lancement (0 Exploration, 1 Vue 3D, 2 SNMP, 3 Traces).
+    static var initialTab: Int? {
+        switch scenario {
+        case "3d": return 1
+        case "traces": return 3
+        default: return nil
+        }
+    }
+
+    /// Journal fictif de l'onglet Traces : cohérent avec le réseau de démo
+    /// (DBMaster.addDefaultNodes), sans aucune donnée réelle. Horodaté à partir de 9:38.
+    static let traces: [(seconds: Int, level: LogLevel, text: String)] = [
+        (0, .INFO, "main: application launched"),
+        (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _speedtestapp._tcp."),
+        (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _airplay._tcp."),
+        (2, .INFO, "Bonjour/mDNS: service found: type:_airplay._tcp.; name:Living Room TV; hostname:Living-Room-TV.local."),
+        (2, .DEBUG, "NetServiceDidResolveAddress: adding 192.168.1.45 to Living-Room-TV.local."),
+        (3, .INFO, "Bonjour/mDNS: service found: type:_airplay._tcp.; name:HomePod; hostname:HomePod.local."),
+        (3, .DEBUG, "NetServiceDidResolveAddress: adding 192.168.1.125 to HomePod.local."),
+        (4, .INFO, "Bonjour/mDNS: service found: type:_speedtestapp._tcp.; name:iPad; hostname:iPad.local."),
+        (4, .DEBUG, "NetServiceDidResolveAddress: adding 2001:db8:1a2b:10::20 to iPad.local."),
+        (5, .INFO, "Bonjour/mDNS: service found: type:_ipp._tcp.; name:printer; hostname:printer.home.arpa."),
+        (6, .INFO, "network browsing: start browsing the network"),
+        (6, .INFO, "network browsing: sending ICMPv4 broadcast packets"),
+        (6, .DEBUG, "network browsing: sending ICMPv4 broadcast packet to 192.168.1.255"),
+        (7, .INFO, "network browsing: sending ICMPv6 multicast packets"),
+        (7, .DEBUG, "network browsing: sending ICMPv6 multicast packet to ff02::1"),
+        (8, .DEBUG, "network browsing: answer from IPv4 address: 192.168.1.1"),
+        (8, .DEBUG, "network browsing: answer from IPv4 address: 192.168.1.10"),
+        (8, .DEBUG, "network browsing: answer from IPv4 address: 192.168.1.12"),
+        (9, .DEBUG, "network browsing: answer from IPv6 address: 2001:db8:1a2b:10::1"),
+        (9, .DEBUG, "network browsing: answer from IPv6 address: 2001:db8:1a2b:10::42"),
+        (10, .INFO, "network browsing: finished waiting for IPv4 replies"),
+        (11, .INFO, "network browsing: finished waiting for IPv6 replies"),
+        (12, .INFO, "SNMP: agent found on 192.168.1.1 (udp/161)"),
+        (12, .INFO, "SNMP: agent found on 192.168.1.10 (udp/161)"),
+        (13, .INFO, "SNMP: agent found on 192.168.1.12 (udp/161)"),
+        (14, .INFO, "browsing TCP ports: target 192.168.1.10"),
+        (16, .DEBUG, "browsing TCP ports: 192.168.1.10 port 22 open"),
+        (17, .DEBUG, "browsing TCP ports: 192.168.1.10 port 445 open"),
+        (18, .DEBUG, "browsing TCP ports: 192.168.1.10 port 5000 open"),
+        (21, .INFO, "network browsing: finished"),
+        (24, .INFO, "ICMP loop: starting for target 192.168.1.1"),
+        (25, .DEBUG, "ICMP loop: received answer from 192.168.1.1 after 2.1 ms"),
+        (26, .DEBUG, "ICMP loop: received answer from 192.168.1.1 after 1.8 ms"),
+        (27, .DEBUG, "ICMP loop: received answer from 192.168.1.1 after 2.4 ms"),
+        (28, .INFO, "flood TCP chargen port: starting for target 192.168.1.20"),
+        (31, .INFO, "flood TCP chargen port: target 192.168.1.20 - 187.4 Mbit/s"),
+        (34, .INFO, "flood TCP chargen port: target 192.168.1.20 - 191.2 Mbit/s"),
+        (37, .INFO, "flood TCP chargen port: stopped with target 192.168.1.20"),
+    ]
 
     /// Haut de l'échelle : 240 Mbit/s.
     static let max_scale: Float = 240_000_000

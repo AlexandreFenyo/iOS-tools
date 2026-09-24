@@ -1,7 +1,9 @@
 locale	sim_language	index	scenario	caption
-en-US	en	1	heatmap	See your WiFi dead zones,\nroom by room
+en-US	en	1	welcome	WiFi heat maps and network\ntools, in one app
 en-US	en	2	measure	Walk, tap, measure —\nno extra hardware
 en-US	en	3	discover	Every device on your network,\nin one list
+en-US	en	4	3d	Your whole network\nin interactive 3D
+en-US	en	5	traces	Detailed logs\nfor network pros
 en-GB	en-GB	1	heatmap	See your WiFi blackspots,\nroom by room
 en-GB	en-GB	2	measure	Walk, tap, measure —\nno extra hardware
 en-GB	en-GB	3	discover	Every device on your network,\nin one list

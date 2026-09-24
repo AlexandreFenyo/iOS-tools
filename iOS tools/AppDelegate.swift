@@ -328,7 +328,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         #if DEBUG
         // Mode capture d'écran, scénario "discover" : pas de modal pas-à-pas,
         // on reste sur la liste des cibles
-        let skip_step_by_step = DemoMode.enabled && DemoMode.scenario == "discover"
+        let skip_step_by_step = DemoMode.enabled && DemoMode.skipsWelcome
+        if DemoMode.enabled, let tab = DemoMode.initialTab {
+            tabBarController.selectedIndex = tab
+        }
         #else
         let skip_step_by_step = false
         #endif

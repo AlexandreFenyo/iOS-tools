@@ -28,8 +28,9 @@
 #   <out>/<locale>/<appareil>/<index>_<scénario>.png           prêtes pour ASC
 #                                                              (bandeau texte, sans alpha)
 #
-# Les légendes (texte indexé par Apple) sont dans scripts/screenshot-captions.tsv ;
-# une ligne par locale x scénario. Ajouter une locale = y ajouter 3 lignes.
+# Les légendes (texte indexé par Apple) sont dans scripts/screenshot-captions.tsv :
+# une ligne par locale x écran (index = ordre d'affichage dans ASC). Les écrans capturés
+# sont ceux que ce fichier liste pour les locales demandées.
 #
 set -euo pipefail
 
@@ -60,7 +61,6 @@ DEVTYPE=(iphone69 com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max
          ipad13   com.apple.CoreSimulator.SimDeviceType.iPad-Pro-13-inch-M5-12GB)
 DEVNAME=(iphone69 "ASC iPhone 6.9" ipad13 "ASC iPad 13")
 DEVSIZE=(iphone69 "1320x2868" ipad13 "2064x2752")
-SCENARIOS=(heatmap measure discover)
 
 # Langues du simulateur à capturer, déduites du TSV (plusieurs locales App Store
 # peuvent partager une langue, ex. nl-NL et it utilisent l'interface anglaise)
@@ -72,6 +72,15 @@ else
 fi
 (( ${#LANGS} > 0 )) || { echo "aucune locale trouvée dans $CAPTIONS pour '$LOCALES'"; exit 1; }
 echo "=== langues simulateur : $LANGS"
+
+# Scénarios (écrans) à capturer : ceux du TSV pour les locales demandées, cf. la liste
+# des scénarios dans DemoData.swift (welcome, heatmap, measure, discover, 3d, traces)
+if [[ -n "$LOCALES" ]]; then
+    SCENARIOS=(${(u)$(awk -F'\t' -v f="$filter" 'NR>1 && index(f, "," $1 ",") {print $4}' "$CAPTIONS")})
+else
+    SCENARIOS=(${(u)$(awk -F'\t' 'NR>1 {print $4}' "$CAPTIONS")})
+fi
+echo "=== écrans : $SCENARIOS"
 
 # Runtime iOS le plus récent installé
 RUNTIME=$(xcrun simctl list runtimes -j | python3 -c '
@@ -152,7 +161,9 @@ for key in $SIM_KEYS; do
             xcrun simctl launch "$udid" "$BUNDLE_ID" \
                 -UIScreenshotMode -UIScreenshotScenario "$scenario" \
                 -AppleLanguages "($lang)" -AppleLocale "$lang" > /dev/null
-            sleep 9   # calcul de la carte (1 Hz) + fondu
+            # Délai avant capture : la vue 3D se peuple puis bascule en mode 3D ; l'accueil
+            # garde une marge sur l'animation du modal ; ailleurs, carte (1 Hz) + fondu
+            case $scenario in 3d) sleep 15 ;; welcome) sleep 12 ;; *) sleep 9 ;; esac
             # Capture dans un répertoire temporaire puis déplacement : le service du
             # simulateur qui écrit l'image n'a pas accès aux volumes externes (le dépôt
             # est sur /Volumes/external-mac) et échoue en « Operation not permitted »
@@ -189,7 +200,7 @@ if (( WANT_MAC )); then
             # contrairement au lancement direct de l'exécutable depuis le Terminal
             open -n "$MAC_APP" --args -UIScreenshotMode -UIScreenshotScenario "$scenario" \
                  -AppleLanguages "($lang)" -AppleLocale "$lang"
-            sleep 12   # démarrage, calcul de la carte, fondu
+            case $scenario in 3d) sleep 18 ;; *) sleep 12 ;; esac   # démarrage, carte, scène 3D
             # Recherche par la fin du chemin : LaunchServices normalise le chemin complet
             mac_pid=$(pgrep -n -f "Debug-maccatalyst/iOS tools.app/Contents/MacOS/iOS tools") \
                 || { echo "  ERREUR  l'app Mac ne s'est pas lancée"; exit 1; }
@@ -223,7 +234,7 @@ echo "=== captures brutes dans $OUT/raw"
 if (( COMPOSE )); then
     echo "=== composition des bandeaux"
     swift "$ROOT/scripts/compose-screenshots.swift" "$OUT" "$LOCALES"
-    for f in "$OUT"/*/mac/*.png(N); do
+    for f in "$OUT"/${~${LOCALES:+(${LOCALES//,/|})}:-*}/mac/*.png(N); do
         check_size "$f" "${f#$OUT/}" "2880x1800 1440x900"
     done
     echo "=== captures prêtes pour App Store Connect dans $OUT/<locale>/<appareil>/"

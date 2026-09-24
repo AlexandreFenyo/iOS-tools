@@ -127,7 +127,7 @@ struct StepByStepSwiftUIView: View {
             #if DEBUG
             // Mode capture d'écran : navigation automatique vers la heat map de démo
             .onAppear {
-                if DemoMode.enabled && DemoMode.scenario != "discover" {
+                if DemoMode.enabled && DemoMode.opensHeatMap {
                     navigation_path.append(NavigationTarget.step_heat_map)
                 }
             }
