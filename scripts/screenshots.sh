@@ -27,6 +27,8 @@
 #     -d  appareils à capturer (défaut : iphone69,ipad13,ipad13-landscape,mac)
 #     -o  répertoire de sortie (défaut : ASO/screenshots, non versionné)
 #     -n  captures brutes seulement, sans composition des bandeaux
+#     -s  écrans à capturer (ex. measure,traces ; défaut : tous ceux du TSV), pour reprendre
+#         quelques captures ratées
 #     -B  sans compilation : réutilise les produits déjà compilés (pour lancer plusieurs
 #         instances en parallèle, une par appareil, après une première compilation)
 #   « ipad13-landscape » seul ne capture que le paysage ; avec « ipad13 », les deux passes.
@@ -57,14 +59,16 @@ LOCALES=""
 DEVICES="iphone69,ipad13,ipad13-landscape,mac"
 COMPOSE=1
 SKIP_BUILD=0
+ONLY_SCENARIOS=""
 
-while getopts "l:d:o:nB" opt; do
+while getopts "l:d:o:nBs:" opt; do
     case $opt in
         l) LOCALES="$OPTARG" ;;
         d) DEVICES="$OPTARG" ;;
         o) OUT="$OPTARG" ;;
         n) COMPOSE=0 ;;
         B) SKIP_BUILD=1 ;;
+        s) ONLY_SCENARIOS="$OPTARG" ;;
         *) sed -n '2,30p' "$0"; exit 1 ;;
     esac
 done
@@ -94,6 +98,7 @@ if [[ -n "$LOCALES" ]]; then
 else
     SCENARIOS=(${(u)$(awk -F'\t' 'NR>1 {print $4}' "$CAPTIONS")})
 fi
+[[ -n "$ONLY_SCENARIOS" ]] && SCENARIOS=(${(s:,:)ONLY_SCENARIOS})
 echo "=== écrans : $SCENARIOS"
 
 # Runtime iOS le plus récent installé
@@ -228,7 +233,7 @@ for key in $SIM_KEYS; do
             case $key:$scenario in
                 ipad13:discover) sleep 15 ;;
                 ipad13:measure|ipad13:heatmap) sleep 20 ;;
-                *:3d) sleep 25 ;;   # plus lent à se peupler sur iPhone
+                *:3d) sleep 40 ;;   # plus lent à se peupler sur iPhone (et machine chargée)
                 *:welcome|*:details) sleep 12 ;;
                 *) sleep 9 ;;
             esac

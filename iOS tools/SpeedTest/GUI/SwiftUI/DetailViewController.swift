@@ -203,13 +203,14 @@ class DetailViewController: UIViewController {
 
     // Clear chart and stop browsing if selected address changes
     private func clearChart(new_address: IPAddress) {
+        // Captures App Store : la courbe est alimentée par le mode démo (demoFeedChart) ;
+        // ne pas la vider, sinon un vidage tardif (machine chargée) efface les données fictives
+        if demo_mode { return }
         if prev_addr_selected != new_address.toNumericString() {
             prev_addr_selected = new_address.toNumericString() ?? ""
             Task.detached(priority: .userInitiated) {
                 await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
                 await self.master_view_controller?.detail_view_controller?.ts.removeAll()
-                // Captures App Store : aucun trafic réseau vers les adresses fictives
-                if demo_mode { return }
                 await self.master_view_controller?.stopBrowsing(.OTHER_ACTION)
 
                 // Start an automatic ping loop

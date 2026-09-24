@@ -163,6 +163,7 @@
 		5DAA0010000000000000RR10 /* CoreWLANShim.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DAA000F000000000000RR0F /* CoreWLANShim.m */; };
 		5DADCF212DA2B75E00846627 /* SnmpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DADCF202DA2B75E00846627 /* SnmpViewController.swift */; };
 		5DC13A7D2A633A470042796F /* iPad.scn in Resources */ = {isa = PBXBuildFile; fileRef = 5DC13A7C2A633A470042796F /* iPad.scn */; };
+		5DC2000000000000000000AB /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 5DC2000000000000000000AA /* Localizable.stringsdict */; };
 		5DC43CFF2CAB493A00B90FAA /* infos.cgi in Resources */ = {isa = PBXBuildFile; fileRef = 5DC43CFE2CAB493500B90FAA /* infos.cgi */; };
 		5DC62F7B290AD19100C4B58E /* HeatMapSwiftUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */; };
 		5DC62F7D290AD29800C4B58E /* HeatMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */; };
@@ -203,7 +204,6 @@
 		5DF2F9E029700F7A00EEDDCE /* SpeedTest.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2F9E229700F7A00EEDDCE /* SpeedTest.storyboard */; };
 		5DF73B4529812C6100438F65 /* NetworkServiceListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF73B4429812C6100438F65 /* NetworkServiceListener.swift */; };
 		5DFF67EA20B61E8C003605BF /* TimeSeries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFF67E920B61E8C003605BF /* TimeSeries.swift */; };
-		5DC2000000000000000000AB /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 5DC2000000000000000000AA /* Localizable.stringsdict */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -560,6 +560,55 @@
 		5DC1002C0200000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		5DC1002C0300000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/SpeedTest.strings"; sourceTree = "<group>"; };
 		5DC13A7C2A633A470042796F /* iPad.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = iPad.scn; sourceTree = "<group>"; };
+		5DC200000000000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ar; path = ar.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200010000000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = bn; path = bn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200020000000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ca; path = ca.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200030000000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = cs; path = cs.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200040000000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = da; path = da.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200050000000000000000 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200060000000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = el; path = el.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200070000000000000000 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200080000000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-AU"; path = "en-AU.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC200090000000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-CA"; path = "en-CA.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC2000A0000000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-GB"; path = "en-GB.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC2000B0000000000000000 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000C0000000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "es-MX"; path = "es-MX.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC2000D0000000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fi; path = fi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000E0000000000000000 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2000F0000000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "fr-CA"; path = "fr-CA.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC200100000000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = gu; path = gu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200110000000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = he; path = he.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200120000000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hi; path = hi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200130000000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hr; path = hr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200140000000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hu; path = hu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200150000000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = id; path = id.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200160000000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200170000000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ja; path = ja.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200180000000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = kn; path = kn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200190000000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001A0000000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ml; path = ml.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001B0000000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = mr; path = mr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001C0000000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ms; path = ms.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001D0000000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nb; path = nb.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001E0000000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2001F0000000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = or; path = or.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200200000000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pa; path = pa.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200210000000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200220000000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pt; path = pt.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200230000000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ro; path = ro.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200240000000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200250000000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sk; path = sk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200260000000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sl; path = sl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200270000000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sv; path = sv.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200280000000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ta; path = ta.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC200290000000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = te; path = te.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002A0000000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = th; path = th.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002B0000000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = tr; path = tr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002C0000000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002D0000000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ur; path = ur.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002E0000000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		5DC2002F0000000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		5DC200300000000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
 		5DC43CFE2CAB493500B90FAA /* infos.cgi */ = {isa = PBXFileReference; lastKnownFileType = text; path = infos.cgi; sourceTree = "<group>"; };
 		5DC62F7A290AD19100C4B58E /* HeatMapSwiftUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapSwiftUIView.swift; sourceTree = "<group>"; };
 		5DC62F7C290AD29800C4B58E /* HeatMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapViewController.swift; sourceTree = "<group>"; };
@@ -875,55 +924,6 @@
 		6259C3DBD97BEA3EC2E6F501 /* libPods-iOS tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iOS tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F56DDF129AA99A901A294BE2 /* Pods-iOS tools.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.debug.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.debug.xcconfig"; sourceTree = "<group>"; };
 		FE1B554AAEFF369AC974FA67 /* Pods-iOS tools.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS tools.release.xcconfig"; path = "Target Support Files/Pods-iOS tools/Pods-iOS tools.release.xcconfig"; sourceTree = "<group>"; };
-		5DC200000000000000000000 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ar; path = ar.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200010000000000000000 /* bn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = bn; path = bn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200020000000000000000 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ca; path = ca.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200030000000000000000 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = cs; path = cs.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200040000000000000000 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = da; path = da.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200050000000000000000 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200060000000000000000 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = el; path = el.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200070000000000000000 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200080000000000000000 /* en-AU */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-AU"; path = en-AU.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200090000000000000000 /* en-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-CA"; path = en-CA.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000A0000000000000000 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "en-GB"; path = en-GB.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000B0000000000000000 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000C0000000000000000 /* es-MX */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "es-MX"; path = es-MX.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000D0000000000000000 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fi; path = fi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000E0000000000000000 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2000F0000000000000000 /* fr-CA */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "fr-CA"; path = fr-CA.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200100000000000000000 /* gu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = gu; path = gu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200110000000000000000 /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = he; path = he.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200120000000000000000 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hi; path = hi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200130000000000000000 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hr; path = hr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200140000000000000000 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = hu; path = hu.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200150000000000000000 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = id; path = id.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200160000000000000000 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200170000000000000000 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ja; path = ja.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200180000000000000000 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = kn; path = kn.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200190000000000000000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001A0000000000000000 /* ml */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ml; path = ml.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001B0000000000000000 /* mr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = mr; path = mr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001C0000000000000000 /* ms */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ms; path = ms.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001D0000000000000000 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nb; path = nb.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001E0000000000000000 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2001F0000000000000000 /* or */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = or; path = or.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200200000000000000000 /* pa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pa; path = pa.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200210000000000000000 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200220000000000000000 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pt; path = pt.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200230000000000000000 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ro; path = ro.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200240000000000000000 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200250000000000000000 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sk; path = sk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200260000000000000000 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sl; path = sl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200270000000000000000 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sv; path = sv.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200280000000000000000 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ta; path = ta.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200290000000000000000 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = te; path = te.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002A0000000000000000 /* th */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = th; path = th.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002B0000000000000000 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = tr; path = tr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002C0000000000000000 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002D0000000000000000 /* ur */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ur; path = ur.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002E0000000000000000 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC2002F0000000000000000 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = zh-Hans.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
-		5DC200300000000000000000 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = zh-Hant.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -2318,6 +2318,62 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		5DC2000000000000000000AA /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5DC200000000000000000000 /* ar */,
+				5DC200010000000000000000 /* bn */,
+				5DC200020000000000000000 /* ca */,
+				5DC200030000000000000000 /* cs */,
+				5DC200040000000000000000 /* da */,
+				5DC200050000000000000000 /* de */,
+				5DC200060000000000000000 /* el */,
+				5DC200070000000000000000 /* en */,
+				5DC200080000000000000000 /* en-AU */,
+				5DC200090000000000000000 /* en-CA */,
+				5DC2000A0000000000000000 /* en-GB */,
+				5DC2000B0000000000000000 /* es */,
+				5DC2000C0000000000000000 /* es-MX */,
+				5DC2000D0000000000000000 /* fi */,
+				5DC2000E0000000000000000 /* fr */,
+				5DC2000F0000000000000000 /* fr-CA */,
+				5DC200100000000000000000 /* gu */,
+				5DC200110000000000000000 /* he */,
+				5DC200120000000000000000 /* hi */,
+				5DC200130000000000000000 /* hr */,
+				5DC200140000000000000000 /* hu */,
+				5DC200150000000000000000 /* id */,
+				5DC200160000000000000000 /* it */,
+				5DC200170000000000000000 /* ja */,
+				5DC200180000000000000000 /* kn */,
+				5DC200190000000000000000 /* ko */,
+				5DC2001A0000000000000000 /* ml */,
+				5DC2001B0000000000000000 /* mr */,
+				5DC2001C0000000000000000 /* ms */,
+				5DC2001D0000000000000000 /* nb */,
+				5DC2001E0000000000000000 /* nl */,
+				5DC2001F0000000000000000 /* or */,
+				5DC200200000000000000000 /* pa */,
+				5DC200210000000000000000 /* pl */,
+				5DC200220000000000000000 /* pt */,
+				5DC200230000000000000000 /* ro */,
+				5DC200240000000000000000 /* ru */,
+				5DC200250000000000000000 /* sk */,
+				5DC200260000000000000000 /* sl */,
+				5DC200270000000000000000 /* sv */,
+				5DC200280000000000000000 /* ta */,
+				5DC200290000000000000000 /* te */,
+				5DC2002A0000000000000000 /* th */,
+				5DC2002B0000000000000000 /* tr */,
+				5DC2002C0000000000000000 /* uk */,
+				5DC2002D0000000000000000 /* ur */,
+				5DC2002E0000000000000000 /* vi */,
+				5DC2002F0000000000000000 /* zh-Hans */,
+				5DC200300000000000000000 /* zh-Hant */,
+			);
+			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
 		5DF2F9E229700F7A00EEDDCE /* SpeedTest.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2373,62 +2429,6 @@
 				5DC1002C0300000000000000 /* zh-Hant */,
 			);
 			name = SpeedTest.storyboard;
-			sourceTree = "<group>";
-		};
-		5DC2000000000000000000AA /* Localizable.stringsdict */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5DC200000000000000000000 /* ar */,
-				5DC200010000000000000000 /* bn */,
-				5DC200020000000000000000 /* ca */,
-				5DC200030000000000000000 /* cs */,
-				5DC200040000000000000000 /* da */,
-				5DC200050000000000000000 /* de */,
-				5DC200060000000000000000 /* el */,
-				5DC200070000000000000000 /* en */,
-				5DC200080000000000000000 /* en-AU */,
-				5DC200090000000000000000 /* en-CA */,
-				5DC2000A0000000000000000 /* en-GB */,
-				5DC2000B0000000000000000 /* es */,
-				5DC2000C0000000000000000 /* es-MX */,
-				5DC2000D0000000000000000 /* fi */,
-				5DC2000E0000000000000000 /* fr */,
-				5DC2000F0000000000000000 /* fr-CA */,
-				5DC200100000000000000000 /* gu */,
-				5DC200110000000000000000 /* he */,
-				5DC200120000000000000000 /* hi */,
-				5DC200130000000000000000 /* hr */,
-				5DC200140000000000000000 /* hu */,
-				5DC200150000000000000000 /* id */,
-				5DC200160000000000000000 /* it */,
-				5DC200170000000000000000 /* ja */,
-				5DC200180000000000000000 /* kn */,
-				5DC200190000000000000000 /* ko */,
-				5DC2001A0000000000000000 /* ml */,
-				5DC2001B0000000000000000 /* mr */,
-				5DC2001C0000000000000000 /* ms */,
-				5DC2001D0000000000000000 /* nb */,
-				5DC2001E0000000000000000 /* nl */,
-				5DC2001F0000000000000000 /* or */,
-				5DC200200000000000000000 /* pa */,
-				5DC200210000000000000000 /* pl */,
-				5DC200220000000000000000 /* pt */,
-				5DC200230000000000000000 /* ro */,
-				5DC200240000000000000000 /* ru */,
-				5DC200250000000000000000 /* sk */,
-				5DC200260000000000000000 /* sl */,
-				5DC200270000000000000000 /* sv */,
-				5DC200280000000000000000 /* ta */,
-				5DC200290000000000000000 /* te */,
-				5DC2002A0000000000000000 /* th */,
-				5DC2002B0000000000000000 /* tr */,
-				5DC2002C0000000000000000 /* uk */,
-				5DC2002D0000000000000000 /* ur */,
-				5DC2002E0000000000000000 /* vi */,
-				5DC2002F0000000000000000 /* zh-Hans */,
-				5DC200300000000000000000 /* zh-Hant */,
-			);
-			name = Localizable.stringsdict;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
