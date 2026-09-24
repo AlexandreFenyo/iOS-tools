@@ -1,3 +1,5 @@
+> **24 sept. 2026 — 6.4 (build 29) soumise** : fiche ASO (« WiFi Heat Map & Analyzer ») en 50 langues, app traduite en 49 langues, frises iPhone + iPad paysage. Publication automatique à l'approbation. Script : `tools/publish-6.4.py`. Traductions générées sans relecture native : à faire relire en priorité pour les langues indiennes, le thaï, l'ourdou et le malais.
+
 # Chantier de redressement ASO — état au 23 septembre 2026
 
 Document de reprise : tout ce qui a été décidé, fait et reste à faire, pour continuer

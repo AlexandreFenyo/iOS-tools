@@ -22,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -46,7 +47,15 @@ def call(method, path, body=None):
             json.dump(body, f)
         args.append(tmp)
     try:
-        out = subprocess.run(args, capture_output=True, text=True, check=True).stdout
+        # Erreurs réseau passagères (curl 35, 28, 56…) : jusqu'à 5 essais
+        for attempt in range(5):
+            r = subprocess.run(args, capture_output=True, text=True)
+            if r.returncode == 0:
+                break
+            time.sleep(5 * (attempt + 1))
+        else:
+            raise RuntimeError(f"{method} {path} : échec réseau (curl {r.returncode})")
+        out = r.stdout
     finally:
         if tmp and os.path.exists(tmp):
             os.remove(tmp)
@@ -148,7 +157,12 @@ def upload_screenshot(set_id, path):
         cmd = ["curl", "-sSf", "--max-time", "300", "-X", op["method"], "--data-binary", "@-", op["url"]]
         for h in op.get("requestHeaders", []):
             cmd[1:1] = ["-H", f"{h['name']}: {h['value']}"]
-        subprocess.run(cmd, input=chunk, capture_output=True, check=True)
+        for attempt in range(5):
+            if subprocess.run(cmd, input=chunk, capture_output=True).returncode == 0:
+                break
+            time.sleep(5 * (attempt + 1))
+        else:
+            raise RuntimeError(f"envoi de {path} impossible")
     call("PATCH", f"/v1/appScreenshots/{shot['id']}", {"data": {
         "type": "appScreenshots", "id": shot["id"],
         "attributes": {"uploaded": True, "sourceFileChecksum": hashlib.md5(data).hexdigest()}}})
@@ -183,7 +197,7 @@ def step_screenshots(only):
 
 def step_build():
     vid, _ = find_version()
-    builds = get_all(f"/v1/builds?filter[app]={APP}&filter[version]={BUILD}&filter[preReleaseVersion.version]={VERSION}")
+    builds = get_all(f"/v1/builds?filter%5Bapp%5D={APP}&filter%5Bversion%5D={BUILD}&filter%5BpreReleaseVersion.version%5D={VERSION}")
     if not builds:
         sys.exit(f"build {BUILD} pas encore visible sur App Store Connect")
     b = builds[0]
