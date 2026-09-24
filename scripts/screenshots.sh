@@ -32,6 +32,10 @@
 #   <out>/raw/<langue simulateur>/<appareil>/<scénario>.png   captures brutes
 #   <out>/<locale>/<appareil>/<index>_<scénario>.png           prêtes pour ASC
 #                                                              (bandeau texte, sans alpha)
+#   <out>/<locale>/<appareil>-frise/<index>_<scénario>.png     variante « frise » : appareils
+#                                                              dessinés en perspective sur un
+#                                                              fond continu (iPhone, iPad
+#                                                              paysage, Mac) — celle à publier
 #
 # Les légendes (texte indexé par Apple) sont dans scripts/screenshot-captions.tsv :
 # une ligne par locale x écran (index = ordre d'affichage dans ASC). Les écrans capturés
@@ -290,6 +294,11 @@ echo "=== captures brutes dans $OUT/raw"
 if (( COMPOSE )); then
     echo "=== composition des bandeaux"
     swift "$ROOT/scripts/compose-screenshots.swift" "$OUT" "$LOCALES"
+    echo "=== frises (appareils en perspective, cf. frise-screenshots.swift)"
+    swift "$ROOT/scripts/frise-screenshots.swift" "$OUT" "$LOCALES"
+    for f in "$OUT"/${~${LOCALES:+(${LOCALES//,/|})}:-*}/mac-frise/[0-9]*.png(N); do
+        check_size "$f" "${f#$OUT/}" "2880x1800 1440x900"
+    done
     for f in "$OUT"/${~${LOCALES:+(${LOCALES//,/|})}:-*}/mac/*.png(N); do
         check_size "$f" "${f#$OUT/}" "2880x1800 1440x900"
     done

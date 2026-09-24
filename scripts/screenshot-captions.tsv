@@ -5,21 +5,39 @@ en-US	en	3	discover	Every device on your network,\nin one list
 en-US	en	4	details	Names, ports and services\nof every device
 en-US	en	5	3d	Your whole network\nin interactive 3D
 en-US	en	6	traces	Detailed logs\nfor network pros
-en-GB	en-GB	1	heatmap	See your WiFi blackspots,\nroom by room
-en-GB	en-GB	2	measure	Walk, tap, measure —\nno extra hardware
-en-GB	en-GB	3	discover	Every device on your network,\nin one list
-fr-FR	fr	1	heatmap	Vos zones blanches WiFi,\npièce par pièce
+en-GB	en	1	welcome	WiFi heat maps and network\ntools, in one app
+en-GB	en	2	measure	Walk, tap, measure —\nno extra hardware
+en-GB	en	3	discover	Every device on your network,\nin one list
+en-GB	en	4	details	Names, ports and services\nof every device
+en-GB	en	5	3d	Your whole network\nin interactive 3D
+en-GB	en	6	traces	Detailed logs\nfor network pros
+fr-FR	fr	1	welcome	Cartes WiFi et outils réseau,\nen une seule app
 fr-FR	fr	2	measure	Marchez, appuyez, mesurez —\nsans aucun matériel
 fr-FR	fr	3	discover	Chaque appareil de votre réseau,\nen une liste
-es-ES	es	1	heatmap	Tus zonas muertas WiFi,\nhabitación a habitación
+fr-FR	fr	4	details	Noms, ports et services\nde chaque appareil
+fr-FR	fr	5	3d	Tout votre réseau\nen 3D interactive
+fr-FR	fr	6	traces	Des journaux détaillés\npour les pros du réseau
+es-ES	es	1	welcome	Mapas WiFi y herramientas\nde red, en una sola app
 es-ES	es	2	measure	Camina, toca, mide —\nsin hardware adicional
 es-ES	es	3	discover	Cada dispositivo de tu red,\nen una lista
-de-DE	de	1	heatmap	WLAN-Funklöcher sehen,\nRaum für Raum
+es-ES	es	4	details	Nombres, puertos y servicios\nde cada dispositivo
+es-ES	es	5	3d	Toda tu red\nen 3D interactivo
+es-ES	es	6	traces	Registros detallados\npara expertos en redes
+de-DE	de	1	welcome	WLAN-Heatmaps und Netzwerk-\ntools in einer App
 de-DE	de	2	measure	Gehen, tippen, messen —\nohne Zusatzhardware
 de-DE	de	3	discover	Jedes Gerät im Netzwerk,\nauf einen Blick
-nl-NL	en	1	heatmap	Zie uw wifi-dode zones,\nkamer voor kamer
+de-DE	de	4	details	Namen, Ports und Dienste\njedes Geräts
+de-DE	de	5	3d	Ihr ganzes Netzwerk\nin interaktivem 3D
+de-DE	de	6	traces	Detaillierte Protokolle\nfür Netzwerkprofis
+nl-NL	en	1	welcome	Wifi-heatmaps en netwerktools\nin één app
 nl-NL	en	2	measure	Loop, tik, meet —\nzonder extra hardware
 nl-NL	en	3	discover	Elk apparaat in uw netwerk,\nin één lijst
-it	en	1	heatmap	Le tue zone morte WiFi,\nstanza per stanza
+nl-NL	en	4	details	Namen, poorten en diensten\nvan elk apparaat
+nl-NL	en	5	3d	Uw hele netwerk\nin interactief 3D
+nl-NL	en	6	traces	Gedetailleerde logs\nvoor netwerkprofs
+it	en	1	welcome	Mappe WiFi e strumenti di rete,\nin un'unica app
 it	en	2	measure	Cammina, tocca, misura —\nsenza hardware extra
 it	en	3	discover	Ogni dispositivo della rete,\nin un unico elenco
+it	en	4	details	Nomi, porte e servizi\ndi ogni dispositivo
+it	en	5	3d	Tutta la tua rete\nin 3D interattivo
+it	en	6	traces	Log dettagliati\nper esperti di rete
