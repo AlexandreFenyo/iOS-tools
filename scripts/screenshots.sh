@@ -74,7 +74,7 @@ fi
 echo "=== langues simulateur : $LANGS"
 
 # Scénarios (écrans) à capturer : ceux du TSV pour les locales demandées, cf. la liste
-# des scénarios dans DemoData.swift (welcome, heatmap, measure, discover, 3d, traces)
+# des scénarios dans DemoData.swift (welcome, heatmap, measure, discover, details, 3d, traces)
 if [[ -n "$LOCALES" ]]; then
     SCENARIOS=(${(u)$(awk -F'\t' -v f="$filter" 'NR>1 && index(f, "," $1 ",") {print $4}' "$CAPTIONS")})
 else
@@ -169,7 +169,7 @@ for key in $SIM_KEYS; do
                 ipad13:discover) sleep 15 ;;
                 ipad13:measure|ipad13:heatmap) sleep 20 ;;
                 *:3d) sleep 25 ;;   # plus lent à se peupler sur iPhone
-                *:welcome) sleep 12 ;;
+                *:welcome|*:details) sleep 12 ;;
                 *) sleep 9 ;;
             esac
             # Capture dans un répertoire temporaire puis déplacement : le service du

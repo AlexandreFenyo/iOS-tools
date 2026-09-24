@@ -333,6 +333,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             tabBarController.selectedIndex = tab
         }
         masterViewController.demoPrepareDiscover()
+        masterViewController.demoPrepareDetails()
         #else
         let skip_step_by_step = false
         #endif

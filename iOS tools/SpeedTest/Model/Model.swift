@@ -1365,8 +1365,36 @@ class DBMaster {
             let local_name = ProcessInfo.processInfo.isMacCatalystApp ? "MacBook Pro"
                 : (UIDevice.current.userInterfaceIdiom == .pad ? "iPad" : "iPhone")
             let other_ios = local_name == "iPad" ? "iPhone" : "iPad"
-            demoNode(local_name, "local", "192.168.1.23", "2001:db8:1a2b:10::23", types: [.localhost],
-                     tcp: [7, 9, 19])
+            #if DEBUG
+            let local_is_receiver = DemoMode.scenario == "details"
+            #else
+            let local_is_receiver = false
+            #endif
+            if local_is_receiver {
+                // Scénario « details » : la première cible de la liste, dont on affiche les
+                // détails, porte les noms, ports et services Bonjour d'un ampli audio en réseau
+                let node = Node()
+                node.addName("eDMP32MB_1E3DF9")
+                node.addName("Marantz SR6008")
+                node.addName("0006781E3DF9@Marantz SR6008")
+                node.addMcastFQDN(FQDN("Marantz-SR6008", "local"))
+                node.addDnsName(DomainName(HostPart("marantz"), DomainPart("fenyo.net")))
+                node.addV4Address(IPv4Address("192.168.1.45")!)
+                node.setTypes([.localhost])
+                node.addService(BonjourServiceInfo("_spotify-connect._tcp.", "80",
+                    ["VERSION": "1.0", "CPath": "/goform/spotifyConnect/spotifyConnect.asp"]))
+                node.addService(BonjourServiceInfo("_http._tcp.", "80", [:]))
+                node.addService(BonjourServiceInfo("_raop._tcp.", "1024",
+                    ["ch": "2", "md": "0,1,2", "vs": "141.9", "vn": "65537", "txtvers": "1", "et": "0,4",
+                     "ss": "16", "sr": "44100", "pw": "false", "am": "SR6008", "fv": "s104834.1000.0",
+                     "ft": "0x44F8A00", "cn": "0,1", "da": "true", "sv": "false", "tp": "UDP"]))
+                node.addTcpPort(80)
+                node.addTcpPort(1024)
+                _ = addNode(node, demo_mode: true)
+            } else {
+                demoNode(local_name, "local", "192.168.1.23", "2001:db8:1a2b:10::23", types: [.localhost],
+                         tcp: [7, 9, 19])
+            }
             demoNode("router", "home.arpa", "192.168.1.1", "2001:db8:1a2b:10::1", types: [.gateway, .snmp],
                      tcp: [22, 53, 80, 443], udp: [53, 161])
             demoNode(other_ios, "local", "192.168.1.20", "2001:db8:1a2b:10::20", types: [.ios, .chargen, .discard],
@@ -1374,7 +1402,7 @@ class DBMaster {
             demoNode(local_name == "MacBook Pro" ? "iMac" : "MacBook Pro", "local", "192.168.1.42", "2001:db8:1a2b:10::42",
                      services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "MacBookPro"])],
                      tcp: [22, 5000, 7000])
-            demoNode("Living Room TV", "local", "192.168.1.45", "2001:db8:1a2b:10::45",
+            demoNode("Living Room TV", "local", "192.168.1.46", "2001:db8:1a2b:10::46",
                      services: [BonjourServiceInfo("_airplay._tcp.", "7000", ["model": "AppleTV"])],
                      tcp: [7000, 7100])
             demoNode("HomePod", "local", "192.168.1.125", "2001:db8:1a2b:10::125",

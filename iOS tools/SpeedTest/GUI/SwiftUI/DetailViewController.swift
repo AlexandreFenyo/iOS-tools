@@ -136,6 +136,13 @@ class DetailViewController: UIViewController {
         }
     }
 
+    #if DEBUG
+    // Captures App Store : comme un appui sur le bouton qui masque la courbe
+    func demoHideChart() {
+        if !chart_hidden { toggleChart() }
+    }
+    #endif
+
     @objc private func toggleChart() {
         chart_hidden.toggle()
         chart_toggle_button.setImage(UIImage(systemName: chart_hidden ? "chevron.down.circle.fill" : "chevron.up.circle.fill"), for: .normal)
@@ -201,6 +208,8 @@ class DetailViewController: UIViewController {
             Task.detached(priority: .userInitiated) {
                 await self.master_view_controller?.detail_view_controller?.ts.setUnits(units: .BANDWIDTH)
                 await self.master_view_controller?.detail_view_controller?.ts.removeAll()
+                // Captures App Store : aucun trafic réseau vers les adresses fictives
+                if demo_mode { return }
                 await self.master_view_controller?.stopBrowsing(.OTHER_ACTION)
 
                 // Start an automatic ping loop

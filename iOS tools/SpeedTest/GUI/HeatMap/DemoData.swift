@@ -21,7 +21,8 @@ enum DemoMode {
     ///   "heatmap"  : carte terminée (défaut)
     ///   "measure"  : mesure en cours, carte partielle avec les points de mesure
     ///   "discover" : pas de modal d'accueil, liste des cibles
-    ///   "3d"       : vue réseau 3D, mode caméra « 3D », zoom de 20 %
+    ///   "details"  : détails de la première cible (ampli audio fictif), courbe masquée
+    ///   "3d"       : vue réseau 3D, mode caméra « 3D », zoom de 20 % (40 % sur iPhone), 5° de rotation
     ///   "traces"   : onglet des traces, journal fictif
     static let scenario: String = {
         let args = ProcessInfo.processInfo.arguments
@@ -32,7 +33,7 @@ enum DemoMode {
     }()
 
     /// Scénarios qui ferment le modal d'accueil au lancement.
-    static var skipsWelcome: Bool { ["discover", "3d", "traces"].contains(scenario) }
+    static var skipsWelcome: Bool { ["discover", "details", "3d", "traces"].contains(scenario) }
 
     /// Scénarios qui naviguent du modal d'accueil vers l'écran de heat map.
     static var opensHeatMap: Bool { ["heatmap", "measure"].contains(scenario) }
@@ -56,7 +57,7 @@ enum DemoMode {
         (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _speedtestapp._tcp."),
         (1, .INFO, "Bonjour/mDNS: start browsing multicast DNS / Bonjour services of type _airplay._tcp."),
         (2, .INFO, "Bonjour/mDNS: service found: type:_airplay._tcp.; name:Living Room TV; hostname:Living-Room-TV.local."),
-        (2, .DEBUG, "NetServiceDidResolveAddress: adding 192.168.1.45 to Living-Room-TV.local."),
+        (2, .DEBUG, "NetServiceDidResolveAddress: adding 192.168.1.46 to Living-Room-TV.local."),
         (3, .INFO, "Bonjour/mDNS: service found: type:_airplay._tcp.; name:HomePod; hostname:HomePod.local."),
         (3, .DEBUG, "NetServiceDidResolveAddress: adding 192.168.1.125 to HomePod.local."),
         (4, .INFO, "Bonjour/mDNS: service found: type:_speedtestapp._tcp.; name:iPad; hostname:iPad.local."),
@@ -237,6 +238,37 @@ extension MasterViewController {
         else { return }
 
         demoFeedChart(attempt: 0)
+    }
+
+    /// Scénario « details » : toucher la première cible de la liste (l'appareil local, qui
+    /// porte dans ce scénario les noms et services d'un ampli audio, cf. addDefaultNodes) ouvre
+    /// la liste de ses IP, qui sélectionne sa première adresse et affiche ses détails (poussés
+    /// par-dessus la liste sur iPhone) ; puis masquer la courbe pour montrer tout le reste.
+    func demoPrepareDetails() {
+        guard DemoMode.enabled, DemoMode.scenario == "details" else { return }
+        demoSelectFirstTarget(attempt: 0)
+    }
+
+    private func demoSelectFirstTarget(attempt: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            guard let self else { return }
+            let first = IndexPath(row: 0, section: SectionType.localhost.rawValue)
+            // La ligne doit exister dans le tableau affiché, pas seulement dans le modèle :
+            // sinon selectRow lève une exception (le tableau se remplit après le modèle)
+            guard first.section < self.tableView.numberOfSections,
+                  self.tableView.numberOfRows(inSection: first.section) > 0
+            else {
+                if attempt < 5 { self.demoSelectFirstTarget(attempt: attempt + 1) }
+                return
+            }
+            self.tableView.selectRow(at: first, animated: false, scrollPosition: .none)
+            self.tableView(self.tableView, didSelectRowAt: first)
+            self.performSegue(withIdentifier: "segue to IP list", sender: self)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.detail_view_controller?.demoHideChart()
+            }
+        }
     }
 
     private func demoFeedChart(attempt: Int) {

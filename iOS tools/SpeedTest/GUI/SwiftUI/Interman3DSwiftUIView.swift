@@ -1200,6 +1200,8 @@ struct Interman3DSwiftUIView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             // Zoom de 20 %, 40 % sur iPhone où la caméra est plus éloignée
                             scaleCamera(getCameraScaleFactor() / (UIDevice.current.userInterfaceIdiom == .phone ? 1.4 : 1.2))
+                            // Rotation de 5° pour casser la symétrie de la vue
+                            rotateCamera(getCameraAngle() + 5 * .pi / 180, smooth: true, duration: 0.5)
                         }
                     }
                 }
