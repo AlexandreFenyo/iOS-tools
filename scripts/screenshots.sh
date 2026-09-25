@@ -232,7 +232,7 @@ for key in $SIM_KEYS; do
             # Découverte sur iPad : courbe de latence fictive injectée par le mode démo
             case $key:$scenario in
                 ipad13:discover) sleep 15 ;;
-                ipad13:measure|ipad13:heatmap) sleep 20 ;;
+                *:measure|*:heatmap) sleep 20 ;;   # calcul de la carte (IDW), plus long sur grande image ou machine chargée
                 *:3d) sleep 40 ;;   # plus lent à se peupler sur iPhone (et machine chargée)
                 *:welcome|*:details) sleep 12 ;;
                 *) sleep 9 ;;
