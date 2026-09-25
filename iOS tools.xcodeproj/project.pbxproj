@@ -2570,7 +2570,7 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "iOS tools/iOS tools maccatalyst.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
@@ -2596,7 +2596,7 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/maccatalyst",
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 6.4;
+				MARKETING_VERSION = 6.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2620,7 +2620,7 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = "iOS tools/iOS tools maccatalyst.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 30;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = YES;
@@ -2645,7 +2645,7 @@
 					"$(PROJECT_DIR)/iOS\\ tools/libnetsnmp/maccatalyst",
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 6.4;
+				MARKETING_VERSION = 6.4.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.fenyo.apple.wifi-map-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

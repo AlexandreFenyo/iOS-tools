@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publie la version 6.4 sur App Store Connect : 50 langues, frises, soumission.
+"""Publie une version sur App Store Connect (6.4, puis 6.4.1…) : 50 langues, frises, soumission.
 
 La 6.4 remet la fiche de référencement préparée pour la 6.2 (nom « WiFi Heat Map &
 Analyzer », textes de ASO/metadata/<locale>/) et l'étend aux 50 langues de la fiche
@@ -29,7 +29,11 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 META = os.path.join(ROOT, "ASO", "metadata")
 SHOTS = os.path.join(ROOT, "ASO", "screenshots")
 APP = "1662393654"
-VERSION, BUILD = "6.4", "29"
+# Version et build publiés (surchargeables : ASC_VERSION=6.4.1 ASC_BUILD=30)
+VERSION = os.environ.get("ASC_VERSION", "6.4")
+BUILD = os.environ.get("ASC_BUILD", "29")
+# Notes de version : ASO/metadata/<locale>/<WHATS_NEW_FILE> (défaut release_notes.txt)
+WHATS_NEW_FILE = os.environ.get("ASC_WHATS_NEW_FILE", "release_notes.txt")
 V63 = "ec7c637d-919d-4ae4-a12d-c6fea96fd17b"
 SUPPORT = "https://fenyo.net/network3dwifitools/support.html"
 MARKETING = "https://fenyo.net/network3dwifitools"
@@ -50,11 +54,13 @@ def call(method, path, body=None):
         # Erreurs réseau passagères (curl 35, 28, 56…) : jusqu'à 5 essais
         for attempt in range(5):
             r = subprocess.run(args, capture_output=True, text=True)
-            if r.returncode == 0:
+            # Réessai aussi sur les erreurs 5xx passagères du serveur d'Apple
+            if r.returncode == 0 and "__HTTP_5" not in r.stdout:
                 break
             time.sleep(5 * (attempt + 1))
         else:
-            raise RuntimeError(f"{method} {path} : échec réseau (curl {r.returncode})")
+            if r.returncode != 0:
+                raise RuntimeError(f"{method} {path} : échec réseau (curl {r.returncode})")
         out = r.stdout
     finally:
         if tmp and os.path.exists(tmp):
@@ -134,7 +140,7 @@ def step_texts(only):
     vlocs = {l["attributes"]["locale"]: l["id"] for l in get_all(f"/v1/appStoreVersions/{vid}/appStoreVersionLocalizations?limit=50")}
     for loc in only:
         attrs = {"description": read(loc, "description.txt"), "keywords": read(loc, "keywords.txt"),
-                 "promotionalText": read(loc, "promotional_text.txt"), "whatsNew": read(loc, "release_notes.txt"),
+                 "promotionalText": read(loc, "promotional_text.txt"), "whatsNew": read(loc, WHATS_NEW_FILE),
                  "supportUrl": SUPPORT, "marketingUrl": MARKETING}
         if loc in vlocs:
             call("PATCH", f"/v1/appStoreVersionLocalizations/{vlocs[loc]}", {"data": {
