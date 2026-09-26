@@ -30,12 +30,18 @@ public class TracesViewModel : ObservableObject {
     static let shared = TracesViewModel()
     
     // Libellés complétés à 5 caractères pour que le texte qui suit soit aligné
-    // (la fonte des traces est à chasse fixe sur Mac)
-    private let log_level_to_string: [LogLevel: String] = [
+    // (la fonte des traces est à chasse fixe sur Mac). Non traduits : les boutons de niveau
+    // filtrent l'affichage sur « [<libellé>] » (cf. levelFilter), dans toutes les langues
+    static let log_level_to_string: [LogLevel: String] = [
         LogLevel.INFO: "INFO ",
         LogLevel.DEBUG: "DEBUG",
         LogLevel.ALL: "ALL  "
     ]
+
+    // Texte de filtre qui ne retient que les traces d'un niveau : « [INFO ] », « [DEBUG] »,
+    // « [ALL  ] » — les crochets écartent les traces d'un autre niveau dont le texte
+    // contiendrait le mot
+    static func levelFilter(_ level: LogLevel) -> String { "[" + log_level_to_string[level]! + "]" }
     
     private let df: DateFormatter = {
         let df = DateFormatter()
@@ -80,14 +86,10 @@ public class TracesViewModel : ObservableObject {
         #if DEBUG
         if DemoMode.enabled { return }
         #endif
-        if _level.rawValue <= level.rawValue {
-            let level = log_level_to_string[_level]!
-            traces.append(df.string(from: _date ?? Date()) + " [" + level + "]: " + str)
-        }
+        // Toutes les traces sont conservées, quel que soit leur niveau : les boutons de niveau
+        // ne font que filtrer l'affichage
+        traces.append(df.string(from: _date ?? Date()) + " [" + Self.log_level_to_string[_level]! + "]: " + str)
     }
-    
-    @Published private(set) var level: LogLevel = .ALL
-    public func setLevel(_ val: LogLevel) { level = val }
 }
 
 public enum LogLevel : Int {
@@ -249,6 +251,26 @@ struct TracesSwiftUIView: View {
     @State private var scroll_controller = TracesScrollController()
     @State private var filter = ""
 
+    // Bouton de niveau : remplace le filtre par « [<niveau>] » (n'affiche que les traces de ce
+    // niveau) ; un nouvel appui sur le bouton actif efface le filtre. Il est en surbrillance
+    // tant que le filtre est exactement le sien.
+    private func levelButton(_ level: LogLevel, _ title: LocalizedStringKey, systemImage: String) -> some View {
+        let level_filter = TracesViewModel.levelFilter(level)
+        let active = filter == level_filter
+        return Button {
+            filter = active ? "" : level_filter
+        } label: {
+            Label(title, systemImage: systemImage)
+                .labelStyle(AdaptiveLabelStyle())
+                .foregroundColor(active ? Color.white.lighter() : Color.gray)
+                .padding(12)
+                .font(.footnote)
+        }
+        .background(active ? COLORS.tabbar_bg5 : Color(COLORS.standard_background).darker().darker())
+        .cornerRadius(20)
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+    }
+
     var body: some View {
         ZStack {
             TracesTextView(traces: filter.isEmpty ? model.traces :
@@ -262,47 +284,11 @@ struct TracesSwiftUIView: View {
                     // s'étire alors exactement à cette largeur
                     VStack(alignment: .leading) {
                         HStack {
-                            Button {
-                                model.setLevel(.INFO)
-                                model.append("set trace level to INFO", level: .INFO)
-                            } label: {
-                                Label("INFO", systemImage: "rectangle.split.2x2")
-                                    .labelStyle(AdaptiveLabelStyle())
-                                    .foregroundColor(model.level != .INFO ? Color.gray : Color.white.lighter())
-                                    .disabled(model.level != .INFO).padding(12)
-                                    .font(.footnote)
-                            }
-                            .background(model.level != .INFO ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20).font(.footnote)
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+                            levelButton(.INFO, "INFO", systemImage: "rectangle.split.2x2")
 
-                            Button {
-                                model.setLevel(.DEBUG)
-                                model.append("set trace level to DEBUG", level: .INFO)
-                            } label: {
-                                Label("DEBUG", systemImage: "tablecells")
-                                    .labelStyle(AdaptiveLabelStyle())
-                                    .foregroundColor(model.level != .DEBUG ? Color.gray : Color.white.lighter())
-                                    .disabled(model.level != .DEBUG).padding(12)
-                                    .font(.footnote)
-                            }
-                            .background(model.level != .DEBUG ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+                            levelButton(.DEBUG, "DEBUG", systemImage: "tablecells")
 
-                            Button {
-                                model.setLevel(.ALL)
-                                model.append("set trace level to ALL", level: .INFO)
-                            } label: {
-                                Label("ALL", systemImage: "rectangle.split.3x3")
-                                    .labelStyle(AdaptiveLabelStyle())
-                                    .foregroundColor(model.level != .ALL ? Color.gray : Color.white.lighter())
-                                    .disabled(model.level != .ALL).padding(12)
-                                    .font(.footnote)
-                            }
-                            .background(model.level != .ALL ? Color(COLORS.standard_background).darker().darker() : COLORS.tabbar_bg5).cornerRadius(20)
-                            .cornerRadius(20)
-                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
+                            levelButton(.ALL, "ALL", systemImage: "rectangle.split.3x3")
                         }
                         .lineLimit(1)
 
