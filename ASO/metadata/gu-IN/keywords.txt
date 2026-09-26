@@ -1,1 +1,1 @@
-વાઇફાઇ,નેટવર્ક,heatmap,coverage,scanner,router,mesh,extender,snmp,lan
+વાઇફાઇ,નેટવર્ક,heatmap,coverage,scanner,router,mesh,extender,snmp,lan,ping

@@ -1,1 +1,1 @@
-heatmap,coverage,router,internet,speed,test,scanner,mesh,snmp,extender,راؤٹر,کوریج
+heatmap,coverage,router,internet,speed,test,scanner,mesh,snmp,extender,راؤٹر,کوریج,ping

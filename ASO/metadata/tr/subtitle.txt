@@ -1,1 +1,1 @@
-Ölü bölgeler, sinyal ve hız
+Ölü bölgeler ve hız testi

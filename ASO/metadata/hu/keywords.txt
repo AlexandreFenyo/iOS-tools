@@ -1,1 +1,1 @@
-hőtérkép,lefedettség,hálózat,router,jelerősítő,mesh,szkenner,teszt,snmp,dbm,wlan,térerő
+hőtérkép,lefedettség,hálózat,router,jelerősítő,mesh,szkenner,teszt,snmp,wlan,ping,internet

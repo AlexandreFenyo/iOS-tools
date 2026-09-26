@@ -1,1 +1,1 @@
-mapa,cieplna,zasięg,sygnał,router,wzmacniacz,repeater,mesh,skaner,sieci,test,snmp,lan,pokrycie,mib
+mapa,cieplna,zasięg,router,wzmacniacz,repeater,mesh,skaner,sieci,test,snmp,lan,pokrycie,mib,ping

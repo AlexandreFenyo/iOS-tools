@@ -1,1 +1,1 @@
-harta,termica,acoperire,retea,router,extender,repetor,mesh,scanner,test,snmp,dbm,wlan,internet,mib
+harta,termica,acoperire,retea,router,extender,repetor,mesh,scanner,test,snmp,wlan,internet,mib,ping

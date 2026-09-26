@@ -1,1 +1,1 @@
-mapa,calor,cobertura,zones,xarxa,router,encaminador,repetidor,mesh,escàner,test,snmp,dbm,wlan,mib
+mapa,calor,cobertura,zones,xarxa,router,encaminador,repetidor,mesh,escàner,test,snmp,wlan,mib,ping

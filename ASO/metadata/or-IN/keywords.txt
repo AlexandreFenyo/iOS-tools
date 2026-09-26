@@ -1,1 +1,1 @@
-heatmap,coverage,deadzone,router,extender,mesh,speedtest,scanner,signal,snmp,ୱାଇଫାଇ
+heatmap,coverage,deadzone,router,extender,mesh,speed,scanner,snmp,ୱାଇଫାଇ,ping,lan

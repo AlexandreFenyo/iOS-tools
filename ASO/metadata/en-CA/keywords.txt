@@ -1,1 +1,1 @@
-heatmap,coverage,survey,scanner,router,mesh,extender,booster,snmp,strength,meter,dbm,ping,lan,mib
+heatmap,coverage,survey,scanner,router,mesh,extender,booster,snmp,ping,lan,mib,latency,network,wlan

@@ -1,1 +1,1 @@
-mapa,calor,cobertura,alcance,roteador,repetidor,mesh,velocidade,teste,internet,scanner,snmp,lan,ping
+mapa,calor,cobertura,alcance,roteador,repetidor,mesh,teste,internet,scanner,snmp,lan,ping,rede,wlan

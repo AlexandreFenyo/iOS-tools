@@ -1,1 +1,1 @@
-varmekort,dækning,netværk,router,forstærker,repeater,mesh,scanner,test,snmp,dbm,wlan,trådløs
+varmekort,dækning,netværk,router,forstærker,repeater,mesh,scanner,test,snmp,wlan,trådløs,ping

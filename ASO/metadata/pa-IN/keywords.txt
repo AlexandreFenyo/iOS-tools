@@ -1,1 +1,1 @@
-ਵਾਈਫਾਈ,ਨੈੱਟਵਰਕ,heatmap,coverage,scanner,router,mesh,extender,snmp,lan
+ਵਾਈਫਾਈ,ਨੈੱਟਵਰਕ,heatmap,coverage,scanner,router,mesh,extender,snmp,lan,ping

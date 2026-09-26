@@ -1,1 +1,1 @@
-ısı,haritası,kapsama,modem,router,mesh,menzil,genişletici,tarayıcı,ağ,snmp,testi,kablosuz
+ısı,haritası,kapsama,modem,router,mesh,menzil,genişletici,tarayıcı,ağ,snmp,kablosuz,ping,lan

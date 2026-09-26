@@ -1,1 +1,1 @@
-heatmap,coverage,deadzone,router,extender,mesh,speedtest,scanner,signal,snmp,network,വൈഫൈ
+heatmap,coverage,deadzone,router,extender,mesh,speed,scanner,snmp,network,വൈഫൈ,ping,lan

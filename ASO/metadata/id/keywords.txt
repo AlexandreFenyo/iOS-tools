@@ -1,1 +1,1 @@
-peta,panas,heatmap,jangkauan,router,repeater,extender,mesh,jaringan,internet,lemot,scanner,snmp,dbm
+peta,panas,heatmap,jangkauan,router,repeater,extender,mesh,jaringan,internet,lemot,scanner,snmp,ping
