@@ -82,7 +82,7 @@ Three prebuilt static slices are selected by SDK-conditional `LIBRARY_SEARCH_PAT
 | simulator | `iOS tools/libnetsnmp/simulator/` (arm64 only) |
 | Mac Catalyst | `iOS tools/libnetsnmp/maccatalyst/` (arm64 + x86_64) |
 
-Rebuild procedure: `iOS tools/libnetsnmp/simulator/README.md`. In the net-snmp sources, `mib.c` contains ISO-8859 bytes, so `grep` treats it as binary — `grep -a` is mandatory to see the patches. End-to-end test agent: `flood.eowyn.eu.org`, community `public`, v2c.
+Rebuild procedure: `iOS tools/libnetsnmp/simulator/README.md`. In the net-snmp sources, `mib.c` contains ISO-8859 bytes, so `grep` treats it as binary — `grep -a` is mandatory to see the patches. End-to-end test agent: `flood.eowyn.eu.org` (= ovh.fenyo.net, 51.75.31.39 / 2001:41d0:304:200::9001), community `public`, v2c. Its snmpd exposes the view `systemonly` extended by `/etc/snmp/snmpd.conf.d/interfaces.conf` (IF-MIB ifTable + ifXTable, needed by "scan interfaces speed") and listens on IPv4 and IPv6 (`/etc/snmp/snmpd.conf.d/listen.conf`: `agentaddress udp:161,udp6:161`). No trailing comments in snmpd config lines: snmpd reads them as a view mask.
 
 `SNMPTypes.swift` holds the OID tree (`OIDNode`, `OIDNodeDisplayable`, filtering/collapse state) and `OIDTimeSeries` (sliding-window bitrate computation for interface counters).
 

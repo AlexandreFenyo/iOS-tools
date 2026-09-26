@@ -132,6 +132,9 @@ final class TracesScrollController {
 fileprivate struct TracesTextView: UIViewRepresentable {
     let traces: [String]
     let filter: String
+    // Marge supplémentaire en haut du texte (filtre actif : les lignes commencent sous les
+    // boutons et le champ de filtre, au lieu d'être masquées par eux)
+    let top_inset: CGFloat
     @Binding var locked: Bool
     let controller: TracesScrollController
 
@@ -194,6 +197,8 @@ fileprivate struct TracesTextView: UIViewRepresentable {
         coordinator.parent = self
         controller.text_view = text_view
 
+        updateTopInset(text_view)
+
         if traces.count > coordinator.applied_count, coordinator.applied_count > 0,
            filter == coordinator.applied_filter,
            traces[coordinator.applied_count - 1] == coordinator.applied_last {
@@ -215,6 +220,21 @@ fileprivate struct TracesTextView: UIViewRepresentable {
         if locked {
             DispatchQueue.main.async { [weak controller] in
                 controller?.scrollToBottom()
+            }
+        }
+    }
+
+    // Ajout ou retrait animé de la marge du haut : on anime le contentInset du défilement
+    // (le texte lui-même n'est pas animable) et, si le haut du texte est visible, le décalage
+    // qui l'accompagne, pour que les lignes glissent au lieu de sauter
+    private func updateTopInset(_ text_view: UITextView) {
+        guard text_view.contentInset.top != top_inset else { return }
+        let top_visible = text_view.contentOffset.y <= -text_view.adjustedContentInset.top + 1
+        UIView.animate(withDuration: 0.35, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState, .allowUserInteraction]) {
+            text_view.contentInset.top = top_inset
+            text_view.verticalScrollIndicatorInsets.top = top_inset
+            if top_visible {
+                text_view.contentOffset.y = -text_view.adjustedContentInset.top
             }
         }
     }
@@ -261,6 +281,8 @@ struct TracesSwiftUIView: View {
     @State public var locked = true
     @State private var scroll_controller = TracesScrollController()
     @State private var filter = ""
+    // Hauteur de la barre de boutons et du champ de filtre, mesurée à l'affichage
+    @State private var controls_height: CGFloat = 0
 
     // Traces affichées : celles qui contiennent au moins un des termes du filtre (« ou »
     // inclusif entre les termes séparés par « | »), toutes si le filtre n'a aucun terme
@@ -292,8 +314,9 @@ struct TracesSwiftUIView: View {
 
     var body: some View {
         ZStack {
-            TracesTextView(traces: filteredTraces,
-                           filter: filter, locked: $locked, controller: scroll_controller)
+            TracesTextView(traces: filteredTraces, filter: filter,
+                           top_inset: TracesViewModel.filterTerms(filter).isEmpty ? 0 : controls_height + 8,
+                           locked: $locked, controller: scroll_controller)
 
             VStack {
                 HStack(alignment: .top) {
@@ -387,7 +410,11 @@ struct TracesSwiftUIView: View {
                     .cornerRadius(20)
                     .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color(COLORS.right_pannel_bg), lineWidth: 3))
 
-                }.background(Color.clear)
+                }
+                .background(GeometryReader { geometry in
+                    Color.clear.preference(key: ControlsHeightKey.self, value: geometry.size.height)
+                })
+                .onPreferenceChange(ControlsHeightKey.self) { controls_height = $0 }
 
                 Spacer()
             }
@@ -395,4 +422,9 @@ struct TracesSwiftUIView: View {
         }
         .background(Color(COLORS.right_pannel_bg))
     }
+}
+
+private struct ControlsHeightKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
 }
