@@ -338,8 +338,10 @@ struct TracesSwiftUIView: View {
                                 .foregroundColor(.gray)
                             ZStack(alignment: .leading) {
                                 if filter.isEmpty {
-                                    // Placeholder gris, comme les boutons de niveau non sélectionnés
-                                    Text("Filter traces")
+                                    // Placeholder gris, comme les boutons de niveau non sélectionnés ;
+                                    // libellé court sur iPhone, où le champ est étroit et le texte
+                                    // complet passerait sur deux lignes
+                                    Text(UIDevice.current.userInterfaceIdiom == .phone ? "Filter" : "Filter traces")
                                         .font(.footnote)
                                         .foregroundColor(Color.gray)
                                         .allowsHitTesting(false)
