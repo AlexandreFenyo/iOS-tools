@@ -3,6 +3,7 @@
 //
 
 extern void alex_walk(void);
+extern void alex_walk_stop(void);
 
 extern void init_snmp(const char *);
 extern int add_mibdir(const char *); // TODO: voir s'il faut mettre des const ci-dessous

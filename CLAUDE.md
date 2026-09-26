@@ -84,7 +84,7 @@ Three prebuilt static slices are selected by SDK-conditional `LIBRARY_SEARCH_PAT
 
 Rebuild procedure: `iOS tools/libnetsnmp/simulator/README.md`. In the net-snmp sources, `mib.c` contains ISO-8859 bytes, so `grep` treats it as binary — `grep -a` is mandatory to see the patches. End-to-end test agent: `flood.eowyn.eu.org` (= ovh.fenyo.net, 51.75.31.39 / 2001:41d0:304:200::9001), community `public`, v2c. Its snmpd exposes the view `systemonly` extended by `/etc/snmp/snmpd.conf.d/interfaces.conf` (IF-MIB ifTable + ifXTable, needed by "scan interfaces speed") and listens on IPv4 and IPv6 (`/etc/snmp/snmpd.conf.d/listen.conf`: `agentaddress udp:161,udp6:161`). No trailing comments in snmpd config lines: snmpd reads them as a view mask.
 
-Known improvement to make (see `TODO.md`): the `alex_rollingbuf_*` ring shared between the C walk thread and the Swift consumer has no atomics or memory barriers.
+The `alex_rollingbuf_*` ring between the C walk thread (producer) and the Swift consumer is single-producer/single-consumer with `_Atomic` indices (release/acquire); `alex_rollingbuf_pop` frees each entry. `SNMPManager.stopWalk()` (C `alex_walk_stop()`) ends a walk between two GETNEXT requests through `alex_main`'s normal exit path (partial results + "Walk interrupted"); the flag is reset by `alex_rollingbuf_init`. "Full scan" walks from `.1` (whole tree, enterprises included). Rebuild the three slices with `build-ios-tools.sh` in the net-snmp repo. Open items: `TODO.md`.
 
 `SNMPTypes.swift` holds the OID tree (`OIDNode`, `OIDNodeDisplayable`, filtering/collapse state) and `OIDTimeSeries` (sliding-window bitrate computation for interface counters).
 

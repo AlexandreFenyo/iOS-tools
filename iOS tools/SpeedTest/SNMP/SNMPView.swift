@@ -615,7 +615,10 @@ struct SNMPView: View {
                         Spacer()
                         
                         Button(action: {
-                            let str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
+                            var str_array = SNMPManager.manager.getWalkCommandLineFromTarget(target: SNMPTarget(current_selected_target_simple))
+                            // Racine .1 : tout l'arbre, y compris les MIB privées (enterprises),
+                            // et non la seule mib-2 que snmpwalk parcourt par défaut
+                            str_array.append(".1")
                             walk(str_array, message: "SNMP walk for \(current_selected_target_simple.host)\(current_selected_target_simple.transport_proto == .TCP ? " - TCP timeout: 75s" : "")")
                             master_view_controller.addTrace("SNMP: full scan for \(current_selected_target_simple.host)")
                         })

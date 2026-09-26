@@ -6,32 +6,27 @@ continuent d'utiliser `../libnetsnmp.a` (arm64/arm64e iphoneos), qui reste la r�
 
 ## Provenance
 
-Construite intégralement depuis les sources patchées de
-<https://github.com/AlexandreFenyo/net-snmp> (commit `0281b6f`), qui contiennent
+Les trois tranches (`../libnetsnmp.a` appareil arm64/arm64e, `libnetsnmp.a` ici simulateur
+arm64, `../maccatalyst/libnetsnmp.a` Catalyst arm64+x86_64) sont construites depuis les sources
+patchées de <https://github.com/AlexandreFenyo/net-snmp>, qui contiennent
 `snmplib/alex_walk.c`, `snmplib/alex_translate.c` et les ajouts `alex_setsnmpmibdir` /
-`alex_setsnmpconfpath` dans `mib.c` / `read_config.c`.
+`alex_setsnmpconfpath` dans `mib.c` / `read_config.c`. Dernière reconstruction : 27 sept. 2026, commit `cab2cb6`
+(anneau à index atomiques, arrêt de walk `alex_walk_stop`, fuite mémoire de
+`alex_rollingbuf_pop` corrigée), iOS 16.6 minimum.
 
 Attention : `mib.c` contient des octets ISO-8859 — `grep` le traite comme binaire et ne
 montre les patchs qu'avec l'option `-a`.
 
 ## Reconstruire
 
-Répliquer `build-nodebugging.sh` du dépôt net-snmp avec la section simulateur :
+Script du dépôt net-snmp (il documente aussi les pièges : configure interactif, objets
+compilés présents dans le dépôt, pcap indisponible sous Catalyst, assembleur x86) :
 
 ```sh
-cp -a ~/git/net-snmp/net-snmp-5.9.4 ~/git/net-snmp/mycpp <répertoire-de-travail>/
-cd <répertoire-de-travail>/net-snmp-5.9.4
-SDK=iphonesimulator
-export CC=$(xcrun --find --sdk $SDK clang) CXX=$(xcrun --find --sdk $SDK clang++)
-export CPP=../mycpp
-export CFLAGS="-arch arm64 -mios-simulator-version-min=16.6 -isysroot $(xcrun --sdk $SDK --show-sdk-path) -O3 -g3"
-export CXXFLAGS="$CFLAGS" LDFLAGS="-arch arm64 -mios-simulator-version-min=16.6 -isysroot $(xcrun --sdk $SDK --show-sdk-path)"
-./configure --host=arm-apple-darwin --prefix=$PWD/../_build \
-    --exec-prefix=$PWD/../_build/platforms/arm64-sim \
-    --enable-static --disable-agent --enable-reentrant --disable-shared
-make -j8 && make install    # l'échec final sur les pages man (maninstall) est sans importance
-cp ../_build/platforms/arm64-sim/lib/libnetsnmp.a <ce dossier>/
+~/git3/net-snmp/build-ios-tools.sh <répertoire-de-travail> "<dépôt iOS-tools>/iOS tools/libnetsnmp"
 ```
+
+Les en-têtes C exposés à Swift sont déclarés dans `iOS tools/Tools/iOS tools-Bridging-Header.h`.
 
 ## Test de bout en bout
 

@@ -755,7 +755,6 @@ class SNMPManager {
                 throw SNMPManagerError.invalidRange
             }
             if let pointer = GenericTools.stringToUnsafeMutablePointer(str_array[i]) {
-                alex_setsnmpconfpath(pointer)
                 alex_set_av(Int32(i), pointer)
                 pointer.deallocate()
             } else {
@@ -785,6 +784,17 @@ class SNMPManager {
         return translation
     }
     
+    // Demande l'arrêt du walk en cours. Le walk C s'arrête entre deux requêtes (au plus
+    // ~4 s en UDP avec -r3 -t1 si l'agent ne répond plus ; en TCP, pas avant la fin d'un
+    // connect() en cours, ~75 s) et sort par son chemin normal : les résultats déjà reçus
+    // sont transmis à onEnd (avec le message « Walk interrupted »), le manager redevient
+    // disponible et le walk suivant repart proprement. Sans effet si aucun walk n'est en cours.
+    func stopWalk() {
+        if state == .walking || state == .walk_finished {
+            alex_walk_stop()
+        }
+    }
+
     // onEnd will be called on MainActor
     func walk(onEnd: @escaping (OIDNode, String) -> Void) throws(SNMPManagerError) {
         if state != .available {
