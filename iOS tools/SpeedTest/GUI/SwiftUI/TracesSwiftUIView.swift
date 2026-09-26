@@ -324,6 +324,9 @@ struct TracesSwiftUIView: View {
                                     .font(.footnote)
                                     .foregroundColor(Color.white.lighter())
                             }
+                            // Largeur idéale nulle : sous le fixedSize du VStack parent, le champ prend
+                            // la largeur de la rangée de boutons au lieu de s'élargir avec le texte saisi
+                            .frame(minWidth: 0, idealWidth: 0, maxWidth: .infinity, alignment: .leading)
                             if !filter.isEmpty {
                                 Button {
                                     filter = ""
