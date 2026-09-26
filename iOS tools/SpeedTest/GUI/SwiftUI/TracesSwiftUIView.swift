@@ -38,10 +38,20 @@ public class TracesViewModel : ObservableObject {
         LogLevel.ALL: "ALL  "
     ]
 
-    // Texte de filtre qui ne retient que les traces d'un niveau : « [INFO ] », « [DEBUG] »,
-    // « [ALL  ] » — les crochets écartent les traces d'un autre niveau dont le texte
-    // contiendrait le mot
-    static func levelFilter(_ level: LogLevel) -> String { "[" + log_level_to_string[level]! + "]" }
+    // Filtre d'un bouton de niveau : les traces de ce niveau et des niveaux moins détaillés,
+    // soit « [INFO ] », « [INFO ]|[DEBUG] » ou « [INFO ]|[DEBUG]|[ALL  ] ». Les crochets
+    // écartent les traces dont le texte contiendrait le mot sans être de ce niveau
+    static func levelFilter(_ level: LogLevel) -> String {
+        [LogLevel.INFO, .DEBUG, .ALL].filter { $0.rawValue <= level.rawValue }
+            .map { "[" + log_level_to_string[$0]! + "]" }.joined(separator: "|")
+    }
+
+    // Termes d'un filtre : « | » sépare des termes reliés par un « ou » inclusif ; plusieurs
+    // « | » consécutifs (ou en début / fin) comptent pour un seul. Sans « | », un seul terme.
+    // Les espaces font partie des termes (« [INFO ] » en contient un).
+    static func filterTerms(_ filter: String) -> [String] {
+        filter.split(separator: "|", omittingEmptySubsequences: true).map(String.init)
+    }
     
     private let df: DateFormatter = {
         let df = DateFormatter()
@@ -141,11 +151,12 @@ fileprivate struct TracesTextView: UIViewRepresentable {
     // insensible à la casse, que le filtrage lui-même)
     private static func attributedLine(_ line: String, filter: String) -> NSAttributedString {
         let result = NSMutableAttributedString(string: line, attributes: attributes)
-        guard !filter.isEmpty else { return result }
-        var search_range = line.startIndex..<line.endIndex
-        while let match = line.range(of: filter, options: [.caseInsensitive], range: search_range, locale: .current) {
-            result.addAttributes(bold_attributes, range: NSRange(match, in: line))
-            search_range = match.upperBound..<line.endIndex
+        for term in TracesViewModel.filterTerms(filter) {
+            var search_range = line.startIndex..<line.endIndex
+            while let match = line.range(of: term, options: [.caseInsensitive], range: search_range, locale: .current) {
+                result.addAttributes(bold_attributes, range: NSRange(match, in: line))
+                search_range = match.upperBound..<line.endIndex
+            }
         }
         return result
     }
@@ -251,9 +262,17 @@ struct TracesSwiftUIView: View {
     @State private var scroll_controller = TracesScrollController()
     @State private var filter = ""
 
-    // Bouton de niveau : remplace le filtre par « [<niveau>] » (n'affiche que les traces de ce
-    // niveau) ; un nouvel appui sur le bouton actif efface le filtre. Il est en surbrillance
-    // tant que le filtre est exactement le sien.
+    // Traces affichées : celles qui contiennent au moins un des termes du filtre (« ou »
+    // inclusif entre les termes séparés par « | »), toutes si le filtre n'a aucun terme
+    private var filteredTraces: [String] {
+        let terms = TracesViewModel.filterTerms(filter)
+        if terms.isEmpty { return model.traces }
+        return model.traces.filter { line in terms.contains { line.localizedCaseInsensitiveContains($0) } }
+    }
+
+    // Bouton de niveau : remplace le filtre par celui du niveau (traces de ce niveau et des
+    // niveaux moins détaillés) ; un nouvel appui sur le bouton actif efface le filtre. Il est
+    // en surbrillance tant que le filtre est exactement le sien.
     private func levelButton(_ level: LogLevel, _ title: LocalizedStringKey, systemImage: String) -> some View {
         let level_filter = TracesViewModel.levelFilter(level)
         let active = filter == level_filter
@@ -273,8 +292,7 @@ struct TracesSwiftUIView: View {
 
     var body: some View {
         ZStack {
-            TracesTextView(traces: filter.isEmpty ? model.traces :
-                            model.traces.filter { $0.localizedCaseInsensitiveContains(filter) },
+            TracesTextView(traces: filteredTraces,
                            filter: filter, locked: $locked, controller: scroll_controller)
 
             VStack {
